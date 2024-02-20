@@ -1,0 +1,15 @@
+include"scene.fbs";
+include"renderer.fbs";
+
+namespace arcadia.serialization;
+
+table project{
+    name:string;
+    filepath:string;
+    scenes:[scene];
+    current_scene_name:string;
+    renderer_cfg:renderer_config;
+}
+
+root_type project;
+

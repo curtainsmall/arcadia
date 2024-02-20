@@ -1,0 +1,14 @@
+namespace arcadia.serialization;
+
+enum ui_style: ubyte{
+    dark = 0,
+    light,
+    classic,
+}
+
+table ui_config{
+    ui_style:ui_style;
+    imgui_ini_filename:string;
+}
+
+root_type ui_config;
