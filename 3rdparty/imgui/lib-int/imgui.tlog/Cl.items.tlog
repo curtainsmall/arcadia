@@ -1,0 +1,9 @@
+D:\CppProject\arcadia\3rdparty\imgui\backends\imgui_impl_glfw.cpp;D:\CppProject\arcadia\3rdparty\imgui\lib-int\imgui_impl_glfw.obj
+D:\CppProject\arcadia\3rdparty\imgui\backends\imgui_impl_opengl3.cpp;D:\CppProject\arcadia\3rdparty\imgui\lib-int\imgui_impl_opengl3.obj
+D:\CppProject\arcadia\3rdparty\imgui\backends\imgui_impl_vulkan.cpp;D:\CppProject\arcadia\3rdparty\imgui\lib-int\imgui_impl_vulkan.obj
+D:\CppProject\arcadia\3rdparty\imgui\imgui.cpp;D:\CppProject\arcadia\3rdparty\imgui\lib-int\imgui.obj
+D:\CppProject\arcadia\3rdparty\imgui\imgui_demo.cpp;D:\CppProject\arcadia\3rdparty\imgui\lib-int\imgui_demo.obj
+D:\CppProject\arcadia\3rdparty\imgui\imgui_draw.cpp;D:\CppProject\arcadia\3rdparty\imgui\lib-int\imgui_draw.obj
+D:\CppProject\arcadia\3rdparty\imgui\imgui_tables.cpp;D:\CppProject\arcadia\3rdparty\imgui\lib-int\imgui_tables.obj
+D:\CppProject\arcadia\3rdparty\imgui\imgui_widgets.cpp;D:\CppProject\arcadia\3rdparty\imgui\lib-int\imgui_widgets.obj
+D:\CppProject\arcadia\3rdparty\imgui\misc\cpp\imgui_stdlib.cpp;D:\CppProject\arcadia\3rdparty\imgui\lib-int\imgui_stdlib.obj

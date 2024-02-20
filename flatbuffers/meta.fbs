@@ -1,0 +1,23 @@
+namespace arcadia.serialization;
+
+struct version{
+    major:int;
+    minor:int;
+    patch:int;
+}
+
+struct opengl{
+    ver:version;
+}
+struct directx{
+    ver:version;
+}
+struct vulkan{
+    ver:version;
+}
+union graphic_api{
+    opengl,
+    directx,
+    vulkan
+}
+
