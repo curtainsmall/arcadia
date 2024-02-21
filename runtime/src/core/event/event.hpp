@@ -33,13 +33,12 @@ namespace arcadia
     struct ARCADIA_API event
     {
     public:
-        virtual constexpr auto get_type_info() const -> const std::type_info & = 0;
-
+        virtual ~event()
+        {};
     };
 
     template<class Event>
     concept event_like = requires{
-        Event::get_type_info_static();
         std::derived_from<Event, arcadia::event>;
     };
 
@@ -51,17 +50,6 @@ namespace arcadia
 
         using self_type = basic_event<Args...>;
     public:
-
-        static constexpr auto get_type_info_static() -> const std::type_info&
-        {
-            return typeid(self_type);
-        }
-
-        virtual constexpr auto get_type_info() const -> const std::type_info & override
-        {
-            return get_type_info_static();
-        }
-
         /// @brief Construct a signaled event
         basic_event(Args ...args):
             data_tuple(std::make_tuple<Args...>(std::forward<Args>(args)...))
