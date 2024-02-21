@@ -15,14 +15,14 @@ auto main(
 
 namespace arcadia
 {
-    struct ARCADIA_API application: arcadia::layer
+    struct ARCADIA_API app_layer: arcadia::layer
     {
         friend auto ::main(int, const char**) -> int;
     public:
-        using self_type = arcadia::application;
+        using self_type = arcadia::app_layer;
     public:
-        application() = default;
-        virtual ~application() = default;
+        app_layer();
+        virtual ~app_layer();
 
 
         virtual inline auto on_event(const arcadia::event&) -> bool override = 0;
@@ -30,6 +30,10 @@ namespace arcadia
 
     private:
         void run();
+
+    #ifndef NDEBUG
+        void _debug_log_event(const arcadia::event& event);
+    #endif
 
     public:
         static inline std::filesystem::path working_directory{ "./" };
@@ -39,5 +43,5 @@ namespace arcadia
         arcadia::timer _timer{};
     };
 
-    ARCADIA_API auto create_application_uptr() -> std::unique_ptr<arcadia::application>;
+    ARCADIA_API auto create_application_uptr() -> std::unique_ptr<arcadia::app_layer>;
 }

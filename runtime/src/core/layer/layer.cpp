@@ -1,6 +1,12 @@
 #include "pch.hpp"
 #include "layer.hpp"
 
+arcadia::layer::layer(const std::string& name):
+    _name(name)
+{}
+
+arcadia::layer::~layer() = default;
+
 auto arcadia::layer_stack::instance() -> self_type&
 {
     static self_type layer_stack{};
@@ -9,7 +15,10 @@ auto arcadia::layer_stack::instance() -> self_type&
 
 auto arcadia::layer_stack::pop_layer() -> self_type&
 {
-    _layer_uptrs.erase(_layer_uptrs.end());
+    if(size())
+    {
+        _layer_uptrs.erase(_layer_uptrs.end() - 1);
+    }
     return *this;
 }
 
@@ -24,6 +33,15 @@ auto arcadia::layer_stack::pop_layer_at(std::size_t idx) -> self_type&
         _layer_uptrs.begin() + idx
     );
 
+    return *this;
+}
+
+auto arcadia::layer_stack::pop_all() -> self_type&
+{
+    while(size())
+    {
+        pop_layer();
+    }
     return *this;
 }
 
@@ -51,3 +69,5 @@ auto arcadia::layer_stack::rend() -> layer_uptr_vector_type::const_reverse_itera
 {
     return _layer_uptrs.rend();
 }
+
+

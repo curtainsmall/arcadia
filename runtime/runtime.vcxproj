@@ -153,7 +153,8 @@
     <ClInclude Include="src\core\exception.hpp" />
     <ClInclude Include="src\core\file\file.hpp" />
     <ClInclude Include="src\core\file\pfd.hpp" />
-    <ClInclude Include="src\core\graphic_api\graphic_api.hpp" />
+    <ClInclude Include="src\function\window\monitor.hpp" />
+    <ClInclude Include="src\platform\graphic_api\graphic_api.hpp" />
     <ClInclude Include="src\core\layer\layer.hpp" />
     <ClInclude Include="src\core\log\log.hpp" />
     <ClInclude Include="src\core\math\angle.hpp" />
@@ -168,24 +169,23 @@
     <ClInclude Include="src\core\serialization.hpp" />
     <ClInclude Include="src\core\time\timer.hpp" />
     <ClInclude Include="src\core\util\conditional.hpp" />
-    <ClInclude Include="src\core\util\functional.hpp" />
     <ClInclude Include="src\core\util\template.hpp" />
     <ClInclude Include="src\core\version\version.hpp" />
     <ClInclude Include="src\function\input\input.hpp" />
     <ClInclude Include="src\function\window\glfw.hpp" />
-    <ClInclude Include="src\function\window\window.hpp" />
+    <ClInclude Include="src\function\window\window_layer.hpp" />
     <ClInclude Include="src\pch.hpp" />
-    <ClInclude Include="src\core\application\application.hpp" />
+    <ClInclude Include="src\core\app\app.hpp" />
     <ClInclude Include="src\core\base.hpp" />
     <ClInclude Include="src\entry_point.hpp" />
     <ClInclude Include="src\platform\base.hpp" />
     <ClInclude Include="src\platform\plateform_detection.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\core\application\application.cpp" />
+    <ClCompile Include="src\core\app\app.cpp" />
     <ClCompile Include="src\core\event\event.cpp" />
     <ClCompile Include="src\core\file\file.cpp" />
-    <ClCompile Include="src\core\graphic_api\graphic_api.cpp" />
+    <ClCompile Include="src\platform\graphic_api\graphic_api.cpp" />
     <ClCompile Include="src\core\layer\layer.cpp" />
     <ClCompile Include="src\core\log\log.cpp" />
     <ClCompile Include="src\core\math\mat4.cpp" />
@@ -193,7 +193,7 @@
     <ClCompile Include="src\core\math\vec3.cpp" />
     <ClCompile Include="src\core\version\version.cpp" />
     <ClCompile Include="src\function\window\glfw.cpp" />
-    <ClCompile Include="src\function\window\window.cpp" />
+    <ClCompile Include="src\function\window\window_layer.cpp" />
     <ClCompile Include="src\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">pch.hpp</PrecompiledHeaderFile>

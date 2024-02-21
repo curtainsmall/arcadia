@@ -7,28 +7,23 @@
 #include<string>
 #include<vector>
 
+#include"boost/noncopyable.hpp"
+
 #include"core/base.hpp"
 #include"core/event/event.hpp"
 #include"core/exception.hpp"
 
 namespace arcadia
 {
-    struct ARCADIA_API layer
+    struct ARCADIA_API layer: boost::noncopyable
     {
     public:
         using delta_time_type = std::chrono::milliseconds;
 
         using self_type = layer;
     public:
-        inline layer(const std::string& name = "layer"):
-            _name(name)
-        {};
-        inline layer(const self_type&) = delete;
-        inline layer(self_type&&) noexcept = default;
-        virtual inline ~layer() = default;
-
-        auto operator=(const self_type&)->self_type & = delete;
-        auto operator=(self_type&&) noexcept -> self_type & = default;
+        layer(const std::string& name = "layer");
+        virtual ~layer();
 
         [[nodiscard]]
         inline auto get_name() const -> const std::string&
@@ -38,7 +33,7 @@ namespace arcadia
 
         /// @brief Process event
         /// @param event Event to be processed
-        /// @return Whether to keep @a event signaled (so that next layer will process it)
+        /// @return Whether to set @a event handled (so that layers after will NOT process it)
         virtual inline auto on_event(const arcadia::event& event) -> bool = 0;
 
         /// @brief Update layer
@@ -106,6 +101,7 @@ namespace arcadia
         }
         auto pop_layer() -> self_type&;
         auto pop_layer_at(std::size_t idx) -> self_type&;
+        auto pop_all() -> self_type&;
 
         template<arcadia::layer_like Layer = arcadia::layer>
         auto at(std::size_t idx) -> Layer&

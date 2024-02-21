@@ -19,9 +19,9 @@ public:\
     using arcadia::basic_event<__VA_ARGS__>::basic_event;\
 }
 
-#define ARCADIA_DISPATCH_EVENT(event_type, event_name, event_handler) \
+#define ARCADIA_DISPATCH_EVENT(event_type, event_instance, event_handler) \
 arcadia::dispatch_event<event_type>(\
-    event_name,\
+    event_instance,\
     [&](const event_type& evt) -> bool\
 {\
     return event_handler(evt);\
@@ -87,7 +87,7 @@ namespace arcadia
         const arcadia::event_handler<Event>& fn
     ) -> bool
     {
-        if(event.get_type_info() == Event::get_type_info_static())
+        if(typeid(event) == typeid(Event))
         {
             return fn(static_cast<const Event&>(event));
         }
@@ -119,7 +119,7 @@ namespace arcadia
         auto swap_queue() -> bool;
 
         /// @brief Check whther the proceessing queue contains event
-        auto non_empty() -> bool;
+        auto size() -> std::size_t;
 
         /// @brief Read the front event in event queue
         /// @return Event at front

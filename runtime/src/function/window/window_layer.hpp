@@ -4,27 +4,27 @@
 
 #include"core/base.hpp"
 #include"core/event/event.hpp"
-#include"core/graphic_api/graphic_api.hpp"
 #include"core/layer/layer.hpp"
 #include"core/math/vec2.hpp"
 #include"function/window/glfw.hpp"
+#include"platform/graphic_api/graphic_api.hpp"
 
 namespace arcadia
 {
-    struct ARCADIA_API window: arcadia::layer
+    struct ARCADIA_API window_layer: arcadia::layer
     {
     public:
 
-        using self_type = arcadia::window;
+        using self_type = arcadia::window_layer;
     public:
-        window(
+        window_layer(
             const arcadia::graphic_api::type& graphic_api = arcadia::graphic_api::opengl{},
             int width = 800,
             int height = 600,
             std::string title = "Untitled",
             int multisample_count = 0
         );
-        virtual ~window();
+        virtual ~window_layer();
 
         [[nodiscard]]
         inline auto get_glfw_window_ptr() const -> GLFWwindow*
@@ -85,6 +85,8 @@ namespace arcadia
             return static_cast<self_type*>(glfwGetWindowUserPointer(glfw_window_ptr));
         }
 
+        void _setup_callbacks();
+
         /// @brief Call [glfwSwapBuffers](https://www.glfw.org/docs/3.3/group__window.html#ga15a5a1ee5b3c2ca6b15ca209a12efd14)
         void _swap_buffers();
 
@@ -102,28 +104,33 @@ namespace arcadia
 
     ARCADIA_EVENT(
         window_close,
-        arcadia::window* // Window to close
+        arcadia::window_layer* // Window to close
     );
     ARCADIA_EVENT(
         window_size,
-        arcadia::window*,
+        arcadia::window_layer*,
         glm::ivec2 // New size
     );
     ARCADIA_EVENT(
         window_pos,
-        arcadia::window*,
+        arcadia::window_layer*,
         glm::ivec2 // New position
     );
     ARCADIA_EVENT(
         window_minified,
-        arcadia::window*
+        arcadia::window_layer*
     );
     ARCADIA_EVENT(
         window_restored,
-        arcadia::window*
+        arcadia::window_layer*
     );
     ARCADIA_EVENT(
         window_maxmized,
-        arcadia::window*
+        arcadia::window_layer*
+    );
+    ARCADIA_EVENT(
+        window_focus,
+        arcadia::window_layer*,
+        bool
     );
 }
