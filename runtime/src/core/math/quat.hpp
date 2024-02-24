@@ -4,6 +4,7 @@
 #include"glm/gtc/quaternion.hpp"
 
 #include"core/base.hpp"
+#include"core/math/glm_header.hpp"
 
 namespace arcadia
 {

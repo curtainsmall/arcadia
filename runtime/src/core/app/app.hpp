@@ -15,14 +15,14 @@ auto main(
 
 namespace arcadia
 {
-    struct ARCADIA_API app_layer: arcadia::layer
+    struct ARCADIA_API app_layer: arcadia::layer_interface
     {
         friend auto ::main(int, const char**) -> int;
     public:
         using self_type = arcadia::app_layer;
     public:
         app_layer();
-        virtual ~app_layer();
+        virtual ~app_layer() = default;
 
 
         virtual inline auto on_event(const arcadia::event&) -> bool override = 0;

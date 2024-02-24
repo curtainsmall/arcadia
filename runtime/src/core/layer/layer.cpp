@@ -1,11 +1,9 @@
 #include "pch.hpp"
 #include "layer.hpp"
 
-arcadia::layer::layer(const std::string& name):
+arcadia::layer_interface::layer_interface(const std::string& name):
     _name(name)
 {}
-
-arcadia::layer::~layer() = default;
 
 auto arcadia::layer_stack::instance() -> self_type&
 {

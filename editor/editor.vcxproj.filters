@@ -27,7 +27,7 @@
     <ClInclude Include="src\ui\wrapper.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\ui\imgui.hpp">
+    <ClInclude Include="src\ui\imgui_header.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

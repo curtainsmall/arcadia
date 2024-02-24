@@ -27,8 +27,6 @@ arcadia::editor_app_layer::editor_app_layer()
     _running = true;
 }
 
-arcadia::editor_app_layer::~editor_app_layer() = default;
-
 void arcadia::editor_app_layer::on_update(delta_time_type delta_time)
 {}
 

@@ -5,7 +5,7 @@
 #include"ui/backend.hpp"
 
 arcadia::imgui_layer::imgui_layer(arcadia::window_layer& window):
-    arcadia::layer("imgui"),
+    arcadia::layer_interface("imgui"),
     _window_ptr(&window)
 {
     _imgui_context_ptr = ImGui::CreateContext();

@@ -7,23 +7,21 @@
 #include<string>
 #include<vector>
 
-#include"boost/noncopyable.hpp"
-
 #include"core/base.hpp"
 #include"core/event/event.hpp"
 #include"core/exception.hpp"
 
 namespace arcadia
 {
-    struct ARCADIA_API layer: boost::noncopyable
+    struct ARCADIA_API layer_interface: arcadia::noncopyable
     {
     public:
         using delta_time_type = std::chrono::milliseconds;
 
-        using self_type = layer;
+        using self_type = layer_interface;
     public:
-        layer(const std::string& name = "layer");
-        virtual ~layer();
+        layer_interface(const std::string& name = "layer");
+        virtual ~layer_interface() = default;
 
         [[nodiscard]]
         inline auto get_name() const -> const std::string&
@@ -45,7 +43,7 @@ namespace arcadia
 
     template<class Layer>
     concept layer_like = requires{
-        std::derived_from<Layer, arcadia::layer>;
+        std::derived_from<Layer, arcadia::layer_interface>;
     };
 
     struct ARCADIA_API layer_stack
@@ -53,7 +51,7 @@ namespace arcadia
     public:
         ARCADIA_EXCEPTION(out_of_range);
 
-        using layer_uptr_vector_type = std::vector<std::unique_ptr<layer>>;
+        using layer_uptr_vector_type = std::vector<std::unique_ptr<layer_interface>>;
 
         using self_type = layer_stack;
     public:
@@ -103,7 +101,7 @@ namespace arcadia
         auto pop_layer_at(std::size_t idx) -> self_type&;
         auto pop_all() -> self_type&;
 
-        template<arcadia::layer_like Layer = arcadia::layer>
+        template<arcadia::layer_like Layer = arcadia::layer_interface>
         auto at(std::size_t idx) -> Layer&
         {
             if(idx >= size())

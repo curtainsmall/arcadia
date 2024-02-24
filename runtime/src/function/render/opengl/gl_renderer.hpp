@@ -1,0 +1,100 @@
+#pragma once
+
+#include<filesystem>
+#include<optional>
+#include<tuple>
+
+#include"core/base.hpp"
+#include"core/exception.hpp"
+#include"core/math.hpp"
+#include"function/render/opengl/buffer/gl_cubemap.hpp"
+#include"function/render/opengl/buffer/gl_framebuffer.hpp"
+#include"function/render/opengl/buffer/gl_vertex_array.hpp"
+#include"function/render/opengl/pipeline/gl_pipeline.hpp"
+#include"function/render/renderer_interface.hpp"
+#include"platform/opengl/opengl_header.hpp"
+#include"resource/component/camera_component/camera_component.hpp"
+#include"resource/component/mesh_component/mesh_component.hpp"
+#include"resource/component/skybox_component/skybox_component.hpp"
+
+namespace arcadia
+{
+    using gl_render_unit_camera = std::tuple<
+        arcadia::gl_framebuffer, // gl_framebuffer
+        glm::uvec2, // viewport_size
+        glm::mat4, // camera_view_mat4
+        glm::mat4 // camera_proj_mat4
+    >;
+
+    using gl_render_unit_mesh = std::tuple<
+        arcadia::gl_vertex_array, // gl_vertex_array
+        glm::mat4, // trasform_mat4
+        arcadia::gl_texture2d, // gl_texture2d_ambient
+        arcadia::gl_texture2d, // gl_texture2d_diffuse
+        arcadia::gl_texture2d  // gl_texture2d_specular
+    >;
+
+    using gl_render_unit_skybox = std::tuple<
+        arcadia::gl_vertex_array, // gl_vertex_array
+        arcadia::gl_cubemap // gl_cubemap
+    >;
+
+    struct ARCADIA_API gl_renderer: arcadia::renderer_interface
+    {
+    public:
+        ARCADIA_EXCEPTION(frame_in_build);
+        ARCADIA_EXCEPTION(frame_not_in_build);
+        ARCADIA_EXCEPTION(draw_fail);
+
+        using self_type = gl_renderer;
+    public:
+        gl_renderer(const std::filesystem::path& gl_shader_folder_path);
+        virtual ~gl_renderer() = default;
+
+        /// @brief Begin a new frame
+        /// @details This function signs that a new frame is started to form, any data in the previous frame may be erased (see submit() functions)
+        virtual void begin_frame() override;
+
+        /// @brief End curtain frame
+        /// @details This function signs that current frame is complete and ready to draw
+        virtual void end_frame() override;
+
+        /// @brief Submit a camera component to this renderer
+        /// @note If this function is not called in a new frame, data from previous frame is used
+        virtual void submit(const arcadia::camera_component& camera_comp) override;
+
+        /// @brief Submit a mesh component to this renderer
+        /// @note If this function is not called in a new frame, data from previous frame is used
+        virtual void submit(const arcadia::mesh_component& mesh_comp) override;
+
+        /// @brief Submit a skybox component to this renderer
+        /// @note This function replaces existing skybox since only one skybox can be rendered at a time
+        virtual void submit(const arcadia::skybox_component& skybox_comp) override;
+
+        /// @brief Draw curtain frame
+        virtual void draw() override;
+
+        /// @brief Get the render result (the framebuffer) id
+        /// @param index Index of framebuffer
+        /// @return OpenGL framebuffer object id (GLuint) as void*
+        virtual auto get_render_result_id(std::size_t index) const->void* override;
+
+    public:
+        void _check_frame_in_build_or_throw() const;
+        void _check_frame_not_in_build_or_throw() const;
+
+        auto _create_unit_cube_mesh() const->std::pair<std::vector<arcadia::vertex>, std::vector<arcadia::mesh_component::index_type>>;
+    private:
+        bool _frame_in_build{ false };
+
+        std::vector<arcadia::gl_render_unit_camera> _gl_render_unit_cameras{};
+        std::vector<arcadia::gl_render_unit_mesh> _gl_render_unit_meshes{};
+        std::optional<arcadia::gl_render_unit_skybox> _gl_render_unit_skybox_opt{};
+
+        bool _legacy_gl_render_unit_camera{ false };
+        bool _legacy_gl_render_unit_mesh{ false };
+
+        arcadia::gl_pipeline _gl_mesh_pipeline;
+        arcadia::gl_pipeline _gl_skybox_pipeline;
+    };
+}

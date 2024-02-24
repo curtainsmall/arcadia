@@ -2,13 +2,13 @@
 
 #include"core/exception.hpp"
 #include"function/window/window_layer.hpp"
-#include"ui/imgui.hpp"
+#include"ui/imgui_header.hpp"
 
 namespace arcadia
 {
     ARCADIA_EXCEPTION(imgui_error);
 
-    struct ARCADIA_API imgui_layer: arcadia::layer
+    struct ARCADIA_API imgui_layer: arcadia::layer_interface
     {
     public:
         imgui_layer(arcadia::window_layer& window);

@@ -3,7 +3,7 @@
 #include"flatbuffers_generated/math_generated.h"
 
 #include"core/base.hpp"
-#include"core/math/glm.hpp"
+#include"core/math/glm_header.hpp"
 
 namespace arcadia
 {

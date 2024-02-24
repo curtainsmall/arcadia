@@ -153,12 +153,34 @@
     <ClInclude Include="src\core\exception.hpp" />
     <ClInclude Include="src\core\file\file.hpp" />
     <ClInclude Include="src\core\file\pfd.hpp" />
+    <ClInclude Include="src\core\math.hpp" />
+    <ClInclude Include="src\core\math\numeric.hpp" />
+    <ClInclude Include="src\function\render\opengl\buffer\gl_cubemap.hpp" />
+    <ClInclude Include="src\function\render\opengl\buffer\gl_framebuffer.hpp" />
+    <ClInclude Include="src\function\render\opengl\buffer\gl_index_buffer.hpp" />
+    <ClInclude Include="src\function\render\opengl\buffer\gl_texture2d.hpp" />
+    <ClInclude Include="src\function\render\opengl\gl_renderer.hpp" />
+    <ClInclude Include="src\function\render\opengl\buffer\gl_vertex_array.hpp" />
+    <ClInclude Include="src\function\render\opengl\buffer\gl_vertex_buffer.hpp" />
+    <ClInclude Include="src\function\render\opengl\pipeline\gl_pipeline.hpp" />
+    <ClInclude Include="src\function\render\opengl\pipeline\gl_shader.hpp" />
+    <ClInclude Include="src\platform\opengl\opengl_header.hpp" />
+    <ClInclude Include="src\resource\component\camera_component\camera_component.hpp" />
+    <ClInclude Include="src\resource\component\component.hpp" />
+    <ClInclude Include="src\resource\component\mesh_component\vertex.hpp" />
+    <ClInclude Include="src\resource\component\skybox_component\cubemap.hpp" />
+    <ClInclude Include="src\resource\component\mesh_component\material\material.hpp" />
+    <ClInclude Include="src\resource\component\mesh_component\material\texture2d.hpp" />
+    <ClInclude Include="src\resource\component\mesh_component\mesh_component.hpp" />
+    <ClInclude Include="src\resource\component\skybox_component\skybox_component.hpp" />
+    <ClInclude Include="src\resource\scene\entt_header.hpp" />
+    <ClInclude Include="src\function\render\renderer_interface.hpp" />
     <ClInclude Include="src\function\window\monitor.hpp" />
     <ClInclude Include="src\platform\graphic_api\graphic_api.hpp" />
     <ClInclude Include="src\core\layer\layer.hpp" />
     <ClInclude Include="src\core\log\log.hpp" />
     <ClInclude Include="src\core\math\angle.hpp" />
-    <ClInclude Include="src\core\math\glm.hpp" />
+    <ClInclude Include="src\core\math\glm_header.hpp" />
     <ClInclude Include="src\core\math\mat2.hpp" />
     <ClInclude Include="src\core\math\mat3.hpp" />
     <ClInclude Include="src\core\math\mat4.hpp" />
@@ -172,7 +194,7 @@
     <ClInclude Include="src\core\util\template.hpp" />
     <ClInclude Include="src\core\version\version.hpp" />
     <ClInclude Include="src\function\input\input.hpp" />
-    <ClInclude Include="src\function\window\glfw.hpp" />
+    <ClInclude Include="src\function\window\glfw_header.hpp" />
     <ClInclude Include="src\function\window\window_layer.hpp" />
     <ClInclude Include="src\pch.hpp" />
     <ClInclude Include="src\core\app\app.hpp" />
@@ -180,11 +202,21 @@
     <ClInclude Include="src\entry_point.hpp" />
     <ClInclude Include="src\platform\base.hpp" />
     <ClInclude Include="src\platform\plateform_detection.hpp" />
+    <ClInclude Include="src\resource\scene\scene.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\core\app\app.cpp" />
     <ClCompile Include="src\core\event\event.cpp" />
     <ClCompile Include="src\core\file\file.cpp" />
+    <ClCompile Include="src\function\render\opengl\buffer\gl_cubemap.cpp" />
+    <ClCompile Include="src\function\render\opengl\buffer\gl_framebuffer.cpp" />
+    <ClCompile Include="src\function\render\opengl\buffer\gl_index_buffer.cpp" />
+    <ClCompile Include="src\function\render\opengl\buffer\gl_texture2d.cpp" />
+    <ClCompile Include="src\function\render\opengl\buffer\gl_vertex_array.cpp" />
+    <ClCompile Include="src\function\render\opengl\buffer\gl_vertex_buffer.cpp" />
+    <ClCompile Include="src\function\render\opengl\gl_renderer.cpp" />
+    <ClCompile Include="src\function\render\opengl\pipeline\gl_pipeline.cpp" />
+    <ClCompile Include="src\function\render\opengl\pipeline\gl_shader.cpp" />
     <ClCompile Include="src\platform\graphic_api\graphic_api.cpp" />
     <ClCompile Include="src\core\layer\layer.cpp" />
     <ClCompile Include="src\core\log\log.cpp" />
@@ -192,7 +224,7 @@
     <ClCompile Include="src\core\math\vec2.cpp" />
     <ClCompile Include="src\core\math\vec3.cpp" />
     <ClCompile Include="src\core\version\version.cpp" />
-    <ClCompile Include="src\function\window\glfw.cpp" />
+    <ClCompile Include="src\function\window\glfw_header.cpp" />
     <ClCompile Include="src\function\window\window_layer.cpp" />
     <ClCompile Include="src\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -200,6 +232,8 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.hpp</PrecompiledHeaderFile>
     </ClCompile>
+    <ClCompile Include="src\platform\opengl\opengl_header.cpp" />
+    <ClCompile Include="src\resource\component\camera_component\camera_component.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\core\util\string.hpp" />

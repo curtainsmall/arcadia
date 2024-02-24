@@ -149,7 +149,7 @@
   <ItemGroup>
     <ClInclude Include="src\editor.hpp" />
     <ClInclude Include="src\ui\backend.hpp" />
-    <ClInclude Include="src\ui\imgui.hpp" />
+    <ClInclude Include="src\ui\imgui_header.hpp" />
     <ClInclude Include="src\ui\imgui_layer.hpp" />
     <ClInclude Include="src\ui\wrapper.hpp" />
   </ItemGroup>

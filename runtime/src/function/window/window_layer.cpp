@@ -15,7 +15,7 @@ arcadia::window_layer::window_layer(
     std::string title,
     int multisample_count
 ):
-    arcadia::layer(std::format("window_{}", title)),
+    arcadia::layer_interface(std::format("window_{}", title)),
     _graphic_api(graphic_api),
     _title(title),
     _multisample_count(multisample_count)

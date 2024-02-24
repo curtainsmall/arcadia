@@ -12,7 +12,7 @@ namespace arcadia
     {
     public:
         editor_app_layer();
-        virtual ~editor_app_layer();
+        virtual ~editor_app_layer() = default;
 
         virtual auto on_event(const arcadia::event& event) -> bool override;
         virtual void on_update(delta_time_type delta_time) override;

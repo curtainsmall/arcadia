@@ -4,7 +4,7 @@
 
 #include"core/base.hpp"
 #include"core/event/event.hpp"
-#include"core/math/vec2.hpp"
+#include"core/math.hpp"
 #include"function/window/window_layer.hpp"
 
 
@@ -15,7 +15,7 @@ namespace arcadia
         enum:int
         {
 
-            unknown        = GLFW_KEY_UNKNOWN,
+            unknown       = GLFW_KEY_UNKNOWN,
             space         = GLFW_KEY_SPACE,
             apostrophe    = GLFW_KEY_APOSTROPHE, // '
             comma         = GLFW_KEY_COMMA, // ,

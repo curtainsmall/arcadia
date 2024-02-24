@@ -32,7 +32,7 @@ namespace arcadia
 {
     struct ARCADIA_API event
     {
-    public:
+        // Virtual destructor that make event type virtual
         virtual ~event()
         {};
     };

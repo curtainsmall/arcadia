@@ -1,7 +1,7 @@
 #pragma once
 
 #include"core/base.hpp"
-#include"core/math/glm.hpp"
+#include"core/math/glm_header.hpp"
 
 namespace arcadia
 {
@@ -37,18 +37,18 @@ namespace arcadia
     [[nodiscard]]
     ARCADIA_API auto gen_scaling_mat4(
         const glm::vec3& scale,
-        const glm::vec3& pivot = {}
+        const glm::vec3& pivot ={}
     ) -> glm::mat4;
 
     [[nodiscard]]
     ARCADIA_API auto gen_rotation_mat4(
         const glm::vec3& rotation,
-        const glm::vec3& pivot = {}
+        const glm::vec3& pivot ={}
     ) -> glm::mat4;
 
     [[nodiscard]]
     ARCADIA_API auto gen_position_mat4(
         const glm::vec3& position,
-        const glm::vec3& pivot = {}
+        const glm::vec3& pivot ={}
     ) -> glm::mat4;
 }

@@ -10,10 +10,8 @@
 #endif
 
 arcadia::app_layer::app_layer():
-    arcadia::layer("application")
+    arcadia::layer_interface("application")
 {}
-
-arcadia::app_layer::~app_layer() = default;
 
 void arcadia::app_layer::run()
 {

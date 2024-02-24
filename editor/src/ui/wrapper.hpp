@@ -13,7 +13,7 @@ namespace arcadia
             const std::string& title,
             bool open = false
         );
-        virtual ~imgui_wrapper();
+        virtual ~imgui_wrapper() = default;
 
         virtual void on_render() = 0;
 

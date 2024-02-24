@@ -9,15 +9,12 @@ namespace arcadia
 {
     ARCADIA_EXCEPTION(glfw_error);
 
-    struct ARCADIA_API glfw_context
+    struct ARCADIA_API glfw_context: arcadia::noncopyable
     {
     public:
         using self_type = glfw_context;
     public:
         glfw_context();
-        glfw_context(const self_type&) = delete;
         ~glfw_context();
-
-        auto operator=(const self_type&) = delete;
     };
 }

@@ -5,13 +5,13 @@
 #include"core/base.hpp"
 #include"core/event/event.hpp"
 #include"core/layer/layer.hpp"
-#include"core/math/vec2.hpp"
-#include"function/window/glfw.hpp"
+#include"core/math.hpp"
+#include"function/window/glfw_header.hpp"
 #include"platform/graphic_api/graphic_api.hpp"
 
 namespace arcadia
 {
-    struct ARCADIA_API window_layer: arcadia::layer
+    struct ARCADIA_API window_layer: arcadia::layer_interface
     {
     public:
 
