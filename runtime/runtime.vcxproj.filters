@@ -108,7 +108,7 @@
     <ClInclude Include="src\function\window\monitor.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\function\render\renderer_interface.hpp">
+    <ClInclude Include="src\function\render\renderer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\resource\scene\entt_header.hpp">
@@ -159,22 +159,37 @@
     <ClInclude Include="src\resource\component\component.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\resource\component\mesh_component\vertex.hpp">
+    <ClInclude Include="src\resource\component\renderable_component\mesh\vertex.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\resource\component\skybox_component\cubemap.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\resource\component\mesh_component\material\material.hpp">
+    <ClInclude Include="src\resource\component\renderable_component\material\material.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\resource\component\mesh_component\material\texture2d.hpp">
+    <ClInclude Include="src\resource\component\renderable_component\material\texture2d.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\resource\component\mesh_component\mesh_component.hpp">
+    <ClInclude Include="src\resource\component\renderable_component\mesh\mesh.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\resource\component\skybox_component\skybox_component.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\nlohmann_json_header.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\uuid.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\resource\component\meta_components\meta_componts.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\resource\component\renderable_component\renderable_component.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\function\render\render_layer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -249,6 +264,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\function\render\opengl\pipeline\gl_pipeline.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\resource\scene\scene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -11,10 +11,10 @@
 #include"function/render/opengl/buffer/gl_framebuffer.hpp"
 #include"function/render/opengl/buffer/gl_vertex_array.hpp"
 #include"function/render/opengl/pipeline/gl_pipeline.hpp"
-#include"function/render/renderer_interface.hpp"
+#include"function/render/renderer.hpp"
 #include"platform/opengl/opengl_header.hpp"
 #include"resource/component/camera_component/camera_component.hpp"
-#include"resource/component/mesh_component/mesh_component.hpp"
+#include"resource/component/renderable_component/renderable_component.hpp"
 #include"resource/component/skybox_component/skybox_component.hpp"
 
 namespace arcadia
@@ -42,48 +42,27 @@ namespace arcadia
     struct ARCADIA_API gl_renderer: arcadia::renderer_interface
     {
     public:
-        ARCADIA_EXCEPTION(frame_in_build);
-        ARCADIA_EXCEPTION(frame_not_in_build);
-        ARCADIA_EXCEPTION(draw_fail);
-
         using self_type = gl_renderer;
     public:
         gl_renderer(const std::filesystem::path& gl_shader_folder_path);
         virtual ~gl_renderer() = default;
 
-        /// @brief Begin a new frame
-        /// @details This function signs that a new frame is started to form, any data in the previous frame may be erased (see submit() functions)
         virtual void begin_frame() override;
-
-        /// @brief End curtain frame
-        /// @details This function signs that current frame is complete and ready to draw
         virtual void end_frame() override;
 
-        /// @brief Submit a camera component to this renderer
-        /// @note If this function is not called in a new frame, data from previous frame is used
         virtual void submit(const arcadia::camera_component& camera_comp) override;
-
-        /// @brief Submit a mesh component to this renderer
-        /// @note If this function is not called in a new frame, data from previous frame is used
-        virtual void submit(const arcadia::mesh_component& mesh_comp) override;
-
-        /// @brief Submit a skybox component to this renderer
-        /// @note This function replaces existing skybox since only one skybox can be rendered at a time
+        virtual void submit(const arcadia::renderable_component& renderable_comp) override;
         virtual void submit(const arcadia::skybox_component& skybox_comp) override;
 
-        /// @brief Draw curtain frame
         virtual void draw() override;
 
-        /// @brief Get the render result (the framebuffer) id
-        /// @param index Index of framebuffer
-        /// @return OpenGL framebuffer object id (GLuint) as void*
         virtual auto get_render_result_id(std::size_t index) const->void* override;
 
     public:
         void _check_frame_in_build_or_throw() const;
         void _check_frame_not_in_build_or_throw() const;
 
-        auto _create_unit_cube_mesh() const->std::pair<std::vector<arcadia::vertex>, std::vector<arcadia::mesh_component::index_type>>;
+        auto _create_unit_cube_mesh() const->std::pair<std::vector<arcadia::vertex>, std::vector<arcadia::mesh::index_type>>;
     private:
         bool _frame_in_build{ false };
 

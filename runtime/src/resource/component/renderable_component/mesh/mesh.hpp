@@ -6,16 +6,16 @@
 
 #include"core/base.hpp"
 #include"resource/component/component.hpp"
-#include"resource/component/mesh_component/material/material.hpp"
-#include"resource/component/mesh_component/vertex.hpp"
+#include"resource/component/renderable_component/material/material.hpp"
+#include"resource/component/renderable_component/mesh/vertex.hpp"
 
 namespace arcadia
 {
-    struct ARCADIA_API mesh_component: arcadia::component
+    struct ARCADIA_API mesh
     {
     public:
         using index_type = unsigned int;
-        using self_type = mesh_component;
+        using self_type = mesh;
     public:
         std::vector<arcadia::vertex> vertices{};
         std::vector<index_type> indices{};

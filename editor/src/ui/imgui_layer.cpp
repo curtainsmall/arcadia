@@ -28,10 +28,9 @@ arcadia::imgui_layer::~imgui_layer()
     }
 }
 
-auto arcadia::imgui_layer::on_event(const arcadia::event& event) -> bool
+auto arcadia::imgui_layer::on_event(const arcadia::event_base& event) -> bool
 {
-    arcadia::imgui_backend::imgui_on_event(event);
-    return false;
+    return arcadia::imgui_backend::imgui_on_event(event);
 }
 
 void arcadia::imgui_layer::on_update(delta_time_type delta_time)

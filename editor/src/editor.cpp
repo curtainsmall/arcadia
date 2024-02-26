@@ -13,16 +13,20 @@ arcadia::editor_app_layer::editor_app_layer()
 
     // Window layer
     {
-        auto window_layer_uptr = std::make_unique<arcadia::window_layer>();
-        _main_window_ptr = window_layer_uptr.get();
-        layer_stack.push_layer<arcadia::window_layer>(std::move(window_layer_uptr));
+        layer_stack.push_layer<arcadia::window_layer>();
+        _main_window_ptr = &layer_stack.top<arcadia::window_layer>();
     }
 
-    /// ImGui layer
+    // Project layer
     {
-        auto imgui_layer_uptr = std::make_unique<arcadia::imgui_layer>(*_main_window_ptr);
-        _main_ui_ptr = imgui_layer_uptr.get();
-        layer_stack.push_layer<arcadia::imgui_layer>(std::move(imgui_layer_uptr));
+        layer_stack.push_layer<arcadia::project_layer>();
+        _project_ptr = &layer_stack.top<arcadia::project_layer>();
+    }
+
+    // ImGui layer
+    {
+        layer_stack.push_layer<arcadia::imgui_layer>(*_main_window_ptr);
+        _main_ui_ptr = &layer_stack.top<arcadia::imgui_layer>();
     }
     _running = true;
 }
@@ -30,18 +34,9 @@ arcadia::editor_app_layer::editor_app_layer()
 void arcadia::editor_app_layer::on_update(delta_time_type delta_time)
 {}
 
-auto arcadia::editor_app_layer::on_event(const arcadia::event& event) -> bool
+auto arcadia::editor_app_layer::on_event(const arcadia::event_base& event) -> bool
 {
     ARCADIA_DISPATCH_EVENT(arcadia::window_close, event, _on_window_close);
-    auto debug_cursor_pos_info = [&](const arcadia::input_cursor_pos& cursor_pos) -> bool
-    {
-        const auto& [wnd_ptr, pos] = cursor_pos.data_tuple;
-        _main_window_ptr->set_title(std::format("x:{},y:{}", pos.x, pos.y));
-        return false;
-    };
-    ARCADIA_DISPATCH_EVENT(arcadia::input_cursor_pos, event, debug_cursor_pos_info
-    );
-
     return false;
 }
 

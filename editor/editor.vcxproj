@@ -148,16 +148,18 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="src\editor.hpp" />
+    <ClInclude Include="src\project\project.hpp" />
     <ClInclude Include="src\ui\backend.hpp" />
     <ClInclude Include="src\ui\imgui_header.hpp" />
     <ClInclude Include="src\ui\imgui_layer.hpp" />
-    <ClInclude Include="src\ui\wrapper.hpp" />
+    <ClInclude Include="src\ui\imgui_window.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\editor.cpp" />
+    <ClCompile Include="src\project\project.cpp" />
     <ClCompile Include="src\ui\backend.cpp" />
     <ClCompile Include="src\ui\imgui_layer.cpp" />
-    <ClCompile Include="src\ui\wrapper.cpp" />
+    <ClCompile Include="src\ui\imgui_window.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

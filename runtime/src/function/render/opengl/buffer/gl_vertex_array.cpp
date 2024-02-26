@@ -3,7 +3,7 @@
 
 arcadia::gl_vertex_array::gl_vertex_array(
     const std::vector<arcadia::vertex>& vertices,
-    const std::vector<arcadia::mesh_component::index_type>& indices
+    const std::vector<arcadia::mesh::index_type>& indices
 ):
     _gl_vertex_buffer(vertices),
     _gl_index_buffer(indices)

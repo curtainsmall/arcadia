@@ -46,7 +46,7 @@ void arcadia::app_layer::run()
 }
 
 #ifndef NDEBUG
-void arcadia::app_layer::_debug_log_event(const arcadia::event& event)
+void arcadia::app_layer::_debug_log_event(const arcadia::event_base& event)
 {
     auto log_when_cursor_pos = [](const arcadia::input_cursor_pos& e) -> bool
     {

@@ -7,8 +7,6 @@
 #include"function/window/window_layer.hpp"
 #include"ui/imgui_header.hpp"
 
-#define ARCADIA_IMGUI_USE_INTERNAL_CALLBACKS 0
-
 namespace arcadia
 {
     namespace imgui_backend
@@ -19,7 +17,7 @@ namespace arcadia
         ARCADIA_API void shutdown(const arcadia::window_layer& window);
 
         // Event handlers
-        ARCADIA_API auto imgui_on_event(const arcadia::event& event) -> bool;
+        ARCADIA_API auto imgui_on_event(const arcadia::event_base& event) -> bool;
         ARCADIA_API auto imgui_on_window_focus(const arcadia::window_focus& window_focus) -> bool;
         ARCADIA_API auto imgui_on_cursor_enter(const arcadia::input_cursor_enter& input_cursor_enter) -> bool;
         ARCADIA_API auto imgui_on_cursor_pos(const arcadia::input_cursor_pos& input_cursor_pos) -> bool;

@@ -25,21 +25,21 @@ namespace arcadia
         virtual ~app_layer() = default;
 
 
-        virtual inline auto on_event(const arcadia::event&) -> bool override = 0;
+        virtual inline auto on_event(const arcadia::event_base&) -> bool override = 0;
         virtual inline void on_update(delta_time_type delta_time) override = 0;
 
     private:
         void run();
 
     #ifndef NDEBUG
-        void _debug_log_event(const arcadia::event& event);
+        void _debug_log_event(const arcadia::event_base& event);
     #endif
 
     public:
         static inline std::filesystem::path working_directory{ "./" };
 
     protected:
-        bool _running{ true };
+        bool _running{ false };
         arcadia::timer _timer{};
     };
 

@@ -4,7 +4,7 @@
 
 #include"core/base.hpp"
 #include"platform/opengl/opengl_header.hpp"
-#include"resource/component/mesh_component/mesh_component.hpp"
+#include"resource/component/renderable_component/mesh/mesh.hpp"
 
 namespace arcadia
 {
@@ -13,7 +13,7 @@ namespace arcadia
     public:
         using self_type = gl_index_buffer;
     public:
-        gl_index_buffer(const std::vector<arcadia::mesh_component::index_type>& indices);
+        gl_index_buffer(const std::vector<arcadia::mesh::index_type>& indices);
         ~gl_index_buffer();
 
         gl_index_buffer(self_type&& rhs) noexcept;

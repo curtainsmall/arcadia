@@ -6,7 +6,7 @@
 #include"function/render/opengl/buffer/gl_index_buffer.hpp"
 #include"function/render/opengl/buffer/gl_vertex_buffer.hpp"
 #include"platform/opengl/opengl_header.hpp"
-#include"resource/component/mesh_component/mesh_component.hpp"
+#include"resource/component/renderable_component/mesh/mesh.hpp"
 
 namespace arcadia
 {
@@ -19,7 +19,7 @@ namespace arcadia
     public:
         gl_vertex_array(
             const std::vector<arcadia::vertex>& vertices,
-            const std::vector<arcadia::mesh_component::index_type>& indices
+            const std::vector<arcadia::mesh::index_type>& indices
         );
         ~gl_vertex_array();
 

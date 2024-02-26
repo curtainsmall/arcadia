@@ -1,12 +1,12 @@
 #include "pch.hpp"
 #include "gl_index_buffer.hpp"
 
-arcadia::gl_index_buffer::gl_index_buffer(const std::vector<arcadia::mesh_component::index_type>& indices):
+arcadia::gl_index_buffer::gl_index_buffer(const std::vector<arcadia::mesh::index_type>& indices):
     _index_count(indices.size())
 {
     ARCADIA_GL_CALL(glGenBuffers(1, &_gl_index_buffer_id));
     bind();
-    ARCADIA_GL_CALL(glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(arcadia::mesh_component::index_type), indices.data(), GL_STATIC_DRAW));
+    ARCADIA_GL_CALL(glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(arcadia::mesh::index_type), indices.data(), GL_STATIC_DRAW));
     unbind();
 }
 

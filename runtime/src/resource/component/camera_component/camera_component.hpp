@@ -17,13 +17,8 @@ namespace arcadia
         static auto to_flatbuffers(flatbuffers::FlatBufferBuilder& builder, const self_type& camera_component) -> flatbuffers::Offset<serialization_type>;
         static auto from_flatbuffers(const serialization_type& flat_camera) -> self_type;
 
-        camera_component(const std::string& name);
+        camera_component() = default;
         ~camera_component() = default;
-
-        inline auto get_name() const -> const std::string&
-        {
-            return _name;
-        }
 
         auto move_forward() -> self_type&;
         auto move_backward() -> self_type&;
@@ -107,7 +102,5 @@ namespace arcadia
         /// @brief Cursor move offset that is out of this range will be silently ignored
         glm::vec2 cursor_move_offset_range{ -100.f,100.f };
 
-    private:
-        std::string _name;
     };
 }

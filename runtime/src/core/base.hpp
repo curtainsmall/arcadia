@@ -8,6 +8,8 @@
 
 #include"platform/base.hpp"
 
+#define ARCADIA_ASSERT(x) assert(x)
+
 namespace arcadia
 {
     struct ARCADIA_API noncopyable

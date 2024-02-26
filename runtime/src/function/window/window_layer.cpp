@@ -62,7 +62,7 @@ arcadia::window_layer::~window_layer()
     }
 }
 
-auto arcadia::window_layer::on_event(const arcadia::event& event) -> bool
+auto arcadia::window_layer::on_event(const arcadia::event_base& event) -> bool
 {
     return false;
 }

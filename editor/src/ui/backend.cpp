@@ -27,7 +27,7 @@ ARCADIA_API void arcadia::imgui_backend::initialize(const arcadia::window_layer&
                 glsl_version = std::format("#version 1{}0", opengl.version.minor + 1);
             }
         }
-        ImGui_ImplGlfw_InitForOpenGL(window.get_glfw_window_ptr(), ARCADIA_IMGUI_USE_INTERNAL_CALLBACKS);
+        ImGui_ImplGlfw_InitForOpenGL(window.get_glfw_window_ptr(), false);
         ImGui_ImplOpenGL3_Init(glsl_version.c_str());
     },
         [](auto&&) -> void
@@ -80,20 +80,23 @@ ARCADIA_API void arcadia::imgui_backend::shutdown(const arcadia::window_layer& w
     );
 }
 
-ARCADIA_API auto arcadia::imgui_backend::imgui_on_event(const arcadia::event& event) -> bool
+ARCADIA_API auto arcadia::imgui_backend::imgui_on_event(const arcadia::event_base& event) -> bool
 {
+    arcadia::event_dispatcher{ event }
+        .dispatch_chained<arcadia::window_focus>(arcadia::imgui_backend::imgui_on_window_focus)
+        .dispatch_chained<arcadia::input_cursor_enter>(arcadia::imgui_backend::imgui_on_cursor_enter)
+        .dispatch_chained<arcadia::input_cursor_pos>(arcadia::imgui_backend::imgui_on_cursor_pos)
+        .dispatch_chained<arcadia::input_mouse_button>(arcadia::imgui_backend::imgui_on_mouse_button)
+        .dispatch_chained<arcadia::input_scroll>(arcadia::imgui_backend::imgui_on_scroll)
+        .dispatch_chained<arcadia::input_key>(arcadia::imgui_backend::imgui_on_key)
+        .dispatch_chained<arcadia::input_char>(arcadia::imgui_backend::imgui_on_char)
+        .dispatch_chained<arcadia::monitor_connection>(arcadia::imgui_backend::imgui_on_monitor); // We will manage monitors ourselves for now
 
-#if !ARCADIA_IMGUI_USE_INTERNAL_CALLBACKS
-    ARCADIA_DISPATCH_EVENT(arcadia::window_focus, event, arcadia::imgui_backend::imgui_on_window_focus);
-    ARCADIA_DISPATCH_EVENT(arcadia::input_cursor_enter, event, arcadia::imgui_backend::imgui_on_cursor_enter);
-    ARCADIA_DISPATCH_EVENT(arcadia::input_cursor_pos, event, arcadia::imgui_backend::imgui_on_cursor_pos);
-    ARCADIA_DISPATCH_EVENT(arcadia::input_mouse_button, event, arcadia::imgui_backend::imgui_on_mouse_button);
-    ARCADIA_DISPATCH_EVENT(arcadia::input_scroll, event, arcadia::imgui_backend::imgui_on_scroll);
-    ARCADIA_DISPATCH_EVENT(arcadia::input_key, event, arcadia::imgui_backend::imgui_on_key);
-    ARCADIA_DISPATCH_EVENT(arcadia::input_char, event, arcadia::imgui_backend::imgui_on_char);
-    //ARCADIA_DISPATCH_EVENT(arcadia::monitor_connection, event, arcadia::imgui_backend::imgui_on_monitor); // We will manage monitors ourselves for now
-#endif
-
+    auto& io = ImGui::GetIO();
+    if(io.WantCaptureMouse || io.WantCaptureKeyboard)
+    {
+        return true;
+    }
     return false;
 }
 

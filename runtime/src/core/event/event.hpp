@@ -30,20 +30,20 @@ arcadia::dispatch_event<event_type>(\
 
 namespace arcadia
 {
-    struct ARCADIA_API event
+    struct ARCADIA_API event_base
     {
         // Virtual destructor that make event type virtual
-        virtual ~event()
+        virtual ~event_base()
         {};
     };
 
     template<class Event>
     concept event_like = requires{
-        std::derived_from<Event, arcadia::event>;
+        std::derived_from<Event, arcadia::event_base>;
     };
 
     template<class ...Args>
-    struct ARCADIA_API basic_event: arcadia::event
+    struct ARCADIA_API basic_event: arcadia::event_base
     {
     public:
         using data_tuple_type = std::tuple<Args...>;
@@ -66,21 +66,69 @@ namespace arcadia
 
     /// @brief Dispatch @a event to handler that receives @a Event
     /// @param event Event to dispatch
-    /// @param fn Handler
-    /// @return Return value of handler: @b true for keep event signaled or @b false for skip remaining handlers; 
-    /// or returns @b true if @a event is not type of @a Event (handler is not called)
+    /// @param handler Handler
+    /// @return 
+    /// @b true if the handler returns true (meaning this event is handled and should not be propagate further), or
+    /// @b false if ther handler returns false or if the event type does not match
     template<arcadia::event_like Event>
     ARCADIA_API auto dispatch_event(
-        const arcadia::event& event,
-        const arcadia::event_handler<Event>& fn
+        const arcadia::event_base& event,
+        const arcadia::event_handler<Event>& handler
     ) -> bool
     {
         if(typeid(event) == typeid(Event))
         {
-            return fn(static_cast<const Event&>(event));
+            return handler(static_cast<const Event&>(event));
         }
         return true;
     }
+
+    struct ARCADIA_API event_dispatcher
+    {
+    public:
+        ARCADIA_EXCEPTION(process_truncated);
+
+        using self_type = event_dispatcher;
+    public:
+        event_dispatcher(const arcadia::event_base& event):
+            _event_ptr(&event)
+        {}
+        ~event_dispatcher() = default;
+
+        /// @brief Dispatch stored event to handler that receives @a Event
+        /// @param handler Handler
+        /// @return 
+        /// @b true if the handler returns true (meaning this event is handled and should not be propagate further), or
+        /// @b false if ther handler returns false or if the event type does not match
+        template<arcadia::event_like Event>
+        auto dispatch(const arcadia::event_handler<Event>& handler) -> bool
+        {
+            if(typeid(*_event_ptr) == typeid(Event))
+            {
+                return handler(static_cast<const Event&>(*_event_ptr));
+            }
+            return true;
+        }
+
+        /// @brief Dispatch stored evetn to handler that receives @a Event
+        /// @param handler Handler
+        /// @return This event dispatcher (when the handler returns false or when this event type does not match)
+        /// @throw process_truncated if the handler returns true (meaning this event is handled and should not be propagate further)
+        template<arcadia::event_like Event>
+        auto dispatch_chained(const arcadia::event_handler<Event>& handler) -> self_type&
+        {
+            if(typeid(*_event_ptr) == typeid(Event))
+            {
+                if(handler(static_cast<const Event&>(*_event_ptr)))
+                {
+                    throw process_truncated{};
+                }
+            }
+            return *this;
+        }
+    private:
+        const arcadia::event_base* _event_ptr;
+    };
 
     struct ARCADIA_API event_queue
     {
@@ -89,7 +137,7 @@ namespace arcadia
 
         using self_type = event_queue;
     private:
-        using _event_uptr_queue_type = std::queue<std::unique_ptr<arcadia::event>>;
+        using _event_uptr_queue_type = std::queue<std::unique_ptr<arcadia::event_base>>;
 
     public:
         static auto instance() -> self_type&;
@@ -111,7 +159,7 @@ namespace arcadia
 
         /// @brief Read the front event in event queue
         /// @return Event at front
-        auto read() -> arcadia::event&;
+        auto read() -> arcadia::event_base&;
 
         /// @brief Pop front event
         /// @return whether the processing queue contains event after pop;

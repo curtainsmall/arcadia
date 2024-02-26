@@ -27,6 +27,20 @@ ARCADIA_API auto arcadia::load_text(const std::filesystem::path& filepath) -> st
     return sstream.str();
 }
 
+auto arcadia::file::create_ifstream() -> std::ifstream
+{
+    std::ifstream ifs{};
+    ifs.exceptions(std::ios::failbit);
+    return ifs;
+}
+
+auto arcadia::file::create_ofstream() -> std::ofstream
+{
+    std::ofstream ofs{};
+    ofs.exceptions(std::ios::failbit);
+    return ofs;
+}
+
 arcadia::file::file(const std::filesystem::path& filepath):
     _filepath(filepath)
 {}

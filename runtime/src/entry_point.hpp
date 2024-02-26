@@ -13,8 +13,8 @@ auto main(
 ) -> int
 {
     auto& layer_stack =  arcadia::layer_stack::instance();
-    layer_stack.push_layer_at<arcadia::app_layer>(0, arcadia::create_application_uptr())
-        .at<arcadia::app_layer>(0)
+    layer_stack.push_layer_at<arcadia::app_layer>(layer_stack.size() - 1, arcadia::create_application_uptr())
+        .buttom<arcadia::app_layer>()
         .run();
 
     layer_stack.pop_all();

@@ -3,7 +3,7 @@
 #include"core/base.hpp"
 #include"core/math.hpp"
 #include"platform/opengl/opengl_header.hpp"
-#include"resource/component/mesh_component/material/texture2d.hpp"
+#include"resource/component/renderable_component/material/texture2d.hpp"
 
 namespace arcadia
 {

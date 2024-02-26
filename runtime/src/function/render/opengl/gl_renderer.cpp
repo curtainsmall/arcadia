@@ -11,6 +11,7 @@ arcadia::gl_renderer::gl_renderer(const std::filesystem::path& gl_shader_folder_
 
 void arcadia::gl_renderer::begin_frame()
 {
+    _check_frame_not_in_build_or_throw();
     _frame_in_build = true;
 
     _legacy_gl_render_unit_camera = true;
@@ -19,6 +20,7 @@ void arcadia::gl_renderer::begin_frame()
 
 void arcadia::gl_renderer::end_frame()
 {
+    _check_frame_in_build_or_throw();
     _frame_in_build = false;
 }
 
@@ -40,7 +42,7 @@ void arcadia::gl_renderer::submit(const arcadia::camera_component& camera_comp)
     );
 }
 
-void arcadia::gl_renderer::submit(const arcadia::mesh_component& mesh_comp)
+void arcadia::gl_renderer::submit(const arcadia::renderable_component& renderable_comp)
 {
     _check_frame_in_build_or_throw();
 
@@ -50,14 +52,16 @@ void arcadia::gl_renderer::submit(const arcadia::mesh_component& mesh_comp)
         _legacy_gl_render_unit_mesh = false;
     }
 
-
-    _gl_render_unit_meshes.emplace_back(
-        arcadia::gl_vertex_array{ mesh_comp.vertices, mesh_comp.indices },
-        arcadia::mat4::create_identity(),
-        mesh_comp.material.ambient_texture2d,
-        mesh_comp.material.diffuse_texture2d,
-        mesh_comp.material.specular_texture2d
-    );
+    for(const auto& mesh : renderable_comp.meshes)
+    {
+        _gl_render_unit_meshes.emplace_back(
+            arcadia::gl_vertex_array{ mesh.vertices, mesh.indices },
+            arcadia::mat4::create_identity(),
+            mesh.material.ambient_texture2d,
+            mesh.material.diffuse_texture2d,
+            mesh.material.specular_texture2d
+        );
+    }
 }
 
 void arcadia::gl_renderer::submit(const arcadia::skybox_component& skybox_comp)
@@ -169,7 +173,7 @@ void arcadia::gl_renderer::_check_frame_not_in_build_or_throw() const
     }
 }
 
-auto arcadia::gl_renderer::_create_unit_cube_mesh() const -> std::pair<std::vector<arcadia::vertex>, std::vector<arcadia::mesh_component::index_type>>
+auto arcadia::gl_renderer::_create_unit_cube_mesh() const -> std::pair<std::vector<arcadia::vertex>, std::vector<arcadia::mesh::index_type>>
 {
     return std::make_pair(
         std::vector<arcadia::vertex>{
@@ -182,7 +186,7 @@ auto arcadia::gl_renderer::_create_unit_cube_mesh() const -> std::pair<std::vect
             arcadia::vertex{ glm::vec3{ 1, 1, -1 } },
             arcadia::vertex{ glm::vec3{ -1, 1, -1 } },
     },
-        std::vector<arcadia::mesh_component::index_type>{
+        std::vector<arcadia::mesh::index_type>{
         // pos-z
         1, 0, 3, 3, 2, 1,
             // neg-z

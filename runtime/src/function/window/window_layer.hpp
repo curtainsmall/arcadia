@@ -32,7 +32,7 @@ namespace arcadia
             return _glfw_window_ptr;
         }
 
-        virtual auto on_event(const arcadia::event& event) -> bool override;
+        virtual auto on_event(const arcadia::event_base& event) -> bool override;
         virtual void on_update(delta_time_type delta_time) override;
 
         [[nodiscard]]

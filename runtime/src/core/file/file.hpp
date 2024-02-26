@@ -1,6 +1,7 @@
 #pragma once
 
 #include<filesystem>
+#include<fstream>
 #include<unordered_map>
 
 #include"core/base.hpp"
@@ -30,6 +31,9 @@ namespace arcadia
 
         using self_type = arcadia::file;
     public:
+
+        static auto create_ifstream() -> std::ifstream;
+        static auto create_ofstream() -> std::ofstream;
 
         file(const std::filesystem::path& filepath);
         file(const self_type&) = default;

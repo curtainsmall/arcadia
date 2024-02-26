@@ -32,10 +32,10 @@ namespace arcadia
         /// @brief Process event
         /// @param event Event to be processed
         /// @return Whether to set @a event handled (so that layers after will NOT process it)
-        virtual inline auto on_event(const arcadia::event& event) -> bool = 0;
+        virtual auto on_event(const arcadia::event_base& event) -> bool = 0;
 
         /// @brief Update layer
-        virtual inline void on_update(delta_time_type delta_time) = 0;
+        virtual void on_update(delta_time_type delta_time) = 0;
 
     private:
         std::string _name{};
@@ -50,6 +50,7 @@ namespace arcadia
     {
     public:
         ARCADIA_EXCEPTION(out_of_range);
+        ARCADIA_EXCEPTION(empty_stack);
 
         using layer_uptr_vector_type = std::vector<std::unique_ptr<layer_interface>>;
 
@@ -109,7 +110,27 @@ namespace arcadia
                 throw out_of_range{ std::format("Index out of range: {}",idx) };
             }
 
-            return static_cast<Layer&>(*_layer_uptrs.at(idx));
+            return static_cast<Layer&>(*_layer_uptrs.at(size() - idx - 1));
+        }
+
+        template<arcadia::layer_like Layer = arcadia::layer_interface>
+        auto top() -> Layer&
+        {
+            if(!size())
+            {
+                throw empty_stack{};
+            }
+            return static_cast<Layer&>(*_layer_uptrs.back());
+        }
+
+        template<arcadia::layer_like Layer = arcadia::layer_interface>
+        auto buttom() -> Layer&
+        {
+            if(!size())
+            {
+                throw empty_stack{};
+            }
+            return static_cast<Layer&>(*_layer_uptrs.front());
         }
 
 

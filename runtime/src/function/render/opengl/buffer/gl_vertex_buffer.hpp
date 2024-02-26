@@ -5,7 +5,7 @@
 #include"core/base.hpp"
 #include"core/math.hpp"
 #include"platform/opengl/opengl_header.hpp"
-#include"resource/component/mesh_component/vertex.hpp"
+#include"resource/component/renderable_component/mesh/vertex.hpp"
 
 namespace arcadia
 {
@@ -27,7 +27,7 @@ namespace arcadia
         template<class Type>
         auto push(GLuint count = 1, GLuint dividor = 0) -> self_type&
         {
-            assert(false && "This generic template should never be occured");
+            ARCADIA_ASSERT(false && "This generic template should never be occured");
             return *this;
         }
 

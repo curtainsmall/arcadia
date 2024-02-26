@@ -13,7 +13,7 @@ auto arcadia::camera_component::to_flatbuffers(flatbuffers::FlatBufferBuilder& b
 
     return arcadia::serialization::Createcamera(
         builder,
-        builder.CreateSharedString(camera_component._name),
+        builder.CreateSharedString(""),
         &pos,
         &target,
         &up,
@@ -32,7 +32,7 @@ auto arcadia::camera_component::to_flatbuffers(flatbuffers::FlatBufferBuilder& b
 
 auto arcadia::camera_component::from_flatbuffers(const serialization_type& flat_camera) -> self_type
 {
-    arcadia::camera_component camera_component{ flat_camera.name()->str() };
+    camera_component camera_component{};
 
     camera_component.pos = arcadia::vec3::from_flatbuffers(*flat_camera.pos());
     camera_component.target = arcadia::vec3::from_flatbuffers(*flat_camera.target());
@@ -50,10 +50,6 @@ auto arcadia::camera_component::from_flatbuffers(const serialization_type& flat_
 
     return camera_component;
 }
-
-arcadia::camera_component::camera_component(const std::string& name):
-    _name(name)
-{}
 
 auto arcadia::camera_component::move_forward() -> self_type&
 {
