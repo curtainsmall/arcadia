@@ -1,17 +1,26 @@
 #pragma once
 
 #include<cassert>
+#include<chrono>
 #include<cstddef>
 #include<cstdint>
 #include<cstdlib>
+#include<string>
 #include<typeindex>
 
 #include"platform/base.hpp"
 
 #define ARCADIA_ASSERT(x) assert(x)
 
+#define ARCADIA_BIND_MEMBER_FN(fn) [this]<class ...Args>(Args&& ...args) -> decltype(auto) { return this->fn(std::forward<Args>(args)...);}
+
+using namespace std::string_literals;
+using namespace std::string_view_literals;
+using namespace std::chrono_literals;
+
 namespace arcadia
 {
+
     struct ARCADIA_API noncopyable
     {
     protected:

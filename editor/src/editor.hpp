@@ -2,14 +2,15 @@
 
 #include<memory>
 
-#include"core/app/app.hpp"
+#include"core/app/app_layer.hpp"
+#include"function/window/window_events.hpp"
 #include"function/window/window_layer.hpp"
-#include"project/project.hpp"
+#include"project/project_layer.hpp"
 #include"ui/imgui_layer.hpp"
 
 namespace arcadia
 {
-    struct editor_app_layer: arcadia::app_layer
+    struct ARCADIA_API editor_app_layer: arcadia::app_layer
     {
     public:
         editor_app_layer();
@@ -17,10 +18,8 @@ namespace arcadia
 
         virtual auto on_event(const arcadia::event_base& event) -> bool override;
         virtual void on_update(delta_time_type delta_time) override;
-
-
     private:
-        auto _on_window_close(const arcadia::window_close& event) -> bool;
+        auto _on_window_close(const arcadia::event::window_close& event) -> bool;
 
     private:
         arcadia::window_layer* _main_window_ptr{};

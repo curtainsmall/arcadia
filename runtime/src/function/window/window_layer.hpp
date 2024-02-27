@@ -18,7 +18,6 @@ namespace arcadia
         using self_type = arcadia::window_layer;
     public:
         window_layer(
-            const arcadia::graphic_api::type& graphic_api = arcadia::graphic_api::opengl{},
             int width = 800,
             int height = 600,
             std::string title = "Untitled",
@@ -75,8 +74,6 @@ namespace arcadia
         auto get_input_mode_raw_mouse_motion() const -> int;
         auto set_input_mode_raw_mouse_motion(int value) -> self_type&;
 
-
-        auto get_graphic_api() const -> const arcadia::graphic_api::type&;
         auto get_multisample_count() const -> int;
 
     private:
@@ -98,39 +95,8 @@ namespace arcadia
 
         GLFWwindow* _glfw_window_ptr{ nullptr };
         glm::dvec2 _last_cursor_pos{ .0f };
-        const arcadia::graphic_api::type _graphic_api;
         const int _multisample_count;
     };
 
-    ARCADIA_EVENT(
-        window_close,
-        arcadia::window_layer* // Window to close
-    );
-    ARCADIA_EVENT(
-        window_size,
-        arcadia::window_layer*,
-        glm::ivec2 // New size
-    );
-    ARCADIA_EVENT(
-        window_pos,
-        arcadia::window_layer*,
-        glm::ivec2 // New position
-    );
-    ARCADIA_EVENT(
-        window_minified,
-        arcadia::window_layer*
-    );
-    ARCADIA_EVENT(
-        window_restored,
-        arcadia::window_layer*
-    );
-    ARCADIA_EVENT(
-        window_maxmized,
-        arcadia::window_layer*
-    );
-    ARCADIA_EVENT(
-        window_focus,
-        arcadia::window_layer*,
-        bool
-    );
+
 }

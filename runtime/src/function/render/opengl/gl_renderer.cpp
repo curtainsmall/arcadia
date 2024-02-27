@@ -5,9 +5,7 @@
 arcadia::gl_renderer::gl_renderer(const std::filesystem::path& gl_shader_folder_path):
     _gl_mesh_pipeline(gl_shader_folder_path, arcadia::get_mesh_shaders_builder()),
     _gl_skybox_pipeline(gl_shader_folder_path, arcadia::get_skybox_shaders_builder())
-{
-    static arcadia::opengl_context gl_context{};
-}
+{}
 
 void arcadia::gl_renderer::begin_frame()
 {

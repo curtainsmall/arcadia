@@ -179,45 +179,48 @@ namespace arcadia
         };
     }
 
-    ARCADIA_EVENT(
-        input_key,
-        arcadia::window_layer*, // Input window
-        int, // Key code
-        int, // Key scancode
-        int, // Input action
-        int  // Input modifiers
-    );
-    ARCADIA_EVENT(
-        input_cursor_pos,
-        arcadia::window_layer*, // Input window
-        glm::dvec2 // Cursor position
-    );
-    ARCADIA_EVENT(
-        input_cursor_move,
-        arcadia::window_layer*, // Input window
-        glm::dvec2 // Cursor movement
-    );
-    ARCADIA_EVENT(
-        input_scroll,
-        arcadia::window_layer*, // Input window
-        glm::dvec2 // Scroll offset (a vertical mouse wheel provides offset along the y-axis
-    );
-    ARCADIA_EVENT(
-        input_mouse_button,
-        arcadia::window_layer*, // Input window
-        int, // Mouse code
-        int, // Input action
-        int  // Input modifiers
-    );
-    ARCADIA_EVENT(
-        input_cursor_enter,
-        arcadia::window_layer*,
-        bool // Whether the cursor entered or not
-    );
-    ARCADIA_EVENT(
-        input_char,
-        arcadia::window_layer*,
-        unsigned int // Unicode code points
-    );
+    namespace event
+    {
+        ARCADIA_EVENT(
+            input_key,
+            arcadia::window_layer*, // Input window
+            int, // Key code
+            int, // Key scancode
+            int, // Input action
+            int  // Input modifiers
+        );
+        ARCADIA_EVENT(
+            input_cursor_pos,
+            arcadia::window_layer*, // Input window
+            glm::dvec2 // Cursor position
+        );
+        ARCADIA_EVENT(
+            input_cursor_move,
+            arcadia::window_layer*, // Input window
+            glm::dvec2 // Cursor movement
+        );
+        ARCADIA_EVENT(
+            input_scroll,
+            arcadia::window_layer*, // Input window
+            glm::dvec2 // Scroll offset (a vertical mouse wheel provides offset along the y-axis
+        );
+        ARCADIA_EVENT(
+            input_mouse_button,
+            arcadia::window_layer*, // Input window
+            int, // Mouse code
+            int, // Input action
+            int  // Input modifiers
+        );
+        ARCADIA_EVENT(
+            input_cursor_enter,
+            arcadia::window_layer*,
+            bool // Whether the cursor entered or not
+        );
+        ARCADIA_EVENT(
+            input_char,
+            arcadia::window_layer*,
+            unsigned int // Unicode code points
+        );
 
+    }
 }

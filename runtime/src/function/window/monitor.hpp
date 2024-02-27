@@ -5,9 +5,12 @@
 
 namespace arcadia
 {
-    ARCADIA_EVENT(
-        monitor_connection,
-        GLFWmonitor*, // TODO: Use custom monitor type
-        bool // Whether the monitor is connected or not
-    );
+    namespace event
+    {
+        ARCADIA_EVENT(
+            monitor_connection,
+            GLFWmonitor*, // TODO: Use custom monitor type
+            bool // Whether the monitor is connected or not
+        );
+    }
 }

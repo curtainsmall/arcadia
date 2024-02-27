@@ -9,6 +9,7 @@
 
 #include"core/base.hpp"
 #include"core/exception.hpp"
+#include"core/log/log.hpp"
 #include"core/util/string.hpp"
 #include"core/util/template.hpp"
 
@@ -17,7 +18,8 @@ struct ARCADIA_API event_name: arcadia::basic_event<__VA_ARGS__>\
 {\
 public:\
     using arcadia::basic_event<__VA_ARGS__>::basic_event;\
-}
+}\
+
 
 #define ARCADIA_DISPATCH_EVENT(event_type, event_instance, event_handler) \
 arcadia::dispatch_event<event_type>(\
@@ -27,6 +29,11 @@ arcadia::dispatch_event<event_type>(\
     return event_handler(evt);\
 }\
 )
+
+#ifndef NDEBUG
+#   define ARCADIA_DEBUG_SHOULD_LOG_EVENT_INFO_WHEN_SIGNALED 1
+#endif
+
 
 namespace arcadia
 {
@@ -80,7 +87,7 @@ namespace arcadia
         {
             return handler(static_cast<const Event&>(event));
         }
-        return true;
+        return false;
     }
 
     struct ARCADIA_API event_dispatcher
@@ -107,7 +114,7 @@ namespace arcadia
             {
                 return handler(static_cast<const Event&>(*_event_ptr));
             }
-            return true;
+            return false;
         }
 
         /// @brief Dispatch stored evetn to handler that receives @a Event
@@ -148,6 +155,10 @@ namespace arcadia
         void signal(Args&& ...args)
         {
             _current_queue_ptr->emplace(std::make_unique<Event>(std::forward<Args>(args)...));
+
+        #if ARCADIA_DEBUG_SHOULD_LOG_EVENT_INFO_WHEN_SIGNALED
+            arcadia::log::debug(std::format("Event signaled: {}", typeid(Event).name()));
+        #endif
         }
 
         /// @brief Swap current queue and processing queue

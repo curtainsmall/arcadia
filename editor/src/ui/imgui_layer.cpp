@@ -1,8 +1,9 @@
 #include "imgui_layer.hpp"
 
-#include"function/input/input.hpp"
+#include"function/input/input_events.hpp"
 #include"function/window/monitor.hpp"
 #include"ui/backend.hpp"
+#include"ui/imgui_windows/imgui_window_manubar.hpp"
 
 arcadia::imgui_layer::imgui_layer(arcadia::window_layer& window):
     arcadia::layer_interface("imgui"),
@@ -17,6 +18,8 @@ arcadia::imgui_layer::imgui_layer(arcadia::window_layer& window):
         | ImGuiConfigFlags_NoMouseCursorChange
         | ImGuiConfigFlags_ViewportsEnable;
     arcadia::imgui_backend::initialize(*_window_ptr);
+
+    _imgui_window_uptrs.emplace_back(std::make_unique<arcadia::imgui_window_menubar>("menubar", true));
 }
 
 arcadia::imgui_layer::~imgui_layer()
@@ -30,6 +33,10 @@ arcadia::imgui_layer::~imgui_layer()
 
 auto arcadia::imgui_layer::on_event(const arcadia::event_base& event) -> bool
 {
+    for(auto& imgui_window_uptr : _imgui_window_uptrs)
+    {
+        imgui_window_uptr->on_event(event);
+    }
     return arcadia::imgui_backend::imgui_on_event(event);
 }
 
@@ -51,6 +58,11 @@ void arcadia::imgui_layer::on_update(delta_time_type delta_time)
     {
         ImGui::ShowStackToolWindow();
         ImGui::ShowMetricsWindow();
+    }
+
+    for(auto& imgui_window_uptr : _imgui_window_uptrs)
+    {
+        imgui_window_uptr->on_update();
     }
 
     ImGui::Render();

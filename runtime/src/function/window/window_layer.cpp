@@ -3,25 +3,26 @@
 
 #include<format>
 
+#include"core/app/app_config.hpp"
 #include"core/util/conditional.hpp"
-#include"function/input/input.hpp"
+#include"function/input/input_events.hpp"
 #include"function/window/monitor.hpp"
-
+#include"function/window/window_events.hpp"
 
 arcadia::window_layer::window_layer(
-    const arcadia::graphic_api::type& graphic_api,
     int width,
     int height,
     std::string title,
     int multisample_count
 ):
     arcadia::layer_interface(std::format("window_{}", title)),
-    _graphic_api(graphic_api),
     _title(title),
     _multisample_count(multisample_count)
 {
+    const auto& app_config = arcadia::app_config::instance();
+
     arcadia::match<void>(
-        _graphic_api,
+        app_config.graphic_api,
         [&](const arcadia::graphic_api::opengl& gl) -> void
     {
         glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
@@ -73,7 +74,7 @@ void arcadia::window_layer::on_update(delta_time_type delta_time)
 
     if(glfwWindowShouldClose(_glfw_window_ptr))
     {
-        event_queue.signal<arcadia::window_close>(this);
+        event_queue.signal<arcadia::event::window_close>(this);
     }
     _swap_buffers();
 
@@ -212,7 +213,7 @@ void arcadia::window_layer::_setup_callbacks()
         [](GLFWwindow* glfw_wnd_ptr, int key, int scancode, int action, int mods) -> void
     {
         arcadia::event_queue::instance()
-            .signal<arcadia::input_key>(
+            .signal<arcadia::event::input_key>(
                 _get_window_ptr_from_glfw_user_pointer(glfw_wnd_ptr),
                 key,
                 scancode,
@@ -229,7 +230,7 @@ void arcadia::window_layer::_setup_callbacks()
         auto wnd_ptr = _get_window_ptr_from_glfw_user_pointer(glfw_wnd_ptr);
         auto& event_queue = arcadia::event_queue::instance();
 
-        event_queue.signal<arcadia::input_cursor_pos>(
+        event_queue.signal<arcadia::event::input_cursor_pos>(
             wnd_ptr,
             cursor_pos
         );
@@ -237,7 +238,7 @@ void arcadia::window_layer::_setup_callbacks()
         if(cursor_pos != last_pos)
         {
 
-            event_queue.signal<arcadia::input_cursor_move>(
+            event_queue.signal<arcadia::event::input_cursor_move>(
                 wnd_ptr,
                 cursor_pos - last_pos
             );
@@ -250,7 +251,7 @@ void arcadia::window_layer::_setup_callbacks()
         [](GLFWwindow* glfw_wnd_ptr, double xoffset, double yoffset) -> void
     {
         arcadia::event_queue::instance()
-            .signal<arcadia::input_scroll>(
+            .signal<arcadia::event::input_scroll>(
                 _get_window_ptr_from_glfw_user_pointer(glfw_wnd_ptr),
                 glm::dvec2{ xoffset,yoffset }
         );
@@ -261,7 +262,7 @@ void arcadia::window_layer::_setup_callbacks()
         [](GLFWwindow* glfw_wnd_ptr, int button, int action, int mods) -> void
     {
         arcadia::event_queue::instance()
-            .signal<arcadia::input_mouse_button>(
+            .signal<arcadia::event::input_mouse_button>(
                 _get_window_ptr_from_glfw_user_pointer(glfw_wnd_ptr),
                 button,
                 action,
@@ -274,7 +275,7 @@ void arcadia::window_layer::_setup_callbacks()
         [](GLFWwindow* glfw_wnd_ptr, int width, int height) -> void
     {
         arcadia::event_queue::instance()
-            .signal<arcadia::window_size>(
+            .signal<arcadia::event::window_size>(
                 _get_window_ptr_from_glfw_user_pointer(glfw_wnd_ptr),
                 glm::ivec2{ width,height }
         );
@@ -285,7 +286,7 @@ void arcadia::window_layer::_setup_callbacks()
         [](GLFWwindow* glfw_wnd_ptr, int xpos, int ypos) -> void
     {
         arcadia::event_queue::instance()
-            .signal<arcadia::window_pos>(
+            .signal<arcadia::event::window_pos>(
                 _get_window_ptr_from_glfw_user_pointer(glfw_wnd_ptr),
                 glm::ivec2{ xpos,ypos }
         );
@@ -298,13 +299,13 @@ void arcadia::window_layer::_setup_callbacks()
         auto& event_queue = arcadia::event_queue::instance();
         if(iconified)
         {
-            event_queue.signal<arcadia::window_minified>(
+            event_queue.signal<arcadia::event::window_minified>(
                 _get_window_ptr_from_glfw_user_pointer(glfw_wnd_ptr)
             );
         }
         else
         {
-            event_queue.signal<arcadia::window_restored>(
+            event_queue.signal<arcadia::event::window_restored>(
                 _get_window_ptr_from_glfw_user_pointer(glfw_wnd_ptr)
             );
         }
@@ -317,13 +318,13 @@ void arcadia::window_layer::_setup_callbacks()
         auto& event_queue = arcadia::event_queue::instance();
         if(maxmized)
         {
-            event_queue.signal<arcadia::window_maxmized>(
+            event_queue.signal<arcadia::event::window_maxmized>(
                 _get_window_ptr_from_glfw_user_pointer(glfw_wnd_ptr)
             );
         }
         else
         {
-            event_queue.signal<arcadia::window_restored>(
+            event_queue.signal<arcadia::event::window_restored>(
                 _get_window_ptr_from_glfw_user_pointer(glfw_wnd_ptr)
             );
         }
@@ -334,7 +335,7 @@ void arcadia::window_layer::_setup_callbacks()
         [](GLFWwindow* glfw_wnd_ptr, int focused) -> void
     {
         arcadia::event_queue::instance()
-            .signal<arcadia::window_focus>(
+            .signal<arcadia::event::window_focus>(
                 _get_window_ptr_from_glfw_user_pointer(glfw_wnd_ptr),
                 focused
             );
@@ -345,7 +346,7 @@ void arcadia::window_layer::_setup_callbacks()
         [](GLFWwindow* glfw_wnd_ptr, int entered) -> void
     {
         arcadia::event_queue::instance()
-            .signal<arcadia::input_cursor_enter>(
+            .signal<arcadia::event::input_cursor_enter>(
                 _get_window_ptr_from_glfw_user_pointer(glfw_wnd_ptr),
                 entered
             );
@@ -364,7 +365,7 @@ void arcadia::window_layer::_setup_callbacks()
             connection = false;
         }
         arcadia::event_queue::instance()
-            .signal<arcadia::monitor_connection>(
+            .signal<arcadia::event::monitor_connection>(
                 glfw_monitor_ptr,
                 connection
             );
@@ -374,8 +375,10 @@ void arcadia::window_layer::_setup_callbacks()
 
 void arcadia::window_layer::_swap_buffers()
 {
+    const auto& app_config = arcadia::app_config::instance();
+
     arcadia::match<void>(
-        _graphic_api,
+        app_config.graphic_api,
         [&](const arcadia::graphic_api::opengl&) -> void
     {
         glfwSwapBuffers(_glfw_window_ptr);
@@ -384,11 +387,6 @@ void arcadia::window_layer::_swap_buffers()
     {
     }
     );
-}
-
-auto arcadia::window_layer::get_graphic_api() const -> const arcadia::graphic_api::type&
-{
-    return _graphic_api;
 }
 
 auto arcadia::window_layer::get_multisample_count() const -> int

@@ -21,7 +21,7 @@
     <ClInclude Include="src\entry_point.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\app\app.hpp">
+    <ClInclude Include="src\core\app\app_layer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\platform\base.hpp">
@@ -99,7 +99,7 @@
     <ClInclude Include="src\platform\plateform_detection.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\function\input\input.hpp">
+    <ClInclude Include="src\function\input\input_events.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\core\time\timer.hpp">
@@ -189,7 +189,13 @@
     <ClInclude Include="src\resource\component\renderable_component\renderable_component.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\function\render\render_layer.hpp">
+    <ClInclude Include="src\core\app\app_config.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\function\window\window_events.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\app\app_context.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -230,7 +236,7 @@
     <ClCompile Include="src\function\window\glfw_header.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\app\app.cpp">
+    <ClCompile Include="src\core\app\app_layer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\platform\opengl\opengl_header.cpp">
@@ -267,6 +273,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\resource\scene\scene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\app\app_config.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\app\app_context.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

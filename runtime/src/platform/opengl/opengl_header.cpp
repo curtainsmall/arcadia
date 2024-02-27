@@ -200,7 +200,7 @@ arcadia::opengl_context::opengl_context()
     ARCADIA_GL_CALL(auto gl_version_str = glGetString(GL_VERSION));
     arcadia::log::info(std::format("OpenGL Version: {}", reinterpret_cast<const char*>(gl_version_str)));
 
-#ifdef ARCADIA_GL_USE_DEBUG_CALLBACK
+#if ARCADIA_GL_USE_DEBUG_CALLBACK
     if(arcadia::get_gl_version() >= arcadia::version{ 4,6,0 })
     {
         ARCADIA_GL_CALL(glEnable(GL_DEBUG_OUTPUT));

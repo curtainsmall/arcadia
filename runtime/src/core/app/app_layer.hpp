@@ -1,6 +1,5 @@
 #pragma once
 
-#include<filesystem>
 #include<memory>
 
 #include"core/base.hpp"
@@ -13,6 +12,9 @@ auto main(
     const char** argv
 ) -> int;
 
+#define ARCADIA ::arcadia::
+#define STD ::std::
+
 namespace arcadia
 {
     struct ARCADIA_API app_layer: arcadia::layer_interface
@@ -24,23 +26,8 @@ namespace arcadia
         app_layer();
         virtual ~app_layer() = default;
 
-
         virtual inline auto on_event(const arcadia::event_base&) -> bool override = 0;
         virtual inline void on_update(delta_time_type delta_time) override = 0;
-
-    private:
-        void run();
-
-    #ifndef NDEBUG
-        void _debug_log_event(const arcadia::event_base& event);
-    #endif
-
-    public:
-        static inline std::filesystem::path working_directory{ "./" };
-
-    protected:
-        bool _running{ false };
-        arcadia::timer _timer{};
     };
 
     ARCADIA_API auto create_application_uptr() -> std::unique_ptr<arcadia::app_layer>;

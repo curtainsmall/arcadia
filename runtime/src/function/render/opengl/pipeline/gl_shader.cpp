@@ -35,13 +35,13 @@ arcadia::gl_shader::~gl_shader()
 arcadia::gl_shader::gl_shader(self_type&& rhs) noexcept
 {
     _gl_shader_id = rhs._gl_shader_id;
-    _gl_shader_id = 0;
+    rhs._gl_shader_id = 0;
 }
 
 auto arcadia::gl_shader::operator=(self_type&& rhs) noexcept -> self_type&
 {
     _gl_shader_id = rhs._gl_shader_id;
-    _gl_shader_id = 0;
+    rhs._gl_shader_id = 0;
 
     return *this;
 }

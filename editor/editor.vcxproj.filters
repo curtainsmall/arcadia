@@ -24,10 +24,22 @@
     <ClInclude Include="src\ui\imgui_layer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\ui\imgui_window.hpp">
+    <ClInclude Include="src\ui\imgui_windows\imgui_window.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\ui\imgui_header.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\project\project_layer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ui\imgui_windows\imgui_window_manubar.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\project\project_events.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ui\ui_events.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\project\project.hpp">
@@ -44,10 +56,10 @@
     <ClCompile Include="src\ui\imgui_layer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\ui\imgui_window.cpp">
+    <ClCompile Include="src\project\project_layer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\project\project.cpp">
+    <ClCompile Include="src\ui\imgui_windows\imgui_window_manubar.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

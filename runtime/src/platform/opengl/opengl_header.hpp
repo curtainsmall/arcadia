@@ -7,10 +7,10 @@
 #include"core/version/version.hpp"
 
 #ifndef NDEBUG
-#   define ARCADIA_GL_USE_DEBUG_CALLBACK
+#   define ARCADIA_GL_USE_DEBUG_CALLBACK 0
 #endif
 
-#if !defined(NDEBUG) && !defined(ARCADIA_GL_USE_DEBUG_CALLBACK)
+#if !defined(NDEBUG) && !ARCADIA_GL_USE_DEBUG_CALLBACK
 #   define ARCADIA_GL_CALL(x) x;arcadia::gl_check_error(#x,__FILE__,__LINE__)
 #else 
 #   define ARCADIA_GL_CALL(x) x
