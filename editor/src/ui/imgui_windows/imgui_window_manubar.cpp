@@ -3,11 +3,12 @@
 #include"ui/imgui_header.hpp"
 #include"ui/ui_events.hpp"
 
-void arcadia::imgui_window_menubar::on_event(const arcadia::event_base& event)
+void arcadia::imgui_window_menubar::on_event(arcadia::event_base& event)
 {
-    arcadia::event_dispatcher d{ event };
-    d.dispatch<arcadia::event::project_built>(ARCADIA_BIND_MEMBER_FN(_on_project_built));
-    d.dispatch<arcadia::event::project_unbuilt>(ARCADIA_BIND_MEMBER_FN(_on_project_unbuilt));
+    arcadia::event_dispatcher{ event }
+        .bind_handler<arcadia::event::project_built>(ARCADIA_BIND_MEMBER_FN(_on_project_built))
+        .bind_handler<arcadia::event::project_unbuilt>(ARCADIA_BIND_MEMBER_FN(_on_project_unbuilt))
+        .dispatch();
 }
 
 void arcadia::imgui_window_menubar::on_update()
@@ -77,6 +78,7 @@ void arcadia::imgui_window_menubar::_edit_menu()
                     event_queue.signal<arcadia::event::select_scene>(key);
                 }
             }
+            ImGui::EndMenu();
         }
         if(ImGui::MenuItem("Delete", nullptr, nullptr, _project_ptr))
         {
@@ -86,16 +88,13 @@ void arcadia::imgui_window_menubar::_edit_menu()
     }
 }
 
-auto arcadia::imgui_window_menubar::_on_project_built(const arcadia::event::project_built& e) -> bool
+void arcadia::imgui_window_menubar::_on_project_built(arcadia::event::project_built& e)
 {
     const auto& [project_ptr] = e.data_tuple;
-
     _project_ptr = project_ptr;
-    return false;
 }
 
-auto arcadia::imgui_window_menubar::_on_project_unbuilt(const arcadia::event::project_unbuilt& e) -> bool
+void arcadia::imgui_window_menubar::_on_project_unbuilt(arcadia::event::project_unbuilt& e)
 {
     _project_ptr = nullptr;
-    return false;
 }

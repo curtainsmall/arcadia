@@ -6,8 +6,8 @@
 
 #include"core/base.hpp"
 #include"resource/component/component.hpp"
-#include"resource/component/renderable_component/material/material.hpp"
-#include"resource/component/renderable_component/mesh/vertex.hpp"
+#include"resource/component/model_component/material/material.hpp"
+#include"resource/component/model_component/mesh/vertex.hpp"
 
 namespace arcadia
 {

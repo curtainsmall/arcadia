@@ -10,8 +10,7 @@
 #include"function/window/window_events.hpp"
 
 arcadia::window_layer::window_layer(
-    int width,
-    int height,
+    glm::ivec2 size,
     std::string title,
     int multisample_count
 ):
@@ -40,7 +39,7 @@ arcadia::window_layer::window_layer(
     }
     );
 
-    _glfw_window_ptr = glfwCreateWindow(width, height, _title.c_str(), nullptr, nullptr);
+    _glfw_window_ptr = glfwCreateWindow(size.x, size.y, _title.c_str(), nullptr, nullptr);
     if(!_glfw_window_ptr)
     {
         const char* desr{ nullptr };
@@ -63,10 +62,8 @@ arcadia::window_layer::~window_layer()
     }
 }
 
-auto arcadia::window_layer::on_event(const arcadia::event_base& event) -> bool
-{
-    return false;
-}
+void arcadia::window_layer::on_event(arcadia::event_base& event)
+{}
 
 void arcadia::window_layer::on_update(delta_time_type delta_time)
 {
@@ -349,6 +346,17 @@ void arcadia::window_layer::_setup_callbacks()
             .signal<arcadia::event::input_cursor_enter>(
                 _get_window_ptr_from_glfw_user_pointer(glfw_wnd_ptr),
                 entered
+            );
+    }
+    );
+    glfwSetCharCallback(
+        _glfw_window_ptr,
+        [](GLFWwindow* glfw_wnd_ptr, unsigned int code_point) -> void
+    {
+        arcadia::event_queue::instance()
+            .signal<arcadia::event::input_char>(
+                _get_window_ptr_from_glfw_user_pointer(glfw_wnd_ptr),
+                code_point
             );
     }
     );

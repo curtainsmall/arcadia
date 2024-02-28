@@ -18,7 +18,7 @@
     <ClInclude Include="src\core\base.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\entry_point.hpp">
+    <ClInclude Include="src\core\entry_point.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\core\app\app_layer.hpp">
@@ -159,19 +159,19 @@
     <ClInclude Include="src\resource\component\component.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\resource\component\renderable_component\mesh\vertex.hpp">
+    <ClInclude Include="src\resource\component\model_component\mesh\vertex.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\resource\component\skybox_component\cubemap.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\resource\component\renderable_component\material\material.hpp">
+    <ClInclude Include="src\resource\component\model_component\material\material.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\resource\component\renderable_component\material\texture2d.hpp">
+    <ClInclude Include="src\resource\component\model_component\material\texture2d.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\resource\component\renderable_component\mesh\mesh.hpp">
+    <ClInclude Include="src\resource\component\model_component\mesh\mesh.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\resource\component\skybox_component\skybox_component.hpp">
@@ -186,7 +186,7 @@
     <ClInclude Include="src\resource\component\meta_components\meta_componts.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\resource\component\renderable_component\renderable_component.hpp">
+    <ClInclude Include="src\resource\component\model_component\model_component.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\core\app\app_config.hpp">

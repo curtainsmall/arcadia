@@ -1,9 +1,11 @@
 #pragma once
 
 #include<filesystem>
+#include<functional>
 
 #include"core/base.hpp"
 #include"core/file/file.hpp"
+#include"core/math.hpp"
 #include"platform/graphic_api/graphic_api.hpp"
 
 namespace arcadia
@@ -17,5 +19,8 @@ namespace arcadia
     public:
         std::filesystem::path working_directory{ arcadia::to_filepath("./") };
         arcadia::graphic_api::type graphic_api{};
+        glm::ivec2 window_size{ 800,600 };
+        std::string window_title{ "Arcadia" };
+        int window_multisample_count{ 0 };
     };
 }

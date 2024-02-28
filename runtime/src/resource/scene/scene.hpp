@@ -1,6 +1,7 @@
 #pragma once
 
 #include<filesystem>
+#include<string>
 #include<unordered_map>
 
 #include"core/base.hpp"
@@ -20,7 +21,9 @@ namespace arcadia
 
         using self_type = scene;
     public:
-        scene() = default;
+        inline scene(const std::string& name):
+            name(name)
+        {}
         ~scene() = default;
 
         auto create_entity(const std::string& name ={}) -> entt::entity;
@@ -71,6 +74,8 @@ namespace arcadia
         /// @throw invalid_entity if @a entity is invalid
         void _check_valid_entity_or_throw(const entt::entity entity) const;
 
+    public:
+        std::string name;
     private:
         entt::registry _registry{};
     };

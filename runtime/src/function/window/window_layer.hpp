@@ -18,8 +18,7 @@ namespace arcadia
         using self_type = arcadia::window_layer;
     public:
         window_layer(
-            int width = 800,
-            int height = 600,
+            glm::ivec2 size ={ 800,600 },
             std::string title = "Untitled",
             int multisample_count = 0
         );
@@ -31,7 +30,7 @@ namespace arcadia
             return _glfw_window_ptr;
         }
 
-        virtual auto on_event(const arcadia::event_base& event) -> bool override;
+        virtual void on_event(arcadia::event_base& event) override;
         virtual void on_update(delta_time_type delta_time) override;
 
         [[nodiscard]]

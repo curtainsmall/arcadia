@@ -45,6 +45,12 @@
     <ClInclude Include="src\project\project.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\ui\imgui_windows\imgui_window_popup_create_project.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ui\imgui_windows\imgui_window_popup_create_scene.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\editor.cpp">
@@ -60,6 +66,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\ui\imgui_windows\imgui_window_manubar.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui\imgui_windows\imgui_window_popup_create_project.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui\imgui_windows\imgui_window_popup_create_scene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

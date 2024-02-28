@@ -1,7 +1,5 @@
 #pragma once
 
-namespace arcadia
-{
 #ifdef _WIN32
 
 #ifdef ARCADIA_DYNAMIC_LIB
@@ -20,4 +18,5 @@ namespace arcadia
 #error Arcadia Engine does not support your operating system
 #endif // _WIN32
 
-}
+
+

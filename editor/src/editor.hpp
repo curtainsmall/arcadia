@@ -5,6 +5,7 @@
 #include"core/app/app_layer.hpp"
 #include"function/window/window_events.hpp"
 #include"function/window/window_layer.hpp"
+
 #include"project/project_layer.hpp"
 #include"ui/imgui_layer.hpp"
 
@@ -16,7 +17,7 @@ namespace arcadia
         editor_app_layer();
         virtual ~editor_app_layer() = default;
 
-        virtual auto on_event(const arcadia::event_base& event) -> bool override;
+        virtual void on_event(arcadia::event_base& event) override;
         virtual void on_update(delta_time_type delta_time) override;
     private:
         auto _on_window_close(const arcadia::event::window_close& event) -> bool;

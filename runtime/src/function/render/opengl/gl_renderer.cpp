@@ -40,7 +40,7 @@ void arcadia::gl_renderer::submit(const arcadia::camera_component& camera_comp)
     );
 }
 
-void arcadia::gl_renderer::submit(const arcadia::renderable_component& renderable_comp)
+void arcadia::gl_renderer::submit(const arcadia::model_component& renderable_comp)
 {
     _check_frame_in_build_or_throw();
 

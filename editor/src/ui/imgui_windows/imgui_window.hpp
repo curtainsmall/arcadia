@@ -19,7 +19,7 @@ namespace arcadia
         {}
         virtual ~imgui_window_interface() = default;
 
-        virtual void on_event(const arcadia::event_base& event)
+        virtual void on_event(arcadia::event_base& event)
         {}
         virtual void on_update() = 0;
 

@@ -83,10 +83,12 @@ auto main(
 
             for(auto& layer_uptr : std::ranges::reverse_view{ arcadia::layer_stack::instance() })
             {
-                if(layer_uptr->on_event(event))
+                layer_uptr->on_event(event);
+                if(event.handled)
                 {
                     break;
                 }
+
             }
             event_queue.pop();
         }

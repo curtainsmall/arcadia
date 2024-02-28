@@ -26,8 +26,8 @@ namespace arcadia
         app_layer();
         virtual ~app_layer() = default;
 
-        virtual inline auto on_event(const arcadia::event_base&) -> bool override = 0;
-        virtual inline void on_update(delta_time_type delta_time) override = 0;
+        virtual void on_event(arcadia::event_base&) override = 0;
+        virtual void on_update(delta_time_type delta_time) override = 0;
     };
 
     ARCADIA_API auto create_application_uptr() -> std::unique_ptr<arcadia::app_layer>;

@@ -6,7 +6,9 @@
 #include"core/event/event.hpp"
 #include"core/layer/layer.hpp"
 #include"function/render/renderer.hpp"
+
 #include"project/project.hpp"
+#include"project/project_events.hpp"
 #include"ui/ui_events.hpp"
 
 namespace arcadia
@@ -17,7 +19,7 @@ namespace arcadia
         project_layer();
         virtual ~project_layer() = default;
 
-        virtual auto on_event(const arcadia::event_base& event) -> bool override;
+        virtual void on_event(arcadia::event_base& event) override;
         virtual void on_update(delta_time_type delta_time) override;
 
         [[nodiscard]]
@@ -26,10 +28,11 @@ namespace arcadia
             return _project_uptr.get();
         }
     private:
-        auto _on_new_project(const arcadia::event::new_project& e) -> bool;
-        auto _on_save_project(const arcadia::event::save_project& e) -> bool;
-        auto _on_save_project_as(const arcadia::event::save_project_as& e) -> bool;
-        auto _on_close_project(const arcadia::event::close_project& e) -> bool;
+        void _on_create_project(arcadia::event::create_project& e);
+
+        void _on_create_scene(arcadia::event::create_scene& e);
+        void _on_select_scene(arcadia::event::select_scene& e);
+        void _on_delete_scene(arcadia::event::delete_scene& e);
     private:
         std::unique_ptr<arcadia::project> _project_uptr{};
         std::unique_ptr<arcadia::renderer_interface> _renderer_uptr{};

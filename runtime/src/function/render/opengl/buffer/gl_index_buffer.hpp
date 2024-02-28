@@ -4,7 +4,7 @@
 
 #include"core/base.hpp"
 #include"platform/opengl/opengl_header.hpp"
-#include"resource/component/renderable_component/mesh/mesh.hpp"
+#include"resource/component/model_component/mesh/mesh.hpp"
 
 namespace arcadia
 {

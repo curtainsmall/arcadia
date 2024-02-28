@@ -31,8 +31,7 @@ namespace arcadia
 
         /// @brief Process event
         /// @param event Event to be processed
-        /// @return Whether to set @a event handled (so that layers after will NOT process it)
-        virtual auto on_event(const arcadia::event_base& event) -> bool = 0;
+        virtual void on_event(arcadia::event_base& event) = 0;
 
         /// @brief Update layer
         virtual void on_update(delta_time_type delta_time) = 0;

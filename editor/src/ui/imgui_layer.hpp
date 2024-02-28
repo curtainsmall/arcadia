@@ -4,6 +4,7 @@
 
 #include"core/exception.hpp"
 #include"function/window/window_layer.hpp"
+
 #include"ui/imgui_header.hpp"
 #include"ui/imgui_windows/imgui_window.hpp"
 
@@ -17,7 +18,7 @@ namespace arcadia
         imgui_layer(arcadia::window_layer& window);
         virtual ~imgui_layer();
 
-        virtual auto on_event(const arcadia::event_base& event) -> bool override;
+        virtual void on_event(arcadia::event_base& event) override;
         virtual void on_update(delta_time_type delta_time) override;
 
     public:

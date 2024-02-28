@@ -156,6 +156,8 @@
     <ClInclude Include="src\ui\imgui_layer.hpp" />
     <ClInclude Include="src\ui\imgui_windows\imgui_window.hpp" />
     <ClInclude Include="src\ui\imgui_windows\imgui_window_manubar.hpp" />
+    <ClInclude Include="src\ui\imgui_windows\imgui_window_popup_create_project.hpp" />
+    <ClInclude Include="src\ui\imgui_windows\imgui_window_popup_create_scene.hpp" />
     <ClInclude Include="src\ui\ui_events.hpp" />
   </ItemGroup>
   <ItemGroup>
@@ -164,6 +166,8 @@
     <ClCompile Include="src\ui\backend.cpp" />
     <ClCompile Include="src\ui\imgui_layer.cpp" />
     <ClCompile Include="src\ui\imgui_windows\imgui_window_manubar.cpp" />
+    <ClCompile Include="src\ui\imgui_windows\imgui_window_popup_create_project.cpp" />
+    <ClCompile Include="src\ui\imgui_windows\imgui_window_popup_create_scene.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

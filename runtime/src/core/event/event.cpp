@@ -13,7 +13,7 @@ auto arcadia::event_queue::swap_queue() -> bool
     return size();
 }
 
-auto arcadia::event_queue::size() -> std::size_t
+auto arcadia::event_queue::size() const -> std::size_t
 {
     return _processing_queue_ptr->size();
 }

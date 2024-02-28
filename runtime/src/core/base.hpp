@@ -10,9 +10,14 @@
 
 #include"platform/base.hpp"
 
+#define ARCADIA_DEBUG 1
+#if !defined(NDEBUG) && ARCADIA_DEBUG
+#   define ARCADIA_IN_DEBUG
+#endif
+
 #define ARCADIA_ASSERT(x) assert(x)
 
-#define ARCADIA_BIND_MEMBER_FN(fn) [this]<class ...Args>(Args&& ...args) -> decltype(auto) { return this->fn(std::forward<Args>(args)...);}
+#define ARCADIA_BIND_MEMBER_FN(fn) [this]<class ...Args>(Args&& ...args) -> decltype(auto) { return this->fn(std::forward<Args>(args)...); }
 
 using namespace std::string_literals;
 using namespace std::string_view_literals;

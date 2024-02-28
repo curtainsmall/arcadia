@@ -4,7 +4,7 @@
 #include"core/exception.hpp"
 #include"core/math.hpp"
 #include"resource/component/camera_component/camera_component.hpp"
-#include"resource/component/renderable_component/renderable_component.hpp"
+#include"resource/component/model_component/model_component.hpp"
 #include"resource/component/skybox_component/skybox_component.hpp"
 
 namespace arcadia
@@ -45,7 +45,7 @@ namespace arcadia
         /// @brief Submit a mesh component to this renderer
         /// @note If this function is not called in a new frame, data from previous frame is used
         /// @throw frame_not_in_build if there is no frame in build
-        virtual void submit(const arcadia::renderable_component&) = 0;
+        virtual void submit(const arcadia::model_component&) = 0;
 
         /// @brief Submit a skybox component to this renderer
         /// @note This function replaces existing skybox since only one skybox can be rendered at a time

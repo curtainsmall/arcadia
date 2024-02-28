@@ -8,8 +8,15 @@ namespace arcadia
 {
     namespace event
     {
+        // used to tell imgui to popup a window for inputting project info
         ARCADIA_EVENT(
             new_project
+        );
+        // used to tell project layer to create project with inputted info
+        ARCADIA_EVENT(
+            create_project,
+            std::string, // name
+            std::string  // filepath
         );
         ARCADIA_EVENT(
             open_project
@@ -24,8 +31,15 @@ namespace arcadia
             close_project
         );
 
+        // used to tell imgui to popup a window for inputting scene info
         ARCADIA_EVENT(
             new_scene
+        );
+        // used to tell project layer to create scene with inputted info
+        ARCADIA_EVENT(
+            create_scene,
+            std::string, // name
+            bool        // as_current
         );
         ARCADIA_EVENT(
             select_scene,
@@ -34,5 +48,7 @@ namespace arcadia
         ARCADIA_EVENT(
             delete_scene
         );
+
+
     }
 }

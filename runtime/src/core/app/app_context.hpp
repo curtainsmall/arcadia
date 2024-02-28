@@ -2,6 +2,9 @@
 
 #include"core/base.hpp"
 #include"core/time/timer.hpp"
+#ifdef ARCADIA_IN_DEBUG
+#   include"function/input/input_events.hpp"
+#endif
 
 namespace arcadia
 {
@@ -11,6 +14,9 @@ namespace arcadia
         using self_type = app_context;
     public:
         static auto instance() -> self_type&;
+
+        app_context();
+
     public:
         bool running{ false };
         arcadia::timer timer{};

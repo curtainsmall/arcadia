@@ -172,13 +172,13 @@
     <ClInclude Include="src\platform\opengl\opengl_header.hpp" />
     <ClInclude Include="src\resource\component\camera_component\camera_component.hpp" />
     <ClInclude Include="src\resource\component\component.hpp" />
-    <ClInclude Include="src\resource\component\renderable_component\mesh\vertex.hpp" />
+    <ClInclude Include="src\resource\component\model_component\mesh\vertex.hpp" />
     <ClInclude Include="src\resource\component\meta_components\meta_componts.hpp" />
-    <ClInclude Include="src\resource\component\renderable_component\renderable_component.hpp" />
+    <ClInclude Include="src\resource\component\model_component\model_component.hpp" />
     <ClInclude Include="src\resource\component\skybox_component\cubemap.hpp" />
-    <ClInclude Include="src\resource\component\renderable_component\material\material.hpp" />
-    <ClInclude Include="src\resource\component\renderable_component\material\texture2d.hpp" />
-    <ClInclude Include="src\resource\component\renderable_component\mesh\mesh.hpp" />
+    <ClInclude Include="src\resource\component\model_component\material\material.hpp" />
+    <ClInclude Include="src\resource\component\model_component\material\texture2d.hpp" />
+    <ClInclude Include="src\resource\component\model_component\mesh\mesh.hpp" />
     <ClInclude Include="src\resource\component\skybox_component\skybox_component.hpp" />
     <ClInclude Include="src\resource\scene\entt_header.hpp" />
     <ClInclude Include="src\function\render\renderer.hpp" />
@@ -206,7 +206,7 @@
     <ClInclude Include="src\pch.hpp" />
     <ClInclude Include="src\core\app\app_layer.hpp" />
     <ClInclude Include="src\core\base.hpp" />
-    <ClInclude Include="src\entry_point.hpp" />
+    <ClInclude Include="src\core\entry_point.hpp" />
     <ClInclude Include="src\platform\base.hpp" />
     <ClInclude Include="src\platform\plateform_detection.hpp" />
     <ClInclude Include="src\resource\scene\scene.hpp" />

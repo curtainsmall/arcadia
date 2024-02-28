@@ -4,9 +4,9 @@
 
 #include"core/app/app_config.hpp"
 #include"core/app/app_context.hpp"
+#include"core/entry_point.hpp"
 #include"core/event/event.hpp"
 #include"core/layer/layer.hpp"
-#include"entry_point.hpp"
 
 arcadia::editor_app_layer::editor_app_layer()
 {
@@ -16,20 +16,27 @@ arcadia::editor_app_layer::editor_app_layer()
 
     // Window layer
     {
-        layer_stack.push_layer<arcadia::window_layer>();
-        _main_window_ptr = &layer_stack.top<arcadia::window_layer>();
+        _main_window_ptr = &layer_stack
+            .push_layer<arcadia::window_layer>(
+                app_config.window_size,
+                app_config.window_title,
+                app_config.window_multisample_count
+            )
+            .top<arcadia::window_layer>();
     }
 
     // Project layer
     {
-        layer_stack.push_layer<arcadia::project_layer>();
-        _project_ptr = &layer_stack.top<arcadia::project_layer>();
+        _project_ptr = &layer_stack
+            .push_layer<arcadia::project_layer>()
+            .top<arcadia::project_layer>();
     }
 
     // ImGui layer
     {
-        layer_stack.push_layer<arcadia::imgui_layer>(*_main_window_ptr);
-        _main_ui_ptr = &layer_stack.top<arcadia::imgui_layer>();
+        _main_ui_ptr = &layer_stack
+            .push_layer<arcadia::imgui_layer>(*_main_window_ptr)
+            .top<arcadia::imgui_layer>();
     }
     app_context.running = true;
 }
@@ -37,10 +44,9 @@ arcadia::editor_app_layer::editor_app_layer()
 void arcadia::editor_app_layer::on_update(delta_time_type delta_time)
 {}
 
-auto arcadia::editor_app_layer::on_event(const arcadia::event_base& event) -> bool
+void arcadia::editor_app_layer::on_event(arcadia::event_base& event)
 {
-    ARCADIA_DISPATCH_EVENT(arcadia::event::window_close, event, _on_window_close);
-    return false;
+    arcadia::dispatch_event<arcadia::event::window_close>(event, ARCADIA_BIND_MEMBER_FN(_on_window_close));
 }
 
 auto arcadia::editor_app_layer::_on_window_close(const arcadia::event::window_close& event) -> bool
