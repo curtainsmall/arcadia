@@ -183,7 +183,6 @@ namespace arcadia
 
     public:
     #ifdef ARCADIA_IN_DEBUG
-
         std::unordered_set<std::type_index> debug_excluded_event_type_set{};
     #endif // ARCADIA_IN_DEBUG
 
