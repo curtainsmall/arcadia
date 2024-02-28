@@ -158,6 +158,7 @@
     <ClInclude Include="src\core\math.hpp" />
     <ClInclude Include="src\core\math\numeric.hpp" />
     <ClInclude Include="src\core\nlohmann_json_header.hpp" />
+    <ClInclude Include="src\core\util\hash.hpp" />
     <ClInclude Include="src\core\uuid.hpp" />
     <ClInclude Include="src\function\render\opengl\buffer\gl_cubemap.hpp" />
     <ClInclude Include="src\function\render\opengl\buffer\gl_framebuffer.hpp" />

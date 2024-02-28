@@ -21,8 +21,19 @@ namespace arcadia
         ~project() = default;
     public:
         std::string name;
-        std::filesystem::path filepath{};
         std::unordered_map<std::string, arcadia::scene> scene_umap{};
         arcadia::scene* active_scene_ptr{};
+    };
+}
+
+namespace std
+{
+    template<>
+    struct hash<arcadia::project>
+    {
+        auto operator()(const arcadia::project& project) const noexcept -> std::size_t
+        {
+            return 0;
+        }
     };
 }
