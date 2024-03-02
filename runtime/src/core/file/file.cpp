@@ -34,10 +34,24 @@ auto arcadia::file::create_ifstream() -> std::ifstream
     return ifs;
 }
 
+auto arcadia::file::create_ifstream(const std::filesystem::path& filepath) -> std::ifstream
+{
+    auto ifs = create_ifstream();
+    ifs.open(filepath);
+    return ifs;
+}
+
 auto arcadia::file::create_ofstream() -> std::ofstream
 {
     std::ofstream ofs{};
     ofs.exceptions(std::ios::failbit);
+    return ofs;
+}
+
+auto arcadia::file::create_ofstream(const std::filesystem::path& filepath) -> std::ofstream
+{
+    auto ofs = create_ofstream();
+    ofs.open(filepath);
     return ofs;
 }
 

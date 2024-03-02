@@ -21,7 +21,7 @@ namespace arcadia
 {
     using gl_render_unit_camera = std::tuple<
         arcadia::gl_framebuffer, // gl_framebuffer
-        glm::uvec2, // viewport_size
+        glm::ivec2, // viewport_size
         glm::mat4, // camera_view_mat4
         glm::mat4 // camera_proj_mat4
     >;

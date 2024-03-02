@@ -1,7 +1,7 @@
 #include "pch.hpp"
 #include "gl_framebuffer.hpp"
 
-arcadia::gl_framebuffer::gl_framebuffer(const glm::uvec2& viewport_size):
+arcadia::gl_framebuffer::gl_framebuffer(const glm::ivec2& viewport_size):
     _gl_texture2d(viewport_size)
 {
     ARCADIA_GL_CALL(glGenFramebuffers(1, &_gl_framebuffer_id));

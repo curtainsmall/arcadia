@@ -187,7 +187,6 @@
     <ClInclude Include="src\platform\graphic_api\graphic_api.hpp" />
     <ClInclude Include="src\core\layer\layer.hpp" />
     <ClInclude Include="src\core\log\log.hpp" />
-    <ClInclude Include="src\core\math\angle.hpp" />
     <ClInclude Include="src\core\math\glm_header.hpp" />
     <ClInclude Include="src\core\math\mat2.hpp" />
     <ClInclude Include="src\core\math\mat3.hpp" />
@@ -244,6 +243,9 @@
     </ClCompile>
     <ClCompile Include="src\platform\opengl\opengl_header.cpp" />
     <ClCompile Include="src\resource\component\camera_component\camera_component.cpp" />
+    <ClCompile Include="src\resource\component\meta_components\meta_componts.cpp" />
+    <ClCompile Include="src\resource\component\model_component\material\texture2d.cpp" />
+    <ClCompile Include="src\resource\component\model_component\model_component.cpp" />
     <ClCompile Include="src\resource\scene\scene.cpp" />
   </ItemGroup>
   <ItemGroup>

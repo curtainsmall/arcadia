@@ -40,7 +40,7 @@ void arcadia::gl_renderer::submit(const arcadia::camera_component& camera_comp)
     );
 }
 
-void arcadia::gl_renderer::submit(const arcadia::model_component& renderable_comp)
+void arcadia::gl_renderer::submit(const arcadia::model_component& model_comp)
 {
     _check_frame_in_build_or_throw();
 
@@ -50,7 +50,7 @@ void arcadia::gl_renderer::submit(const arcadia::model_component& renderable_com
         _legacy_gl_render_unit_mesh = false;
     }
 
-    for(const auto& mesh : renderable_comp.meshes)
+    for(const auto& mesh : model_comp.get_meshes())
     {
         _gl_render_unit_meshes.emplace_back(
             arcadia::gl_vertex_array{ mesh.vertices, mesh.indices },

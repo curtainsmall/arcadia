@@ -33,7 +33,9 @@ namespace arcadia
     public:
 
         static auto create_ifstream() -> std::ifstream;
+        static auto create_ifstream(const std::filesystem::path& filepath) -> std::ifstream;
         static auto create_ofstream() -> std::ofstream;
+        static auto create_ofstream(const std::filesystem::path& filepath) -> std::ofstream;
 
         file(const std::filesystem::path& filepath);
         file(const self_type&) = default;

@@ -44,13 +44,47 @@ void arcadia::project_layer::on_event(arcadia::event_base& event)
 void arcadia::project_layer::on_update(delta_time_type delta_time)
 {}
 
-void arcadia::project_layer::_save_project_to(const std::filesystem::path& filepath)
+void arcadia::project_layer::_save_project()
 {
+    ARCADIA_ASSERT(_project_uptr);
+
+    nlohmann::json json{
+        {"name",_project_uptr->name},
+        {"scene", nlohmann::json::object()},
+        {"active_scene_name", _project_uptr->active_scene_ptr ? _project_uptr->active_scene_ptr->name : ""s}
+    };
+    for(const auto& [name, scene] : _project_uptr->scene_umap)
+    {
+        json
+            .at("scene")
+            .push_back(
+                { name,scene.to_json() }
+        );
+    }
+
+    auto ofs = arcadia::file::create_ofstream(_project_filepath);
+    ofs << std::setw(4) << json;
+
     arcadia::log::debug("Project saved");
 }
 
-void arcadia::project_layer::_load_project_from(const std::filesystem::path& filepath)
+void arcadia::project_layer::_load_project()
 {
+    ARCADIA_ASSERT(!_project_uptr);
+
+    auto ifs = arcadia::file::create_ifstream(_project_filepath);
+    auto json = nlohmann::json::parse(ifs);
+
+    _project_uptr = std::make_unique<arcadia::project>(json.at("name"));
+
+    for(const auto& [key, json_scene] : json.at("scene").items())
+    {
+        _project_uptr->scene_umap.try_emplace(key, json_scene);
+    }
+
+    auto& active_scene_name = json.at("active_scene_name");
+    _project_uptr->active_scene_ptr = active_scene_name.size() ? &_project_uptr->scene_umap.at(active_scene_name) : nullptr;
+
     arcadia::log::debug("Project loaded");
 }
 
@@ -68,13 +102,13 @@ void arcadia::project_layer::_on_create_project(arcadia::event::create_project& 
                 return;
             }
         }
-        _save_project_to(_project_filepath);
+        _save_project();
         _project_uptr.reset();
     }
 
     const auto& [name, filepath_str] = e.data_tuple;
     _project_uptr = std::make_unique<arcadia::project>(name);
-    _project_filepath = filepath_str.size() ? arcadia::to_filepath(filepath_str) : arcadia::to_filepath("./");
+    _project_filepath = filepath_str.size() ? arcadia::to_filepath(filepath_str) : std::filesystem::path{};
 
     arcadia::event_queue::instance()
         .signal<arcadia::event::project_built>(_project_uptr.get());
@@ -94,7 +128,7 @@ void arcadia::project_layer::_on_open_project(arcadia::event::open_project& e)
                 return;
             }
         }
-        _save_project_to(_project_filepath);
+        _save_project();
         _project_uptr.reset();
     }
 
@@ -106,7 +140,7 @@ void arcadia::project_layer::_on_open_project(arcadia::event::open_project& e)
     {
         return;
     }
-    _load_project_from(_project_filepath);
+    _load_project();
 }
 
 void arcadia::project_layer::_on_save_project(arcadia::event::save_project& e)
@@ -121,7 +155,7 @@ void arcadia::project_layer::_on_save_project(arcadia::event::save_project& e)
             return;
         }
     }
-    _save_project_to(_project_filepath);
+    _save_project();
 }
 
 void arcadia::project_layer::_on_save_project_as(arcadia::event::save_project_as& e)
@@ -133,7 +167,7 @@ void arcadia::project_layer::_on_save_project_as(arcadia::event::save_project_as
     {
         return;
     }
-    _save_project_to(_project_filepath);
+    _save_project();
 }
 
 void arcadia::project_layer::_on_close_project(arcadia::event::close_project& e)
@@ -150,7 +184,7 @@ void arcadia::project_layer::_on_close_project(arcadia::event::close_project& e)
                 return;
             }
         }
-        _save_project_to(_project_filepath);
+        _save_project();
     }
     _project_uptr.reset();
 }
@@ -163,9 +197,9 @@ void arcadia::project_layer::_on_create_scene(arcadia::event::create_scene& e)
         name
     ).first->second;
 
-    auto entity = scene.create_entity("default_camera");
+    auto camera_entity = scene.create_entity("default_camera");
 
-    auto& camera_comp = scene.emplace_component<arcadia::camera_component>(entity);
+    auto& camera_comp = scene.emplace_component<arcadia::camera_component>(camera_entity);
     camera_comp.pos ={ 0,0,10 };
 
     if(as_current)

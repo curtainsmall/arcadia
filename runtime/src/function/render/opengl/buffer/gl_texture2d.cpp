@@ -1,7 +1,7 @@
 #include "pch.hpp"
 #include "gl_texture2d.hpp"
 
-arcadia::gl_texture2d::gl_texture2d(const glm::uvec2& size)
+arcadia::gl_texture2d::gl_texture2d(const glm::ivec2& size)
 {
     ARCADIA_GL_CALL(glGenTextures(1, &_gl_texture2d_id));
     bind();

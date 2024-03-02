@@ -4,15 +4,20 @@
 
 #include"core/base.hpp"
 #include"core/math/glm_header.hpp"
+#include"core/nlohmann_json_header.hpp"
 
 namespace arcadia
 {
+
     namespace vec3
     {
         using serialization_type = arcadia::serialization::vec3;
 
         extern auto to_flatbuffers(const glm::vec3& vec) -> serialization_type;
         extern auto from_flatbuffers(const serialization_type& flat_vec) -> glm::vec3;
+
+        extern auto to_json(const glm::vec3& vec) -> nlohmann::json;
+        extern auto from_json(const nlohmann::json& json) -> glm::vec3;
 
         ARCADIA_API constexpr auto create_zero() -> glm::vec3
         {

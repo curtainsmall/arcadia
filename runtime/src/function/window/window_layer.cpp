@@ -7,7 +7,6 @@
 #include"core/util/conditional.hpp"
 #include"function/input/input_events.hpp"
 #include"function/window/monitor.hpp"
-#include"function/window/window_events.hpp"
 
 arcadia::window_layer::window_layer(
     glm::ivec2 size,
@@ -39,6 +38,7 @@ arcadia::window_layer::window_layer(
     }
     );
 
+    glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
     _glfw_window_ptr = glfwCreateWindow(size.x, size.y, _title.c_str(), nullptr, nullptr);
     if(!_glfw_window_ptr)
     {
@@ -49,9 +49,28 @@ arcadia::window_layer::window_layer(
     glfwMakeContextCurrent(_glfw_window_ptr);
 
     glfwGetCursorPos(_glfw_window_ptr, &_last_cursor_pos.x, &_last_cursor_pos.y);
-    glfwSetWindowUserPointer(_glfw_window_ptr, this);
+    auto& min = app_config.window_min_size;
+    auto& max = app_config.window_max_size;
+    glfwSetWindowSizeLimits(
+        _glfw_window_ptr,
+        min.x < 0 ? GLFW_DONT_CARE : min.x,
+        min.y < 0 ? GLFW_DONT_CARE : min.y,
+        max.x < 0 ? GLFW_DONT_CARE : max.x,
+        max.y < 0 ? GLFW_DONT_CARE : max.y
+    );
+    if(app_config.window_maxmized)
+    {
+        set_size_state(arcadia::window_size_state::maxmized);
+    }
+    else
+    {
+        set_pos(app_config.window_pos);
+    }
 
+    glfwSetWindowUserPointer(_glfw_window_ptr, this);
     _setup_callbacks();
+
+    set_visible(true);
 }
 
 arcadia::window_layer::~window_layer()
@@ -104,6 +123,39 @@ auto arcadia::window_layer::set_size(const glm::ivec2& size) -> self_type&
     return *this;
 }
 
+auto arcadia::window_layer::get_size_state() const -> arcadia::window_size_state
+{
+    if(glfwGetWindowAttrib(_glfw_window_ptr, GLFW_MAXIMIZED))
+    {
+        return arcadia::window_size_state::maxmized;
+    }
+    else if(glfwGetWindowAttrib(_glfw_window_ptr, GLFW_ICONIFIED))
+    {
+        return arcadia::window_size_state::minimized;
+    }
+    else
+    {
+        return arcadia::window_size_state::restored;
+    }
+}
+
+auto arcadia::window_layer::set_size_state(arcadia::window_size_state state) -> self_type&
+{
+    switch(state)
+    {
+        case arcadia::window_size_state::minimized:
+            glfwIconifyWindow(_glfw_window_ptr);
+            break;
+        case arcadia::window_size_state::restored:
+            glfwRestoreWindow(_glfw_window_ptr);
+            break;
+        case arcadia::window_size_state::maxmized:
+            glfwMaximizeWindow(_glfw_window_ptr);
+            break;
+    }
+    return *this;
+}
+
 auto arcadia::window_layer::get_pos() const -> glm::ivec2
 {
     glm::ivec2 pos{};
@@ -113,6 +165,11 @@ auto arcadia::window_layer::get_pos() const -> glm::ivec2
 
 auto arcadia::window_layer::set_pos(const glm::ivec2& pos) -> self_type&
 {
+    if(pos.x < 0 || pos.y < 0)
+    {
+        return *this;
+    }
+
     glfwSetWindowPos(_glfw_window_ptr, pos.x, pos.y);
     return *this;
 }
@@ -296,14 +353,16 @@ void arcadia::window_layer::_setup_callbacks()
         auto& event_queue = arcadia::event_queue::instance();
         if(iconified)
         {
-            event_queue.signal<arcadia::event::window_minified>(
-                _get_window_ptr_from_glfw_user_pointer(glfw_wnd_ptr)
+            event_queue.signal<arcadia::event::window_size_state>(
+                _get_window_ptr_from_glfw_user_pointer(glfw_wnd_ptr),
+                arcadia::window_size_state::minimized
             );
         }
         else
         {
-            event_queue.signal<arcadia::event::window_restored>(
-                _get_window_ptr_from_glfw_user_pointer(glfw_wnd_ptr)
+            event_queue.signal<arcadia::event::window_size_state>(
+                _get_window_ptr_from_glfw_user_pointer(glfw_wnd_ptr),
+                arcadia::window_size_state::restored
             );
         }
     }
@@ -315,14 +374,16 @@ void arcadia::window_layer::_setup_callbacks()
         auto& event_queue = arcadia::event_queue::instance();
         if(maxmized)
         {
-            event_queue.signal<arcadia::event::window_maxmized>(
-                _get_window_ptr_from_glfw_user_pointer(glfw_wnd_ptr)
+            event_queue.signal<arcadia::event::window_size_state>(
+                _get_window_ptr_from_glfw_user_pointer(glfw_wnd_ptr),
+                arcadia::window_size_state::maxmized
             );
         }
         else
         {
-            event_queue.signal<arcadia::event::window_restored>(
-                _get_window_ptr_from_glfw_user_pointer(glfw_wnd_ptr)
+            event_queue.signal<arcadia::event::window_size_state>(
+                _get_window_ptr_from_glfw_user_pointer(glfw_wnd_ptr),
+                arcadia::window_size_state::restored
             );
         }
     }

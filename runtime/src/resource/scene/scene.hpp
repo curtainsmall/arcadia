@@ -7,6 +7,7 @@
 #include"core/base.hpp"
 #include"core/event/event.hpp"
 #include"core/exception.hpp"
+#include"core/nlohmann_json_header.hpp"
 #include"core/uuid.hpp"
 #include"resource/component/component.hpp"
 #include"resource/scene/entt_header.hpp"
@@ -21,10 +22,16 @@ namespace arcadia
 
         using self_type = scene;
     public:
+
         inline scene(const std::string& name):
             name(name)
         {}
+        scene(const nlohmann::json& json);
         ~scene() = default;
+        auto to_json() const->nlohmann::json;
+
+        scene(self_type&&) noexcept = default;
+        auto operator=(self_type&&) noexcept -> self_type & = default;
 
         auto create_entity(const std::string& name ={}) -> entt::entity;
         auto destroy_entity(const entt::entity entity) -> entt::registry::version_type;
@@ -70,13 +77,49 @@ namespace arcadia
             _registry.remove<Component>(entity);
         }
 
+        [[nodiscard]]
+        inline auto get_registry() const -> const entt::registry&
+        {
+            return _registry;
+        }
+
     private:
         /// @throw invalid_entity if @a entity is invalid
         void _check_valid_entity_or_throw(const entt::entity entity) const;
-
     public:
         std::string name;
     private:
         entt::registry _registry{};
+    };
+
+    struct ARCADIA_API json_scene_add_component_to_entity_helper: arcadia::noncopyable
+    {
+    public:
+        using self_type = json_scene_add_component_to_entity_helper;
+    public:
+        inline json_scene_add_component_to_entity_helper(const arcadia::scene& scene, nlohmann::json& json_entity):
+            _scene_ptr(&scene),
+            _json_entity_ptr(&json_entity)
+        {}
+        ~json_scene_add_component_to_entity_helper() = default;
+
+        template<arcadia::component_like Component>
+        auto add(const std::string& name) -> self_type&
+        {
+            auto view = _scene_ptr->get_registry().view<Component>();
+            for(auto entity : view)
+            {
+                const auto& [comp] = view.get(entity);
+                _json_entity_ptr
+                    ->at(arcadia::to_string(entity))
+                    .push_back(
+                        { name , comp.to_json() }
+                );
+            }
+            return *this;
+        }
+    private:
+        const arcadia::scene* _scene_ptr;
+        nlohmann::json* _json_entity_ptr;
     };
 }

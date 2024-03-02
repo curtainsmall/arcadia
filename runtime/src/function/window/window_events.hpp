@@ -7,6 +7,13 @@ namespace arcadia
 {
     struct window_layer;
 
+    enum struct window_size_state: int8_t
+    {
+        minimized = -1,
+        restored = 0,
+        maxmized = 1,
+    };
+
     namespace event
     {
         ARCADIA_EVENT(
@@ -24,16 +31,9 @@ namespace arcadia
             glm::ivec2 // New position
         );
         ARCADIA_EVENT(
-            window_minified,
-            arcadia::window_layer*
-        );
-        ARCADIA_EVENT(
-            window_restored,
-            arcadia::window_layer*
-        );
-        ARCADIA_EVENT(
-            window_maxmized,
-            arcadia::window_layer*
+            window_size_state,
+            arcadia::window_layer*,
+            arcadia::window_size_state // New state
         );
         ARCADIA_EVENT(
             window_focus,

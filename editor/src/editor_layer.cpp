@@ -1,4 +1,4 @@
-#include "editor.hpp"
+#include "editor_layer.hpp"
 
 #include<memory>
 
@@ -46,14 +46,21 @@ void arcadia::editor_app_layer::on_update(delta_time_type delta_time)
 
 void arcadia::editor_app_layer::on_event(arcadia::event_base& event)
 {
-    arcadia::dispatch_event<arcadia::event::window_close>(event, ARCADIA_BIND_MEMBER_FN(_on_window_close));
+    arcadia::event_dispatcher{ event }
+        .bind_handler<arcadia::event::window_close>(ARCADIA_BIND_MEMBER_FN(_on_window_close))
+        .dispatch();
 }
 
-auto arcadia::editor_app_layer::_on_window_close(const arcadia::event::window_close& event) -> bool
+void arcadia::editor_app_layer::_on_window_close(const arcadia::event::window_close& e)
 {
+    const auto& [wnd_ptr] = e.data_tuple;
+    auto& app_config = arcadia::app_config::instance();
+    app_config.window_size = wnd_ptr->get_size();
+    app_config.window_pos = wnd_ptr->get_pos();
+    app_config.window_maxmized = wnd_ptr->get_size_state() == arcadia::window_size_state::maxmized;
+
     auto& app_context = arcadia::app_context::instance();
     app_context.running = false;
-    return false;
 }
 
 auto arcadia::create_application_uptr() -> std::unique_ptr<arcadia::app_layer>

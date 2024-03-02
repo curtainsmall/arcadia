@@ -1,5 +1,7 @@
 #pragma once
 
+#include<tuple>
+
 #include"core/base.hpp"
 
 namespace arcadia
@@ -24,6 +26,18 @@ namespace arcadia
         [] <class ...Types>(const Template<Types...>&)
         {}(t);
     };*/
+
+    template<class ...Args>
+    struct ARCADIA_API pack
+    {
+    public:
+        using tuple_type = std::tuple<Args...>;
+
+        template<std::size_t Index>
+        using at_t = std::tuple_element_t<Index, tuple_type>;
+    public:
+        static constexpr std::size_t size = std::tuple_size_v<tuple_type>;
+    };
 
 
 }

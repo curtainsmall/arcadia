@@ -11,6 +11,9 @@ namespace arcadia
     public:
         using self_type = skybox_component;
     public:
+        skybox_component() = default;
+        ~skybox_component() = default;
+    public:
         arcadia::cubemap cubemap{};
     };
 }

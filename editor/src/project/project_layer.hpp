@@ -29,8 +29,8 @@ namespace arcadia
             return _project_uptr.get();
         }
     private:
-        void _save_project_to(const std::filesystem::path& filepath);
-        void _load_project_from(const std::filesystem::path& filepath);
+        void _save_project();
+        void _load_project();
 
         void _on_create_project(arcadia::event::create_project& e);
         void _on_open_project(arcadia::event::open_project& e);
@@ -43,7 +43,7 @@ namespace arcadia
         void _on_delete_scene(arcadia::event::delete_scene& e);
     private:
         std::unique_ptr<arcadia::project> _project_uptr{};
-        std::filesystem::path _project_filepath{ arcadia::to_filepath("./") };
+        std::filesystem::path _project_filepath{};
         std::unique_ptr<arcadia::renderer_interface> _renderer_uptr{};
         std::size_t _project_hash{};
     };

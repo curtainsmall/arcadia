@@ -20,8 +20,7 @@ namespace arcadia
         virtual void on_event(arcadia::event_base& event) override;
         virtual void on_update(delta_time_type delta_time) override;
     private:
-        auto _on_window_close(const arcadia::event::window_close& event) -> bool;
-
+        void _on_window_close(const arcadia::event::window_close& e);
     private:
         arcadia::window_layer* _main_window_ptr{};
         arcadia::project_layer* _project_ptr{};

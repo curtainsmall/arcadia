@@ -3,52 +3,42 @@
 
 #include"core/math.hpp"
 
-auto arcadia::camera_component::to_flatbuffers(flatbuffers::FlatBufferBuilder& builder, const self_type& camera_component) -> flatbuffers::Offset<serialization_type>
+auto arcadia::camera_component::to_json() const -> nlohmann::json
 {
-    auto pos = arcadia::vec3::to_flatbuffers(camera_component.pos);
-    auto target = arcadia::vec3::to_flatbuffers(camera_component.target);
-    auto up = arcadia::vec3::to_flatbuffers(camera_component.up);
-    auto viewport_size = arcadia::uvec2::to_flatbuffers(camera_component.viewport_size);
-    auto cursor_move_offset_range = arcadia::vec2::to_flatbuffers(camera_component.cursor_move_offset_range);
-
-    return arcadia::serialization::Createcamera(
-        builder,
-        builder.CreateSharedString(""),
-        &pos,
-        &target,
-        &up,
-        camera_component.near_plane,
-        camera_component.far_plane,
-        camera_component.fovy,
-        camera_component.fovy_min,
-        camera_component.fovy_max,
-        camera_component.speed,
-        &viewport_size,
-        camera_component.fixed_up,
-        camera_component.up_epsilon,
-        &cursor_move_offset_range
-    );
+    return nlohmann::json{
+        { "pos"                     ,arcadia::vec3::to_json(pos) },
+        { "target"                  ,arcadia::vec3::to_json(target) },
+        { "up"                      ,arcadia::vec3::to_json(up) },
+        { "near_plane"              ,near_plane },
+        { "far_plane"               ,far_plane },
+        { "fovy"                    ,fovy },
+        { "fovy_min"                ,fovy_min },
+        { "fovy_max"                ,fovy_max },
+        { "speed"                   ,speed},
+        { "viewport_size"           ,arcadia::ivec2::to_json(viewport_size) },
+        { "sensitivity"             ,sensitivity },
+        { "fixed_up"                ,fixed_up },
+        { "up_epsilon"              ,up_epsilon },
+        { "cursor_move_offset_range",arcadia::vec2::to_json(cursor_move_offset_range) }
+    };
 }
 
-auto arcadia::camera_component::from_flatbuffers(const serialization_type& flat_camera) -> self_type
+arcadia::camera_component::camera_component(const nlohmann::json& json)
 {
-    camera_component camera_component{};
-
-    camera_component.pos = arcadia::vec3::from_flatbuffers(*flat_camera.pos());
-    camera_component.target = arcadia::vec3::from_flatbuffers(*flat_camera.target());
-    camera_component.up = arcadia::vec3::from_flatbuffers(*flat_camera.up());
-    camera_component.near_plane = flat_camera.near_plane();
-    camera_component.far_plane = flat_camera.far_plane();
-    camera_component.fovy = flat_camera.fovy();
-    camera_component.fovy_min = flat_camera.fovy_min();
-    camera_component.fovy_max = flat_camera.fovy_max();
-    camera_component.speed = flat_camera.speed();
-    camera_component.viewport_size = arcadia::uvec2::from_flatbuffers(*flat_camera.viewport_size());
-    camera_component.fixed_up = flat_camera.fixed_up();
-    camera_component.up_epsilon = flat_camera.up_epsilon();
-    camera_component.cursor_move_offset_range = arcadia::vec2::from_flatbuffers(*flat_camera.cursor_move_offset_range());
-
-    return camera_component;
+    pos                      = arcadia::vec3::from_json(json.at("pos"));
+    target                   = arcadia::vec3::from_json(json.at("target"));
+    up                       = arcadia::vec3::from_json(json.at("up"));
+    near_plane               = json.at("near_plane");
+    far_plane                = json.at("far_plane");
+    fovy                     = json.at("fovy");
+    fovy_min                 = json.at("fovy_min");
+    fovy_max                 = json.at("fovy_max");
+    speed                    = json.at("speed");
+    viewport_size            = arcadia::ivec2::from_json(json.at("viewport_size"));
+    sensitivity              = json.at("sensitivity");
+    fixed_up                 = json.at("fixed_up");
+    up_epsilon               = json.at("up_epsilon");
+    cursor_move_offset_range = arcadia::vec2::from_json(json.at("cursor_move_offset_range"));
 }
 
 auto arcadia::camera_component::move_forward() -> self_type&
@@ -98,8 +88,8 @@ auto arcadia::camera_component::rotate_view(const glm::vec2& offset) -> self_typ
         auto y_angle_offset =
             glm::clamp(
                 -offset.y * sensitivity + _pitch_angle(),
-                -glm::half_pi<float>() + up_epsilon.get_rad(),
-                glm::half_pi<float>() - up_epsilon.get_rad()
+                -glm::half_pi<float>() + up_epsilon,
+                glm::half_pi<float>() - up_epsilon
             )
             - _pitch_angle();
         forward = glm::angleAxis(y_angle_offset, glm::cross(forward, up)) * forward;
@@ -125,8 +115,8 @@ auto arcadia::camera_component::drag_view(const glm::vec2& offset) -> self_type&
         auto y_angle_offset =
             glm::clamp(
                 -offset.y * sensitivity + _pitch_angle(),
-                -glm::half_pi<float>() + up_epsilon.get_rad(),
-                glm::half_pi<float>() - up_epsilon.get_rad()
+                -glm::half_pi<float>() + up_epsilon,
+                glm::half_pi<float>() - up_epsilon
             )
             - _pitch_angle();
         rotation = glm::angleAxis(y_angle_offset, glm::cross(forward, up));
@@ -145,7 +135,7 @@ auto arcadia::camera_component::build_view_mat4() const -> glm::mat4
 auto arcadia::camera_component::build_proj_mat4() const -> glm::mat4
 {
     return glm::perspective(
-        fovy.get_rad(),
+        fovy,
         viewport_size.x * 1.f / viewport_size.y,
         near_plane,
         far_plane

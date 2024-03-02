@@ -15,7 +15,7 @@ namespace arcadia
 
         using self_type = gl_framebuffer;
     public:
-        gl_framebuffer(const glm::uvec2& viewport_size);
+        gl_framebuffer(const glm::ivec2& viewport_size);
         ~gl_framebuffer();
 
         gl_framebuffer(self_type&& rhs) noexcept;

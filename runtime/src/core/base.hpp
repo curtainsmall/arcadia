@@ -2,6 +2,7 @@
 
 #include<cassert>
 #include<chrono>
+#include<complex>
 #include<cstddef>
 #include<cstdint>
 #include<cstdlib>
@@ -22,6 +23,7 @@
 using namespace std::string_literals;
 using namespace std::string_view_literals;
 using namespace std::chrono_literals;
+using namespace std::complex_literals;
 
 namespace arcadia
 {

@@ -18,6 +18,6 @@ namespace arcadia
         std::vector<glm::vec4> neg_y_pixels{};
         std::vector<glm::vec4> pos_z_pixels{};
         std::vector<glm::vec4> neg_z_pixels{};
-        glm::uvec2 size{};
+        glm::ivec2 size{};
     };
 }

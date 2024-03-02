@@ -3,6 +3,7 @@
 #include<string>
 
 #include"core/base.hpp"
+#include"core/nlohmann_json_header.hpp"
 #include"core/uuid.hpp"
 #include"resource/component/component.hpp"
 
@@ -22,16 +23,20 @@ namespace arcadia
     struct ARCADIA_API tag_component: arcadia::component
     {
     public:
+        using self_type = tag_component;
+    public:
         tag_component() = default;
         inline tag_component(const std::string& msg):
-            _msg(msg)
+            _tag(msg)
         {}
+        tag_component(const nlohmann::json& json);
         ~tag_component() = default;
+        auto to_json() const->nlohmann::json;
 
         [[nodiscard]]
         auto get() const -> const std::string&
         {
-            return _msg;
+            return _tag;
         }
 
         operator const std::string& () const
@@ -40,6 +45,6 @@ namespace arcadia
         }
 
     private:
-        std::string _msg{};
+        std::string _tag{};
     };
 }

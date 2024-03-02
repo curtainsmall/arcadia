@@ -17,10 +17,16 @@ namespace arcadia
     public:
         static auto instance() -> self_type&;
     public:
+        static inline std::filesystem::path filepath{ arcadia::to_filepath(".acdacfg") };
+
         std::filesystem::path working_directory{ arcadia::to_filepath("./") };
         arcadia::graphic_api::type graphic_api{};
-        glm::ivec2 window_size{ 800,600 };
+        glm::ivec2 window_pos{ -1,-1 }; // Use negative value for `don't care`
+        glm::ivec2 window_size{ 1280,768 };
+        glm::ivec2 window_min_size{ 800,600 };
+        glm::ivec2 window_max_size{ -1,-1 }; // Use negative value for `don't care`
         std::string window_title{ "Arcadia" };
         int window_multisample_count{ 0 };
+        bool window_maxmized{ true };
     };
 }

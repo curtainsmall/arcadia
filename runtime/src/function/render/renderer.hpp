@@ -13,7 +13,7 @@ namespace arcadia
     {
     public:
         void* id;
-        glm::uvec2 size;
+        glm::ivec2 size;
     };
 
     struct ARCADIA_API renderer_interface: arcadia::noncopyable

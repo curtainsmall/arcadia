@@ -5,12 +5,8 @@
 #include"core/base.hpp"
 #include"core/event/event.hpp"
 #include"core/layer/layer.hpp"
-#include"core/time/timer.hpp"
 
-auto main(
-    int argc,
-    const char** argv
-) -> int;
+auto main(int argc, const char** argv) -> int;
 
 #define ARCADIA ::arcadia::
 #define STD ::std::
@@ -24,7 +20,7 @@ namespace arcadia
         using self_type = arcadia::app_layer;
     public:
         app_layer();
-        virtual ~app_layer() = default;
+        virtual ~app_layer();
 
         virtual void on_event(arcadia::event_base&) override = 0;
         virtual void on_update(delta_time_type delta_time) override = 0;

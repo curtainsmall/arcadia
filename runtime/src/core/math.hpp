@@ -1,6 +1,5 @@
 #pragma once
 
-#include"core/math/angle.hpp"
 #include"core/math/glm_header.hpp"
 #include"core/math/mat2.hpp"
 #include"core/math/mat3.hpp"

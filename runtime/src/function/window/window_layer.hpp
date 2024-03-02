@@ -7,6 +7,7 @@
 #include"core/layer/layer.hpp"
 #include"core/math.hpp"
 #include"function/window/glfw_header.hpp"
+#include"function/window/window_events.hpp"
 #include"platform/graphic_api/graphic_api.hpp"
 
 namespace arcadia
@@ -14,7 +15,6 @@ namespace arcadia
     struct ARCADIA_API window_layer: arcadia::layer_interface
     {
     public:
-
         using self_type = arcadia::window_layer;
     public:
         window_layer(
@@ -40,6 +40,10 @@ namespace arcadia
         [[nodiscard]]
         auto get_size() const->glm::ivec2;
         auto set_size(const glm::ivec2& size) -> self_type&;
+
+        [[nodiscard]]
+        auto get_size_state() const->arcadia::window_size_state;
+        auto set_size_state(arcadia::window_size_state state) -> self_type&;
 
         [[nodiscard]]
         auto get_pos() const->glm::ivec2;

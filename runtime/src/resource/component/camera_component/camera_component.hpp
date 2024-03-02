@@ -4,6 +4,7 @@
 
 #include"core/base.hpp"
 #include"core/math.hpp"
+#include"core/nlohmann_json_header.hpp"
 #include"resource/component/component.hpp"
 
 namespace arcadia
@@ -14,11 +15,10 @@ namespace arcadia
         using self_type = arcadia::camera_component;
         using serialization_type = arcadia::serialization::camera;
     public:
-        static auto to_flatbuffers(flatbuffers::FlatBufferBuilder& builder, const self_type& camera_component) -> flatbuffers::Offset<serialization_type>;
-        static auto from_flatbuffers(const serialization_type& flat_camera) -> self_type;
-
         camera_component() = default;
+        camera_component(const nlohmann::json& json);
         ~camera_component() = default;
+        auto to_json() const->nlohmann::json;
 
         auto move_forward() -> self_type&;
         auto move_backward() -> self_type&;
@@ -76,19 +76,19 @@ namespace arcadia
         float far_plane{ 100.f };
 
         /// @brief FOV angle in vertical direction
-        arcadia::degree fovy{ 90.f };
+        float fovy{ 90.f };
 
         /// @brief Minimun value fo @ref arcadia::camera::fovy
-        arcadia::degree fovy_min{ 1.f };
+        float fovy_min{ 1.f };
 
         /// @brief Maximun value of @ref arcadia::camera::fovy
-        arcadia::degree fovy_max{ 120.f };
+        float fovy_max{ 120.f };
 
         /// @brief Move speed of free-camera
         float speed{ .25f };
 
         /// @brief Size of the viewport of this camera
-        glm::uvec2 viewport_size{ 800,600 };
+        glm::ivec2 viewport_size{ 800,600 };
 
         /// @brief Sensitivity of view rotation
         float sensitivity{ .005f };
@@ -97,7 +97,7 @@ namespace arcadia
         bool fixed_up{ true };
 
         /// @brief How small angle between @ref arcadia::camera::up and @ref arcadia::camera::target can be
-        arcadia::degree up_epsilon{ .1f };
+        float up_epsilon{ .1f };
 
         /// @brief Cursor move offset that is out of this range will be silently ignored
         glm::vec2 cursor_move_offset_range{ -100.f,100.f };
