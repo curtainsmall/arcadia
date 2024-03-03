@@ -18,6 +18,12 @@ namespace arcadia
         virtual void on_event(arcadia::event_base& event) override;
         virtual void on_update() override;
 
+        [[nodiscard]]
+        virtual inline auto get_title() const -> std::string override
+        {
+            return "Create Scene";
+        }
+
     private:
         const arcadia::project* _project_ptr{};
         std::string _name{};

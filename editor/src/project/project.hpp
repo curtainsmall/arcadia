@@ -16,24 +16,30 @@ namespace arcadia
         inline project(
             std::string name
         ):
-            name(name)
+            _name(name)
         {}
         ~project() = default;
+
+        [[nodiscard]]
+        inline auto get_name() const -> const std::string&
+        {
+            return _name;
+        }
+        inline auto set_name(const std::string& name) -> self_type&
+        {
+            _name = name;
+            _modified = true;
+            return *this;
+        }
+
+        [[nodiscard]]
+        auto is_modified() const -> bool;
+
     public:
-        std::string name;
         std::unordered_map<std::string, arcadia::scene> scene_umap{};
         arcadia::scene* active_scene_ptr{};
-    };
-}
-
-namespace std
-{
-    template<>
-    struct hash<arcadia::project>
-    {
-        auto operator()(const arcadia::project& project) const noexcept -> std::size_t
-        {
-            return 0;
-        }
+    private:
+        bool _modified{ true };
+        std::string _name;
     };
 }

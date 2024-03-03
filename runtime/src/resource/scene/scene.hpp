@@ -24,11 +24,29 @@ namespace arcadia
     public:
 
         inline scene(const std::string& name):
-            name(name)
+            _name(name)
         {}
         scene(const nlohmann::json& json);
         ~scene() = default;
         auto to_json() const->nlohmann::json;
+
+        [[nodiscard]]
+        inline auto get_name() const -> const std::string&
+        {
+            return _name;
+        }
+        inline auto set_name(const std::string& name) -> self_type&
+        {
+            _name = name;
+            _modified = true;
+            return *this;
+        }
+
+        [[nodiscard]]
+        inline auto is_modified() const -> bool
+        {
+            return _modified;
+        }
 
         scene(self_type&&) noexcept = default;
         auto operator=(self_type&&) noexcept -> self_type & = default;
@@ -40,19 +58,35 @@ namespace arcadia
         template<arcadia::component_like Component, class ...Args>
         auto emplace_component(const entt::entity entity, Args&& ...args) -> Component&
         {
-            return _registry.emplace<Component>(entity, std::forward<Args>(args)...);
+            auto& comp = _registry.emplace<Component>(entity, std::forward<Args>(args)...);
+            _modified = true;
+            return comp;
         }
 
         template<arcadia::component_like Component, class ...Args>
         auto replace_component(const entt::entity entity, Args&& ...args) -> Component&
         {
-            return _registry.replace<Component>(entity, std::forward<Args>(args)...);
+            auto& comp = _registry.replace<Component>(entity, std::forward<Args>(args)...);
+            _modified = true;
+            return comp;
         }
 
         template<arcadia::component_like Component, class ...Args>
         auto emplace_or_replace_component(const entt::entity entity, Args&& ...args) -> Component&
         {
-            return _registry.emplace_or_replace(entity, std::forward<Args>(args)...);
+            auto& comp = _registry.emplace_or_replace<Component>(entity, std::forward<Args>(args)...);
+            _modified = true;
+            return comp;
+        }
+
+        template<arcadia::component_like Component>
+        auto get_component(const entt::entity entity) const -> const Component&
+        {
+            if(!has_component<Component>(entity))
+            {
+                throw no_such_component{ std::format("No such component with entity: {0} with type info: {1}", static_cast<entt::id_type>(entity),typeid(Component)) };
+            }
+            return _registry.get<Component>(entity);
         }
 
         template<arcadia::component_like Component>
@@ -62,7 +96,9 @@ namespace arcadia
             {
                 throw no_such_component{ std::format("No such component with entity: {0} with type info: {1}", static_cast<entt::id_type>(entity),typeid(Component)) };
             }
-            return _registry.get<Component>(entity);
+            auto& comp = _registry.get<Component>(entity);
+            _modified = true;
+            return comp;
         }
 
         template<arcadia::component_like ...Components>
@@ -75,6 +111,7 @@ namespace arcadia
         void remove_component(const entt::entity entity)
         {
             _registry.remove<Component>(entity);
+            _modified = true;
         }
 
         [[nodiscard]]
@@ -86,9 +123,9 @@ namespace arcadia
     private:
         /// @throw invalid_entity if @a entity is invalid
         void _check_valid_entity_or_throw(const entt::entity entity) const;
-    public:
-        std::string name;
     private:
+        bool _modified{ true };
+        std::string _name;
         entt::registry _registry{};
     };
 

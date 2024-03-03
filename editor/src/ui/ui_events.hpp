@@ -8,6 +8,14 @@ namespace arcadia
 {
     namespace event
     {
+        //==== Events for imgui window ====//
+        ARCADIA_EVENT(
+            focus_imgui_window,
+            std::string // Title of the imgui window to open
+        );
+
+        //==== Events for project ====//
+
         // used to tell imgui to popup a window for inputting project info
         ARCADIA_EVENT(
             new_project
@@ -31,6 +39,8 @@ namespace arcadia
             close_project
         );
 
+        //==== Events for scene ====//
+
         // used to tell imgui to popup a window for inputting scene info
         ARCADIA_EVENT(
             new_scene
@@ -49,6 +59,11 @@ namespace arcadia
             delete_scene
         );
 
+        //==== Events for outliner ====//
+
+        ARCADIA_EVENT(
+            new_entity
+        );
 
     }
 }

@@ -16,6 +16,12 @@ namespace arcadia
 
         virtual void on_event(arcadia::event_base& event) override;
         virtual void on_update() override;
+
+        [[nodiscard]]
+        virtual inline auto get_title() const -> std::string override
+        {
+            return "Create Project";
+        }
     private:
         std::string _name{};
         std::string _filepath_str{};

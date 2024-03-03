@@ -38,13 +38,13 @@ void arcadia::imgui_window_popup_create_scene::on_update()
 
     auto popup_flags =
         ImGuiPopupFlags_NoOpenOverExistingPopup;
-    ImGui::OpenPopup(_title.c_str(), popup_flags);
+    ImGui::OpenPopup(get_title().c_str(), popup_flags);
 
     ImGui::SetNextWindowSize({ 430,120 }, ImGuiCond_Once);
 
     auto window_flags =
         ImGuiWindowFlags_NoCollapse;
-    if(ImGui::BeginPopupModal(_title.c_str(), &_open, window_flags))
+    if(ImGui::BeginPopupModal(get_title().c_str(), &_open, window_flags))
     {
         auto input_text_flags =
             ImGuiInputTextFlags_AutoSelectAll;

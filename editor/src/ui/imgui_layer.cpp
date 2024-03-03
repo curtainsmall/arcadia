@@ -5,8 +5,11 @@
 
 #include"ui/backend.hpp"
 #include"ui/imgui_windows/imgui_window_manubar.hpp"
+#include"ui/imgui_windows/imgui_window_outliner.hpp"
 #include"ui/imgui_windows/imgui_window_popup_create_project.hpp"
 #include"ui/imgui_windows/imgui_window_popup_create_scene.hpp"
+#include"ui/imgui_windows/imgui_window_viewport.hpp"
+
 
 arcadia::imgui_layer::imgui_layer(arcadia::window_layer& window):
     arcadia::layer_interface("imgui"),
@@ -22,9 +25,15 @@ arcadia::imgui_layer::imgui_layer(arcadia::window_layer& window):
         | ImGuiConfigFlags_ViewportsEnable;
     arcadia::imgui_backend::initialize(*_window_ptr);
 
-    _imgui_window_uptrs.emplace_back(std::make_unique<arcadia::imgui_window_menubar>("menubar", true));
-    _imgui_window_uptrs.emplace_back(std::make_unique<arcadia::imgui_window_popup_create_project>("popup_create_project", false));
-    _imgui_window_uptrs.emplace_back(std::make_unique<arcadia::imgui_window_popup_create_scene>("popup_create_scene", false));
+    std::vector<std::string> imgui_window_titles{
+        "Outliner",
+        "Viewport"
+    };
+    _emplace_imgui_window<arcadia::imgui_window_menubar>(true, imgui_window_titles);
+    _emplace_imgui_window<arcadia::imgui_window_popup_create_project>(false);
+    _emplace_imgui_window<arcadia::imgui_window_popup_create_scene>(false);
+    _emplace_imgui_window<arcadia::imgui_window_outliner>(false);
+    _emplace_imgui_window<arcadia::imgui_window_viewport>(false);
 }
 
 arcadia::imgui_layer::~imgui_layer()

@@ -49,9 +49,9 @@ void arcadia::project_layer::_save_project()
     ARCADIA_ASSERT(_project_uptr);
 
     nlohmann::json json{
-        {"name",_project_uptr->name},
+        {"name",_project_uptr->get_name()},
         {"scene", nlohmann::json::object()},
-        {"active_scene_name", _project_uptr->active_scene_ptr ? _project_uptr->active_scene_ptr->name : ""s}
+        {"active_scene_name", _project_uptr->active_scene_ptr ? _project_uptr->active_scene_ptr->get_name() : ""s}
     };
     for(const auto& [name, scene] : _project_uptr->scene_umap)
     {
@@ -145,6 +145,8 @@ void arcadia::project_layer::_on_open_project(arcadia::event::open_project& e)
 
 void arcadia::project_layer::_on_save_project(arcadia::event::save_project& e)
 {
+    ARCADIA_ASSERT(_project_uptr);
+
     if(_project_filepath.empty())
     {
         _project_filepath = pfd::save_file{
@@ -160,6 +162,8 @@ void arcadia::project_layer::_on_save_project(arcadia::event::save_project& e)
 
 void arcadia::project_layer::_on_save_project_as(arcadia::event::save_project_as& e)
 {
+    ARCADIA_ASSERT(_project_uptr);
+
     _project_filepath = pfd::save_file{
         "Save as"
     }.result();
@@ -172,7 +176,9 @@ void arcadia::project_layer::_on_save_project_as(arcadia::event::save_project_as
 
 void arcadia::project_layer::_on_close_project(arcadia::event::close_project& e)
 {
-    if(arcadia::hash(*_project_uptr) != _project_hash)
+    ARCADIA_ASSERT(_project_uptr);
+
+    if(_project_uptr->is_modified())
     {
         if(_project_filepath.empty())
         {
@@ -216,7 +222,7 @@ void arcadia::project_layer::_on_select_scene(arcadia::event::select_scene& e)
 
 void arcadia::project_layer::_on_delete_scene(arcadia::event::delete_scene& e)
 {
-    _project_uptr->scene_umap.erase(_project_uptr->active_scene_ptr->name);
+    _project_uptr->scene_umap.erase(_project_uptr->active_scene_ptr->get_name());
     _project_uptr->active_scene_ptr = nullptr;
 }
 

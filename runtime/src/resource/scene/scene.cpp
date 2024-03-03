@@ -31,7 +31,7 @@
 */
 
 arcadia::scene::scene(const nlohmann::json& json):
-    name(json.at("name"))
+    _name(json.at("name"))
 {
     auto& json_entity = json.at("entity");
 
@@ -65,7 +65,7 @@ arcadia::scene::scene(const nlohmann::json& json):
 auto arcadia::scene::to_json() const -> nlohmann::json
 {
     nlohmann::json json{
-        {"name",name},
+        {"name",_name},
         {"entity",nlohmann::json::object()}
     };
 
@@ -94,11 +94,13 @@ auto arcadia::scene::create_entity(const std::string& name) -> entt::entity
 {
     auto entity = _registry.create();
     emplace_component<arcadia::tag_component>(entity, name);
+    _modified = true;
     return entity;
 }
 
 auto arcadia::scene::destroy_entity(entt::entity entity) -> entt::registry::version_type
 {
+    _modified = true;
     return _registry.destroy(entity);
 }
 
