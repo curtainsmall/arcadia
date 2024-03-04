@@ -23,7 +23,7 @@ namespace arcadia
         void _on_window_close(const arcadia::event::window_close& e);
     private:
         arcadia::window_layer* _main_window_ptr{};
-        arcadia::project_layer* _project_ptr{};
+        arcadia::project_layer* _project_cptr{};
         arcadia::imgui_layer* _main_ui_ptr{};
     };
 

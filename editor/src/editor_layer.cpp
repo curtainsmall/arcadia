@@ -27,7 +27,7 @@ arcadia::editor_app_layer::editor_app_layer()
 
     // Project layer
     {
-        _project_ptr = &layer_stack
+        _project_cptr = &layer_stack
             .push_layer<arcadia::project_layer>()
             .top<arcadia::project_layer>();
     }
@@ -47,8 +47,7 @@ void arcadia::editor_app_layer::on_update(delta_time_type delta_time)
 void arcadia::editor_app_layer::on_event(arcadia::event_base& event)
 {
     arcadia::event_dispatcher{ event }
-        .bind_handler<arcadia::event::window_close>(ARCADIA_BIND_MEMBER_FN(_on_window_close))
-        .dispatch();
+    .dispatch<arcadia::event::window_close>(ARCADIA_BIND_MEMBER_FN(_on_window_close));
 }
 
 void arcadia::editor_app_layer::_on_window_close(const arcadia::event::window_close& e)

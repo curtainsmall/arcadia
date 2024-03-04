@@ -1,32 +1,13 @@
 #include "imgui_window_popup_create_scene.hpp"
 
-#include"project/project_events.hpp"
 #include"ui/imgui_header.hpp"
-#include"ui/ui_events.hpp"
 
 void arcadia::imgui_window_popup_create_scene::on_event(arcadia::event_base& event)
 {
     arcadia::event_dispatcher{ event }
-        .bind_handler<arcadia::event::project_built>(
-            [&](arcadia::event::project_built& e)
-    {
-        const auto& [project_ptr] = e.data_tuple;
-        _project_ptr = project_ptr;
-    }
-        )
-        .bind_handler<arcadia::event::project_unbuilt>(
-            [&](arcadia::event::project_unbuilt&)
-    {
-        _project_ptr = nullptr;
-    }
-        )
-        .bind_handler<arcadia::event::new_scene>(
-            [&](arcadia::event::new_scene& e)
-    {
-        _open = true;
-    }
-        )
-        .dispatch();
+        .dispatch<arcadia::event::project_built>(ARCADIA_BIND_MEMBER_FN(_on_project_built))
+        .dispatch<arcadia::event::project_unbuilt>(ARCADIA_BIND_MEMBER_FN(_on_project_unbuilt))
+        .dispatch<arcadia::event::new_scene>(ARCADIA_BIND_MEMBER_FN(_on_new_scene));
 }
 
 void arcadia::imgui_window_popup_create_scene::on_update()
@@ -48,20 +29,20 @@ void arcadia::imgui_window_popup_create_scene::on_update()
     {
         auto input_text_flags =
             ImGuiInputTextFlags_AutoSelectAll;
-        if(ImGui::InputText("Scene name", &_name, input_text_flags))
+        ImGui::Text("Scene name");
+        if(ImGui::InputText("##scene_name", &_name, input_text_flags))
         {
-            _name_available = !_project_ptr->scene_umap.contains(_name);
-            _display_empty_name_waring = _name.empty();
+            _name_available = !_project_cptr->scene_umap.contains(_name);
+            if(_name.empty())
+            {
+                ImGui::TextColored({ 204,80,69,255 }, "Scene name cannot empty");
+            }
         }
         if(!_name_available)
         {
             ImGui::PushStyleColor(ImGuiCol_Text, { 204, 80, 69, 255 });
             ImGui::Text("Scene named \"&s\" already exsits", _name.c_str());
             ImGui::PopStyleColor();
-        }
-        if(_display_empty_name_waring)
-        {
-            ImGui::TextColored({ 204,80,69,255 }, "Scene name cannot empty");
         }
         ImGui::Checkbox("As current", &_as_current);
 
@@ -86,4 +67,20 @@ void arcadia::imgui_window_popup_create_scene::on_update()
 
         ImGui::EndPopup();
     }
+}
+
+void arcadia::imgui_window_popup_create_scene::_on_project_built(arcadia::event::project_built& e)
+{
+    const auto& [project_ptr] = e.data_tuple;
+    _project_cptr = project_ptr;
+}
+
+void arcadia::imgui_window_popup_create_scene::_on_project_unbuilt(arcadia::event::project_unbuilt& e)
+{
+    _project_cptr = nullptr;
+}
+
+void arcadia::imgui_window_popup_create_scene::_on_new_scene(arcadia::event::new_scene& e)
+{
+    _open = true;
 }

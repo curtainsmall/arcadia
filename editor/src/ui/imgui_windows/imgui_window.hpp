@@ -28,7 +28,6 @@ namespace arcadia
         virtual void on_event(arcadia::event_base& event)
         {}
         virtual void on_update() = 0;
-        virtual auto get_title() const->std::string = 0;
 
     protected:
         bool _open;
@@ -37,20 +36,8 @@ namespace arcadia
     template<class ImGuiWindow>
     concept imgui_window_like = requires{
         std::derived_from<ImGuiWindow, arcadia::imgui_window_interface>;
-    };
-
-    template<class ImGuiWindow>
-    struct ARCADIA_API basic_imgui_window: arcadia::imgui_window_interface
-    {
-    public:
-        using imgui_window_type = ImGuiWindow;
-        using self_type = basic_imgui_window<imgui_window_type>;
-    public:
-        static constexpr auto get_type_info() -> const std::type_info&
         {
-            return typeid(imgui_window_type);
-        }
+            ImGuiWindow::get_title()
+        }->std::same_as<std::string>;
     };
-
-
 }

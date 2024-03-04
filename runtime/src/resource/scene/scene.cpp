@@ -69,15 +69,15 @@ auto arcadia::scene::to_json() const -> nlohmann::json
         {"entity",nlohmann::json::object()}
     };
 
-    auto tag_comp_view =_registry.view<arcadia::tag_component>();
-    for(auto entity : tag_comp_view)
+    auto name_comp_view =_registry.view<arcadia::name_component>();
+    for(auto entity : name_comp_view)
     {
-        const auto& [tag_comp] = tag_comp_view.get(entity);
+        const auto& [name_comp] = name_comp_view.get(entity);
         json
             .at("entity")
             .push_back(
                 { arcadia::to_string(entity),{
-                    { "tag", tag_comp.to_json()}
+                    { "tag", name_comp.to_json()}
                     }
                 }
         );
@@ -92,8 +92,13 @@ auto arcadia::scene::to_json() const -> nlohmann::json
 
 auto arcadia::scene::create_entity(const std::string& name) -> entt::entity
 {
+    if(_name_uset.contains(name))
+    {
+        throw conflict_name{ std::format("Conflict entity name: {}",name) };
+    }
+
     auto entity = _registry.create();
-    emplace_component<arcadia::tag_component>(entity, name);
+    emplace_component<arcadia::name_component>(entity, name);
     _modified = true;
     return entity;
 }

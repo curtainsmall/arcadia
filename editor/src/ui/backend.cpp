@@ -94,15 +94,15 @@ ARCADIA_API void arcadia::imgui_backend::imgui_on_event(arcadia::event_base& eve
 
     if(
         arcadia::event_dispatcher{ event }
-        .bind_handler<arcadia::event::window_focus>(arcadia::imgui_backend::imgui_on_window_focus)
-        .bind_handler<arcadia::event::input_cursor_enter>(arcadia::imgui_backend::imgui_on_cursor_enter)
-        .bind_handler<arcadia::event::input_cursor_pos>(arcadia::imgui_backend::imgui_on_cursor_pos)
-        .bind_handler<arcadia::event::input_mouse_button>(arcadia::imgui_backend::imgui_on_mouse_button)
-        .bind_handler<arcadia::event::input_scroll>(arcadia::imgui_backend::imgui_on_scroll)
-        .bind_handler<arcadia::event::input_key>(arcadia::imgui_backend::imgui_on_key)
-        .bind_handler<arcadia::event::input_char>(arcadia::imgui_backend::imgui_on_char)
-        //.bind_handler<arcadia::event::monitor_connection>(arcadia::imgui_backend::imgui_on_monitor); // We will manage monitors ourselves for now
-        .dispatch()
+        .dispatch<arcadia::event::window_focus>(arcadia::imgui_backend::imgui_on_window_focus)
+        .dispatch<arcadia::event::input_cursor_enter>(arcadia::imgui_backend::imgui_on_cursor_enter)
+        .dispatch<arcadia::event::input_cursor_pos>(arcadia::imgui_backend::imgui_on_cursor_pos)
+        .dispatch<arcadia::event::input_mouse_button>(arcadia::imgui_backend::imgui_on_mouse_button)
+        .dispatch<arcadia::event::input_scroll>(arcadia::imgui_backend::imgui_on_scroll)
+        .dispatch<arcadia::event::input_key>(arcadia::imgui_backend::imgui_on_key)
+        .dispatch<arcadia::event::input_char>(arcadia::imgui_backend::imgui_on_char)
+        //.dispatch<arcadia::event::monitor_connection>(arcadia::imgui_backend::imgui_on_monitor); // We will manage monitors ourselves for now
+        .result()
         )
     {
         auto& io = ImGui::GetIO();

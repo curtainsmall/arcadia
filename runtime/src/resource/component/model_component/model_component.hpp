@@ -12,7 +12,7 @@
 
 namespace arcadia
 {
-    struct ARCADIA_API model_component: arcadia::component
+    struct ARCADIA_API model_component: arcadia::component_base
     {
     public:
         using self_type = model_component;

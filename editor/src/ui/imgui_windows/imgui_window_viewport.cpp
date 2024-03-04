@@ -1,22 +1,11 @@
 #include "imgui_window_viewport.hpp"
 
 #include"ui/imgui_header.hpp"
-#include"ui/ui_events.hpp"
 
 void arcadia::imgui_window_viewport::on_event(arcadia::event_base& event)
 {
     arcadia::event_dispatcher{ event }
-        .bind_handler<arcadia::event::focus_imgui_window>(
-            [&](arcadia::event::focus_imgui_window& e)
-    {
-        const auto& [title] = e.data_tuple;
-        if(title == get_title())
-        {
-            _open = true;
-        }
-    }
-        )
-        .dispatch();
+    .dispatch<arcadia::event::open_imgui_window>(ARCADIA_BIND_MEMBER_FN(_on_open_window));
 }
 
 void arcadia::imgui_window_viewport::on_update()
@@ -30,9 +19,15 @@ void arcadia::imgui_window_viewport::on_update()
         ImGuiWindowFlags_NoCollapse;
     if(ImGui::Begin(get_title().c_str(), &_open, window_flags))
     {
-        if(ImGui::Button("test"))
-        {
-        }
     }
     ImGui::End();
+}
+
+void arcadia::imgui_window_viewport::_on_open_window(arcadia::event::open_imgui_window& e)
+{
+    const auto& [title] = e.data_tuple;
+    if(title == get_title())
+    {
+        _open = true;
+    }
 }

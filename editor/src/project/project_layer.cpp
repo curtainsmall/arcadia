@@ -30,15 +30,14 @@ arcadia::project_layer::project_layer():
 void arcadia::project_layer::on_event(arcadia::event_base& event)
 {
     arcadia::event_dispatcher{ event }
-        .bind_handler<arcadia::event::create_project>(ARCADIA_BIND_MEMBER_FN(_on_create_project))
-        .bind_handler<arcadia::event::open_project>(ARCADIA_BIND_MEMBER_FN(_on_open_project))
-        .bind_handler<arcadia::event::save_project>(ARCADIA_BIND_MEMBER_FN(_on_save_project))
-        .bind_handler<arcadia::event::save_project_as>(ARCADIA_BIND_MEMBER_FN(_on_save_project_as))
-        .bind_handler<arcadia::event::close_project>(ARCADIA_BIND_MEMBER_FN(_on_close_project))
-        .bind_handler<arcadia::event::select_scene>(ARCADIA_BIND_MEMBER_FN(_on_select_scene))
-        .bind_handler<arcadia::event::delete_scene>(ARCADIA_BIND_MEMBER_FN(_on_delete_scene))
-        .bind_handler<arcadia::event::create_scene>(ARCADIA_BIND_MEMBER_FN(_on_create_scene))
-        .dispatch();
+        .dispatch<arcadia::event::create_project>(ARCADIA_BIND_MEMBER_FN(_on_create_project))
+        .dispatch<arcadia::event::open_project>(ARCADIA_BIND_MEMBER_FN(_on_open_project))
+        .dispatch<arcadia::event::save_project>(ARCADIA_BIND_MEMBER_FN(_on_save_project))
+        .dispatch<arcadia::event::save_project_as>(ARCADIA_BIND_MEMBER_FN(_on_save_project_as))
+        .dispatch<arcadia::event::close_project>(ARCADIA_BIND_MEMBER_FN(_on_close_project))
+        .dispatch<arcadia::event::select_scene>(ARCADIA_BIND_MEMBER_FN(_on_select_scene))
+        .dispatch<arcadia::event::delete_scene>(ARCADIA_BIND_MEMBER_FN(_on_delete_scene))
+        .dispatch<arcadia::event::create_scene>(ARCADIA_BIND_MEMBER_FN(_on_create_scene));
 }
 
 void arcadia::project_layer::on_update(delta_time_type delta_time)

@@ -1,8 +1,10 @@
 #pragma once
 
+#include<any>
 #include<filesystem>
+#include<map>
 #include<string>
-#include<unordered_map>
+#include<unordered_set>
 
 #include"core/base.hpp"
 #include"core/event/event.hpp"
@@ -19,6 +21,7 @@ namespace arcadia
     public:
         ARCADIA_EXCEPTION(invalid_entity);
         ARCADIA_EXCEPTION(no_such_component);
+        ARCADIA_EXCEPTION(conflict_name);
 
         using self_type = scene;
     public:
@@ -51,7 +54,7 @@ namespace arcadia
         scene(self_type&&) noexcept = default;
         auto operator=(self_type&&) noexcept -> self_type & = default;
 
-        auto create_entity(const std::string& name ={}) -> entt::entity;
+        auto create_entity(const std::string& name) -> entt::entity;
         auto destroy_entity(const entt::entity entity) -> entt::registry::version_type;
         auto is_valid(const entt::entity entity) const -> bool;
 
@@ -127,6 +130,7 @@ namespace arcadia
         bool _modified{ true };
         std::string _name;
         entt::registry _registry{};
+        std::unordered_set<std::string> _name_uset{};
     };
 
     struct ARCADIA_API json_scene_add_component_to_entity_helper: arcadia::noncopyable

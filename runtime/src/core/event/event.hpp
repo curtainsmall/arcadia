@@ -106,37 +106,30 @@ namespace arcadia
         {}
         ~event_dispatcher() = default;
 
-        /// @brief Add a handler to this dispatcher only if the event the handler accepts matches the event type that this dispatcher owns
+        /// @brief Dispatch stored event to given handler. If their types match, the handler will be excuted at once
+        /// @tparam Event Event type to match
+        /// @param handler Event handler
+        /// @return Self
         template<arcadia::event_like Event>
-        auto bind_handler(const arcadia::event_handler<Event>& handler) -> self_type&
+        auto dispatch(const arcadia::event_handler<Event>& handler) -> self_type&
         {
             if(typeid(*_event_ptr) == typeid(Event))
             {
-                _bound_handler = [&]() -> void
-                {
-                    handler(static_cast<Event&>(*_event_ptr));
-                };
+                handler(static_cast<Event&>(*_event_ptr));
+                _result = true;
             }
             return *this;
         }
 
-        /// @brief Dispatch owned event to bound handler
-        /// @return 
-        /// - @b true, if successfully dispatched
-        /// - @b false, if not handler bound (maybe because no handler bound with @ref bind_handler matches the owned event type)
-        inline auto dispatch() const -> bool
+        /// @brief Whether any dispatch succedded
+        inline auto result() const -> bool
         {
-            if(_bound_handler)
-            {
-                _bound_handler();
-                return true;
-            }
-            return false;
+            return _result;
         }
 
     private:
         arcadia::event_base* _event_ptr;
-        std::function<void()> _bound_handler{};
+        bool _result{ false };
     };
 
     struct ARCADIA_API event_queue

@@ -10,7 +10,7 @@ namespace arcadia
     {
         //==== Events for imgui window ====//
         ARCADIA_EVENT(
-            focus_imgui_window,
+            open_imgui_window,
             std::string // Title of the imgui window to open
         );
 
@@ -63,6 +63,10 @@ namespace arcadia
 
         ARCADIA_EVENT(
             new_entity
+        );
+        ARCADIA_EVENT(
+            create_entity,
+            std::string // name
         );
 
     }

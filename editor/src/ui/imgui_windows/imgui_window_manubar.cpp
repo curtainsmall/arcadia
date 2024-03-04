@@ -6,9 +6,8 @@
 void arcadia::imgui_window_menubar::on_event(arcadia::event_base& event)
 {
     arcadia::event_dispatcher{ event }
-        .bind_handler<arcadia::event::project_built>(ARCADIA_BIND_MEMBER_FN(_on_project_built))
-        .bind_handler<arcadia::event::project_unbuilt>(ARCADIA_BIND_MEMBER_FN(_on_project_unbuilt))
-        .dispatch();
+        .dispatch<arcadia::event::project_built>(ARCADIA_BIND_MEMBER_FN(_on_project_built))
+        .dispatch<arcadia::event::project_unbuilt>(ARCADIA_BIND_MEMBER_FN(_on_project_unbuilt));
 }
 
 void arcadia::imgui_window_menubar::on_update()
@@ -37,15 +36,15 @@ void arcadia::imgui_window_menubar::_file_menu()
         {
             event_queue.signal<arcadia::event::open_project>();
         }
-        if(ImGui::MenuItem("Save Project", nullptr, nullptr, _project_ptr))
+        if(ImGui::MenuItem("Save Project", nullptr, nullptr, _project_cptr))
         {
             event_queue.signal<arcadia::event::save_project>();
         }
-        if(ImGui::MenuItem("Save Project As...", nullptr, nullptr, _project_ptr))
+        if(ImGui::MenuItem("Save Project As...", nullptr, nullptr, _project_cptr))
         {
             event_queue.signal<arcadia::event::save_project_as>();
         }
-        if(ImGui::MenuItem("Close Project", nullptr, nullptr, _project_ptr))
+        if(ImGui::MenuItem("Close Project", nullptr, nullptr, _project_cptr))
         {
             event_queue.signal<arcadia::event::close_project>();
         }
@@ -59,22 +58,22 @@ void arcadia::imgui_window_menubar::_edit_menu()
     auto& event_queue = arcadia::event_queue::instance();
     if(ImGui::BeginMenu("Edit"))
     {
-        if(ImGui::MenuItem("New Scene ...", nullptr, nullptr, _project_ptr))
+        if(ImGui::MenuItem("New Scene ...", nullptr, nullptr, _project_cptr))
         {
             event_queue.signal<arcadia::event::new_scene>();
         }
 
         bool has_scene{ false };
-        if(_project_ptr)
+        if(_project_cptr)
         {
-            has_scene = _project_ptr->scene_umap.size();
+            has_scene = _project_cptr->scene_umap.size();
         }
 
         if(ImGui::BeginMenu("Select Scene", has_scene))
         {
-            ARCADIA_ASSERT(_project_ptr);
+            ARCADIA_ASSERT(_project_cptr);
 
-            for(const auto& [key, scene] : _project_ptr->scene_umap)
+            for(const auto& [key, scene] : _project_cptr->scene_umap)
             {
                 if(ImGui::MenuItem(key.c_str()))
                 {
@@ -83,7 +82,7 @@ void arcadia::imgui_window_menubar::_edit_menu()
             }
             ImGui::EndMenu();
         }
-        if(ImGui::MenuItem("Delete Scene", nullptr, nullptr, _project_ptr))
+        if(ImGui::MenuItem("Delete Scene", nullptr, nullptr, _project_cptr))
         {
             event_queue.signal<arcadia::event::delete_scene>();
         }
@@ -100,7 +99,7 @@ void arcadia::imgui_window_menubar::_view_menu()
         {
             if(ImGui::MenuItem(title.c_str()))
             {
-                event_queue.signal<arcadia::event::focus_imgui_window>(title);
+                event_queue.signal<arcadia::event::open_imgui_window>(title);
                 ImGui::SetWindowFocus(title.c_str());
             }
         }
@@ -111,10 +110,10 @@ void arcadia::imgui_window_menubar::_view_menu()
 void arcadia::imgui_window_menubar::_on_project_built(arcadia::event::project_built& e)
 {
     const auto& [project_ptr] = e.data_tuple;
-    _project_ptr = project_ptr;
+    _project_cptr = project_ptr;
 }
 
 void arcadia::imgui_window_menubar::_on_project_unbuilt(arcadia::event::project_unbuilt& e)
 {
-    _project_ptr = nullptr;
+    _project_cptr = nullptr;
 }

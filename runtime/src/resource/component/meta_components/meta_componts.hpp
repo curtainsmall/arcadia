@@ -9,7 +9,7 @@
 
 namespace arcadia
 {
-    struct ARCADIA_API uuid_compont: arcadia::component
+    struct ARCADIA_API uuid_compont: arcadia::component_base
     {
     public:
         inline uuid_compont():
@@ -20,23 +20,24 @@ namespace arcadia
         arcadia::uuid _uuid;
     };
 
-    struct ARCADIA_API tag_component: arcadia::component
+
+    struct ARCADIA_API name_component: arcadia::component_base
     {
     public:
-        using self_type = tag_component;
+        using self_type = name_component;
     public:
-        tag_component() = default;
-        inline tag_component(const std::string& msg):
-            _tag(msg)
+        name_component() = default;
+        inline name_component(const std::string& name):
+            _name(name)
         {}
-        tag_component(const nlohmann::json& json);
-        ~tag_component() = default;
+        name_component(const nlohmann::json& json);
+        ~name_component() = default;
         auto to_json() const->nlohmann::json;
 
         [[nodiscard]]
         auto get() const -> const std::string&
         {
-            return _tag;
+            return _name;
         }
 
         operator const std::string& () const
@@ -45,6 +46,6 @@ namespace arcadia
         }
 
     private:
-        std::string _tag{};
+        std::string _name{};
     };
 }

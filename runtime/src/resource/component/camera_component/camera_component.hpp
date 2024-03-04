@@ -9,7 +9,7 @@
 
 namespace arcadia
 {
-    struct ARCADIA_API camera_component: arcadia::component
+    struct ARCADIA_API camera_component: arcadia::component_base
     {
     public:
         using self_type = arcadia::camera_component;

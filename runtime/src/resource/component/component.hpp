@@ -8,14 +8,6 @@
 
 namespace arcadia
 {
-    struct ARCADIA_API component_state_base
-    {};
-
-    template<class State>
-    concept component_state_like = requires{
-        std::derived_from<State, arcadia::component_state_base>;
-    };
-
     struct ARCADIA_API component_state_ok
     {};
     struct ARCADIA_API component_state_error
@@ -33,29 +25,33 @@ namespace arcadia
         arcadia::component_state_error
     >;
 
-    struct ARCADIA_API component: arcadia::noncopyable
+    struct ARCADIA_API component_base: arcadia::noncopyable
     {
     public:
-        inline component(const arcadia::component_state state ={}):
+        inline component_base(
+            const arcadia::component_state state ={}
+        ):
             _state(state)
         {}
-        ~component() = default;
+        ~component_base() = default;
 
         [[nodiscard]]
-        inline auto state() const -> const arcadia::component_state&
+        inline auto get_state() const -> const arcadia::component_state&
         {
             return _state;
         }
 
-        inline void state(const arcadia::component_state& state)
+        inline void set_state(const arcadia::component_state& state)
         {
             _state = state;
         }
 
-        template<arcadia::component_state_like ComponentState, class ...Args>
-        void state(Args&& ...args)
+        template<class ComponentState, class ...Args>
+        void set_state(Args&& ...args)
         {
-            state(ComponentState(std::forward<Args>(args)...));
+            ARCADIA_ASSERT(std::holds_alternative<ComponentState>(_state));
+
+            set_state(ComponentState(std::forward<Args>(args)...));
         }
 
     private:
@@ -65,7 +61,7 @@ namespace arcadia
     template<class Component>
     concept component_like = requires(const Component comp, const nlohmann::json json)
     {
-        std::derived_from<Component, arcadia::component>;
+        std::derived_from<Component, arcadia::component_base>;
         {
             comp.to_json()
         }->std::same_as<nlohmann::json>;
@@ -73,4 +69,5 @@ namespace arcadia
             Component(json)
         };
     };
+
 }

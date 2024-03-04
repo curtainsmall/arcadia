@@ -6,7 +6,7 @@
 
 namespace arcadia
 {
-    struct ARCADIA_API skybox_component: arcadia::component
+    struct ARCADIA_API skybox_component: arcadia::component_base
     {
     public:
         using self_type = skybox_component;

@@ -3,17 +3,11 @@
 #include"core/file/pfd.hpp"
 
 #include"ui/imgui_header.hpp"
-#include"ui/ui_events.hpp"
 
 void arcadia::imgui_window_popup_create_project::on_event(arcadia::event_base& event)
 {
-    arcadia::dispatch_event<arcadia::event::new_project>(
-        event,
-        [&](arcadia::event::new_project& e)
-    {
-        _open = true;
-    }
-    );
+    arcadia::event_dispatcher{ event }
+    .dispatch<arcadia::event::new_project>(ARCADIA_BIND_MEMBER_FN(_on_new_project));
 }
 
 void arcadia::imgui_window_popup_create_project::on_update()
@@ -36,14 +30,12 @@ void arcadia::imgui_window_popup_create_project::on_update()
         auto input_text_flags =
             ImGuiInputTextFlags_AutoSelectAll;
         ImGui::Text("Project name");
-        ImGui::SameLine();
         if(ImGui::InputText("##project_name", &_name, input_text_flags))
         {
-            _display_empty_name_waring = _name.empty();
-        }
-        if(_display_empty_name_waring)
-        {
-            ImGui::TextColored({ 204, 80, 69, 255 }, "Project name cannot be empty");
+            if(_name.empty())
+            {
+                ImGui::TextColored({ 204, 80, 69, 255 }, "Project name cannot be empty");
+            }
         }
         if(ImGui::Button("Project location"))
         {
@@ -78,4 +70,9 @@ void arcadia::imgui_window_popup_create_project::on_update()
 
         ImGui::EndPopup();
     }
+}
+
+void arcadia::imgui_window_popup_create_project::_on_new_project(arcadia::event::new_project& e)
+{
+    _open = true;
 }

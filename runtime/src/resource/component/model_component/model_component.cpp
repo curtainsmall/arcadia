@@ -44,7 +44,7 @@ void arcadia::model_component::_import()
         || !ai_scene->mRootNode
         )
     {
-        state<arcadia::component_state_error>(std::format("Failed to load model form:\n {}", _filepath.generic_string()));
+        set_state<arcadia::component_state_error>(std::format("Failed to load model form:\n {}", _filepath.generic_string()));
     }
 
     std::size_t next_mesh_index{ 0 };

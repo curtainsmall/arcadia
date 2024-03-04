@@ -30,7 +30,7 @@ namespace arcadia
             _imgui_window_uptrs.emplace_back(std::make_unique<ImGuiWindow>(std::forward<Args>(args)...));
         }
     public:
-        bool show_demo_window{ false };
+        bool show_demo_window{ true };
         bool show_debug_info{ false };
     private:
         arcadia::window_layer* _window_ptr;
