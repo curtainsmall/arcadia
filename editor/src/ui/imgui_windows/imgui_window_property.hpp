@@ -4,30 +4,25 @@
 
 #include"core/base.hpp"
 #include"core/event/event.hpp"
-
 #include"function/ui/imgui_window.hpp"
+
 #include"ui/ui_events.hpp"
 
 namespace arcadia
 {
-    struct ARCADIA_API imgui_window_popup_create_entity: arcadia::imgui_window_interface
+    struct ARCADIA_API imgui_window_property: arcadia::imgui_window_interface
     {
     public:
-        using self_type = imgui_window_popup_create_entity;
+        using self_type = imgui_window_property;
     public:
-        ARCADIA_IMGUI_WINDOW_ID_STR("###popup_create_entity");
+        ARCADIA_IMGUI_WINDOW_ID_STR("###property");
 
         using arcadia::imgui_window_interface::imgui_window_interface;
-        virtual ~imgui_window_popup_create_entity() = default;
-
+        virtual ~imgui_window_property() = default;
 
         virtual void on_event(arcadia::event_base& event) override;
         virtual void on_update() override;
-
     private:
-        void _on_new_entity(arcadia::event::new_entity& e);
-
-    private:
-        std::string _name{};
+        void _on_open_imgui_window(arcadia::event::open_imgui_window& e);
     };
 }

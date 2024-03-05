@@ -1,8 +1,7 @@
 #include "imgui_window_popup_create_project.hpp"
 
 #include"core/file/pfd.hpp"
-
-#include"ui/imgui_header.hpp"
+#include"function/ui/imgui_header.hpp"
 
 void arcadia::imgui_window_popup_create_project::on_event(arcadia::event_base& event)
 {
@@ -17,15 +16,17 @@ void arcadia::imgui_window_popup_create_project::on_update()
         return;
     }
 
+    auto imgui_window = _title + get_id_str();
+
     auto popup_flags =
         ImGuiPopupFlags_NoOpenOverExistingPopup;
-    ImGui::OpenPopup(get_title().c_str(), popup_flags);
+    ImGui::OpenPopup(imgui_window.c_str(), popup_flags);
 
     ImGui::SetNextWindowSize({ 430,120 }, ImGuiCond_Once);
 
     auto window_flags =
         ImGuiWindowFlags_NoCollapse;
-    if(ImGui::BeginPopupModal(get_title().c_str(), &_open, window_flags))
+    if(ImGui::BeginPopupModal(imgui_window.c_str(), &_open, window_flags))
     {
         auto input_text_flags =
             ImGuiInputTextFlags_AutoSelectAll;

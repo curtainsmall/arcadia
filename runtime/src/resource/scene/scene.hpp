@@ -33,6 +33,9 @@ namespace arcadia
         ~scene() = default;
         auto to_json() const->nlohmann::json;
 
+        scene(self_type&&) noexcept = default;
+        auto operator=(self_type&&) noexcept -> self_type & = default;
+
         [[nodiscard]]
         inline auto get_name() const -> const std::string&
         {
@@ -51,15 +54,20 @@ namespace arcadia
             return _modified;
         }
 
-        scene(self_type&&) noexcept = default;
-        auto operator=(self_type&&) noexcept -> self_type & = default;
+        [[nodiscard]]
+        inline auto get_registry() const -> const entt::registry&
+        {
+            return _registry;
+        }
 
-        auto create_entity(const std::string& name) -> entt::entity;
-        auto destroy_entity(const entt::entity entity) -> entt::registry::version_type;
-        auto is_valid(const entt::entity entity) const -> bool;
+        [[nodiscard]]
+        auto create(const std::string& name) -> entt::entity;
+        auto destroy(const entt::entity entity) -> entt::registry::version_type;
+        [[nodiscard]]
+        auto valid(const entt::entity entity) const -> bool;
 
         template<arcadia::component_like Component, class ...Args>
-        auto emplace_component(const entt::entity entity, Args&& ...args) -> Component&
+        auto emplace(const entt::entity entity, Args&& ...args) -> Component&
         {
             auto& comp = _registry.emplace<Component>(entity, std::forward<Args>(args)...);
             _modified = true;
@@ -67,7 +75,7 @@ namespace arcadia
         }
 
         template<arcadia::component_like Component, class ...Args>
-        auto replace_component(const entt::entity entity, Args&& ...args) -> Component&
+        auto replace(const entt::entity entity, Args&& ...args) -> Component&
         {
             auto& comp = _registry.replace<Component>(entity, std::forward<Args>(args)...);
             _modified = true;
@@ -75,52 +83,77 @@ namespace arcadia
         }
 
         template<arcadia::component_like Component, class ...Args>
-        auto emplace_or_replace_component(const entt::entity entity, Args&& ...args) -> Component&
+        auto emplace_or_replace(const entt::entity entity, Args&& ...args) -> Component&
         {
             auto& comp = _registry.emplace_or_replace<Component>(entity, std::forward<Args>(args)...);
             _modified = true;
             return comp;
         }
 
-        template<arcadia::component_like Component>
-        auto get_component(const entt::entity entity) const -> const Component&
+        template<arcadia::component_like ...Components>
+        [[nodiscard]]
+        auto get(const entt::entity entity) const -> decltype(auto)
         {
-            if(!has_component<Component>(entity))
+            if(!all_of<Components...>(entity))
             {
-                throw no_such_component{ std::format("No such component with entity: {0} with type info: {1}", static_cast<entt::id_type>(entity),typeid(Component)) };
+                throw no_such_component{ std::format("No such component with entity: {0} with type info: {1}", static_cast<entt::id_type>(entity),typeid(Components)) };
             }
-            return _registry.get<Component>(entity);
+            return _registry.get<Components...>(entity);
         }
 
-        template<arcadia::component_like Component>
-        auto get_component(const entt::entity entity) -> Component&
+        template<arcadia::component_like ...Components>
+        [[nodiscard]]
+        auto get(const entt::entity entity) -> decltype(auto)
         {
-            if(!has_component<Component>(entity))
+            if(!all_of<Components...>(entity))
             {
-                throw no_such_component{ std::format("No such component with entity: {0} with type info: {1}", static_cast<entt::id_type>(entity),typeid(Component)) };
+                throw no_such_component{ std::format("No such component with entity: {0} with type info: {1}", static_cast<entt::id_type>(entity),typeid(Components)) };
             }
-            auto& comp = _registry.get<Component>(entity);
+            auto& comp = _registry.get<Components...>(entity);
             _modified = true;
             return comp;
         }
 
         template<arcadia::component_like ...Components>
-        auto has_component(const entt::entity entity) const -> bool
+        [[nodiscard]]
+        auto all_of(const entt::entity entity) const -> bool
         {
             return _registry.all_of<Components...>(entity);
         }
 
+        template<arcadia::component_like ...Components>
+        [[nodiscard]]
+        auto any_of(const entt::entity entity) const -> bool
+        {
+            return _registry.any_of<Components...>(entity);
+        }
+
         template<arcadia::component_like Component>
-        void remove_component(const entt::entity entity)
+        void remove(const entt::entity entity)
         {
             _registry.remove<Component>(entity);
             _modified = true;
         }
 
+        template<arcadia::component_like ...Components, arcadia::component_like ...ExcludeComponents>
         [[nodiscard]]
-        inline auto get_registry() const -> const entt::registry&
+        auto view(entt::exclude_t<ExcludeComponents...> exclude = entt::exclude_t{}) -> decltype(auto)
         {
-            return _registry;
+            return _registry.view<Components...>(exclude);
+        }
+
+        template<arcadia::component_like ...Components, arcadia::component_like ...ExcludeComponents>
+        [[nodiscard]]
+        auto view(entt::exclude_t<ExcludeComponents...> exclude= entt::exclude_t{}) const -> decltype(auto)
+        {
+            return _registry.view<Components...>(exclude);
+        }
+
+        template<arcadia::component_like ...OwnedComponents, arcadia::component_like ...GetComponents, arcadia::component_like ...ExcludeComponents>
+        [[nodiscard]]
+        auto group(entt::get_t<GetComponents...> get = entt::get_t{}, entt::exclude_t<ExcludeComponents...>exclude= entt::exclude_t{}) -> decltype(auto)
+        {
+            return _registry.group<OwnedComponents...>(get, exclude);
         }
 
     private:
@@ -144,10 +177,10 @@ namespace arcadia
         {}
         ~json_scene_add_component_to_entity_helper() = default;
 
-        template<arcadia::component_like Component>
+        template<arcadia::component_like Components>
         auto add(const std::string& name) -> self_type&
         {
-            auto view = _scene_ptr->get_registry().view<Component>();
+            auto view = _scene_ptr->get_registry().view<Components>();
             for(auto entity : view)
             {
                 const auto& [comp] = view.get(entity);

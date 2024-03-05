@@ -17,7 +17,7 @@ auto main(
 {
     // Add app_layer
     auto& layer_stack = arcadia::layer_stack::instance();
-    layer_stack.push_layer_at<arcadia::app_layer>(layer_stack.size() - 1, arcadia::create_application_uptr());
+    layer_stack.push_layer<arcadia::app_layer>(layer_stack.end(), arcadia::create_application_uptr());
 
     // Main loop
     auto& app_context = arcadia::app_context::instance();
@@ -30,7 +30,7 @@ auto main(
         {
             auto& event = event_queue.read();
 
-            for(auto& layer_uptr : std::ranges::reverse_view{ arcadia::layer_stack::instance() })
+            for(auto& layer_uptr : arcadia::layer_stack::instance())
             {
                 layer_uptr->on_event(event);
                 if(event.handled)
@@ -43,7 +43,7 @@ auto main(
         }
 
         // Updates
-        for(auto& layer_uptr : arcadia::layer_stack::instance())
+        for(auto& layer_uptr : std::ranges::reverse_view{ arcadia::layer_stack::instance() })
         {
             layer_uptr->on_update(app_context.timer.since_last());
         }

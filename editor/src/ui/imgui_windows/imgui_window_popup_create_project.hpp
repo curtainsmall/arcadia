@@ -5,7 +5,7 @@
 #include"core/base.hpp"
 #include"core/event/event.hpp"
 
-#include"ui/imgui_windows/imgui_window.hpp"
+#include"function/ui/imgui_window.hpp"
 #include"ui/ui_events.hpp"
 
 namespace arcadia
@@ -15,11 +15,7 @@ namespace arcadia
     public:
         using self_type = imgui_window_popup_create_project;
     public:
-        [[nodiscard]]
-        static inline auto get_title() -> std::string
-        {
-            return "Create Project";
-        }
+        ARCADIA_IMGUI_WINDOW_ID_STR("###popup_create_project");
 
         using arcadia::imgui_window_interface::imgui_window_interface;
         virtual ~imgui_window_popup_create_project() = default;

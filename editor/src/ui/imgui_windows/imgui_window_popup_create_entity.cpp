@@ -1,6 +1,6 @@
 #include "imgui_window_popup_create_entity.hpp"
 
-#include"ui/imgui_header.hpp"
+#include"function/ui/imgui_header.hpp"
 
 void arcadia::imgui_window_popup_create_entity::on_event(arcadia::event_base& event)
 {
@@ -15,13 +15,15 @@ void arcadia::imgui_window_popup_create_entity::on_update()
         return;
     }
 
+    auto imgui_title = _title + get_id_str();
+
     auto popup_flags =
         ImGuiPopupFlags_NoOpenOverExistingPopup;
-    ImGui::OpenPopup(get_title().c_str(), popup_flags);
+    ImGui::OpenPopup(imgui_title.c_str(), popup_flags);
 
     auto window_flags =
         ImGuiWindowFlags_NoCollapse;
-    if(ImGui::BeginPopupModal(get_title().c_str(), &_open, window_flags))
+    if(ImGui::BeginPopupModal(imgui_title.c_str(), &_open, window_flags))
     {
         auto input_text_flags =
             ImGuiInputTextFlags_AutoSelectAll;

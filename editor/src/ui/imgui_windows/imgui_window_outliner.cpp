@@ -1,11 +1,15 @@
 #include "imgui_window_outliner.hpp"
 
-#include"ui/imgui_header.hpp"
+#include"function/ui/imgui_header.hpp"
+#include"resource/component/meta_components/meta_componts.hpp"
 
 void arcadia::imgui_window_outliner::on_event(arcadia::event_base& event)
 {
     arcadia::event_dispatcher{ event }
-    .dispatch<arcadia::event::open_imgui_window>(ARCADIA_BIND_MEMBER_FN(_on_open_window));
+        .dispatch<arcadia::event::open_imgui_window>(ARCADIA_BIND_MEMBER_FN(_on_open_window))
+        .dispatch<arcadia::event::scene_activated>(ARCADIA_BIND_MEMBER_FN(_on_scene_activated))
+        .dispatch<arcadia::event::scene_deactivated>(ARCADIA_BIND_MEMBER_FN(_on_scene_deactivated))
+        .result();
 }
 
 void arcadia::imgui_window_outliner::on_update()
@@ -17,13 +21,44 @@ void arcadia::imgui_window_outliner::on_update()
 
     auto& event_queue = arcadia::event_queue::instance();
 
+    auto imgui_title = _title + get_id_str();
+
     auto window_flags =
         ImGuiWindowFlags_NoCollapse;
-    if(ImGui::Begin(get_title().c_str(), &_open, window_flags))
+    if(ImGui::Begin(imgui_title.c_str(), &_open, window_flags))
     {
-        if(ImGui::Button("New Entity"))
+        if(_scene_cptr)
         {
-            event_queue.signal<arcadia::event::new_entity>();
+            if(ImGui::Button("New Entity"))
+            {
+                event_queue.signal<arcadia::event::new_entity>();
+            }
+
+            const auto& view = _scene_cptr->view<arcadia::name_component>();
+            for(const auto entity : view)
+            {
+                const auto& [name_comp] = view.get(entity);
+                if(ImGui::Selectable(name_comp.get().c_str()))
+                {
+                    // TODO: Select entity here
+                }
+
+                if(ImGui::BeginPopupContextItem())
+                {
+                    if(ImGui::Selectable("Delete entity"))
+                    {
+                    }
+                    if(ImGui::Selectable("Rename entity"))
+                    {
+                    }
+
+                    ImGui::EndPopup();
+                }
+            }
+        }
+        else
+        {
+            ImGui::Text("No scene to outline here");
         }
     }
     ImGui::End();
@@ -32,20 +67,20 @@ void arcadia::imgui_window_outliner::on_update()
 
 void arcadia::imgui_window_outliner::_on_open_window(arcadia::event::open_imgui_window& e)
 {
-    const auto& [title] = e.data_tuple;
-    if(title == get_title())
+    const auto& [id_str] = e.data_tuple;
+    if(id_str == get_id_str())
     {
         _open = true;
     }
 }
 
-void arcadia::imgui_window_outliner::_on_scene_built(arcadia::event::scene_built& e)
+void arcadia::imgui_window_outliner::_on_scene_activated(arcadia::event::scene_activated& e)
 {
     const auto& [scene_ptr] = e.data_tuple;
     _scene_cptr = scene_ptr;
 }
 
-void arcadia::imgui_window_outliner::_on_scene_built(arcadia::event::scene_unbuilt& e)
+void arcadia::imgui_window_outliner::_on_scene_deactivated(arcadia::event::scene_deactivated& e)
 {
     _scene_cptr = nullptr;
 }

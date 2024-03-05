@@ -1,4 +1,5 @@
-#include "backend.hpp"
+#include"pch.hpp"
+#include "imgui_backend.hpp"
 
 #include"imgui/backends/imgui_impl_glfw.h"
 #include"imgui/backends/imgui_impl_opengl3.h"
@@ -39,7 +40,7 @@ ARCADIA_API void arcadia::imgui_backend::initialize(const arcadia::window_layer&
     );
 }
 
-ARCADIA_API void arcadia::imgui_backend::new_frame(const arcadia::window_layer& window)
+ARCADIA_API void arcadia::imgui_backend::begin_frame(const arcadia::window_layer& window)
 {
     const auto& app_config = arcadia::app_config::instance();
 

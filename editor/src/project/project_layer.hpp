@@ -41,6 +41,9 @@ namespace arcadia
         void _on_create_scene(arcadia::event::create_scene& e);
         void _on_select_scene(arcadia::event::select_scene& e);
         void _on_delete_scene(arcadia::event::delete_scene& e);
+
+        void _on_create_entity(arcadia::event::create_entity& e);
+        void _on_delete_entity(arcadia::event::delete_entity& e);
     private:
         std::unique_ptr<arcadia::project> _project_uptr{};
         std::filesystem::path _project_filepath{};

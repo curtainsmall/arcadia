@@ -15,20 +15,15 @@ auto arcadia::layer_stack::pop_layer() -> self_type&
 {
     if(size())
     {
-        _layer_uptrs.erase(_layer_uptrs.end() - 1);
+        _layer_uptrs.erase(_layer_uptrs.begin());
     }
     return *this;
 }
 
-auto arcadia::layer_stack::pop_layer_at(std::size_t idx) -> self_type&
+auto arcadia::layer_stack::pop_layer(layer_uptr_vector_type::const_iterator iter) -> self_type&
 {
-    if(idx >= _layer_uptrs.size())
-    {
-        throw out_of_range{ std::format("Index out of range: {}",idx) };
-    }
-
     _layer_uptrs.erase(
-        _layer_uptrs.begin() + idx
+        iter
     );
 
     return *this;

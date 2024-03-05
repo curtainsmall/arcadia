@@ -1,18 +1,11 @@
+#include"pch.hpp"
 #include "imgui_layer.hpp"
 
 #include"function/input/input_events.hpp"
+#include"function/ui/imgui_backend.hpp"
 #include"function/window/monitor.hpp"
 
-#include"ui/backend.hpp"
-#include"ui/imgui_windows/imgui_window_manubar.hpp"
-#include"ui/imgui_windows/imgui_window_outliner.hpp"
-#include"ui/imgui_windows/imgui_window_popup_create_entity.hpp"
-#include"ui/imgui_windows/imgui_window_popup_create_project.hpp"
-#include"ui/imgui_windows/imgui_window_popup_create_scene.hpp"
-#include"ui/imgui_windows/imgui_window_viewport.hpp"
-
-
-arcadia::imgui_layer::imgui_layer(arcadia::window_layer& window):
+arcadia::imgui_layer::imgui_layer(arcadia::window_layer& window, const std::function<void(arcadia::imgui_layer&)>& imgui_window_installer):
     arcadia::layer_interface("imgui"),
     _window_ptr(&window)
 {
@@ -26,16 +19,7 @@ arcadia::imgui_layer::imgui_layer(arcadia::window_layer& window):
         | ImGuiConfigFlags_ViewportsEnable;
     arcadia::imgui_backend::initialize(*_window_ptr);
 
-    std::initializer_list<std::string> imgui_window_titles{
-        arcadia::imgui_window_outliner::get_title(),
-        arcadia::imgui_window_viewport::get_title()
-    };
-    _emplace_imgui_window<arcadia::imgui_window_menubar>(true, imgui_window_titles);
-    _emplace_imgui_window<arcadia::imgui_window_popup_create_project>(false);
-    _emplace_imgui_window<arcadia::imgui_window_popup_create_scene>(false);
-    _emplace_imgui_window<arcadia::imgui_window_popup_create_entity>(false);
-    _emplace_imgui_window<arcadia::imgui_window_outliner>(false);
-    _emplace_imgui_window<arcadia::imgui_window_viewport>(false);
+    imgui_window_installer(*this);
 }
 
 arcadia::imgui_layer::~imgui_layer()
@@ -60,7 +44,7 @@ void arcadia::imgui_layer::on_update(delta_time_type delta_time)
 {
     ImGui::SetCurrentContext(_imgui_context_ptr);
 
-    arcadia::imgui_backend::new_frame(*_window_ptr);
+    arcadia::imgui_backend::begin_frame(*_window_ptr);
     ImGui::NewFrame();
 
     ImGui::DockSpaceOverViewport();

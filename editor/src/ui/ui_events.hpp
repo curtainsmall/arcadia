@@ -3,6 +3,7 @@
 #include<string>
 
 #include"core/event/event.hpp"
+#include"resource/scene/entt_header.hpp"
 
 namespace arcadia
 {
@@ -53,7 +54,7 @@ namespace arcadia
         );
         ARCADIA_EVENT(
             select_scene,
-            std::string
+            std::string // name
         );
         ARCADIA_EVENT(
             delete_scene
@@ -67,6 +68,10 @@ namespace arcadia
         ARCADIA_EVENT(
             create_entity,
             std::string // name
+        );
+        ARCADIA_EVENT(
+            delete_entity,
+            entt::entity // entity
         );
 
     }

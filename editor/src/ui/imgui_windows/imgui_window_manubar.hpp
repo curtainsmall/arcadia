@@ -4,11 +4,10 @@
 
 #include"core/base.hpp"
 #include"core/event/event.hpp"
-
+#include"function/ui/imgui_window.hpp"
 
 #include"project/project.hpp"
 #include"project/project_events.hpp"
-#include"ui/imgui_windows/imgui_window.hpp"
 
 namespace arcadia
 {
@@ -18,15 +17,11 @@ namespace arcadia
     public:
         using self_type = imgui_window_menubar;
     public:
-        [[nodiscard]]
-        static constexpr auto get_title() -> std::string
-        {
-            return "Menu Bar";
-        }
+        ARCADIA_IMGUI_WINDOW_ID_STR("###menubar");
 
-        inline imgui_window_menubar(bool open, const std::initializer_list<std::string>& imgui_window_titles):
-            arcadia::imgui_window_interface(open),
-            _imgui_window_titles(imgui_window_titles)
+        inline imgui_window_menubar(bool open, const std::initializer_list<std::tuple<std::string, std::string>>& imgui_window_title_id_pairs):
+            arcadia::imgui_window_interface(open, "Menubar"),
+            _imgui_window_title_and_id_str_pairs(imgui_window_title_id_pairs)
         {}
         virtual ~imgui_window_menubar() = default;
 
@@ -43,6 +38,6 @@ namespace arcadia
         void _on_project_unbuilt(arcadia::event::project_unbuilt& e);
     private:
         const arcadia::project* _project_cptr{};
-        std::vector<std::string> _imgui_window_titles{};
+        std::vector<std::tuple<std::string, std::string>> _imgui_window_title_and_id_str_pairs{};
     };
 }

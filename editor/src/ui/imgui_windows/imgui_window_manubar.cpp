@@ -1,6 +1,7 @@
 #include "imgui_window_manubar.hpp"
 
-#include"ui/imgui_header.hpp"
+#include"function/ui/imgui_header.hpp"
+
 #include"ui/ui_events.hpp"
 
 void arcadia::imgui_window_menubar::on_event(arcadia::event_base& event)
@@ -95,12 +96,12 @@ void arcadia::imgui_window_menubar::_view_menu()
     auto& event_queue = arcadia::event_queue::instance();
     if(ImGui::BeginMenu("View"))
     {
-        for(const auto& title : _imgui_window_titles)
+        for(const auto& [title, id_str] : _imgui_window_title_and_id_str_pairs)
         {
             if(ImGui::MenuItem(title.c_str()))
             {
-                event_queue.signal<arcadia::event::open_imgui_window>(title);
-                ImGui::SetWindowFocus(title.c_str());
+                event_queue.signal<arcadia::event::open_imgui_window>(id_str);
+                ImGui::SetWindowFocus(id_str.c_str());
             }
         }
         ImGui::EndMenu();

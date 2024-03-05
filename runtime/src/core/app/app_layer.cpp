@@ -20,44 +20,72 @@ arcadia::app_layer::app_layer():
         auto& app_config = arcadia::app_config::instance();
 
         // Working directory
-        app_config.working_directory = arcadia::to_filepath(json.at("working_directory"));
+        app_config.working_directory = arcadia::to_filepath(json.value("working_directory", app_config.working_directory.generic_string()));
 
         // Graphic api
-        auto& json_graphic_api = json.at("graphic_api");
-        arcadia::version graphic_api_version{ json_graphic_api.at("version") };
-        std::string graphic_api_type_str = json_graphic_api.at("type");
-        app_config.graphic_api = arcadia::match<arcadia::graphic_api::type>(
-            graphic_api_type_str,
-            []()
+        try
         {
-            return arcadia::graphic_api::type{};
-        },
-            "opengl"s,
-            [&]()
-        {
-            return arcadia::graphic_api::opengl{ graphic_api_version };
-        },
-            "directx"s,
-            [&]()
-        {
-            return arcadia::graphic_api::directx{ graphic_api_version };
-        },
-            "vulkan"s,
-            [&]()
-        {
-            return arcadia::graphic_api::vulkan{ graphic_api_version };
+            const auto& json_graphic_api = json.at("graphic_api");
+            arcadia::version graphic_api_version{ json_graphic_api.at("version") };
+            std::string graphic_api_type_str = json_graphic_api.at("type");
+            app_config.graphic_api = arcadia::match<arcadia::graphic_api::type>(
+                graphic_api_type_str,
+                []()
+            {
+                return arcadia::graphic_api::type{};
+            },
+                "opengl"s,
+                [&]()
+            {
+                return arcadia::graphic_api::opengl{ graphic_api_version };
+            },
+                "directx"s,
+                [&]()
+            {
+                return arcadia::graphic_api::directx{ graphic_api_version };
+            },
+                "vulkan"s,
+                [&]()
+            {
+                return arcadia::graphic_api::vulkan{ graphic_api_version };
+            }
+            );
         }
-        );
+        catch(nlohmann::json::out_of_range)
+        {
+            // Use default value
+        }
 
         // Window
-        auto& json_window = json.at("window");
-        app_config.window_pos = arcadia::ivec2::from_json(json_window.at("pos"));
-        app_config.window_size = arcadia::ivec2::from_json(json_window.at("size"));
-        app_config.window_max_size = arcadia::ivec2::from_json(json_window.at("max_size"));
-        app_config.window_min_size = arcadia::ivec2::from_json(json_window.at("min_size"));
-        app_config.window_multisample_count = json_window.at("multisample_count");
-        app_config.window_title = json_window.at("title");
-        app_config.window_maxmized = json_window.at("maxmized");
+        try
+        {
+            const auto& json_window             = json.at("window");
+            app_config.window_pos               = arcadia::ivec2::from_json(json_window.value("pos", arcadia::ivec2::to_json(app_config.window_pos)));
+            app_config.window_size              = arcadia::ivec2::from_json(json_window.value("size", arcadia::ivec2::to_json(app_config.window_size)));
+            app_config.window_max_size          = arcadia::ivec2::from_json(json_window.value("max_size", arcadia::ivec2::to_json(app_config.window_max_size)));
+            app_config.window_min_size          = arcadia::ivec2::from_json(json_window.value("min_size", arcadia::ivec2::to_json(app_config.window_min_size)));
+            app_config.window_multisample_count = json_window.value("multisample_count", app_config.window_multisample_count);
+            app_config.window_title             = json_window.value("title", app_config.window_title);
+            app_config.window_maxmized          = json_window.value("maxmized", app_config.window_maxmized);
+        }
+        catch(nlohmann::json::out_of_range)
+        {
+            // Use default value
+        }
+
+        // ImGui
+        try
+        {
+            const auto& json_imgui = json.at("imgui");
+            for(const auto& id_strs : json_imgui.value("opened_window_id_strs", nlohmann::json::array()))
+            {
+                app_config.imgui_opened_window_id_strs.emplace(id_strs);
+            }
+        }
+        catch(nlohmann::json::out_of_range)
+        {
+            // Use default value
+        }
     }
     catch(const std::ios_base::failure&)
     {
@@ -111,6 +139,20 @@ arcadia::app_layer::~app_layer()
             }
         }
     );
+
+    // ImGui
+    json.push_back(
+        { "imgui",{
+            {"opened_window_id_strs",nlohmann::json::array()}
+            }
+        }
+    );
+    for(const auto& id_str : app_config.imgui_opened_window_id_strs)
+    {
+        json.at("imgui")
+            .at("opened_window_id_strs")
+            .push_back(id_str);
+    }
 
     auto ofs = arcadia::file::create_ofstream(arcadia::app_config::filepath);
     ofs << std::setw(4) << json;

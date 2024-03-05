@@ -39,7 +39,7 @@ arcadia::scene::scene(const nlohmann::json& json):
     {
         // For tag component
         // All components bound to `json_entity_str` should now be bound to `entity` in the new scene
-        auto entity = create_entity(json_entity.at(json_entity_str).at("tag").dump());
+        auto entity = create(json_entity.at(json_entity_str).at("tag").dump());
 
         // For other components
         for(const auto& [json_comp_key, json_comp] : json_entity.at(json_entity_str).items())
@@ -49,12 +49,12 @@ arcadia::scene::scene(const nlohmann::json& json):
                 "model"s,
                 [&]() -> void
             {
-                emplace_component<arcadia::model_component>(entity, json_comp);
+                emplace<arcadia::model_component>(entity, json_comp);
             },
                 "camera"s,
                 [&]() -> void
             {
-                emplace_component<arcadia::camera_component>(entity, json_comp);
+                emplace<arcadia::camera_component>(entity, json_comp);
             }
             );
         }
@@ -90,7 +90,7 @@ auto arcadia::scene::to_json() const -> nlohmann::json
     return json;
 }
 
-auto arcadia::scene::create_entity(const std::string& name) -> entt::entity
+auto arcadia::scene::create(const std::string& name) -> entt::entity
 {
     if(_name_uset.contains(name))
     {
@@ -98,25 +98,25 @@ auto arcadia::scene::create_entity(const std::string& name) -> entt::entity
     }
 
     auto entity = _registry.create();
-    emplace_component<arcadia::name_component>(entity, name);
+    emplace<arcadia::name_component>(entity, name);
     _modified = true;
     return entity;
 }
 
-auto arcadia::scene::destroy_entity(entt::entity entity) -> entt::registry::version_type
+auto arcadia::scene::destroy(entt::entity entity) -> entt::registry::version_type
 {
     _modified = true;
     return _registry.destroy(entity);
 }
 
-auto arcadia::scene::is_valid(const entt::entity entity) const -> bool
+auto arcadia::scene::valid(const entt::entity entity) const -> bool
 {
     return _registry.valid(entity);
 }
 
 void arcadia::scene::_check_valid_entity_or_throw(const entt::entity entity) const
 {
-    if(!is_valid(entity))
+    if(!valid(entity))
     {
         throw invalid_entity{ std::format("Invalid entity: {}",static_cast<entt::id_type>(entity)) };
     }

@@ -170,6 +170,10 @@
     <ClInclude Include="src\function\render\opengl\buffer\gl_vertex_buffer.hpp" />
     <ClInclude Include="src\function\render\opengl\pipeline\gl_pipeline.hpp" />
     <ClInclude Include="src\function\render\opengl\pipeline\gl_shader.hpp" />
+    <ClInclude Include="src\function\ui\imgui_backend.hpp" />
+    <ClInclude Include="src\function\ui\imgui_header.hpp" />
+    <ClInclude Include="src\function\ui\imgui_layer.hpp" />
+    <ClInclude Include="src\function\ui\imgui_window.hpp" />
     <ClInclude Include="src\function\window\window_events.hpp" />
     <ClInclude Include="src\platform\opengl\opengl_header.hpp" />
     <ClInclude Include="src\resource\component\camera_component\camera_component.hpp" />
@@ -227,6 +231,8 @@
     <ClCompile Include="src\function\render\opengl\gl_renderer.cpp" />
     <ClCompile Include="src\function\render\opengl\pipeline\gl_pipeline.cpp" />
     <ClCompile Include="src\function\render\opengl\pipeline\gl_shader.cpp" />
+    <ClCompile Include="src\function\ui\imgui_backend.cpp" />
+    <ClCompile Include="src\function\ui\imgui_layer.cpp" />
     <ClCompile Include="src\platform\graphic_api\graphic_api.cpp" />
     <ClCompile Include="src\core\layer\layer.cpp" />
     <ClCompile Include="src\core\log\log.cpp" />

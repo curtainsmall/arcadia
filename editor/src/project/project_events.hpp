@@ -22,6 +22,13 @@ namespace arcadia
             arcadia::scene*
         );
         ARCADIA_EVENT(
+            scene_activated,
+            arcadia::scene*
+        );
+        ARCADIA_EVENT(
+            scene_deactivated
+        );
+        ARCADIA_EVENT(
             scene_unbuilt
         );
     }

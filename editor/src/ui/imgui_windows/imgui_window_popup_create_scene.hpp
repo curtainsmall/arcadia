@@ -5,9 +5,9 @@
 #include"core/base.hpp"
 #include"core/event/event.hpp"
 
+#include"function/ui/imgui_window.hpp"
 #include"project/project.hpp"
 #include"project/project_events.hpp"
-#include"ui/imgui_windows/imgui_window.hpp"
 #include"ui/ui_events.hpp"
 
 namespace arcadia
@@ -17,11 +17,7 @@ namespace arcadia
     public:
         using self_type = imgui_window_popup_create_scene;
     public:
-        [[nodiscard]]
-        static constexpr auto get_title() -> std::string
-        {
-            return "Create Scene";
-        }
+        ARCADIA_IMGUI_WINDOW_ID_STR("###popup_create_scene");
 
         using arcadia::imgui_window_interface::imgui_window_interface;
         virtual ~imgui_window_popup_create_scene() = default;

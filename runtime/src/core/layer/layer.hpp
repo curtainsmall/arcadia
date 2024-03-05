@@ -70,35 +70,30 @@ namespace arcadia
         >
         auto push_layer(std::unique_ptr<Layer>&& uptr) -> self_type&
         {
-            _layer_uptrs.emplace_back(std::move(uptr));
+            _layer_uptrs.emplace(_layer_uptrs.begin(), std::move(uptr));
             return *this;
         }
         template<
             arcadia::layer_like Layer,
             class ...Args
         >
-        auto push_layer_at(std::size_t idx, Args&& ...args) -> self_type&
+        auto push_layer(layer_uptr_vector_type::const_iterator iter, Args&& ...args) -> self_type&
         {
-            return push_layer_at(idx, std::make_unique<Layer>(std::forward<Args>(args)...));
+            return push_layer(iter, std::make_unique<Layer>(std::forward<Args>(args)...));
         }
         template<
             arcadia::layer_like Layer
         >
-        auto push_layer_at(std::size_t idx, std::unique_ptr<Layer>&& uptr) -> self_type&
+        auto push_layer(layer_uptr_vector_type::const_iterator iter, std::unique_ptr<Layer>&& uptr) -> self_type&
         {
-            if(idx >= _layer_uptrs.size())
-            {
-                throw out_of_range{ std::format("Index out of range: {}",idx) };
-            }
-
             _layer_uptrs.emplace(
-                _layer_uptrs.begin() + idx,
+                iter,
                 std::move(uptr)
             );
             return *this;
         }
         auto pop_layer() -> self_type&;
-        auto pop_layer_at(std::size_t idx) -> self_type&;
+        auto pop_layer(layer_uptr_vector_type::const_iterator iter) -> self_type&;
         auto pop_all() -> self_type&;
 
         template<arcadia::layer_like Layer = arcadia::layer_interface>
@@ -119,7 +114,7 @@ namespace arcadia
             {
                 throw empty_stack{};
             }
-            return static_cast<Layer&>(*_layer_uptrs.back());
+            return static_cast<Layer&>(*_layer_uptrs.front());
         }
 
         template<arcadia::layer_like Layer = arcadia::layer_interface>
@@ -129,7 +124,7 @@ namespace arcadia
             {
                 throw empty_stack{};
             }
-            return static_cast<Layer&>(*_layer_uptrs.front());
+            return static_cast<Layer&>(*_layer_uptrs.back());
         }
 
 

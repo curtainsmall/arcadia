@@ -35,9 +35,12 @@ void arcadia::project_layer::on_event(arcadia::event_base& event)
         .dispatch<arcadia::event::save_project>(ARCADIA_BIND_MEMBER_FN(_on_save_project))
         .dispatch<arcadia::event::save_project_as>(ARCADIA_BIND_MEMBER_FN(_on_save_project_as))
         .dispatch<arcadia::event::close_project>(ARCADIA_BIND_MEMBER_FN(_on_close_project))
+        .dispatch<arcadia::event::create_scene>(ARCADIA_BIND_MEMBER_FN(_on_create_scene))
         .dispatch<arcadia::event::select_scene>(ARCADIA_BIND_MEMBER_FN(_on_select_scene))
         .dispatch<arcadia::event::delete_scene>(ARCADIA_BIND_MEMBER_FN(_on_delete_scene))
-        .dispatch<arcadia::event::create_scene>(ARCADIA_BIND_MEMBER_FN(_on_create_scene));
+        .dispatch<arcadia::event::create_entity>(ARCADIA_BIND_MEMBER_FN(_on_create_entity))
+        .dispatch<arcadia::event::delete_entity>(ARCADIA_BIND_MEMBER_FN(_on_delete_entity))
+        .result();
 }
 
 void arcadia::project_layer::on_update(delta_time_type delta_time)
@@ -202,14 +205,16 @@ void arcadia::project_layer::_on_create_scene(arcadia::event::create_scene& e)
         name
     ).first->second;
 
-    auto camera_entity = scene.create_entity("default_camera");
+    auto camera_entity = scene.create("default_camera");
 
-    auto& camera_comp = scene.emplace_component<arcadia::camera_component>(camera_entity);
+    auto& camera_comp = scene.emplace<arcadia::camera_component>(camera_entity);
     camera_comp.pos ={ 0,0,10 };
 
     if(as_current)
     {
         _project_uptr->active_scene_ptr = &scene;
+        arcadia::event_queue::instance()
+            .signal<arcadia::event::scene_activated>(_project_uptr->active_scene_ptr);
     }
 }
 
@@ -224,4 +229,10 @@ void arcadia::project_layer::_on_delete_scene(arcadia::event::delete_scene& e)
     _project_uptr->scene_umap.erase(_project_uptr->active_scene_ptr->get_name());
     _project_uptr->active_scene_ptr = nullptr;
 }
+
+void arcadia::project_layer::_on_create_entity(arcadia::event::create_entity& e)
+{}
+
+void arcadia::project_layer::_on_delete_entity(arcadia::event::delete_entity& e)
+{}
 
