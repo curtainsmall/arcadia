@@ -5,6 +5,7 @@
 #include"core/base.hpp"
 #include"core/event/event.hpp"
 #include"function/ui/imgui_window.hpp"
+#include"resource/scene/scene.hpp"
 
 #include"ui/ui_events.hpp"
 
@@ -24,5 +25,9 @@ namespace arcadia
         virtual void on_update() override;
     private:
         void _on_open_imgui_window(arcadia::event::open_imgui_window& e);
+
+    private:
+        const arcadia::scene* _scene_cptr{};
+        entt::entity _entity{ entt::null };
     };
 }

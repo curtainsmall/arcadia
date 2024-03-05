@@ -22,7 +22,10 @@ void arcadia::imgui_window_property::on_update()
         ImGuiWindowFlags_NoCollapse;
     if(ImGui::Begin(imgui_title.c_str(), &_open, window_flags))
     {
-
+        if(!_scene_cptr)
+        {
+            ImGui::Text("No property to show here");
+        }
     }
     ImGui::End();
 }

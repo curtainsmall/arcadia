@@ -5,9 +5,9 @@
 
 #include"core/exception.hpp"
 #include"function/ui/imgui_header.hpp"
+#include"function/ui/imgui_style.hpp"
 #include"function/ui/imgui_window.hpp"
 #include"function/window/window_layer.hpp"
-
 
 namespace arcadia
 {
@@ -18,7 +18,11 @@ namespace arcadia
     public:
         using self_type = imgui_layer;
     public:
-        imgui_layer(arcadia::window_layer& window, const std::function<void(arcadia::imgui_layer&)>& imgui_window_installer ={});
+        imgui_layer(
+            arcadia::window_layer& window,
+            const std::function<void(arcadia::imgui_layer&)>& imgui_window_installer ={},
+            const std::function<void()>& imgui_style_setter = arcadia::imgui_style_dark
+        );
         virtual ~imgui_layer();
 
         [[nodiscard]]
@@ -43,7 +47,7 @@ namespace arcadia
             return *this;
         }
     public:
-        bool show_demo_window{ true };
+        bool show_demo_window{ false };
         bool show_debug_info{ false };
     private:
         arcadia::window_layer* _window_ptr;

@@ -5,11 +5,16 @@
 #include"function/ui/imgui_backend.hpp"
 #include"function/window/monitor.hpp"
 
-arcadia::imgui_layer::imgui_layer(arcadia::window_layer& window, const std::function<void(arcadia::imgui_layer&)>& imgui_window_installer):
+arcadia::imgui_layer::imgui_layer(
+    arcadia::window_layer& window,
+    const std::function<void(arcadia::imgui_layer&)>& imgui_window_installer,
+    const std::function<void()>& imgui_style_setter
+):
     arcadia::layer_interface("imgui"),
     _window_ptr(&window)
 {
     _imgui_context_ptr = ImGui::CreateContext();
+    ImGui::SetCurrentContext(_imgui_context_ptr);
 
     auto& io = _imgui_context_ptr->IO;
     io.ConfigWindowsMoveFromTitleBarOnly = true;
@@ -18,6 +23,8 @@ arcadia::imgui_layer::imgui_layer(arcadia::window_layer& window, const std::func
         | ImGuiConfigFlags_NoMouseCursorChange
         | ImGuiConfigFlags_ViewportsEnable;
     arcadia::imgui_backend::initialize(*_window_ptr);
+
+    imgui_style_setter();
 
     imgui_window_installer(*this);
 }

@@ -27,7 +27,11 @@ void arcadia::imgui_window_outliner::on_update()
         ImGuiWindowFlags_NoCollapse;
     if(ImGui::Begin(imgui_title.c_str(), &_open, window_flags))
     {
-        if(_scene_cptr)
+        if(!_scene_cptr)
+        {
+            ImGui::Text("No scene to outline here");
+        }
+        else
         {
             if(ImGui::Button("New Entity"))
             {
@@ -55,10 +59,6 @@ void arcadia::imgui_window_outliner::on_update()
                     ImGui::EndPopup();
                 }
             }
-        }
-        else
-        {
-            ImGui::Text("No scene to outline here");
         }
     }
     ImGui::End();

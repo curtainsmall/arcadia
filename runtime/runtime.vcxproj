@@ -173,6 +173,7 @@
     <ClInclude Include="src\function\ui\imgui_backend.hpp" />
     <ClInclude Include="src\function\ui\imgui_header.hpp" />
     <ClInclude Include="src\function\ui\imgui_layer.hpp" />
+    <ClInclude Include="src\function\ui\imgui_style.hpp" />
     <ClInclude Include="src\function\ui\imgui_window.hpp" />
     <ClInclude Include="src\function\window\window_events.hpp" />
     <ClInclude Include="src\platform\opengl\opengl_header.hpp" />

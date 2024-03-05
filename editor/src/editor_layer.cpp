@@ -43,7 +43,11 @@ arcadia::editor_app_layer::editor_app_layer()
     // Editor ImGui layer
     {
         _editor_ui_ptr = &layer_stack
-            .push_layer<arcadia::imgui_layer>(*_editor_window_ptr, ARCADIA_BIND_MEMBER_FN(_imgui_window_installer))
+            .push_layer<arcadia::imgui_layer>(
+                *_editor_window_ptr,
+                ARCADIA_BIND_MEMBER_FN(_imgui_window_installer),
+                arcadia::imgui_style_dark
+            )
             .top<arcadia::imgui_layer>();
     }
     app_context.running = true;
