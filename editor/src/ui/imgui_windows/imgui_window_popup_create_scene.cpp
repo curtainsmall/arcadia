@@ -45,7 +45,7 @@ void arcadia::imgui_window_popup_create_scene::on_update()
         if(!_name_available)
         {
             ImGui::PushStyleColor(ImGuiCol_Text, { 204, 80, 69, 255 });
-            ImGui::Text("Scene named \"&s\" already exsits", _name.c_str());
+            ImGui::Text("Scene named \"%s\" already exsits", _name.c_str());
             ImGui::PopStyleColor();
         }
         ImGui::Checkbox("As current", &_as_current);

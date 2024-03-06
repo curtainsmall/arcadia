@@ -32,5 +32,8 @@ namespace arcadia
 
     private:
         std::weak_ptr<const arcadia::scene> _scene_wptr{};
+
+        std::string _entity_old_name{};
+        std::string _entity_new_name{};
     };
 }

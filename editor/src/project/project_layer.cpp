@@ -43,6 +43,7 @@ void arcadia::project_layer::on_event(arcadia::event_base& event)
         .dispatch<arcadia::event::select_scene>(ARCADIA_BIND_MEMBER_FN(_on_select_scene))
         .dispatch<arcadia::event::delete_scene>(ARCADIA_BIND_MEMBER_FN(_on_delete_scene))
         .dispatch<arcadia::event::create_entity>(ARCADIA_BIND_MEMBER_FN(_on_create_entity))
+        .dispatch<arcadia::event::rename_entity>(ARCADIA_BIND_MEMBER_FN(_on_rename_entity))
         .dispatch<arcadia::event::delete_entity>(ARCADIA_BIND_MEMBER_FN(_on_delete_entity))
         .result();
 }
@@ -292,9 +293,9 @@ void arcadia::project_layer::_on_create_scene(arcadia::event::create_scene& e)
         std::make_shared<arcadia::scene>(name)
     ).first->second;
 
-    auto camera_entity = scene_sptr->create("default_camera");
+    auto camera_entity = scene_sptr->create_entity("default_camera");
 
-    auto& camera_comp = scene_sptr->emplace<arcadia::camera_component>(camera_entity);
+    auto& camera_comp = scene_sptr->emplace_component<arcadia::camera_component>(camera_entity);
     camera_comp.pos ={ 0,0,10 };
 
     if(as_current)
@@ -339,8 +340,26 @@ void arcadia::project_layer::_on_create_entity(arcadia::event::create_entity& e)
     const auto& [name] = e.data_tuple;
 
     auto& scene = _project_sptr->get_active_scene();
-    auto entity = scene.create(name);
+    auto entity = scene.create_entity(name);
 
+}
+
+void arcadia::project_layer::_on_rename_entity(arcadia::event::rename_entity& e)
+{
+    ARCADIA_ASSERT(_project_sptr);
+    ARCADIA_ASSERT(_project_sptr->has_active_scene());
+
+    const auto& [old_name, new_name] = e.data_tuple;
+
+    if(!_project_sptr->get_active_scene().rename_entity(old_name, new_name))
+    {
+        pfd::message{
+            "Rename Entity",
+            std::format("Failed to rename {} to {}, because the new name is already used",old_name,new_name),
+            pfd::choice::ok,
+            pfd::icon::info
+        };
+    }
 }
 
 void arcadia::project_layer::_on_delete_entity(arcadia::event::delete_entity& e)
@@ -350,6 +369,6 @@ void arcadia::project_layer::_on_delete_entity(arcadia::event::delete_entity& e)
 
     const auto& [entity] = e.data_tuple;
     auto& scene = _project_sptr->get_active_scene();
-    scene.destroy(entity);
+    scene.destroy_entity(entity);
 }
 

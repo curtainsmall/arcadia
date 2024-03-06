@@ -38,7 +38,7 @@ arcadia::scene::scene(const nlohmann::json& json):
     for(const auto& [entity_name, json_comps] : json_entities.items())
     {
         // All components bound to `json_entity_str` should now be bound to `entity` in the new scene
-        const auto entity = create(entity_name);
+        const auto entity = create_entity(entity_name);
 
         // For other components
         for(const auto& [json_comp_type_str, json_comp] : json_entities.at(entity_name).items())
@@ -48,12 +48,12 @@ arcadia::scene::scene(const nlohmann::json& json):
                 "model"s,
                 [&]() -> void
             {
-                emplace<arcadia::model_component>(entity, json_comp);
+                emplace_component<arcadia::model_component>(entity, json_comp);
             },
                 "camera"s,
                 [&]() -> void
             {
-                emplace<arcadia::camera_component>(entity, json_comp);
+                emplace_component<arcadia::camera_component>(entity, json_comp);
             }
             );
         }
@@ -68,14 +68,12 @@ auto arcadia::scene::to_json() const -> nlohmann::json
         {"entities",nlohmann::json::object()}
     };
 
-    auto name_comp_view =_registry.view<arcadia::name_component>();
-    for(auto entity : name_comp_view)
+    for(const auto& [name, entity] : _name_entity_bimap)
     {
-        const auto& [name_comp] = name_comp_view.get(entity);
         json
             .at("entities")
             .push_back(
-                { name_comp.get(), nlohmann::json::object() }
+                { name, nlohmann::json::object() }
         );
     }
 
@@ -86,33 +84,61 @@ auto arcadia::scene::to_json() const -> nlohmann::json
     return json;
 }
 
-auto arcadia::scene::create(const std::string& name) -> entt::entity
+auto arcadia::scene::create_entity(const std::string& name) -> entt::entity
 {
-    if(_name_uset.contains(name))
+    if(contains_entity(name))
     {
         throw conflict_name{ std::format("Conflict entity name: {}",name) };
     }
 
     auto entity = _registry.create();
-    emplace<arcadia::name_component>(entity, name);
     set_modified(true);
+    _name_entity_bimap.left.insert(std::make_pair(name, entity));
     return entity;
 }
 
-auto arcadia::scene::destroy(entt::entity entity) -> entt::registry::version_type
+auto arcadia::scene::destroy_entity(const std::string& name) -> entt::registry::version_type
+{
+    if(!contains_entity(name))
+    {
+        throw invalid_name{ std::format("Invalid entity name: {}", name) };
+    }
+
+    return destroy_entity(_name_entity_bimap.left.at(name));
+}
+
+auto arcadia::scene::destroy_entity(entt::entity entity) -> entt::registry::version_type
 {
     set_modified(true);
+    _name_entity_bimap.right.erase(entity);
     return _registry.destroy(entity);
 }
 
-auto arcadia::scene::valid(const entt::entity entity) const -> bool
+auto arcadia::scene::is_entity_valid(const entt::entity entity) const -> bool
 {
     return _registry.valid(entity);
 }
 
+auto arcadia::scene::contains_entity(const std::string& name) const -> bool
+{
+    return _name_entity_bimap.left.find(name) != _name_entity_bimap.left.end();
+}
+
+auto arcadia::scene::rename_entity(const std::string& old_name, const std::string& new_name) -> bool
+{
+    if(contains_entity(new_name))
+    {
+        return false;
+    }
+
+    _name_entity_bimap.left.replace_key(_name_entity_bimap.left.find(old_name), new_name);
+    set_modified(true);
+    return true;
+}
+
 void arcadia::scene::_check_valid_entity_or_throw(const entt::entity entity) const
 {
-    if(!valid(entity))
+    if(!is_entity_valid(entity))
     {
         throw invalid_entity{ std::format("Invalid entity: {}",static_cast<entt::id_type>(entity)) };
     }

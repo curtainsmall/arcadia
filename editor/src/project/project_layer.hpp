@@ -46,6 +46,7 @@ namespace arcadia
         void _on_delete_scene(arcadia::event::delete_scene& e);
 
         void _on_create_entity(arcadia::event::create_entity& e);
+        void _on_rename_entity(arcadia::event::rename_entity& e);
         void _on_delete_entity(arcadia::event::delete_entity& e);
 
     private:

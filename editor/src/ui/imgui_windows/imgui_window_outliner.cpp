@@ -43,23 +43,40 @@ void arcadia::imgui_window_outliner::on_update()
                 event_queue.signal<arcadia::event::new_entity>();
             }
 
-            const auto& view = scene_sptr->view<arcadia::name_component>();
-            for(const auto entity : view)
+            for(const auto& [name, entity] : scene_sptr->get_name_entity_bimap())
             {
-                const auto& [name_comp] = view.get(entity);
-                if(ImGui::Selectable(name_comp.get().c_str()))
+                if(_entity_old_name == name)
                 {
-                    // TODO: Select entity here
+                    _entity_new_name = _entity_old_name;
+
+                    auto input_text_flags =
+                        ImGuiInputTextFlags_AutoSelectAll;
+                    ImGui::InputText("###rename_entity", &_entity_new_name, input_text_flags);
+                    ImGui::SetItemDefaultFocus();
+                    if(!ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Left))
+                    {
+                        event_queue.signal<arcadia::event::rename_entity>(_entity_old_name, _entity_new_name);
+                        _entity_old_name.clear();
+                        _entity_new_name.clear();
+                    }
+                }
+                else
+                {
+                    if(ImGui::Selectable(name.c_str()))
+                    {
+                        // TODO: Select entity here
+                    }
                 }
 
                 if(ImGui::BeginPopupContextItem())
                 {
                     if(ImGui::Selectable("Delete entity"))
                     {
-                        event_queue.signal<arcadia::event::delete_entity>(entity);
+                        event_queue.signal<arcadia::event::delete_entity>(name);
                     }
                     if(ImGui::Selectable("Rename entity"))
                     {
+                        _entity_old_name = name;
                     }
 
                     ImGui::EndPopup();

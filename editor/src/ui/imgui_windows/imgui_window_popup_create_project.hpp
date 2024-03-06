@@ -29,6 +29,6 @@ namespace arcadia
     private:
         std::string _name{};
         std::string _filepath_str{};
-        bool _display_empty_name_warning{ false };
+        bool _display_empty_name_warning{ true };
     };
 }

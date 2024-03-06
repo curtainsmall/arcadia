@@ -45,7 +45,7 @@ void arcadia::imgui_window_viewport::on_update()
             renderer_sptr->begin_frame();
 
             // Model
-            const auto& model_comp_view = scene_sptr->view<arcadia::model_component>();
+            const auto& model_comp_view = scene_sptr->component_view<arcadia::model_component>();
             for(const auto& entity : model_comp_view)
             {
                 const auto& [model_comp] = model_comp_view.get(entity);
@@ -53,7 +53,7 @@ void arcadia::imgui_window_viewport::on_update()
             }
 
             // Camera
-            const auto& camera_comp_view = scene_sptr->view<arcadia::camera_component>();
+            const auto& camera_comp_view = scene_sptr->component_view<arcadia::camera_component>();
             for(const auto& entity : camera_comp_view)
             {
                 const auto& [camera_comp] = camera_comp_view.get(entity);
