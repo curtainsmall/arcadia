@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\editor_layer.hpp">
+    <ClInclude Include="src\editor\editor_layer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\project\project_layer.hpp">
@@ -51,9 +51,12 @@
     <ClInclude Include="src\ui\imgui_windows\imgui_window_property.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\editor\editor_context.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\editor_layer.cpp">
+    <ClCompile Include="src\editor\editor_layer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\project\project_layer.cpp">
@@ -68,9 +71,6 @@
     <ClCompile Include="src\ui\imgui_windows\imgui_window_popup_create_scene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\project\project.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\ui\imgui_windows\imgui_window_outliner.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -81,6 +81,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\ui\imgui_windows\imgui_window_property.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\editor\editor_context.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

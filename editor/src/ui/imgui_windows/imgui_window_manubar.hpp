@@ -1,5 +1,6 @@
 #pragma once
 
+#include<memory>
 #include<string>
 
 #include"core/base.hpp"
@@ -37,7 +38,7 @@ namespace arcadia
         void _on_project_built(arcadia::event::project_built& e);
         void _on_project_unbuilt(arcadia::event::project_unbuilt& e);
     private:
-        const arcadia::project* _project_cptr{};
+        std::weak_ptr<const arcadia::project> _project_wptr{};
         std::vector<std::tuple<std::string, std::string>> _imgui_window_title_and_id_str_pairs{};
     };
 }

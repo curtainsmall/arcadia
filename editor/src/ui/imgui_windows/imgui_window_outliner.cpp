@@ -19,15 +19,20 @@ void arcadia::imgui_window_outliner::on_update()
         return;
     }
 
+    auto has_scene = _scene_wptr.use_count();
+    auto scene_sptr = _scene_wptr.lock();
+
     auto& event_queue = arcadia::event_queue::instance();
 
-    auto imgui_title = _title + get_id_str();
+    auto imgui_title = has_scene
+        ? _title + " - " + scene_sptr->get_name() + get_id_str()
+        : _title + get_id_str();
 
     auto window_flags =
         ImGuiWindowFlags_NoCollapse;
     if(ImGui::Begin(imgui_title.c_str(), &_open, window_flags))
     {
-        if(!_scene_cptr)
+        if(!has_scene)
         {
             ImGui::Text("No scene to outline here");
         }
@@ -38,7 +43,7 @@ void arcadia::imgui_window_outliner::on_update()
                 event_queue.signal<arcadia::event::new_entity>();
             }
 
-            const auto& view = _scene_cptr->view<arcadia::name_component>();
+            const auto& view = scene_sptr->view<arcadia::name_component>();
             for(const auto entity : view)
             {
                 const auto& [name_comp] = view.get(entity);
@@ -51,6 +56,7 @@ void arcadia::imgui_window_outliner::on_update()
                 {
                     if(ImGui::Selectable("Delete entity"))
                     {
+                        event_queue.signal<arcadia::event::delete_entity>(entity);
                     }
                     if(ImGui::Selectable("Rename entity"))
                     {
@@ -76,11 +82,11 @@ void arcadia::imgui_window_outliner::_on_open_window(arcadia::event::open_imgui_
 
 void arcadia::imgui_window_outliner::_on_scene_activated(arcadia::event::scene_activated& e)
 {
-    const auto& [scene_ptr] = e.data_tuple;
-    _scene_cptr = scene_ptr;
+    const auto& [scene_wptr] = e.data_tuple;
+    _scene_wptr = scene_wptr;
 }
 
 void arcadia::imgui_window_outliner::_on_scene_deactivated(arcadia::event::scene_deactivated& e)
 {
-    _scene_cptr = nullptr;
+    _scene_wptr.reset();
 }

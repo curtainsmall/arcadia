@@ -12,6 +12,7 @@
 #include"core/nlohmann_json_header.hpp"
 #include"core/uuid.hpp"
 #include"resource/component/component.hpp"
+#include"resource/component/meta_components/meta_componts.hpp"
 #include"resource/scene/entt_header.hpp"
 
 namespace arcadia
@@ -53,6 +54,10 @@ namespace arcadia
         {
             return _modified;
         }
+        inline void set_modified(bool modified)
+        {
+            _modified = modified;
+        }
 
         [[nodiscard]]
         inline auto get_registry() const -> const entt::registry&
@@ -70,7 +75,7 @@ namespace arcadia
         auto emplace(const entt::entity entity, Args&& ...args) -> Component&
         {
             auto& comp = _registry.emplace<Component>(entity, std::forward<Args>(args)...);
-            _modified = true;
+            set_modified(true);
             return comp;
         }
 
@@ -78,7 +83,7 @@ namespace arcadia
         auto replace(const entt::entity entity, Args&& ...args) -> Component&
         {
             auto& comp = _registry.replace<Component>(entity, std::forward<Args>(args)...);
-            _modified = true;
+            set_modified(true);
             return comp;
         }
 
@@ -86,7 +91,7 @@ namespace arcadia
         auto emplace_or_replace(const entt::entity entity, Args&& ...args) -> Component&
         {
             auto& comp = _registry.emplace_or_replace<Component>(entity, std::forward<Args>(args)...);
-            _modified = true;
+            set_modified(true);
             return comp;
         }
 
@@ -96,7 +101,7 @@ namespace arcadia
         {
             if(!all_of<Components...>(entity))
             {
-                throw no_such_component{ std::format("No such component with entity: {0} with type info: {1}", static_cast<entt::id_type>(entity),typeid(Components)) };
+                throw no_such_component{ std::format("No such component with entity: {0}", static_cast<entt::id_type>(entity)) };
             }
             return _registry.get<Components...>(entity);
         }
@@ -107,10 +112,10 @@ namespace arcadia
         {
             if(!all_of<Components...>(entity))
             {
-                throw no_such_component{ std::format("No such component with entity: {0} with type info: {1}", static_cast<entt::id_type>(entity),typeid(Components)) };
+                throw no_such_component{ std::format("No such component with entity: {0}", static_cast<entt::id_type>(entity)) };
             }
             auto& comp = _registry.get<Components...>(entity);
-            _modified = true;
+            set_modified(true);
             return comp;
         }
 
@@ -132,7 +137,7 @@ namespace arcadia
         void remove(const entt::entity entity)
         {
             _registry.remove<Component>(entity);
-            _modified = true;
+            set_modified(true);
         }
 
         template<arcadia::component_like ...Components, arcadia::component_like ...ExcludeComponents>
@@ -160,7 +165,7 @@ namespace arcadia
         /// @throw invalid_entity if @a entity is invalid
         void _check_valid_entity_or_throw(const entt::entity entity) const;
     private:
-        bool _modified{ true };
+        bool _modified{ false };
         std::string _name;
         entt::registry _registry{};
         std::unordered_set<std::string> _name_uset{};
@@ -171,29 +176,28 @@ namespace arcadia
     public:
         using self_type = json_scene_add_component_to_entity_helper;
     public:
-        inline json_scene_add_component_to_entity_helper(const arcadia::scene& scene, nlohmann::json& json_entity):
+        inline json_scene_add_component_to_entity_helper(const arcadia::scene& scene, nlohmann::json& json_entities):
             _scene_ptr(&scene),
-            _json_entity_ptr(&json_entity)
+            _json_entities_ptr(&json_entities)
         {}
         ~json_scene_add_component_to_entity_helper() = default;
 
         template<arcadia::component_like Components>
-        auto add(const std::string& name) -> self_type&
+        auto add(const std::string& type) -> self_type&
         {
             auto view = _scene_ptr->get_registry().view<Components>();
             for(auto entity : view)
             {
                 const auto& [comp] = view.get(entity);
-                _json_entity_ptr
-                    ->at(arcadia::to_string(entity))
-                    .push_back(
-                        { name , comp.to_json() }
-                );
+
+                _json_entities_ptr
+                    ->at(_scene_ptr->get<arcadia::name_component>(entity).get())
+                    .push_back({ type , comp.to_json() });
             }
             return *this;
         }
     private:
         const arcadia::scene* _scene_ptr;
-        nlohmann::json* _json_entity_ptr;
+        nlohmann::json* _json_entities_ptr;
     };
 }

@@ -1,5 +1,7 @@
 #pragma once
 
+#include<memory>
+
 #include"core/event/event.hpp"
 #include"resource/scene/scene.hpp"
 
@@ -11,7 +13,7 @@ namespace arcadia
     {
         ARCADIA_EVENT(
             project_built,
-            arcadia::project*
+            std::weak_ptr<arcadia::project>
         );
         ARCADIA_EVENT(
             project_unbuilt
@@ -19,11 +21,11 @@ namespace arcadia
 
         ARCADIA_EVENT(
             scene_built,
-            arcadia::scene*
+            std::weak_ptr<arcadia::scene>
         );
         ARCADIA_EVENT(
             scene_activated,
-            arcadia::scene*
+            std::weak_ptr<arcadia::scene>
         );
         ARCADIA_EVENT(
             scene_deactivated

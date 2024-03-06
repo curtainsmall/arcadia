@@ -3,6 +3,8 @@
 #include"core/event/event.hpp"
 #include"core/math.hpp"
 
+struct GLFWmonitor;
+
 namespace arcadia
 {
     struct window_layer;
@@ -17,9 +19,14 @@ namespace arcadia
     namespace event
     {
         ARCADIA_EVENT(
-            window_close,
+            window_should_close,
             arcadia::window_layer* // Window to close
         );
+        ARCADIA_EVENT(
+            window_close_canceled,
+            arcadia::window_layer* // Window to cancel close
+        );
+
         ARCADIA_EVENT(
             window_size,
             arcadia::window_layer*,
@@ -39,6 +46,12 @@ namespace arcadia
             window_focus,
             arcadia::window_layer*,
             bool
+        );
+
+        ARCADIA_EVENT(
+            monitor_connection,
+            GLFWmonitor*, // TODO: Use custom monitor type
+            bool // Whether the monitor is connected or not
         );
     }
 }

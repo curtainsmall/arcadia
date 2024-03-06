@@ -1,5 +1,6 @@
 #pragma once
 
+#include<memory>
 #include<string>
 
 #include"core/base.hpp"
@@ -27,7 +28,7 @@ namespace arcadia
         void _on_open_imgui_window(arcadia::event::open_imgui_window& e);
 
     private:
-        const arcadia::scene* _scene_cptr{};
+        std::weak_ptr<const arcadia::scene> _scene_wptr{};
         entt::entity _entity{ entt::null };
     };
 }

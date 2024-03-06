@@ -1,5 +1,6 @@
 #pragma once
 
+#include<memory>
 #include<string>
 
 #include"core/base.hpp"
@@ -30,6 +31,6 @@ namespace arcadia
         void _on_scene_deactivated(arcadia::event::scene_deactivated& e);
 
     private:
-        const arcadia::scene* _scene_cptr{};
+        std::weak_ptr<const arcadia::scene> _scene_wptr{};
     };
 }

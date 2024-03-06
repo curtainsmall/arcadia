@@ -189,7 +189,6 @@
     <ClInclude Include="src\resource\component\skybox_component\skybox_component.hpp" />
     <ClInclude Include="src\resource\scene\entt_header.hpp" />
     <ClInclude Include="src\function\render\renderer.hpp" />
-    <ClInclude Include="src\function\window\monitor.hpp" />
     <ClInclude Include="src\platform\graphic_api\graphic_api.hpp" />
     <ClInclude Include="src\core\layer\layer.hpp" />
     <ClInclude Include="src\core\log\log.hpp" />

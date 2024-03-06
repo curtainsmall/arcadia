@@ -147,7 +147,7 @@ namespace arcadia
         /// @brief Signal @a Event
         /// @param ...args Argument to construct @a Event
         template<arcadia::event_like Event, class ...Args>
-        void signal(Args&& ...args)
+        auto signal(Args&& ...args) -> self_type&
         {
             _current_queue_ptr->emplace(std::make_unique<Event>(std::forward<Args>(args)...));
 
@@ -157,6 +157,7 @@ namespace arcadia
                 arcadia::log::debug(std::format("Event signaled: {}", typeid(Event).name()));
             }
         #endif
+            return *this;
         }
 
         /// @brief Swap current queue and processing queue

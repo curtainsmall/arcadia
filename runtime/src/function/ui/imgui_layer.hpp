@@ -1,6 +1,7 @@
 #pragma once
 
 #include<functional>
+#include<memory>
 #include<vector>
 
 #include"core/exception.hpp"
@@ -19,16 +20,16 @@ namespace arcadia
         using self_type = imgui_layer;
     public:
         imgui_layer(
-            arcadia::window_layer& window,
+            const std::shared_ptr<const arcadia::window_layer>& window_layer_sptr,
             const std::function<void(arcadia::imgui_layer&)>& imgui_window_installer ={},
             const std::function<void()>& imgui_style_setter = arcadia::imgui_style_dark
         );
         virtual ~imgui_layer();
 
         [[nodiscard]]
-        inline auto get_window() const -> const arcadia::window_layer&
+        inline auto get_window_sptr() const -> std::shared_ptr<const arcadia::window_layer>
         {
-            return *_window_ptr;
+            return _window_wptr.lock();
         }
 
         [[nodiscard]]
@@ -50,7 +51,7 @@ namespace arcadia
         bool show_demo_window{ false };
         bool show_debug_info{ false };
     private:
-        arcadia::window_layer* _window_ptr;
+        std::weak_ptr<const arcadia::window_layer> _window_wptr;
         ImGuiContext* _imgui_context_ptr{ nullptr };
         std::vector<std::unique_ptr<arcadia::imgui_window_interface>> _imgui_window_uptrs{};
     };

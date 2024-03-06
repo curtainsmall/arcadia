@@ -2,7 +2,6 @@
 #include "scene.hpp"
 
 #include"resource/component/camera_component/camera_component.hpp"
-#include"resource/component/meta_components/meta_componts.hpp"
 #include"resource/component/model_component/model_component.hpp"
 
 /* Json of scene is in pattern:
@@ -33,19 +32,19 @@
 arcadia::scene::scene(const nlohmann::json& json):
     _name(json.at("name"))
 {
-    auto& json_entity = json.at("entity");
 
-    for(const auto& [json_entity_str, json_comps] : json_entity.items())
+    const auto& json_entities = json.at("entities");
+
+    for(const auto& [entity_name, json_comps] : json_entities.items())
     {
-        // For tag component
         // All components bound to `json_entity_str` should now be bound to `entity` in the new scene
-        auto entity = create(json_entity.at(json_entity_str).at("tag").dump());
+        const auto entity = create(entity_name);
 
         // For other components
-        for(const auto& [json_comp_key, json_comp] : json_entity.at(json_entity_str).items())
+        for(const auto& [json_comp_type_str, json_comp] : json_entities.at(entity_name).items())
         {
             arcadia::match<void>(
-                json_comp_key,
+                json_comp_type_str,
                 "model"s,
                 [&]() -> void
             {
@@ -66,7 +65,7 @@ auto arcadia::scene::to_json() const -> nlohmann::json
 {
     nlohmann::json json{
         {"name",_name},
-        {"entity",nlohmann::json::object()}
+        {"entities",nlohmann::json::object()}
     };
 
     auto name_comp_view =_registry.view<arcadia::name_component>();
@@ -74,16 +73,13 @@ auto arcadia::scene::to_json() const -> nlohmann::json
     {
         const auto& [name_comp] = name_comp_view.get(entity);
         json
-            .at("entity")
+            .at("entities")
             .push_back(
-                { arcadia::to_string(entity),{
-                    { "tag", name_comp.to_json()}
-                    }
-                }
+                { name_comp.get(), nlohmann::json::object() }
         );
     }
 
-    json_scene_add_component_to_entity_helper{ *this,json.at("entity") }
+    json_scene_add_component_to_entity_helper{ *this,json.at("entities") }
         .add<arcadia::model_component>("model")
         .add<arcadia::camera_component>("camera");
 
@@ -99,13 +95,13 @@ auto arcadia::scene::create(const std::string& name) -> entt::entity
 
     auto entity = _registry.create();
     emplace<arcadia::name_component>(entity, name);
-    _modified = true;
+    set_modified(true);
     return entity;
 }
 
 auto arcadia::scene::destroy(entt::entity entity) -> entt::registry::version_type
 {
-    _modified = true;
+    set_modified(true);
     return _registry.destroy(entity);
 }
 

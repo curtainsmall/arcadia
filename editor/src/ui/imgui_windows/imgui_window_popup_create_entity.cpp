@@ -21,6 +21,9 @@ void arcadia::imgui_window_popup_create_entity::on_update()
         ImGuiPopupFlags_NoOpenOverExistingPopup;
     ImGui::OpenPopup(imgui_title.c_str(), popup_flags);
 
+    auto& io = ImGui::GetIO();
+    ImGui::SetNextWindowPos({ io.DisplaySize.x * .5f,io.DisplaySize.y * .5f });
+
     auto window_flags =
         ImGuiWindowFlags_NoCollapse;
     if(ImGui::BeginPopupModal(imgui_title.c_str(), &_open, window_flags))

@@ -3,15 +3,14 @@
 
 #include"function/input/input_events.hpp"
 #include"function/ui/imgui_backend.hpp"
-#include"function/window/monitor.hpp"
 
 arcadia::imgui_layer::imgui_layer(
-    arcadia::window_layer& window,
+    const std::shared_ptr<const arcadia::window_layer>& window_layer_sptr,
     const std::function<void(arcadia::imgui_layer&)>& imgui_window_installer,
     const std::function<void()>& imgui_style_setter
 ):
     arcadia::layer_interface("imgui"),
-    _window_ptr(&window)
+    _window_wptr(window_layer_sptr)
 {
     _imgui_context_ptr = ImGui::CreateContext();
     ImGui::SetCurrentContext(_imgui_context_ptr);
@@ -22,7 +21,7 @@ arcadia::imgui_layer::imgui_layer(
         ImGuiConfigFlags_DockingEnable
         | ImGuiConfigFlags_NoMouseCursorChange
         | ImGuiConfigFlags_ViewportsEnable;
-    arcadia::imgui_backend::initialize(*_window_ptr);
+    arcadia::imgui_backend::initialize(*_window_wptr.lock());
 
     imgui_style_setter();
 
@@ -33,7 +32,7 @@ arcadia::imgui_layer::~imgui_layer()
 {
     if(_imgui_context_ptr)
     {
-        arcadia::imgui_backend::shutdown(*_window_ptr);
+        arcadia::imgui_backend::shutdown(*_window_wptr.lock());
         ImGui::DestroyContext(_imgui_context_ptr);
     }
 }
@@ -49,9 +48,11 @@ void arcadia::imgui_layer::on_event(arcadia::event_base& event)
 
 void arcadia::imgui_layer::on_update(delta_time_type delta_time)
 {
+    auto window_sptr = _window_wptr.lock();
+
     ImGui::SetCurrentContext(_imgui_context_ptr);
 
-    arcadia::imgui_backend::begin_frame(*_window_ptr);
+    arcadia::imgui_backend::begin_frame(*window_sptr);
     ImGui::NewFrame();
 
     ImGui::DockSpaceOverViewport();
@@ -73,7 +74,7 @@ void arcadia::imgui_layer::on_update(delta_time_type delta_time)
     }
 
     ImGui::Render();
-    arcadia::imgui_backend::render_draw_data(*_window_ptr);
+    arcadia::imgui_backend::render_draw_data(*window_sptr);
 
     if(ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
     {

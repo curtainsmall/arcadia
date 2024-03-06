@@ -7,6 +7,7 @@
 #include"function/window/window_events.hpp"
 #include"function/window/window_layer.hpp"
 
+#include"project/project_events.hpp"
 #include"project/project_layer.hpp"
 
 namespace arcadia
@@ -21,12 +22,14 @@ namespace arcadia
         virtual void on_update(delta_time_type delta_time) override;
     private:
         void _imgui_window_installer(arcadia::imgui_layer& imgui_layer);
+        void _stop();
 
-        void _on_window_close(const arcadia::event::window_close& e);
+        void _on_window_should_close(arcadia::event::window_should_close& e);
+        void _on_project_unbuilt(arcadia::event::project_unbuilt& e);
+        void _on_window_close_canceled(arcadia::event::window_close_canceled& e);
+
     private:
-        arcadia::window_layer* _editor_window_ptr{};
-        arcadia::project_layer* _project_cptr{};
-        arcadia::imgui_layer* _editor_ui_ptr{};
+        bool _waiting_for_project_unbuilt_before_closing{ false };
     };
 
     ARCADIA_API auto create_application_uptr() -> std::unique_ptr<arcadia::app_layer>;

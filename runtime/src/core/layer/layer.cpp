@@ -15,14 +15,14 @@ auto arcadia::layer_stack::pop_layer() -> self_type&
 {
     if(size())
     {
-        _layer_uptrs.erase(_layer_uptrs.begin());
+        _layer_sptrs.erase(_layer_sptrs.begin());
     }
     return *this;
 }
 
-auto arcadia::layer_stack::pop_layer(layer_uptr_vector_type::const_iterator iter) -> self_type&
+auto arcadia::layer_stack::pop_layer(layer_sptr_vector_type::const_iterator iter) -> self_type&
 {
-    _layer_uptrs.erase(
+    _layer_sptrs.erase(
         iter
     );
 
@@ -40,27 +40,27 @@ auto arcadia::layer_stack::pop_all() -> self_type&
 
 auto arcadia::layer_stack::size() -> std::size_t
 {
-    return _layer_uptrs.size();
+    return _layer_sptrs.size();
 }
 
-auto arcadia::layer_stack::begin() -> layer_uptr_vector_type::const_iterator
+auto arcadia::layer_stack::begin() -> layer_sptr_vector_type::const_iterator
 {
-    return _layer_uptrs.begin();
+    return _layer_sptrs.begin();
 }
 
-auto arcadia::layer_stack::end() -> layer_uptr_vector_type::const_iterator
+auto arcadia::layer_stack::end() -> layer_sptr_vector_type::const_iterator
 {
-    return _layer_uptrs.end();
+    return _layer_sptrs.end();
 }
 
-auto arcadia::layer_stack::rbegin() -> layer_uptr_vector_type::const_reverse_iterator
+auto arcadia::layer_stack::rbegin() -> layer_sptr_vector_type::const_reverse_iterator
 {
-    return _layer_uptrs.rbegin();
+    return _layer_sptrs.rbegin();
 }
 
-auto arcadia::layer_stack::rend() -> layer_uptr_vector_type::const_reverse_iterator
+auto arcadia::layer_stack::rend() -> layer_sptr_vector_type::const_reverse_iterator
 {
-    return _layer_uptrs.rend();
+    return _layer_sptrs.rend();
 }
 
 

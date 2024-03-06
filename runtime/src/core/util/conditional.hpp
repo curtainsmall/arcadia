@@ -76,4 +76,43 @@ namespace arcadia
         }
     }
 
+    template<
+        class Res,
+        class Case,
+        std::convertible_to<Case> Cond,
+        class ...Cases
+    >
+        requires (sizeof...(Cases) % 2 == 0)
+    ARCADIA_API auto match(const Cond& cond, const Case& case_expr, const Res& case_res, Cases&& ...cases) -> Res
+    {
+        if constexpr(sizeof...(Cases) == 0)
+        {
+            return cond == case_expr ? case_res : Res();
+        }
+        else
+        {
+            return cond == case_expr ? case_res : arcadia::match<Res, Cond, Case>(cond, std::forward<Cases>(cases)...);
+        }
+    }
+
+    template<
+        class Res,
+        class Case,
+        std::convertible_to<Case> Cond,
+        class ...Cases
+    >
+        requires (sizeof...(Cases) % 2 == 0)
+    ARCADIA_API auto match(const Cond& cond, const Res& default_res, const Case& case_expr, const Res& case_res, Cases&& ...cases) -> Res
+    {
+        if constexpr(sizeof...(Cases) == 0)
+        {
+            return cond == case_expr ? case_res : default_res;
+        }
+        else
+        {
+            return cond == case_expr ? case_res : arcadia::match<Res, Cond, Case>(cond, std::forward<Cases>(cases)...);
+        }
+    }
+
+
 }

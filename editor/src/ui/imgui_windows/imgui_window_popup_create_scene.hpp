@@ -1,11 +1,12 @@
 #pragma once
 
+#include<memory>
 #include<string>
 
 #include"core/base.hpp"
 #include"core/event/event.hpp"
-
 #include"function/ui/imgui_window.hpp"
+
 #include"project/project.hpp"
 #include"project/project_events.hpp"
 #include"ui/ui_events.hpp"
@@ -32,7 +33,7 @@ namespace arcadia
 
 
     private:
-        const arcadia::project* _project_cptr{};
+        std::weak_ptr<const arcadia::project> _project_wptr{};
         std::string _name{};
         bool _as_current{ true };
         bool _name_available{ true };

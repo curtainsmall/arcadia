@@ -1,12 +1,9 @@
 #include "pch.hpp"
 #include "window_layer.hpp"
 
-#include<format>
-
 #include"core/app/app_config.hpp"
 #include"core/util/conditional.hpp"
 #include"function/input/input_events.hpp"
-#include"function/window/monitor.hpp"
 
 arcadia::window_layer::window_layer(
     glm::ivec2 size,
@@ -86,12 +83,6 @@ void arcadia::window_layer::on_event(arcadia::event_base& event)
 
 void arcadia::window_layer::on_update(delta_time_type delta_time)
 {
-    auto& event_queue = arcadia::event_queue::instance();
-
-    if(glfwWindowShouldClose(_glfw_window_ptr))
-    {
-        event_queue.signal<arcadia::event::window_close>(this);
-    }
     _swap_buffers();
 
     glfwPollEvents();
@@ -440,6 +431,16 @@ void arcadia::window_layer::_setup_callbacks()
             );
     }
     );
+    glfwSetWindowCloseCallback(
+        _glfw_window_ptr,
+        [](GLFWwindow* glfw_wnd_ptr) -> void
+    {
+        arcadia::event_queue::instance()
+            .signal<arcadia::event::window_should_close>(
+                _get_window_ptr_from_glfw_user_pointer(glfw_wnd_ptr)
+            );
+    }
+    );
 }
 
 void arcadia::window_layer::_swap_buffers()
@@ -456,6 +457,15 @@ void arcadia::window_layer::_swap_buffers()
     {
     }
     );
+}
+
+void arcadia::window_layer::_on_window_close_canceled(arcadia::event::window_close_canceled& e)
+{
+    const auto& [wnd_ptr] = e.data_tuple;
+    if(wnd_ptr == this)
+    {
+        glfwSetWindowShouldClose(_glfw_window_ptr, GLFW_FALSE);
+    }
 }
 
 auto arcadia::window_layer::get_multisample_count() const -> int

@@ -90,6 +90,8 @@ namespace arcadia
         /// @brief Call [glfwSwapBuffers](https://www.glfw.org/docs/3.3/group__window.html#ga15a5a1ee5b3c2ca6b15ca209a12efd14)
         void _swap_buffers();
 
+        void _on_window_close_canceled(arcadia::event::window_close_canceled& e);
+
     private:
         static inline glfw_context _glfw_context{};
 

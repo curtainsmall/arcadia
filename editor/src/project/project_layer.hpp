@@ -7,6 +7,7 @@
 #include"core/file/file.hpp"
 #include"core/layer/layer.hpp"
 #include"function/render/renderer.hpp"
+#include"function/window/window_events.hpp"
 
 #include"project/project.hpp"
 #include"project/project_events.hpp"
@@ -26,11 +27,13 @@ namespace arcadia
         [[nodiscard]]
         inline auto has_project() const noexcept -> bool
         {
-            return _project_uptr.get();
+            return _project_sptr.get();
         }
     private:
         void _save_project();
         void _load_project();
+
+        void _on_window_should_close(arcadia::event::window_should_close& e);
 
         void _on_create_project(arcadia::event::create_project& e);
         void _on_open_project(arcadia::event::open_project& e);
@@ -44,10 +47,11 @@ namespace arcadia
 
         void _on_create_entity(arcadia::event::create_entity& e);
         void _on_delete_entity(arcadia::event::delete_entity& e);
+
     private:
-        std::unique_ptr<arcadia::project> _project_uptr{};
+        std::shared_ptr<arcadia::project> _project_sptr{};
         std::filesystem::path _project_filepath{};
-        std::unique_ptr<arcadia::renderer_interface> _renderer_uptr{};
+        std::shared_ptr<arcadia::renderer_interface> _renderer_sptr{};
         std::size_t _project_hash{};
     };
 }

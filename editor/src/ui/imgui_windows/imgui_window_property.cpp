@@ -16,13 +16,15 @@ void arcadia::imgui_window_property::on_update()
         return;
     }
 
+    auto has_scene = _scene_wptr.use_count();
+
     auto imgui_title = _title + get_id_str();
 
     auto window_flags =
         ImGuiWindowFlags_NoCollapse;
     if(ImGui::Begin(imgui_title.c_str(), &_open, window_flags))
     {
-        if(!_scene_cptr)
+        if(!has_scene)
         {
             ImGui::Text("No property to show here");
         }

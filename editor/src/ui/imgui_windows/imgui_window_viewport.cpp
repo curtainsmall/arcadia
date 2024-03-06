@@ -21,17 +21,20 @@ void arcadia::imgui_window_viewport::on_update()
         return;
     }
 
+    auto scene_sptr = _scene_wptr.lock();
+    auto renderer_sptr = _renderer_wptr.lock();
+
     auto imgui_title = _title + get_id_str();
 
     auto window_flags =
         ImGuiWindowFlags_NoCollapse;
     if(ImGui::Begin(imgui_title.c_str(), &_open, window_flags))
     {
-        if(!_scene_cptr)
+        if(!scene_sptr)
         {
             ImGui::Text("No scene to render here");
         }
-        else if(!_renderer_ptr)
+        else if(!renderer_sptr)
         {
             ImGui::Text("No renderer to use here");
         }
@@ -39,31 +42,31 @@ void arcadia::imgui_window_viewport::on_update()
         {
             glm::ivec2 size{};
 
-            _renderer_ptr->begin_frame();
+            renderer_sptr->begin_frame();
 
             // Model
-            const auto& model_comp_view = _scene_cptr->view<arcadia::model_component>();
+            const auto& model_comp_view = scene_sptr->view<arcadia::model_component>();
             for(const auto& entity : model_comp_view)
             {
                 const auto& [model_comp] = model_comp_view.get(entity);
-                _renderer_ptr->submit(model_comp);
+                renderer_sptr->submit(model_comp);
             }
 
             // Camera
-            const auto& camera_comp_view = _scene_cptr->view<arcadia::camera_component>();
+            const auto& camera_comp_view = scene_sptr->view<arcadia::camera_component>();
             for(const auto& entity : camera_comp_view)
             {
                 const auto& [camera_comp] = camera_comp_view.get(entity);
-                _renderer_ptr->submit(camera_comp);
+                renderer_sptr->submit(camera_comp);
 
                 size = camera_comp.viewport_size;
             }
 
-            _renderer_ptr->end_frame();
+            renderer_sptr->end_frame();
 
-            _renderer_ptr->draw();
+            renderer_sptr->draw();
 
-            ImGui::Image(_renderer_ptr->get_render_result_id(0), size);
+            ImGui::Image(renderer_sptr->get_render_result_id(0), size);
         }
     }
     ImGui::End();
@@ -80,11 +83,11 @@ void arcadia::imgui_window_viewport::_on_open_window(arcadia::event::open_imgui_
 
 void arcadia::imgui_window_viewport::_on_scene_activated(arcadia::event::scene_activated& e)
 {
-    const auto& [scene_ptr] = e.data_tuple;
-    _scene_cptr = scene_ptr;
+    const auto& [scene_wptr] = e.data_tuple;
+    _scene_wptr = scene_wptr;
 }
 
 void arcadia::imgui_window_viewport::_on_scene_deactivated(arcadia::event::scene_deactivated& e)
 {
-    _scene_cptr = nullptr;
+    _scene_wptr.reset();
 }

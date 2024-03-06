@@ -51,7 +51,7 @@ namespace arcadia
         ARCADIA_EXCEPTION(out_of_range);
         ARCADIA_EXCEPTION(empty_stack);
 
-        using layer_uptr_vector_type = std::vector<std::unique_ptr<layer_interface>>;
+        using layer_sptr_vector_type = std::vector<std::shared_ptr<layer_interface>>;
 
         using self_type = layer_stack;
     public:
@@ -63,37 +63,37 @@ namespace arcadia
         >
         auto push_layer(Args&& ...args) -> self_type&
         {
-            return push_layer(std::make_unique<Layer>(std::forward<Args>(args)...));
+            return push_layer(std::make_shared<Layer>(std::forward<Args>(args)...));
         }
         template<
             arcadia::layer_like Layer
         >
-        auto push_layer(std::unique_ptr<Layer>&& uptr) -> self_type&
+        auto push_layer(std::shared_ptr<Layer>&& sptr) -> self_type&
         {
-            _layer_uptrs.emplace(_layer_uptrs.begin(), std::move(uptr));
+            _layer_sptrs.emplace(_layer_sptrs.begin(), std::move(sptr));
             return *this;
         }
         template<
             arcadia::layer_like Layer,
             class ...Args
         >
-        auto push_layer(layer_uptr_vector_type::const_iterator iter, Args&& ...args) -> self_type&
+        auto push_layer(layer_sptr_vector_type::const_iterator iter, Args&& ...args) -> self_type&
         {
-            return push_layer(iter, std::make_unique<Layer>(std::forward<Args>(args)...));
+            return push_layer(iter, std::make_shared<Layer>(std::forward<Args>(args)...));
         }
         template<
             arcadia::layer_like Layer
         >
-        auto push_layer(layer_uptr_vector_type::const_iterator iter, std::unique_ptr<Layer>&& uptr) -> self_type&
+        auto push_layer(layer_sptr_vector_type::const_iterator iter, std::shared_ptr<Layer>&& sptr) -> self_type&
         {
-            _layer_uptrs.emplace(
+            _layer_sptrs.emplace(
                 iter,
-                std::move(uptr)
+                std::move(sptr)
             );
             return *this;
         }
         auto pop_layer() -> self_type&;
-        auto pop_layer(layer_uptr_vector_type::const_iterator iter) -> self_type&;
+        auto pop_layer(layer_sptr_vector_type::const_iterator iter) -> self_type&;
         auto pop_all() -> self_type&;
 
         template<arcadia::layer_like Layer = arcadia::layer_interface>
@@ -104,38 +104,38 @@ namespace arcadia
                 throw out_of_range{ std::format("Index out of range: {}",idx) };
             }
 
-            return static_cast<Layer&>(*_layer_uptrs.at(size() - idx - 1));
+            return static_cast<Layer&>(*_layer_sptrs.at(size() - idx - 1));
         }
 
         template<arcadia::layer_like Layer = arcadia::layer_interface>
-        auto top() -> Layer&
+        auto top() -> std::shared_ptr<Layer>
         {
             if(!size())
             {
                 throw empty_stack{};
             }
-            return static_cast<Layer&>(*_layer_uptrs.front());
+            return std::static_pointer_cast<Layer>(_layer_sptrs.front());
         }
 
         template<arcadia::layer_like Layer = arcadia::layer_interface>
-        auto buttom() -> Layer&
+        auto buttom() -> std::shared_ptr<Layer>
         {
             if(!size())
             {
                 throw empty_stack{};
             }
-            return static_cast<Layer&>(*_layer_uptrs.back());
+            return std::static_pointer_cast<Layer>(_layer_sptrs.back());
         }
 
 
         auto size() -> std::size_t;
 
-        auto begin() -> layer_uptr_vector_type::const_iterator;
-        auto end() -> layer_uptr_vector_type::const_iterator;
-        auto rbegin() -> layer_uptr_vector_type::const_reverse_iterator;
-        auto rend() -> layer_uptr_vector_type::const_reverse_iterator;
+        auto begin() -> layer_sptr_vector_type::const_iterator;
+        auto end() -> layer_sptr_vector_type::const_iterator;
+        auto rbegin() -> layer_sptr_vector_type::const_reverse_iterator;
+        auto rend() -> layer_sptr_vector_type::const_reverse_iterator;
 
     private:
-        layer_uptr_vector_type _layer_uptrs{};
+        layer_sptr_vector_type _layer_sptrs{};
     };
 }
