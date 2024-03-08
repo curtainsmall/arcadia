@@ -18,6 +18,7 @@ arcadia::app_context::app_context()
         .debug_excluded_event_type_set;
     set.emplace(typeid(arcadia::event::input_cursor_pos));
     set.emplace(typeid(arcadia::event::input_cursor_move));
+    set.emplace(typeid(arcadia::event::window_pos));
 
 #endif // ARCADIA_IN_DEBUG
 

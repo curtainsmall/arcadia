@@ -154,12 +154,12 @@
     <ClInclude Include="src\core\event\event.hpp" />
     <ClInclude Include="src\core\exception.hpp" />
     <ClInclude Include="src\core\file\file.hpp" />
-    <ClInclude Include="src\core\file\pfd.hpp" />
+    <ClInclude Include="src\core\file\pfd_header.hpp" />
     <ClInclude Include="src\core\math.hpp" />
     <ClInclude Include="src\core\math\numeric.hpp" />
     <ClInclude Include="src\core\meta\meta.hpp" />
     <ClInclude Include="src\core\nlohmann_json_header.hpp" />
-    <ClInclude Include="src\core\util\hash.hpp" />
+    <ClInclude Include="src\core\hash.hpp" />
     <ClInclude Include="src\core\uuid.hpp" />
     <ClInclude Include="src\function\render\opengl\buffer\gl_cubemap.hpp" />
     <ClInclude Include="src\function\render\opengl\buffer\gl_framebuffer.hpp" />
@@ -179,8 +179,8 @@
     <ClInclude Include="src\platform\opengl\opengl_header.hpp" />
     <ClInclude Include="src\resource\component\camera_component\camera_component.hpp" />
     <ClInclude Include="src\resource\component\component.hpp" />
+    <ClInclude Include="src\resource\component\components.hpp" />
     <ClInclude Include="src\resource\component\model_component\mesh\vertex.hpp" />
-    <ClInclude Include="src\resource\component\meta_components\meta_componts.hpp" />
     <ClInclude Include="src\resource\component\model_component\model_component.hpp" />
     <ClInclude Include="src\resource\component\skybox_component\cubemap.hpp" />
     <ClInclude Include="src\resource\component\model_component\material\material.hpp" />
@@ -202,8 +202,8 @@
     <ClInclude Include="src\core\math\vec4.hpp" />
     <ClInclude Include="src\core\serialization.hpp" />
     <ClInclude Include="src\core\time\timer.hpp" />
-    <ClInclude Include="src\core\util\conditional.hpp" />
-    <ClInclude Include="src\core\util\template.hpp" />
+    <ClInclude Include="src\core\conditional.hpp" />
+    <ClInclude Include="src\core\template.hpp" />
     <ClInclude Include="src\core\version\version.hpp" />
     <ClInclude Include="src\function\input\input_events.hpp" />
     <ClInclude Include="src\function\window\glfw_header.hpp" />
@@ -250,13 +250,12 @@
     </ClCompile>
     <ClCompile Include="src\platform\opengl\opengl_header.cpp" />
     <ClCompile Include="src\resource\component\camera_component\camera_component.cpp" />
-    <ClCompile Include="src\resource\component\meta_components\meta_componts.cpp" />
     <ClCompile Include="src\resource\component\model_component\material\texture2d.cpp" />
     <ClCompile Include="src\resource\component\model_component\model_component.cpp" />
     <ClCompile Include="src\resource\scene\scene.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="src\core\util\string.hpp" />
+    <None Include="src\core\string.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

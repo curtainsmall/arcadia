@@ -66,7 +66,7 @@ namespace arcadia
         [[nodiscard]]
         inline auto has_active_scene() const -> bool
         {
-            return _active_scene_wptr.use_count();
+            return !_active_scene_wptr.expired();
         }
         [[nodiscard]]
         inline auto get_active_scene() -> arcadia::scene&
@@ -87,21 +87,32 @@ namespace arcadia
             }
             return *_active_scene_wptr.lock();
         }
-        inline void set_active_scene(const std::string& name ={})
+        inline auto set_active_scene(const std::string& name ={}) -> std::weak_ptr<arcadia::scene>&
         {
-            if(name.size() && scene_sptr_umap.find(name) != scene_sptr_umap.end())
+            auto has_active_scene = !_active_scene_wptr.expired();
+            auto active_scene_sptr = _active_scene_wptr.lock();
+
+            auto is_same_scene = has_active_scene && name == active_scene_sptr->get_name();
+
+            if(!is_same_scene)
             {
-                _active_scene_wptr = scene_sptr_umap.at(name);
-                arcadia::event_queue::instance()
-                    .signal<arcadia::event::scene_activated>(_active_scene_wptr);
+                if(has_active_scene)
+                {
+                    _active_scene_wptr.reset();
+                    arcadia::event_queue::instance()
+                        .signal<arcadia::event::scene_deactivated>();
+                }
+
+                if(name.size() && scene_sptr_umap.find(name) != scene_sptr_umap.end())
+                {
+                    _active_scene_wptr = scene_sptr_umap.at(name);
+                    arcadia::event_queue::instance()
+                        .signal<arcadia::event::scene_activated>(_active_scene_wptr);
+                }
             }
-            else
-            {
-                _active_scene_wptr.reset();
-                arcadia::event_queue::instance()
-                    .signal<arcadia::event::scene_deactivated>();
-            }
+
             set_modified(true);
+            return _active_scene_wptr;
         }
 
     public:

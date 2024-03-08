@@ -11,6 +11,8 @@ namespace arcadia
     public:
         using self_type = skybox_component;
     public:
+        ARCADIA_COMPONENT_TYPE_STR_GETERS("Skybox");
+
         skybox_component() = default;
         ~skybox_component() = default;
     public:

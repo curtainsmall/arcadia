@@ -18,7 +18,7 @@ namespace arcadia
     public:
         using self_type = imgui_window_menubar;
     public:
-        ARCADIA_IMGUI_WINDOW_ID_STR("###menubar");
+        ARCADIA_IMGUI_WINDOW_ID_STR_GETERS("###menubar");
 
         inline imgui_window_menubar(bool open, const std::initializer_list<std::tuple<std::string, std::string>>& imgui_window_title_id_pairs):
             arcadia::imgui_window_interface(open, "Menubar"),

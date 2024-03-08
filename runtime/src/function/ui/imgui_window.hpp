@@ -6,7 +6,7 @@
 #include"core/base.hpp"
 #include"core/event/event.hpp"
 
-#define ARCADIA_IMGUI_WINDOW_ID_STR(IdStr) \
+#define ARCADIA_IMGUI_WINDOW_ID_STR_GETERS(IdStr) \
 [[nodiscard]]\
 static constexpr auto get_id_str_static() -> std::string\
 {\
@@ -17,13 +17,6 @@ virtual inline auto get_id_str() const -> std::string override\
 {\
     return get_id_str_static();\
 }
-
-#define ARCADIA_IMGUI_WINDOW(Name) \
-struct ARCADIA_API Name: arcadia::imgui_window_interface\
-{\
-ARCADIA_IMGUI_WINDOW_ID_STR(Name)
-
-#define ARCADIA_IMGUI_WINDOW_END }
 
 namespace arcadia
 {

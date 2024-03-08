@@ -17,6 +17,7 @@ namespace arcadia
     public:
         using self_type = model_component;
     public:
+        ARCADIA_COMPONENT_TYPE_STR_GETERS("Model");
 
         model_component() = default;
         model_component(const std::filesystem::path& filepath);
@@ -39,8 +40,11 @@ namespace arcadia
             return _filepath;
         }
 
+        void import(const std::filesystem::path & filepath);
+
     private:
-        void _import();
+        void _load();
+        void _unload();
 
         void _process_assimp_node(
             const aiScene* const ai_scene,

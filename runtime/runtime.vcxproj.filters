@@ -33,7 +33,7 @@
     <ClInclude Include="src\core\log\log.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\file\pfd.hpp">
+    <ClInclude Include="src\core\file\pfd_header.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\core\file\file.hpp">
@@ -57,10 +57,10 @@
     <ClInclude Include="src\core\layer\layer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\util\conditional.hpp">
+    <ClInclude Include="src\core\conditional.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\util\template.hpp">
+    <ClInclude Include="src\core\template.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\core\math\glm_header.hpp">
@@ -177,9 +177,6 @@
     <ClInclude Include="src\core\uuid.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\resource\component\meta_components\meta_componts.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\resource\component\model_component\model_component.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -192,7 +189,7 @@
     <ClInclude Include="src\core\app\app_context.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\util\hash.hpp">
+    <ClInclude Include="src\core\hash.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\core\meta\meta.hpp">
@@ -211,6 +208,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\function\ui\imgui_style.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\resource\component\components.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -302,9 +302,6 @@
     <ClCompile Include="src\resource\component\model_component\material\texture2d.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\resource\component\meta_components\meta_componts.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\function\ui\imgui_backend.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -313,6 +310,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="src\core\util\string.hpp" />
+    <None Include="src\core\string.hpp" />
   </ItemGroup>
 </Project>

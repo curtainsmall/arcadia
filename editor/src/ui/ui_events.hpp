@@ -1,8 +1,10 @@
 #pragma once
 
+#include<memory>
 #include<string>
 
 #include"core/event/event.hpp"
+#include"resource/scene/entt_header.hpp"
 
 namespace arcadia
 {
@@ -56,27 +58,42 @@ namespace arcadia
             std::string // name
         );
         ARCADIA_EVENT(
+            close_scene
+        );
+        ARCADIA_EVENT(
             delete_scene
         );
 
-        //==== Events for outliner ====//
+        //==== Events for entity ====//
 
         ARCADIA_EVENT(
             new_entity
         );
         ARCADIA_EVENT(
-            create_entity,
-            std::string // name
+            select_entity,
+            entt::entity // entity
         );
         ARCADIA_EVENT(
             rename_entity,
             std::string, // old_name
-            std::string // new_name
+            std::string  // new_name
         );
         ARCADIA_EVENT(
             delete_entity,
-            std::string // name
+            entt::entity // entity
         );
 
+        //==== Events for component ====//
+
+        ARCADIA_EVENT(
+            add_component,
+            entt::entity, // entity
+            std::string // type_str
+        );
+        ARCADIA_EVENT(
+            remove_component,
+            entt::entity, // entity
+            std::string // type_str
+        );
     }
 }

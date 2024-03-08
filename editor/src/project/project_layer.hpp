@@ -19,7 +19,7 @@ namespace arcadia
     {
     public:
         project_layer();
-        virtual ~project_layer() = default;
+        virtual ~project_layer();
 
         virtual void on_event(arcadia::event_base& event) override;
         virtual void on_update(delta_time_type delta_time) override;
@@ -30,6 +30,9 @@ namespace arcadia
             return _project_sptr.get();
         }
     private:
+        [[nodiscard]]
+        auto _get_scene_or_assert() -> arcadia::scene&;
+
         void _save_project();
         void _load_project();
 
@@ -43,11 +46,15 @@ namespace arcadia
 
         void _on_create_scene(arcadia::event::create_scene& e);
         void _on_select_scene(arcadia::event::select_scene& e);
+        void _on_close_scene(arcadia::event::close_scene& e);
         void _on_delete_scene(arcadia::event::delete_scene& e);
 
-        void _on_create_entity(arcadia::event::create_entity& e);
+        void _on_new_entity(arcadia::event::new_entity& e);
         void _on_rename_entity(arcadia::event::rename_entity& e);
         void _on_delete_entity(arcadia::event::delete_entity& e);
+
+        void _on_add_component(arcadia::event::add_component& e);
+        void _on_remove_component(arcadia::event::remove_component& e);
 
     private:
         std::shared_ptr<arcadia::project> _project_sptr{};

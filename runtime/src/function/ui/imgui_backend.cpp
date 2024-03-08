@@ -5,7 +5,7 @@
 #include"imgui/backends/imgui_impl_opengl3.h"
 
 #include"core/app/app_config.hpp"
-#include"core/util/conditional.hpp"
+#include"core/conditional.hpp"
 
 ARCADIA_API void arcadia::imgui_backend::initialize(const arcadia::window_layer& window)
 {

@@ -152,9 +152,9 @@
     <ClInclude Include="src\project\project.hpp" />
     <ClInclude Include="src\project\project_layer.hpp" />
     <ClInclude Include="src\project\project_events.hpp" />
+    <ClInclude Include="src\ui\imgui_windows\imgui_windows.hpp" />
     <ClInclude Include="src\ui\imgui_windows\imgui_window_manubar.hpp" />
     <ClInclude Include="src\ui\imgui_windows\imgui_window_outliner.hpp" />
-    <ClInclude Include="src\ui\imgui_windows\imgui_window_popup_create_entity.hpp" />
     <ClInclude Include="src\ui\imgui_windows\imgui_window_popup_create_project.hpp" />
     <ClInclude Include="src\ui\imgui_windows\imgui_window_popup_create_scene.hpp" />
     <ClInclude Include="src\ui\imgui_windows\imgui_window_property.hpp" />
@@ -167,7 +167,6 @@
     <ClCompile Include="src\project\project_layer.cpp" />
     <ClCompile Include="src\ui\imgui_windows\imgui_window_manubar.cpp" />
     <ClCompile Include="src\ui\imgui_windows\imgui_window_outliner.cpp" />
-    <ClCompile Include="src\ui\imgui_windows\imgui_window_popup_create_entity.cpp" />
     <ClCompile Include="src\ui\imgui_windows\imgui_window_popup_create_project.cpp" />
     <ClCompile Include="src\ui\imgui_windows\imgui_window_popup_create_scene.cpp" />
     <ClCompile Include="src\ui\imgui_windows\imgui_window_property.cpp" />

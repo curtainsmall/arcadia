@@ -61,4 +61,45 @@ namespace arcadia
         extern auto to_flatbuffers(const glm::uvec2& vec) -> serialization_type;
         extern auto from_flatbuffers(const serialization_type& flat_vec) -> glm::uvec2;
     }
+
+
+}
+
+namespace std
+{
+    template<>
+    struct std::formatter<glm::vec2>: std::formatter<std::string>
+    {
+        auto format(const glm::vec2& vec, std::format_context& ctx) const
+        {
+            return std::formatter<std::string>::format(
+                std::format("{:.2},{:.2}", vec.x, vec.y),
+                ctx
+            );
+        }
+    };
+
+    template<>
+    struct std::formatter<glm::ivec2>: std::formatter<std::string>
+    {
+        auto format(const glm::ivec2& vec, std::format_context& ctx) const
+        {
+            return std::formatter<std::string>::format(
+                std::format("{:.2},{:.2}", vec.x, vec.y),
+                ctx
+            );
+        }
+    };
+
+    template<>
+    struct std::formatter<glm::uvec2>: std::formatter<std::string>
+    {
+        auto format(const glm::uvec2& vec, std::format_context& ctx) const
+        {
+            return std::formatter<std::string>::format(
+                std::format("{:.2},{:.2}", vec.x, vec.y),
+                ctx
+            );
+        }
+    };
 }

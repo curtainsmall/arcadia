@@ -9,13 +9,7 @@
 #include"core/layer/layer.hpp"
 
 #include"editor/editor_context.hpp"
-#include"ui/imgui_windows/imgui_window_manubar.hpp"
-#include"ui/imgui_windows/imgui_window_outliner.hpp"
-#include"ui/imgui_windows/imgui_window_popup_create_entity.hpp"
-#include"ui/imgui_windows/imgui_window_popup_create_project.hpp"
-#include"ui/imgui_windows/imgui_window_popup_create_scene.hpp"
-#include"ui/imgui_windows/imgui_window_property.hpp"
-#include"ui/imgui_windows/imgui_window_viewport.hpp"
+#include"ui/imgui_windows/imgui_windows.hpp"
 
 arcadia::editor_app_layer::editor_app_layer()
 {
@@ -51,6 +45,8 @@ arcadia::editor_app_layer::editor_app_layer()
                 arcadia::imgui_style_dark
             )
             .top<arcadia::imgui_layer>();
+
+        //editor_context.main_imgui_layer_wptr.lock()->show_demo_window = true;
     }
     app_context.running = true;
 }
@@ -80,7 +76,6 @@ void arcadia::editor_app_layer::_imgui_window_installer(arcadia::imgui_layer& im
         .emplace_imgui_window<arcadia::imgui_window_menubar>(true, imgui_window_ids)
         .emplace_imgui_window<arcadia::imgui_window_popup_create_project>(false, "Create Project")
         .emplace_imgui_window<arcadia::imgui_window_popup_create_scene>(false, "Create Scene")
-        .emplace_imgui_window<arcadia::imgui_window_popup_create_entity>(false, "Create Entity")
         .emplace_imgui_window<arcadia::imgui_window_outliner>(id_strs.contains(arcadia::imgui_window_outliner::get_id_str_static()), "Outliner")
         .emplace_imgui_window<arcadia::imgui_window_viewport>(id_strs.contains(arcadia::imgui_window_viewport::get_id_str_static()), "Viewport")
         .emplace_imgui_window<arcadia::imgui_window_property>(id_strs.contains(arcadia::imgui_window_property::get_id_str_static()), "Property");

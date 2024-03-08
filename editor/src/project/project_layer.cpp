@@ -1,11 +1,11 @@
 #include "project_layer.hpp"
 
 #include"core/app/app_config.hpp"
+#include"core/conditional.hpp"
 #include"core/file/file.hpp"
-#include"core/file/pfd.hpp"
+#include"core/file/pfd_header.hpp"
+#include"core/hash.hpp"
 #include"core/log/log.hpp"
-#include"core/util/conditional.hpp"
-#include"core/util/hash.hpp"
 #include"function/render/opengl/gl_renderer.hpp"
 #include"function/window/window_events.hpp"
 #include"resource/component/camera_component/camera_component.hpp"
@@ -16,6 +16,7 @@ arcadia::project_layer::project_layer():
     arcadia::layer_interface("project")
 {
     const auto& app_config = arcadia::app_config::instance();
+    auto& event_queue = arcadia::event_queue::instance();
 
     arcadia::match<void>(
         app_config.graphic_api,
@@ -28,6 +29,14 @@ arcadia::project_layer::project_layer():
     {
     }
     );
+
+    event_queue.signal<arcadia::event::renderer_built>(_renderer_sptr);
+}
+
+arcadia::project_layer::~project_layer()
+{
+    auto& event_queue = arcadia::event_queue::instance();
+    event_queue.signal<arcadia::event::renderer_unbuilt>();
 }
 
 void arcadia::project_layer::on_event(arcadia::event_base& event)
@@ -41,15 +50,27 @@ void arcadia::project_layer::on_event(arcadia::event_base& event)
         .dispatch<arcadia::event::close_project>(ARCADIA_BIND_MEMBER_FN(_on_close_project))
         .dispatch<arcadia::event::create_scene>(ARCADIA_BIND_MEMBER_FN(_on_create_scene))
         .dispatch<arcadia::event::select_scene>(ARCADIA_BIND_MEMBER_FN(_on_select_scene))
+        .dispatch<arcadia::event::close_scene>(ARCADIA_BIND_MEMBER_FN(_on_close_scene))
         .dispatch<arcadia::event::delete_scene>(ARCADIA_BIND_MEMBER_FN(_on_delete_scene))
-        .dispatch<arcadia::event::create_entity>(ARCADIA_BIND_MEMBER_FN(_on_create_entity))
+        .dispatch<arcadia::event::new_entity>(ARCADIA_BIND_MEMBER_FN(_on_new_entity))
+        //.dispatch<arcadia::event::create_entity>(ARCADIA_BIND_MEMBER_FN(_on_create_entity))
         .dispatch<arcadia::event::rename_entity>(ARCADIA_BIND_MEMBER_FN(_on_rename_entity))
         .dispatch<arcadia::event::delete_entity>(ARCADIA_BIND_MEMBER_FN(_on_delete_entity))
+        .dispatch<arcadia::event::add_component>(ARCADIA_BIND_MEMBER_FN(_on_add_component))
+        .dispatch<arcadia::event::remove_component>(ARCADIA_BIND_MEMBER_FN(_on_remove_component))
         .result();
 }
 
 void arcadia::project_layer::on_update(delta_time_type delta_time)
 {}
+
+auto arcadia::project_layer::_get_scene_or_assert() -> arcadia::scene&
+{
+    ARCADIA_ASSERT(_project_sptr);
+    ARCADIA_ASSERT(_project_sptr->has_active_scene());
+
+    return _project_sptr->get_active_scene();
+}
 
 void arcadia::project_layer::_save_project()
 {
@@ -295,9 +316,6 @@ void arcadia::project_layer::_on_create_scene(arcadia::event::create_scene& e)
 
     auto camera_entity = scene_sptr->create_entity("default_camera");
 
-    auto& camera_comp = scene_sptr->emplace_component<arcadia::camera_component>(camera_entity);
-    camera_comp.pos ={ 0,0,10 };
-
     if(as_current)
     {
         _project_sptr->set_active_scene(name);
@@ -309,49 +327,66 @@ void arcadia::project_layer::_on_select_scene(arcadia::event::select_scene& e)
     ARCADIA_ASSERT(_project_sptr);
 
     const auto& [name] = e.data_tuple;
-    _project_sptr->set_active_scene(name);
+    auto& active_scene_wptr = _project_sptr->set_active_scene(name);
+}
+
+void arcadia::project_layer::_on_close_scene(arcadia::event::close_scene& e)
+{
+    ARCADIA_ASSERT(_project_sptr);
+
+    _project_sptr->set_active_scene();
 }
 
 void arcadia::project_layer::_on_delete_scene(arcadia::event::delete_scene& e)
 {
     ARCADIA_ASSERT(_project_sptr);
-
-    if(_project_sptr->has_active_scene())
-    {
-        _project_sptr->scene_sptr_umap.erase(_project_sptr->get_active_scene().get_name());
-        _project_sptr->set_active_scene();
-    }
-    else
-    {
-        pfd::message{
-            "Delete scene",
-            "There is no current scene",
-            pfd::choice::ok,
-            pfd::icon::warning
-        };
-    }
-}
-
-void arcadia::project_layer::_on_create_entity(arcadia::event::create_entity& e)
-{
-    ARCADIA_ASSERT(_project_sptr);
     ARCADIA_ASSERT(_project_sptr->has_active_scene());
 
-    const auto& [name] = e.data_tuple;
+    const auto& scene_name = _project_sptr->get_active_scene().get_name();
 
-    auto& scene = _project_sptr->get_active_scene();
-    auto entity = scene.create_entity(name);
+    auto res = pfd::message{
+        "Delete Scene",
+        std::format("Do you want to delete scene: {}", scene_name)
+    }.result();
 
+    switch(res)
+    {
+        case pfd::button::ok:
+        {
+            _project_sptr->scene_sptr_umap.erase(scene_name);
+            _project_sptr->set_active_scene();
+            break;
+        }
+        case pfd::button::cancel:
+        default:
+        {
+            break;
+        }
+    }
+
+}
+
+void arcadia::project_layer::_on_new_entity(arcadia::event::new_entity& e)
+{
+    auto& scene = _get_scene_or_assert();
+
+    std::string name = "New Entity";
+    std::string final_name = name;
+    int postfix{ 1 };
+    while(scene.contains_entity(final_name))
+    {
+        final_name = std::format("{} {}", name, ++postfix);
+    }
+
+    ARCADIA_DISCARD(scene.create_entity(final_name));
 }
 
 void arcadia::project_layer::_on_rename_entity(arcadia::event::rename_entity& e)
 {
-    ARCADIA_ASSERT(_project_sptr);
-    ARCADIA_ASSERT(_project_sptr->has_active_scene());
-
     const auto& [old_name, new_name] = e.data_tuple;
 
-    if(!_project_sptr->get_active_scene().rename_entity(old_name, new_name))
+    auto& scene = _get_scene_or_assert();
+    if(!scene.rename_entity(old_name, new_name))
     {
         pfd::message{
             "Rename Entity",
@@ -364,11 +399,48 @@ void arcadia::project_layer::_on_rename_entity(arcadia::event::rename_entity& e)
 
 void arcadia::project_layer::_on_delete_entity(arcadia::event::delete_entity& e)
 {
-    ARCADIA_ASSERT(_project_sptr);
-    ARCADIA_ASSERT(_project_sptr->has_active_scene());
-
     const auto& [entity] = e.data_tuple;
-    auto& scene = _project_sptr->get_active_scene();
+    auto& scene = _get_scene_or_assert();
     scene.destroy_entity(entity);
+}
+
+void arcadia::project_layer::_on_add_component(arcadia::event::add_component& e)
+{
+    const auto& [entity, type_str] = e.data_tuple;
+    auto& scene = _get_scene_or_assert();
+
+    arcadia::match<void>(
+        type_str,
+        arcadia::camera_component::get_type_str_static(),
+        [&]()
+    {
+        scene.emplace_component<arcadia::camera_component>(entity);
+    },
+        arcadia::model_component::get_type_str_static(),
+        [&]()
+    {
+        scene.emplace_component<arcadia::model_component>(entity);
+    }
+    );
+}
+
+void arcadia::project_layer::_on_remove_component(arcadia::event::remove_component& e)
+{
+    const auto& [entity, type_str] = e.data_tuple;
+    auto& scene = _get_scene_or_assert();
+
+    arcadia::match<void>(
+        type_str,
+        arcadia::camera_component::get_type_str_static(),
+        [&]()
+    {
+        scene.remove_conponent<arcadia::camera_component>(entity);
+    },
+        arcadia::model_component::get_type_str_static(),
+        [&]()
+    {
+        scene.remove_conponent<arcadia::model_component>(entity);
+    }
+    );
 }
 

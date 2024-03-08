@@ -18,6 +18,7 @@
     constexpr ImVec4(const glm::ivec4& i) : x(static_cast<float>(i.x)), y(static_cast<float>(i.y)),z(static_cast<float>(i.z)),w(static_cast<float>(i.w)) {} \
     operator glm::ivec4() const { return glm::ivec4(static_cast<int>(x), static_cast<int>(y),static_cast<unsigned int>(z), static_cast<unsigned int>(w)); }
 
+#define IMGUI_DISABLE_OBSOLETE_FUNCTIONS
 #include"imgui/imgui.h"
 #include"imgui/imgui_internal.h"
 #include"imgui/misc/cpp/imgui_stdlib.h"

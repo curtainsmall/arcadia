@@ -56,6 +56,8 @@ namespace arcadia
 
         virtual void draw() override;
 
+        virtual void clear() override;
+
         virtual auto get_render_result_id(std::size_t index) const->void* override;
 
     public:

@@ -57,20 +57,23 @@ void arcadia::imgui_layer::on_update(delta_time_type delta_time)
 
     ImGui::DockSpaceOverViewport();
 
-    if(show_demo_window)
-    {
-        ImGui::ShowDemoWindow();
-    }
-
     if(show_debug_info)
     {
         ImGui::ShowStackToolWindow();
         ImGui::ShowMetricsWindow();
     }
 
-    for(auto& imgui_window_uptr : _imgui_window_uptrs)
+    if(show_demo_window)
     {
-        imgui_window_uptr->on_update();
+        ImGui::ShowDemoWindow();
+    }
+    else
+    {
+
+        for(auto& imgui_window_uptr : _imgui_window_uptrs)
+        {
+            imgui_window_uptr->on_update();
+        }
     }
 
     ImGui::Render();

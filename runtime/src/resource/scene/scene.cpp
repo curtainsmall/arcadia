@@ -84,6 +84,28 @@ auto arcadia::scene::to_json() const -> nlohmann::json
     return json;
 }
 
+auto arcadia::scene::get_name_of_entity(const entt::entity entity) const -> const std::string&
+{
+    auto iter = _name_entity_bimap.right.find(entity);
+    if(iter == _name_entity_bimap.right.end())
+    {
+        throw invalid_entity{ std::format("Cannot find name of entity {}, because it is invalid",arcadia::to_string(entity)) };
+    }
+
+    return iter->get_left();
+}
+
+auto arcadia::scene::get_entity_of_name(const std::string& name) const -> entt::entity
+{
+    auto iter = _name_entity_bimap.left.find(name);
+    if(iter == _name_entity_bimap.left.end())
+    {
+        throw invalid_name{ std::format("Cannot find entity of name {}, because it is invalid",name) };
+    }
+
+    return iter->get_right();
+}
+
 auto arcadia::scene::create_entity(const std::string& name) -> entt::entity
 {
     if(contains_entity(name))
@@ -114,7 +136,7 @@ auto arcadia::scene::destroy_entity(entt::entity entity) -> entt::registry::vers
     return _registry.destroy(entity);
 }
 
-auto arcadia::scene::is_entity_valid(const entt::entity entity) const -> bool
+auto arcadia::scene::contains_entity(const entt::entity entity) const -> bool
 {
     return _registry.valid(entity);
 }
@@ -138,7 +160,7 @@ auto arcadia::scene::rename_entity(const std::string& old_name, const std::strin
 
 void arcadia::scene::_check_valid_entity_or_throw(const entt::entity entity) const
 {
-    if(!is_entity_valid(entity))
+    if(!contains_entity(entity))
     {
         throw invalid_entity{ std::format("Invalid entity: {}",static_cast<entt::id_type>(entity)) };
     }

@@ -57,6 +57,9 @@ namespace arcadia
         /// @throw draw_fail if the draw call failed for any reason
         virtual void draw() = 0;
 
+        /// @brief Clear all caches
+        virtual void clear() = 0;
+
         /// @brief Get the render result (the framebuffer) id
         /// @details Object id type for graphic apis:
         /// - OpenGL: GLuint

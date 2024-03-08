@@ -150,6 +150,17 @@ void arcadia::gl_renderer::draw()
 
 }
 
+void arcadia::gl_renderer::clear()
+{
+    _gl_render_unit_cameras.clear();
+    _legacy_gl_render_unit_camera = false;
+
+    _gl_render_unit_meshes.clear();
+    _legacy_gl_render_unit_mesh = false;
+
+    _gl_render_unit_skybox_opt.reset();
+}
+
 auto arcadia::gl_renderer::get_render_result_id(std::size_t index) const -> void*
 {
     return reinterpret_cast<void*>(std::get<0>(_gl_render_unit_cameras.at(index)).get_gl_texture2d().get_id());

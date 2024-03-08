@@ -18,7 +18,7 @@ namespace arcadia
     public:
         using self_type = imgui_window_popup_create_scene;
     public:
-        ARCADIA_IMGUI_WINDOW_ID_STR("###popup_create_scene");
+        ARCADIA_IMGUI_WINDOW_ID_STR_GETERS("###popup_create_scene");
 
         using arcadia::imgui_window_interface::imgui_window_interface;
         virtual ~imgui_window_popup_create_scene() = default;

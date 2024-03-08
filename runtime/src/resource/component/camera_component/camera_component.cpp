@@ -43,7 +43,7 @@ arcadia::camera_component::camera_component(const nlohmann::json& json)
 
 auto arcadia::camera_component::move_forward() -> self_type&
 {
-    const auto movement = _forward() * speed;
+    const auto movement = get_forward_dir() * speed;
     pos += movement;
     target += movement;
     return *this;
@@ -51,16 +51,15 @@ auto arcadia::camera_component::move_forward() -> self_type&
 
 auto arcadia::camera_component::move_backward() -> self_type&
 {
-    const auto movement = _forward() * speed;
+    const auto movement = get_forward_dir() * speed;
     pos -= movement;
     target -= movement;
-
     return *this;
 }
 
 auto arcadia::camera_component::move_left() -> self_type&
 {
-    const auto movement = glm::cross(_forward(), up) * speed;
+    const auto movement = glm::cross(get_forward_dir(), up) * speed;
     pos -= movement;
     target -= movement;
     return *this;
@@ -68,9 +67,25 @@ auto arcadia::camera_component::move_left() -> self_type&
 
 auto arcadia::camera_component::move_right() -> self_type&
 {
-    const auto movement = glm::cross(_forward(), up) * speed;
+    const auto movement = glm::cross(get_forward_dir(), up) * speed;
     pos += movement;
     target += movement;
+    return *this;
+}
+
+auto arcadia::camera_component::move(const glm::vec3& offset) -> self_type&
+{
+    pos += offset;
+    target += offset;
+    return *this;
+}
+
+auto arcadia::camera_component::drag_view_move(const glm::vec2& offset) -> self_type&
+{
+    move(
+        get_left_dir() * offset.x * sensitivity
+        + get_up_dir() * offset.y * sensitivity
+    );
     return *this;
 }
 
@@ -78,7 +93,7 @@ auto arcadia::camera_component::rotate_view(const glm::vec2& offset) -> self_typ
 {
     if(_test_cursor_move(offset.x, offset.y))
     {
-        auto forward = _forward();
+        auto forward = get_forward_dir();
 
         //Horizontal
         auto x_angle_offset = -offset.x * sensitivity;
@@ -99,11 +114,11 @@ auto arcadia::camera_component::rotate_view(const glm::vec2& offset) -> self_typ
     return *this;
 }
 
-auto arcadia::camera_component::drag_view(const glm::vec2& offset) -> self_type&
+auto arcadia::camera_component::drag_view_rotate(const glm::vec2& offset) -> self_type&
 {
     if(_test_cursor_move(offset.x, offset.y))
     {
-        const auto& forward = _forward();
+        const auto& forward = get_forward_dir();
 
         //Horizontal
         auto x_angle_offset = -offset.x * sensitivity;
@@ -154,20 +169,30 @@ auto arcadia::camera_component::build_mat4(bool col_major) const -> glm::mat4
     }
 }
 
-auto arcadia::camera_component::_forward() const -> glm::vec3
+auto arcadia::camera_component::get_forward_dir() const -> glm::vec3
 {
     return glm::normalize(target - pos);
 }
 
+auto arcadia::camera_component::get_left_dir() const -> glm::vec3
+{
+    return glm::normalize(glm::cross(up, get_forward_dir()));
+}
+
+auto arcadia::camera_component::get_up_dir() const -> glm::vec3
+{
+    return glm::normalize(glm::cross(get_forward_dir(), get_left_dir()));
+}
+
 auto arcadia::camera_component::_pitch_angle() const -> float
 {
-    const auto& forward = _forward();
+    const auto& forward = get_forward_dir();
     return glm::angle(forward, up) - glm::half_pi<float>();
 }
 
 auto arcadia::camera_component::_yaw_angle() const -> float
 {
-    const auto& forward = _forward();
+    const auto& forward = get_forward_dir();
     auto yaw_vec = forward - glm::dot(forward, arcadia::vec3::create_pos_unit_y());
 
     auto coef =
@@ -178,7 +203,7 @@ auto arcadia::camera_component::_yaw_angle() const -> float
 
 auto arcadia::camera_component::_roll_angle() const -> float
 {
-    const auto& forward = _forward();
+    const auto& forward = get_forward_dir();
     auto normal_of_forward_and_up = glm::cross(forward, up);
     auto pos_uni_y_proj_on_forward_and_up = up - glm::dot(up, normal_of_forward_and_up);
 

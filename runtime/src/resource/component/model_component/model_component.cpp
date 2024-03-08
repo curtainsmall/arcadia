@@ -1,6 +1,8 @@
 #include"pch.hpp"
 #include"model_component.hpp"
 
+#include"core/file/file.hpp"
+#include"core/file/pfd_header.hpp"
 
 #include"assimp/postprocess.h"
 #define STBI_FAILURE_USERMSG
@@ -18,20 +20,83 @@ auto arcadia::model_component::to_json() const -> nlohmann::json
 arcadia::model_component::model_component(const std::filesystem::path& filepath):
     _filepath(filepath)
 {
-    _import();
+    if(!_filepath.empty())
+    {
+        _load();
+    }
 }
 
 arcadia::model_component::model_component(const nlohmann::json& json):
-    _filepath(json.at("filepath").dump())
+    _filepath(arcadia::to_filepath(json.at("filepath")))
 {
-    _import();
+    if(!_filepath.empty())
+    {
+        _load();
+    }
 }
 
-void arcadia::model_component::_import()
+void arcadia::model_component::import(const std::filesystem::path & filepath)
+{
+    if(!_filepath.empty() && !filepath.empty())
+    {
+        auto res = pfd::message{
+             "Replacing Model",
+             std::format("Do you want to replace model from {} with model from {}",_filepath.generic_string(),filepath.generic_string()),
+             pfd::choice::yes_no,
+             pfd::icon::info
+        }.result();
+
+        switch(res)
+        {
+            case pfd::button::yes:
+            {
+                _unload();
+                _filepath = filepath;
+                _load();
+                break;
+            }
+            case pfd::button::no:
+            default:
+            {
+                break;
+            }
+        }
+    }
+    else if(!_filepath.empty() && filepath.empty())
+    {
+        auto res = pfd::message{
+            "Unloading Model",
+            std::format("Do you want to unload model from {}",_filepath.generic_string()),
+            pfd::choice::yes_no,
+            pfd::icon::info
+        }.result();
+        switch(res)
+        {
+            case pfd::button::yes:
+            {
+                _unload();
+                _filepath = filepath;
+                break;
+            }
+            case pfd::button::no:
+            default:
+            {
+                break;
+            }
+        }
+    }
+    else if(!filepath.empty())
+    {
+        _filepath = filepath;
+        _load();
+    }
+}
+
+void arcadia::model_component::_load()
 {
     Assimp::Importer importer{};
     auto ai_scene = importer.ReadFile(
-        _filepath.string(),
+        _filepath.generic_string(),
         aiProcess_Triangulate
         | aiProcess_GenNormals
         | aiProcess_CalcTangentSpace
@@ -44,7 +109,7 @@ void arcadia::model_component::_import()
         || !ai_scene->mRootNode
         )
     {
-        set_state<arcadia::component_state_error>(std::format("Failed to load model form:\n {}", _filepath.generic_string()));
+        throw arcadia::exception{}; // Keep empty model component
     }
 
     std::size_t next_mesh_index{ 0 };
@@ -53,6 +118,12 @@ void arcadia::model_component::_import()
         ai_scene->mRootNode,
         next_mesh_index
     );
+
+}
+
+void arcadia::model_component::_unload()
+{
+    _meshes.clear();
 }
 
 void arcadia::model_component::_process_assimp_node(

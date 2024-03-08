@@ -8,6 +8,7 @@
 #include<cstdlib>
 #include<string>
 #include<typeindex>
+#include<typeinfo>
 
 #include"platform/base.hpp"
 
@@ -19,6 +20,8 @@
 #define ARCADIA_ASSERT(x) assert(x)
 
 #define ARCADIA_BIND_MEMBER_FN(fn) [this]<class ...Args>(Args&& ...args) -> decltype(auto) { return this->fn(std::forward<Args>(args)...); }
+
+#define ARCADIA_DISCARD(x) (void) x
 
 using namespace std::string_literals;
 using namespace std::string_view_literals;

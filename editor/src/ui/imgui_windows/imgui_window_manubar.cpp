@@ -25,7 +25,7 @@ void arcadia::imgui_window_menubar::on_update()
 
 void arcadia::imgui_window_menubar::_file_menu()
 {
-    auto has_project = _project_wptr.use_count();
+    auto has_project = !_project_wptr.expired();
     auto project_sptr = _project_wptr.lock();
 
     auto& event_queue = arcadia::event_queue::instance();
@@ -59,7 +59,7 @@ void arcadia::imgui_window_menubar::_file_menu()
 
 void arcadia::imgui_window_menubar::_edit_menu()
 {
-    auto has_project = _project_wptr.use_count();
+    auto has_project = !_project_wptr.expired();
     auto project_sptr = _project_wptr.lock();
 
     auto& event_queue = arcadia::event_queue::instance();
@@ -71,6 +71,7 @@ void arcadia::imgui_window_menubar::_edit_menu()
         }
 
         bool has_scene = has_project && project_sptr->scene_sptr_umap.size();
+        bool has_active_scene = has_scene && project_sptr->has_active_scene();
 
         if(ImGui::BeginMenu("Select Scene", has_scene))
         {
@@ -85,7 +86,11 @@ void arcadia::imgui_window_menubar::_edit_menu()
             }
             ImGui::EndMenu();
         }
-        if(ImGui::MenuItem("Delete Scene", nullptr, nullptr, project_sptr.get()))
+        if(ImGui::MenuItem("Close Scene", nullptr, nullptr, has_active_scene))
+        {
+            event_queue.signal<arcadia::event::close_scene>();
+        }
+        if(ImGui::MenuItem("Delete Scene", nullptr, nullptr, has_active_scene))
         {
             event_queue.signal<arcadia::event::delete_scene>();
         }

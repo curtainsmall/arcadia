@@ -1,7 +1,7 @@
 #include "pch.hpp"
 #include "graphic_api.hpp"
 
-#include"core/util/conditional.hpp"
+#include"core/conditional.hpp"
 
 auto arcadia::graphic_api::directx::to_flatbuffers(const self_type& dx) -> serialization_type
 {

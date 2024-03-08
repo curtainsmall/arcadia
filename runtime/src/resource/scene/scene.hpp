@@ -14,7 +14,7 @@
 #include"core/nlohmann_json_header.hpp"
 #include"core/uuid.hpp"
 #include"resource/component/component.hpp"
-#include"resource/component/meta_components/meta_componts.hpp"
+#include"resource/component/components.hpp"
 #include"resource/scene/entt_header.hpp"
 
 namespace arcadia
@@ -75,11 +75,15 @@ namespace arcadia
         }
 
         [[nodiscard]]
+        auto get_name_of_entity(const entt::entity entity) const -> const std::string&;
+        auto get_entity_of_name(const std::string& name) const->entt::entity;
+
+        [[nodiscard]]
         auto create_entity(const std::string& name) -> entt::entity;
         auto destroy_entity(const std::string& name) -> entt::registry::version_type;
         auto destroy_entity(const entt::entity entity) -> entt::registry::version_type;
         [[nodiscard]]
-        auto is_entity_valid(const entt::entity entity) const -> bool;
+        auto contains_entity(const entt::entity entity) const -> bool;
         [[nodiscard]]
         auto contains_entity(const std::string& name) const -> bool;
         auto rename_entity(const std::string& old_name, const std::string& new_name) -> bool;

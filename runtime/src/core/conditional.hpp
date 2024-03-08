@@ -4,7 +4,7 @@
 #include<variant>
 
 #include"core/base.hpp"
-#include"core/util/template.hpp"
+#include"core/template.hpp"
 
 namespace arcadia
 {
@@ -45,7 +45,7 @@ namespace arcadia
         class ...Cases
     >
         requires (sizeof...(Cases) % 2 == 0)
-    ARCADIA_API auto match(const Cond& cond, const Case& case_expr, const std::function<Ret()> case_fn, Cases&& ...cases) -> Ret
+    ARCADIA_API auto match(const Cond& cond, const Case& case_expr, const std::function<Ret()>& case_fn, Cases&& ...cases) -> Ret
     {
         if constexpr(sizeof...(Cases) == 0)
         {
@@ -64,7 +64,7 @@ namespace arcadia
         class ...Cases
     >
         requires (sizeof...(Cases) % 2 == 0)
-    ARCADIA_API auto match(const Cond& cond, const std::function<Ret()>& default_fn, const Case& case_expr, const std::function<Ret()> case_fn, Cases&& ...cases) -> Ret
+    ARCADIA_API auto match(const Cond& cond, const std::function<Ret()>& default_fn, const Case& case_expr, const std::function<Ret()>& case_fn, Cases&& ...cases) -> Ret
     {
         if constexpr(sizeof...(Cases) == 0)
         {

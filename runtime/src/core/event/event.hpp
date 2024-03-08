@@ -8,9 +8,9 @@
 #include<vector>
 
 #include"core/base.hpp"
+#include"core/conditional.hpp"
 #include"core/exception.hpp"
 #include"core/log/log.hpp"
-#include"core/util/conditional.hpp"
 
 #ifdef ARCADIA_IN_DEBUG
 #   include<unordered_set>
@@ -26,7 +26,7 @@ public:\
 
 namespace arcadia
 {
-    struct ARCADIA_API event_base
+    struct ARCADIA_API event_base: arcadia::noncopyable
     {
     public:
         event_base() = default;

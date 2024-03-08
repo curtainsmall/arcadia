@@ -8,9 +8,12 @@
 void arcadia::imgui_window_viewport::on_event(arcadia::event_base& event)
 {
     arcadia::event_dispatcher{ event }
-        .dispatch<arcadia::event::open_imgui_window>(ARCADIA_BIND_MEMBER_FN(_on_open_window))
+        .dispatch<arcadia::event::input_cursor_move>(ARCADIA_BIND_MEMBER_FN(_on_input_cursor_move))
+        .dispatch<arcadia::event::open_imgui_window>(ARCADIA_BIND_MEMBER_FN(_on_open_imgui_window))
         .dispatch<arcadia::event::scene_activated>(ARCADIA_BIND_MEMBER_FN(_on_scene_activated))
         .dispatch<arcadia::event::scene_deactivated>(ARCADIA_BIND_MEMBER_FN(_on_scene_deactivated))
+        .dispatch<arcadia::event::renderer_built>(ARCADIA_BIND_MEMBER_FN(_on_renderer_built))
+        .dispatch<arcadia::event::renderer_unbuilt>(ARCADIA_BIND_MEMBER_FN(_on_renderer_unbuilt))
         .result();
 }
 
@@ -21,7 +24,7 @@ void arcadia::imgui_window_viewport::on_update()
         return;
     }
 
-    auto scene_sptr = _scene_wptr.lock();
+    std::shared_ptr<const arcadia::scene> scene_sptr = _scene_wptr.lock();
     auto renderer_sptr = _renderer_wptr.lock();
 
     auto imgui_title = _title + get_id_str();
@@ -40,39 +43,62 @@ void arcadia::imgui_window_viewport::on_update()
         }
         else
         {
-            glm::ivec2 size{};
-
+            _camera.viewport_size = ImGui::GetContentRegionAvail();
             renderer_sptr->begin_frame();
 
-            // Model
-            const auto& model_comp_view = scene_sptr->component_view<arcadia::model_component>();
-            for(const auto& entity : model_comp_view)
+            renderer_sptr->submit(_camera);
+
+            renderer_sptr->submit(_grid);
+            const auto& model_comp_group = scene_sptr->component_view<arcadia::model_component>();
+            for(const auto& entity : model_comp_group)
             {
-                const auto& [model_comp] = model_comp_view.get(entity);
+                const auto& [model_comp] = model_comp_group.get(entity);
                 renderer_sptr->submit(model_comp);
-            }
-
-            // Camera
-            const auto& camera_comp_view = scene_sptr->component_view<arcadia::camera_component>();
-            for(const auto& entity : camera_comp_view)
-            {
-                const auto& [camera_comp] = camera_comp_view.get(entity);
-                renderer_sptr->submit(camera_comp);
-
-                size = camera_comp.viewport_size;
             }
 
             renderer_sptr->end_frame();
 
             renderer_sptr->draw();
 
-            ImGui::Image(renderer_sptr->get_render_result_id(0), size);
+            auto image_cursor_pos = ImGui::GetCursorPos();
+            ImGui::Image(renderer_sptr->get_render_result_id(0), _camera.viewport_size, { 0,1 }, { 1,0 });
+
+            if(ImGui::IsItemHovered())
+            {
+                auto& io = ImGui::GetIO();
+
+                // Scroll to zoom (move camera forwards or backwards along direction)
+                auto mouse_wheel_offset = io.MouseWheel;
+                _camera.move(_camera.get_forward_dir() * mouse_wheel_offset);
+
+                if(ImGui::IsMouseDown(ImGuiMouseButton_Middle))
+                {
+                    if(ImGui::IsKeyDown(ImGuiKey_LeftShift))
+                    {
+                        _camera.drag_view_move(_cursor_move);
+                    }
+                    else
+                    {
+                        _camera.drag_view_rotate(_cursor_move);
+                    }
+                }
+
+                // Display viewport camera info
+                ImGui::SetCursorPos(image_cursor_pos);
+                ImGui::Text(std::format("Camera - Pos: {} - Target: {}", _camera.pos, _camera.target).c_str());
+            }
         }
     }
     ImGui::End();
 }
 
-void arcadia::imgui_window_viewport::_on_open_window(arcadia::event::open_imgui_window& e)
+void arcadia::imgui_window_viewport::_on_input_cursor_move(arcadia::event::input_cursor_move& e)
+{
+    const auto& [wnd_ptr, cursor_move] = e.data_tuple;
+    _cursor_move = cursor_move;
+}
+
+void arcadia::imgui_window_viewport::_on_open_imgui_window(arcadia::event::open_imgui_window& e)
 {
     const auto& [id_str] = e.data_tuple;
     if(id_str == get_id_str())
@@ -90,4 +116,15 @@ void arcadia::imgui_window_viewport::_on_scene_activated(arcadia::event::scene_a
 void arcadia::imgui_window_viewport::_on_scene_deactivated(arcadia::event::scene_deactivated& e)
 {
     _scene_wptr.reset();
+}
+
+void arcadia::imgui_window_viewport::_on_renderer_built(arcadia::event::renderer_built& e)
+{
+    const auto& [renderer_wptr] = e.data_tuple;
+    _renderer_wptr = renderer_wptr;
+}
+
+void arcadia::imgui_window_viewport::_on_renderer_unbuilt(arcadia::event::renderer_unbuilt& e)
+{
+    _renderer_wptr.reset();
 }

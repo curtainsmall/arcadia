@@ -15,6 +15,8 @@ namespace arcadia
         using self_type = arcadia::camera_component;
         using serialization_type = arcadia::serialization::camera;
     public:
+        ARCADIA_COMPONENT_TYPE_STR_GETERS("Camera");
+
         camera_component() = default;
         camera_component(const nlohmann::json& json);
         ~camera_component() = default;
@@ -24,8 +26,11 @@ namespace arcadia
         auto move_backward() -> self_type&;
         auto move_left() -> self_type&;
         auto move_right() -> self_type&;
+        auto move(const glm::vec3& offset) -> self_type&;
+        auto drag_view_move(const glm::vec2& offset) -> self_type&;
+
         auto rotate_view(const glm::vec2& offset) -> self_type&;
-        auto drag_view(const glm::vec2& offset) -> self_type&;
+        auto drag_view_rotate(const glm::vec2& offset) -> self_type&;
 
         [[nodiscard]]
         auto build_view_mat4() const->glm::mat4;
@@ -36,9 +41,11 @@ namespace arcadia
         [[nodiscard]]
         auto build_mat4(bool col_major = true) const->glm::mat4;
 
-    private:
         // Get forward vector by position and target
-        auto _forward() const->glm::vec3;
+        auto get_forward_dir() const->glm::vec3;
+        auto get_left_dir() const->glm::vec3;
+        auto get_up_dir() const->glm::vec3;
+    private:
 
         // Angle of pitch
         // Look from right:
@@ -67,7 +74,7 @@ namespace arcadia
 
         /// @brief Direction of global up
         /// @note This should always be unit vector
-        glm::vec3 up{ arcadia::vec3::create_pos_unit_x() };
+        glm::vec3 up{ arcadia::vec3::create_pos_unit_y() };
 
         /// @brief Near plane of clip space
         float near_plane{ .1f };

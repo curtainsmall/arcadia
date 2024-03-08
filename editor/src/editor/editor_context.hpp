@@ -18,8 +18,8 @@ namespace arcadia
         static auto instance() -> self_type&;
 
     public:
-        std::weak_ptr<const arcadia::window_layer> main_window_layer_wptr{};
-        std::weak_ptr<const arcadia::imgui_layer> main_imgui_layer_wptr{};
-        std::weak_ptr<const arcadia::project_layer> main_project_layer_wptr{};
+        std::weak_ptr<arcadia::window_layer> main_window_layer_wptr{};
+        std::weak_ptr<arcadia::imgui_layer> main_imgui_layer_wptr{};
+        std::weak_ptr<arcadia::project_layer> main_project_layer_wptr{};
     };
 }
