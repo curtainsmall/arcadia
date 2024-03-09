@@ -3,6 +3,7 @@
 
 #include"core/file/file.hpp"
 #include"core/file/pfd_header.hpp"
+#include"core/log/log.hpp"
 
 #include"assimp/postprocess.h"
 #define STBI_FAILURE_USERMSG
@@ -109,7 +110,8 @@ void arcadia::model_component::_load()
         || !ai_scene->mRootNode
         )
     {
-        throw arcadia::exception{}; // Keep empty model component
+        arcadia::log::error(importer.GetErrorString());
+        return;
     }
 
     std::size_t next_mesh_index{ 0 };

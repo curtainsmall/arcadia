@@ -4,7 +4,7 @@
 arcadia::gl_vertex_buffer::gl_vertex_buffer(const std::vector<arcadia::vertex>& vertices):
     _vertex_count(vertices.size())
 {
-    ARCADIA_GL_CALL(glGenBuffers(1, &_gl_vertex_buffer_id));
+    ARCADIA_GL_CALL(glGenBuffers(1, &_gl_id));
     bind();
     ARCADIA_GL_CALL(glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(arcadia::vertex), vertices.data(), GL_STATIC_DRAW));
     unbind();
@@ -18,13 +18,13 @@ arcadia::gl_vertex_buffer::gl_vertex_buffer(const std::vector<arcadia::vertex>& 
 
 arcadia::gl_vertex_buffer::~gl_vertex_buffer()
 {
-    ARCADIA_GL_CALL(glDeleteBuffers(1, &_gl_vertex_buffer_id));
+    ARCADIA_GL_CALL(glDeleteBuffers(1, &_gl_id));
 }
 
 arcadia::gl_vertex_buffer::gl_vertex_buffer(self_type&& rhs) noexcept
 {
-    _gl_vertex_buffer_id = rhs._gl_vertex_buffer_id;
-    rhs._gl_vertex_buffer_id = 0;
+    _gl_id = rhs._gl_id;
+    rhs._gl_id = 0;
 
     _buffer_layout = std::move(rhs._buffer_layout);
 
@@ -34,8 +34,8 @@ arcadia::gl_vertex_buffer::gl_vertex_buffer(self_type&& rhs) noexcept
 
 auto arcadia::gl_vertex_buffer::operator=(self_type&& rhs) noexcept -> self_type&
 {
-    _gl_vertex_buffer_id = rhs._gl_vertex_buffer_id;
-    rhs._gl_vertex_buffer_id = 0;
+    _gl_id = rhs._gl_id;
+    rhs._gl_id = 0;
 
     _buffer_layout = std::move(rhs._buffer_layout);
 
@@ -47,12 +47,12 @@ auto arcadia::gl_vertex_buffer::operator=(self_type&& rhs) noexcept -> self_type
 
 void arcadia::gl_vertex_buffer::bind() const
 {
-    if(_gl_vertex_buffer_id == 0)
+    if(_gl_id == 0)
     {
         throw arcadia::gl_invalid{ "Cannot bind null OpenGL vertex buffer" };
     }
 
-    ARCADIA_GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, _gl_vertex_buffer_id));
+    ARCADIA_GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, _gl_id));
 }
 
 void arcadia::gl_vertex_buffer::unbind() const

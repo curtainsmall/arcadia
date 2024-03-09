@@ -20,9 +20,9 @@ namespace arcadia
         auto operator=(self_type&& rhs) noexcept -> self_type&;
 
         [[nodiscard]]
-        inline auto get_id() const -> GLuint
+        inline auto get_gl_id() const -> GLuint
         {
-            return _gl_index_buffer_id;
+            return _gl_id;
         }
 
         [[nodiscard]]
@@ -34,7 +34,7 @@ namespace arcadia
         void bind() const;
         void unbind() const;
     private:
-        GLuint _gl_index_buffer_id{ 0 };
+        GLuint _gl_id{ 0 };
         GLsizei _index_count{ 0 };
     };
 }

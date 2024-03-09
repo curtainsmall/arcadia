@@ -35,9 +35,9 @@ namespace arcadia
         auto operator=(self_type&& rhs) noexcept -> self_type&;
 
         [[nodiscard]]
-        inline auto get_id() const -> GLuint
+        inline auto get_gl_id() const -> GLuint
         {
-            return _gl_pipeline_id;
+            return _gl_id;
         }
 
         void use() const;
@@ -59,7 +59,7 @@ namespace arcadia
         auto _get_uniform_location(const std::string& name) -> GLuint;
 
     private:
-        GLuint _gl_pipeline_id{ 0 };
+        GLuint _gl_id{ 0 };
         std::unordered_map<std::string, GLuint> _gl_uniform_location_cache_umap{};
         std::vector<arcadia::gl_shader> _gl_shaders{};
     };

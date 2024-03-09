@@ -85,7 +85,7 @@ void arcadia::imgui_window_viewport::on_update()
 
                 // Display viewport camera info
                 ImGui::SetCursorPos(image_cursor_pos);
-                ImGui::Text(std::format("Camera - Pos: {} - Target: {}", _camera.pos, _camera.target).c_str());
+                ImGui::Text(std::format("Camera - Pos: {} - Direction: {}", _camera.pos, _camera.get_forward_dir()).c_str());
             }
         }
     }

@@ -11,9 +11,9 @@ auto arcadia::camera_component::to_json() const -> nlohmann::json
         { "up"                      ,arcadia::vec3::to_json(up) },
         { "near_plane"              ,near_plane },
         { "far_plane"               ,far_plane },
-        { "fovy"                    ,fovy },
-        { "fovy_min"                ,fovy_min },
-        { "fovy_max"                ,fovy_max },
+        { "fov"                     ,fov },
+        { "fov_min"                 ,fov_min },
+        { "fov_max"                 ,fov_max },
         { "speed"                   ,speed},
         { "viewport_size"           ,arcadia::ivec2::to_json(viewport_size) },
         { "sensitivity"             ,sensitivity },
@@ -30,9 +30,9 @@ arcadia::camera_component::camera_component(const nlohmann::json& json)
     up                       = arcadia::vec3::from_json(json.at("up"));
     near_plane               = json.at("near_plane");
     far_plane                = json.at("far_plane");
-    fovy                     = json.at("fovy");
-    fovy_min                 = json.at("fovy_min");
-    fovy_max                 = json.at("fovy_max");
+    fov                      = json.at("fov");
+    fov_min                  = json.at("fov_min");
+    fov_max                  = json.at("fov_max");
     speed                    = json.at("speed");
     viewport_size            = arcadia::ivec2::from_json(json.at("viewport_size"));
     sensitivity              = json.at("sensitivity");
@@ -150,7 +150,7 @@ auto arcadia::camera_component::build_view_mat4() const -> glm::mat4
 auto arcadia::camera_component::build_proj_mat4() const -> glm::mat4
 {
     return glm::perspective(
-        fovy,
+        fov,
         viewport_size.x * 1.f / viewport_size.y,
         near_plane,
         far_plane

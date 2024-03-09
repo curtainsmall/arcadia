@@ -3,7 +3,7 @@
 
 arcadia::gl_cubemap::gl_cubemap(const arcadia::cubemap& cubemap)
 {
-    ARCADIA_GL_CALL(glGenTextures(1, &_gl_cubemap_id));
+    ARCADIA_GL_CALL(glGenTextures(1, &_gl_id));
     bind();
 
     // TODO: Multisample ?
@@ -25,13 +25,13 @@ arcadia::gl_cubemap::gl_cubemap(const arcadia::cubemap& cubemap)
 
 arcadia::gl_cubemap::~gl_cubemap()
 {
-    ARCADIA_GL_CALL(glDeleteTextures(1, &_gl_cubemap_id));
+    ARCADIA_GL_CALL(glDeleteTextures(1, &_gl_id));
 }
 
 arcadia::gl_cubemap::gl_cubemap(self_type&& rhs) noexcept
 {
-    _gl_cubemap_id = rhs._gl_cubemap_id;
-    rhs._gl_cubemap_id = 0;
+    _gl_id = rhs._gl_id;
+    rhs._gl_id = 0;
 
     _slot = rhs._slot;
     rhs._slot = -1u;
@@ -39,8 +39,8 @@ arcadia::gl_cubemap::gl_cubemap(self_type&& rhs) noexcept
 
 auto arcadia::gl_cubemap::operator=(self_type&& rhs) noexcept -> self_type&
 {
-    _gl_cubemap_id = rhs._gl_cubemap_id;
-    rhs._gl_cubemap_id = 0;
+    _gl_id = rhs._gl_id;
+    rhs._gl_id = 0;
 
     _slot = rhs._slot;
     rhs._slot = -1u;
@@ -50,13 +50,13 @@ auto arcadia::gl_cubemap::operator=(self_type&& rhs) noexcept -> self_type&
 
 void arcadia::gl_cubemap::bind(GLenum slot)
 {
-    if(_gl_cubemap_id == 0)
+    if(_gl_id == 0)
     {
         throw arcadia::gl_invalid{ "Cannot bind null OpenGL cubemap" };
     }
     _slot = slot;
     ARCADIA_GL_CALL(glActiveTexture(GL_TEXTURE0 + slot));
-    ARCADIA_GL_CALL(glBindTexture(GL_TEXTURE_CUBE_MAP, _gl_cubemap_id));
+    ARCADIA_GL_CALL(glBindTexture(GL_TEXTURE_CUBE_MAP, _gl_id));
 }
 
 void arcadia::gl_cubemap::unbind()
@@ -73,7 +73,7 @@ void arcadia::gl_cubemap::unbind()
 
 void arcadia::gl_cubemap::set_tex_parameter(GLenum pname, GLint param)
 {
-    if(_gl_cubemap_id == 0 || _slot == -1)
+    if(_gl_id == 0 || _slot == -1)
     {
         throw arcadia::gl_invalid{ "Cannot set texture parameter to an unbound OpenGL Texture" };
     }
@@ -83,7 +83,7 @@ void arcadia::gl_cubemap::set_tex_parameter(GLenum pname, GLint param)
 
 void arcadia::gl_cubemap::set_tex_parameter(GLenum pname, GLfloat param)
 {
-    if(_gl_cubemap_id == 0 || _slot == -1)
+    if(_gl_id == 0 || _slot == -1)
     {
         throw arcadia::gl_invalid{ "Cannot set texture parameter to an unbound OpenGL Texture" };
     }

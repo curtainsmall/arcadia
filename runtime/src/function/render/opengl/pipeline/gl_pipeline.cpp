@@ -6,7 +6,7 @@ arcadia::gl_pipeline::gl_pipeline(
     const gl_shaders_builder_type& gl_shaders_builder
 )
 {
-    ARCADIA_GL_CALL(_gl_pipeline_id = glCreateProgram());
+    ARCADIA_GL_CALL(_gl_id = glCreateProgram());
 
     // Build Shaders
     gl_shaders_builder(gl_shader_folder_path, _gl_shaders);
@@ -14,35 +14,35 @@ arcadia::gl_pipeline::gl_pipeline(
     // Build pipeline
     for(const auto& shader : _gl_shaders)
     {
-        ARCADIA_GL_CALL(glAttachShader(_gl_pipeline_id, shader.get_id()));
+        ARCADIA_GL_CALL(glAttachShader(_gl_id, shader.get_gl_id()));
     }
 
     GLint status{ GL_FALSE };
-    ARCADIA_GL_CALL(glLinkProgram(_gl_pipeline_id));
-    ARCADIA_GL_CALL(glGetProgramiv(_gl_pipeline_id, GL_LINK_STATUS, &status));
+    ARCADIA_GL_CALL(glLinkProgram(_gl_id));
+    ARCADIA_GL_CALL(glGetProgramiv(_gl_id, GL_LINK_STATUS, &status));
     if(status == GL_FALSE)
     {
         GLint length{ 0 };
-        ARCADIA_GL_CALL(glGetProgramiv(_gl_pipeline_id, GL_INFO_LOG_LENGTH, &length));
+        ARCADIA_GL_CALL(glGetProgramiv(_gl_id, GL_INFO_LOG_LENGTH, &length));
         std::string msg{};
         msg.reserve(length);
-        ARCADIA_GL_CALL(glGetProgramInfoLog(_gl_pipeline_id, length, nullptr, msg.data()));
-        ARCADIA_GL_CALL(glDeleteProgram(_gl_pipeline_id));
-        _gl_pipeline_id = 0;
+        ARCADIA_GL_CALL(glGetProgramInfoLog(_gl_id, length, nullptr, msg.data()));
+        ARCADIA_GL_CALL(glDeleteProgram(_gl_id));
+        _gl_id = 0;
         throw link_fail{ msg };
     }
 
-    ARCADIA_GL_CALL(glValidateProgram(_gl_pipeline_id));
-    ARCADIA_GL_CALL(glGetProgramiv(_gl_pipeline_id, GL_VALIDATE_STATUS, &status));
+    ARCADIA_GL_CALL(glValidateProgram(_gl_id));
+    ARCADIA_GL_CALL(glGetProgramiv(_gl_id, GL_VALIDATE_STATUS, &status));
     if(status == GL_FALSE)
     {
         GLint length{ 0 };
-        ARCADIA_GL_CALL(glGetProgramiv(_gl_pipeline_id, GL_INFO_LOG_LENGTH, &length));
+        ARCADIA_GL_CALL(glGetProgramiv(_gl_id, GL_INFO_LOG_LENGTH, &length));
         std::string msg{};
         msg.reserve(length);
-        ARCADIA_GL_CALL(glGetProgramInfoLog(_gl_pipeline_id, length, nullptr, msg.data()));
-        ARCADIA_GL_CALL(glDeleteProgram(_gl_pipeline_id));
-        _gl_pipeline_id = 0;
+        ARCADIA_GL_CALL(glGetProgramInfoLog(_gl_id, length, nullptr, msg.data()));
+        ARCADIA_GL_CALL(glDeleteProgram(_gl_id));
+        _gl_id = 0;
         throw link_fail{ msg };
     }
 
@@ -51,15 +51,15 @@ arcadia::gl_pipeline::gl_pipeline(
 
 arcadia::gl_pipeline::~gl_pipeline()
 {
-    ARCADIA_GL_CALL(glDeleteProgram(_gl_pipeline_id));
+    ARCADIA_GL_CALL(glDeleteProgram(_gl_id));
 }
 
 arcadia::gl_pipeline::gl_pipeline(self_type&& rhs) noexcept:
     _gl_uniform_location_cache_umap(std::move(rhs._gl_uniform_location_cache_umap)),
     _gl_shaders(std::move(rhs._gl_shaders))
 {
-    _gl_pipeline_id = rhs._gl_pipeline_id;
-    rhs._gl_pipeline_id = 0;
+    _gl_id = rhs._gl_id;
+    rhs._gl_id = 0;
 }
 
 auto arcadia::gl_pipeline::operator=(self_type&& rhs) noexcept -> self_type&
@@ -67,19 +67,19 @@ auto arcadia::gl_pipeline::operator=(self_type&& rhs) noexcept -> self_type&
     _gl_uniform_location_cache_umap = std::move(rhs._gl_uniform_location_cache_umap);
     _gl_shaders = std::move(rhs._gl_shaders);
 
-    _gl_pipeline_id = rhs._gl_pipeline_id;
-    rhs._gl_pipeline_id = 0;
+    _gl_id = rhs._gl_id;
+    rhs._gl_id = 0;
 
     return *this;
 }
 
 void arcadia::gl_pipeline::use() const
 {
-    if(_gl_pipeline_id == 0)
+    if(_gl_id == 0)
     {
         throw arcadia::gl_invalid{ "Cannot use null OpenGL pipeline" };
     }
-    ARCADIA_GL_CALL(glUseProgram(_gl_pipeline_id));
+    ARCADIA_GL_CALL(glUseProgram(_gl_id));
 }
 
 void arcadia::gl_pipeline::unuse() const
@@ -150,7 +150,7 @@ auto arcadia::gl_pipeline::_get_uniform_location(const std::string& name) -> GLu
     }
     catch(const std::out_of_range&)
     {
-        ARCADIA_GL_CALL(auto location = glGetUniformLocation(_gl_pipeline_id, name.c_str()));
+        ARCADIA_GL_CALL(auto location = glGetUniformLocation(_gl_id, name.c_str()));
         if(location == -1)
         {
             arcadia::log::error(std::format("Failed to get OpenGL uniform location of {}, because it does not exist", name));

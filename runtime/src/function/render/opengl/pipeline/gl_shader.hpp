@@ -33,11 +33,11 @@ namespace arcadia
         auto operator=(self_type&& rhs) noexcept -> self_type&;
 
         [[nodiscard]]
-        inline auto get_id() const -> GLuint
+        inline auto get_gl_id() const -> GLuint
         {
-            return _gl_shader_id;
+            return _gl_id;
         }
     private:
-        GLuint _gl_shader_id{ 0 };
+        GLuint _gl_id{ 0 };
     };
 }

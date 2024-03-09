@@ -29,7 +29,7 @@ namespace arcadia
         [[nodiscard]]
         inline auto get_id() const -> GLuint
         {
-            return _gl_vertex_array_id;
+            return _gl_id;
         }
 
         void bind() const;
@@ -41,7 +41,7 @@ namespace arcadia
         void draw_indices_instanced(GLenum mode, GLsizei count);
 
     private:
-        GLuint _gl_vertex_array_id{ 0 };
+        GLuint _gl_id{ 0 };
 
         arcadia::gl_vertex_buffer _gl_vertex_buffer;
         arcadia::gl_index_buffer _gl_index_buffer;

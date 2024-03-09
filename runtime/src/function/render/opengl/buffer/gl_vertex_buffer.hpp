@@ -132,9 +132,9 @@ namespace arcadia
         auto operator=(self_type&& rhs) noexcept -> self_type&;
 
         [[nodiscard]]
-        inline auto get_id() const -> GLuint
+        inline auto get_gl_id() const -> GLuint
         {
-            return _gl_vertex_buffer_id;
+            return _gl_id;
         }
 
         [[nodiscard]]
@@ -149,7 +149,7 @@ namespace arcadia
         /// @note Call this function @b after the OpenGL vertex array you want to use has been bound
         void setup_vertex_attrib_array() const;
     private:
-        GLuint _gl_vertex_buffer_id{ 0 };
+        GLuint _gl_id{ 0 };
         arcadia::gl_buffer_layout _buffer_layout{};
         GLsizei _vertex_count{ 0 };
     };

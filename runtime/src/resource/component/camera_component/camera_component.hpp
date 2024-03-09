@@ -83,13 +83,13 @@ namespace arcadia
         float far_plane{ 100.f };
 
         /// @brief FOV angle in vertical direction
-        float fovy{ 90.f };
+        float fov{ 90.f };
 
-        /// @brief Minimun value fo @ref arcadia::camera::fovy
-        float fovy_min{ 1.f };
+        /// @brief Minimun value fo @ref arcadia::camera::fov
+        float fov_min{ 1.f };
 
-        /// @brief Maximun value of @ref arcadia::camera::fovy
-        float fovy_max{ 120.f };
+        /// @brief Maximun value of @ref arcadia::camera::fov
+        float fov_max{ 120.f };
 
         /// @brief Move speed of free-camera
         float speed{ .25f };

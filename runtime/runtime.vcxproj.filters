@@ -213,6 +213,9 @@
     <ClInclude Include="src\resource\component\components.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\function\render\opengl\buffer\gl_renderbuffer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\pch.cpp">
@@ -306,6 +309,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\function\ui\imgui_layer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\function\render\opengl\buffer\gl_renderbuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

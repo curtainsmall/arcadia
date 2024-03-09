@@ -19,9 +19,9 @@ namespace arcadia
         auto operator=(self_type&& rhs) noexcept -> self_type&;
 
         [[nodiscard]]
-        inline auto get_id() const -> GLuint
+        inline auto get_gl_id() const -> GLuint
         {
-            return _gl_cubemap_id;
+            return _gl_id;
         }
 
         void bind(GLenum slot = 0);
@@ -31,7 +31,7 @@ namespace arcadia
         void set_tex_parameter(GLenum pname, GLfloat param);
 
     private:
-        GLuint _gl_cubemap_id{};
+        GLuint _gl_id{};
         GLenum _slot{ -1u };
 
     };

@@ -8,7 +8,7 @@ arcadia::gl_vertex_array::gl_vertex_array(
     _gl_vertex_buffer(vertices),
     _gl_index_buffer(indices)
 {
-    ARCADIA_GL_CALL(glGenVertexArrays(1, &_gl_vertex_array_id));
+    ARCADIA_GL_CALL(glGenVertexArrays(1, &_gl_id));
     bind();
     _gl_vertex_buffer.setup_vertex_attrib_array();
     unbind();
@@ -16,15 +16,15 @@ arcadia::gl_vertex_array::gl_vertex_array(
 
 arcadia::gl_vertex_array::~gl_vertex_array()
 {
-    ARCADIA_GL_CALL(glDeleteVertexArrays(1, &_gl_vertex_array_id));
+    ARCADIA_GL_CALL(glDeleteVertexArrays(1, &_gl_id));
 }
 
 arcadia::gl_vertex_array::gl_vertex_array(self_type&& rhs) noexcept:
     _gl_vertex_buffer(std::move(rhs._gl_vertex_buffer)),
     _gl_index_buffer(std::move(rhs._gl_index_buffer))
 {
-    _gl_vertex_array_id = rhs._gl_vertex_array_id;
-    rhs._gl_vertex_array_id = 0;
+    _gl_id = rhs._gl_id;
+    rhs._gl_id = 0;
 }
 
 auto arcadia::gl_vertex_array::operator=(self_type&& rhs) noexcept -> self_type&
@@ -32,20 +32,20 @@ auto arcadia::gl_vertex_array::operator=(self_type&& rhs) noexcept -> self_type&
     _gl_vertex_buffer = std::move(rhs._gl_vertex_buffer);
     _gl_index_buffer = std::move(rhs._gl_index_buffer);
 
-    _gl_vertex_array_id = rhs._gl_vertex_array_id;
-    rhs._gl_vertex_array_id = 0;
+    _gl_id = rhs._gl_id;
+    rhs._gl_id = 0;
 
     return *this;
 }
 
 void arcadia::gl_vertex_array::bind() const
 {
-    if(_gl_vertex_array_id == 0)
+    if(_gl_id == 0)
     {
         throw arcadia::gl_invalid{ "Cannot bind null OpenGL vertex array" };
     }
 
-    ARCADIA_GL_CALL(glBindVertexArray(_gl_vertex_array_id));
+    ARCADIA_GL_CALL(glBindVertexArray(_gl_id));
 
     _gl_vertex_buffer.bind();
     _gl_index_buffer.bind();

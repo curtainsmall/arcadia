@@ -5,7 +5,10 @@
 arcadia::gl_renderer::gl_renderer(const std::filesystem::path& gl_shader_folder_path):
     _gl_mesh_pipeline(gl_shader_folder_path, arcadia::get_mesh_shaders_builder()),
     _gl_skybox_pipeline(gl_shader_folder_path, arcadia::get_skybox_shaders_builder())
-{}
+{
+    ARCADIA_GL_CALL(glEnable(GL_DEPTH_TEST));
+    ARCADIA_GL_CALL(glEnable(GL_CULL_FACE));
+}
 
 void arcadia::gl_renderer::begin_frame()
 {
@@ -33,8 +36,12 @@ void arcadia::gl_renderer::submit(const arcadia::camera_component& camera_comp)
     }
 
     _gl_render_unit_cameras.emplace_back(
-        arcadia::gl_framebuffer{ camera_comp.viewport_size },
-        std::move(camera_comp.viewport_size),
+        arcadia::gl_framebuffer{
+            camera_comp.viewport_size,
+            camera_comp.near_plane,
+            camera_comp.far_plane
+        },
+        camera_comp.viewport_size,
         camera_comp.build_view_mat4(),
         camera_comp.build_proj_mat4()
     );
@@ -90,7 +97,7 @@ void arcadia::gl_renderer::draw()
         // Clear framebufers
         ARCADIA_GL_CALL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
-        // Draw meshes
+        // Draw with mesh pipeline
         _gl_mesh_pipeline.use();
 
         // Set uniform for camera matrix
@@ -124,7 +131,7 @@ void arcadia::gl_renderer::draw()
         }
         _gl_mesh_pipeline.unuse();
 
-        // Draw skybox
+        // Draw with skybox pipeline
         if(_gl_render_unit_skybox_opt)
         {
             _gl_skybox_pipeline.use();
@@ -163,7 +170,7 @@ void arcadia::gl_renderer::clear()
 
 auto arcadia::gl_renderer::get_render_result_id(std::size_t index) const -> void*
 {
-    return reinterpret_cast<void*>(std::get<0>(_gl_render_unit_cameras.at(index)).get_gl_texture2d().get_id());
+    return reinterpret_cast<void*>(std::get<0>(_gl_render_unit_cameras.at(index)).get_gl_texture2d().get_gl_id());
 }
 
 void arcadia::gl_renderer::_check_frame_in_build_or_throw() const

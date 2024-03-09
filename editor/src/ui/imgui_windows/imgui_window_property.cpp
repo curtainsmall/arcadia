@@ -67,9 +67,9 @@ void arcadia::imgui_window_property::_display_camera_component()
     ImGui::DragFloat3("Up", &camera_comp.up.x);
     ImGui::DragFloat("Near Plane", &camera_comp.near_plane);
     ImGui::DragFloat("Far Plane", &camera_comp.far_plane);
-    ImGui::DragFloat("FOV-Y", &camera_comp.fovy);
-    ImGui::DragFloat("FOV-Y Min", &camera_comp.fovy_min);
-    ImGui::DragFloat("FOV-Y Max", &camera_comp.fovy_max);
+    ImGui::DragFloat("FOV", &camera_comp.fov);
+    ImGui::DragFloat("FOV Min", &camera_comp.fov_min);
+    ImGui::DragFloat("FOV Max", &camera_comp.fov_max);
     ImGui::DragFloat("Speed", &camera_comp.speed);
     ImGui::DragInt2("Viewport Size", &camera_comp.viewport_size.x);
     ImGui::DragFloat("Sensitivity", &camera_comp.sensitivity);

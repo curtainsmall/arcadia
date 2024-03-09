@@ -164,6 +164,7 @@
     <ClInclude Include="src\function\render\opengl\buffer\gl_cubemap.hpp" />
     <ClInclude Include="src\function\render\opengl\buffer\gl_framebuffer.hpp" />
     <ClInclude Include="src\function\render\opengl\buffer\gl_index_buffer.hpp" />
+    <ClInclude Include="src\function\render\opengl\buffer\gl_renderbuffer.hpp" />
     <ClInclude Include="src\function\render\opengl\buffer\gl_texture2d.hpp" />
     <ClInclude Include="src\function\render\opengl\gl_renderer.hpp" />
     <ClInclude Include="src\function\render\opengl\buffer\gl_vertex_array.hpp" />
@@ -225,6 +226,7 @@
     <ClCompile Include="src\function\render\opengl\buffer\gl_cubemap.cpp" />
     <ClCompile Include="src\function\render\opengl\buffer\gl_framebuffer.cpp" />
     <ClCompile Include="src\function\render\opengl\buffer\gl_index_buffer.cpp" />
+    <ClCompile Include="src\function\render\opengl\buffer\gl_renderbuffer.cpp" />
     <ClCompile Include="src\function\render\opengl\buffer\gl_texture2d.cpp" />
     <ClCompile Include="src\function\render\opengl\buffer\gl_vertex_array.cpp" />
     <ClCompile Include="src\function\render\opengl\buffer\gl_vertex_buffer.cpp" />
