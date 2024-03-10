@@ -209,8 +209,4 @@ arcadia::opengl_context::opengl_context()
 #endif
 
     arcadia::log::flush();
-
-    ARCADIA_GL_CALL(glEnable(GL_DEPTH_TEST));
-    ARCADIA_GL_CALL(glEnable(GL_MULTISAMPLE));
-    ARCADIA_GL_CALL(glClearColor(.2f, .3, .3f, 1.f));
 }

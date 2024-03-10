@@ -23,12 +23,15 @@ namespace arcadia
         arcadia::gl_framebuffer, // gl_framebuffer
         glm::ivec2, // viewport_size
         glm::mat4, // camera_view_mat4
-        glm::mat4 // camera_proj_mat4
+        glm::mat4, // camera_proj_mat4
+        bool, // should_display_grid
+        float, // near_plane
+        float // far_plane
     >;
 
     using gl_render_unit_mesh = std::tuple<
         arcadia::gl_vertex_array, // gl_vertex_array
-        glm::mat4, // trasform_mat4
+        glm::mat4, // trasform_mat
         arcadia::gl_texture2d, // gl_texture2d_ambient
         arcadia::gl_texture2d, // gl_texture2d_diffuse
         arcadia::gl_texture2d  // gl_texture2d_specular
@@ -77,5 +80,6 @@ namespace arcadia
 
         arcadia::gl_pipeline _gl_mesh_pipeline;
         arcadia::gl_pipeline _gl_skybox_pipeline;
+        arcadia::gl_pipeline _gl_grid_pipeline;
     };
 }

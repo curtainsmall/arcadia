@@ -53,7 +53,6 @@ void arcadia::project_layer::on_event(arcadia::event_base& event)
         .dispatch<arcadia::event::close_scene>(ARCADIA_BIND_MEMBER_FN(_on_close_scene))
         .dispatch<arcadia::event::delete_scene>(ARCADIA_BIND_MEMBER_FN(_on_delete_scene))
         .dispatch<arcadia::event::new_entity>(ARCADIA_BIND_MEMBER_FN(_on_new_entity))
-        //.dispatch<arcadia::event::create_entity>(ARCADIA_BIND_MEMBER_FN(_on_create_entity))
         .dispatch<arcadia::event::rename_entity>(ARCADIA_BIND_MEMBER_FN(_on_rename_entity))
         .dispatch<arcadia::event::delete_entity>(ARCADIA_BIND_MEMBER_FN(_on_delete_entity))
         .dispatch<arcadia::event::add_component>(ARCADIA_BIND_MEMBER_FN(_on_add_component))
@@ -209,17 +208,29 @@ void arcadia::project_layer::_on_open_project(arcadia::event::open_project& e)
             }
         }
         _save_project();
-        _project_sptr.reset();
     }
 
     auto filepathes = pfd::open_file{
-        "Open"
+        "Open",
+        "",
+        std::vector<std::string>{"Arcadia Project","*.acdaprj"}
     }.result();
     _project_filepath = filepathes.size() ? filepathes.at(0) : std::string{};
     if(_project_filepath.empty())
     {
         return;
     }
+    if(_project_filepath.extension() != ".acdaprj")
+    {
+        pfd::message{
+            "Open Project",
+            std::format("Arcadia project must ends with extension \".arcaprj\" while {} does not",_project_filepath.generic_string()),
+            pfd::choice::ok,
+            pfd::icon::info
+        };
+        return;
+    }
+    _project_sptr.reset();
     _load_project();
     _project_sptr->set_modified(false, true);
     arcadia::event_queue::instance()

@@ -238,7 +238,6 @@
     <ClCompile Include="src\platform\graphic_api\graphic_api.cpp" />
     <ClCompile Include="src\core\layer\layer.cpp" />
     <ClCompile Include="src\core\log\log.cpp" />
-    <ClCompile Include="src\core\math\mat4.cpp" />
     <ClCompile Include="src\core\math\vec2.cpp" />
     <ClCompile Include="src\core\math\vec3.cpp" />
     <ClCompile Include="src\core\version\version.cpp" />

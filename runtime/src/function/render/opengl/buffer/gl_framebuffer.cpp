@@ -7,9 +7,7 @@ arcadia::gl_framebuffer::gl_framebuffer(
     float far_plane
 ):
     _gl_texture2d(viewport_size),
-    _gl_depth_stencil_renderbuffer(GL_DEPTH24_STENCIL8, viewport_size),
-    _near_plane(near_plane),
-    _far_plane(far_plane)
+    _gl_depth_stencil_renderbuffer(GL_DEPTH24_STENCIL8, viewport_size)
 {
     ARCADIA_GL_CALL(glGenFramebuffers(1, &_gl_id));
 
@@ -54,13 +52,11 @@ void arcadia::gl_framebuffer::bind() const
     }
 
     ARCADIA_GL_CALL(glBindFramebuffer(GL_FRAMEBUFFER, _gl_id));
-    ARCADIA_GL_CALL(glDepthRange(_near_plane, _far_plane));
 }
 
 void arcadia::gl_framebuffer::unbind() const
 {
     ARCADIA_GL_CALL(glBindFramebuffer(GL_FRAMEBUFFER, 0));
-    ARCADIA_GL_CALL(glDepthRange(0.f, 1.f));
 }
 
 auto arcadia::gl_framebuffer::is_complete() const -> GLenum

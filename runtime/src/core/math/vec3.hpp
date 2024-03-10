@@ -19,33 +19,33 @@ namespace arcadia
         extern auto to_json(const glm::vec3& vec) -> nlohmann::json;
         extern auto from_json(const nlohmann::json& json) -> glm::vec3;
 
-        ARCADIA_API constexpr auto create_zero() -> glm::vec3
+        ARCADIA_API constexpr auto zero() -> glm::vec3
         {
             return glm::vec3{};
         }
-        ARCADIA_API constexpr auto create_pos_unit_x() -> glm::vec3
+        ARCADIA_API constexpr auto pos_unit_x() -> glm::vec3
         {
             return glm::vec3{ 1.f,.0f,.0f };
         }
-        ARCADIA_API constexpr auto create_pos_unit_y() -> glm::vec3
+        ARCADIA_API constexpr auto pos_unit_y() -> glm::vec3
         {
             return glm::vec3{ .0f,1.f,.0f };
         }
-        ARCADIA_API constexpr auto create_pos_unit_z() -> glm::vec3
+        ARCADIA_API constexpr auto pos_unit_z() -> glm::vec3
         {
             return glm::vec3{ .0f,.0f,1.f };
         }
-        ARCADIA_API constexpr auto create_neg_unit_x() -> glm::vec3
+        ARCADIA_API constexpr auto neg_unit_x() -> glm::vec3
         {
-            return -create_pos_unit_x();
+            return -pos_unit_x();
         }
-        ARCADIA_API constexpr auto create_neg_unit_y() -> glm::vec3
+        ARCADIA_API constexpr auto neg_unit_y() -> glm::vec3
         {
-            return -create_pos_unit_y();
+            return -pos_unit_y();
         }
-        ARCADIA_API constexpr auto create_neg_unit_z() -> glm::vec3
+        ARCADIA_API constexpr auto neg_unit_z() -> glm::vec3
         {
-            return -create_pos_unit_z();
+            return -pos_unit_z();
         }
     }
 

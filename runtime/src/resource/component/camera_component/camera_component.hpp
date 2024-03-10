@@ -67,14 +67,14 @@ namespace arcadia
 
     public:
         /// @brief Position of camera
-        glm::vec3 pos{ arcadia::vec3::create_pos_unit_z() };
+        glm::vec3 pos{ arcadia::vec3::pos_unit_z() };
 
         /// @brief Target that the camera pointing to
-        glm::vec3 target{ arcadia::vec3::create_zero() };
+        glm::vec3 target{ arcadia::vec3::zero() };
 
         /// @brief Direction of global up
         /// @note This should always be unit vector
-        glm::vec3 up{ arcadia::vec3::create_pos_unit_y() };
+        glm::vec3 up{ arcadia::vec3::pos_unit_y() };
 
         /// @brief Near plane of clip space
         float near_plane{ .1f };
@@ -97,9 +97,6 @@ namespace arcadia
         /// @brief Size of the viewport of this camera
         glm::ivec2 viewport_size{ 800,600 };
 
-        /// @brief Sensitivity of view rotation
-        float sensitivity{ .005f };
-
         /// @brief Whether @ref arcadia::camera::up should be fixed
         bool fixed_up{ true };
 
@@ -109,5 +106,7 @@ namespace arcadia
         /// @brief Cursor move offset that is out of this range will be silently ignored
         glm::vec2 cursor_move_offset_range{ -100.f,100.f };
 
+        /// @brief Display a grid a X-Z plane
+        bool should_display_grid{ false };
     };
 }

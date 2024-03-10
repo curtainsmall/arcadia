@@ -45,7 +45,5 @@ namespace arcadia
         GLuint _gl_id{ 0 };
         arcadia::gl_texture2d _gl_texture2d;
         arcadia::gl_renderbuffer _gl_depth_stencil_renderbuffer{};
-        float _near_plane{ .0f };
-        float _far_plane{ 1.f };
     };
 }

@@ -72,7 +72,6 @@ void arcadia::imgui_window_property::_display_camera_component()
     ImGui::DragFloat("FOV Max", &camera_comp.fov_max);
     ImGui::DragFloat("Speed", &camera_comp.speed);
     ImGui::DragInt2("Viewport Size", &camera_comp.viewport_size.x);
-    ImGui::DragFloat("Sensitivity", &camera_comp.sensitivity);
     ImGui::Checkbox("Fixed Up", &camera_comp.fixed_up);
     ImGui::DragFloat("Up Epsilon", &camera_comp.up_epsilon);
     //ImGui::DragFloat2("Cursor Move Offset Range", &camera_comp.cursor_move_offset_range.x);
@@ -107,6 +106,10 @@ void arcadia::imgui_window_property::_display_model_component()
             model_comp.import(filepath);
         }
     }
+    ImGui::DragFloat3("Location", &model_comp.location[0]);
+    ImGui::DragFloat3("Rotation", &model_comp.rotation[0], .05f);
+    ImGui::DragFloat3("Scale", &model_comp.scale[0]);
+    ImGui::DragFloat3("Pivot", &model_comp.pivot[0]);
     ImGui::EndGroup();
 
 }

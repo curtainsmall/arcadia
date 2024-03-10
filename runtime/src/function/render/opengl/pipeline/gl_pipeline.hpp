@@ -43,17 +43,24 @@ namespace arcadia
         void use() const;
         void unuse() const;
 
-        void set_uniform_4f(const std::string& name, GLfloat f0, GLfloat f1, GLfloat f2, GLfloat f3);
-        void set_uniform_3f(const std::string& name, GLfloat f0, GLfloat f1, GLfloat f2);
-        void set_uniform_2f(const std::string& name, GLfloat f0, GLfloat f1);
-        void set_uniform_1f(const std::string& name, GLfloat f);
-        void set_uniform_1i(const std::string& name, GLint i);
-        void set_uniform_vec4(const std::string& name, const glm::vec4& vec);
-        void set_uniform_vec3(const std::string& name, const glm::vec3& vec);
-        void set_uniform_vec2(const std::string& name, const glm::vec2& vec);
-        void set_uniform_mat4(const std::string& name, const glm::mat4& mat);
-        void set_uniform_mat3(const std::string& name, const glm::mat3& mat);
-        void set_uniform_mat2(const std::string& name, const glm::mat2& mat);
+        void set_uniform(const std::string& name, GLfloat f0, GLfloat f1, GLfloat f2, GLfloat f3);
+        void set_uniform(const std::string& name, GLfloat f0, GLfloat f1, GLfloat f2);
+        void set_uniform(const std::string& name, GLfloat f0, GLfloat f1);
+        void set_uniform(const std::string& name, GLfloat f);
+        void set_uniform(const std::string& name, GLint i0, GLint i1, GLint i2, GLint i3);
+        void set_uniform(const std::string& name, GLint i0, GLint i1, GLint i2);
+        void set_uniform(const std::string& name, GLint i0, GLint i1);
+        void set_uniform(const std::string& name, GLint i);
+        void set_uniform(const std::string& name, GLuint u0, GLuint u1, GLuint u2, GLuint u3);
+        void set_uniform(const std::string& name, GLuint u0, GLuint u1, GLuint u2);
+        void set_uniform(const std::string& name, GLuint u0, GLuint u1);
+        void set_uniform(const std::string& name, GLuint u);
+        void set_uniform(const std::string& name, const glm::vec4& vec);
+        void set_uniform(const std::string& name, const glm::vec3& vec);
+        void set_uniform(const std::string& name, const glm::vec2& vec);
+        void set_uniform(const std::string& name, const glm::mat4& mat);
+        void set_uniform(const std::string& name, const glm::mat3& mat);
+        void set_uniform(const std::string& name, const glm::mat2& mat);
 
     private:
         auto _get_uniform_location(const std::string& name) -> GLuint;
@@ -95,6 +102,30 @@ namespace arcadia
             auto
                 gl_vertex_shader_path = gl_shader_folder_path / "skybox.vert",
                 gl_fragment_shader_path = gl_shader_folder_path / "skybox.frag";
+
+            auto
+                gl_vertex_shader_source = arcadia::load_text(gl_vertex_shader_path),
+                gl_fragment_shader_source = arcadia::load_text(gl_fragment_shader_path);
+
+            gl_shaders.emplace_back(
+                gl_vertex_shader_source,
+                GL_VERTEX_SHADER
+            );
+
+            gl_shaders.emplace_back(
+                gl_fragment_shader_source,
+                GL_FRAGMENT_SHADER
+            );
+        };
+    }
+
+    static inline auto get_grid_shaders_builder() -> arcadia::gl_pipeline::gl_shaders_builder_type
+    {
+        return [](const std::filesystem::path& gl_shader_folder_path, std::vector<arcadia::gl_shader>& gl_shaders) -> void
+        {
+            auto
+                gl_vertex_shader_path = gl_shader_folder_path / "grid.vert",
+                gl_fragment_shader_path = gl_shader_folder_path / "grid.frag";
 
             auto
                 gl_vertex_shader_source = arcadia::load_text(gl_vertex_shader_path),

@@ -8,11 +8,11 @@ namespace arcadia
     namespace mat3
     {
 
-        ARCADIA_API constexpr auto create_zero() -> glm::mat3
+        ARCADIA_API constexpr auto zero() -> glm::mat3
         {
             return glm::mat3{ .0f };
         }
-        ARCADIA_API constexpr auto create_identity() -> glm::mat3
+        ARCADIA_API constexpr auto identity() -> glm::mat3
         {
             return glm::mat3{};
         }

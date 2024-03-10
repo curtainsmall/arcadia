@@ -6,6 +6,7 @@
 #include"assimp/scene.h"
 
 #include"core/base.hpp"
+#include"core/math.hpp"
 #include"core/nlohmann_json_header.hpp"
 #include"resource/component/component.hpp"
 #include"resource/component/model_component/mesh/mesh.hpp"
@@ -58,6 +59,12 @@ namespace arcadia
             aiTextureType ai_texture_type,
             texture2d& texture
         );
+
+    public:
+        glm::vec3 location{ arcadia::vec3::zero() };
+        glm::vec3 rotation{ arcadia::vec3::zero() };
+        glm::vec3 scale{ 1,1,1 };
+        glm::vec3 pivot{ arcadia::vec3::zero() };
 
     private:
         std::vector<arcadia::mesh> _meshes{};

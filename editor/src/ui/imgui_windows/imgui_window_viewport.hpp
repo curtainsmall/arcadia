@@ -22,7 +22,10 @@ namespace arcadia
     public:
         ARCADIA_IMGUI_WINDOW_ID_STR_GETERS("###viewport");
 
-        using arcadia::imgui_window_interface::imgui_window_interface;
+        imgui_window_viewport(
+            bool open,
+            const std::string& title
+        );
         virtual ~imgui_window_viewport() = default;
 
         virtual void on_event(arcadia::event_base& event) override;

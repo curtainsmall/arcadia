@@ -10,11 +10,11 @@ namespace arcadia
 {
     namespace quat
     {
-        ARCADIA_API constexpr auto create_zero() -> glm::quat
+        ARCADIA_API constexpr auto zero() -> glm::quat
         {
             return glm::quat{};
         }
-        ARCADIA_API constexpr auto create_identity() -> glm::quat
+        ARCADIA_API constexpr auto identity() -> glm::quat
         {
             return glm::quat{ 1.f,.0f,.0f,.0f };
         }

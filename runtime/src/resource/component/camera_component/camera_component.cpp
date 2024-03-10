@@ -16,7 +16,6 @@ auto arcadia::camera_component::to_json() const -> nlohmann::json
         { "fov_max"                 ,fov_max },
         { "speed"                   ,speed},
         { "viewport_size"           ,arcadia::ivec2::to_json(viewport_size) },
-        { "sensitivity"             ,sensitivity },
         { "fixed_up"                ,fixed_up },
         { "up_epsilon"              ,up_epsilon },
         { "cursor_move_offset_range",arcadia::vec2::to_json(cursor_move_offset_range) }
@@ -35,7 +34,6 @@ arcadia::camera_component::camera_component(const nlohmann::json& json)
     fov_max                  = json.at("fov_max");
     speed                    = json.at("speed");
     viewport_size            = arcadia::ivec2::from_json(json.at("viewport_size"));
-    sensitivity              = json.at("sensitivity");
     fixed_up                 = json.at("fixed_up");
     up_epsilon               = json.at("up_epsilon");
     cursor_move_offset_range = arcadia::vec2::from_json(json.at("cursor_move_offset_range"));
@@ -83,8 +81,8 @@ auto arcadia::camera_component::move(const glm::vec3& offset) -> self_type&
 auto arcadia::camera_component::drag_view_move(const glm::vec2& offset) -> self_type&
 {
     move(
-        get_left_dir() * offset.x * sensitivity
-        + get_up_dir() * offset.y * sensitivity
+        get_left_dir() * offset.x
+        + get_up_dir() * offset.y
     );
     return *this;
 }
@@ -96,13 +94,13 @@ auto arcadia::camera_component::rotate_view(const glm::vec2& offset) -> self_typ
         auto forward = get_forward_dir();
 
         //Horizontal
-        auto x_angle_offset = -offset.x * sensitivity;
+        auto x_angle_offset = -offset.x;
         forward = glm::angleAxis(x_angle_offset, up) * forward;
 
         //Vertical
         auto y_angle_offset =
             glm::clamp(
-                -offset.y * sensitivity + _pitch_angle(),
+                -offset.y + _pitch_angle(),
                 -glm::half_pi<float>() + up_epsilon,
                 glm::half_pi<float>() - up_epsilon
             )
@@ -121,7 +119,7 @@ auto arcadia::camera_component::drag_view_rotate(const glm::vec2& offset) -> sel
         const auto& forward = get_forward_dir();
 
         //Horizontal
-        auto x_angle_offset = -offset.x * sensitivity;
+        auto x_angle_offset = -offset.x;
         auto rotation = glm::angleAxis(x_angle_offset, up);
         pos = rotation * pos;
         target = rotation * target;
@@ -129,7 +127,7 @@ auto arcadia::camera_component::drag_view_rotate(const glm::vec2& offset) -> sel
         //Vertical
         auto y_angle_offset =
             glm::clamp(
-                -offset.y * sensitivity + _pitch_angle(),
+                -offset.y + _pitch_angle(),
                 -glm::half_pi<float>() + up_epsilon,
                 glm::half_pi<float>() - up_epsilon
             )
@@ -193,12 +191,12 @@ auto arcadia::camera_component::_pitch_angle() const -> float
 auto arcadia::camera_component::_yaw_angle() const -> float
 {
     const auto& forward = get_forward_dir();
-    auto yaw_vec = forward - glm::dot(forward, arcadia::vec3::create_pos_unit_y());
+    auto yaw_vec = forward - glm::dot(forward, arcadia::vec3::pos_unit_y());
 
     auto coef =
-        glm::angle(yaw_vec, arcadia::vec3::create_pos_unit_x()) < glm::half_pi<float>() ?
+        glm::angle(yaw_vec, arcadia::vec3::pos_unit_x()) < glm::half_pi<float>() ?
         1 : -1;
-    return coef * glm::angle(yaw_vec, arcadia::vec3::create_neg_unit_z());
+    return coef * glm::angle(yaw_vec, arcadia::vec3::neg_unit_z());
 }
 
 auto arcadia::camera_component::_roll_angle() const -> float

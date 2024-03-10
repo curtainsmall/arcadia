@@ -5,6 +5,12 @@
 #include"resource/component/model_component/model_component.hpp"
 
 
+arcadia::imgui_window_viewport::imgui_window_viewport(bool open, const std::string& title):
+    imgui_window_interface(open, title)
+{
+    _camera.should_display_grid = false;
+}
+
 void arcadia::imgui_window_viewport::on_event(arcadia::event_base& event)
 {
     arcadia::event_dispatcher{ event }
@@ -75,11 +81,11 @@ void arcadia::imgui_window_viewport::on_update()
                 {
                     if(ImGui::IsKeyDown(ImGuiKey_LeftShift))
                     {
-                        _camera.drag_view_move(_cursor_move);
+                        _camera.drag_view_move(_cursor_move * .05f);
                     }
                     else
                     {
-                        _camera.drag_view_rotate(_cursor_move);
+                        _camera.drag_view_rotate(_cursor_move * .005f);
                     }
                 }
 

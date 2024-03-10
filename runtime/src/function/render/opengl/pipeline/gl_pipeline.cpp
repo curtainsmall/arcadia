@@ -87,57 +87,92 @@ void arcadia::gl_pipeline::unuse() const
     ARCADIA_GL_CALL(glUseProgram(0));
 }
 
-void arcadia::gl_pipeline::set_uniform_4f(const std::string& name, GLfloat f0, GLfloat f1, GLfloat f2, GLfloat f3)
+void arcadia::gl_pipeline::set_uniform(const std::string& name, GLfloat f0, GLfloat f1, GLfloat f2, GLfloat f3)
 {
     ARCADIA_GL_CALL(glUniform4f(_get_uniform_location(name), f0, f1, f2, f3));
 }
 
-void arcadia::gl_pipeline::set_uniform_3f(const std::string& name, GLfloat f0, GLfloat f1, GLfloat f2)
+void arcadia::gl_pipeline::set_uniform(const std::string& name, GLfloat f0, GLfloat f1, GLfloat f2)
 {
     ARCADIA_GL_CALL(glUniform3f(_get_uniform_location(name), f0, f1, f2));
 }
 
-void arcadia::gl_pipeline::set_uniform_2f(const std::string& name, GLfloat f0, GLfloat f1)
+void arcadia::gl_pipeline::set_uniform(const std::string& name, GLfloat f0, GLfloat f1)
 {
     ARCADIA_GL_CALL(glUniform2f(_get_uniform_location(name), f0, f1));
 }
 
-void arcadia::gl_pipeline::set_uniform_1f(const std::string& name, GLfloat f)
+void arcadia::gl_pipeline::set_uniform(const std::string& name, GLfloat f)
 {
     ARCADIA_GL_CALL(glUniform1f(_get_uniform_location(name), f));
 }
 
-void arcadia::gl_pipeline::set_uniform_1i(const std::string& name, GLint i)
+void arcadia::gl_pipeline::set_uniform(const std::string& name, GLint i0, GLint i1, GLint i2, GLint i3)
+{
+    ARCADIA_GL_CALL(glUniform4i(_get_uniform_location(name), i0, i1, i2, i3));
+}
+
+void arcadia::gl_pipeline::set_uniform(const std::string& name, GLint i0, GLint i1, GLint i2)
+{
+    ARCADIA_GL_CALL(glUniform3i(_get_uniform_location(name), i0, i1, i2));
+}
+
+void arcadia::gl_pipeline::set_uniform(const std::string& name, GLint i0, GLint i1)
+{
+    ARCADIA_GL_CALL(glUniform2i(_get_uniform_location(name), i0, i1));
+}
+
+void arcadia::gl_pipeline::set_uniform(const std::string& name, GLint i)
 {
     ARCADIA_GL_CALL(glUniform1i(_get_uniform_location(name), i));
 }
 
-void arcadia::gl_pipeline::set_uniform_vec4(const std::string& name, const glm::vec4& vec)
+void arcadia::gl_pipeline::set_uniform(const std::string& name, GLuint u0, GLuint u1, GLuint u2, GLuint u3)
 {
-    set_uniform_4f(name, vec.x, vec.y, vec.z, vec.w);
+    ARCADIA_GL_CALL(glUniform4ui(_get_uniform_location(name), u0, u1, u2, u3));
 }
 
-void arcadia::gl_pipeline::set_uniform_vec3(const std::string& name, const glm::vec3& vec)
+void arcadia::gl_pipeline::set_uniform(const std::string& name, GLuint u0, GLuint u1, GLuint u2)
 {
-    set_uniform_3f(name, vec.x, vec.y, vec.z);
+    ARCADIA_GL_CALL(glUniform3ui(_get_uniform_location(name), u0, u1, u2));
 }
 
-void arcadia::gl_pipeline::set_uniform_vec2(const std::string& name, const glm::vec2& vec)
+void arcadia::gl_pipeline::set_uniform(const std::string& name, GLuint u0, GLuint u1)
 {
-    set_uniform_2f(name, vec.x, vec.y);
+    ARCADIA_GL_CALL(glUniform2ui(_get_uniform_location(name), u0, u1));
 }
 
-void arcadia::gl_pipeline::set_uniform_mat4(const std::string& name, const glm::mat4& mat)
+void arcadia::gl_pipeline::set_uniform(const std::string& name, GLuint u)
+{
+    ARCADIA_GL_CALL(glUniform1ui(_get_uniform_location(name), u));
+}
+
+void arcadia::gl_pipeline::set_uniform(const std::string& name, const glm::vec4& vec)
+{
+    set_uniform(name, vec.x, vec.y, vec.z, vec.w);
+}
+
+void arcadia::gl_pipeline::set_uniform(const std::string& name, const glm::vec3& vec)
+{
+    set_uniform(name, vec.x, vec.y, vec.z);
+}
+
+void arcadia::gl_pipeline::set_uniform(const std::string& name, const glm::vec2& vec)
+{
+    set_uniform(name, vec.x, vec.y);
+}
+
+void arcadia::gl_pipeline::set_uniform(const std::string& name, const glm::mat4& mat)
 {
     ARCADIA_GL_CALL(glUniformMatrix4fv(_get_uniform_location(name), 1, GL_FALSE, &mat[0][0]));
 }
 
-void arcadia::gl_pipeline::set_uniform_mat3(const std::string& name, const glm::mat3& mat)
+void arcadia::gl_pipeline::set_uniform(const std::string& name, const glm::mat3& mat)
 {
     ARCADIA_GL_CALL(glUniformMatrix3fv(_get_uniform_location(name), 1, GL_FALSE, &mat[0][0]));
 }
 
-void arcadia::gl_pipeline::set_uniform_mat2(const std::string& name, const glm::mat2& mat)
+void arcadia::gl_pipeline::set_uniform(const std::string& name, const glm::mat2& mat)
 {
     ARCADIA_GL_CALL(glUniformMatrix2fv(_get_uniform_location(name), 1, GL_FALSE, &mat[0][0]));
 }
