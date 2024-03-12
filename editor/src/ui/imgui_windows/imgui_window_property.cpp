@@ -129,6 +129,12 @@ void arcadia::imgui_window_property::_display_light_component()
 
     ImGui::PushItemWidth(200.f);
 
+    float light_color_drag_speed = 1.f;
+    float light_color_min = .0f;
+    float light_color_max = 255.f;
+    float light_strength_speed = 1.f;
+    float light_strength_min = 0.f;
+    float light_strength_max = 100.f;
     arcadia::match<void>(
         light_comp.light,
         [&](arcadia::spot_light& light)
@@ -146,27 +152,29 @@ void arcadia::imgui_window_property::_display_light_component()
         ImGui::Text("                  Z"); ImGui::SameLine(); ImGui::DragFloat("##dir_z", &light.direction.z);
 
         ImGui::NewLine();
-        ImGui::Text("        Cutoff Angle"); ImGui::SameLine(); ImGui::DragFloat("Cutoff Angle", &light.cutoff_angle);
+        float cutoff_angle_degree = glm::degrees(light.cutoff_angle);
+        ImGui::Text("        Cutoff Angle"); ImGui::SameLine(); ImGui::DragFloat("Cutoff Angle", &cutoff_angle_degree, 1.f, 0.f, 360.f);
+        light.cutoff_angle = glm::radians(cutoff_angle_degree);
 
         ImGui::NewLine();
-        ImGui::Text("             Color R"); ImGui::SameLine(); ImGui::DragFloat("##color_r", &light.color.r);
-        ImGui::Text("                   G"); ImGui::SameLine(); ImGui::DragFloat("##color_g", &light.color.g);
-        ImGui::Text("                   B"); ImGui::SameLine(); ImGui::DragFloat("##color_b", &light.color.b);
+        ImGui::Text("             Color R"); ImGui::SameLine(); ImGui::DragFloat("##color_r", &light.color.r, light_color_drag_speed, light_color_min, light_color_max);
+        ImGui::Text("                   G"); ImGui::SameLine(); ImGui::DragFloat("##color_g", &light.color.g, light_color_drag_speed, light_color_min, light_color_max);
+        ImGui::Text("                   B"); ImGui::SameLine(); ImGui::DragFloat("##color_b", &light.color.b, light_color_drag_speed, light_color_min, light_color_max);
 
         ImGui::NewLine();
-        ImGui::Text(" Ambient Strength R"); ImGui::SameLine(); ImGui::DragFloat("##as_r", &light.ambient_strength.r);
-        ImGui::Text("                  G"); ImGui::SameLine(); ImGui::DragFloat("##as_g", &light.ambient_strength.g);
-        ImGui::Text("                  B"); ImGui::SameLine(); ImGui::DragFloat("##as_b", &light.ambient_strength.b);
+        ImGui::Text(" Ambient Strength R"); ImGui::SameLine(); ImGui::DragFloat("##as_r", &light.ambient_strength.r, light_strength_speed, light_strength_min, light_strength_max);
+        ImGui::Text("                  G"); ImGui::SameLine(); ImGui::DragFloat("##as_g", &light.ambient_strength.g, light_strength_speed, light_strength_min, light_strength_max);
+        ImGui::Text("                  B"); ImGui::SameLine(); ImGui::DragFloat("##as_b", &light.ambient_strength.b, light_strength_speed, light_strength_min, light_strength_max);
 
         ImGui::NewLine();
-        ImGui::Text(" Diffuse Strength R"); ImGui::SameLine(); ImGui::DragFloat("##ds_r", &light.diffuse_strength.r);
-        ImGui::Text("                  G"); ImGui::SameLine(); ImGui::DragFloat("##ds_g", &light.diffuse_strength.g);
-        ImGui::Text("                  B"); ImGui::SameLine(); ImGui::DragFloat("##ds_b", &light.diffuse_strength.b);
+        ImGui::Text(" Diffuse Strength R"); ImGui::SameLine(); ImGui::DragFloat("##ds_r", &light.diffuse_strength.r, light_strength_speed, light_strength_min, light_strength_max);
+        ImGui::Text("                  G"); ImGui::SameLine(); ImGui::DragFloat("##ds_g", &light.diffuse_strength.g, light_strength_speed, light_strength_min, light_strength_max);
+        ImGui::Text("                  B"); ImGui::SameLine(); ImGui::DragFloat("##ds_b", &light.diffuse_strength.b, light_strength_speed, light_strength_min, light_strength_max);
 
         ImGui::NewLine();
-        ImGui::Text("Specular Strength R"); ImGui::SameLine(); ImGui::DragFloat("##ss_r", &light.specular_strength.r);
-        ImGui::Text("                  G"); ImGui::SameLine(); ImGui::DragFloat("##ss_g", &light.specular_strength.g);
-        ImGui::Text("                  B"); ImGui::SameLine(); ImGui::DragFloat("##ss_b", &light.specular_strength.b);
+        ImGui::Text("Specular Strength R"); ImGui::SameLine(); ImGui::DragFloat("##ss_r", &light.specular_strength.r, light_strength_speed, light_strength_min, light_strength_max);
+        ImGui::Text("                  G"); ImGui::SameLine(); ImGui::DragFloat("##ss_g", &light.specular_strength.g, light_strength_speed, light_strength_min, light_strength_max);
+        ImGui::Text("                  B"); ImGui::SameLine(); ImGui::DragFloat("##ss_b", &light.specular_strength.b, light_strength_speed, light_strength_min, light_strength_max);
     },
         [&](arcadia::direct_light& light)
     {
@@ -183,24 +191,24 @@ void arcadia::imgui_window_property::_display_light_component()
         ImGui::Text("                  Z"); ImGui::SameLine(); ImGui::DragFloat("##dir_z", &light.direction.z);
 
         ImGui::NewLine();
-        ImGui::Text("            Color R"); ImGui::SameLine(); ImGui::DragFloat("##color_r", &light.color.r);
-        ImGui::Text("                  G"); ImGui::SameLine(); ImGui::DragFloat("##color_g", &light.color.g);
-        ImGui::Text("                  B"); ImGui::SameLine(); ImGui::DragFloat("##color_b", &light.color.b);
+        ImGui::Text("            Color R"); ImGui::SameLine(); ImGui::DragFloat("##color_r", &light.color.r, light_color_drag_speed, light_color_min, light_color_max);
+        ImGui::Text("                  G"); ImGui::SameLine(); ImGui::DragFloat("##color_g", &light.color.g, light_color_drag_speed, light_color_min, light_color_max);
+        ImGui::Text("                  B"); ImGui::SameLine(); ImGui::DragFloat("##color_b", &light.color.b, light_color_drag_speed, light_color_min, light_color_max);
 
         ImGui::NewLine();
-        ImGui::Text(" Ambient Strength R"); ImGui::SameLine(); ImGui::DragFloat("##as_r", &light.ambient_strength.r);
-        ImGui::Text("                  G"); ImGui::SameLine(); ImGui::DragFloat("##as_g", &light.ambient_strength.g);
-        ImGui::Text("                  B"); ImGui::SameLine(); ImGui::DragFloat("##as_b", &light.ambient_strength.b);
+        ImGui::Text(" Ambient Strength R"); ImGui::SameLine(); ImGui::DragFloat("##as_r", &light.ambient_strength.r, light_strength_speed, light_strength_min, light_strength_max);
+        ImGui::Text("                  G"); ImGui::SameLine(); ImGui::DragFloat("##as_g", &light.ambient_strength.g, light_strength_speed, light_strength_min, light_strength_max);
+        ImGui::Text("                  B"); ImGui::SameLine(); ImGui::DragFloat("##as_b", &light.ambient_strength.b, light_strength_speed, light_strength_min, light_strength_max);
 
         ImGui::NewLine();
-        ImGui::Text(" Diffuse Strength R"); ImGui::SameLine(); ImGui::DragFloat("##ds_r", &light.diffuse_strength.r);
-        ImGui::Text("                  G"); ImGui::SameLine(); ImGui::DragFloat("##ds_g", &light.diffuse_strength.g);
-        ImGui::Text("                  B"); ImGui::SameLine(); ImGui::DragFloat("##ds_b", &light.diffuse_strength.b);
+        ImGui::Text(" Diffuse Strength R"); ImGui::SameLine(); ImGui::DragFloat("##ds_r", &light.diffuse_strength.r, light_strength_speed, light_strength_min, light_strength_max);
+        ImGui::Text("                  G"); ImGui::SameLine(); ImGui::DragFloat("##ds_g", &light.diffuse_strength.g, light_strength_speed, light_strength_min, light_strength_max);
+        ImGui::Text("                  B"); ImGui::SameLine(); ImGui::DragFloat("##ds_b", &light.diffuse_strength.b, light_strength_speed, light_strength_min, light_strength_max);
 
         ImGui::NewLine();
-        ImGui::Text("Specular Strength R"); ImGui::SameLine(); ImGui::DragFloat("##ss_r", &light.specular_strength.r);
-        ImGui::Text("                  G"); ImGui::SameLine(); ImGui::DragFloat("##ss_g", &light.specular_strength.g);
-        ImGui::Text("                  B"); ImGui::SameLine(); ImGui::DragFloat("##ss_b", &light.specular_strength.b);
+        ImGui::Text("Specular Strength R"); ImGui::SameLine(); ImGui::DragFloat("##ss_r", &light.specular_strength.r, light_strength_speed, light_strength_min, light_strength_max);
+        ImGui::Text("                  G"); ImGui::SameLine(); ImGui::DragFloat("##ss_g", &light.specular_strength.g, light_strength_speed, light_strength_min, light_strength_max);
+        ImGui::Text("                  B"); ImGui::SameLine(); ImGui::DragFloat("##ss_b", &light.specular_strength.b, light_strength_speed, light_strength_min, light_strength_max);
     },
         [&](arcadia::area_light& light)
     {
@@ -221,24 +229,24 @@ void arcadia::imgui_window_property::_display_light_component()
         ImGui::Text("             Height"); ImGui::SameLine(); ImGui::DragFloat("##height", &light.size.y);
 
         ImGui::NewLine();
-        ImGui::Text("            Color R"); ImGui::SameLine(); ImGui::DragFloat("##color_r", &light.color.r);
-        ImGui::Text("                  G"); ImGui::SameLine(); ImGui::DragFloat("##color_g", &light.color.g);
-        ImGui::Text("                  B"); ImGui::SameLine(); ImGui::DragFloat("##color_b", &light.color.b);
+        ImGui::Text("            Color R"); ImGui::SameLine(); ImGui::DragFloat("##color_r", &light.color.r, light_color_drag_speed, light_color_min, light_color_max);
+        ImGui::Text("                  G"); ImGui::SameLine(); ImGui::DragFloat("##color_g", &light.color.g, light_color_drag_speed, light_color_min, light_color_max);
+        ImGui::Text("                  B"); ImGui::SameLine(); ImGui::DragFloat("##color_b", &light.color.b, light_color_drag_speed, light_color_min, light_color_max);
 
         ImGui::NewLine();
-        ImGui::Text(" Ambient Strength R"); ImGui::SameLine(); ImGui::DragFloat("##as_r", &light.ambient_strength.r);
-        ImGui::Text("                  G"); ImGui::SameLine(); ImGui::DragFloat("##as_g", &light.ambient_strength.g);
-        ImGui::Text("                  B"); ImGui::SameLine(); ImGui::DragFloat("##as_b", &light.ambient_strength.b);
+        ImGui::Text(" Ambient Strength R"); ImGui::SameLine(); ImGui::DragFloat("##as_r", &light.ambient_strength.r, light_strength_speed, light_strength_min, light_strength_max);
+        ImGui::Text("                  G"); ImGui::SameLine(); ImGui::DragFloat("##as_g", &light.ambient_strength.g, light_strength_speed, light_strength_min, light_strength_max);
+        ImGui::Text("                  B"); ImGui::SameLine(); ImGui::DragFloat("##as_b", &light.ambient_strength.b, light_strength_speed, light_strength_min, light_strength_max);
 
         ImGui::NewLine();
-        ImGui::Text(" Diffuse Strength R"); ImGui::SameLine(); ImGui::DragFloat("##ds_r", &light.diffuse_strength.r);
-        ImGui::Text("                  G"); ImGui::SameLine(); ImGui::DragFloat("##ds_g", &light.diffuse_strength.g);
-        ImGui::Text("                  B"); ImGui::SameLine(); ImGui::DragFloat("##ds_b", &light.diffuse_strength.b);
+        ImGui::Text(" Diffuse Strength R"); ImGui::SameLine(); ImGui::DragFloat("##ds_r", &light.diffuse_strength.r, light_strength_speed, light_strength_min, light_strength_max);
+        ImGui::Text("                  G"); ImGui::SameLine(); ImGui::DragFloat("##ds_g", &light.diffuse_strength.g, light_strength_speed, light_strength_min, light_strength_max);
+        ImGui::Text("                  B"); ImGui::SameLine(); ImGui::DragFloat("##ds_b", &light.diffuse_strength.b, light_strength_speed, light_strength_min, light_strength_max);
 
         ImGui::NewLine();
-        ImGui::Text("Specular Strength R"); ImGui::SameLine(); ImGui::DragFloat("##ss_r", &light.specular_strength.r);
-        ImGui::Text("                  G"); ImGui::SameLine(); ImGui::DragFloat("##ss_g", &light.specular_strength.g);
-        ImGui::Text("                  B"); ImGui::SameLine(); ImGui::DragFloat("##ss_b", &light.specular_strength.b);
+        ImGui::Text("Specular Strength R"); ImGui::SameLine(); ImGui::DragFloat("##ss_r", &light.specular_strength.r, light_strength_speed, light_strength_min, light_strength_max);
+        ImGui::Text("                  G"); ImGui::SameLine(); ImGui::DragFloat("##ss_g", &light.specular_strength.g, light_strength_speed, light_strength_min, light_strength_max);
+        ImGui::Text("                  B"); ImGui::SameLine(); ImGui::DragFloat("##ss_b", &light.specular_strength.b, light_strength_speed, light_strength_min, light_strength_max);
     },
         [&](arcadia::point_light& light)
     {
@@ -255,24 +263,24 @@ void arcadia::imgui_window_property::_display_light_component()
         ImGui::Text("          Quadratic"); ImGui::SameLine(); ImGui::DragFloat("##k2", &light.attenuation_coefs.z);
 
         ImGui::NewLine();
-        ImGui::Text("            Color R"); ImGui::SameLine(); ImGui::DragFloat("##color_r", &light.color.r);
-        ImGui::Text("                  G"); ImGui::SameLine(); ImGui::DragFloat("##color_g", &light.color.g);
-        ImGui::Text("                  B"); ImGui::SameLine(); ImGui::DragFloat("##color_b", &light.color.b);
+        ImGui::Text("            Color R"); ImGui::SameLine(); ImGui::DragFloat("##color_r", &light.color.r, light_color_drag_speed, light_color_min, light_color_max);
+        ImGui::Text("                  G"); ImGui::SameLine(); ImGui::DragFloat("##color_g", &light.color.g, light_color_drag_speed, light_color_min, light_color_max);
+        ImGui::Text("                  B"); ImGui::SameLine(); ImGui::DragFloat("##color_b", &light.color.b, light_color_drag_speed, light_color_min, light_color_max);
 
         ImGui::NewLine();
-        ImGui::Text(" Ambient Strength R"); ImGui::SameLine(); ImGui::DragFloat("##as_r", &light.ambient_strength.r);
-        ImGui::Text("                  G"); ImGui::SameLine(); ImGui::DragFloat("##as_g", &light.ambient_strength.g);
-        ImGui::Text("                  B"); ImGui::SameLine(); ImGui::DragFloat("##as_b", &light.ambient_strength.b);
+        ImGui::Text(" Ambient Strength R"); ImGui::SameLine(); ImGui::DragFloat("##as_r", &light.ambient_strength.r, light_strength_speed, light_strength_min, light_strength_max);
+        ImGui::Text("                  G"); ImGui::SameLine(); ImGui::DragFloat("##as_g", &light.ambient_strength.g, light_strength_speed, light_strength_min, light_strength_max);
+        ImGui::Text("                  B"); ImGui::SameLine(); ImGui::DragFloat("##as_b", &light.ambient_strength.b, light_strength_speed, light_strength_min, light_strength_max);
 
         ImGui::NewLine();
-        ImGui::Text(" Diffuse Strength R"); ImGui::SameLine(); ImGui::DragFloat("##ds_r", &light.diffuse_strength.r);
-        ImGui::Text("                  G"); ImGui::SameLine(); ImGui::DragFloat("##ds_g", &light.diffuse_strength.g);
-        ImGui::Text("                  B"); ImGui::SameLine(); ImGui::DragFloat("##ds_b", &light.diffuse_strength.b);
+        ImGui::Text(" Diffuse Strength R"); ImGui::SameLine(); ImGui::DragFloat("##ds_r", &light.diffuse_strength.r, light_strength_speed, light_strength_min, light_strength_max);
+        ImGui::Text("                  G"); ImGui::SameLine(); ImGui::DragFloat("##ds_g", &light.diffuse_strength.g, light_strength_speed, light_strength_min, light_strength_max);
+        ImGui::Text("                  B"); ImGui::SameLine(); ImGui::DragFloat("##ds_b", &light.diffuse_strength.b, light_strength_speed, light_strength_min, light_strength_max);
 
         ImGui::NewLine();
-        ImGui::Text("Specular Strength R"); ImGui::SameLine(); ImGui::DragFloat("##ss_r", &light.specular_strength.r);
-        ImGui::Text("                  G"); ImGui::SameLine(); ImGui::DragFloat("##ss_g", &light.specular_strength.g);
-        ImGui::Text("                  B"); ImGui::SameLine(); ImGui::DragFloat("##ss_b", &light.specular_strength.b);
+        ImGui::Text("Specular Strength R"); ImGui::SameLine(); ImGui::DragFloat("##ss_r", &light.specular_strength.r, light_strength_speed, light_strength_min, light_strength_max);
+        ImGui::Text("                  G"); ImGui::SameLine(); ImGui::DragFloat("##ss_g", &light.specular_strength.g, light_strength_speed, light_strength_min, light_strength_max);
+        ImGui::Text("                  B"); ImGui::SameLine(); ImGui::DragFloat("##ss_b", &light.specular_strength.b, light_strength_speed, light_strength_min, light_strength_max);
 
     }
     );
