@@ -216,6 +216,9 @@
     <ClInclude Include="src\function\render\opengl\buffer\gl_renderbuffer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\resource\component\light_component\light_component.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\pch.cpp">
@@ -309,6 +312,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\function\render\opengl\buffer\gl_renderbuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\resource\component\light_component\light_component.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\math\vec4.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

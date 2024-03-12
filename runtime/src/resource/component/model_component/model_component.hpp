@@ -18,12 +18,13 @@ namespace arcadia
     public:
         using self_type = model_component;
     public:
-        ARCADIA_COMPONENT_TYPE_STR_GETERS("Model");
+        ARCADIA_COMPONENT_TYPE_STR_GETERS("model");
 
         model_component() = default;
         model_component(const std::filesystem::path& filepath);
         model_component(const nlohmann::json& json);
         ~model_component() = default;
+        [[nodiscard]]
         auto to_json() const->nlohmann::json;
 
         model_component(self_type&&) noexcept = default;

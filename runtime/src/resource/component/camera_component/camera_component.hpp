@@ -15,11 +15,12 @@ namespace arcadia
         using self_type = arcadia::camera_component;
         using serialization_type = arcadia::serialization::camera;
     public:
-        ARCADIA_COMPONENT_TYPE_STR_GETERS("Camera");
+        ARCADIA_COMPONENT_TYPE_STR_GETERS("camera");
 
         camera_component() = default;
         camera_component(const nlohmann::json& json);
         ~camera_component() = default;
+        [[nodiscard]]
         auto to_json() const->nlohmann::json;
 
         auto move_forward() -> self_type&;

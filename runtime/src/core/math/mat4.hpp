@@ -14,10 +14,10 @@ namespace arcadia
         ARCADIA_API constexpr auto zero_affine() -> glm::mat4
         {
             return glm::mat4{
-            glm::vec4{},
-            glm::vec4{},
-            glm::vec4{},
-            glm::vec4{ .0f,.0f,.0f,1.f }
+                glm::vec4{},
+                glm::vec4{},
+                glm::vec4{},
+                glm::vec4{ .0f,.0f,.0f,1.f }
             };
         }
         ARCADIA_API constexpr auto identity() -> glm::mat4

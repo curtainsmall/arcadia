@@ -2,11 +2,15 @@
 
 #include"core/base.hpp"
 #include"core/math/glm_header.hpp"
+#include"core/nlohmann_json_header.hpp"
 
 namespace arcadia
 {
     namespace vec4
     {
+        ARCADIA_API extern auto to_json(const glm::vec4& vec) -> nlohmann::json;
+        ARCADIA_API extern auto from_json(const nlohmann::json& json) -> glm::vec4;
+
         ARCADIA_API constexpr auto zero() -> glm::vec4
         {
             return glm::vec4{};

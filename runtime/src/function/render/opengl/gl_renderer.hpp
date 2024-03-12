@@ -24,12 +24,17 @@ namespace arcadia
         glm::ivec2, // viewport_size
         glm::mat4, // camera_view_mat4
         glm::mat4, // camera_proj_mat4
+        glm::vec3, // camera_position
         bool, // should_display_grid
         float, // near_plane
         float // far_plane
     >;
 
-    using gl_render_unit_mesh = std::tuple<
+    using gl_render_unit_light = std::tuple<
+        arcadia::light_type // light
+    >;
+
+    using gl_render_unit_model = std::tuple<
         arcadia::gl_vertex_array, // gl_vertex_array
         glm::mat4, // trasform_mat
         arcadia::gl_texture2d, // gl_texture2d_ambient
@@ -54,6 +59,7 @@ namespace arcadia
         virtual void end_frame() override;
 
         virtual void submit(const arcadia::camera_component& camera_comp) override;
+        virtual void submit(const arcadia::light_component& light_comp) override;
         virtual void submit(const arcadia::model_component& renderable_comp) override;
         virtual void submit(const arcadia::skybox_component& skybox_comp) override;
 
@@ -72,11 +78,13 @@ namespace arcadia
         bool _frame_in_build{ false };
 
         std::vector<arcadia::gl_render_unit_camera> _gl_render_unit_cameras{};
-        std::vector<arcadia::gl_render_unit_mesh> _gl_render_unit_meshes{};
+        std::vector<arcadia::gl_render_unit_light> _gl_render_unit_lights{};
+        std::vector<arcadia::gl_render_unit_model> _gl_render_unit_models{};
         std::optional<arcadia::gl_render_unit_skybox> _gl_render_unit_skybox_opt{};
 
         bool _legacy_gl_render_unit_camera{ false };
-        bool _legacy_gl_render_unit_mesh{ false };
+        bool _legacy_gl_render_unit_light{ false };
+        bool _legacy_gl_render_unit_model{ false };
 
         arcadia::gl_pipeline _gl_mesh_pipeline;
         arcadia::gl_pipeline _gl_skybox_pipeline;

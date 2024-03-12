@@ -1,0 +1,10 @@
+^D:\CPPPROJECT\ARCADIA\3RDPARTY\GLFW\TESTS\CMAKELISTS.TXT
+setlocal
+D:\CMake\bin\cmake.exe -SD:/CppProject/arcadia/3rdparty/glfw -BD:/CppProject/arcadia/3rdparty/glfw/_build --check-stamp-file D:/CppProject/arcadia/3rdparty/glfw/_build/tests/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

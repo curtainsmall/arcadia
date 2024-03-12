@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="D:\CppProject\arcadia\3rdparty\glfw\_build\CMakeFiles\d245e09aa04125556df321ba2d7b268d\generate.stamp.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{6F023686-FABB-35BD-BA24-F1125EEF4E8B}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

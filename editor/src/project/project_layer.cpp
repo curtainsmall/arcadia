@@ -75,19 +75,7 @@ void arcadia::project_layer::_save_project()
 {
     ARCADIA_ASSERT(_project_sptr);
 
-    nlohmann::json json{
-        {"name",_project_sptr->get_name()},
-        {"scenes", nlohmann::json::array()},
-        {"active_scene_name", _project_sptr->has_active_scene() ? _project_sptr->get_active_scene().get_name() : ""s}
-    };
-    for(const auto& [name, scene_sptr] : _project_sptr->scene_sptr_umap)
-    {
-        json
-            .at("scenes")
-            .push_back(
-                scene_sptr->to_json()
-            );
-    }
+    auto json = _project_sptr->to_json();
 
     auto ofs = arcadia::file::create_ofstream(_project_filepath);
     ofs << std::setw(4) << json;
@@ -102,15 +90,7 @@ void arcadia::project_layer::_load_project()
     auto ifs = arcadia::file::create_ifstream(_project_filepath);
     auto json = nlohmann::json::parse(ifs);
 
-    _project_sptr = std::make_shared<arcadia::project>(json.at("name"));
-
-    for(const auto& json_scene : json.at("scenes"))
-    {
-        _project_sptr->scene_sptr_umap.try_emplace(json_scene.at("name"), std::make_shared<arcadia::scene>(json_scene));
-    }
-
-    auto& active_scene_name = json.at("active_scene_name");
-    _project_sptr->set_active_scene(active_scene_name);
+    _project_sptr = std::make_shared<arcadia::project>(json);
 
     arcadia::log::debug("Project loaded");
 }
@@ -325,8 +305,6 @@ void arcadia::project_layer::_on_create_scene(arcadia::event::create_scene& e)
         std::make_shared<arcadia::scene>(name)
     ).first->second;
 
-    auto camera_entity = scene_sptr->create_entity("default_camera");
-
     if(as_current)
     {
         _project_sptr->set_active_scene(name);
@@ -427,6 +405,11 @@ void arcadia::project_layer::_on_add_component(arcadia::event::add_component& e)
     {
         scene.emplace_component<arcadia::camera_component>(entity);
     },
+        arcadia::light_component::get_type_str_static(),
+        [&]()
+    {
+        scene.emplace_component<arcadia::light_component>(entity);
+    },
         arcadia::model_component::get_type_str_static(),
         [&]()
     {
@@ -446,6 +429,11 @@ void arcadia::project_layer::_on_remove_component(arcadia::event::remove_compone
         [&]()
     {
         scene.remove_conponent<arcadia::camera_component>(entity);
+    },
+        arcadia::light_component::get_type_str_static(),
+        [&]()
+    {
+        scene.remove_conponent<arcadia::light_component>(entity);
     },
         arcadia::model_component::get_type_str_static(),
         [&]()

@@ -54,6 +54,9 @@
     <ClInclude Include="src\ui\imgui_windows\imgui_windows.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\editor\editor_config.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\editor\editor_layer.cpp">
@@ -81,6 +84,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\editor\editor_context.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\editor\editor_config.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\project\project.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

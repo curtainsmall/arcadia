@@ -115,14 +115,15 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)editor\src;D:\Vulkan\Include;$(SolutionDir)runtime\src;$(SolutionDir)3rdparty;$(SolutionDir)3rdparty\glm;$(SolutionDir)3rdparty\imgui;$(SolutionDir)3rdparty\assimp\include;$(SolutionDir)3rdparty\glfw\include;$(SolutionDir)3rdparty\spdlog\include;$(SolutionDir)3rdparty\flatbuffers-23.5.26\include;$(SolutionDir)3rdparty\portable-file-dialogs-0.1.0;$(SolutionDir)3rdparty\boost_1_83_0;$(SolutionDir)3rdparty\glew\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)editor\src;D:\Vulkan\Include;$(SolutionDir)runtime\src;$(SolutionDir)3rdparty;$(SolutionDir)3rdparty\JoltPhysics-master;$(SolutionDir)3rdparty\glm;$(SolutionDir)3rdparty\imgui;$(SolutionDir)3rdparty\assimp\include;$(SolutionDir)3rdparty\glfw\include;$(SolutionDir)3rdparty\spdlog\include;$(SolutionDir)3rdparty\flatbuffers-23.5.26\include;$(SolutionDir)3rdparty\portable-file-dialogs-0.1.0;$(SolutionDir)3rdparty\boost_1_83_0;$(SolutionDir)3rdparty\glew\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ObjectFileName>$(IntDir)%(RelativeDir)</ObjectFileName>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(SolutionDir)3rdparty\glew\lib\Release\x64\glew32s.lib;$(SolutionDir)3rdparty\glfw\build\src\Release\glfw3.lib;$(SolutionDir)3rdparty\spdlog\build\Release\spdlog.lib;$(SolutionDir)3rdparty\imgui\lib\imgui.lib;$(SolutionDir)bin\$(Configuration)\$(Platform)\arcadia\runtime\arcadia_runtime.lib;User32.lib;Gdi32.lib;Shell32.lib;opengl32.lib;$(SolutionDir)3rdparty\assimp\_build\lib\Debug\assimp-vc143-mtd.lib;$(SolutionDir)3rdparty\assimp\_build\contrib\zlib\Debug\zlibstaticd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(SolutionDir)3rdparty\glew\lib\Release\x64\glew32s.lib;$(SolutionDir)3rdparty\glfw\_build\src\MinSizeRel\glfw3.lib;$(SolutionDir)3rdparty\spdlog\build\Release\spdlog.lib;$(SolutionDir)3rdparty\imgui\lib\imgui.lib;$(SolutionDir)3rdparty\JoltPhysics-master\Build\VS2022_CL\Debug\Jolt.lib;$(SolutionDir)bin\$(Configuration)\$(Platform)\arcadia\runtime\arcadia_runtime.lib;User32.lib;Gdi32.lib;Shell32.lib;opengl32.lib;$(SolutionDir)3rdparty\assimp\_build\lib\Debug\assimp-vc143-mtd.lib;$(SolutionDir)3rdparty\assimp\_build\contrib\zlib\Debug\zlibstaticd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -134,19 +135,21 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)editor\src;D:\Vulkan\Include;$(SolutionDir)runtime\src;$(SolutionDir)3rdparty;$(SolutionDir)3rdparty\glm;$(SolutionDir)3rdparty\imgui;$(SolutionDir)3rdparty\assimp\include;$(SolutionDir)3rdparty\glfw\include;$(SolutionDir)3rdparty\spdlog\include;$(SolutionDir)3rdparty\flatbuffers-23.5.26\include;$(SolutionDir)3rdparty\portable-file-dialogs-0.1.0;$(SolutionDir)3rdparty\boost_1_83_0;$(SolutionDir)3rdparty\flatbuffer;$(SolutionDir)3rdparty\glew\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)editor\src;D:\Vulkan\Include;$(SolutionDir)runtime\src;$(SolutionDir)3rdparty;$(SolutionDir)3rdparty\JoltPhysics-master;$(SolutionDir)3rdparty\glm;$(SolutionDir)3rdparty\imgui;$(SolutionDir)3rdparty\assimp\include;$(SolutionDir)3rdparty\glfw\include;$(SolutionDir)3rdparty\spdlog\include;$(SolutionDir)3rdparty\flatbuffers-23.5.26\include;$(SolutionDir)3rdparty\portable-file-dialogs-0.1.0;$(SolutionDir)3rdparty\boost_1_83_0;$(SolutionDir)3rdparty\flatbuffer;$(SolutionDir)3rdparty\glew\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ObjectFileName>$(IntDir)%(RelativeDir)</ObjectFileName>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(SolutionDir)3rdparty\glew\lib\Release\x64\glew32s.lib;$(SolutionDir)3rdparty\glfw\build\src\Release\glfw3.lib;$(SolutionDir)3rdparty\spdlog\build\Release\spdlog.lib;$(SolutionDir)3rdparty\imgui\lib\imgui.lib;$(SolutionDir)bin\$(Configuration)\$(Platform)\arcadia\runtime\arcadia_runtime.lib;User32.lib;Gdi32.lib;Shell32.lib;opengl32.lib;$(SolutionDir)3rdparty\assimp\_build\lib\MinSizeRel\assimp-vc143-mt.lib;$(SolutionDir)3rdparty\assimp\_build\contrib\zlib\MinSizeRel\zlibstatic.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(SolutionDir)3rdparty\glew\lib\Release\x64\glew32s.lib;$(SolutionDir)3rdparty\glfw\build\src\Release\glfw3.lib;$(SolutionDir)3rdparty\spdlog\build\Release\spdlog.lib;$(SolutionDir)3rdparty\imgui\lib\imgui.lib;$(SolutionDir)3rdparty\JoltPhysics-master\Build\VS2022_CL\Distribution\Jolt.lib;$(SolutionDir)bin\$(Configuration)\$(Platform)\arcadia\runtime\arcadia_runtime.lib;User32.lib;Gdi32.lib;Shell32.lib;opengl32.lib;$(SolutionDir)3rdparty\assimp\_build\lib\MinSizeRel\assimp-vc143-mt.lib;$(SolutionDir)3rdparty\assimp\_build\contrib\zlib\MinSizeRel\zlibstatic.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\editor\editor_config.hpp" />
     <ClInclude Include="src\editor\editor_context.hpp" />
     <ClInclude Include="src\editor\editor_layer.hpp" />
     <ClInclude Include="src\project\project.hpp" />
@@ -162,8 +165,10 @@
     <ClInclude Include="src\ui\ui_events.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\editor\editor_config.cpp" />
     <ClCompile Include="src\editor\editor_context.cpp" />
     <ClCompile Include="src\editor\editor_layer.cpp" />
+    <ClCompile Include="src\project\project.cpp" />
     <ClCompile Include="src\project\project_layer.cpp" />
     <ClCompile Include="src\ui\imgui_windows\imgui_window_manubar.cpp" />
     <ClCompile Include="src\ui\imgui_windows\imgui_window_outliner.cpp" />

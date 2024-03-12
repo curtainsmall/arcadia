@@ -13,7 +13,11 @@
 auto arcadia::model_component::to_json() const -> nlohmann::json
 {
     nlohmann::json json{
-        { "filepath", _filepath.generic_string() }
+        { "filepath", _filepath.generic_string() },
+        {"location",arcadia::vec3::to_json(location)},
+        {"rotation",arcadia::vec3::to_json(rotation)},
+        {"scale",arcadia::vec3::to_json(scale)},
+        {"pivot",arcadia::vec3::to_json(scale)}
     };
     return json;
 }
@@ -28,7 +32,11 @@ arcadia::model_component::model_component(const std::filesystem::path& filepath)
 }
 
 arcadia::model_component::model_component(const nlohmann::json& json):
-    _filepath(arcadia::to_filepath(json.at("filepath")))
+    _filepath(arcadia::to_filepath(json.at("filepath"))),
+    location(arcadia::vec3::from_json(json.at("location"))),
+    rotation(arcadia::vec3::from_json(json.at("rotation"))),
+    scale(arcadia::vec3::from_json(json.at("scale"))),
+    pivot(arcadia::vec3::from_json(json.at("pivot")))
 {
     if(!_filepath.empty())
     {

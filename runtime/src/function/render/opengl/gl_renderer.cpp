@@ -3,8 +3,10 @@
 
 #include<vector>
 
+#include"core/conditional.hpp"
+
 arcadia::gl_renderer::gl_renderer(const std::filesystem::path& gl_shader_folder_path):
-    _gl_mesh_pipeline(gl_shader_folder_path, arcadia::get_mesh_shaders_builder()),
+    _gl_mesh_pipeline(gl_shader_folder_path, arcadia::get_model_shaders_builder()),
     _gl_skybox_pipeline(gl_shader_folder_path, arcadia::get_skybox_shaders_builder()),
     _gl_grid_pipeline(gl_shader_folder_path, arcadia::get_grid_shaders_builder())
 {
@@ -18,7 +20,8 @@ void arcadia::gl_renderer::begin_frame()
     _frame_in_build = true;
 
     _legacy_gl_render_unit_camera = true;
-    _legacy_gl_render_unit_mesh = true;
+    _legacy_gl_render_unit_light = true;
+    _legacy_gl_render_unit_model = true;
 }
 
 void arcadia::gl_renderer::end_frame()
@@ -46,20 +49,34 @@ void arcadia::gl_renderer::submit(const arcadia::camera_component& camera_comp)
         camera_comp.viewport_size,
         camera_comp.build_view_mat4(),
         camera_comp.build_proj_mat4(),
+        camera_comp.pos,
         camera_comp.should_display_grid,
         camera_comp.near_plane,
         camera_comp.far_plane
     );
 }
 
+void arcadia::gl_renderer::submit(const arcadia::light_component& light_comp)
+{
+    _check_frame_in_build_or_throw();
+
+    if(_legacy_gl_render_unit_light)
+    {
+        _gl_render_unit_lights.clear();
+        _legacy_gl_render_unit_light = false;
+    }
+
+    _gl_render_unit_lights.emplace_back(light_comp.light);
+}
+
 void arcadia::gl_renderer::submit(const arcadia::model_component& model_comp)
 {
     _check_frame_in_build_or_throw();
 
-    if(_legacy_gl_render_unit_mesh)
+    if(_legacy_gl_render_unit_model)
     {
-        _gl_render_unit_meshes.clear();
-        _legacy_gl_render_unit_mesh = false;
+        _gl_render_unit_models.clear();
+        _legacy_gl_render_unit_model = false;
     }
 
     auto transform_mat =
@@ -98,7 +115,7 @@ void arcadia::gl_renderer::submit(const arcadia::model_component& model_comp)
 
     for(const auto& mesh : model_comp.get_meshes())
     {
-        _gl_render_unit_meshes.emplace_back(
+        _gl_render_unit_models.emplace_back(
             arcadia::gl_vertex_array{ mesh.vertices, mesh.indices },
             transform_mat,
             mesh.material.ambient_texture2d,
@@ -138,6 +155,7 @@ void arcadia::gl_renderer::draw()
             viewport_size,
             camera_view_mat4,
             camera_proj_mat4,
+            camera_position,
             should_display_grid,
             near_plane,
             far_plane
@@ -179,26 +197,54 @@ void arcadia::gl_renderer::draw()
 
         // Draw with mesh pipeline
         _gl_mesh_pipeline.use();
+        auto tex_uniform_index = 0;
 
         // Set uniform for camera matrix
         _gl_mesh_pipeline.set_uniform("u_view_mat", camera_view_mat4);
         _gl_mesh_pipeline.set_uniform("u_proj_mat", camera_proj_mat4);
+        _gl_mesh_pipeline.set_uniform("u_view_pos", camera_position);
+
+        // Lights
+        for(const auto& [light] : _gl_render_unit_lights)
+        {
+            arcadia::match<void>(
+                light,
+                [&](const arcadia::spot_light& light)
+            {},
+                [&](const arcadia::direct_light& light)
+            {},
+                [&](const arcadia::area_light& light)
+            {},
+                [&](const arcadia::point_light& light)
+            {
+                _gl_mesh_pipeline.set_uniform("u_point_light.position", light.position);
+                _gl_mesh_pipeline.set_uniform("u_point_light.attenuation_coefs", light.attenuation_coefs);
+                _gl_mesh_pipeline.set_uniform("u_point_light.color", light.color);
+                _gl_mesh_pipeline.set_uniform("u_point_light.ambient_strength", light.ambient_strength);
+                _gl_mesh_pipeline.set_uniform("u_point_light.diffuse_strength", light.diffuse_strength);
+                _gl_mesh_pipeline.set_uniform("u_point_light.specular_strength", light.specular_strength);
+            }
+            );
+        }
 
         // For each render unit mesh
-        for(auto& [gl_vertex_array, transform_mat4, gl_texture2d_ambient, gl_texture2d_diffuse, gl_texture2d_specular] : _gl_render_unit_meshes)
+        for(auto& [gl_vertex_array, transform_mat4, gl_texture2d_ambient, gl_texture2d_diffuse, gl_texture2d_specular] : _gl_render_unit_models)
         {
             ARCADIA_GL_CALL(glViewport(0, 0, viewport_size.x, viewport_size.y));
 
             _gl_mesh_pipeline.set_uniform("u_transform_mat", transform_mat4);
+            _gl_mesh_pipeline.set_uniform("u_normal_mat", glm::mat3{ glm::transpose(glm::inverse(transform_mat4)) });
 
-            _gl_mesh_pipeline.set_uniform("u_tex_ambient", 0);
-            gl_texture2d_ambient.bind(0);
+            _gl_mesh_pipeline.set_uniform("u_material.ambient", tex_uniform_index);
+            gl_texture2d_ambient.bind(tex_uniform_index++);
 
-            _gl_mesh_pipeline.set_uniform("u_tex_diffuse", 1);
-            gl_texture2d_diffuse.bind(1);
+            _gl_mesh_pipeline.set_uniform("u_material.diffuse", tex_uniform_index);
+            gl_texture2d_diffuse.bind(tex_uniform_index++);
 
-            _gl_mesh_pipeline.set_uniform("u_tex_specular", 2);
-            gl_texture2d_specular.bind(2);
+            _gl_mesh_pipeline.set_uniform("u_material.specular", tex_uniform_index);
+            gl_texture2d_specular.bind(tex_uniform_index++);
+
+            _gl_mesh_pipeline.set_uniform("u_material.shininess", 32.f);
 
             gl_vertex_array.bind();
             gl_vertex_array.draw_indices(GL_TRIANGLES);
@@ -209,6 +255,7 @@ void arcadia::gl_renderer::draw()
             gl_texture2d_specular.unbind();
 
         }
+
         _gl_mesh_pipeline.unuse();
 
         // Draw with skybox pipeline
@@ -242,8 +289,11 @@ void arcadia::gl_renderer::clear()
     _gl_render_unit_cameras.clear();
     _legacy_gl_render_unit_camera = false;
 
-    _gl_render_unit_meshes.clear();
-    _legacy_gl_render_unit_mesh = false;
+    _gl_render_unit_lights.clear();
+    _legacy_gl_render_unit_light = false;
+
+    _gl_render_unit_models.clear();
+    _legacy_gl_render_unit_model = false;
 
     _gl_render_unit_skybox_opt.reset();
 }
@@ -298,3 +348,6 @@ auto arcadia::gl_renderer::_create_unit_cube_mesh() const -> std::pair<std::vect
     }
     );
 }
+
+
+

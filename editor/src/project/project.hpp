@@ -4,6 +4,7 @@
 #include<string>
 #include<unordered_map>
 
+#include"core/nlohmann_json_header.hpp"
 #include"project/project_events.hpp"
 #include"resource/scene/scene.hpp"
 
@@ -21,7 +22,10 @@ namespace arcadia
         ):
             _name(name)
         {}
+        project(nlohmann::json& json);
         ~project() = default;
+        [[nodiscard]]
+        auto to_json() const->nlohmann::json;
 
         [[nodiscard]]
         inline auto get_name() const -> const std::string&
@@ -36,87 +40,21 @@ namespace arcadia
         }
 
         [[nodiscard]]
-        inline auto is_modified() const -> bool
-        {
-            if(_modified)
-            {
-                return true;
-            }
-            for(const auto& [name, scene_sptr] : scene_sptr_umap)
-            {
-                if(scene_sptr->is_modified())
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-        inline void set_modified(bool modified, bool recursively = false)
-        {
-            _modified = modified;
-            if(recursively)
-            {
-                for(auto& [name, scene_sptr] : scene_sptr_umap)
-                {
-                    scene_sptr->set_modified(modified);
-                }
-            }
-        }
+        auto is_modified() const -> bool;
+        void set_modified(bool modified, bool recursively = false);
 
         [[nodiscard]]
-        inline auto has_active_scene() const -> bool
-        {
-            return !_active_scene_wptr.expired();
-        }
+        auto has_active_scene() const -> bool;
         [[nodiscard]]
-        inline auto get_active_scene() -> arcadia::scene&
-        {
-            if(!has_active_scene())
-            {
-                throw no_active_scene{};
-            }
-            // If scene is modified, it will record it internally so we does not need to change _modified here
-            return *_active_scene_wptr.lock();
-        }
+        auto get_active_scene() -> arcadia::scene&;
         [[nodiscard]]
-        inline auto get_active_scene() const -> const arcadia::scene&
-        {
-            if(!has_active_scene())
-            {
-                throw no_active_scene{};
-            }
-            return *_active_scene_wptr.lock();
-        }
-        inline auto set_active_scene(const std::string& name ={}) -> std::weak_ptr<arcadia::scene>&
-        {
-            auto has_active_scene = !_active_scene_wptr.expired();
-            auto active_scene_sptr = _active_scene_wptr.lock();
+        auto get_active_scene() const -> const arcadia::scene&;
+        auto set_active_scene(const std::string& name ={}) -> std::weak_ptr<arcadia::scene>&;
 
-            auto is_same_scene = has_active_scene && name == active_scene_sptr->get_name();
-
-            if(!is_same_scene)
-            {
-                if(has_active_scene)
-                {
-                    _active_scene_wptr.reset();
-                    arcadia::event_queue::instance()
-                        .signal<arcadia::event::scene_deactivated>();
-                }
-
-                if(name.size() && scene_sptr_umap.find(name) != scene_sptr_umap.end())
-                {
-                    _active_scene_wptr = scene_sptr_umap.at(name);
-                    arcadia::event_queue::instance()
-                        .signal<arcadia::event::scene_activated>(_active_scene_wptr);
-                }
-            }
-
-            set_modified(true);
-            return _active_scene_wptr;
-        }
 
     public:
         std::unordered_map<std::string, std::shared_ptr<arcadia::scene>> scene_sptr_umap{};
+        arcadia::camera_component viewport_camera{};
     private:
         std::weak_ptr<arcadia::scene> _active_scene_wptr{};
         bool _modified{ false };

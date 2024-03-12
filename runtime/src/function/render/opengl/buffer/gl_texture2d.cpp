@@ -1,13 +1,16 @@
 #include "pch.hpp"
 #include "gl_texture2d.hpp"
 
-arcadia::gl_texture2d::gl_texture2d(const glm::ivec2& size)
+arcadia::gl_texture2d::gl_texture2d(
+    const glm::ivec2& size,
+    void* ptr
+)
 {
     ARCADIA_GL_CALL(glGenTextures(1, &_gl_id));
     bind();
 
     // TODO: Multisample count ?
-    ARCADIA_GL_CALL(glTexImage2D(GL_TEXTURE_2D, 0/* TODO: Mipmap level ?*/, GL_RGBA, size.x, size.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr));
+    ARCADIA_GL_CALL(glTexImage2D(GL_TEXTURE_2D, 0/* TODO: Mipmap level ?*/, GL_RGBA, size.x, size.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, ptr));
     // TODO: Generate mipmap ?
     set_tex_parameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 

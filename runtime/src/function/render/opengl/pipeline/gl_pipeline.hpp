@@ -71,13 +71,13 @@ namespace arcadia
         std::vector<arcadia::gl_shader> _gl_shaders{};
     };
 
-    static inline auto get_mesh_shaders_builder() -> arcadia::gl_pipeline::gl_shaders_builder_type
+    static inline auto get_model_shaders_builder() -> arcadia::gl_pipeline::gl_shaders_builder_type
     {
         return [](const std::filesystem::path& gl_shader_folder_path, std::vector<arcadia::gl_shader>& gl_shaders) -> void
         {
             auto
-                gl_vertex_shader_path = gl_shader_folder_path / "mesh.vert",
-                gl_fragment_shader_path = gl_shader_folder_path / "mesh.frag";
+                gl_vertex_shader_path = gl_shader_folder_path / "model.vert",
+                gl_fragment_shader_path = gl_shader_folder_path / "model.frag";
 
             auto
                 gl_vertex_shader_source = arcadia::load_text(gl_vertex_shader_path),

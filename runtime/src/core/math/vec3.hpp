@@ -16,8 +16,8 @@ namespace arcadia
         extern auto to_flatbuffers(const glm::vec3& vec) -> serialization_type;
         extern auto from_flatbuffers(const serialization_type& flat_vec) -> glm::vec3;
 
-        extern auto to_json(const glm::vec3& vec) -> nlohmann::json;
-        extern auto from_json(const nlohmann::json& json) -> glm::vec3;
+        ARCADIA_API extern auto to_json(const glm::vec3& vec) -> nlohmann::json;
+        ARCADIA_API extern auto from_json(const nlohmann::json& json) -> glm::vec3;
 
         ARCADIA_API constexpr auto zero() -> glm::vec3
         {
@@ -53,16 +53,16 @@ namespace arcadia
     {
         using serialization_type = arcadia::serialization::ivec3;
 
-        extern auto to_flatbuffers(const glm::ivec3& vec) -> serialization_type;
-        extern auto from_flatbuffers(const serialization_type& flat_vec) -> glm::ivec3;
+        ARCADIA_API extern auto to_flatbuffers(const glm::ivec3& vec) -> serialization_type;
+        ARCADIA_API extern auto from_flatbuffers(const serialization_type& flat_vec) -> glm::ivec3;
     }
 
     namespace uvec3
     {
         using serialization_type = arcadia::serialization::uvec3;
 
-        extern auto to_flatbuffers(const glm::uvec3& vec) -> serialization_type;
-        extern auto from_flatbuffers(const serialization_type& flat_vec) -> glm::uvec3;
+        ARCADIA_API extern auto to_flatbuffers(const glm::uvec3& vec) -> serialization_type;
+        ARCADIA_API extern auto from_flatbuffers(const serialization_type& flat_vec) -> glm::uvec3;
     }
 }
 

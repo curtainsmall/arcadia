@@ -10,6 +10,7 @@
 #include"resource/scene/scene.hpp"
 
 #include"function/ui/imgui_window.hpp"
+#include"project/project.hpp"
 #include"project/project_events.hpp"
 #include"ui/ui_events.hpp"
 
@@ -34,15 +35,17 @@ namespace arcadia
     private:
         void _on_input_cursor_move(arcadia::event::input_cursor_move& e);
         void _on_open_imgui_window(arcadia::event::open_imgui_window& e);
+        void _on_project_built(arcadia::event::project_built& e);
+        void _on_project_unbuilt(arcadia::event::project_unbuilt& e);
         void _on_scene_activated(arcadia::event::scene_activated& e);
         void _on_scene_deactivated(arcadia::event::scene_deactivated& e);
         void _on_renderer_built(arcadia::event::renderer_built& e);
         void _on_renderer_unbuilt(arcadia::event::renderer_unbuilt& e);
     private:
+        std::weak_ptr<arcadia::project> _project_wptr{};
         std::weak_ptr<arcadia::scene> _scene_wptr{};
         std::weak_ptr<arcadia::renderer_interface> _renderer_wptr{};
 
-        arcadia::camera_component _camera{};
         arcadia::model_component _grid{};
 
         glm::vec2 _cursor_move{};

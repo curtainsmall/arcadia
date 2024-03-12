@@ -89,6 +89,7 @@ void arcadia::imgui_window_outliner::on_update()
                             {
                                 int item_count{ 0 };
                                 _add_component_menu_item<arcadia::camera_component>(item_count);
+                                _add_component_menu_item<arcadia::light_component>(item_count);
                                 _add_component_menu_item<arcadia::model_component>(item_count);
 
                                 if(item_count == 0)
@@ -102,6 +103,7 @@ void arcadia::imgui_window_outliner::on_update()
                             {
                                 int item_count{ 0 };
                                 _remove_component_menu_item<arcadia::camera_component>(item_count);
+                                _remove_component_menu_item<arcadia::light_component>(item_count);
                                 _remove_component_menu_item<arcadia::model_component>(item_count);
 
                                 if(item_count == 0)

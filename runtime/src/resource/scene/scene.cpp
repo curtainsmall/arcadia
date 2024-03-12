@@ -45,12 +45,17 @@ arcadia::scene::scene(const nlohmann::json& json):
         {
             arcadia::match<void>(
                 json_comp_type_str,
-                "model"s,
+                arcadia::model_component::get_type_str_static(),
                 [&]() -> void
             {
                 emplace_component<arcadia::model_component>(entity, json_comp);
             },
-                "camera"s,
+                arcadia::light_component::get_type_str_static(),
+                [&]() -> void
+            {
+                emplace_component<arcadia::light_component>(entity, json_comp);
+            },
+                arcadia::camera_component::get_type_str_static(),
                 [&]() -> void
             {
                 emplace_component<arcadia::camera_component>(entity, json_comp);
@@ -78,8 +83,9 @@ auto arcadia::scene::to_json() const -> nlohmann::json
     }
 
     json_scene_add_component_to_entity_helper{ *this,json.at("entities") }
-        .add<arcadia::model_component>("model")
-        .add<arcadia::camera_component>("camera");
+        .add<arcadia::camera_component>(arcadia::camera_component::get_type_str_static())
+        .add<arcadia::light_component>(arcadia::light_component::get_type_str_static())
+        .add<arcadia::model_component>(arcadia::model_component::get_type_str_static());
 
     return json;
 }

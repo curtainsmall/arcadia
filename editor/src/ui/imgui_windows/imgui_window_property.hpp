@@ -41,6 +41,7 @@ namespace arcadia
 
         void _display_components();
         void _display_camera_component();
+        void _display_light_component();
         void _display_model_component();
 
         void _on_open_imgui_window(arcadia::event::open_imgui_window& e);

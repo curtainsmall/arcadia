@@ -13,7 +13,8 @@ namespace arcadia
         using self_type = gl_texture2d;
     public:
         gl_texture2d(
-            const glm::ivec2& size
+            const glm::ivec2& size,
+            void* ptr = nullptr
         );
         gl_texture2d(
             const arcadia::texture2d& texture2d

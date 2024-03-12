@@ -7,15 +7,15 @@
 
 arcadia::imgui_window_viewport::imgui_window_viewport(bool open, const std::string& title):
     imgui_window_interface(open, title)
-{
-    _camera.should_display_grid = false;
-}
+{}
 
 void arcadia::imgui_window_viewport::on_event(arcadia::event_base& event)
 {
     arcadia::event_dispatcher{ event }
         .dispatch<arcadia::event::input_cursor_move>(ARCADIA_BIND_MEMBER_FN(_on_input_cursor_move))
         .dispatch<arcadia::event::open_imgui_window>(ARCADIA_BIND_MEMBER_FN(_on_open_imgui_window))
+        .dispatch<arcadia::event::project_built>(ARCADIA_BIND_MEMBER_FN(_on_project_built))
+        .dispatch<arcadia::event::project_unbuilt>(ARCADIA_BIND_MEMBER_FN(_on_project_unbuilt))
         .dispatch<arcadia::event::scene_activated>(ARCADIA_BIND_MEMBER_FN(_on_scene_activated))
         .dispatch<arcadia::event::scene_deactivated>(ARCADIA_BIND_MEMBER_FN(_on_scene_deactivated))
         .dispatch<arcadia::event::renderer_built>(ARCADIA_BIND_MEMBER_FN(_on_renderer_built))
@@ -30,6 +30,7 @@ void arcadia::imgui_window_viewport::on_update()
         return;
     }
 
+    auto project_sptr = _project_wptr.lock();
     std::shared_ptr<const arcadia::scene> scene_sptr = _scene_wptr.lock();
     auto renderer_sptr = _renderer_wptr.lock();
 
@@ -49,16 +50,28 @@ void arcadia::imgui_window_viewport::on_update()
         }
         else
         {
-            _camera.viewport_size = ImGui::GetContentRegionAvail();
+            auto& camera = project_sptr->viewport_camera;
+
+            camera.viewport_size = ImGui::GetContentRegionAvail();
             renderer_sptr->begin_frame();
 
-            renderer_sptr->submit(_camera);
+            // Cameras
+            renderer_sptr->submit(camera);
 
-            renderer_sptr->submit(_grid);
-            const auto& model_comp_group = scene_sptr->component_view<arcadia::model_component>();
-            for(const auto& entity : model_comp_group)
+            // Lights
+            const auto& light_comp_view = scene_sptr->component_view<arcadia::light_component>();
+            for(const auto& entity : light_comp_view)
             {
-                const auto& [model_comp] = model_comp_group.get(entity);
+                const auto& [light_comp] = light_comp_view.get(entity);
+                renderer_sptr->submit(light_comp);
+            }
+
+            // Models
+            renderer_sptr->submit(_grid);
+            const auto& model_comp_view = scene_sptr->component_view<arcadia::model_component>();
+            for(const auto& entity : model_comp_view)
+            {
+                const auto& [model_comp] = model_comp_view.get(entity);
                 renderer_sptr->submit(model_comp);
             }
 
@@ -67,7 +80,7 @@ void arcadia::imgui_window_viewport::on_update()
             renderer_sptr->draw();
 
             auto image_cursor_pos = ImGui::GetCursorPos();
-            ImGui::Image(renderer_sptr->get_render_result_id(0), _camera.viewport_size, { 0,1 }, { 1,0 });
+            ImGui::Image(renderer_sptr->get_render_result_id(0), camera.viewport_size, { 0,1 }, { 1,0 });
 
             if(ImGui::IsItemHovered())
             {
@@ -75,23 +88,23 @@ void arcadia::imgui_window_viewport::on_update()
 
                 // Scroll to zoom (move camera forwards or backwards along direction)
                 auto mouse_wheel_offset = io.MouseWheel;
-                _camera.move(_camera.get_forward_dir() * mouse_wheel_offset);
+                camera.move(camera.get_forward_dir() * mouse_wheel_offset);
 
                 if(ImGui::IsMouseDown(ImGuiMouseButton_Middle))
                 {
                     if(ImGui::IsKeyDown(ImGuiKey_LeftShift))
                     {
-                        _camera.drag_view_move(_cursor_move * .05f);
+                        camera.drag_view_move(_cursor_move * .05f);
                     }
                     else
                     {
-                        _camera.drag_view_rotate(_cursor_move * .005f);
+                        camera.drag_view_rotate(_cursor_move * .005f);
                     }
                 }
 
                 // Display viewport camera info
                 ImGui::SetCursorPos(image_cursor_pos);
-                ImGui::Text(std::format("Camera - Pos: {} - Direction: {}", _camera.pos, _camera.get_forward_dir()).c_str());
+                ImGui::Text(std::format("Camera - Pos: {} - Direction: {}", camera.pos, camera.get_forward_dir()).c_str());
             }
         }
     }
@@ -111,6 +124,17 @@ void arcadia::imgui_window_viewport::_on_open_imgui_window(arcadia::event::open_
     {
         _open = true;
     }
+}
+
+void arcadia::imgui_window_viewport::_on_project_built(arcadia::event::project_built& e)
+{
+    const auto& [project_wptr] = e.data_tuple;
+    _project_wptr = project_wptr;
+}
+
+void arcadia::imgui_window_viewport::_on_project_unbuilt(arcadia::event::project_unbuilt& e)
+{
+    _project_wptr.reset();
 }
 
 void arcadia::imgui_window_viewport::_on_scene_activated(arcadia::event::scene_activated& e)
