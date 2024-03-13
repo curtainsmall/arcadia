@@ -205,8 +205,24 @@ void arcadia::gl_renderer::draw()
         _gl_mesh_pipeline.set_uniform("u_view_pos", camera_position);
 
         // Lights
+        const int light_type_none = 0;
+        const int light_type_spot = 1;
+        const int light_type_direct = 2;
+        const int light_type_area = 3;
+        const int light_type_point = 4;
+        const GLsizeiptr light_t_size{ 128 };
+        const int max_light_count = 32;
+        const int light_count_size_aligned = 16;
+        GLsizeiptr light_count = 0;
+        arcadia::gl_uniform_buffer gl_uniform_buffer{ light_count_size_aligned + light_t_size * max_light_count };
         for(const auto& [light] : _gl_render_unit_lights)
         {
+            if(light_count > max_light_count)
+            {
+                throw too_many_lights{ std::format("The max light count is {}",max_light_count) };
+            }
+
+            GLintptr base_offfset = light_count_size_aligned + light_count * light_t_size;
             arcadia::match<void>(
                 light,
                 [&](const arcadia::spot_light& light)
@@ -217,15 +233,19 @@ void arcadia::gl_renderer::draw()
             {},
                 [&](const arcadia::point_light& light)
             {
-                _gl_mesh_pipeline.set_uniform("u_point_light.position", light.position);
-                _gl_mesh_pipeline.set_uniform("u_point_light.attenuation_coefs", light.attenuation_coefs);
-                _gl_mesh_pipeline.set_uniform("u_point_light.color", light.color);
-                _gl_mesh_pipeline.set_uniform("u_point_light.ambient_strength", light.ambient_strength);
-                _gl_mesh_pipeline.set_uniform("u_point_light.diffuse_strength", light.diffuse_strength);
-                _gl_mesh_pipeline.set_uniform("u_point_light.specular_strength", light.specular_strength);
+                gl_uniform_buffer.sub_data(base_offfset + 0, sizeof(int), &light_type_point);
+                gl_uniform_buffer.sub_data(base_offfset + 16, sizeof(glm::vec3), &light.position);
+                gl_uniform_buffer.sub_data(base_offfset + 48, sizeof(glm::vec3), &light.attenuation_coefs);
+                gl_uniform_buffer.sub_data(base_offfset + 64, sizeof(glm::vec3), &light.color);
+                gl_uniform_buffer.sub_data(base_offfset + 80, sizeof(glm::vec3), &light.ambient_strength);
+                gl_uniform_buffer.sub_data(base_offfset + 96, sizeof(glm::vec3), &light.diffuse_strength);
+                gl_uniform_buffer.sub_data(base_offfset + 112, sizeof(glm::vec3), &light.specular_strength);
             }
             );
+            ++light_count;
         }
+        gl_uniform_buffer.sub_data(0, sizeof(int), &light_count);
+        gl_uniform_buffer.bind_buffer_base(0);
 
         // For each render unit mesh
         for(auto& [gl_vertex_array, transform_mat4, gl_texture2d_ambient, gl_texture2d_diffuse, gl_texture2d_specular] : _gl_render_unit_models)

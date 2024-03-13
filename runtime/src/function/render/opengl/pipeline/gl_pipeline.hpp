@@ -62,6 +62,8 @@ namespace arcadia
         void set_uniform(const std::string& name, const glm::mat3& mat);
         void set_uniform(const std::string& name, const glm::mat2& mat);
 
+        void set_uniform_block_binding(const std::string& name, GLuint index);
+
     private:
         auto _get_uniform_location(const std::string& name) -> GLuint;
 

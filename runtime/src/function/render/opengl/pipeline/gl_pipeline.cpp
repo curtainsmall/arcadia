@@ -177,6 +177,12 @@ void arcadia::gl_pipeline::set_uniform(const std::string& name, const glm::mat2&
     ARCADIA_GL_CALL(glUniformMatrix2fv(_get_uniform_location(name), 1, GL_FALSE, &mat[0][0]));
 }
 
+void arcadia::gl_pipeline::set_uniform_block_binding(const std::string& name, GLuint index)
+{
+    ARCADIA_GL_CALL(GLuint block_index = glGetUniformBlockIndex(_gl_id, name.c_str()));
+    ARCADIA_GL_CALL(glUniformBlockBinding(_gl_id, block_index, index));
+}
+
 auto arcadia::gl_pipeline::_get_uniform_location(const std::string& name) -> GLuint
 {
     try

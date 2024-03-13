@@ -1,6 +1,8 @@
 #include "pch.hpp"
 #include "gl_uniform_buffer.hpp"
 
+#include"core/log/log.hpp"
+
 arcadia::gl_uniform_buffer::gl_uniform_buffer(
     GLsizeiptr size
 )
@@ -10,6 +12,12 @@ arcadia::gl_uniform_buffer::gl_uniform_buffer(
     bind();
     ARCADIA_GL_CALL(glBufferData(GL_UNIFORM_BUFFER, size, nullptr, GL_STATIC_DRAW));
     unbind();
+}
+
+arcadia::gl_uniform_buffer::gl_uniform_buffer(GLsizeiptr size, const GLvoid* data):
+    gl_uniform_buffer(size)
+{
+    sub_data(0, size, data);
 }
 
 arcadia::gl_uniform_buffer::~gl_uniform_buffer()
@@ -45,7 +53,23 @@ void arcadia::gl_uniform_buffer::unbind() const
     ARCADIA_GL_CALL(glBindBuffer(GL_UNIFORM_BUFFER, 0));
 }
 
-void arcadia::gl_uniform_buffer::set_binding(GLuint index)
+void arcadia::gl_uniform_buffer::bind_buffer_base(GLuint index) const
 {
+    bind();
     ARCADIA_GL_CALL(glBindBufferBase(GL_UNIFORM_BUFFER, index, _gl_id));
+    unbind();
+}
+
+void arcadia::gl_uniform_buffer::bind_buffer_range(GLuint index, GLintptr offset, GLsizeiptr size) const
+{
+    bind();
+    ARCADIA_GL_CALL(glBindBufferRange(GL_UNIFORM_BUFFER, index, _gl_id, offset, size));
+    unbind();
+}
+
+void arcadia::gl_uniform_buffer::sub_data(GLintptr offset, GLsizeiptr size, const GLvoid* data) const
+{
+    bind();
+    ARCADIA_GL_CALL(glBufferSubData(GL_UNIFORM_BUFFER, offset, size, data));
+    unbind();
 }
