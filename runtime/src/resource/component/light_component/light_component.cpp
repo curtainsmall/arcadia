@@ -73,7 +73,8 @@ auto arcadia::light_component::to_json() const -> nlohmann::json
         [&](const arcadia::null_light&)
     {
         return nlohmann::json{
-            {"type","null"}
+            {"type","null"},
+            {"light",nlohmann::json::object()}
         };
     },
         [&](const arcadia::spot_light& light)

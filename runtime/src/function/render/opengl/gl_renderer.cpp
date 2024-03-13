@@ -222,7 +222,6 @@ void arcadia::gl_renderer::draw()
                 throw too_many_lights{ std::format("The max light count is {}",max_light_count) };
             }
 
-            GLintptr base_offfset = light_count_size_aligned + light_count * light_t_size;
             arcadia::match<void>(
                 light,
                 [&](const arcadia::null_light& light)
@@ -231,6 +230,7 @@ void arcadia::gl_renderer::draw()
             {},
                 [&](const arcadia::direct_light& light)
             {
+                GLintptr base_offfset = light_count_size_aligned + light_count * light_t_size;
                 gl_uniform_buffer.sub_data(base_offfset + 0, sizeof(int), &light_type_direct);
                 gl_uniform_buffer.sub_data(base_offfset + 32, sizeof(glm::vec3), &light.direction);
                 glm::vec3 normalized_color = light.color / 255.f;
@@ -238,11 +238,13 @@ void arcadia::gl_renderer::draw()
                 gl_uniform_buffer.sub_data(base_offfset + 80, sizeof(glm::vec3), &light.ambient_strength);
                 gl_uniform_buffer.sub_data(base_offfset + 96, sizeof(glm::vec3), &light.diffuse_strength);
                 gl_uniform_buffer.sub_data(base_offfset + 112, sizeof(glm::vec3), &light.specular_strength);
+                ++light_count;
             },
                 [&](const arcadia::area_light& light)
             {},
                 [&](const arcadia::point_light& light)
             {
+                GLintptr base_offfset = light_count_size_aligned + light_count * light_t_size;
                 gl_uniform_buffer.sub_data(base_offfset + 0, sizeof(int), &light_type_point);
                 gl_uniform_buffer.sub_data(base_offfset + 16, sizeof(glm::vec3), &light.position);
                 gl_uniform_buffer.sub_data(base_offfset + 48, sizeof(glm::vec3), &light.attenuation_coefs);
@@ -251,9 +253,9 @@ void arcadia::gl_renderer::draw()
                 gl_uniform_buffer.sub_data(base_offfset + 80, sizeof(glm::vec3), &light.ambient_strength);
                 gl_uniform_buffer.sub_data(base_offfset + 96, sizeof(glm::vec3), &light.diffuse_strength);
                 gl_uniform_buffer.sub_data(base_offfset + 112, sizeof(glm::vec3), &light.specular_strength);
+                ++light_count;
             }
             );
-            ++light_count;
         }
         gl_uniform_buffer.sub_data(0, sizeof(int), &light_count);
         gl_uniform_buffer.bind_buffer_base(0);

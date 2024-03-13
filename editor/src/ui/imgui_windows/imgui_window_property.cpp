@@ -129,6 +129,9 @@ void arcadia::imgui_window_property::_display_light_component()
 
     ImGui::PushItemWidth(200.f);
 
+    float light_direction_drag_speed = .01f;
+    float light_direction_min = -1.f;
+    float light_direction_max = 1.f;
     float light_color_drag_speed = 1.f;
     float light_color_min = .0f;
     float light_color_max = 255.f;
@@ -214,9 +217,9 @@ void arcadia::imgui_window_property::_display_light_component()
         ImGui::Text("                  Z"); ImGui::SameLine(); ImGui::DragFloat("##pos_z", &light.position.z);
 
         ImGui::NewLine();
-        ImGui::Text("        Direction X"); ImGui::SameLine(); ImGui::DragFloat("##dir_x", &light.direction.x);
-        ImGui::Text("                  Y"); ImGui::SameLine(); ImGui::DragFloat("##dir_y", &light.direction.y);
-        ImGui::Text("                  Z"); ImGui::SameLine(); ImGui::DragFloat("##dir_z", &light.direction.z);
+        ImGui::Text("        Direction X"); ImGui::SameLine(); ImGui::DragFloat("##dir_x", &light.direction.x, light_direction_drag_speed, light_direction_min, light_direction_max);
+        ImGui::Text("                  Y"); ImGui::SameLine(); ImGui::DragFloat("##dir_y", &light.direction.y, light_direction_drag_speed, light_direction_min, light_direction_max);
+        ImGui::Text("                  Z"); ImGui::SameLine(); ImGui::DragFloat("##dir_z", &light.direction.z, light_direction_drag_speed, light_direction_min, light_direction_max);
 
         ImGui::NewLine();
         float cutoff_angle_degree = glm::degrees(light.cutoff_angle);
@@ -292,9 +295,9 @@ void arcadia::imgui_window_property::_display_light_component()
         ImGui::SeparatorText("Direct Light");
 
         ImGui::NewLine();
-        ImGui::Text("        Direction X"); ImGui::SameLine(); ImGui::DragFloat("##dir_x", &light.direction.x);
-        ImGui::Text("                  Y"); ImGui::SameLine(); ImGui::DragFloat("##dir_y", &light.direction.y);
-        ImGui::Text("                  Z"); ImGui::SameLine(); ImGui::DragFloat("##dir_z", &light.direction.z);
+        ImGui::Text("        Direction X"); ImGui::SameLine(); ImGui::DragFloat("##dir_x", &light.direction.x, light_direction_drag_speed, light_direction_min, light_direction_max);
+        ImGui::Text("                  Y"); ImGui::SameLine(); ImGui::DragFloat("##dir_y", &light.direction.y, light_direction_drag_speed, light_direction_min, light_direction_max);
+        ImGui::Text("                  Z"); ImGui::SameLine(); ImGui::DragFloat("##dir_z", &light.direction.z, light_direction_drag_speed, light_direction_min, light_direction_max);
 
         ImGui::NewLine();
         ImGui::Text("            Color R"); ImGui::SameLine(); ImGui::DragFloat("##color_r", &light.color.r, light_color_drag_speed, light_color_min, light_color_max);
@@ -370,9 +373,9 @@ void arcadia::imgui_window_property::_display_light_component()
         ImGui::Text("                  Z"); ImGui::SameLine(); ImGui::DragFloat("##pos_z", &light.position.z);
 
         ImGui::NewLine();
-        ImGui::Text("        Direction X"); ImGui::SameLine(); ImGui::DragFloat("##dir_x", &light.direction.x);
-        ImGui::Text("                  Y"); ImGui::SameLine(); ImGui::DragFloat("##dir_y", &light.direction.y);
-        ImGui::Text("                  Z"); ImGui::SameLine(); ImGui::DragFloat("##dir_z", &light.direction.z);
+        ImGui::Text("        Direction X"); ImGui::SameLine(); ImGui::DragFloat("##dir_x", &light.direction.x, light_direction_drag_speed, light_direction_min, light_direction_max);
+        ImGui::Text("                  Y"); ImGui::SameLine(); ImGui::DragFloat("##dir_y", &light.direction.y, light_direction_drag_speed, light_direction_min, light_direction_max);
+        ImGui::Text("                  Z"); ImGui::SameLine(); ImGui::DragFloat("##dir_z", &light.direction.z, light_direction_drag_speed, light_direction_min, light_direction_max);
 
         ImGui::NewLine();
         ImGui::Text("         Size Width"); ImGui::SameLine(); ImGui::DragFloat("##width", &light.size.x);
