@@ -9,8 +9,13 @@ arcadia::light_component::light_component(const nlohmann::json& json)
     auto& json_light = json.at("light");
     light = arcadia::match<arcadia::light_type>(
         type_str,
+        "null"s,
+        [&]()
+    {
+        return arcadia::light_type{ arcadia::null_light{} };
+    },
         "spot"s,
-        [&]() -> arcadia::light_type
+        [&]()
     {
         arcadia::spot_light light{};
         light.position = arcadia::vec3::from_json(json_light.at("position"));
@@ -20,22 +25,21 @@ arcadia::light_component::light_component(const nlohmann::json& json)
         light.ambient_strength = arcadia::vec3::from_json(json_light.at("ambient_strength"));
         light.diffuse_strength = arcadia::vec3::from_json(json_light.at("diffuse_strength"));
         light.specular_strength = arcadia::vec3::from_json(json_light.at("specular_strength"));
-        return light;
+        return arcadia::light_type{ light };
     },
         "direct"s,
-        [&]() -> arcadia::light_type
+        [&]()
     {
         arcadia::direct_light light{};
-        light.position = arcadia::vec3::from_json(json_light.at("position"));
         light.direction = arcadia::vec3::from_json(json_light.at("direction"));
         light.color = arcadia::vec3::from_json(json_light.at("color"));
         light.ambient_strength = arcadia::vec3::from_json(json_light.at("ambient_strength"));
         light.diffuse_strength = arcadia::vec3::from_json(json_light.at("diffuse_strength"));
         light.specular_strength = arcadia::vec3::from_json(json_light.at("specular_strength"));
-        return light;
+        return arcadia::light_type{ light };
     },
         "area"s,
-        [&]() -> arcadia::light_type
+        [&]()
     {
         arcadia::area_light light{};
         light.position = arcadia::vec3::from_json(json_light.at("position"));
@@ -45,10 +49,10 @@ arcadia::light_component::light_component(const nlohmann::json& json)
         light.ambient_strength = arcadia::vec3::from_json(json_light.at("ambient_strength"));
         light.diffuse_strength = arcadia::vec3::from_json(json_light.at("diffuse_strength"));
         light.specular_strength = arcadia::vec3::from_json(json_light.at("specular_strength"));
-        return light;
+        return arcadia::light_type{ light };
     },
         "point"s,
-        [&]() -> arcadia::light_type
+        [&]()
     {
         arcadia::point_light light{};
         light.position = arcadia::vec3::from_json(json_light.at("position"));
@@ -57,7 +61,7 @@ arcadia::light_component::light_component(const nlohmann::json& json)
         light.ambient_strength = arcadia::vec3::from_json(json_light.at("ambient_strength"));
         light.diffuse_strength = arcadia::vec3::from_json(json_light.at("diffuse_strength"));
         light.specular_strength = arcadia::vec3::from_json(json_light.at("specular_strength"));
-        return light;
+        return arcadia::light_type{ light };
     }
     );
 }
@@ -66,6 +70,12 @@ auto arcadia::light_component::to_json() const -> nlohmann::json
 {
     return arcadia::match<nlohmann::json>(
         light,
+        [&](const arcadia::null_light&)
+    {
+        return nlohmann::json{
+            {"type","null"}
+        };
+    },
         [&](const arcadia::spot_light& light)
     {
         return nlohmann::json{
@@ -103,7 +113,6 @@ auto arcadia::light_component::to_json() const -> nlohmann::json
         return nlohmann::json{
             {"type","direct"},
             {"light",{
-                    {"position",arcadia::vec3::to_json(light.position)},
                     {"direction",arcadia::vec3::to_json(light.direction)},
                     {"color",arcadia::vec3::to_json(light.color)},
                     {"ambient_strength",arcadia::vec3::to_json(light.ambient_strength)},

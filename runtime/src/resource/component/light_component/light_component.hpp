@@ -9,25 +9,27 @@
 
 namespace arcadia
 {
+    struct ARCADIA_API null_light
+    {};
+
     struct ARCADIA_API spot_light
     {
     public:
         glm::vec3 position{ arcadia::vec3::zero() };
         glm::vec3 direction{ arcadia::vec3::zero() };
         float cutoff_angle{ glm::radians(30.f) };
-        glm::vec3 color{ 1.f,1.f,1.f };
+        glm::vec3 color{ 255.f,255.f,255.f };
         glm::vec3 ambient_strength{ arcadia::vec3::zero() };
-        glm::vec3 diffuse_strength{ arcadia::vec3::zero() };
+        glm::vec3 diffuse_strength{ 20.f,20.f,20.f };
         glm::vec3 specular_strength{ arcadia::vec3::zero() };
     };
 
     struct ARCADIA_API direct_light
     {
-        glm::vec3 position{ arcadia::vec3::zero() };
         glm::vec3 direction{ arcadia::vec3::zero() };
-        glm::vec3 color{ 1.f,1.f,1.f };
+        glm::vec3 color{ 255.f,255.f,255.f };
         glm::vec3 ambient_strength{ arcadia::vec3::zero() };
-        glm::vec3 diffuse_strength{ arcadia::vec3::zero() };
+        glm::vec3 diffuse_strength{ 20.f,20.f,20.f };
         glm::vec3 specular_strength{ arcadia::vec3::zero() };
     };
 
@@ -36,9 +38,9 @@ namespace arcadia
         glm::vec3 position{ arcadia::vec3::zero() };
         glm::vec3 direction{ arcadia::vec3::zero() };
         glm::vec2 size{ arcadia::vec2::zero() };
-        glm::vec3 color{ 1.f,1.f,1.f };
+        glm::vec3 color{ 255.f,255.f,255.f };
         glm::vec3 ambient_strength{ arcadia::vec3::zero() };
-        glm::vec3 diffuse_strength{ arcadia::vec3::zero() };
+        glm::vec3 diffuse_strength{ 20.f,20.f,20.f };
         glm::vec3 specular_strength{ arcadia::vec3::zero() };
     };
 
@@ -47,13 +49,14 @@ namespace arcadia
     {
         glm::vec3 position{ arcadia::vec3::zero() };
         glm::vec3 attenuation_coefs{ 1.f,.045f,.0075f };
-        glm::vec3 color{ 1.f,1.f,1.f };
+        glm::vec3 color{ 255.f,255.f,255.f };
         glm::vec3 ambient_strength{ arcadia::vec3::zero() };
         glm::vec3 diffuse_strength{ arcadia::vec3::zero() };
         glm::vec3 specular_strength{ arcadia::vec3::zero() };
     };
 
     using light_type = std::variant<
+        arcadia::null_light,
         arcadia::spot_light,
         arcadia::direct_light,
         arcadia::area_light,
@@ -74,6 +77,6 @@ namespace arcadia
         auto to_json() const->nlohmann::json;
 
     public:
-        arcadia::light_type light{ arcadia::point_light{} };
+        arcadia::light_type light{};
     };
 }

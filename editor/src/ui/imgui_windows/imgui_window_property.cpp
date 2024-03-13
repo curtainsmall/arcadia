@@ -137,12 +137,79 @@ void arcadia::imgui_window_property::_display_light_component()
     float light_strength_max = 100.f;
     arcadia::match<void>(
         light_comp.light,
+        [&](arcadia::null_light& light)
+    {
+        if(ImGui::BeginCombo("Light Type", "(No light)"))
+        {
+            if(ImGui::Selectable("Spot Light"))
+            {
+                light_comp.light = arcadia::spot_light{};
+            }
+            if(ImGui::Selectable("Direct Light"))
+            {
+                light_comp.light = arcadia::direct_light{};
+            }
+            if(ImGui::Selectable("Area Light"))
+            {
+                light_comp.light = arcadia::area_light{};
+            }
+            if(ImGui::Selectable("Point Light"))
+            {
+                light_comp.light = arcadia::point_light{};
+            }
+            ImGui::EndCombo();
+        }
+    },
         [&](arcadia::spot_light& light)
     {
+        if(ImGui::BeginCombo("Light Type", "Spot Light"))
+        {
+            if(ImGui::Selectable("Direct Light"))
+            {
+                auto res = pfd::message{
+                    "Changing Light Type",
+                    "Do you want to change light type to Direct Light? All properties for current light will be lost",
+                    pfd::choice::yes_no,
+                    pfd::icon::info
+                }.result();
+                if(res == pfd::button::yes)
+                {
+                    light_comp.light = arcadia::direct_light{};
+                }
+            }
+            if(ImGui::Selectable("Area Light"))
+            {
+                auto res = pfd::message{
+                    "Changing Light Type",
+                    "Do you want to change light type to Area Light? All properties for current light will be lost",
+                    pfd::choice::yes_no,
+                    pfd::icon::info
+                }.result();
+                if(res == pfd::button::yes)
+                {
+                    light_comp.light = arcadia::area_light{};
+                }
+            }
+            if(ImGui::Selectable("Point Light"))
+            {
+                auto res = pfd::message{
+                    "Changing Light Type",
+                    "Do you want to change light type to Point Light? All properties for current light will be lost",
+                    pfd::choice::yes_no,
+                    pfd::icon::info
+                }.result();
+                if(res == pfd::button::yes)
+                {
+                    light_comp.light = arcadia::point_light{};
+                }
+            }
+            ImGui::EndCombo();
+        }
+
         ImGui::SeparatorText("Spot Light");
 
         ImGui::NewLine();
-        ImGui::Text("          Position X"); ImGui::SameLine(); ImGui::DragFloat("##pos_x", &light.position.x);
+        ImGui::Text("         Position X"); ImGui::SameLine(); ImGui::DragFloat("##pos_x", &light.position.x);
         ImGui::Text("                  Y"); ImGui::SameLine(); ImGui::DragFloat("##pos_y", &light.position.y);
         ImGui::Text("                  Z"); ImGui::SameLine(); ImGui::DragFloat("##pos_z", &light.position.z);
 
@@ -157,9 +224,9 @@ void arcadia::imgui_window_property::_display_light_component()
         light.cutoff_angle = glm::radians(cutoff_angle_degree);
 
         ImGui::NewLine();
-        ImGui::Text("             Color R"); ImGui::SameLine(); ImGui::DragFloat("##color_r", &light.color.r, light_color_drag_speed, light_color_min, light_color_max);
-        ImGui::Text("                   G"); ImGui::SameLine(); ImGui::DragFloat("##color_g", &light.color.g, light_color_drag_speed, light_color_min, light_color_max);
-        ImGui::Text("                   B"); ImGui::SameLine(); ImGui::DragFloat("##color_b", &light.color.b, light_color_drag_speed, light_color_min, light_color_max);
+        ImGui::Text("            Color R"); ImGui::SameLine(); ImGui::DragFloat("##color_r", &light.color.r, light_color_drag_speed, light_color_min, light_color_max);
+        ImGui::Text("                  G"); ImGui::SameLine(); ImGui::DragFloat("##color_g", &light.color.g, light_color_drag_speed, light_color_min, light_color_max);
+        ImGui::Text("                  B"); ImGui::SameLine(); ImGui::DragFloat("##color_b", &light.color.b, light_color_drag_speed, light_color_min, light_color_max);
 
         ImGui::NewLine();
         ImGui::Text(" Ambient Strength R"); ImGui::SameLine(); ImGui::DragFloat("##as_r", &light.ambient_strength.r, light_strength_speed, light_strength_min, light_strength_max);
@@ -178,12 +245,51 @@ void arcadia::imgui_window_property::_display_light_component()
     },
         [&](arcadia::direct_light& light)
     {
-        ImGui::SeparatorText("Direct Light");
+        if(ImGui::BeginCombo("Light Type", "Direct Light"))
+        {
+            if(ImGui::Selectable("Spot Light"))
+            {
+                auto res = pfd::message{
+                    "Changing Light Type",
+                    "Do you want to change light type to Spot Light? All properties for current light will be lost",
+                    pfd::choice::yes_no,
+                    pfd::icon::info
+                }.result();
+                if(res == pfd::button::yes)
+                {
+                    light_comp.light = arcadia::spot_light{};
+                }
+            }
+            if(ImGui::Selectable("Area Light"))
+            {
+                auto res = pfd::message{
+                    "Changing Light Type",
+                    "Do you want to change light type to Area Light? All properties for current light will be lost",
+                    pfd::choice::yes_no,
+                    pfd::icon::info
+                }.result();
+                if(res == pfd::button::yes)
+                {
+                    light_comp.light = arcadia::area_light{};
+                }
+            }
+            if(ImGui::Selectable("Point Light"))
+            {
+                auto res = pfd::message{
+                    "Changing Light Type",
+                    "Do you want to change light type to Point Light? All properties for current light will be lost",
+                    pfd::choice::yes_no,
+                    pfd::icon::info
+                }.result();
+                if(res == pfd::button::yes)
+                {
+                    light_comp.light = arcadia::point_light{};
+                }
+            }
+            ImGui::EndCombo();
+        }
 
-        ImGui::NewLine();
-        ImGui::Text("         Position X"); ImGui::SameLine(); ImGui::DragFloat("##pos_x", &light.position.x);
-        ImGui::Text("                  Y"); ImGui::SameLine(); ImGui::DragFloat("##pos_y", &light.position.y);
-        ImGui::Text("                  Z"); ImGui::SameLine(); ImGui::DragFloat("##pos_z", &light.position.z);
+        ImGui::SeparatorText("Direct Light");
 
         ImGui::NewLine();
         ImGui::Text("        Direction X"); ImGui::SameLine(); ImGui::DragFloat("##dir_x", &light.direction.x);
@@ -212,6 +318,50 @@ void arcadia::imgui_window_property::_display_light_component()
     },
         [&](arcadia::area_light& light)
     {
+        if(ImGui::BeginCombo("Light Type", "Area Light"))
+        {
+            if(ImGui::Selectable("Spot Light"))
+            {
+                auto res = pfd::message{
+                    "Changing Light Type",
+                    "Do you want to change light type to Spot Light? All properties for current light will be lost",
+                    pfd::choice::yes_no,
+                    pfd::icon::info
+                }.result();
+                if(res == pfd::button::yes)
+                {
+                    light_comp.light = arcadia::spot_light{};
+                }
+            }
+            if(ImGui::Selectable("Direct Light"))
+            {
+                auto res = pfd::message{
+                    "Changing Light Type",
+                    "Do you want to change light type to Direct Light? All properties for current light will be lost",
+                    pfd::choice::yes_no,
+                    pfd::icon::info
+                }.result();
+                if(res == pfd::button::yes)
+                {
+                    light_comp.light = arcadia::direct_light{};
+                }
+            }
+            if(ImGui::Selectable("Point Light"))
+            {
+                auto res = pfd::message{
+                    "Changing Light Type",
+                    "Do you want to change light type to Point Light? All properties for current light will be lost",
+                    pfd::choice::yes_no,
+                    pfd::icon::info
+                }.result();
+                if(res == pfd::button::yes)
+                {
+                    light_comp.light = arcadia::point_light{};
+                }
+            }
+            ImGui::EndCombo();
+        }
+
         ImGui::SeparatorText("Area Light");
 
         ImGui::NewLine();
@@ -250,6 +400,50 @@ void arcadia::imgui_window_property::_display_light_component()
     },
         [&](arcadia::point_light& light)
     {
+        if(ImGui::BeginCombo("Light Type", "Point Light"))
+        {
+            if(ImGui::Selectable("Spot Light"))
+            {
+                auto res = pfd::message{
+                    "Changing Light Type",
+                    "Do you want to change light type to Spot Light? All properties for current light will be lost",
+                    pfd::choice::yes_no,
+                    pfd::icon::info
+                }.result();
+                if(res == pfd::button::yes)
+                {
+                    light_comp.light = arcadia::spot_light{};
+                }
+            }
+            if(ImGui::Selectable("Direct Light"))
+            {
+                auto res = pfd::message{
+                    "Changing Light Type",
+                    "Do you want to change light type to Direct Light? All properties for current light will be lost",
+                    pfd::choice::yes_no,
+                    pfd::icon::info
+                }.result();
+                if(res == pfd::button::yes)
+                {
+                    light_comp.light = arcadia::direct_light{};
+                }
+            }
+            if(ImGui::Selectable("Area Light"))
+            {
+                auto res = pfd::message{
+                    "Changing Light Type",
+                    "Do you want to change light type to Area Light? All properties for current light will be lost",
+                    pfd::choice::yes_no,
+                    pfd::icon::info
+                }.result();
+                if(res == pfd::button::yes)
+                {
+                    light_comp.light = arcadia::area_light{};
+                }
+            }
+            ImGui::EndCombo();
+        }
+
         ImGui::SeparatorText("Point Light");
 
         ImGui::NewLine();
