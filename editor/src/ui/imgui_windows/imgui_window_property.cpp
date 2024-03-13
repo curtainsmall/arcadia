@@ -129,15 +129,15 @@ void arcadia::imgui_window_property::_display_light_component()
 
     ImGui::PushItemWidth(200.f);
 
-    float light_direction_drag_speed = .01f;
-    float light_direction_min = -1.f;
-    float light_direction_max = 1.f;
-    float light_color_drag_speed = 1.f;
-    float light_color_min = .0f;
-    float light_color_max = 255.f;
-    float light_strength_speed = 1.f;
-    float light_strength_min = 0.f;
-    float light_strength_max = 100.f;
+    const float light_direction_drag_speed = .01f;
+    const float light_direction_min = -1.f;
+    const float light_direction_max = 1.f;
+    const float light_color_drag_speed = 1.f;
+    const float light_color_min = .0f;
+    const float light_color_max = 255.f;
+    const float light_strength_speed = 1.f;
+    const float light_strength_min = 0.f;
+    const float light_strength_max = 100.f;
     arcadia::match<void>(
         light_comp.light,
         [&](arcadia::null_light& light)
@@ -222,9 +222,25 @@ void arcadia::imgui_window_property::_display_light_component()
         ImGui::Text("                  Z"); ImGui::SameLine(); ImGui::DragFloat("##dir_z", &light.direction.z, light_direction_drag_speed, light_direction_min, light_direction_max);
 
         ImGui::NewLine();
-        float cutoff_angle_degree = glm::degrees(light.cutoff_angle);
-        ImGui::Text("        Cutoff Angle"); ImGui::SameLine(); ImGui::DragFloat("Cutoff Angle", &cutoff_angle_degree, 1.f, 0.f, 360.f);
-        light.cutoff_angle = glm::radians(cutoff_angle_degree);
+        ImGui::Text("Attenuation Contant"); ImGui::SameLine(); ImGui::DragFloat("##k0", &light.attenuation_coefs.x);
+        ImGui::Text("             Linear"); ImGui::SameLine(); ImGui::DragFloat("##k1", &light.attenuation_coefs.y);
+        ImGui::Text("          Quadratic"); ImGui::SameLine(); ImGui::DragFloat("##k2", &light.attenuation_coefs.z);
+
+        ImGui::NewLine();
+
+        glm::vec2 cutoff_angles_degree{
+            glm::degrees(light.cutoff_angles.x),
+            glm::degrees(light.cutoff_angles.y)
+        };
+        const float cutoff_angle_drag_speend = .1f;
+        const float cutoff_angle_min = 0.f;
+        const float cutoff_angle_max = 180.f;
+        ImGui::Text(" Inner Cutoff Angle"); ImGui::SameLine(); ImGui::DragFloat("##inner", &cutoff_angles_degree.x, cutoff_angle_drag_speend, cutoff_angle_min, cutoff_angles_degree.y);
+        ImGui::Text(" Outer Cutoff Angle"); ImGui::SameLine(); ImGui::DragFloat("##outer", &cutoff_angles_degree.y, cutoff_angle_drag_speend, cutoff_angles_degree.x, cutoff_angle_max);
+        light.cutoff_angles = glm::vec2{
+            glm::radians(cutoff_angles_degree.x),
+            glm::radians(cutoff_angles_degree.y)
+        };
 
         ImGui::NewLine();
         ImGui::Text("            Color R"); ImGui::SameLine(); ImGui::DragFloat("##color_r", &light.color.r, light_color_drag_speed, light_color_min, light_color_max);

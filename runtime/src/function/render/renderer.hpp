@@ -36,22 +36,18 @@ namespace arcadia
         virtual void end_frame() = 0;
 
         /// @brief Submit a camera component to this renderer
-        /// @note If this function is not called in a new frame, data from previous frame is used
         /// @throw frame_not_in_build if there is no frame in build
         virtual void submit(const arcadia::camera_component&) = 0;
 
         /// @brief Submit a light component to this renderer
-        /// @note If this function is not called in a new frame, data from previous frame is used
         /// @throw frame_not_in_build if there is no frame in build
         virtual void submit(const arcadia::light_component&) = 0;
 
         /// @brief Submit a mesh component to this renderer
-        /// @note If this function is not called in a new frame, data from previous frame is used
         /// @throw frame_not_in_build if there is no frame in build
         virtual void submit(const arcadia::model_component&) = 0;
 
         /// @brief Submit a skybox component to this renderer
-        /// @note This function replaces existing skybox since only one skybox can be rendered at a time
         /// @throw frame_not_in_build if there is no frame in build
         virtual void submit(const arcadia::skybox_component&) = 0;
 

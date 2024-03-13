@@ -18,10 +18,7 @@ void arcadia::gl_renderer::begin_frame()
 {
     _check_frame_not_in_build_or_throw();
     _frame_in_build = true;
-
-    _legacy_gl_render_unit_camera = true;
-    _legacy_gl_render_unit_light = true;
-    _legacy_gl_render_unit_model = true;
+    clear();
 }
 
 void arcadia::gl_renderer::end_frame()
@@ -33,12 +30,6 @@ void arcadia::gl_renderer::end_frame()
 void arcadia::gl_renderer::submit(const arcadia::camera_component& camera_comp)
 {
     _check_frame_in_build_or_throw();
-
-    if(_legacy_gl_render_unit_camera)
-    {
-        _gl_render_unit_cameras.clear();
-        _legacy_gl_render_unit_camera = false;
-    }
 
     _gl_render_unit_cameras.emplace_back(
         arcadia::gl_framebuffer{
@@ -60,24 +51,12 @@ void arcadia::gl_renderer::submit(const arcadia::light_component& light_comp)
 {
     _check_frame_in_build_or_throw();
 
-    if(_legacy_gl_render_unit_light)
-    {
-        _gl_render_unit_lights.clear();
-        _legacy_gl_render_unit_light = false;
-    }
-
     _gl_render_unit_lights.emplace_back(light_comp.light);
 }
 
 void arcadia::gl_renderer::submit(const arcadia::model_component& model_comp)
 {
     _check_frame_in_build_or_throw();
-
-    if(_legacy_gl_render_unit_model)
-    {
-        _gl_render_unit_models.clear();
-        _legacy_gl_render_unit_model = false;
-    }
 
     auto transform_mat =
         // Translate
@@ -227,7 +206,23 @@ void arcadia::gl_renderer::draw()
                 [&](const arcadia::null_light& light)
             {},
                 [&](const arcadia::spot_light& light)
-            {},
+            {
+                GLintptr base_offfset = light_count_size_aligned + light_count * light_t_size;
+                gl_uniform_buffer.sub_data(base_offfset + 0, sizeof(int), &light_type_spot);
+                float cosine_inner_cutoff_angle = glm::cos(light.cutoff_angles.x);
+                float cosine_outer_cutoff_angle = glm::cos(light.cutoff_angles.y);
+                gl_uniform_buffer.sub_data(base_offfset + 4, sizeof(float), &cosine_inner_cutoff_angle);
+                gl_uniform_buffer.sub_data(base_offfset + 8, sizeof(float), &cosine_outer_cutoff_angle);
+                gl_uniform_buffer.sub_data(base_offfset + 16, sizeof(glm::vec3), &light.position);
+                gl_uniform_buffer.sub_data(base_offfset + 32, sizeof(glm::vec3), &light.direction);
+                gl_uniform_buffer.sub_data(base_offfset + 48, sizeof(glm::vec3), &light.attenuation_coefs);
+                glm::vec3 normalized_color = light.color / 255.f;
+                gl_uniform_buffer.sub_data(base_offfset + 64, sizeof(glm::vec3), &normalized_color);
+                gl_uniform_buffer.sub_data(base_offfset + 80, sizeof(glm::vec3), &light.ambient_strength);
+                gl_uniform_buffer.sub_data(base_offfset + 96, sizeof(glm::vec3), &light.diffuse_strength);
+                gl_uniform_buffer.sub_data(base_offfset + 112, sizeof(glm::vec3), &light.specular_strength);
+                ++light_count;
+            },
                 [&](const arcadia::direct_light& light)
             {
                 GLintptr base_offfset = light_count_size_aligned + light_count * light_t_size;
@@ -320,14 +315,8 @@ void arcadia::gl_renderer::draw()
 void arcadia::gl_renderer::clear()
 {
     _gl_render_unit_cameras.clear();
-    _legacy_gl_render_unit_camera = false;
-
     _gl_render_unit_lights.clear();
-    _legacy_gl_render_unit_light = false;
-
     _gl_render_unit_models.clear();
-    _legacy_gl_render_unit_model = false;
-
     _gl_render_unit_skybox_opt.reset();
 }
 

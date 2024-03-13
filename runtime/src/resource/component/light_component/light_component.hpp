@@ -17,7 +17,8 @@ namespace arcadia
     public:
         glm::vec3 position{ arcadia::vec3::zero() };
         glm::vec3 direction{ arcadia::vec3::zero() };
-        float cutoff_angle{ glm::radians(30.f) };
+        glm::vec3 attenuation_coefs{ 1.f,.045f,.0075f };
+        glm::vec2 cutoff_angles{ glm::radians(30.f),glm::radians(32.f) };
         glm::vec3 color{ 255.f,255.f,255.f };
         glm::vec3 ambient_strength{ arcadia::vec3::zero() };
         glm::vec3 diffuse_strength{ 20.f,20.f,20.f };

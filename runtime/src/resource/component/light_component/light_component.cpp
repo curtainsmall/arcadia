@@ -20,7 +20,8 @@ arcadia::light_component::light_component(const nlohmann::json& json)
         arcadia::spot_light light{};
         light.position = arcadia::vec3::from_json(json_light.at("position"));
         light.direction = arcadia::vec3::from_json(json_light.at("direction"));
-        light.cutoff_angle = json_light.at("cutoff_angle");
+        light.attenuation_coefs = arcadia::vec3::from_json(json_light.at("attenuation_coefs"));
+        light.cutoff_angles = arcadia::vec2::from_json(json_light.at("cutoff_angles"));
         light.color = arcadia::vec3::from_json(json_light.at("color"));
         light.ambient_strength = arcadia::vec3::from_json(json_light.at("ambient_strength"));
         light.diffuse_strength = arcadia::vec3::from_json(json_light.at("diffuse_strength"));
@@ -84,7 +85,8 @@ auto arcadia::light_component::to_json() const -> nlohmann::json
             {"light",{
                     {"position",arcadia::vec3::to_json(light.position)},
                     {"direction",arcadia::vec3::to_json(light.direction)},
-                    {"cutoff_angle",light.cutoff_angle},
+                    {"attenuation_coefs",arcadia::vec3::to_json(light.attenuation_coefs)},
+                    {"cutoff_angles",arcadia::vec2::to_json(light.cutoff_angles)},
                     {"color",arcadia::vec3::to_json(light.color)},
                     {"ambient_strength",arcadia::vec3::to_json(light.ambient_strength)},
                     {"diffuse_strength",arcadia::vec3::to_json(light.diffuse_strength)},

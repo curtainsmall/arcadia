@@ -81,10 +81,6 @@ namespace arcadia
         std::vector<arcadia::gl_render_unit_model> _gl_render_unit_models{};
         std::optional<arcadia::gl_render_unit_skybox> _gl_render_unit_skybox_opt{};
 
-        bool _legacy_gl_render_unit_camera{ false };
-        bool _legacy_gl_render_unit_light{ false };
-        bool _legacy_gl_render_unit_model{ false };
-
         arcadia::gl_pipeline _gl_mesh_pipeline;
         arcadia::gl_pipeline _gl_skybox_pipeline;
         arcadia::gl_pipeline _gl_grid_pipeline;
