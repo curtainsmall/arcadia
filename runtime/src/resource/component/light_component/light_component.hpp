@@ -19,7 +19,7 @@ namespace arcadia
         glm::vec3 direction{ arcadia::vec3::zero() };
         glm::vec3 attenuation_coefs{ 1.f,.045f,.0075f };
         glm::vec2 cutoff_angles{ glm::radians(30.f),glm::radians(32.f) };
-        glm::vec3 color{ 255.f,255.f,255.f };
+        glm::vec3 color{ 1.f,1.f,1.f };
         glm::vec3 ambient_strength{ arcadia::vec3::zero() };
         glm::vec3 diffuse_strength{ 5.f,5.f,5.f };
         glm::vec3 specular_strength{ arcadia::vec3::zero() };
@@ -28,7 +28,7 @@ namespace arcadia
     struct ARCADIA_API direct_light
     {
         glm::vec3 direction{ arcadia::vec3::zero() };
-        glm::vec3 color{ 255.f,255.f,255.f };
+        glm::vec3 color{ 1.f,1.f,1.f };
         glm::vec3 ambient_strength{ arcadia::vec3::zero() };
         glm::vec3 diffuse_strength{ 5.f,5.f,5.f };
         glm::vec3 specular_strength{ arcadia::vec3::zero() };
@@ -39,7 +39,7 @@ namespace arcadia
         glm::vec3 position{ arcadia::vec3::zero() };
         glm::vec3 direction{ arcadia::vec3::zero() };
         glm::vec2 size{ arcadia::vec2::zero() };
-        glm::vec3 color{ 255.f,255.f,255.f };
+        glm::vec3 color{ 1.f,1.f,1.f };
         glm::vec3 ambient_strength{ arcadia::vec3::zero() };
         glm::vec3 diffuse_strength{ 5.f,5.f,5.f };
         glm::vec3 specular_strength{ arcadia::vec3::zero() };
@@ -50,7 +50,7 @@ namespace arcadia
     {
         glm::vec3 position{ arcadia::vec3::zero() };
         glm::vec3 attenuation_coefs{ 1.f,.045f,.0075f };
-        glm::vec3 color{ 255.f,255.f,255.f };
+        glm::vec3 color{ 1.f,1.f,1.f };
         glm::vec3 ambient_strength{ arcadia::vec3::zero() };
         glm::vec3 diffuse_strength{ 5.f,5.f,5.f };
         glm::vec3 specular_strength{ arcadia::vec3::zero() };

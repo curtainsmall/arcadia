@@ -26,4 +26,25 @@ namespace arcadia
         }
     }
 
+    namespace dmat4
+    {
+        ARCADIA_API constexpr auto zero() -> glm::dmat4
+        {
+            return glm::dmat4{ .0f };
+        }
+        ARCADIA_API constexpr auto zero_affine() -> glm::dmat4
+        {
+            return glm::dmat4{
+                glm::dvec4{},
+                glm::dvec4{},
+                glm::dvec4{},
+                glm::dvec4{ .0,.0,.0,1. }
+            };
+        }
+        ARCADIA_API constexpr auto identity() -> glm::dmat4
+        {
+            return glm::dmat4{};
+        }
+    }
+
 }

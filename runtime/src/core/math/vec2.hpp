@@ -8,10 +8,8 @@
 
 namespace arcadia
 {
-
     namespace vec2
     {
-
         using serialization_type = arcadia::serialization::vec2;
 
         extern auto to_flatbuffers(const glm::vec2& vec) -> serialization_type;
@@ -42,6 +40,34 @@ namespace arcadia
         }
     }
 
+    namespace dvec2
+    {
+        extern auto to_json(const glm::dvec2& vec) -> nlohmann::json;
+        extern auto from_json(const nlohmann::json& json) -> glm::dvec2;
+
+        ARCADIA_API constexpr auto zero() -> glm::dvec2
+        {
+            return glm::dvec2{};
+        }
+        ARCADIA_API constexpr auto pos_unit_x() -> glm::dvec2
+        {
+            return glm::dvec2{ 1., .0 };
+        }
+        ARCADIA_API constexpr auto pos_unit_y() -> glm::dvec2
+        {
+            return glm::dvec2{ .0, 1. };
+        }
+        ARCADIA_API constexpr auto neg_unit_x() -> glm::dvec2
+        {
+            return -pos_unit_x();
+        }
+        ARCADIA_API constexpr auto neg_unit_y() -> glm::dvec2
+        {
+            return -pos_unit_y();
+        }
+
+    }
+
 
     namespace ivec2
     {
@@ -61,8 +87,6 @@ namespace arcadia
         extern auto to_flatbuffers(const glm::uvec2& vec) -> serialization_type;
         extern auto from_flatbuffers(const serialization_type& flat_vec) -> glm::uvec2;
     }
-
-
 }
 
 namespace std
@@ -71,6 +95,18 @@ namespace std
     struct std::formatter<glm::vec2>: std::formatter<std::string>
     {
         auto format(const glm::vec2& vec, std::format_context& ctx) const
+        {
+            return std::formatter<std::string>::format(
+                std::format("{:.2},{:.2}", vec.x, vec.y),
+                ctx
+            );
+        }
+    };
+
+    template<>
+    struct std::formatter<glm::dvec2>: std::formatter<std::string>
+    {
+        auto format(const glm::dvec2& vec, std::format_context& ctx) const
         {
             return std::formatter<std::string>::format(
                 std::format("{:.2},{:.2}", vec.x, vec.y),

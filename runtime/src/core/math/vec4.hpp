@@ -16,6 +16,17 @@ namespace arcadia
             return glm::vec4{};
         }
     }
+
+    namespace dvec4
+    {
+        ARCADIA_API extern auto to_json(const glm::dvec4& vec) -> nlohmann::json;
+        ARCADIA_API extern auto from_json(const nlohmann::json& json) -> glm::dvec4;
+
+        ARCADIA_API constexpr auto zero() -> glm::dvec4
+        {
+            return glm::dvec4{};
+        }
+    }
 }
 
 namespace std

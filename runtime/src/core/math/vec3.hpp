@@ -49,6 +49,41 @@ namespace arcadia
         }
     }
 
+    namespace dvec3
+    {
+        ARCADIA_API extern auto to_json(const glm::dvec3& vec) -> nlohmann::json;
+        ARCADIA_API extern auto from_json(const nlohmann::json& json) -> glm::dvec3;
+
+        ARCADIA_API constexpr auto zero() -> glm::dvec3
+        {
+            return glm::dvec3{};
+        }
+        ARCADIA_API constexpr auto pos_unit_x() -> glm::dvec3
+        {
+            return glm::dvec3{ 1.,.0,.0 };
+        }
+        ARCADIA_API constexpr auto pos_unit_y() -> glm::dvec3
+        {
+            return glm::dvec3{ .0,1.,.0 };
+        }
+        ARCADIA_API constexpr auto pos_unit_z() -> glm::dvec3
+        {
+            return glm::dvec3{ .0,.0,1. };
+        }
+        ARCADIA_API constexpr auto neg_unit_x() -> glm::dvec3
+        {
+            return -pos_unit_x();
+        }
+        ARCADIA_API constexpr auto neg_unit_y() -> glm::dvec3
+        {
+            return -pos_unit_y();
+        }
+        ARCADIA_API constexpr auto neg_unit_z() -> glm::dvec3
+        {
+            return -pos_unit_z();
+        }
+    }
+
     namespace ivec3
     {
         using serialization_type = arcadia::serialization::ivec3;

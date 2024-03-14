@@ -187,6 +187,7 @@
     <ClInclude Include="src\resource\component\light_component\light_component.hpp" />
     <ClInclude Include="src\resource\component\model_component\mesh\vertex.hpp" />
     <ClInclude Include="src\resource\component\model_component\model_component.hpp" />
+    <ClInclude Include="src\resource\component\physics_component\physics_component.hpp" />
     <ClInclude Include="src\resource\component\skybox_component\cubemap.hpp" />
     <ClInclude Include="src\resource\component\model_component\material\material.hpp" />
     <ClInclude Include="src\resource\component\model_component\material\texture2d.hpp" />
@@ -260,6 +261,7 @@
     <ClCompile Include="src\resource\component\light_component\light_component.cpp" />
     <ClCompile Include="src\resource\component\model_component\material\texture2d.cpp" />
     <ClCompile Include="src\resource\component\model_component\model_component.cpp" />
+    <ClCompile Include="src\resource\component\physics_component\physics_component.cpp" />
     <ClCompile Include="src\resource\scene\scene.cpp" />
   </ItemGroup>
   <ItemGroup>

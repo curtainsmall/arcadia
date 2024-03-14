@@ -132,9 +132,9 @@ void arcadia::imgui_window_property::_display_light_component()
     const float light_direction_drag_speed = .01f;
     const float light_direction_min = -1.f;
     const float light_direction_max = 1.f;
-    const float light_color_drag_speed = 1.f;
+    const float light_color_drag_speed = .005f;
     const float light_color_min = .0f;
-    const float light_color_max = 255.f;
+    const float light_color_max = 1.f;
     const float light_strength_speed = 1.f;
     const float light_strength_min = 0.f;
     const float light_strength_max = 100.f;

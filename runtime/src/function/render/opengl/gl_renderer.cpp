@@ -213,8 +213,7 @@ void arcadia::gl_renderer::draw()
                 gl_uniform_buffer.sub_data(base_offfset + 16, sizeof(glm::vec3), &light.position);
                 gl_uniform_buffer.sub_data(base_offfset + 32, sizeof(glm::vec3), &light.direction);
                 gl_uniform_buffer.sub_data(base_offfset + 48, sizeof(glm::vec3), &light.attenuation_coefs);
-                glm::vec3 normalized_color = light.color / 255.f;
-                gl_uniform_buffer.sub_data(base_offfset + 64, sizeof(glm::vec3), &normalized_color);
+                gl_uniform_buffer.sub_data(base_offfset + 64, sizeof(glm::vec3), &light.color);
                 gl_uniform_buffer.sub_data(base_offfset + 80, sizeof(glm::vec3), &light.ambient_strength);
                 gl_uniform_buffer.sub_data(base_offfset + 96, sizeof(glm::vec3), &light.diffuse_strength);
                 gl_uniform_buffer.sub_data(base_offfset + 112, sizeof(glm::vec3), &light.specular_strength);
@@ -227,8 +226,7 @@ void arcadia::gl_renderer::draw()
                 GLintptr base_offfset = light_count_size_aligned + light_count * light_t_size;
                 gl_uniform_buffer.sub_data(base_offfset + 0, sizeof(int), &light_type_direct);
                 gl_uniform_buffer.sub_data(base_offfset + 32, sizeof(glm::vec3), &light.direction);
-                glm::vec3 normalized_color = light.color / 255.f;
-                gl_uniform_buffer.sub_data(base_offfset + 64, sizeof(glm::vec3), &normalized_color);
+                gl_uniform_buffer.sub_data(base_offfset + 64, sizeof(glm::vec3), &light.color);
                 gl_uniform_buffer.sub_data(base_offfset + 80, sizeof(glm::vec3), &light.ambient_strength);
                 gl_uniform_buffer.sub_data(base_offfset + 96, sizeof(glm::vec3), &light.diffuse_strength);
                 gl_uniform_buffer.sub_data(base_offfset + 112, sizeof(glm::vec3), &light.specular_strength);
@@ -242,8 +240,7 @@ void arcadia::gl_renderer::draw()
                 gl_uniform_buffer.sub_data(base_offfset + 0, sizeof(int), &light_type_point);
                 gl_uniform_buffer.sub_data(base_offfset + 16, sizeof(glm::vec3), &light.position);
                 gl_uniform_buffer.sub_data(base_offfset + 48, sizeof(glm::vec3), &light.attenuation_coefs);
-                glm::vec3 normalized_color = light.color / 255.f;
-                gl_uniform_buffer.sub_data(base_offfset + 64, sizeof(glm::vec3), &normalized_color);
+                gl_uniform_buffer.sub_data(base_offfset + 64, sizeof(glm::vec3), &light.color);
                 gl_uniform_buffer.sub_data(base_offfset + 80, sizeof(glm::vec3), &light.ambient_strength);
                 gl_uniform_buffer.sub_data(base_offfset + 96, sizeof(glm::vec3), &light.diffuse_strength);
                 gl_uniform_buffer.sub_data(base_offfset + 112, sizeof(glm::vec3), &light.specular_strength);
