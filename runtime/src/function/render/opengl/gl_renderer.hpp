@@ -84,5 +84,6 @@ namespace arcadia
         arcadia::gl_pipeline _gl_mesh_pipeline;
         arcadia::gl_pipeline _gl_skybox_pipeline;
         arcadia::gl_pipeline _gl_grid_pipeline;
+        arcadia::gl_pipeline _gl_icon_pipeline;
     };
 }

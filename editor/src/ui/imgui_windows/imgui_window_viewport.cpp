@@ -53,7 +53,7 @@ void arcadia::imgui_window_viewport::on_update()
             auto& camera = project_sptr->viewport_camera;
 
             camera.viewport_size = ImGui::GetContentRegionAvail();
-            camera.should_display_grid = true;
+            //camera.should_display_grid = true;
             renderer_sptr->begin_frame();
 
             // Cameras

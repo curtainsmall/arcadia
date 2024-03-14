@@ -144,4 +144,28 @@ namespace arcadia
             );
         };
     }
+
+    static inline auto get_icon_shaders_builder() -> arcadia::gl_pipeline::gl_shaders_builder_type
+    {
+        return [](const std::filesystem::path& gl_shader_folder_path, std::vector<arcadia::gl_shader>& gl_shaders) -> void
+        {
+            auto
+                gl_vertex_shader_path = gl_shader_folder_path / "icon.vert",
+                gl_fragment_shader_path = gl_shader_folder_path / "icon.frag";
+
+            auto
+                gl_vertex_shader_source = arcadia::load_text(gl_vertex_shader_path),
+                gl_fragment_shader_source = arcadia::load_text(gl_fragment_shader_path);
+
+            gl_shaders.emplace_back(
+                gl_vertex_shader_source,
+                GL_VERTEX_SHADER
+            );
+
+            gl_shaders.emplace_back(
+                gl_fragment_shader_source,
+                GL_FRAGMENT_SHADER
+            );
+        };
+    }
 }

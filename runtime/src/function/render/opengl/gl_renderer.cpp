@@ -8,7 +8,8 @@
 arcadia::gl_renderer::gl_renderer(const std::filesystem::path& gl_shader_folder_path):
     _gl_mesh_pipeline(gl_shader_folder_path, arcadia::get_model_shaders_builder()),
     _gl_skybox_pipeline(gl_shader_folder_path, arcadia::get_skybox_shaders_builder()),
-    _gl_grid_pipeline(gl_shader_folder_path, arcadia::get_grid_shaders_builder())
+    _gl_grid_pipeline(gl_shader_folder_path, arcadia::get_grid_shaders_builder()),
+    _gl_icon_pipeline(gl_shader_folder_path, arcadia::get_icon_shaders_builder())
 {
     ARCADIA_GL_CALL(glEnable(GL_DEPTH_TEST));
     ARCADIA_GL_CALL(glEnable(GL_CULL_FACE));
@@ -143,8 +144,9 @@ void arcadia::gl_renderer::draw()
         gl_framebuffer.bind();
 
         // Clear framebufers
-        ARCADIA_GL_CALL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+        ARCADIA_GL_CALL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
 
+        // Draw grid
         if(should_display_grid)
         {
             std::vector<arcadia::vertex> grid_vertices{
@@ -153,13 +155,11 @@ void arcadia::gl_renderer::draw()
                 arcadia::vertex{ glm::vec3{1,-1,0} },
                 arcadia::vertex{ glm::vec3{1,1,0} }
             };
-
             std::vector<arcadia::mesh::index_type> grid_indices{
                 0,1,2,
                 2,3,0
             };
-
-            arcadia::gl_vertex_array grid_vertex_array{ grid_vertices, grid_indices };
+            arcadia::gl_vertex_array gl_grid_vertex_array{ grid_vertices, grid_indices };
 
             _gl_grid_pipeline.use();
             _gl_grid_pipeline.set_uniform("u_view_mat4", camera_view_mat4);
@@ -167,21 +167,12 @@ void arcadia::gl_renderer::draw()
             _gl_grid_pipeline.set_uniform("u_near_plane", near_plane);
             _gl_grid_pipeline.set_uniform("u_far_plane", far_plane);
 
-            grid_vertex_array.bind();
-            grid_vertex_array.draw_indices(GL_TRIANGLES);
-            grid_vertex_array.unbind();
+            gl_grid_vertex_array.bind();
+            gl_grid_vertex_array.draw_indices(GL_TRIANGLES);
+            gl_grid_vertex_array.unbind();
 
             _gl_grid_pipeline.unuse();
         }
-
-        // Draw with mesh pipeline
-        _gl_mesh_pipeline.use();
-        auto tex_uniform_index = 0;
-
-        // Set uniform for camera matrix
-        _gl_mesh_pipeline.set_uniform("u_view_mat", camera_view_mat4);
-        _gl_mesh_pipeline.set_uniform("u_proj_mat", camera_proj_mat4);
-        _gl_mesh_pipeline.set_uniform("u_view_pos", camera_position);
 
         // Lights
         const int light_type_none = 0;
@@ -191,9 +182,15 @@ void arcadia::gl_renderer::draw()
         const int light_type_point = 4;
         const GLsizeiptr light_t_size{ 128 };
         const int max_light_count = 32;
-        const int light_count_size_aligned = 16;
+        const int light_count_size_aligned = 16; // Sizeof `u_light_count` in fragment shader with alignment considered
         GLsizeiptr light_count = 0;
         arcadia::gl_uniform_buffer gl_uniform_buffer{ light_count_size_aligned + light_t_size * max_light_count };
+        auto [vertices, indices] = _create_unit_cube_mesh(); // Icon for lights
+        arcadia::gl_vertex_array gl_icon_vertex_array{ vertices,indices };
+        _gl_icon_pipeline.use();
+        _gl_icon_pipeline.set_uniform("u_view_mat", camera_view_mat4);
+        _gl_icon_pipeline.set_uniform("u_proj_mat", camera_proj_mat4);
+        gl_icon_vertex_array.bind();
         for(const auto& [light] : _gl_render_unit_lights)
         {
             if(light_count > max_light_count)
@@ -222,6 +219,8 @@ void arcadia::gl_renderer::draw()
                 gl_uniform_buffer.sub_data(base_offfset + 96, sizeof(glm::vec3), &light.diffuse_strength);
                 gl_uniform_buffer.sub_data(base_offfset + 112, sizeof(glm::vec3), &light.specular_strength);
                 ++light_count;
+
+                _gl_icon_pipeline.set_uniform("u_transform_mat", glm::translate(arcadia::mat4::identity(), light.position));
             },
                 [&](const arcadia::direct_light& light)
             {
@@ -249,14 +248,33 @@ void arcadia::gl_renderer::draw()
                 gl_uniform_buffer.sub_data(base_offfset + 96, sizeof(glm::vec3), &light.diffuse_strength);
                 gl_uniform_buffer.sub_data(base_offfset + 112, sizeof(glm::vec3), &light.specular_strength);
                 ++light_count;
+
+                _gl_icon_pipeline.set_uniform("u_transform_mat", glm::translate(arcadia::mat4::identity(), light.position));
             }
             );
+
+            _gl_icon_pipeline.set_uniform("u_color", glm::vec3{ 1.f,1.f,1.f });
+            gl_icon_vertex_array.draw_indices(GL_TRIANGLES);
+
         }
+        gl_icon_vertex_array.unbind();
+        _gl_icon_pipeline.unuse();
         gl_uniform_buffer.sub_data(0, sizeof(int), &light_count);
         gl_uniform_buffer.bind_buffer_base(0);
 
-        // For each render unit mesh
-        for(auto& [gl_vertex_array, transform_mat4, gl_texture2d_ambient, gl_texture2d_diffuse, gl_texture2d_specular] : _gl_render_unit_models)
+        // Draw with mesh pipeline
+        _gl_mesh_pipeline.use();
+        auto tex_uniform_index = 0;
+        _gl_mesh_pipeline.set_uniform("u_view_mat", camera_view_mat4);
+        _gl_mesh_pipeline.set_uniform("u_proj_mat", camera_proj_mat4);
+        _gl_mesh_pipeline.set_uniform("u_view_pos", camera_position);
+        for(auto& [
+            gl_vertex_array,
+                transform_mat4,
+                gl_texture2d_ambient,
+                gl_texture2d_diffuse,
+                gl_texture2d_specular
+        ] : _gl_render_unit_models)
         {
             ARCADIA_GL_CALL(glViewport(0, 0, viewport_size.x, viewport_size.y));
 
@@ -283,7 +301,6 @@ void arcadia::gl_renderer::draw()
             gl_texture2d_specular.unbind();
 
         }
-
         _gl_mesh_pipeline.unuse();
 
         // Draw with skybox pipeline
@@ -356,17 +373,17 @@ auto arcadia::gl_renderer::_create_unit_cube_mesh() const -> std::pair<std::vect
     },
         std::vector<arcadia::mesh::index_type>{
         // pos-z
-        1, 0, 3, 3, 2, 1,
+        0, 1, 2, 2, 3, 0,
             // neg-z
-            4, 5, 6, 6, 7, 3,
+            5, 4, 7, 7, 6, 5,
             // pos-x
-            5, 1, 2, 2, 6, 5,
+            1, 5, 6, 6, 2, 1,
             // neg-x
-            0, 4, 7, 7, 3, 0,
+            4, 0, 3, 3, 7, 4,
             // pos-y
-            7, 6, 2, 2, 3, 7,
+            3, 2, 6, 6, 7, 3,
             //neg-y
-            0, 1, 5, 5, 4, 0
+            4, 5, 1, 1, 0, 4
     }
     );
 }
