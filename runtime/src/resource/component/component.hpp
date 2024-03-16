@@ -5,6 +5,7 @@
 
 #include"core/base.hpp"
 #include"core/nlohmann_json_header.hpp"
+#include"core/uuid.hpp"
 
 #define ARCADIA_COMPONENT_TYPE_STR_GETERS(TypeStr) \
 [[nodiscard]]\
@@ -25,6 +26,14 @@ namespace arcadia
     {
     public:
         virtual auto get_type_str() const->std::string = 0;
+
+        [[nodiscard]]
+        inline auto get_uuid() const -> arcadia::uuid
+        {
+            return _uuid;
+        }
+    private:
+        arcadia::uuid _uuid{};
     };
 
     template<class Component>

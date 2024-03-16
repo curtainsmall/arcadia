@@ -122,21 +122,26 @@ void arcadia::model_component::_load()
         return;
     }
 
+    std::vector<arcadia::mesh> meshes{};
+
     std::size_t next_mesh_index{ 0 };
     _process_assimp_node(
+        meshes,
         ai_scene,
         ai_scene->mRootNode,
         next_mesh_index
     );
 
+    _meshes_opt = identifiable_meshes{ std::move(meshes) };
 }
 
 void arcadia::model_component::_unload()
 {
-    _meshes.clear();
+    _meshes_opt.reset();
 }
 
 void arcadia::model_component::_process_assimp_node(
+    std::vector<arcadia::mesh>& meshes,
     const aiScene* const ai_scene,
     const aiNode* const ai_node,
     std::size_t& next_mesh_index
@@ -150,7 +155,7 @@ void arcadia::model_component::_process_assimp_node(
         )
     {
         auto ai_mesh = ai_scene->mMeshes[ai_node->mMeshes[i]];
-        auto& mesh = _meshes.emplace_back();
+        auto& mesh = meshes.emplace_back();
 
         // Vertex
         mesh.vertices.reserve(ai_mesh->mNumVertices);
@@ -228,6 +233,7 @@ void arcadia::model_component::_process_assimp_node(
     for(unsigned int i = 0; i < ai_node->mNumChildren; ++i)
     {
         _process_assimp_node(
+            meshes,
             ai_scene,
             ai_node->mChildren[i],
             next_mesh_index

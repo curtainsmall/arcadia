@@ -87,7 +87,7 @@
     <ClInclude Include="src\core\math\quat.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\function\window\glfw_header.hpp">
+    <ClInclude Include="src\platform\glfw\glfw_header.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\function\window\window_layer.hpp">
@@ -225,6 +225,12 @@
     <ClInclude Include="src\resource\component\physics_component\physics_component.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\platform\jolt\jolt_header.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\function\physics\physics_simulator.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\pch.cpp">
@@ -242,12 +248,6 @@
     <ClCompile Include="src\platform\graphic_api\graphic_api.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\math\vec2.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\math\vec3.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\function\window\window_layer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -257,7 +257,7 @@
     <ClCompile Include="src\core\layer\layer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\function\window\glfw_header.cpp">
+    <ClCompile Include="src\platform\glfw\glfw_header.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\core\app\app_layer.cpp">
@@ -323,13 +323,13 @@
     <ClCompile Include="src\resource\component\light_component\light_component.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\math\vec4.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\function\render\opengl\buffer\gl_uniform_buffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\resource\component\physics_component\physics_component.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\function\physics\physics_simulator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

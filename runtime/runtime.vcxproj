@@ -163,6 +163,7 @@
     <ClInclude Include="src\core\nlohmann_json_header.hpp" />
     <ClInclude Include="src\core\hash.hpp" />
     <ClInclude Include="src\core\uuid.hpp" />
+    <ClInclude Include="src\function\physics\physics_simulator.hpp" />
     <ClInclude Include="src\function\render\opengl\buffer\gl_cubemap.hpp" />
     <ClInclude Include="src\function\render\opengl\buffer\gl_framebuffer.hpp" />
     <ClInclude Include="src\function\render\opengl\buffer\gl_index_buffer.hpp" />
@@ -187,6 +188,7 @@
     <ClInclude Include="src\resource\component\light_component\light_component.hpp" />
     <ClInclude Include="src\resource\component\model_component\mesh\vertex.hpp" />
     <ClInclude Include="src\resource\component\model_component\model_component.hpp" />
+    <ClInclude Include="src\platform\jolt\jolt_header.hpp" />
     <ClInclude Include="src\resource\component\physics_component\physics_component.hpp" />
     <ClInclude Include="src\resource\component\skybox_component\cubemap.hpp" />
     <ClInclude Include="src\resource\component\model_component\material\material.hpp" />
@@ -212,7 +214,7 @@
     <ClInclude Include="src\core\template.hpp" />
     <ClInclude Include="src\core\version\version.hpp" />
     <ClInclude Include="src\function\input\input_events.hpp" />
-    <ClInclude Include="src\function\window\glfw_header.hpp" />
+    <ClInclude Include="src\platform\glfw\glfw_header.hpp" />
     <ClInclude Include="src\function\window\window_layer.hpp" />
     <ClInclude Include="src\pch.hpp" />
     <ClInclude Include="src\core\app\app_layer.hpp" />
@@ -228,7 +230,7 @@
     <ClCompile Include="src\core\app\app_config.cpp" />
     <ClCompile Include="src\core\event\event.cpp" />
     <ClCompile Include="src\core\file\file.cpp" />
-    <ClCompile Include="src\core\math\vec4.cpp" />
+    <ClCompile Include="src\function\physics\physics_simulator.cpp" />
     <ClCompile Include="src\function\render\opengl\buffer\gl_cubemap.cpp" />
     <ClCompile Include="src\function\render\opengl\buffer\gl_framebuffer.cpp" />
     <ClCompile Include="src\function\render\opengl\buffer\gl_index_buffer.cpp" />
@@ -245,10 +247,8 @@
     <ClCompile Include="src\platform\graphic_api\graphic_api.cpp" />
     <ClCompile Include="src\core\layer\layer.cpp" />
     <ClCompile Include="src\core\log\log.cpp" />
-    <ClCompile Include="src\core\math\vec2.cpp" />
-    <ClCompile Include="src\core\math\vec3.cpp" />
     <ClCompile Include="src\core\version\version.cpp" />
-    <ClCompile Include="src\function\window\glfw_header.cpp" />
+    <ClCompile Include="src\platform\glfw\glfw_header.cpp" />
     <ClCompile Include="src\function\window\window_layer.cpp" />
     <ClCompile Include="src\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

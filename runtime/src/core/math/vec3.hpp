@@ -1,7 +1,5 @@
 #pragma once
 
-#include"flatbuffers_generated/math_generated.h"
-
 #include"core/base.hpp"
 #include"core/math/glm_header.hpp"
 #include"core/nlohmann_json_header.hpp"
@@ -11,13 +9,22 @@ namespace arcadia
 
     namespace vec3
     {
-        using serialization_type = arcadia::serialization::vec3;
-
-        extern auto to_flatbuffers(const glm::vec3& vec) -> serialization_type;
-        extern auto from_flatbuffers(const serialization_type& flat_vec) -> glm::vec3;
-
-        ARCADIA_API extern auto to_json(const glm::vec3& vec) -> nlohmann::json;
-        ARCADIA_API extern auto from_json(const nlohmann::json& json) -> glm::vec3;
+        ARCADIA_API inline auto to_json(const glm::vec3& vec) -> nlohmann::json
+        {
+            return nlohmann::json{
+                    { "x",vec.x },
+                    { "y",vec.y },
+                    { "z",vec.z }
+            };
+        }
+        ARCADIA_API inline auto from_json(const nlohmann::json& json) -> glm::vec3
+        {
+            glm::vec3 vec{};
+            vec.x = json.at("x");
+            vec.y = json.at("y");
+            vec.z = json.at("z");
+            return vec;
+        }
 
         ARCADIA_API constexpr auto zero() -> glm::vec3
         {
@@ -51,8 +58,22 @@ namespace arcadia
 
     namespace dvec3
     {
-        ARCADIA_API extern auto to_json(const glm::dvec3& vec) -> nlohmann::json;
-        ARCADIA_API extern auto from_json(const nlohmann::json& json) -> glm::dvec3;
+        ARCADIA_API inline auto to_json(const glm::dvec3& vec) -> nlohmann::json
+        {
+            return nlohmann::json{
+                     { "x",vec.x },
+                     { "y",vec.y },
+                     { "z",vec.z }
+            };
+        }
+        ARCADIA_API inline auto from_json(const nlohmann::json& json) -> glm::dvec3
+        {
+            glm::dvec3 vec{};
+            vec.x = json.at("x");
+            vec.y = json.at("y");
+            vec.z = json.at("z");
+            return vec;
+        }
 
         ARCADIA_API constexpr auto zero() -> glm::dvec3
         {
@@ -86,18 +107,42 @@ namespace arcadia
 
     namespace ivec3
     {
-        using serialization_type = arcadia::serialization::ivec3;
-
-        ARCADIA_API extern auto to_flatbuffers(const glm::ivec3& vec) -> serialization_type;
-        ARCADIA_API extern auto from_flatbuffers(const serialization_type& flat_vec) -> glm::ivec3;
+        ARCADIA_API inline auto to_json(const glm::ivec3& vec) -> nlohmann::json
+        {
+            return nlohmann::json{
+                     { "x",vec.x },
+                     { "y",vec.y },
+                     { "z",vec.z }
+            };
+        }
+        ARCADIA_API inline auto from_json(const nlohmann::json& json) -> glm::ivec3
+        {
+            glm::ivec3 vec{};
+            vec.x = json.at("x");
+            vec.y = json.at("y");
+            vec.z = json.at("z");
+            return vec;
+        }
     }
 
     namespace uvec3
     {
-        using serialization_type = arcadia::serialization::uvec3;
-
-        ARCADIA_API extern auto to_flatbuffers(const glm::uvec3& vec) -> serialization_type;
-        ARCADIA_API extern auto from_flatbuffers(const serialization_type& flat_vec) -> glm::uvec3;
+        ARCADIA_API inline auto to_json(const glm::uvec3& vec) -> nlohmann::json
+        {
+            return nlohmann::json{
+                     { "x",vec.x },
+                     { "y",vec.y },
+                     { "z",vec.z }
+            };
+        }
+        ARCADIA_API inline auto from_json(const nlohmann::json& json) -> glm::uvec3
+        {
+            glm::uvec3 vec{};
+            vec.x = json.at("x");
+            vec.y = json.at("y");
+            vec.z = json.at("z");
+            return vec;
+        }
     }
 }
 
