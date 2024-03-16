@@ -1,5 +1,7 @@
 #pragma once
 
+#include<optional>
+#include<tuple>
 #include<vector>
 
 #include"assimp/Importer.hpp"
@@ -8,14 +10,48 @@
 #include"core/base.hpp"
 #include"core/math.hpp"
 #include"core/nlohmann_json_header.hpp"
+#include"core/uuid.hpp"
 #include"resource/component/component.hpp"
 #include"resource/component/model_component/mesh/mesh.hpp"
 
 namespace arcadia
 {
+    struct ARCADIA_API model_meshes
+    {
+    public:
+        using meshes_type = std::vector<arcadia::mesh>;
+    public:
+        model_meshes() = default;
+        model_meshes(meshes_type&& meshes):
+            _meshes(std::move(meshes))
+        {}
+
+        [[nodiscard]]
+        inline auto get_uuid() const -> arcadia::uuid
+        {
+            return _uuid;
+        }
+
+        [[nodiscard]]
+        inline auto get_meshes() const -> const meshes_type&
+        {
+            return _meshes;
+        }
+
+    private:
+        meshes_type _meshes{};
+        arcadia::uuid _uuid{};
+    };
+
+
     struct ARCADIA_API model_component: arcadia::component_base
     {
     public:
+        using meshes_type = std::tuple<
+            arcadia::uuid,
+            std::vector<arcadia::mesh>
+        >;
+
         using self_type = model_component;
     public:
         ARCADIA_COMPONENT_TYPE_STR_GETERS("model");
@@ -31,9 +67,15 @@ namespace arcadia
         auto operator=(self_type&&) noexcept -> self_type & = default;
 
         [[nodiscard]]
-        inline auto get_meshes() const -> const std::vector<arcadia::mesh>&
+        inline auto has_meshes_tuple() const -> bool
         {
-            return _meshes;
+            return _meshes_opt.has_value();
+        }
+
+        [[nodiscard]]
+        inline auto get_meshes_tuple() const -> const meshes_type&
+        {
+            return *_meshes_opt;
         }
 
         [[nodiscard]]
@@ -49,6 +91,7 @@ namespace arcadia
         void _unload();
 
         void _process_assimp_node(
+            std::vector<arcadia::mesh>& meshes,
             const aiScene* const ai_scene,
             const aiNode* const ai_node,
             std::size_t& next_mesh_index
@@ -68,7 +111,7 @@ namespace arcadia
         glm::vec3 pivot{ arcadia::vec3::zero() };
 
     private:
-        std::vector<arcadia::mesh> _meshes{};
+        std::optional<meshes_type> _meshes_opt{};
         std::filesystem::path _filepath{};
     };
 }

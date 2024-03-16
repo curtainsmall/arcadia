@@ -2,7 +2,10 @@
 
 #include<filesystem>
 #include<optional>
+#include<set>
 #include<tuple>
+#include<unordered_map>
+#include<vector>
 
 #include"core/base.hpp"
 #include"core/exception.hpp"
@@ -32,7 +35,7 @@ namespace arcadia
         arcadia::light_type // light
     >;
 
-    using gl_render_unit_model = std::tuple<
+    using gl_render_unit_mesh = std::tuple<
         arcadia::gl_vertex_array, // gl_vertex_array
         glm::mat4, // trasform_mat
         arcadia::gl_texture2d, // gl_texture2d_ambient
@@ -59,7 +62,7 @@ namespace arcadia
 
         virtual void submit(const arcadia::camera_component& camera_comp) override;
         virtual void submit(const arcadia::light_component& light_comp) override;
-        virtual void submit(const arcadia::model_component& renderable_comp) override;
+        virtual void submit(const arcadia::model_component& model_comp) override;
         virtual void submit(const arcadia::skybox_component& skybox_comp) override;
 
         virtual void draw() override;
@@ -76,9 +79,12 @@ namespace arcadia
     private:
         bool _frame_in_build{ false };
 
+        // Meshes
+        std::unordered_map<arcadia::uuid, std::vector<arcadia::gl_render_unit_mesh>> _gl_render_unit_meshes_umap{};
+        std::set<arcadia::uuid> _submitted_meshes_uuids{};
+
         std::vector<arcadia::gl_render_unit_camera> _gl_render_unit_cameras{};
         std::vector<arcadia::gl_render_unit_light> _gl_render_unit_lights{};
-        std::vector<arcadia::gl_render_unit_model> _gl_render_unit_models{};
         std::optional<arcadia::gl_render_unit_skybox> _gl_render_unit_skybox_opt{};
 
         arcadia::gl_pipeline _gl_mesh_pipeline;

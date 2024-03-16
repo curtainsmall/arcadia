@@ -19,13 +19,34 @@ void arcadia::gl_renderer::begin_frame()
 {
     _check_frame_not_in_build_or_throw();
     _frame_in_build = true;
-    clear();
+
+    // Clear submitted meshes uuids
+    _submitted_meshes_uuids.clear();
+
+    // Clear cameras
+    _gl_render_unit_cameras.clear();
+
+    // Clear lights
+    _gl_render_unit_lights.clear();
+
+    // Clear skybox
+    _gl_render_unit_skybox_opt.reset();
+
 }
 
 void arcadia::gl_renderer::end_frame()
 {
     _check_frame_in_build_or_throw();
     _frame_in_build = false;
+
+    // Remove gl_render_unit_mesh-es that have been submitted in previous frames but not in this frame
+    for(auto iter = _gl_render_unit_meshes_umap.begin(); iter != _gl_render_unit_meshes_umap.end(); ++iter)
+    {
+        if(!_submitted_meshes_uuids.contains(iter->first))
+        {
+            _gl_render_unit_meshes_umap.erase(iter);
+        }
+    }
 }
 
 void arcadia::gl_renderer::submit(const arcadia::camera_component& camera_comp)
@@ -59,49 +80,61 @@ void arcadia::gl_renderer::submit(const arcadia::model_component& model_comp)
 {
     _check_frame_in_build_or_throw();
 
-    auto transform_mat =
-        // Translate
-        glm::translate(
-            // Move pivot back from origin
-            glm::translate(
-                // Rotate about z-axis
-                glm::rotate(
-                    // Rotate about y-axis
-                    glm::rotate(
-                        // Rotate about x-axis
-                        glm::rotate(
-                            // Scale about origin (same as pivot)
-                            glm::scale(
-                                // Move pivot to origin
-                                glm::translate(
-                                    arcadia::mat4::identity(),
-                                    -model_comp.pivot
-                                ),
-                                model_comp.scale
-                            ),
-                            model_comp.rotation.x,
-                            arcadia::vec3::pos_unit_x()
-                        ),
-                        model_comp.rotation.y,
-                        arcadia::vec3::pos_unit_y()
-                    ),
-                    model_comp.rotation.z,
-                    arcadia::vec3::pos_unit_z()
-                ),
-                model_comp.pivot
-            ),
-            model_comp.location
-        );
-
-    for(const auto& mesh : model_comp.get_meshes())
+    if(model_comp.has_meshes_tuple())
     {
-        _gl_render_unit_models.emplace_back(
-            arcadia::gl_vertex_array{ mesh.vertices, mesh.indices },
-            transform_mat,
-            mesh.material.ambient_texture2d,
-            mesh.material.diffuse_texture2d,
-            mesh.material.specular_texture2d
-        );
+        auto transform_mat =
+            // Translate
+            glm::translate(
+                // Move pivot back from origin
+                glm::translate(
+                    // Rotate about z-axis
+                    glm::rotate(
+                        // Rotate about y-axis
+                        glm::rotate(
+                            // Rotate about x-axis
+                            glm::rotate(
+                                // Scale about origin (same as pivot)
+                                glm::scale(
+                                    // Move pivot to origin
+                                    glm::translate(
+                                        arcadia::mat4::identity(),
+                                        -model_comp.pivot
+                                    ),
+                                    model_comp.scale
+                                ),
+                                model_comp.rotation.x,
+                                arcadia::vec3::pos_unit_x()
+                            ),
+                            model_comp.rotation.y,
+                            arcadia::vec3::pos_unit_y()
+                        ),
+                        model_comp.rotation.z,
+                        arcadia::vec3::pos_unit_z()
+                    ),
+                    model_comp.pivot
+                ),
+                model_comp.location
+            );
+
+        const auto& [uuid, meshes] = model_comp.get_meshes_tuple();
+        // Add gl_render_unit_mesh if there isn't one
+        if(!_gl_render_unit_meshes_umap.contains(uuid))
+        {
+            std::vector<arcadia::gl_render_unit_mesh> gl_meshes{};
+            for(const auto& mesh : meshes)
+            {
+                // For any uuid, its corresponding meshes must be the same
+                gl_meshes.emplace_back(
+                    arcadia::gl_vertex_array{ mesh.vertices, mesh.indices },
+                    transform_mat,
+                    mesh.material.ambient_texture2d,
+                    mesh.material.diffuse_texture2d,
+                    mesh.material.specular_texture2d
+                );
+            }
+            _gl_render_unit_meshes_umap.try_emplace(uuid, std::move(gl_meshes));
+        }
+        _submitted_meshes_uuids.emplace(uuid);
     }
 }
 
@@ -265,38 +298,41 @@ void arcadia::gl_renderer::draw()
         _gl_mesh_pipeline.set_uniform("u_view_mat", camera_view_mat4);
         _gl_mesh_pipeline.set_uniform("u_proj_mat", camera_proj_mat4);
         _gl_mesh_pipeline.set_uniform("u_view_pos", camera_position);
-        for(auto& [
-            gl_vertex_array,
-                transform_mat4,
-                gl_texture2d_ambient,
-                gl_texture2d_diffuse,
-                gl_texture2d_specular
-        ] : _gl_render_unit_models)
+        for(auto& [uuid, gl_meshes] : _gl_render_unit_meshes_umap)
         {
-            ARCADIA_GL_CALL(glViewport(0, 0, viewport_size.x, viewport_size.y));
+            for(auto& [
+                gl_vertex_array,
+                    transform_mat4,
+                    gl_texture2d_ambient,
+                    gl_texture2d_diffuse,
+                    gl_texture2d_specular
+            ] : gl_meshes)
+            {
+                ARCADIA_GL_CALL(glViewport(0, 0, viewport_size.x, viewport_size.y));
 
-            _gl_mesh_pipeline.set_uniform("u_transform_mat", transform_mat4);
-            _gl_mesh_pipeline.set_uniform("u_normal_mat", glm::mat3{ glm::transpose(glm::inverse(transform_mat4)) });
+                _gl_mesh_pipeline.set_uniform("u_transform_mat", transform_mat4);
+                _gl_mesh_pipeline.set_uniform("u_normal_mat", glm::mat3{ glm::transpose(glm::inverse(transform_mat4)) });
 
-            _gl_mesh_pipeline.set_uniform("u_material.ambient", tex_uniform_index);
-            gl_texture2d_ambient.bind(tex_uniform_index++);
+                _gl_mesh_pipeline.set_uniform("u_material.ambient", tex_uniform_index);
+                gl_texture2d_ambient.bind(tex_uniform_index++);
 
-            _gl_mesh_pipeline.set_uniform("u_material.diffuse", tex_uniform_index);
-            gl_texture2d_diffuse.bind(tex_uniform_index++);
+                _gl_mesh_pipeline.set_uniform("u_material.diffuse", tex_uniform_index);
+                gl_texture2d_diffuse.bind(tex_uniform_index++);
 
-            _gl_mesh_pipeline.set_uniform("u_material.specular", tex_uniform_index);
-            gl_texture2d_specular.bind(tex_uniform_index++);
+                _gl_mesh_pipeline.set_uniform("u_material.specular", tex_uniform_index);
+                gl_texture2d_specular.bind(tex_uniform_index++);
 
-            _gl_mesh_pipeline.set_uniform("u_material.shininess", 32.f);
+                _gl_mesh_pipeline.set_uniform("u_material.shininess", 32.f);
 
-            gl_vertex_array.bind();
-            gl_vertex_array.draw_indices(GL_TRIANGLES);
-            gl_vertex_array.unbind();
+                gl_vertex_array.bind();
+                gl_vertex_array.draw_indices(GL_TRIANGLES);
+                gl_vertex_array.unbind();
 
-            gl_texture2d_ambient.unbind();
-            gl_texture2d_diffuse.unbind();
-            gl_texture2d_specular.unbind();
+                gl_texture2d_ambient.unbind();
+                gl_texture2d_diffuse.unbind();
+                gl_texture2d_specular.unbind();
 
+            }
         }
         _gl_mesh_pipeline.unuse();
 
@@ -330,7 +366,8 @@ void arcadia::gl_renderer::clear()
 {
     _gl_render_unit_cameras.clear();
     _gl_render_unit_lights.clear();
-    _gl_render_unit_models.clear();
+    _gl_render_unit_meshes_umap.clear();
+    _submitted_meshes_uuids.clear();
     _gl_render_unit_skybox_opt.reset();
 }
 

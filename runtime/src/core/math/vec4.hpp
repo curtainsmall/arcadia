@@ -8,8 +8,24 @@ namespace arcadia
 {
     namespace vec4
     {
-        ARCADIA_API extern auto to_json(const glm::vec4& vec) -> nlohmann::json;
-        ARCADIA_API extern auto from_json(const nlohmann::json& json) -> glm::vec4;
+        ARCADIA_API inline auto to_json(const glm::vec4& vec) -> nlohmann::json
+        {
+            return nlohmann::json{
+                {"x",vec.x},
+                {"y",vec.y},
+                {"z",vec.z},
+                {"w",vec.w}
+            };
+        }
+        ARCADIA_API inline auto from_json(const nlohmann::json& json) -> glm::vec4
+        {
+            glm::vec4 vec{};
+            vec.x = json.at("x");
+            vec.y = json.at("y");
+            vec.z = json.at("z");
+            vec.w = json.at("w");
+            return vec;
+        }
 
         ARCADIA_API constexpr auto zero() -> glm::vec4
         {
@@ -19,8 +35,24 @@ namespace arcadia
 
     namespace dvec4
     {
-        ARCADIA_API extern auto to_json(const glm::dvec4& vec) -> nlohmann::json;
-        ARCADIA_API extern auto from_json(const nlohmann::json& json) -> glm::dvec4;
+        ARCADIA_API inline auto to_json(const glm::dvec4& vec) -> nlohmann::json
+        {
+            return nlohmann::json{
+                {"x",vec.x},
+                {"y",vec.y},
+                {"z",vec.z},
+                {"w",vec.w}
+            };
+        }
+        ARCADIA_API inline auto from_json(const nlohmann::json& json) -> glm::dvec4
+        {
+            glm::dvec4 vec{};
+            vec.x = json.at("x");
+            vec.y = json.at("y");
+            vec.z = json.at("z");
+            vec.w = json.at("w");
+            return vec;
+        }
 
         ARCADIA_API constexpr auto zero() -> glm::dvec4
         {

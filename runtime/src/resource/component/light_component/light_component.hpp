@@ -45,7 +45,6 @@ namespace arcadia
         glm::vec3 specular_strength{ arcadia::vec3::zero() };
     };
 
-
     struct ARCADIA_API point_light
     {
         glm::vec3 position{ arcadia::vec3::zero() };

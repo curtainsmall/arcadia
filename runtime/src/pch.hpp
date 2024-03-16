@@ -16,4 +16,9 @@
 #include<utility>
 #include<vector>
 
-#include"Jolt/Jolt.h"
+#include"platform/opengl/opengl_header.hpp" // To prevent any other headers including `gl.h` before this one
+
+#include"function/ui/imgui_header.hpp"
+#include"platform/glfw/glfw_header.hpp"
+#include"platform/jolt/jolt_header.hpp"
+#include"resource/scene/entt_header.hpp"
