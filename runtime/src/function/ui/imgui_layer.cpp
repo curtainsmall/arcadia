@@ -52,7 +52,7 @@ void arcadia::imgui_layer::on_update(delta_time_type delta_time)
 
     ImGui::SetCurrentContext(_imgui_context_ptr);
 
-    arcadia::imgui_backend::begin_frame(*window_sptr);
+    arcadia::imgui_backend::new_frame(*window_sptr);
     ImGui::NewFrame();
 
     ImGui::DockSpaceOverViewport();

@@ -2,7 +2,6 @@
 #include "window_layer.hpp"
 
 #include"core/app/app_config.hpp"
-#include"core/conditional.hpp"
 #include"function/input/input_events.hpp"
 
 arcadia::window_layer::window_layer(

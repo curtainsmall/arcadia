@@ -74,8 +74,6 @@ void arcadia::editor_app_layer::_imgui_window_installer(arcadia::imgui_layer& im
     };
     imgui_layer
         .emplace_imgui_window<arcadia::imgui_window_menubar>(true, imgui_window_ids)
-        .emplace_imgui_window<arcadia::imgui_window_popup_create_project>(false, "Create Project")
-        .emplace_imgui_window<arcadia::imgui_window_popup_create_scene>(false, "Create Scene")
         .emplace_imgui_window<arcadia::imgui_window_outliner>(id_strs.contains(arcadia::imgui_window_outliner::get_id_str_static()), "Outliner")
         .emplace_imgui_window<arcadia::imgui_window_viewport>(id_strs.contains(arcadia::imgui_window_viewport::get_id_str_static()), "Viewport")
         .emplace_imgui_window<arcadia::imgui_window_property>(id_strs.contains(arcadia::imgui_window_property::get_id_str_static()), "Property");

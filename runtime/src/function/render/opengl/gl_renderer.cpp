@@ -3,8 +3,6 @@
 
 #include<vector>
 
-#include"core/conditional.hpp"
-
 arcadia::gl_renderer::gl_renderer(const std::filesystem::path& gl_shader_folder_path):
     _gl_mesh_pipeline(gl_shader_folder_path, arcadia::get_model_shaders_builder()),
     _gl_skybox_pipeline(gl_shader_folder_path, arcadia::get_skybox_shaders_builder()),
@@ -15,13 +13,13 @@ arcadia::gl_renderer::gl_renderer(const std::filesystem::path& gl_shader_folder_
     ARCADIA_GL_CALL(glEnable(GL_CULL_FACE));
 }
 
-void arcadia::gl_renderer::begin_frame()
+void arcadia::gl_renderer::prepare()
 {
-    _check_frame_not_in_build_or_throw();
+    _assert_frame_not_in_build();
     _frame_in_build = true;
 
     // Clear submitted meshes uuids
-    _submitted_meshes_uuids.clear();
+    _submitted_meshes_uuid_set.clear();
 
     // Clear cameras
     _gl_render_unit_cameras.clear();
@@ -34,24 +32,28 @@ void arcadia::gl_renderer::begin_frame()
 
 }
 
-void arcadia::gl_renderer::end_frame()
+void arcadia::gl_renderer::finalize()
 {
-    _check_frame_in_build_or_throw();
+    _assert_frame_in_build();
     _frame_in_build = false;
 
     // Remove gl_render_unit_mesh-es that have been submitted in previous frames but not in this frame
-    for(auto iter = _gl_render_unit_meshes_umap.begin(); iter != _gl_render_unit_meshes_umap.end(); ++iter)
+    for(auto iter = _gl_render_unit_meshes_umap.begin(); iter != _gl_render_unit_meshes_umap.end();)
     {
-        if(!_submitted_meshes_uuids.contains(iter->first))
+        if(!_submitted_meshes_uuid_set.contains(iter->first))
         {
-            _gl_render_unit_meshes_umap.erase(iter);
+            iter = _gl_render_unit_meshes_umap.erase(iter);
+        }
+        else
+        {
+            ++iter;
         }
     }
 }
 
 void arcadia::gl_renderer::submit(const arcadia::camera_component& camera_comp)
 {
-    _check_frame_in_build_or_throw();
+    _assert_frame_in_build();
 
     _gl_render_unit_cameras.emplace_back(
         arcadia::gl_framebuffer{
@@ -71,59 +73,56 @@ void arcadia::gl_renderer::submit(const arcadia::camera_component& camera_comp)
 
 void arcadia::gl_renderer::submit(const arcadia::light_component& light_comp)
 {
-    _check_frame_in_build_or_throw();
+    _assert_frame_in_build();
 
     _gl_render_unit_lights.emplace_back(light_comp.light);
 }
 
 void arcadia::gl_renderer::submit(const arcadia::model_component& model_comp)
 {
-    _check_frame_in_build_or_throw();
+    _assert_frame_in_build();
 
     if(model_comp.has_identifiable_meshes())
     {
-        auto transform_mat =
-            // Translate
-            glm::translate(
-                // Move pivot back from origin
-                glm::translate(
-                    // Rotate about z-axis
-                    glm::rotate(
-                        // Rotate about y-axis
-                        glm::rotate(
-                            // Rotate about x-axis
-                            glm::rotate(
-                                // Scale about origin (same as pivot)
-                                glm::scale(
-                                    // Move pivot to origin
-                                    glm::translate(
-                                        arcadia::mat4::identity(),
-                                        -model_comp.pivot
-                                    ),
-                                    model_comp.scale
-                                ),
-                                model_comp.rotation.x,
-                                arcadia::vec3::pos_unit_x()
-                            ),
-                            model_comp.rotation.y,
-                            arcadia::vec3::pos_unit_y()
-                        ),
-                        model_comp.rotation.z,
-                        arcadia::vec3::pos_unit_z()
-                    ),
-                    model_comp.pivot
-                ),
-                model_comp.location
-            );
-
-        const auto& identifiable_meshes = model_comp.get_identifiable_meshes();
-        const auto& uuid = identifiable_meshes.get_uuid();
-        const auto& meshes = identifiable_meshes.get_meshes();
-        // Add gl_render_unit_mesh if there isn't one
-        if(!_gl_render_unit_meshes_umap.contains(identifiable_meshes.get_uuid()))
+        const auto& [uuid, meshes] = model_comp.get_identifiable_meshes();
+        if(!_gl_render_unit_meshes_umap.contains(uuid))
         {
+            auto transform_mat =
+                // Translate
+                glm::translate(
+                    // Move pivot back from origin
+                    glm::translate(
+                        // Rotate about z-axis
+                        glm::rotate(
+                            // Rotate about y-axis
+                            glm::rotate(
+                                // Rotate about x-axis
+                                glm::rotate(
+                                    // Scale about origin (same as pivot)
+                                    glm::scale(
+                                        // Move pivot to origin
+                                        glm::translate(
+                                            arcadia::mat4::identity(),
+                                            -model_comp.pivot
+                                        ),
+                                        model_comp.scale
+                                    ),
+                                    model_comp.rotation.x,
+                                    arcadia::vec3::pos_unit_x()
+                                ),
+                                model_comp.rotation.y,
+                                arcadia::vec3::pos_unit_y()
+                            ),
+                            model_comp.rotation.z,
+                            arcadia::vec3::pos_unit_z()
+                        ),
+                        model_comp.pivot
+                    ),
+                    model_comp.location
+                );
+
             std::vector<arcadia::gl_render_unit_mesh> gl_meshes{};
-            for(const auto& mesh : identifiable_meshes.get_meshes())
+            for(const auto& mesh : meshes)
             {
                 // For any uuid, its corresponding meshes must be the same
                 gl_meshes.emplace_back(
@@ -136,13 +135,13 @@ void arcadia::gl_renderer::submit(const arcadia::model_component& model_comp)
             }
             _gl_render_unit_meshes_umap.try_emplace(uuid, std::move(gl_meshes));
         }
-        _submitted_meshes_uuids.emplace(uuid);
+        _submitted_meshes_uuid_set.emplace(uuid);
     }
 }
 
 void arcadia::gl_renderer::submit(const arcadia::skybox_component& skybox_comp)
 {
-    _check_frame_in_build_or_throw();
+    _assert_frame_in_build();
 
     const auto& [vertices, indices] = _create_unit_cube_mesh();
     _gl_render_unit_skybox_opt.emplace(
@@ -153,7 +152,7 @@ void arcadia::gl_renderer::submit(const arcadia::skybox_component& skybox_comp)
 
 void arcadia::gl_renderer::draw()
 {
-    _check_frame_not_in_build_or_throw();
+    _assert_frame_not_in_build();
 
 
     if(_gl_render_unit_cameras.empty())
@@ -369,7 +368,7 @@ void arcadia::gl_renderer::clear()
     _gl_render_unit_cameras.clear();
     _gl_render_unit_lights.clear();
     _gl_render_unit_meshes_umap.clear();
-    _submitted_meshes_uuids.clear();
+    _submitted_meshes_uuid_set.clear();
     _gl_render_unit_skybox_opt.reset();
 }
 
@@ -378,20 +377,14 @@ auto arcadia::gl_renderer::get_render_result_id(std::size_t index) const -> void
     return reinterpret_cast<void*>(std::get<0>(_gl_render_unit_cameras.at(index)).get_gl_texture2d().get_gl_id());
 }
 
-void arcadia::gl_renderer::_check_frame_in_build_or_throw() const
+void arcadia::gl_renderer::_assert_frame_in_build() const
 {
-    if(!_frame_in_build)
-    {
-        throw frame_not_in_build{ "Frame is not in build, did you call `begin_frame()`?" };
-    }
+    ARCADIA_ASSERT(_frame_in_build && "Frame is not in build, did you call `prepare()`?");
 }
 
-void arcadia::gl_renderer::_check_frame_not_in_build_or_throw() const
+void arcadia::gl_renderer::_assert_frame_not_in_build() const
 {
-    if(_frame_in_build)
-    {
-        throw frame_not_in_build{ "Frame is in build, did you call `end_frame()`?" };
-    }
+    ARCADIA_ASSERT(!_frame_in_build && "Frame is in build, did you call `finalize()`?");
 }
 
 auto arcadia::gl_renderer::_create_unit_cube_mesh() const -> std::pair<std::vector<arcadia::vertex>, std::vector<arcadia::mesh::index_type>>

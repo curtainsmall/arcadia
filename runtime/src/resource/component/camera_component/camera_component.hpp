@@ -15,7 +15,7 @@ namespace arcadia
         using self_type = arcadia::camera_component;
         using serialization_type = arcadia::serialization::camera;
     public:
-        ARCADIA_COMPONENT_TYPE_STR_GETERS("camera");
+        ARCADIA_COMPONENT_TYPE_STR_GETTERS("camera");
 
         camera_component() = default;
         camera_component(const nlohmann::json& json);
@@ -42,7 +42,7 @@ namespace arcadia
         [[nodiscard]]
         auto build_mat4(bool col_major = true) const->glm::mat4;
 
-        // Get forward vector by position and target
+        // Get forward vector by jph_position and target
         auto get_forward_dir() const->glm::vec3;
         auto get_left_dir() const->glm::vec3;
         auto get_up_dir() const->glm::vec3;

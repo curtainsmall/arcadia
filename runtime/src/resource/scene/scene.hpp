@@ -1,10 +1,7 @@
 #pragma once
 
-#include<any>
 #include<filesystem>
-#include<map>
 #include<string>
-#include<unordered_set>
 
 #include"boost/bimap.hpp"
 
@@ -14,7 +11,6 @@
 #include"core/nlohmann_json_header.hpp"
 #include"core/uuid.hpp"
 #include"resource/component/component.hpp"
-#include"resource/component/components.hpp"
 #include"resource/scene/entt_header.hpp"
 
 namespace arcadia
@@ -118,7 +114,7 @@ namespace arcadia
         {
             if(!contains_all_component_of<Components...>(entity))
             {
-                throw no_such_component{ std::format("No such component with entity: {0}", static_cast<entt::id_type>(entity)) };
+                throw no_such_component{ std::format("No such component with entity: {0}", entity) };
             }
             return _registry.get<Components...>(entity);
         }
@@ -129,7 +125,7 @@ namespace arcadia
         {
             if(!contains_all_component_of<Components...>(entity))
             {
-                throw no_such_component{ std::format("No such component with entity: {0}", static_cast<entt::id_type>(entity)) };
+                throw no_such_component{ std::format("No such component with entity: {0}", entity) };
             }
             auto& comp = _registry.get<Components...>(entity);
             set_modified(true);

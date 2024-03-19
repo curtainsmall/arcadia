@@ -4,11 +4,6 @@
 #include"resource/component/camera_component/camera_component.hpp"
 #include"resource/component/model_component/model_component.hpp"
 
-
-arcadia::imgui_window_viewport::imgui_window_viewport(bool open, const std::string& title):
-    imgui_window_interface(open, title)
-{}
-
 void arcadia::imgui_window_viewport::on_event(arcadia::event_base& event)
 {
     arcadia::event_dispatcher{ event }
@@ -54,7 +49,7 @@ void arcadia::imgui_window_viewport::on_update()
 
             camera.viewport_size = ImGui::GetContentRegionAvail();
             //camera.should_display_grid = true;
-            renderer_sptr->begin_frame();
+            renderer_sptr->prepare();
 
             // Cameras
             renderer_sptr->submit(camera);
@@ -68,7 +63,7 @@ void arcadia::imgui_window_viewport::on_update()
             }
 
             // Models
-            renderer_sptr->submit(_grid);
+            //renderer_sptr->submit(_grid);
             const auto& model_comp_view = scene_sptr->component_view<arcadia::model_component>();
             for(const auto& entity : model_comp_view)
             {
@@ -76,7 +71,7 @@ void arcadia::imgui_window_viewport::on_update()
                 renderer_sptr->submit(model_comp);
             }
 
-            renderer_sptr->end_frame();
+            renderer_sptr->finalize();
 
             renderer_sptr->draw();
 

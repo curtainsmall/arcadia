@@ -6,6 +6,8 @@
 #include"core/base.hpp"
 #include"core/event/event.hpp"
 #include"function/ui/imgui_window.hpp"
+#include"platform/jolt/jolt_header.hpp"
+#include"resource/component/physics_component/physics_component.hpp"
 #include"resource/scene/scene.hpp"
 
 #include"project/project_events.hpp"
@@ -13,14 +15,35 @@
 
 namespace arcadia
 {
+    struct ARCADIA_API imgui_window_popup_physics_component_create_body
+    {
+    public:
+        using self_type = imgui_window_popup_physics_component_create_body;
+    public:
+        void operator()(arcadia::physics_component& physics_comp);
+    public:
+        bool open{ false };
+    private:
+        JPH::RVec3 _jph_position{ JPH::RVec3::sZero() };
+        JPH::Quat _jph_rotation{ JPH::Quat::sZero() };
+        JPH::EMotionType _jph_motion_type{ JPH::EMotionType::Static };
+        JPH::ObjectLayer _jph_object_layer{ arcadia::jph_object_layers::non_moving };
+        arcadia::physics_component::jph_shape_info_type _jph_shape_info{ arcadia::physics_component::jph_box_shape_info{} };
+    };
+
     struct ARCADIA_API imgui_window_property: arcadia::imgui_window_interface
     {
     public:
         using self_type = imgui_window_property;
     public:
-        ARCADIA_IMGUI_WINDOW_ID_STR_GETERS("###property");
+        ARCADIA_IMGUI_WINDOW_ID_STR_GETTERS("###property");
 
-        using arcadia::imgui_window_interface::imgui_window_interface;
+        inline imgui_window_property(
+            bool open,
+            const std::string& title
+        ):
+            imgui_window_interface(open, title)
+        {}
         virtual ~imgui_window_property() = default;
 
         virtual void on_event(arcadia::event_base& event) override;
@@ -43,6 +66,7 @@ namespace arcadia
         void _display_camera_component();
         void _display_light_component();
         void _display_model_component();
+        void _display_physics_component();
 
         void _on_open_imgui_window(arcadia::event::open_imgui_window& e);
         void _on_scene_activated(arcadia::event::scene_activated& e);
@@ -51,6 +75,8 @@ namespace arcadia
         void _on_delete_entity(arcadia::event::delete_entity& e);
 
     private:
+        arcadia::imgui_window_popup_physics_component_create_body _imgui_window_popup_physics_component_create_body{};
+
         std::weak_ptr<arcadia::scene> _scene_wptr{};
         entt::entity _selected_entity{ entt::null };
     };

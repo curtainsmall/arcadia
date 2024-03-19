@@ -210,8 +210,6 @@
     <ClInclude Include="src\core\math\vec4.hpp" />
     <ClInclude Include="src\core\serialization.hpp" />
     <ClInclude Include="src\core\time\timer.hpp" />
-    <ClInclude Include="src\core\conditional.hpp" />
-    <ClInclude Include="src\core\template.hpp" />
     <ClInclude Include="src\core\version\version.hpp" />
     <ClInclude Include="src\function\input\input_events.hpp" />
     <ClInclude Include="src\platform\glfw\glfw_header.hpp" />

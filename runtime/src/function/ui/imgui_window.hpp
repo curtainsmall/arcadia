@@ -1,12 +1,12 @@
 #pragma once
 
+#include<functional>
 #include<string>
-#include<typeinfo>
 
 #include"core/base.hpp"
 #include"core/event/event.hpp"
 
-#define ARCADIA_IMGUI_WINDOW_ID_STR_GETERS(IdStr) \
+#define ARCADIA_IMGUI_WINDOW_ID_STR_GETTERS(IdStr) \
 [[nodiscard]]\
 static constexpr auto get_id_str_static() -> std::string\
 {\
@@ -20,7 +20,6 @@ virtual inline auto get_id_str() const -> std::string override\
 
 namespace arcadia
 {
-
     struct ARCADIA_API imgui_window_interface
     {
     public:
@@ -64,4 +63,5 @@ namespace arcadia
             ImGuiWindow::get_id_str_static()
         } -> std::same_as<std::string>;
     };
+
 }

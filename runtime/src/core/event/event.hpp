@@ -8,7 +8,6 @@
 #include<vector>
 
 #include"core/base.hpp"
-#include"core/conditional.hpp"
 #include"core/exception.hpp"
 #include"core/log/log.hpp"
 

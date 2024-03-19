@@ -21,12 +21,14 @@ namespace arcadia
     public:
         using self_type = imgui_window_viewport;
     public:
-        ARCADIA_IMGUI_WINDOW_ID_STR_GETERS("###viewport");
+        ARCADIA_IMGUI_WINDOW_ID_STR_GETTERS("###viewport");
 
-        imgui_window_viewport(
+        inline imgui_window_viewport(
             bool open,
             const std::string& title
-        );
+        ):
+            imgui_window_interface(open, title)
+        {}
         virtual ~imgui_window_viewport() = default;
 
         virtual void on_event(arcadia::event_base& event) override;

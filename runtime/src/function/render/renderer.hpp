@@ -31,12 +31,12 @@ namespace arcadia
         /// @brief Begin a new frame
         /// @details This function signs that a new frame is started to form, any data in the previous frame may be erased (see submit() functions)
         /// @throw frame_in_build if there is already a frame in build
-        virtual void begin_frame() = 0;
+        virtual void prepare() = 0;
 
         /// @brief End curtain frame
         /// @details This function signs that current frame is complete and ready to draw
         /// @throw frame_not_in_build if there is no frame in build
-        virtual void end_frame() = 0;
+        virtual void finalize() = 0;
 
         /// @brief Submit a camera component to this renderer
         /// @throw frame_not_in_build if there is no frame in build

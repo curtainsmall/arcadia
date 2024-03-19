@@ -13,11 +13,11 @@
 auto arcadia::model_component::to_json() const -> nlohmann::json
 {
     nlohmann::json json{
-        { "filepath", _filepath.generic_string() },
+        {"filepath", _filepath.generic_string() },
         {"location",arcadia::vec3::to_json(location)},
         {"rotation",arcadia::vec3::to_json(rotation)},
-        {"scale",arcadia::vec3::to_json(scale)},
-        {"pivot",arcadia::vec3::to_json(scale)}
+        {"scale"   ,arcadia::vec3::to_json(scale)},
+        {"pivot"   ,arcadia::vec3::to_json(scale)}
     };
     return json;
 }
@@ -132,12 +132,12 @@ void arcadia::model_component::_load()
         next_mesh_index
     );
 
-    _meshes_opt = identifiable_meshes{ std::move(meshes) };
+    _identifiable_meshes_uptr = std::make_unique<identifiable_meshes>(std::move(meshes));
 }
 
 void arcadia::model_component::_unload()
 {
-    _meshes_opt.reset();
+    _identifiable_meshes_uptr.reset();
 }
 
 void arcadia::model_component::_process_assimp_node(

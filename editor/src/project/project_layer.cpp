@@ -1,7 +1,6 @@
 #include "project_layer.hpp"
 
 #include"core/app/app_config.hpp"
-#include"core/conditional.hpp"
 #include"core/file/file.hpp"
 #include"core/file/pfd_header.hpp"
 #include"core/hash.hpp"
@@ -9,6 +8,9 @@
 #include"function/render/opengl/gl_renderer.hpp"
 #include"function/window/window_events.hpp"
 #include"resource/component/camera_component/camera_component.hpp"
+#include"resource/component/light_component/light_component.hpp"
+#include"resource/component/model_component/model_component.hpp"
+#include"resource/component/physics_component/physics_component.hpp"
 
 #include"editor/editor_context.hpp"
 
@@ -414,6 +416,11 @@ void arcadia::project_layer::_on_add_component(arcadia::event::add_component& e)
         [&]()
     {
         scene.emplace_component<arcadia::model_component>(entity);
+    },
+        arcadia::physics_component::get_type_str_static(),
+        [&]()
+    {
+        scene.emplace_component<arcadia::physics_component>(entity);
     }
     );
 }
@@ -439,6 +446,11 @@ void arcadia::project_layer::_on_remove_component(arcadia::event::remove_compone
         [&]()
     {
         scene.remove_conponent<arcadia::model_component>(entity);
+    },
+        arcadia::physics_component::get_type_str_static(),
+        [&]()
+    {
+        scene.remove_conponent<arcadia::physics_component>(entity);
     }
     );
 }

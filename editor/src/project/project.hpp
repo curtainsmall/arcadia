@@ -6,6 +6,7 @@
 
 #include"core/nlohmann_json_header.hpp"
 #include"project/project_events.hpp"
+#include"resource/component/camera_component/camera_component.hpp"
 #include"resource/scene/scene.hpp"
 
 namespace arcadia

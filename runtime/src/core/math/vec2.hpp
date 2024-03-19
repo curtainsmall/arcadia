@@ -17,10 +17,10 @@ namespace arcadia
         }
         ARCADIA_API inline auto from_json(const nlohmann::json& json) -> glm::vec2
         {
-            glm::vec2 vec{};
-            vec.x = json.at("x");
-            vec.y = json.at("y");
-            return vec;
+            return glm::vec2{
+                json.at("x"),
+                json.at("y")
+            };
         }
 
         ARCADIA_API constexpr auto zero() -> glm::vec2
@@ -56,10 +56,10 @@ namespace arcadia
         }
         ARCADIA_API inline auto from_json(const nlohmann::json& json) -> glm::dvec2
         {
-            glm::dvec2 vec{};
-            vec.x = json.at("x");
-            vec.y = json.at("y");
-            return vec;
+            return glm::dvec2{
+                json.at("x"),
+                json.at("y")
+            };
         }
 
         ARCADIA_API constexpr auto zero() -> glm::dvec2

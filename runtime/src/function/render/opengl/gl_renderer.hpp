@@ -57,8 +57,8 @@ namespace arcadia
         gl_renderer(const std::filesystem::path& gl_shader_folder_path);
         virtual ~gl_renderer() = default;
 
-        virtual void begin_frame() override;
-        virtual void end_frame() override;
+        virtual void prepare() override;
+        virtual void finalize() override;
 
         virtual void submit(const arcadia::camera_component& camera_comp) override;
         virtual void submit(const arcadia::light_component& light_comp) override;
@@ -72,8 +72,8 @@ namespace arcadia
         virtual auto get_render_result_id(std::size_t index) const->void* override;
 
     public:
-        void _check_frame_in_build_or_throw() const;
-        void _check_frame_not_in_build_or_throw() const;
+        void _assert_frame_in_build() const;
+        void _assert_frame_not_in_build() const;
 
         auto _create_unit_cube_mesh() const->std::pair<std::vector<arcadia::vertex>, std::vector<arcadia::mesh::index_type>>;
     private:
@@ -81,7 +81,7 @@ namespace arcadia
 
         // Meshes
         std::unordered_map<arcadia::uuid, std::vector<arcadia::gl_render_unit_mesh>> _gl_render_unit_meshes_umap{};
-        std::set<arcadia::uuid> _submitted_meshes_uuids{};
+        std::set<arcadia::uuid> _submitted_meshes_uuid_set{};
 
         std::vector<arcadia::gl_render_unit_camera> _gl_render_unit_cameras{};
         std::vector<arcadia::gl_render_unit_light> _gl_render_unit_lights{};

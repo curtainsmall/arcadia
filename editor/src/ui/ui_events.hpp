@@ -95,5 +95,11 @@ namespace arcadia
             entt::entity, // entity
             std::string // type_str
         );
+
+        //==== Events for physics component ====//
+
+        ARCADIA_EVENT(
+            physics_component_new_body
+        );
     }
 }

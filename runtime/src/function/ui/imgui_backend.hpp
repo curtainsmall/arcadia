@@ -12,7 +12,7 @@ namespace arcadia
     namespace imgui_backend
     {
         ARCADIA_API void initialize(const arcadia::window_layer& window);
-        ARCADIA_API void begin_frame(const arcadia::window_layer& window);
+        ARCADIA_API void new_frame(const arcadia::window_layer& window);
         ARCADIA_API void render_draw_data(const arcadia::window_layer& window);
         ARCADIA_API void shutdown(const arcadia::window_layer& window);
 

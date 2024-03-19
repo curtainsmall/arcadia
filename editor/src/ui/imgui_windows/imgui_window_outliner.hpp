@@ -6,9 +6,9 @@
 #include"core/base.hpp"
 #include"function/ui/imgui_header.hpp"
 #include"function/ui/imgui_window.hpp"
-#include"project/project_events.hpp"
 #include"resource/scene/scene.hpp"
 
+#include"project/project_events.hpp"
 #include"ui/ui_events.hpp"
 
 namespace arcadia
@@ -18,9 +18,14 @@ namespace arcadia
     public:
         using self_type = imgui_window_outliner;
     public:
-        ARCADIA_IMGUI_WINDOW_ID_STR_GETERS("###outliner");
+        ARCADIA_IMGUI_WINDOW_ID_STR_GETTERS("###outliner");
 
-        using arcadia::imgui_window_interface::imgui_window_interface;
+        inline imgui_window_outliner(
+            bool open,
+            const std::string& title
+        ):
+            imgui_window_interface(open, title)
+        {}
         virtual ~imgui_window_outliner() = default;
 
         virtual void on_event(arcadia::event_base& event);

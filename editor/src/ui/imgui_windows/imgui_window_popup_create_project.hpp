@@ -15,7 +15,7 @@ namespace arcadia
     public:
         using self_type = imgui_window_popup_create_project;
     public:
-        ARCADIA_IMGUI_WINDOW_ID_STR_GETERS("###popup_create_project");
+        ARCADIA_IMGUI_WINDOW_ID_STR_GETTERS("###popup_create_project");
 
         using arcadia::imgui_window_interface::imgui_window_interface;
         virtual ~imgui_window_popup_create_project() = default;
@@ -30,5 +30,5 @@ namespace arcadia
         std::string _name{};
         std::string _filepath_str{};
         bool _display_empty_name_warning{ true };
-    };
+    }
 }

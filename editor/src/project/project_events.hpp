@@ -3,12 +3,12 @@
 #include<memory>
 
 #include"core/event/event.hpp"
-#include"function/render/renderer.hpp"
-#include"resource/scene/scene.hpp"
 
 namespace arcadia
 {
     struct project;
+    struct renderer_interface;
+    struct scene;
 
     namespace event
     {

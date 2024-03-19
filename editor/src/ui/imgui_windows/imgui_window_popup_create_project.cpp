@@ -16,17 +16,17 @@ void arcadia::imgui_window_popup_create_project::on_update()
         return;
     }
 
-    auto imgui_window = _title + get_id_str();
+    auto imgui_window_title = _title + get_id_str();
 
     auto popup_flags =
         ImGuiPopupFlags_NoOpenOverExistingPopup;
-    ImGui::OpenPopup(imgui_window.c_str(), popup_flags);
+    ImGui::OpenPopup(imgui_window_title.c_str(), popup_flags);
 
     ImGui::SetNextWindowSize({ 430,120 }, ImGuiCond_Once);
 
     auto window_flags =
         ImGuiWindowFlags_NoCollapse;
-    if(ImGui::BeginPopupModal(imgui_window.c_str(), &_open, window_flags))
+    if(ImGui::BeginPopupModal(imgui_window_title.c_str(), &_open, window_flags))
     {
         auto input_text_flags =
             ImGuiInputTextFlags_AutoSelectAll;

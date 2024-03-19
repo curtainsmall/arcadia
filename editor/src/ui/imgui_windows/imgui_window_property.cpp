@@ -1,7 +1,291 @@
 #include "imgui_window_property.hpp"
 
+#include<algorithm>
+#include<string>
+
 #include"core/file/pfd_header.hpp"
 #include"function/ui/imgui_header.hpp"
+#include"resource/component/camera_component/camera_component.hpp"
+#include"resource/component/light_component/light_component.hpp"
+#include"resource/component/model_component/model_component.hpp"
+#include"resource/component/physics_component/physics_component.hpp"
+#include"resource/component/skybox_component/skybox_component.hpp"
+
+void arcadia::imgui_window_popup_physics_component_create_body::operator()(arcadia::physics_component& physics_comp)
+{
+    if(!open)
+    {
+        return;
+    }
+
+    auto imgui_window_title = "Physics Component - Create Body"s;
+
+    auto popup_flags =
+        ImGuiPopupFlags_NoOpenOverExistingPopup;
+    ImGui::OpenPopup(imgui_window_title.c_str(), popup_flags);
+
+    auto window_flags =
+        ImGuiWindowFlags_NoCollapse;
+    if(ImGui::BeginPopupModal(imgui_window_title.c_str(), &open, window_flags))
+    {
+        float speed = 1.f;
+        float min = .0f;
+        float max = .0f;
+        const char* format = "%.3f";
+        auto slider_flags =
+            ImGuiSliderFlags_AlwaysClamp;
+
+        // Position
+        float
+            pos_x = _jph_position.GetX(),
+            pos_y = _jph_position.GetY(),
+            pos_z = _jph_position.GetZ();
+        ImGui::Text("  Position X"); ImGui::SameLine(); ImGui::DragFloat("##position_x", &pos_x, speed, min, max, format, slider_flags);
+        ImGui::Text("           Y"); ImGui::SameLine(); ImGui::DragFloat("##position_y", &pos_y, speed, min, max, format, slider_flags);
+        ImGui::Text("           Z"); ImGui::SameLine(); ImGui::DragFloat("##position_z", &pos_z, speed, min, max, format, slider_flags);
+        _jph_position.SetX(pos_x);
+        _jph_position.SetY(pos_y);
+        _jph_position.SetZ(pos_z);
+
+        // Rotation
+        ImGui::NewLine();
+        float
+            rot_w = _jph_rotation.GetW(),
+            rot_x = _jph_rotation.GetX(),
+            rot_y = _jph_rotation.GetY(),
+            rot_z = _jph_rotation.GetZ();
+        ImGui::Text("  Rotation W"); ImGui::SameLine(); ImGui::DragFloat("##rotation_w", &rot_w, speed, min, max, format, slider_flags);
+        ImGui::Text("           X"); ImGui::SameLine(); ImGui::DragFloat("##rotation_x", &rot_x, speed, min, max, format, slider_flags);
+        ImGui::Text("           Y"); ImGui::SameLine(); ImGui::DragFloat("##rotation_y", &rot_y, speed, min, max, format, slider_flags);
+        ImGui::Text("           Z"); ImGui::SameLine(); ImGui::DragFloat("##rotation_z", &rot_z, speed, min, max, format, slider_flags);
+        _jph_rotation.SetW(rot_w);
+        _jph_rotation.SetX(rot_x);
+        _jph_rotation.SetY(rot_y);
+        _jph_rotation.SetZ(rot_z);
+
+        // Motion type
+        ImGui::NewLine();
+        auto jph_motion_type_preview = arcadia::match<std::string>(
+            _jph_motion_type,
+            JPH::EMotionType::Static,
+            "Static"s,
+            JPH::EMotionType::Dynamic,
+            "Dynamic"s,
+            JPH::EMotionType::Kinematic,
+            "Kinematic"s
+        );
+        ImGui::Text(" Motion Type");
+        ImGui::SameLine();
+        if(ImGui::BeginCombo("##motion_type", jph_motion_type_preview.c_str()))
+        {
+            if(ImGui::Selectable("Static"))
+            {
+                _jph_motion_type = JPH::EMotionType::Static;
+            }
+            if(ImGui::Selectable("Dynamic"))
+            {
+                _jph_motion_type = JPH::EMotionType::Dynamic;
+            }
+            if(ImGui::Selectable("Kinematic"))
+            {
+                _jph_motion_type = JPH::EMotionType::Kinematic;
+            }
+            ImGui::EndCombo();
+        }
+
+        // Object layer
+        auto jph_object_layer_prview = arcadia::match<std::string>(
+            _jph_object_layer,
+            arcadia::jph_object_layers::non_moving,
+            "Non Moving",
+            arcadia::jph_object_layers::moving,
+            "Moving"
+        );
+        ImGui::Text("Object Layer");
+        ImGui::SameLine();
+        if(ImGui::BeginCombo("##object_layer", jph_object_layer_prview.c_str()))
+        {
+            if(ImGui::Selectable("Non Moving"))
+            {
+                _jph_object_layer = arcadia::jph_object_layers::non_moving;
+            }
+            if(ImGui::Selectable("Moving"))
+            {
+                _jph_object_layer = arcadia::jph_object_layers::moving;
+            }
+            ImGui::EndCombo();
+        }
+
+        //Shape
+        _jph_shape_info = arcadia::match<arcadia::physics_component::jph_shape_info_type>(
+            _jph_shape_info,
+            [&](arcadia::physics_component::jph_box_shape_info& info) -> arcadia::physics_component::jph_shape_info_type
+        {
+            ImGui::Text("  Shape Type");
+            ImGui::SameLine();
+            if(ImGui::BeginCombo("##shape_type", "Box Shape"))
+            {
+                if(ImGui::Selectable("Capsule Shape"))
+                {
+                    ImGui::EndCombo();
+                    return arcadia::physics_component::jph_capsule_shape_info{};
+                }
+                if(ImGui::Selectable("Cylinder Shape"))
+                {
+                    ImGui::EndCombo();
+                    return arcadia::physics_component::jph_cylinder_shape_info{};
+                }
+                if(ImGui::Selectable("Sphere Shape"))
+                {
+                    ImGui::EndCombo();
+                    return arcadia::physics_component::jph_sphere_shape_info{};
+                }
+                ImGui::EndCombo();
+            }
+            ImGui::NewLine();
+            ImGui::SeparatorText("Box Shape");
+
+            float
+                half_extent_x = info.half_extent.GetX(),
+                half_extent_y = info.half_extent.GetY(),
+                half_extent_z = info.half_extent.GetZ();
+            ImGui::Text("Half Extent X"); ImGui::SameLine(); ImGui::DragFloat("##half_extent_x", &half_extent_x, speed, info.convex_radius, (std::numeric_limits<float>::max)(), format, slider_flags);
+            ImGui::Text("            Y"); ImGui::SameLine(); ImGui::DragFloat("##half_extent_y", &half_extent_y, speed, info.convex_radius, (std::numeric_limits<float>::max)(), format, slider_flags);
+            ImGui::Text("            Z"); ImGui::SameLine(); ImGui::DragFloat("##half_extent_z", &half_extent_z, speed, info.convex_radius, (std::numeric_limits<float>::max)(), format, slider_flags);
+            info.half_extent.SetX(half_extent_x);
+            info.half_extent.SetY(half_extent_y);
+            info.half_extent.SetZ(half_extent_z);
+
+            ImGui::NewLine();
+            ImGui::Text("Convex Radius"); ImGui::SameLine(); ImGui::DragFloat("##convex_radius", &info.convex_radius, speed, .0f, std::min({ half_extent_x, half_extent_y, half_extent_z }), format, slider_flags);
+
+            return _jph_shape_info;
+        },
+            [&](arcadia::physics_component::jph_capsule_shape_info& info) -> arcadia::physics_component::jph_shape_info_type
+        {
+            ImGui::Text("  Shape Type");
+            ImGui::SameLine();
+            if(ImGui::BeginCombo("##shape_type", "Capsule Shape"))
+            {
+                if(ImGui::Selectable("Box Shape"))
+                {
+                    ImGui::EndCombo();
+                    return arcadia::physics_component::jph_box_shape_info{};
+                }
+                if(ImGui::Selectable("Cylinder Shape"))
+                {
+                    ImGui::EndCombo();
+                    return arcadia::physics_component::jph_cylinder_shape_info{};
+                }
+                if(ImGui::Selectable("Sphere Shape"))
+                {
+                    ImGui::EndCombo();
+                    return arcadia::physics_component::jph_sphere_shape_info{};
+                }
+                ImGui::EndCombo();
+            }
+            ImGui::NewLine();
+            ImGui::SeparatorText("Capsule Type");
+
+            ImGui::Text("                 Radius"); ImGui::SameLine(); ImGui::DragFloat("##radius", &info.radius, speed, .0f, (std::numeric_limits<float>::max)(), format, slider_flags);
+            ImGui::NewLine();
+            ImGui::Text("Half Height of Cylinder"); ImGui::SameLine(); ImGui::DragFloat("##half_height_of_cylinder", &info.half_height_of_cylinder, speed, .0f, (std::numeric_limits<float>::max)(), format, slider_flags);
+
+            return _jph_shape_info;
+        },
+            [&](arcadia::physics_component::jph_cylinder_shape_info& info) -> arcadia::physics_component::jph_shape_info_type
+        {
+            ImGui::Text("  Shape Type");
+            ImGui::SameLine();
+            if(ImGui::BeginCombo("##shape_type", "Cylinder Shape"))
+            {
+                if(ImGui::Selectable("Box Shape"))
+                {
+                    ImGui::EndCombo();
+                    return arcadia::physics_component::jph_box_shape_info{};
+                }
+                if(ImGui::Selectable("Capsule Shape"))
+                {
+                    ImGui::EndCombo();
+                    return arcadia::physics_component::jph_capsule_shape_info{};
+                }
+                if(ImGui::Selectable("Sphere Shape"))
+                {
+                    ImGui::EndCombo();
+                    return arcadia::physics_component::jph_sphere_shape_info{};
+                }
+                ImGui::EndCombo();
+            }
+            ImGui::NewLine();
+            ImGui::SeparatorText("Cylinder Shape");
+
+            ImGui::Text("  Half Height"); ImGui::SameLine(); ImGui::DragFloat("##half_height", &info.half_height, speed, .0f, (std::numeric_limits<float>::max)(), format, slider_flags);
+            ImGui::NewLine();
+            ImGui::Text("       Radius"); ImGui::SameLine(); ImGui::DragFloat("##radius", &info.radius, speed, .0f, (std::numeric_limits<float>::max)(), format, slider_flags);
+            ImGui::NewLine();
+            ImGui::Text("Convex Radius"); ImGui::SameLine(); ImGui::DragFloat("##convex_radius", &info.convex_radius, speed, .0f, (std::numeric_limits<float>::max)(), format, slider_flags);
+
+            return _jph_shape_info;
+        },
+            [&](arcadia::physics_component::jph_sphere_shape_info& info) -> arcadia::physics_component::jph_shape_info_type
+        {
+            ImGui::Text("  Shape Type");
+            ImGui::SameLine();
+            if(ImGui::BeginCombo("##shape_type", "Sphere Shape"))
+            {
+                if(ImGui::Selectable("Box Shape"))
+                {
+                    ImGui::EndCombo();
+                    return arcadia::physics_component::jph_box_shape_info{};
+                }
+                if(ImGui::Selectable("Capsule Shape"))
+                {
+                    ImGui::EndCombo();
+                    return arcadia::physics_component::jph_capsule_shape_info{};
+                }
+                if(ImGui::Selectable("Cylinder Shape"))
+                {
+                    ImGui::EndCombo();
+                    return arcadia::physics_component::jph_cylinder_shape_info{};
+                }
+                ImGui::EndCombo();
+            }
+            ImGui::NewLine();
+            ImGui::SeparatorText("Sphere Shape");
+
+            ImGui::Text("   Radius"); ImGui::SameLine(); ImGui::DragFloat("##radius", &info.radius, speed, .0f, (std::numeric_limits<float>::max)(), format, slider_flags);
+
+            return _jph_shape_info;
+        }
+        );
+
+        ImGui::NewLine();
+        auto confirmed = ImGui::Button("Confirm");
+        if(confirmed)
+        {
+            physics_comp.build_identifiable_jph_body_info(
+                _jph_position,
+                _jph_rotation,
+                _jph_motion_type,
+                _jph_object_layer,
+                std::move(_jph_shape_info)
+            );
+        }
+        ImGui::SameLine();
+        if(confirmed || ImGui::Button("Cancel"))
+        {
+            ImGui::CloseCurrentPopup();
+            open = false;
+            _jph_position = JPH::RVec3::sZero();
+            _jph_rotation = JPH::Quat::sZero();
+            _jph_motion_type = JPH::EMotionType::Static;
+            _jph_object_layer = arcadia::jph_object_layers::non_moving;
+            _jph_shape_info = arcadia::physics_component::jph_box_shape_info{};
+        }
+
+        ImGui::EndPopup();
+    }
+}
 
 void arcadia::imgui_window_property::on_event(arcadia::event_base& event)
 {
@@ -51,6 +335,7 @@ void arcadia::imgui_window_property::_display_components()
     _display_camera_component();
     _display_light_component();
     _display_model_component();
+    _display_physics_component();
 }
 
 void arcadia::imgui_window_property::_display_camera_component()
@@ -60,6 +345,12 @@ void arcadia::imgui_window_property::_display_camera_component()
         return;
     }
 
+    const float speed = 1.f;
+    const float min = .0;
+    const float max = .0f;
+    const char* format = "%.3f";
+    const auto flags =
+        ImGuiSliderFlags_AlwaysClamp;
     auto& camera_comp = _get_component<arcadia::camera_component>();
     ImGui::BeginGroup();
 
@@ -68,47 +359,47 @@ void arcadia::imgui_window_property::_display_camera_component()
     ImGui::SeparatorText("Camera");
 
     ImGui::NewLine();
-    ImGui::Text("     Position X"); ImGui::SameLine(); ImGui::DragFloat("##pos_x", &camera_comp.pos.x);
-    ImGui::Text("              Y"); ImGui::SameLine(); ImGui::DragFloat("##pos_y", &camera_comp.pos.y);
-    ImGui::Text("              Z"); ImGui::SameLine(); ImGui::DragFloat("##pos_z", &camera_comp.pos.z);
+    ImGui::Text("     Position X"); ImGui::SameLine(); ImGui::DragFloat("##pos_x", &camera_comp.pos.x, speed, min, max, format, flags);
+    ImGui::Text("              Y"); ImGui::SameLine(); ImGui::DragFloat("##pos_y", &camera_comp.pos.y, speed, min, max, format, flags);
+    ImGui::Text("              Z"); ImGui::SameLine(); ImGui::DragFloat("##pos_z", &camera_comp.pos.z, speed, min, max, format, flags);
 
     ImGui::NewLine();
-    ImGui::Text("       Target X"); ImGui::SameLine(); ImGui::DragFloat("##target_x", &camera_comp.target.x);
-    ImGui::Text("              Y"); ImGui::SameLine(); ImGui::DragFloat("##target_y", &camera_comp.target.y);
-    ImGui::Text("              Z"); ImGui::SameLine(); ImGui::DragFloat("##target_z", &camera_comp.target.z);
+    ImGui::Text("       Target X"); ImGui::SameLine(); ImGui::DragFloat("##target_x", &camera_comp.target.x, speed, min, max, format, flags);
+    ImGui::Text("              Y"); ImGui::SameLine(); ImGui::DragFloat("##target_y", &camera_comp.target.y, speed, min, max, format, flags);
+    ImGui::Text("              Z"); ImGui::SameLine(); ImGui::DragFloat("##target_z", &camera_comp.target.z, speed, min, max, format, flags);
 
     ImGui::NewLine();
-    ImGui::Text("           Up X"); ImGui::SameLine(); ImGui::DragFloat("##up_x", &camera_comp.up.x);
-    ImGui::Text("              Y"); ImGui::SameLine(); ImGui::DragFloat("##up_y", &camera_comp.up.y);
-    ImGui::Text("              Z"); ImGui::SameLine(); ImGui::DragFloat("##up_z", &camera_comp.up.z);
+    ImGui::Text("           Up X"); ImGui::SameLine(); ImGui::DragFloat("##up_x", &camera_comp.up.x, speed, min, max, format, flags);
+    ImGui::Text("              Y"); ImGui::SameLine(); ImGui::DragFloat("##up_y", &camera_comp.up.y, speed, min, max, format, flags);
+    ImGui::Text("              Z"); ImGui::SameLine(); ImGui::DragFloat("##up_z", &camera_comp.up.z, speed, min, max, format, flags);
 
     ImGui::NewLine();
-    ImGui::Text("     Near Plane"); ImGui::SameLine(); ImGui::DragFloat("##near", &camera_comp.near_plane);
+    ImGui::Text("     Near Plane"); ImGui::SameLine(); ImGui::DragFloat("##near", &camera_comp.near_plane, speed, min, max, format, flags);
 
     ImGui::NewLine();
-    ImGui::Text("      Far Plane"); ImGui::SameLine(); ImGui::DragFloat("##far", &camera_comp.far_plane);
+    ImGui::Text("      Far Plane"); ImGui::SameLine(); ImGui::DragFloat("##far", &camera_comp.far_plane, speed, min, max, format, flags);
 
     ImGui::NewLine();
-    ImGui::Text("            FOV"); ImGui::SameLine(); ImGui::DragFloat("##fov", &camera_comp.fov);
+    ImGui::Text("            FOV"); ImGui::SameLine(); ImGui::DragFloat("##fov", &camera_comp.fov, speed, camera_comp.fov_min, camera_comp.fov_max, format, flags);
 
     ImGui::NewLine();
-    ImGui::Text("        FOV Min"); ImGui::SameLine(); ImGui::DragFloat("##fov_min", &camera_comp.fov_min);
+    ImGui::Text("        FOV Min"); ImGui::SameLine(); ImGui::DragFloat("##fov_min", &camera_comp.fov_min, speed, .0f, 180.f, format, flags);
 
     ImGui::NewLine();
-    ImGui::Text("        FOV Max"); ImGui::SameLine(); ImGui::DragFloat("##fov_max", &camera_comp.fov_max);
+    ImGui::Text("        FOV Max"); ImGui::SameLine(); ImGui::DragFloat("##fov_max", &camera_comp.fov_max, speed, .0f, 180.f, format, flags);
 
     ImGui::NewLine();
-    ImGui::Text("          Speed"); ImGui::SameLine(); ImGui::DragFloat("##speed", &camera_comp.speed);
+    ImGui::Text("          Speed"); ImGui::SameLine(); ImGui::DragFloat("##speed", &camera_comp.speed, speed, min, max, format, flags);
 
     ImGui::NewLine();
-    ImGui::Text("Viewport Size X"); ImGui::SameLine(); ImGui::DragInt("##viewport_size_x", &camera_comp.viewport_size.x);
-    ImGui::Text("              Y"); ImGui::SameLine(); ImGui::DragInt("##viewport_size_y", &camera_comp.viewport_size.y);
+    ImGui::Text("Viewport Size X"); ImGui::SameLine(); ImGui::DragInt("##viewport_size_x", &camera_comp.viewport_size.x, speed, 1.f, 1.f, format, flags);
+    ImGui::Text("              Y"); ImGui::SameLine(); ImGui::DragInt("##viewport_size_y", &camera_comp.viewport_size.y, speed, 1.f, 1.f, format, flags);
 
     ImGui::NewLine();
     ImGui::Text("       Fixed Up"); ImGui::SameLine(); ImGui::Checkbox("##fixed_up", &camera_comp.fixed_up);
 
-    ImGui::NewFrame();
-    ImGui::Text("     Up Epsilon"); ImGui::SameLine(); ImGui::DragFloat("##up_epsilon", &camera_comp.up_epsilon);
+    ImGui::NewLine();
+    ImGui::Text("     Up Epsilon"); ImGui::SameLine(); ImGui::DragFloat("##up_epsilon", &camera_comp.up_epsilon, speed, min, max, format, flags);
 
     //ImGui::DragFloat2("Cursor Move Offset Range", &camera_comp.cursor_move_offset_range.x);
 
@@ -126,8 +417,8 @@ void arcadia::imgui_window_property::_display_light_component()
 
     auto& light_comp = _get_component<arcadia::light_component>();
     ImGui::BeginGroup();
-
     ImGui::PushItemWidth(200.f);
+
 
     const float light_direction_drag_speed = .01f;
     const float light_direction_min = -1.f;
@@ -138,6 +429,13 @@ void arcadia::imgui_window_property::_display_light_component()
     const float light_strength_speed = 1.f;
     const float light_strength_min = 0.f;
     const float light_strength_max = 100.f;
+
+    const float speed = 1.f;
+    const float min = .0f;
+    const float max = .0f;
+    const auto format = "%.3f";
+    const auto flags =
+        ImGuiSliderFlags_AlwaysClamp;
     arcadia::match<void>(
         light_comp.light,
         [&](arcadia::null_light& light)
@@ -212,19 +510,19 @@ void arcadia::imgui_window_property::_display_light_component()
         ImGui::SeparatorText("Spot Light");
 
         ImGui::NewLine();
-        ImGui::Text("         Position X"); ImGui::SameLine(); ImGui::DragFloat("##pos_x", &light.position.x);
-        ImGui::Text("                  Y"); ImGui::SameLine(); ImGui::DragFloat("##pos_y", &light.position.y);
-        ImGui::Text("                  Z"); ImGui::SameLine(); ImGui::DragFloat("##pos_z", &light.position.z);
+        ImGui::Text("         Position X"); ImGui::SameLine(); ImGui::DragFloat("##pos_x", &light.position.x, speed, min, max, format, flags);
+        ImGui::Text("                  Y"); ImGui::SameLine(); ImGui::DragFloat("##pos_y", &light.position.y, speed, min, max, format, flags);
+        ImGui::Text("                  Z"); ImGui::SameLine(); ImGui::DragFloat("##pos_z", &light.position.z, speed, min, max, format, flags);
 
         ImGui::NewLine();
-        ImGui::Text("        Direction X"); ImGui::SameLine(); ImGui::DragFloat("##dir_x", &light.direction.x, light_direction_drag_speed, light_direction_min, light_direction_max);
-        ImGui::Text("                  Y"); ImGui::SameLine(); ImGui::DragFloat("##dir_y", &light.direction.y, light_direction_drag_speed, light_direction_min, light_direction_max);
-        ImGui::Text("                  Z"); ImGui::SameLine(); ImGui::DragFloat("##dir_z", &light.direction.z, light_direction_drag_speed, light_direction_min, light_direction_max);
+        ImGui::Text("        Direction X"); ImGui::SameLine(); ImGui::DragFloat("##dir_x", &light.direction.x, light_direction_drag_speed, light_direction_min, light_direction_max, format, flags);
+        ImGui::Text("                  Y"); ImGui::SameLine(); ImGui::DragFloat("##dir_y", &light.direction.y, light_direction_drag_speed, light_direction_min, light_direction_max, format, flags);
+        ImGui::Text("                  Z"); ImGui::SameLine(); ImGui::DragFloat("##dir_z", &light.direction.z, light_direction_drag_speed, light_direction_min, light_direction_max, format, flags);
 
         ImGui::NewLine();
-        ImGui::Text("Attenuation Contant"); ImGui::SameLine(); ImGui::DragFloat("##k0", &light.attenuation_coefs.x);
-        ImGui::Text("             Linear"); ImGui::SameLine(); ImGui::DragFloat("##k1", &light.attenuation_coefs.y);
-        ImGui::Text("          Quadratic"); ImGui::SameLine(); ImGui::DragFloat("##k2", &light.attenuation_coefs.z);
+        ImGui::Text("Attenuation Contant"); ImGui::SameLine(); ImGui::DragFloat("##k0", &light.attenuation_coefs.x, speed, min, max, format, flags);
+        ImGui::Text("             Linear"); ImGui::SameLine(); ImGui::DragFloat("##k1", &light.attenuation_coefs.y, speed, min, max, format, flags);
+        ImGui::Text("          Quadratic"); ImGui::SameLine(); ImGui::DragFloat("##k2", &light.attenuation_coefs.z, speed, min, max, format, flags);
 
         ImGui::NewLine();
 
@@ -235,32 +533,32 @@ void arcadia::imgui_window_property::_display_light_component()
         const float cutoff_angle_drag_speend = .1f;
         const float cutoff_angle_min = 0.f;
         const float cutoff_angle_max = 180.f;
-        ImGui::Text(" Inner Cutoff Angle"); ImGui::SameLine(); ImGui::DragFloat("##inner", &cutoff_angles_degree.x, cutoff_angle_drag_speend, cutoff_angle_min, cutoff_angles_degree.y);
-        ImGui::Text(" Outer Cutoff Angle"); ImGui::SameLine(); ImGui::DragFloat("##outer", &cutoff_angles_degree.y, cutoff_angle_drag_speend, cutoff_angles_degree.x, cutoff_angle_max);
+        ImGui::Text(" Inner Cutoff Angle"); ImGui::SameLine(); ImGui::DragFloat("##inner", &cutoff_angles_degree.x, cutoff_angle_drag_speend, cutoff_angle_min, cutoff_angles_degree.y, format, flags);
+        ImGui::Text(" Outer Cutoff Angle"); ImGui::SameLine(); ImGui::DragFloat("##outer", &cutoff_angles_degree.y, cutoff_angle_drag_speend, cutoff_angles_degree.x, cutoff_angle_max, format, flags);
         light.cutoff_angles = glm::vec2{
             glm::radians(cutoff_angles_degree.x),
             glm::radians(cutoff_angles_degree.y)
         };
 
         ImGui::NewLine();
-        ImGui::Text("            Color R"); ImGui::SameLine(); ImGui::DragFloat("##color_r", &light.color.r, light_color_drag_speed, light_color_min, light_color_max);
-        ImGui::Text("                  G"); ImGui::SameLine(); ImGui::DragFloat("##color_g", &light.color.g, light_color_drag_speed, light_color_min, light_color_max);
-        ImGui::Text("                  B"); ImGui::SameLine(); ImGui::DragFloat("##color_b", &light.color.b, light_color_drag_speed, light_color_min, light_color_max);
+        ImGui::Text("            Color R"); ImGui::SameLine(); ImGui::DragFloat("##color_r", &light.color.r, light_color_drag_speed, light_color_min, light_color_max, format, flags);
+        ImGui::Text("                  G"); ImGui::SameLine(); ImGui::DragFloat("##color_g", &light.color.g, light_color_drag_speed, light_color_min, light_color_max, format, flags);
+        ImGui::Text("                  B"); ImGui::SameLine(); ImGui::DragFloat("##color_b", &light.color.b, light_color_drag_speed, light_color_min, light_color_max, format, flags);
 
         ImGui::NewLine();
-        ImGui::Text(" Ambient Strength R"); ImGui::SameLine(); ImGui::DragFloat("##as_r", &light.ambient_strength.r, light_strength_speed, light_strength_min, light_strength_max);
-        ImGui::Text("                  G"); ImGui::SameLine(); ImGui::DragFloat("##as_g", &light.ambient_strength.g, light_strength_speed, light_strength_min, light_strength_max);
-        ImGui::Text("                  B"); ImGui::SameLine(); ImGui::DragFloat("##as_b", &light.ambient_strength.b, light_strength_speed, light_strength_min, light_strength_max);
+        ImGui::Text(" Ambient Strength R"); ImGui::SameLine(); ImGui::DragFloat("##as_r", &light.ambient_strength.r, light_strength_speed, light_strength_min, light_strength_max, format, flags);
+        ImGui::Text("                  G"); ImGui::SameLine(); ImGui::DragFloat("##as_g", &light.ambient_strength.g, light_strength_speed, light_strength_min, light_strength_max, format, flags);
+        ImGui::Text("                  B"); ImGui::SameLine(); ImGui::DragFloat("##as_b", &light.ambient_strength.b, light_strength_speed, light_strength_min, light_strength_max, format, flags);
 
         ImGui::NewLine();
-        ImGui::Text(" Diffuse Strength R"); ImGui::SameLine(); ImGui::DragFloat("##ds_r", &light.diffuse_strength.r, light_strength_speed, light_strength_min, light_strength_max);
-        ImGui::Text("                  G"); ImGui::SameLine(); ImGui::DragFloat("##ds_g", &light.diffuse_strength.g, light_strength_speed, light_strength_min, light_strength_max);
-        ImGui::Text("                  B"); ImGui::SameLine(); ImGui::DragFloat("##ds_b", &light.diffuse_strength.b, light_strength_speed, light_strength_min, light_strength_max);
+        ImGui::Text(" Diffuse Strength R"); ImGui::SameLine(); ImGui::DragFloat("##ds_r", &light.diffuse_strength.r, light_strength_speed, light_strength_min, light_strength_max, format, flags);
+        ImGui::Text("                  G"); ImGui::SameLine(); ImGui::DragFloat("##ds_g", &light.diffuse_strength.g, light_strength_speed, light_strength_min, light_strength_max, format, flags);
+        ImGui::Text("                  B"); ImGui::SameLine(); ImGui::DragFloat("##ds_b", &light.diffuse_strength.b, light_strength_speed, light_strength_min, light_strength_max, format, flags);
 
         ImGui::NewLine();
-        ImGui::Text("Specular Strength R"); ImGui::SameLine(); ImGui::DragFloat("##ss_r", &light.specular_strength.r, light_strength_speed, light_strength_min, light_strength_max);
-        ImGui::Text("                  G"); ImGui::SameLine(); ImGui::DragFloat("##ss_g", &light.specular_strength.g, light_strength_speed, light_strength_min, light_strength_max);
-        ImGui::Text("                  B"); ImGui::SameLine(); ImGui::DragFloat("##ss_b", &light.specular_strength.b, light_strength_speed, light_strength_min, light_strength_max);
+        ImGui::Text("Specular Strength R"); ImGui::SameLine(); ImGui::DragFloat("##ss_r", &light.specular_strength.r, light_strength_speed, light_strength_min, light_strength_max, format, flags);
+        ImGui::Text("                  G"); ImGui::SameLine(); ImGui::DragFloat("##ss_g", &light.specular_strength.g, light_strength_speed, light_strength_min, light_strength_max, format, flags);
+        ImGui::Text("                  B"); ImGui::SameLine(); ImGui::DragFloat("##ss_b", &light.specular_strength.b, light_strength_speed, light_strength_min, light_strength_max, format, flags);
     },
         [&](arcadia::direct_light& light)
     {
@@ -311,29 +609,29 @@ void arcadia::imgui_window_property::_display_light_component()
         ImGui::SeparatorText("Direct Light");
 
         ImGui::NewLine();
-        ImGui::Text("        Direction X"); ImGui::SameLine(); ImGui::DragFloat("##dir_x", &light.direction.x, light_direction_drag_speed, light_direction_min, light_direction_max);
-        ImGui::Text("                  Y"); ImGui::SameLine(); ImGui::DragFloat("##dir_y", &light.direction.y, light_direction_drag_speed, light_direction_min, light_direction_max);
-        ImGui::Text("                  Z"); ImGui::SameLine(); ImGui::DragFloat("##dir_z", &light.direction.z, light_direction_drag_speed, light_direction_min, light_direction_max);
+        ImGui::Text("        Direction X"); ImGui::SameLine(); ImGui::DragFloat("##dir_x", &light.direction.x, light_direction_drag_speed, light_direction_min, light_direction_max, format, flags);
+        ImGui::Text("                  Y"); ImGui::SameLine(); ImGui::DragFloat("##dir_y", &light.direction.y, light_direction_drag_speed, light_direction_min, light_direction_max, format, flags);
+        ImGui::Text("                  Z"); ImGui::SameLine(); ImGui::DragFloat("##dir_z", &light.direction.z, light_direction_drag_speed, light_direction_min, light_direction_max, format, flags);
 
         ImGui::NewLine();
-        ImGui::Text("            Color R"); ImGui::SameLine(); ImGui::DragFloat("##color_r", &light.color.r, light_color_drag_speed, light_color_min, light_color_max);
-        ImGui::Text("                  G"); ImGui::SameLine(); ImGui::DragFloat("##color_g", &light.color.g, light_color_drag_speed, light_color_min, light_color_max);
-        ImGui::Text("                  B"); ImGui::SameLine(); ImGui::DragFloat("##color_b", &light.color.b, light_color_drag_speed, light_color_min, light_color_max);
+        ImGui::Text("            Color R"); ImGui::SameLine(); ImGui::DragFloat("##color_r", &light.color.r, light_color_drag_speed, light_color_min, light_color_max, format, flags);
+        ImGui::Text("                  G"); ImGui::SameLine(); ImGui::DragFloat("##color_g", &light.color.g, light_color_drag_speed, light_color_min, light_color_max, format, flags);
+        ImGui::Text("                  B"); ImGui::SameLine(); ImGui::DragFloat("##color_b", &light.color.b, light_color_drag_speed, light_color_min, light_color_max, format, flags);
 
         ImGui::NewLine();
-        ImGui::Text(" Ambient Strength R"); ImGui::SameLine(); ImGui::DragFloat("##as_r", &light.ambient_strength.r, light_strength_speed, light_strength_min, light_strength_max);
-        ImGui::Text("                  G"); ImGui::SameLine(); ImGui::DragFloat("##as_g", &light.ambient_strength.g, light_strength_speed, light_strength_min, light_strength_max);
-        ImGui::Text("                  B"); ImGui::SameLine(); ImGui::DragFloat("##as_b", &light.ambient_strength.b, light_strength_speed, light_strength_min, light_strength_max);
+        ImGui::Text(" Ambient Strength R"); ImGui::SameLine(); ImGui::DragFloat("##as_r", &light.ambient_strength.r, light_strength_speed, light_strength_min, light_strength_max, format, flags);
+        ImGui::Text("                  G"); ImGui::SameLine(); ImGui::DragFloat("##as_g", &light.ambient_strength.g, light_strength_speed, light_strength_min, light_strength_max, format, flags);
+        ImGui::Text("                  B"); ImGui::SameLine(); ImGui::DragFloat("##as_b", &light.ambient_strength.b, light_strength_speed, light_strength_min, light_strength_max, format, flags);
 
         ImGui::NewLine();
-        ImGui::Text(" Diffuse Strength R"); ImGui::SameLine(); ImGui::DragFloat("##ds_r", &light.diffuse_strength.r, light_strength_speed, light_strength_min, light_strength_max);
-        ImGui::Text("                  G"); ImGui::SameLine(); ImGui::DragFloat("##ds_g", &light.diffuse_strength.g, light_strength_speed, light_strength_min, light_strength_max);
-        ImGui::Text("                  B"); ImGui::SameLine(); ImGui::DragFloat("##ds_b", &light.diffuse_strength.b, light_strength_speed, light_strength_min, light_strength_max);
+        ImGui::Text(" Diffuse Strength R"); ImGui::SameLine(); ImGui::DragFloat("##ds_r", &light.diffuse_strength.r, light_strength_speed, light_strength_min, light_strength_max, format, flags);
+        ImGui::Text("                  G"); ImGui::SameLine(); ImGui::DragFloat("##ds_g", &light.diffuse_strength.g, light_strength_speed, light_strength_min, light_strength_max, format, flags);
+        ImGui::Text("                  B"); ImGui::SameLine(); ImGui::DragFloat("##ds_b", &light.diffuse_strength.b, light_strength_speed, light_strength_min, light_strength_max, format, flags);
 
         ImGui::NewLine();
-        ImGui::Text("Specular Strength R"); ImGui::SameLine(); ImGui::DragFloat("##ss_r", &light.specular_strength.r, light_strength_speed, light_strength_min, light_strength_max);
-        ImGui::Text("                  G"); ImGui::SameLine(); ImGui::DragFloat("##ss_g", &light.specular_strength.g, light_strength_speed, light_strength_min, light_strength_max);
-        ImGui::Text("                  B"); ImGui::SameLine(); ImGui::DragFloat("##ss_b", &light.specular_strength.b, light_strength_speed, light_strength_min, light_strength_max);
+        ImGui::Text("Specular Strength R"); ImGui::SameLine(); ImGui::DragFloat("##ss_r", &light.specular_strength.r, light_strength_speed, light_strength_min, light_strength_max, format, flags);
+        ImGui::Text("                  G"); ImGui::SameLine(); ImGui::DragFloat("##ss_g", &light.specular_strength.g, light_strength_speed, light_strength_min, light_strength_max, format, flags);
+        ImGui::Text("                  B"); ImGui::SameLine(); ImGui::DragFloat("##ss_b", &light.specular_strength.b, light_strength_speed, light_strength_min, light_strength_max, format, flags);
     },
         [&](arcadia::area_light& light)
     {
@@ -384,38 +682,38 @@ void arcadia::imgui_window_property::_display_light_component()
         ImGui::SeparatorText("Area Light");
 
         ImGui::NewLine();
-        ImGui::Text("         Position X"); ImGui::SameLine(); ImGui::DragFloat("##pos_x", &light.position.x);
-        ImGui::Text("                  Y"); ImGui::SameLine(); ImGui::DragFloat("##pos_y", &light.position.y);
-        ImGui::Text("                  Z"); ImGui::SameLine(); ImGui::DragFloat("##pos_z", &light.position.z);
+        ImGui::Text("         Position X"); ImGui::SameLine(); ImGui::DragFloat("##pos_x", &light.position.x, speed, min, max, format, flags);
+        ImGui::Text("                  Y"); ImGui::SameLine(); ImGui::DragFloat("##pos_y", &light.position.y, speed, min, max, format, flags);
+        ImGui::Text("                  Z"); ImGui::SameLine(); ImGui::DragFloat("##pos_z", &light.position.z, speed, min, max, format, flags);
 
         ImGui::NewLine();
-        ImGui::Text("        Direction X"); ImGui::SameLine(); ImGui::DragFloat("##dir_x", &light.direction.x, light_direction_drag_speed, light_direction_min, light_direction_max);
-        ImGui::Text("                  Y"); ImGui::SameLine(); ImGui::DragFloat("##dir_y", &light.direction.y, light_direction_drag_speed, light_direction_min, light_direction_max);
-        ImGui::Text("                  Z"); ImGui::SameLine(); ImGui::DragFloat("##dir_z", &light.direction.z, light_direction_drag_speed, light_direction_min, light_direction_max);
+        ImGui::Text("        Direction X"); ImGui::SameLine(); ImGui::DragFloat("##dir_x", &light.direction.x, light_direction_drag_speed, light_direction_min, light_direction_max, format, flags);
+        ImGui::Text("                  Y"); ImGui::SameLine(); ImGui::DragFloat("##dir_y", &light.direction.y, light_direction_drag_speed, light_direction_min, light_direction_max, format, flags);
+        ImGui::Text("                  Z"); ImGui::SameLine(); ImGui::DragFloat("##dir_z", &light.direction.z, light_direction_drag_speed, light_direction_min, light_direction_max, format, flags);
 
         ImGui::NewLine();
-        ImGui::Text("         Size Width"); ImGui::SameLine(); ImGui::DragFloat("##width", &light.size.x);
-        ImGui::Text("             Height"); ImGui::SameLine(); ImGui::DragFloat("##height", &light.size.y);
+        ImGui::Text("         Size Width"); ImGui::SameLine(); ImGui::DragFloat("##width", &light.size.x, speed, min, max, format, flags);
+        ImGui::Text("             Height"); ImGui::SameLine(); ImGui::DragFloat("##height", &light.size.y, speed, min, max, format, flags);
 
         ImGui::NewLine();
-        ImGui::Text("            Color R"); ImGui::SameLine(); ImGui::DragFloat("##color_r", &light.color.r, light_color_drag_speed, light_color_min, light_color_max);
-        ImGui::Text("                  G"); ImGui::SameLine(); ImGui::DragFloat("##color_g", &light.color.g, light_color_drag_speed, light_color_min, light_color_max);
-        ImGui::Text("                  B"); ImGui::SameLine(); ImGui::DragFloat("##color_b", &light.color.b, light_color_drag_speed, light_color_min, light_color_max);
+        ImGui::Text("            Color R"); ImGui::SameLine(); ImGui::DragFloat("##color_r", &light.color.r, light_color_drag_speed, light_color_min, light_color_max, format, flags);
+        ImGui::Text("                  G"); ImGui::SameLine(); ImGui::DragFloat("##color_g", &light.color.g, light_color_drag_speed, light_color_min, light_color_max, format, flags);
+        ImGui::Text("                  B"); ImGui::SameLine(); ImGui::DragFloat("##color_b", &light.color.b, light_color_drag_speed, light_color_min, light_color_max, format, flags);
 
         ImGui::NewLine();
-        ImGui::Text(" Ambient Strength R"); ImGui::SameLine(); ImGui::DragFloat("##as_r", &light.ambient_strength.r, light_strength_speed, light_strength_min, light_strength_max);
-        ImGui::Text("                  G"); ImGui::SameLine(); ImGui::DragFloat("##as_g", &light.ambient_strength.g, light_strength_speed, light_strength_min, light_strength_max);
-        ImGui::Text("                  B"); ImGui::SameLine(); ImGui::DragFloat("##as_b", &light.ambient_strength.b, light_strength_speed, light_strength_min, light_strength_max);
+        ImGui::Text(" Ambient Strength R"); ImGui::SameLine(); ImGui::DragFloat("##as_r", &light.ambient_strength.r, light_strength_speed, light_strength_min, light_strength_max, format, flags);
+        ImGui::Text("                  G"); ImGui::SameLine(); ImGui::DragFloat("##as_g", &light.ambient_strength.g, light_strength_speed, light_strength_min, light_strength_max, format, flags);
+        ImGui::Text("                  B"); ImGui::SameLine(); ImGui::DragFloat("##as_b", &light.ambient_strength.b, light_strength_speed, light_strength_min, light_strength_max, format, flags);
 
         ImGui::NewLine();
-        ImGui::Text(" Diffuse Strength R"); ImGui::SameLine(); ImGui::DragFloat("##ds_r", &light.diffuse_strength.r, light_strength_speed, light_strength_min, light_strength_max);
-        ImGui::Text("                  G"); ImGui::SameLine(); ImGui::DragFloat("##ds_g", &light.diffuse_strength.g, light_strength_speed, light_strength_min, light_strength_max);
-        ImGui::Text("                  B"); ImGui::SameLine(); ImGui::DragFloat("##ds_b", &light.diffuse_strength.b, light_strength_speed, light_strength_min, light_strength_max);
+        ImGui::Text(" Diffuse Strength R"); ImGui::SameLine(); ImGui::DragFloat("##ds_r", &light.diffuse_strength.r, light_strength_speed, light_strength_min, light_strength_max, format, flags);
+        ImGui::Text("                  G"); ImGui::SameLine(); ImGui::DragFloat("##ds_g", &light.diffuse_strength.g, light_strength_speed, light_strength_min, light_strength_max, format, flags);
+        ImGui::Text("                  B"); ImGui::SameLine(); ImGui::DragFloat("##ds_b", &light.diffuse_strength.b, light_strength_speed, light_strength_min, light_strength_max, format, flags);
 
         ImGui::NewLine();
-        ImGui::Text("Specular Strength R"); ImGui::SameLine(); ImGui::DragFloat("##ss_r", &light.specular_strength.r, light_strength_speed, light_strength_min, light_strength_max);
-        ImGui::Text("                  G"); ImGui::SameLine(); ImGui::DragFloat("##ss_g", &light.specular_strength.g, light_strength_speed, light_strength_min, light_strength_max);
-        ImGui::Text("                  B"); ImGui::SameLine(); ImGui::DragFloat("##ss_b", &light.specular_strength.b, light_strength_speed, light_strength_min, light_strength_max);
+        ImGui::Text("Specular Strength R"); ImGui::SameLine(); ImGui::DragFloat("##ss_r", &light.specular_strength.r, light_strength_speed, light_strength_min, light_strength_max, format, flags);
+        ImGui::Text("                  G"); ImGui::SameLine(); ImGui::DragFloat("##ss_g", &light.specular_strength.g, light_strength_speed, light_strength_min, light_strength_max, format, flags);
+        ImGui::Text("                  B"); ImGui::SameLine(); ImGui::DragFloat("##ss_b", &light.specular_strength.b, light_strength_speed, light_strength_min, light_strength_max, format, flags);
     },
         [&](arcadia::point_light& light)
     {
@@ -466,40 +764,39 @@ void arcadia::imgui_window_property::_display_light_component()
         ImGui::SeparatorText("Point Light");
 
         ImGui::NewLine();
-        ImGui::Text("         Position X"); ImGui::SameLine(); ImGui::DragFloat("##pos_x", &light.position.x);
-        ImGui::Text("                  Y"); ImGui::SameLine(); ImGui::DragFloat("##pos_y", &light.position.y);
-        ImGui::Text("                  Z"); ImGui::SameLine(); ImGui::DragFloat("##pos_z", &light.position.z);
+        ImGui::Text("         Position X"); ImGui::SameLine(); ImGui::DragFloat("##pos_x", &light.position.x, speed, min, max, format, flags);
+        ImGui::Text("                  Y"); ImGui::SameLine(); ImGui::DragFloat("##pos_y", &light.position.y, speed, min, max, format, flags);
+        ImGui::Text("                  Z"); ImGui::SameLine(); ImGui::DragFloat("##pos_z", &light.position.z, speed, min, max, format, flags);
 
         ImGui::NewLine();
-        ImGui::Text("Attenuation Contant"); ImGui::SameLine(); ImGui::DragFloat("##k0", &light.attenuation_coefs.x);
-        ImGui::Text("             Linear"); ImGui::SameLine(); ImGui::DragFloat("##k1", &light.attenuation_coefs.y);
-        ImGui::Text("          Quadratic"); ImGui::SameLine(); ImGui::DragFloat("##k2", &light.attenuation_coefs.z);
+        ImGui::Text("Attenuation Contant"); ImGui::SameLine(); ImGui::DragFloat("##k0", &light.attenuation_coefs.x, speed, min, max, format, flags);
+        ImGui::Text("             Linear"); ImGui::SameLine(); ImGui::DragFloat("##k1", &light.attenuation_coefs.y, speed, min, max, format, flags);
+        ImGui::Text("          Quadratic"); ImGui::SameLine(); ImGui::DragFloat("##k2", &light.attenuation_coefs.z, speed, min, max, format, flags);
 
         ImGui::NewLine();
-        ImGui::Text("            Color R"); ImGui::SameLine(); ImGui::DragFloat("##color_r", &light.color.r, light_color_drag_speed, light_color_min, light_color_max);
-        ImGui::Text("                  G"); ImGui::SameLine(); ImGui::DragFloat("##color_g", &light.color.g, light_color_drag_speed, light_color_min, light_color_max);
-        ImGui::Text("                  B"); ImGui::SameLine(); ImGui::DragFloat("##color_b", &light.color.b, light_color_drag_speed, light_color_min, light_color_max);
+        ImGui::Text("            Color R"); ImGui::SameLine(); ImGui::DragFloat("##color_r", &light.color.r, light_color_drag_speed, light_color_min, light_color_max, format, flags);
+        ImGui::Text("                  G"); ImGui::SameLine(); ImGui::DragFloat("##color_g", &light.color.g, light_color_drag_speed, light_color_min, light_color_max, format, flags);
+        ImGui::Text("                  B"); ImGui::SameLine(); ImGui::DragFloat("##color_b", &light.color.b, light_color_drag_speed, light_color_min, light_color_max, format, flags);
 
         ImGui::NewLine();
-        ImGui::Text(" Ambient Strength R"); ImGui::SameLine(); ImGui::DragFloat("##as_r", &light.ambient_strength.r, light_strength_speed, light_strength_min, light_strength_max);
-        ImGui::Text("                  G"); ImGui::SameLine(); ImGui::DragFloat("##as_g", &light.ambient_strength.g, light_strength_speed, light_strength_min, light_strength_max);
-        ImGui::Text("                  B"); ImGui::SameLine(); ImGui::DragFloat("##as_b", &light.ambient_strength.b, light_strength_speed, light_strength_min, light_strength_max);
+        ImGui::Text(" Ambient Strength R"); ImGui::SameLine(); ImGui::DragFloat("##as_r", &light.ambient_strength.r, light_strength_speed, light_strength_min, light_strength_max, format, flags);
+        ImGui::Text("                  G"); ImGui::SameLine(); ImGui::DragFloat("##as_g", &light.ambient_strength.g, light_strength_speed, light_strength_min, light_strength_max, format, flags);
+        ImGui::Text("                  B"); ImGui::SameLine(); ImGui::DragFloat("##as_b", &light.ambient_strength.b, light_strength_speed, light_strength_min, light_strength_max, format, flags);
 
         ImGui::NewLine();
-        ImGui::Text(" Diffuse Strength R"); ImGui::SameLine(); ImGui::DragFloat("##ds_r", &light.diffuse_strength.r, light_strength_speed, light_strength_min, light_strength_max);
-        ImGui::Text("                  G"); ImGui::SameLine(); ImGui::DragFloat("##ds_g", &light.diffuse_strength.g, light_strength_speed, light_strength_min, light_strength_max);
-        ImGui::Text("                  B"); ImGui::SameLine(); ImGui::DragFloat("##ds_b", &light.diffuse_strength.b, light_strength_speed, light_strength_min, light_strength_max);
+        ImGui::Text(" Diffuse Strength R"); ImGui::SameLine(); ImGui::DragFloat("##ds_r", &light.diffuse_strength.r, light_strength_speed, light_strength_min, light_strength_max, format, flags);
+        ImGui::Text("                  G"); ImGui::SameLine(); ImGui::DragFloat("##ds_g", &light.diffuse_strength.g, light_strength_speed, light_strength_min, light_strength_max, format, flags);
+        ImGui::Text("                  B"); ImGui::SameLine(); ImGui::DragFloat("##ds_b", &light.diffuse_strength.b, light_strength_speed, light_strength_min, light_strength_max, format, flags);
 
         ImGui::NewLine();
-        ImGui::Text("Specular Strength R"); ImGui::SameLine(); ImGui::DragFloat("##ss_r", &light.specular_strength.r, light_strength_speed, light_strength_min, light_strength_max);
-        ImGui::Text("                  G"); ImGui::SameLine(); ImGui::DragFloat("##ss_g", &light.specular_strength.g, light_strength_speed, light_strength_min, light_strength_max);
-        ImGui::Text("                  B"); ImGui::SameLine(); ImGui::DragFloat("##ss_b", &light.specular_strength.b, light_strength_speed, light_strength_min, light_strength_max);
+        ImGui::Text("Specular Strength R"); ImGui::SameLine(); ImGui::DragFloat("##ss_r", &light.specular_strength.r, light_strength_speed, light_strength_min, light_strength_max, format, flags);
+        ImGui::Text("                  G"); ImGui::SameLine(); ImGui::DragFloat("##ss_g", &light.specular_strength.g, light_strength_speed, light_strength_min, light_strength_max, format, flags);
+        ImGui::Text("                  B"); ImGui::SameLine(); ImGui::DragFloat("##ss_b", &light.specular_strength.b, light_strength_speed, light_strength_min, light_strength_max, format, flags);
 
     }
     );
 
     ImGui::PopItemWidth();
-
     ImGui::EndGroup();
 }
 
@@ -510,9 +807,15 @@ void arcadia::imgui_window_property::_display_model_component()
         return;
     }
 
+    const float speed = 1.f;
+    const float min = .0f;
+    const float max = 1.f;
+    const char* format = "%.3f";
+    const auto flags =
+        ImGuiSliderFlags_AlwaysClamp;
+
     auto& model_comp = _get_component<arcadia::model_component>();
     ImGui::BeginGroup();
-
     ImGui::PushItemWidth(200.f);
 
     ImGui::SeparatorText("Model");
@@ -537,30 +840,113 @@ void arcadia::imgui_window_property::_display_model_component()
     }
 
     ImGui::NewLine();
-    ImGui::Text("Location X"); ImGui::SameLine(); ImGui::DragFloat("##location_x", &model_comp.location.x);
-    ImGui::Text("         Y"); ImGui::SameLine(); ImGui::DragFloat("##location_y", &model_comp.location.y);
-    ImGui::Text("         Z"); ImGui::SameLine(); ImGui::DragFloat("##location_z", &model_comp.location.z);
+    ImGui::Text("Location X"); ImGui::SameLine(); ImGui::DragFloat("##location_x", &model_comp.location.x, speed, min, max, format, flags);
+    ImGui::Text("         Y"); ImGui::SameLine(); ImGui::DragFloat("##location_y", &model_comp.location.y, speed, min, max, format, flags);
+    ImGui::Text("         Z"); ImGui::SameLine(); ImGui::DragFloat("##location_z", &model_comp.location.z, speed, min, max, format, flags);
 
     ImGui::NewLine();
     float rotation_drag_speed{ .05f };
-    ImGui::Text("Rotation X"); ImGui::SameLine(); ImGui::DragFloat("##rotation_x", &model_comp.rotation.x, rotation_drag_speed);
-    ImGui::Text("         Y"); ImGui::SameLine(); ImGui::DragFloat("##rotation_y", &model_comp.rotation.y, rotation_drag_speed);
-    ImGui::Text("         Z"); ImGui::SameLine(); ImGui::DragFloat("##rotation_z", &model_comp.rotation.z, rotation_drag_speed);
+    ImGui::Text("Rotation X"); ImGui::SameLine(); ImGui::DragFloat("##rotation_x", &model_comp.rotation.x, rotation_drag_speed, min, max, format, flags);
+    ImGui::Text("         Y"); ImGui::SameLine(); ImGui::DragFloat("##rotation_y", &model_comp.rotation.y, rotation_drag_speed, min, max, format, flags);
+    ImGui::Text("         Z"); ImGui::SameLine(); ImGui::DragFloat("##rotation_z", &model_comp.rotation.z, rotation_drag_speed, min, max, format, flags);
 
     ImGui::NewLine();
-    ImGui::Text("   Scale X"); ImGui::SameLine(); ImGui::DragFloat("##scale_x", &model_comp.scale.x);
-    ImGui::Text("         Y"); ImGui::SameLine(); ImGui::DragFloat("##scale_y", &model_comp.scale.y);
-    ImGui::Text("         Z"); ImGui::SameLine(); ImGui::DragFloat("##scale_z", &model_comp.scale.z);
+    ImGui::Text("   Scale X"); ImGui::SameLine(); ImGui::DragFloat("##scale_x", &model_comp.scale.x, speed, min, max, format, flags);
+    ImGui::Text("         Y"); ImGui::SameLine(); ImGui::DragFloat("##scale_y", &model_comp.scale.y, speed, min, max, format, flags);
+    ImGui::Text("         Z"); ImGui::SameLine(); ImGui::DragFloat("##scale_z", &model_comp.scale.z, speed, min, max, format, flags);
 
     ImGui::NewLine();
-    ImGui::Text("   Pivot X"); ImGui::SameLine(); ImGui::DragFloat("##pivot_x", &model_comp.pivot.x);
-    ImGui::Text("         Y"); ImGui::SameLine(); ImGui::DragFloat("##pivot_y", &model_comp.pivot.y);
-    ImGui::Text("         Z"); ImGui::SameLine(); ImGui::DragFloat("##pivot_z", &model_comp.pivot.z);
+    ImGui::Text("   Pivot X"); ImGui::SameLine(); ImGui::DragFloat("##pivot_x", &model_comp.pivot.x, speed, min, max, format, flags);
+    ImGui::Text("         Y"); ImGui::SameLine(); ImGui::DragFloat("##pivot_y", &model_comp.pivot.y, speed, min, max, format, flags);
+    ImGui::Text("         Z"); ImGui::SameLine(); ImGui::DragFloat("##pivot_z", &model_comp.pivot.z, speed, min, max, format, flags);
 
     ImGui::PopItemWidth();
-
     ImGui::EndGroup();
 
+}
+
+void arcadia::imgui_window_property::_display_physics_component()
+{
+    if(!_contains_component<arcadia::physics_component>())
+    {
+        return;
+    }
+
+    auto& physics_comp = _get_component<arcadia::physics_component>();
+    ImGui::BeginGroup();
+    ImGui::PushItemWidth(200.f);
+
+    ImGui::SeparatorText("Physics");
+
+    _imgui_window_popup_physics_component_create_body(physics_comp);
+    if(physics_comp.has_identifiable_jph_body_info())
+    {
+        const auto& [uuid, jph_body_info] = physics_comp.get_identifiable_jph_body_info();
+
+        ImGui::Text("Initial state");
+        ImGui::Text(std::format("Position: {}", arcadia::from_jph_vec3(jph_body_info.jph_position)).c_str());
+        ImGui::Text(std::format("Rotation: {}", arcadia::from_jph_quat(jph_body_info.jph_rotation)).c_str());
+        ImGui::Text(std::format(
+            "Motion Type: {}",
+            arcadia::match<std::string>(
+                jph_body_info.jph_motion_type,
+                JPH::EMotionType::Static,
+                [&]()
+        {
+            return "Static";
+        },
+                JPH::EMotionType::Dynamic,
+                [&]()
+        {
+            return "Dynamic";
+        },
+                JPH::EMotionType::Kinematic,
+                [&]()
+        {
+            return "Kinematic";
+        }
+            )
+        ).c_str());
+        ImGui::Text(std::format("Object Layer: {}", jph_body_info.jph_object_layer).c_str());
+        ImGui::Text("Shape Info");
+        arcadia::match<void>(
+            jph_body_info.jph_shape_info,
+            [&](const arcadia::physics_component::jph_box_shape_info& info)
+        {
+            ImGui::Text(std::format("Half Extent: {}", arcadia::from_jph_vec3(info.half_extent)).c_str());
+            ImGui::Text(std::format("Convex Radius: {}", info.convex_radius).c_str());
+        },
+            [&](const arcadia::physics_component::jph_capsule_shape_info& info)
+        {
+            ImGui::Text(std::format("Radius: {}", info.radius).c_str());
+            ImGui::Text(std::format("Half Height of Cylinder: {}", info.half_height_of_cylinder).c_str());
+        },
+            [&](const arcadia::physics_component::jph_cylinder_shape_info& info)
+        {
+            ImGui::Text(std::format("Half Height: {}", info.half_height).c_str());
+            ImGui::Text(std::format("Radius: {}", info.radius).c_str());
+            ImGui::Text(std::format("Convex Radius: {}", info.convex_radius).c_str());
+        },
+            [&](const arcadia::physics_component::jph_sphere_shape_info& info)
+        {
+            ImGui::Text(std::format("Radius: {}", info.radius).c_str());
+        }
+        );
+        if(ImGui::Button("Recreate Body"))
+        {
+            _imgui_window_popup_physics_component_create_body.open = true;
+        }
+    }
+    else
+    {
+        if(ImGui::Button("Create Body"))
+        {
+            _imgui_window_popup_physics_component_create_body.open = true;
+        }
+    }
+
+    ImGui::PopItemWidth();
+    ImGui::EndGroup();
 }
 
 void arcadia::imgui_window_property::_on_open_imgui_window(arcadia::event::open_imgui_window& e)

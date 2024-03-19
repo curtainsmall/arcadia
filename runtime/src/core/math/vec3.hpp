@@ -19,11 +19,11 @@ namespace arcadia
         }
         ARCADIA_API inline auto from_json(const nlohmann::json& json) -> glm::vec3
         {
-            glm::vec3 vec{};
-            vec.x = json.at("x");
-            vec.y = json.at("y");
-            vec.z = json.at("z");
-            return vec;
+            return glm::vec3{
+                json.at("x"),
+                json.at("y"),
+                json.at("z")
+            };
         }
 
         ARCADIA_API constexpr auto zero() -> glm::vec3
@@ -68,11 +68,11 @@ namespace arcadia
         }
         ARCADIA_API inline auto from_json(const nlohmann::json& json) -> glm::dvec3
         {
-            glm::dvec3 vec{};
-            vec.x = json.at("x");
-            vec.y = json.at("y");
-            vec.z = json.at("z");
-            return vec;
+            return glm::dvec3{
+                json.at("x"),
+                json.at("y"),
+                json.at("z")
+            };
         }
 
         ARCADIA_API constexpr auto zero() -> glm::dvec3
@@ -117,11 +117,11 @@ namespace arcadia
         }
         ARCADIA_API inline auto from_json(const nlohmann::json& json) -> glm::ivec3
         {
-            glm::ivec3 vec{};
-            vec.x = json.at("x");
-            vec.y = json.at("y");
-            vec.z = json.at("z");
-            return vec;
+            return glm::ivec3{
+                json.at("x"),
+                json.at("y"),
+                json.at("z")
+            };
         }
     }
 
@@ -137,11 +137,11 @@ namespace arcadia
         }
         ARCADIA_API inline auto from_json(const nlohmann::json& json) -> glm::uvec3
         {
-            glm::uvec3 vec{};
-            vec.x = json.at("x");
-            vec.y = json.at("y");
-            vec.z = json.at("z");
-            return vec;
+            return glm::uvec3{
+                json.at("x"),
+                json.at("y"),
+                json.at("z")
+            };
         }
     }
 }

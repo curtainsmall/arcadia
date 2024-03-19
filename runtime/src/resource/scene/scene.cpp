@@ -2,31 +2,29 @@
 #include "scene.hpp"
 
 #include"resource/component/camera_component/camera_component.hpp"
+#include"resource/component/light_component/light_component.hpp"
 #include"resource/component/model_component/model_component.hpp"
+#include"resource/component/physics_component/physics_component.hpp"
 
-/* Json of scene is in pattern:
+
+/* Json object of scene is in pattern:
     {
         "name": <scene_name>,
-        "entity":
+        "entities":
         {
-            "<entity1>":
+            "<entity_name_1>":
             {
-                "tag": <tag_component_json_object1>,
-                "model": <model_component_json_object>,
+                <component_type_str>: <component_json_object>,
                 ...
             },
-            "<entity2>":
+            "<entity_name_2>":
             {
-                "tag": <tag_component_json_object2>,
-                "camera": <camera_component_json_object>,
+                <component_type_str>: <component_json_object>,
                 ...
             },
             ...
         }
     }
-    where *_component_json_object(s) are optional except tag_component_json_object.
-    For c++ struct `*_component` where `*` is the actual type name, `*` is used as the key in JSON object.
-    For example, JSON object key for `tag_component` is `tag`.
 */
 
 arcadia::scene::scene(const nlohmann::json& json):
@@ -46,19 +44,24 @@ arcadia::scene::scene(const nlohmann::json& json):
             arcadia::match<void>(
                 json_comp_type_str,
                 arcadia::model_component::get_type_str_static(),
-                [&]() -> void
+                [&]()
             {
                 emplace_component<arcadia::model_component>(entity, json_comp);
             },
                 arcadia::light_component::get_type_str_static(),
-                [&]() -> void
+                [&]()
             {
                 emplace_component<arcadia::light_component>(entity, json_comp);
             },
                 arcadia::camera_component::get_type_str_static(),
-                [&]() -> void
+                [&]()
             {
                 emplace_component<arcadia::camera_component>(entity, json_comp);
+            },
+                arcadia::physics_component::get_type_str_static(),
+                [&]()
+            {
+                emplace_component<arcadia::physics_component>(entity, json_comp);
             }
             );
         }
@@ -85,7 +88,8 @@ auto arcadia::scene::to_json() const -> nlohmann::json
     json_scene_add_component_to_entity_helper{ *this,json.at("entities") }
         .add<arcadia::camera_component>(arcadia::camera_component::get_type_str_static())
         .add<arcadia::light_component>(arcadia::light_component::get_type_str_static())
-        .add<arcadia::model_component>(arcadia::model_component::get_type_str_static());
+        .add<arcadia::model_component>(arcadia::model_component::get_type_str_static())
+        .add<arcadia::physics_component>(arcadia::physics_component::get_type_str_static());
 
     return json;
 }
@@ -95,7 +99,7 @@ auto arcadia::scene::get_name_of_entity(const entt::entity entity) const -> cons
     auto iter = _name_entity_bimap.right.find(entity);
     if(iter == _name_entity_bimap.right.end())
     {
-        throw invalid_entity{ std::format("Cannot find name of entity {}, because it is invalid",arcadia::to_string(entity)) };
+        throw invalid_entity{ std::format("Cannot find name of entity {}, because it is invalid", entity) };
     }
 
     return iter->get_left();
@@ -168,6 +172,6 @@ void arcadia::scene::_check_valid_entity_or_throw(const entt::entity entity) con
 {
     if(!contains_entity(entity))
     {
-        throw invalid_entity{ std::format("Invalid entity: {}",static_cast<entt::id_type>(entity)) };
+        throw invalid_entity{ std::format("Invalid entity: {}",entity) };
     }
 }

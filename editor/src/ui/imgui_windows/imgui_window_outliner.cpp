@@ -1,7 +1,13 @@
 #include "imgui_window_outliner.hpp"
 
+#include"core/event/event.hpp"
 #include"core/file/pfd_header.hpp"
 #include"function/ui/imgui_header.hpp"
+#include"resource/component/camera_component/camera_component.hpp"
+#include"resource/component/light_component/light_component.hpp"
+#include"resource/component/model_component/model_component.hpp"
+#include"resource/component/physics_component/physics_component.hpp"
+#include"resource/component/skybox_component/skybox_component.hpp"
 
 void arcadia::imgui_window_outliner::on_event(arcadia::event_base& event)
 {
@@ -91,6 +97,7 @@ void arcadia::imgui_window_outliner::on_update()
                                 _add_component_menu_item<arcadia::camera_component>(item_count);
                                 _add_component_menu_item<arcadia::light_component>(item_count);
                                 _add_component_menu_item<arcadia::model_component>(item_count);
+                                _add_component_menu_item<arcadia::physics_component>(item_count);
 
                                 if(item_count == 0)
                                 {
@@ -105,6 +112,7 @@ void arcadia::imgui_window_outliner::on_update()
                                 _remove_component_menu_item<arcadia::camera_component>(item_count);
                                 _remove_component_menu_item<arcadia::light_component>(item_count);
                                 _remove_component_menu_item<arcadia::model_component>(item_count);
+                                _remove_component_menu_item<arcadia::physics_component>(item_count);
 
                                 if(item_count == 0)
                                 {

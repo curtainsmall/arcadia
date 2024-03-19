@@ -192,7 +192,7 @@ namespace arcadia
         ARCADIA_EVENT(
             input_cursor_pos,
             arcadia::window_layer*, // Input window
-            glm::dvec2 // Cursor position
+            glm::dvec2 // Cursor jph_position
         );
         ARCADIA_EVENT(
             input_cursor_move,

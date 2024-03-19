@@ -1,7 +1,6 @@
 #pragma once
 
-#include<optional>
-#include<tuple>
+#include<memory>
 #include<vector>
 
 #include"assimp/Importer.hpp"
@@ -19,29 +18,11 @@ namespace arcadia
     struct ARCADIA_API model_component: arcadia::component_base
     {
     public:
-        struct ARCADIA_API identifiable_meshes: arcadia::identifiable_base
-        {
-        public:
-            using meshes_type = std::vector<arcadia::mesh>;
-            using self_type = identifiable_meshes;
-        public:
-            inline identifiable_meshes(meshes_type&& meshes):
-                _meshes(std::move(meshes))
-            {}
-
-            [[nodiscard]]
-            inline auto get_meshes() const -> const meshes_type&
-            {
-                return _meshes;
-            }
-
-        private:
-            meshes_type _meshes{};
-        };
+        using identifiable_meshes = arcadia::basic_identifiable<std::vector<arcadia::mesh>>;
 
         using self_type = model_component;
     public:
-        ARCADIA_COMPONENT_TYPE_STR_GETERS("model");
+        ARCADIA_COMPONENT_TYPE_STR_GETTERS("model");
 
         model_component() = default;
         model_component(const std::filesystem::path& filepath);
@@ -56,13 +37,13 @@ namespace arcadia
         [[nodiscard]]
         inline auto has_identifiable_meshes() const -> bool
         {
-            return _meshes_opt.has_value();
+            return _identifiable_meshes_uptr.get();
         }
 
         [[nodiscard]]
         inline auto get_identifiable_meshes() const -> const identifiable_meshes&
         {
-            return *_meshes_opt;
+            return *_identifiable_meshes_uptr;
         }
 
         [[nodiscard]]
@@ -98,7 +79,7 @@ namespace arcadia
         glm::vec3 pivot{ arcadia::vec3::zero() };
 
     private:
-        std::optional<identifiable_meshes> _meshes_opt{};
+        std::unique_ptr<identifiable_meshes> _identifiable_meshes_uptr{};
         std::filesystem::path _filepath{};
     };
 }

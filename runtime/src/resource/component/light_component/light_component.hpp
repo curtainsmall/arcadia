@@ -1,6 +1,6 @@
 #pragma once
 
-#include<variant>
+#include<memory>
 
 #include"core/base.hpp"
 #include"core/math.hpp"
@@ -68,7 +68,7 @@ namespace arcadia
     public:
         using self_type = light_component;
     public:
-        ARCADIA_COMPONENT_TYPE_STR_GETERS("light");
+        ARCADIA_COMPONENT_TYPE_STR_GETTERS("light");
 
         light_component() = default;
         light_component(const nlohmann::json& json);
