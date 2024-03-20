@@ -19,7 +19,7 @@ namespace arcadia
         virtual ~editor_app_layer() = default;
 
         virtual void on_event(arcadia::event_base& event) override;
-        virtual void on_update(delta_time_type delta_time) override;
+        virtual void on_update() override;
     private:
         void _imgui_window_installer(arcadia::imgui_layer& imgui_layer);
         void _stop();

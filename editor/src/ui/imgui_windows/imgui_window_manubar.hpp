@@ -5,6 +5,8 @@
 
 #include"core/base.hpp"
 #include"core/event/event.hpp"
+#include"function/physics/physics_simulator.hpp"
+#include"function/render/renderer.hpp"
 #include"function/ui/imgui_window.hpp"
 
 #include"project/project.hpp"
@@ -70,6 +72,7 @@ namespace arcadia
         arcadia::imgui_window_popup_create_scene _imgui_window_popup_create_scene{};
 
         std::weak_ptr<const arcadia::project> _project_wptr{};
+
         std::vector<std::tuple<std::string, std::string>> _imgui_window_title_and_id_str_pairs{};
     };
 }

@@ -30,13 +30,14 @@ void arcadia::imgui_window_outliner::on_update()
 
     auto& event_queue = arcadia::event_queue::instance();
 
-    auto imgui_title = has_scene
+    auto imgui_window_title = has_scene
         ? _title + " - " + scene_sptr->get_name() + get_id_str()
         : _title + get_id_str();
 
+    ImGui::SetNextWindowSize(glm::vec2{ 1024,768 }, ImGuiCond_Once);
     auto window_flags =
         ImGuiWindowFlags_NoCollapse;
-    if(ImGui::Begin(imgui_title.c_str(), &_open, window_flags))
+    if(ImGui::Begin(imgui_window_title.c_str(), &_open, window_flags))
     {
         if(has_scene && ImGui::BeginPopupContextWindow())
         {

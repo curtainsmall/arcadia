@@ -51,7 +51,7 @@ arcadia::editor_app_layer::editor_app_layer()
     app_context.running = true;
 }
 
-void arcadia::editor_app_layer::on_update(delta_time_type delta_time)
+void arcadia::editor_app_layer::on_update()
 {}
 
 void arcadia::editor_app_layer::on_event(arcadia::event_base& event)
@@ -71,12 +71,14 @@ void arcadia::editor_app_layer::_imgui_window_installer(arcadia::imgui_layer& im
         std::make_tuple("Outliner"s,arcadia::imgui_window_outliner::get_id_str_static()),
         std::make_tuple("Viewport"s,arcadia::imgui_window_viewport::get_id_str_static()),
         std::make_tuple("Property"s,arcadia::imgui_window_property::get_id_str_static()),
+        std::make_tuple("State"s,arcadia::imgui_window_state::get_id_str_static())
     };
     imgui_layer
         .emplace_imgui_window<arcadia::imgui_window_menubar>(true, imgui_window_ids)
         .emplace_imgui_window<arcadia::imgui_window_outliner>(id_strs.contains(arcadia::imgui_window_outliner::get_id_str_static()), "Outliner")
         .emplace_imgui_window<arcadia::imgui_window_viewport>(id_strs.contains(arcadia::imgui_window_viewport::get_id_str_static()), "Viewport")
-        .emplace_imgui_window<arcadia::imgui_window_property>(id_strs.contains(arcadia::imgui_window_property::get_id_str_static()), "Property");
+        .emplace_imgui_window<arcadia::imgui_window_property>(id_strs.contains(arcadia::imgui_window_property::get_id_str_static()), "Property")
+        .emplace_imgui_window<arcadia::imgui_window_state>(id_strs.contains(arcadia::imgui_window_state::get_id_str_static()), "State");
 }
 
 void arcadia::editor_app_layer::_stop()

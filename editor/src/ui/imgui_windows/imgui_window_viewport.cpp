@@ -1,5 +1,6 @@
 #include "imgui_window_viewport.hpp"
 
+#include"core/app/app_context.hpp"
 #include"function/ui/imgui_header.hpp"
 #include"resource/component/camera_component/camera_component.hpp"
 #include"resource/component/model_component/model_component.hpp"
@@ -25,12 +26,15 @@ void arcadia::imgui_window_viewport::on_update()
         return;
     }
 
+    const auto& app_context = arcadia::app_context::instance();
+
     auto project_sptr = _project_wptr.lock();
     std::shared_ptr<const arcadia::scene> scene_sptr = _scene_wptr.lock();
     auto renderer_sptr = _renderer_wptr.lock();
 
     auto imgui_title = _title + get_id_str();
 
+    ImGui::SetNextWindowSize(glm::vec2{ 1024,768 }, ImGuiCond_Once);
     auto window_flags =
         ImGuiWindowFlags_NoCollapse;
     if(ImGui::Begin(imgui_title.c_str(), &_open, window_flags))
@@ -98,10 +102,13 @@ void arcadia::imgui_window_viewport::on_update()
                     }
                 }
 
-                // Display viewport camera info
-                ImGui::SetCursorPos(image_cursor_pos);
-                ImGui::Text(std::format("Camera - Pos: {} - Direction: {}", camera.pos, camera.get_forward_dir()).c_str());
             }
+
+            // Display viewport camera info
+            ImGui::SetCursorPos(image_cursor_pos);
+            ImGui::Text(std::format("Camera - Pos: {} - Direction: {}", camera.pos, camera.get_forward_dir()).c_str());
+            float fps = 1.f / std::chrono::duration_cast<std::chrono::duration<float>>(app_context.delta_time).count();
+            ImGui::Text(std::format("FPS: {:.2f}", fps).c_str());
         }
     }
     ImGui::End();

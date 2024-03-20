@@ -312,6 +312,7 @@ void arcadia::imgui_window_property::on_update()
         ? _title + " - " + scene_sptr->get_name_of_entity(_selected_entity) + get_id_str()
         : _title + get_id_str();
 
+    ImGui::SetNextWindowSize(glm::vec2{ 1024,768 }, ImGuiCond_Once);
     auto window_flags =
         ImGuiWindowFlags_NoCollapse;
     if(ImGui::Begin(imgui_title.c_str(), &_open, window_flags))

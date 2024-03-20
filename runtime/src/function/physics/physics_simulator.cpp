@@ -14,7 +14,8 @@ arcadia::physics_simulator::physics_simulator()
     const unsigned int max_body_pair = 65535;
     const unsigned int max_contact_constraints = 10240;
 
-    _jph_physics_system.Init(max_bodies, num_body_mutexes, max_body_pair, max_contact_constraints, _jph_broad_phase_layer, _jph_object_vs_broad_phase_layer_filter, _jph_object_layer_pair_filter);
+    _jph_physics_system_uptr = std::make_unique<JPH::PhysicsSystem>();
+    _jph_physics_system_uptr->Init(max_bodies, num_body_mutexes, max_body_pair, max_contact_constraints, _jph_broad_phase_layer, _jph_object_vs_broad_phase_layer_filter, _jph_object_layer_pair_filter);
 }
 
 arcadia::physics_simulator::~physics_simulator()
@@ -38,7 +39,7 @@ void arcadia::physics_simulator::finalize()
     _assert_frame_in_build();
     _frame_in_build = false;
 
-    auto& body_interface = _jph_physics_system.GetBodyInterface();
+    auto& body_interface = _jph_physics_system_uptr->GetBodyInterface();
     for(auto iter = _jph_body_id_umap.begin(); iter != _jph_body_id_umap.end();)
     {
         if(!_submitted_body_info_set.contains(iter->first))
@@ -52,7 +53,7 @@ void arcadia::physics_simulator::finalize()
         }
     }
 
-    _jph_physics_system.OptimizeBroadPhase();
+    _jph_physics_system_uptr->OptimizeBroadPhase();
 }
 
 void arcadia::physics_simulator::submit(const arcadia::physics_component& physics_comp)
@@ -64,7 +65,7 @@ void arcadia::physics_simulator::submit(const arcadia::physics_component& physic
         const auto& [uuid, body_info] = physics_comp.get_identifiable_jph_body_info();
         if(!_jph_body_id_umap.contains(uuid))
         {
-            auto& jph_body_interface = _jph_physics_system.GetBodyInterface();
+            auto& jph_body_interface = _jph_physics_system_uptr->GetBodyInterface();
             JPH::ShapeRefC jph_shape_refc = arcadia::match<JPH::Shape*>(
                 body_info.jph_shape_info,
                 [&](const arcadia::physics_component::jph_box_shape_info& info)
@@ -110,7 +111,7 @@ void arcadia::physics_simulator::update()
     JPH::JobSystemThreadPool job_system_thread_pool{ JPH::cMaxPhysicsJobs,JPH::cMaxPhysicsBarriers,static_cast<int>(std::thread::hardware_concurrency() - 1) };
 
 
-    _jph_physics_system.Update(jph_physics_system_delta_time, jph_physics_system_collision_steps, &temp_allocator, &job_system_thread_pool);
+    _jph_physics_system_uptr->Update(1.f / jph_physics_system_updates_per_second, jph_physics_system_collision_steps_per_update, &temp_allocator, &job_system_thread_pool);
 }
 
 void arcadia::physics_simulator::_assert_frame_in_build() const

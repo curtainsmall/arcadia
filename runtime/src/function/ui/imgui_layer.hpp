@@ -39,7 +39,7 @@ namespace arcadia
         }
 
         virtual void on_event(arcadia::event_base& event) override;
-        virtual void on_update(delta_time_type delta_time) override;
+        virtual void on_update() override;
 
         template<arcadia::imgui_window_like ImGuiWindow, class ...Args>
         auto emplace_imgui_window(Args&& ...args) -> self_type&

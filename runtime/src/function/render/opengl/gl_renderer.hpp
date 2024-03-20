@@ -69,7 +69,14 @@ namespace arcadia
 
         virtual void clear() override;
 
+        [[nodiscard]]
         virtual auto get_render_result_id(std::size_t index) const->void* override;
+
+        [[nodiscard]]
+        virtual inline auto get_graphic_api_type() const->arcadia::graphic_api::type override
+        {
+            return arcadia::graphic_api::opengl{ arcadia::version{4, 6, 0} };
+        }
 
     public:
         void _assert_frame_in_build() const;

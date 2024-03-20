@@ -46,7 +46,7 @@ void arcadia::imgui_layer::on_event(arcadia::event_base& event)
     }
 }
 
-void arcadia::imgui_layer::on_update(delta_time_type delta_time)
+void arcadia::imgui_layer::on_update()
 {
     auto window_sptr = _window_wptr.lock();
 

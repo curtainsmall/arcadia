@@ -23,6 +23,8 @@ auto main(
     auto& app_context = arcadia::app_context::instance();
     while(app_context.running)
     {
+        app_context.delta_time = app_context.timer.since_last();
+
         // Process event 
         auto& event_queue = arcadia::event_queue::instance();
         event_queue.swap_queue();
@@ -45,7 +47,7 @@ auto main(
         // Updates
         for(auto& layer_sptr : std::ranges::reverse_view{ arcadia::layer_stack::instance() })
         {
-            layer_sptr->on_update(app_context.timer.since_last());
+            layer_sptr->on_update();
         }
     }
 

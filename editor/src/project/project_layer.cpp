@@ -31,14 +31,17 @@ arcadia::project_layer::project_layer():
     {
     }
     );
-
     event_queue.signal<arcadia::event::renderer_built>(_renderer_sptr);
+
+    _physics_simulator_sptr = std::make_shared<arcadia::physics_simulator>();
+    event_queue.signal<arcadia::event::physics_simulator_built>(_physics_simulator_sptr);
 }
 
 arcadia::project_layer::~project_layer()
 {
     auto& event_queue = arcadia::event_queue::instance();
     event_queue.signal<arcadia::event::renderer_unbuilt>();
+    event_queue.signal<arcadia::event::physics_simulator_unbuilt>();
 }
 
 void arcadia::project_layer::on_event(arcadia::event_base& event)
@@ -62,7 +65,7 @@ void arcadia::project_layer::on_event(arcadia::event_base& event)
         .result();
 }
 
-void arcadia::project_layer::on_update(delta_time_type delta_time)
+void arcadia::project_layer::on_update()
 {}
 
 auto arcadia::project_layer::_get_scene_or_assert() -> arcadia::scene&

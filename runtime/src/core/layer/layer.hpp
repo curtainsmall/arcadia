@@ -16,8 +16,6 @@ namespace arcadia
     struct ARCADIA_API layer_interface: arcadia::noncopyable
     {
     public:
-        using delta_time_type = std::chrono::milliseconds;
-
         using self_type = layer_interface;
     public:
         layer_interface(const std::string& name = "layer");
@@ -34,7 +32,7 @@ namespace arcadia
         virtual void on_event(arcadia::event_base& event) = 0;
 
         /// @brief Update layer
-        virtual void on_update(delta_time_type delta_time) = 0;
+        virtual void on_update() = 0;
 
     private:
         std::string _name{};

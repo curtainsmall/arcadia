@@ -6,6 +6,7 @@
 #include"core/event/event.hpp"
 #include"core/file/file.hpp"
 #include"core/layer/layer.hpp"
+#include"function/physics/physics_simulator.hpp"
 #include"function/render/renderer.hpp"
 #include"function/window/window_events.hpp"
 
@@ -22,7 +23,7 @@ namespace arcadia
         virtual ~project_layer();
 
         virtual void on_event(arcadia::event_base& event) override;
-        virtual void on_update(delta_time_type delta_time) override;
+        virtual void on_update() override;
 
         [[nodiscard]]
         inline auto has_project() const noexcept -> bool
@@ -57,9 +58,11 @@ namespace arcadia
         void _on_remove_component(arcadia::event::remove_component& e);
 
     private:
-        std::shared_ptr<arcadia::project> _project_sptr{};
         std::filesystem::path _project_filepath{};
+        std::shared_ptr<arcadia::project> _project_sptr{};
+
         std::shared_ptr<arcadia::renderer_interface> _renderer_sptr{};
-        std::size_t _project_hash{};
+
+        std::shared_ptr<arcadia::physics_simulator> _physics_simulator_sptr{};
     };
 }

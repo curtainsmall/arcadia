@@ -1,5 +1,6 @@
 #pragma once
 
+#include<memory>
 #include<set>
 #include<unordered_map>
 
@@ -27,6 +28,12 @@ namespace arcadia
         [[nodiscard]]
         virtual auto GetBroadPhaseLayer(JPH::ObjectLayer layer) const->JPH::BroadPhaseLayer override;
 
+        [[nodiscard]]
+        virtual inline auto GetBroadPhaseLayerName(JPH::BroadPhaseLayer inLayer) const -> const char*
+        {
+            return nullptr;
+        }
+
     private:
         JPH::BroadPhaseLayer _object_to_broad_phase[arcadia::jph_object_layers::num_layers];
     };
@@ -41,10 +48,9 @@ namespace arcadia
     struct ARCADIA_API physics_simulator
     {
     public:
-        ARCADIA_EXCEPTION(frame_in_build);
-        ARCADIA_EXCEPTION(frame_not_in_build);
         ARCADIA_EXCEPTION(submit_fail);
 
+        using jph_body_id_umap_type = std::unordered_map<arcadia::uuid, JPH::BodyID>;
         using self_type = physics_simulator;
     public:
         physics_simulator();
@@ -57,24 +63,30 @@ namespace arcadia
 
         void update();
 
+        [[nodiscard]]
+        inline auto get_jph_body_id_umap() const -> const jph_body_id_umap_type&
+        {
+            return _jph_body_id_umap;
+        }
+
     private:
         void _assert_frame_in_build() const;
         void _assert_frame_not_in_build() const;
     public:
         JPH::uint jph_temp_allocator_size{ 10 * 1024 * 1024 };
 
-        float jph_physics_system_delta_time{ 1.f / 60.f };
-        int jph_physics_system_collision_steps{ 1 };
+        int jph_physics_system_updates_per_second{ 60 };
+        int jph_physics_system_collision_steps_per_update{ 1 };
     private:
         bool _frame_in_build{ false };
 
-        std::unordered_map<arcadia::uuid, JPH::BodyID> _jph_body_id_umap{};
+        jph_body_id_umap_type _jph_body_id_umap{};
         std::set<arcadia::uuid> _submitted_body_info_set{};
 
         arcadia::jph_broad_phase_layer_impl _jph_broad_phase_layer{};
         arcadia::jph_object_vs_broad_phase_layer_filter_impl _jph_object_vs_broad_phase_layer_filter{};
         arcadia::jph_object_layer_pair_filter_impl _jph_object_layer_pair_filter{};
 
-        JPH::PhysicsSystem _jph_physics_system{};
+        std::unique_ptr<JPH::PhysicsSystem> _jph_physics_system_uptr{};
     };
 }

@@ -159,6 +159,7 @@
     <ClInclude Include="src\ui\imgui_windows\imgui_window_manubar.hpp" />
     <ClInclude Include="src\ui\imgui_windows\imgui_window_outliner.hpp" />
     <ClInclude Include="src\ui\imgui_windows\imgui_window_property.hpp" />
+    <ClInclude Include="src\ui\imgui_windows\imgui_window_state.hpp" />
     <ClInclude Include="src\ui\imgui_windows\imgui_window_viewport.hpp" />
     <ClInclude Include="src\ui\ui_events.hpp" />
   </ItemGroup>
@@ -171,6 +172,7 @@
     <ClCompile Include="src\ui\imgui_windows\imgui_window_manubar.cpp" />
     <ClCompile Include="src\ui\imgui_windows\imgui_window_outliner.cpp" />
     <ClCompile Include="src\ui\imgui_windows\imgui_window_property.cpp" />
+    <ClCompile Include="src\ui\imgui_windows\imgui_window_state.cpp" />
     <ClCompile Include="src\ui\imgui_windows\imgui_window_viewport.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

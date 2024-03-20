@@ -20,5 +20,6 @@ namespace arcadia
     public:
         bool running{ false };
         arcadia::timer timer{};
+        arcadia::timer::duration_type delta_time{};
     };
 }

@@ -80,7 +80,7 @@ arcadia::window_layer::~window_layer()
 void arcadia::window_layer::on_event(arcadia::event_base& event)
 {}
 
-void arcadia::window_layer::on_update(delta_time_type delta_time)
+void arcadia::window_layer::on_update()
 {
     _swap_buffers();
 

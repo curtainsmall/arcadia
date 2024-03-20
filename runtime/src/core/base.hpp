@@ -14,10 +14,7 @@
 
 #include"platform/base.hpp"
 
-#define ARCADIA_DEBUG 1
-#if !defined(NDEBUG) && ARCADIA_DEBUG
-#   define ARCADIA_IN_DEBUG
-#endif
+
 
 #define ARCADIA_ASSERT(x) assert(x)
 

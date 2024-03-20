@@ -1,5 +1,13 @@
 #pragma once
 
+#include"core/base.hpp"
+
+#ifdef ARCADIA_IN_DEBUG
+#define JPH_FLOATING_POINT_EXCEPTIONS_ENABLED
+#define JPH_PROFILE_ENABLED
+#define JPH_DEBUG_RENDERER
+#endif
+
 #include"Jolt/Jolt.h"
 
 #include"Jolt/Core/Factory.h"
@@ -93,4 +101,6 @@ namespace arcadia
         static constexpr JPH::BroadPhaseLayer moving{ 0 };
         static constexpr std::size_t num_layers{ 2 };
     }
+
 }
+

@@ -8,6 +8,7 @@ namespace arcadia
 {
     struct project;
     struct renderer_interface;
+    struct physics_simulator;
     struct scene;
 
     namespace event
@@ -31,6 +32,17 @@ namespace arcadia
         );
         ARCADIA_EVENT(
             renderer_unbuilt
+        );
+
+        //==== Event for physics simulator ====//
+
+        ARCADIA_EVENT(
+            physics_simulator_built,
+            std::weak_ptr<arcadia::physics_simulator>
+        );
+
+        ARCADIA_EVENT(
+            physics_simulator_unbuilt
         );
 
         //==== Event for scene ====//

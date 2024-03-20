@@ -18,5 +18,10 @@
 #error Arcadia Engine does not support your operating system
 #endif // _WIN32
 
+#define ARCADIA_DEBUG 1
+#if !defined(NDEBUG) && ARCADIA_DEBUG
+#   define ARCADIA_IN_DEBUG
+#endif
+
 
 

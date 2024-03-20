@@ -2,6 +2,7 @@
 
 #include"core/file/pfd_header.hpp"
 #include"function/ui/imgui_header.hpp"
+#include"platform/graphic_api/graphic_api.hpp"
 
 #include"ui/ui_events.hpp"
 
@@ -134,7 +135,8 @@ void arcadia::imgui_window_menubar::on_event(arcadia::event_base& event)
 {
     arcadia::event_dispatcher{ event }
         .dispatch<arcadia::event::project_built>(ARCADIA_BIND_MEMBER_FN(_on_project_built))
-        .dispatch<arcadia::event::project_unbuilt>(ARCADIA_BIND_MEMBER_FN(_on_project_unbuilt));
+        .dispatch<arcadia::event::project_unbuilt>(ARCADIA_BIND_MEMBER_FN(_on_project_unbuilt))
+        .result();
 }
 
 void arcadia::imgui_window_menubar::on_update()
@@ -246,6 +248,7 @@ void arcadia::imgui_window_menubar::_view_menu()
     }
 }
 
+
 void arcadia::imgui_window_menubar::_on_project_built(arcadia::event::project_built& e)
 {
     const auto& [project_wptr] = e.data_tuple;
@@ -256,4 +259,6 @@ void arcadia::imgui_window_menubar::_on_project_unbuilt(arcadia::event::project_
 {
     _project_wptr.reset();
 }
+
+
 

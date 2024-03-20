@@ -31,7 +31,7 @@ namespace arcadia
         }
 
         virtual void on_event(arcadia::event_base& event) override;
-        virtual void on_update(delta_time_type delta_time) override;
+        virtual void on_update() override;
 
         [[nodiscard]]
         auto get_title() const->const std::string&;
