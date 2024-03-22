@@ -27,38 +27,42 @@ namespace arcadia
     public:
         virtual ~renderer_interface() = default;
 
-        /// @brief Begin a new frame
-        /// @details This function signs that a new frame is started to form, any data in the previous frame may be erased (see submit() functions)
-        /// @throw in_build if there is already a frame in build
+        /// @brief Check whether the physcis simulator is in build
+        virtual auto is_in_build() const -> bool = 0;
+
+        /// @brief Start building the renderer
+        /// @details This function signs that the renderer is in build
+        /// @note This function can only be called when the physics simulator is not in build
         virtual void prepare() = 0;
 
-        /// @brief End curtain frame
+        /// @brief Finish building the renderer
         /// @details This function signs that current frame is complete and ready to draw
-        /// @throw not_in_build if there is no frame in build
+        /// @note This function can only be called when the physics simulator is in build
         virtual void finalize() = 0;
 
         /// @brief Submit a camera component to this renderer
-        /// @throw not_in_build if there is no frame in build
+        /// @note This function can only be called when the physics simulator is in build
         virtual void submit(const arcadia::camera_component&) = 0;
 
         /// @brief Submit a light component to this renderer
-        /// @throw not_in_build if there is no frame in build
+        /// @note This function can only be called when the physics simulator is in build
         virtual void submit(const arcadia::light_component&) = 0;
 
         /// @brief Submit a mesh component to this renderer
-        /// @throw not_in_build if there is no frame in build
+        /// @note This function can only be called when the physics simulator is in build
         virtual void submit(const arcadia::model_component&) = 0;
 
         /// @brief Submit a skybox component to this renderer
-        /// @throw not_in_build if there is no frame in build
+        /// @note This function can only be called when the physics simulator is in build
         virtual void submit(const arcadia::skybox_component&) = 0;
 
         /// @brief Draw curtain frame
-        /// @throw in_build if the frame is in build
         /// @throw draw_fail if the draw call failed for any reason
+        /// @note This function can only be called when the physics simulator is not in build
         virtual void draw() = 0;
 
         /// @brief Clear all caches
+        /// @note In normal use of renderer, this function is not needed
         virtual void clear() = 0;
 
         /// @brief Get the render result (the framebuffer) id

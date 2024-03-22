@@ -2,6 +2,7 @@
 
 #include<cassert>
 #include<chrono>
+#include<cmath>
 #include<complex>
 #include<cstddef>
 #include<cstdint>
@@ -13,8 +14,6 @@
 #include<variant>
 
 #include"platform/base.hpp"
-
-
 
 #define ARCADIA_ASSERT(x) assert(x)
 

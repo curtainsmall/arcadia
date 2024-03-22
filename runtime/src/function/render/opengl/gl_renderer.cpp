@@ -16,7 +16,7 @@ arcadia::gl_renderer::gl_renderer(const std::filesystem::path& gl_shader_folder_
 void arcadia::gl_renderer::prepare()
 {
     _assert_frame_not_in_build();
-    _frame_in_build = true;
+    _in_build = true;
 
     // Clear submitted meshes uuids
     _submitted_meshes_uuid_set.clear();
@@ -35,7 +35,7 @@ void arcadia::gl_renderer::prepare()
 void arcadia::gl_renderer::finalize()
 {
     _assert_frame_in_build();
-    _frame_in_build = false;
+    _in_build = false;
 
     // Remove gl_render_unit_mesh-es that have been submitted in previous frames but not in this frame
     for(auto iter = _gl_render_unit_meshes_umap.begin(); iter != _gl_render_unit_meshes_umap.end();)
@@ -379,12 +379,12 @@ auto arcadia::gl_renderer::get_render_result_id(std::size_t index) const -> void
 
 void arcadia::gl_renderer::_assert_frame_in_build() const
 {
-    ARCADIA_ASSERT(_frame_in_build && "Frame is not in build, did you call `prepare()`?");
+    ARCADIA_ASSERT(_in_build && "Frame is not in build, did you call `prepare()`?");
 }
 
 void arcadia::gl_renderer::_assert_frame_not_in_build() const
 {
-    ARCADIA_ASSERT(!_frame_in_build && "Frame is in build, did you call `finalize()`?");
+    ARCADIA_ASSERT(!_in_build && "Frame is in build, did you call `finalize()`?");
 }
 
 auto arcadia::gl_renderer::_create_unit_cube_mesh() const -> std::pair<std::vector<arcadia::vertex>, std::vector<arcadia::mesh::index_type>>

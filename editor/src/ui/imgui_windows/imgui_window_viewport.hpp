@@ -6,6 +6,7 @@
 #include"core/base.hpp"
 #include"core/event/event.hpp"
 #include"function/input/input_events.hpp"
+#include"function/physics/physics_simulator.hpp"
 #include"function/render/renderer.hpp"
 #include"resource/scene/scene.hpp"
 
@@ -43,12 +44,13 @@ namespace arcadia
         void _on_scene_deactivated(arcadia::event::scene_deactivated& e);
         void _on_renderer_built(arcadia::event::renderer_built& e);
         void _on_renderer_unbuilt(arcadia::event::renderer_unbuilt& e);
+        void _on_physics_simulator_built(arcadia::event::physics_simulator_built& e);
+        void _on_physics_simulator_unbuilt(arcadia::event::physics_simulator_unbuilt& e);
     private:
         std::weak_ptr<arcadia::project> _project_wptr{};
         std::weak_ptr<arcadia::scene> _scene_wptr{};
         std::weak_ptr<arcadia::renderer_interface> _renderer_wptr{};
-
-        arcadia::model_component _grid{};
+        std::weak_ptr<arcadia::physics_simulator> _physics_simulator_wptr{};
 
         glm::vec2 _cursor_move{};
     };

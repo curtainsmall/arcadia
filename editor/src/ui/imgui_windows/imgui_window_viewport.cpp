@@ -16,6 +16,8 @@ void arcadia::imgui_window_viewport::on_event(arcadia::event_base& event)
         .dispatch<arcadia::event::scene_deactivated>(ARCADIA_BIND_MEMBER_FN(_on_scene_deactivated))
         .dispatch<arcadia::event::renderer_built>(ARCADIA_BIND_MEMBER_FN(_on_renderer_built))
         .dispatch<arcadia::event::renderer_unbuilt>(ARCADIA_BIND_MEMBER_FN(_on_renderer_unbuilt))
+        .dispatch<arcadia::event::physics_simulator_built>(ARCADIA_BIND_MEMBER_FN(_on_physics_simulator_built))
+        .dispatch<arcadia::event::physics_simulator_unbuilt>(ARCADIA_BIND_MEMBER_FN(_on_physics_simulator_unbuilt))
         .result();
 }
 
@@ -29,8 +31,9 @@ void arcadia::imgui_window_viewport::on_update()
     const auto& app_context = arcadia::app_context::instance();
 
     auto project_sptr = _project_wptr.lock();
-    std::shared_ptr<const arcadia::scene> scene_sptr = _scene_wptr.lock();
+    auto scene_sptr = _scene_wptr.lock();
     auto renderer_sptr = _renderer_wptr.lock();
+    auto physics_simulator_sptr = _physics_simulator_wptr.lock();
 
     auto imgui_title = _title + get_id_str();
 
@@ -49,6 +52,28 @@ void arcadia::imgui_window_viewport::on_update()
         }
         else
         {
+            //==== Physics Simulator ====// 
+            if(physics_simulator_sptr)
+            {
+                physics_simulator_sptr->prepare();
+
+                auto physics_comp_view = scene_sptr->component_view<arcadia::physics_component>();
+                for(auto [entity, physics_comp] : physics_comp_view.each())
+                {
+                    physics_simulator_sptr->submit(physics_comp);
+                }
+
+                physics_simulator_sptr->finalize();
+
+                physics_simulator_sptr->update();
+                for(auto [entity, physics_comp] : physics_comp_view.each())
+                {
+                    physics_simulator_sptr->quary(physics_comp);
+                }
+
+            }
+
+            //==== Renderer ====//
             auto& camera = project_sptr->viewport_camera;
 
             camera.viewport_size = ImGui::GetContentRegionAvail();
@@ -59,24 +84,20 @@ void arcadia::imgui_window_viewport::on_update()
             renderer_sptr->submit(camera);
 
             // Lights
-            const auto& light_comp_view = scene_sptr->component_view<arcadia::light_component>();
-            for(const auto& entity : light_comp_view)
+            auto light_comp_view = scene_sptr->component_view<arcadia::light_component>();
+            for(auto [entity, light_comp] : light_comp_view.each())
             {
-                const auto& [light_comp] = light_comp_view.get(entity);
                 renderer_sptr->submit(light_comp);
             }
 
             // Models
-            //renderer_sptr->submit(_grid);
-            const auto& model_comp_view = scene_sptr->component_view<arcadia::model_component>();
-            for(const auto& entity : model_comp_view)
+            auto model_comp_view = scene_sptr->component_view<arcadia::model_component>();
+            for(auto [entity, model_comp] : model_comp_view.each())
             {
-                const auto& [model_comp] = model_comp_view.get(entity);
                 renderer_sptr->submit(model_comp);
             }
 
             renderer_sptr->finalize();
-
             renderer_sptr->draw();
 
             auto image_cursor_pos = ImGui::GetCursorPos();
@@ -160,4 +181,15 @@ void arcadia::imgui_window_viewport::_on_renderer_built(arcadia::event::renderer
 void arcadia::imgui_window_viewport::_on_renderer_unbuilt(arcadia::event::renderer_unbuilt& e)
 {
     _renderer_wptr.reset();
+}
+
+void arcadia::imgui_window_viewport::_on_physics_simulator_built(arcadia::event::physics_simulator_built& e)
+{
+    const auto& [physics_simulator_wptr] = e.data_tuple;
+    _physics_simulator_wptr = physics_simulator_wptr;
+}
+
+void arcadia::imgui_window_viewport::_on_physics_simulator_unbuilt(arcadia::event::physics_simulator_unbuilt& e)
+{
+    _physics_simulator_wptr.reset();
 }

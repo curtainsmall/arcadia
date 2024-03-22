@@ -84,8 +84,6 @@ void arcadia::project_layer::_save_project()
 
     auto ofs = arcadia::file::create_ofstream(_project_filepath);
     ofs << std::setw(4) << json;
-
-    arcadia::log::debug("Project saved");
 }
 
 void arcadia::project_layer::_load_project()
@@ -96,8 +94,6 @@ void arcadia::project_layer::_load_project()
     auto json = nlohmann::json::parse(ifs);
 
     _project_sptr = std::make_shared<arcadia::project>(json);
-
-    arcadia::log::debug("Project loaded");
 }
 
 void arcadia::project_layer::_on_window_should_close(arcadia::event::window_should_close& e)

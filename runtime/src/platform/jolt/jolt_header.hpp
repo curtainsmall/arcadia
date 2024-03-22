@@ -21,6 +21,7 @@
 #include"Jolt/Physics/Collision/Shape/CylinderShape.h"
 #include"Jolt/Physics/Collision/Shape/SphereShape.h"
 #include"Jolt/Physics/PhysicsSystem.h"
+#include"Jolt/Physics/PhysicsSettings.h"
 #include"Jolt/RegisterTypes.h"
 
 #include"core/math.hpp"
@@ -70,11 +71,11 @@ namespace arcadia
     [[nodiscard]]
     inline auto to_jph_quat(const glm::quat& quat) -> JPH::Quat
     {
-        return {
-            quat.w,
+        return JPH::Quat{
             quat.x,
             quat.y,
-            quat.z
+            quat.z,
+            quat.w
         };
     }
     [[nodiscard]]

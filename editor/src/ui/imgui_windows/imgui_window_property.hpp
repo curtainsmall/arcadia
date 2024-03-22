@@ -25,7 +25,7 @@ namespace arcadia
         bool open{ false };
     private:
         JPH::RVec3 _jph_position{ JPH::RVec3::sZero() };
-        JPH::Quat _jph_rotation{ JPH::Quat::sZero() };
+        JPH::Quat _jph_rotation{ JPH::Quat::sIdentity() };
         JPH::EMotionType _jph_motion_type{ JPH::EMotionType::Static };
         JPH::ObjectLayer _jph_object_layer{ arcadia::jph_object_layers::non_moving };
         arcadia::physics_component::jph_shape_info_type _jph_shape_info{ arcadia::physics_component::jph_box_shape_info{} };

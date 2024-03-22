@@ -1,5 +1,7 @@
 #pragma once
 
+#include"boost/math/special_functions.hpp"
+
 #include"core/base.hpp"
 #include"core/math/glm_header.hpp"
 #include"core/nlohmann_json_header.hpp"
@@ -43,6 +45,29 @@ namespace arcadia
         {
             return -pos_unit_y();
         }
+
+        /// @brief Normalize vector with one axis fixed
+        /// @param vec Vector to normalize
+        /// @param fixed_index Index of fixed axis, must be 0 or 1
+        /// @return Normalized vector
+        ARCADIA_API inline auto fixed_normalize(const glm::vec2& vec, glm::vec2::length_type fixed_idx) -> glm::vec2
+        {
+            ARCADIA_ASSERT(fixed_idx >= 0 && vec.length());
+
+            auto fixed = vec[fixed_idx];
+            auto a = vec[1 - fixed_idx];
+
+            if(a != 0)
+            {
+                a = boost::math::sign(a) * std::sqrt(1 - fixed * fixed);
+            }
+
+            glm::vec2 res{};
+            res[fixed_idx] = fixed;
+            res[1 - fixed_idx] = a;
+            return res;
+        }
+
     }
 
     namespace dvec2
@@ -81,6 +106,28 @@ namespace arcadia
         ARCADIA_API constexpr auto neg_unit_y() -> glm::dvec2
         {
             return -pos_unit_y();
+        }
+
+        /// @brief Normalize vector with one axis fixed
+        /// @param vec Vector to normalize
+        /// @param fixed_index Index of fixed axis, must be 0 or 1
+        /// @return Normalized vector
+        ARCADIA_API inline auto fixed_normalize(const glm::dvec2& vec, glm::dvec2::length_type fixed_index) -> glm::dvec2
+        {
+            ARCADIA_ASSERT(fixed_index >= 0 && fixed_index < vec.length());
+
+            auto fixed = vec[fixed_index];
+            auto a = vec[1 - fixed_index];
+
+            if(a != 0)
+            {
+                a = boost::math::sign(a) * std::sqrt(1 - fixed * fixed);
+            }
+
+            glm::dvec2 res{};
+            res[fixed_index] = fixed;
+            res[1 - fixed_index] = a;
+            return res;
         }
     }
 

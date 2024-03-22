@@ -28,7 +28,7 @@ void arcadia::imgui_window_popup_physics_component_create_body::operator()(arcad
         ImGuiWindowFlags_NoCollapse;
     if(ImGui::BeginPopupModal(imgui_window_title.c_str(), &open, window_flags))
     {
-        float speed = 1.f;
+        float speed = .05f;
         float min = .0f;
         float max = .0f;
         const char* format = "%.3f";
@@ -54,14 +54,30 @@ void arcadia::imgui_window_popup_physics_component_create_body::operator()(arcad
             rot_x = _jph_rotation.GetX(),
             rot_y = _jph_rotation.GetY(),
             rot_z = _jph_rotation.GetZ();
-        ImGui::Text("  Rotation W"); ImGui::SameLine(); ImGui::DragFloat("##rotation_w", &rot_w, speed, min, max, format, slider_flags);
-        ImGui::Text("           X"); ImGui::SameLine(); ImGui::DragFloat("##rotation_x", &rot_x, speed, min, max, format, slider_flags);
-        ImGui::Text("           Y"); ImGui::SameLine(); ImGui::DragFloat("##rotation_y", &rot_y, speed, min, max, format, slider_flags);
-        ImGui::Text("           Z"); ImGui::SameLine(); ImGui::DragFloat("##rotation_z", &rot_z, speed, min, max, format, slider_flags);
-        _jph_rotation.SetW(rot_w);
-        _jph_rotation.SetX(rot_x);
-        _jph_rotation.SetY(rot_y);
-        _jph_rotation.SetZ(rot_z);
+        float
+            rot_speed = .05f,
+            rot_min = -1.f,
+            rot_max = 1.f;
+        ImGui::Text("  Rotation W"); ImGui::SameLine(); ImGui::DragFloat("##rotation_w", &rot_w, rot_speed, rot_min, rot_max, format, slider_flags);
+        ImGui::Text("           X"); ImGui::SameLine(); ImGui::DragFloat("##rotation_x", &rot_x, rot_speed, rot_min, rot_max, format, slider_flags);
+        ImGui::Text("           Y"); ImGui::SameLine(); ImGui::DragFloat("##rotation_y", &rot_y, rot_speed, rot_min, rot_max, format, slider_flags);
+        ImGui::Text("           Z"); ImGui::SameLine(); ImGui::DragFloat("##rotation_z", &rot_z, rot_speed, rot_min, rot_max, format, slider_flags);
+        if(rot_w != _jph_rotation.GetW())
+        {
+            _jph_rotation = arcadia::to_jph_quat(arcadia::quat::fixed_normalize(glm::quat{ rot_w,rot_x,rot_y,rot_z }, 0));
+        }
+        else if(rot_x != _jph_rotation.GetX())
+        {
+            _jph_rotation = arcadia::to_jph_quat(arcadia::quat::fixed_normalize(glm::quat{ rot_w,rot_x,rot_y,rot_z }, 1));
+        }
+        else if(rot_y != _jph_rotation.GetY())
+        {
+            _jph_rotation = arcadia::to_jph_quat(arcadia::quat::fixed_normalize(glm::quat{ rot_w,rot_x,rot_y,rot_z }, 2));
+        }
+        else if(rot_z != _jph_rotation.GetZ())
+        {
+            _jph_rotation = arcadia::to_jph_quat(arcadia::quat::fixed_normalize(glm::quat{ rot_w,rot_x,rot_y,rot_z }, 3));
+        }
 
         // Motion type
         ImGui::NewLine();
@@ -149,15 +165,19 @@ void arcadia::imgui_window_popup_physics_component_create_body::operator()(arcad
                 half_extent_x = info.half_extent.GetX(),
                 half_extent_y = info.half_extent.GetY(),
                 half_extent_z = info.half_extent.GetZ();
-            ImGui::Text("Half Extent X"); ImGui::SameLine(); ImGui::DragFloat("##half_extent_x", &half_extent_x, speed, info.convex_radius, (std::numeric_limits<float>::max)(), format, slider_flags);
-            ImGui::Text("            Y"); ImGui::SameLine(); ImGui::DragFloat("##half_extent_y", &half_extent_y, speed, info.convex_radius, (std::numeric_limits<float>::max)(), format, slider_flags);
-            ImGui::Text("            Z"); ImGui::SameLine(); ImGui::DragFloat("##half_extent_z", &half_extent_z, speed, info.convex_radius, (std::numeric_limits<float>::max)(), format, slider_flags);
+            auto half_extent_min = std::max({ .01f,info.convex_radius });
+            auto half_extent_max = (std::numeric_limits<float>::max)();
+            ImGui::Text("Half Extent X"); ImGui::SameLine(); ImGui::DragFloat("##half_extent_x", &half_extent_x, speed, half_extent_min, half_extent_max, format, slider_flags);
+            ImGui::Text("            Y"); ImGui::SameLine(); ImGui::DragFloat("##half_extent_y", &half_extent_y, speed, half_extent_min, half_extent_max, format, slider_flags);
+            ImGui::Text("            Z"); ImGui::SameLine(); ImGui::DragFloat("##half_extent_z", &half_extent_z, speed, half_extent_min, half_extent_max, format, slider_flags);
             info.half_extent.SetX(half_extent_x);
             info.half_extent.SetY(half_extent_y);
             info.half_extent.SetZ(half_extent_z);
 
             ImGui::NewLine();
-            ImGui::Text("Convex Radius"); ImGui::SameLine(); ImGui::DragFloat("##convex_radius", &info.convex_radius, speed, .0f, std::min({ half_extent_x, half_extent_y, half_extent_z }), format, slider_flags);
+            auto convex_radius_min = .0f;
+            auto convex_radius_max = std::min({ half_extent_x, half_extent_y, half_extent_z });
+            ImGui::Text("Convex Radius"); ImGui::SameLine(); ImGui::DragFloat("##convex_radius", &info.convex_radius, speed, convex_radius_min, convex_radius_max, format, slider_flags);
 
             return _jph_shape_info;
         },
@@ -187,9 +207,14 @@ void arcadia::imgui_window_popup_physics_component_create_body::operator()(arcad
             ImGui::NewLine();
             ImGui::SeparatorText("Capsule Type");
 
-            ImGui::Text("                 Radius"); ImGui::SameLine(); ImGui::DragFloat("##radius", &info.radius, speed, .0f, (std::numeric_limits<float>::max)(), format, slider_flags);
+            auto radius_min = .0f;
+            auto radius_max = (std::numeric_limits<float>::max)();
+            ImGui::Text("                 Radius"); ImGui::SameLine(); ImGui::DragFloat("##radius", &info.radius, speed, radius_min, radius_max, format, slider_flags);
+
             ImGui::NewLine();
-            ImGui::Text("Half Height of Cylinder"); ImGui::SameLine(); ImGui::DragFloat("##half_height_of_cylinder", &info.half_height_of_cylinder, speed, .0f, (std::numeric_limits<float>::max)(), format, slider_flags);
+            auto half_height_of_cylinder_min = .0f;
+            auto half_height_of_cylinder_max = (std::numeric_limits<float>::max)();
+            ImGui::Text("Half Height of Cylinder"); ImGui::SameLine(); ImGui::DragFloat("##half_height_of_cylinder", &info.half_height_of_cylinder, speed, half_height_of_cylinder_min, half_height_of_cylinder_max, format, slider_flags);
 
             return _jph_shape_info;
         },
@@ -219,11 +244,19 @@ void arcadia::imgui_window_popup_physics_component_create_body::operator()(arcad
             ImGui::NewLine();
             ImGui::SeparatorText("Cylinder Shape");
 
-            ImGui::Text("  Half Height"); ImGui::SameLine(); ImGui::DragFloat("##half_height", &info.half_height, speed, .0f, (std::numeric_limits<float>::max)(), format, slider_flags);
+            auto half_height_min = .0f;
+            auto half_height_max = (std::numeric_limits<float>::max)();
+            ImGui::Text("  Half Height"); ImGui::SameLine(); ImGui::DragFloat("##half_height", &info.half_height, speed, half_height_min, half_height_max, format, slider_flags);
+
             ImGui::NewLine();
-            ImGui::Text("       Radius"); ImGui::SameLine(); ImGui::DragFloat("##radius", &info.radius, speed, .0f, (std::numeric_limits<float>::max)(), format, slider_flags);
+            auto radius_min = .0f;
+            auto radius_max = (std::numeric_limits<float>::max)();
+            ImGui::Text("       Radius"); ImGui::SameLine(); ImGui::DragFloat("##radius", &info.radius, speed, radius_min, radius_max, format, slider_flags);
+
             ImGui::NewLine();
-            ImGui::Text("Convex Radius"); ImGui::SameLine(); ImGui::DragFloat("##convex_radius", &info.convex_radius, speed, .0f, (std::numeric_limits<float>::max)(), format, slider_flags);
+            auto convex_radius_min = .0f;
+            auto convex_radius_max = (std::numeric_limits<float>::max)();
+            ImGui::Text("Convex Radius"); ImGui::SameLine(); ImGui::DragFloat("##convex_radius", &info.convex_radius, speed, convex_radius_min, convex_radius_max, format, slider_flags);
 
             return _jph_shape_info;
         },
@@ -253,7 +286,9 @@ void arcadia::imgui_window_popup_physics_component_create_body::operator()(arcad
             ImGui::NewLine();
             ImGui::SeparatorText("Sphere Shape");
 
-            ImGui::Text("   Radius"); ImGui::SameLine(); ImGui::DragFloat("##radius", &info.radius, speed, .0f, (std::numeric_limits<float>::max)(), format, slider_flags);
+            auto radius_min = .0f;
+            auto radius_max = (std::numeric_limits<float>::max)();
+            ImGui::Text("   Radius"); ImGui::SameLine(); ImGui::DragFloat("##radius", &info.radius, speed, radius_min, radius_max, format, slider_flags);
 
             return _jph_shape_info;
         }
@@ -277,7 +312,7 @@ void arcadia::imgui_window_popup_physics_component_create_body::operator()(arcad
             ImGui::CloseCurrentPopup();
             open = false;
             _jph_position = JPH::RVec3::sZero();
-            _jph_rotation = JPH::Quat::sZero();
+            _jph_rotation = JPH::Quat::sIdentity();
             _jph_motion_type = JPH::EMotionType::Static;
             _jph_object_layer = arcadia::jph_object_layers::non_moving;
             _jph_shape_info = arcadia::physics_component::jph_box_shape_info{};

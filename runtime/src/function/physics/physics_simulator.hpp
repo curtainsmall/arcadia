@@ -49,6 +49,7 @@ namespace arcadia
     {
     public:
         ARCADIA_EXCEPTION(submit_fail);
+        ARCADIA_EXCEPTION(quary_fail);
 
         using jph_body_id_umap_type = std::unordered_map<arcadia::uuid, JPH::BodyID>;
         using self_type = physics_simulator;
@@ -56,12 +57,37 @@ namespace arcadia
         physics_simulator();
         ~physics_simulator();
 
+        /// @brief Check whether the physcis simulator is in build
+        [[nodiscard]]
+        inline auto is_in_build() const -> bool
+        {
+            return _in_build;
+        }
+
+        /// @brief Start building the physics simulator
+        /// @details This function signs that the physics simulator is in build
+        /// @note This function can only be called when the physics simulator is not in build
         void prepare();
+
+        /// @brief Finish building the physcis simulator
+        /// @note This function can only be called when the physics simulator is in build
         void finalize();
 
+        /// @brief Submit a physics component to the physics simulator
+        /// @note This function can only be called when the physics simulator is in build
         void submit(const arcadia::physics_component& physics_comp);
 
+        /// @brief Update physcis simulator for one step
+        /// @note This function can only be called when the physics simulator is not in build
         void update();
+
+        /// @brief Quary the updated data of the physics component from the physcis simulator
+        /// @note This function can only be called when the physics simulator is not in build
+        void quary(physics_component& physics_comp);
+
+        /// @brief Clear all caches
+        /// @note In normal use of physics simulator, this function is not needed
+        void clear();
 
         [[nodiscard]]
         inline auto get_jph_body_id_umap() const -> const jph_body_id_umap_type&
@@ -73,12 +99,14 @@ namespace arcadia
         void _assert_frame_in_build() const;
         void _assert_frame_not_in_build() const;
     public:
+        bool should_update{ false };
+
         JPH::uint jph_temp_allocator_size{ 10 * 1024 * 1024 };
 
         int jph_physics_system_updates_per_second{ 60 };
         int jph_physics_system_collision_steps_per_update{ 1 };
     private:
-        bool _frame_in_build{ false };
+        bool _in_build{ false };
 
         jph_body_id_umap_type _jph_body_id_umap{};
         std::set<arcadia::uuid> _submitted_body_info_set{};

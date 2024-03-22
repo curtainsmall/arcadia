@@ -28,7 +28,7 @@ arcadia::physics_simulator::~physics_simulator()
 void arcadia::physics_simulator::prepare()
 {
     _assert_frame_not_in_build();
-    _frame_in_build = true;
+    _in_build = true;
 
     // Clear submitted body uuids
     _submitted_body_info_set.clear();
@@ -37,13 +37,14 @@ void arcadia::physics_simulator::prepare()
 void arcadia::physics_simulator::finalize()
 {
     _assert_frame_in_build();
-    _frame_in_build = false;
+    _in_build = false;
 
     auto& body_interface = _jph_physics_system_uptr->GetBodyInterface();
     for(auto iter = _jph_body_id_umap.begin(); iter != _jph_body_id_umap.end();)
     {
         if(!_submitted_body_info_set.contains(iter->first))
         {
+            body_interface.RemoveBody(iter->second);
             body_interface.DestroyBody(iter->second);
             iter = _jph_body_id_umap.erase(iter);
         }
@@ -107,6 +108,11 @@ void arcadia::physics_simulator::submit(const arcadia::physics_component& physic
 
 void arcadia::physics_simulator::update()
 {
+    if(!should_update)
+    {
+        return;
+    }
+
     JPH::TempAllocatorImpl temp_allocator{ jph_temp_allocator_size };
     JPH::JobSystemThreadPool job_system_thread_pool{ JPH::cMaxPhysicsJobs,JPH::cMaxPhysicsBarriers,static_cast<int>(std::thread::hardware_concurrency() - 1) };
 
@@ -114,14 +120,42 @@ void arcadia::physics_simulator::update()
     _jph_physics_system_uptr->Update(1.f / jph_physics_system_updates_per_second, jph_physics_system_collision_steps_per_update, &temp_allocator, &job_system_thread_pool);
 }
 
+void arcadia::physics_simulator::quary(physics_component& physics_comp)
+{
+    _assert_frame_not_in_build();
+
+    if(physics_comp.has_identifiable_jph_body_info())
+    {
+        const auto& [uuid, prev_body_info] = physics_comp.get_identifiable_jph_body_info();
+        if(_jph_body_id_umap.contains(uuid))
+        {
+            auto& body_interface = _jph_physics_system_uptr->GetBodyInterface();
+            const auto& body_id = _jph_body_id_umap.at(uuid);
+            physics_comp.build_identifiable_jph_body_info(
+                body_interface.GetPosition(body_id),
+                body_interface.GetRotation(body_id),
+                body_interface.GetMotionType(body_id),
+                body_interface.GetObjectLayer(body_id),
+                prev_body_info.jph_shape_info
+            );
+        }
+    }
+}
+
+void arcadia::physics_simulator::clear()
+{
+    _jph_body_id_umap.clear();
+    _submitted_body_info_set.clear();
+}
+
 void arcadia::physics_simulator::_assert_frame_in_build() const
 {
-    ARCADIA_ASSERT(_frame_in_build && "Frame is not in build, did you call `begin_frame()`?");
+    ARCADIA_ASSERT(_in_build && "Frame is not in build, did you call `prepare()`?");
 }
 
 void arcadia::physics_simulator::_assert_frame_not_in_build() const
 {
-    ARCADIA_ASSERT(!_frame_in_build && "Frame is in build, did you call `end_frame()`?");
+    ARCADIA_ASSERT(!_in_build && "Frame is in build, did you call `finalize()`?");
 }
 
 auto arcadia::jph_object_layer_pair_filter_impl::ShouldCollide(JPH::ObjectLayer obj_1, JPH::ObjectLayer obj_2) const -> bool

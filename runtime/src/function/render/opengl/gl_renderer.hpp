@@ -57,16 +57,34 @@ namespace arcadia
         gl_renderer(const std::filesystem::path& gl_shader_folder_path);
         virtual ~gl_renderer() = default;
 
+        /// @copydoc arcadia::renderer::is_in_build
+        [[nodiscard]]
+        virtual inline auto is_in_build() const -> bool override
+        {
+            return _in_build;
+        }
+
+        /// @copydoc arcadia::renderer::prepare
         virtual void prepare() override;
+        /// @copydoc arcadia::renderer::finalize
         virtual void finalize() override;
 
+        /// @copydoc arcadia::renderer::submit
         virtual void submit(const arcadia::camera_component& camera_comp) override;
+
+        /// @copydoc arcadia::renderer::submit
         virtual void submit(const arcadia::light_component& light_comp) override;
+
+        /// @copydoc arcadia::renderer::submit
         virtual void submit(const arcadia::model_component& model_comp) override;
+
+        /// @copydoc arcadia::renderer::submit
         virtual void submit(const arcadia::skybox_component& skybox_comp) override;
 
+        /// @copydoc arcadia::renderer::draw
         virtual void draw() override;
 
+        /// @copydoc arcadia::renderer::clear
         virtual void clear() override;
 
         [[nodiscard]]
@@ -84,7 +102,7 @@ namespace arcadia
 
         auto _create_unit_cube_mesh() const->std::pair<std::vector<arcadia::vertex>, std::vector<arcadia::mesh::index_type>>;
     private:
-        bool _frame_in_build{ false };
+        bool _in_build{ false };
 
         // Meshes
         std::unordered_map<arcadia::uuid, std::vector<arcadia::gl_render_unit_mesh>> _gl_render_unit_meshes_umap{};

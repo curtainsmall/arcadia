@@ -1,7 +1,6 @@
 #pragma once
 
-#define GLM_FORCE_QUAT_DATA_WXYZ
-#include"glm/gtc/quaternion.hpp"
+#include"boost/math/special_functions/sign.hpp"
 
 #include"core/base.hpp"
 #include"core/math/glm_header.hpp"
@@ -37,6 +36,43 @@ namespace arcadia
         ARCADIA_API constexpr auto identity() -> glm::quat
         {
             return glm::quat{ 1.f,.0f,.0f,.0f };
+        }
+
+        /// @brief Normalize quaternion with one axis fixed
+        /// @param vec Quaternion to normalize
+        /// @param fixed_index Index of fixed axis, must be 0, 1, 2 or 3
+        /// @return Normalized quaternion
+        ARCADIA_API inline auto fixed_normalize(const glm::quat& quat, glm::quat::length_type fixed_index) -> glm::quat
+        {
+            ARCADIA_ASSERT(fixed_index >= 0 && fixed_index < quat.length());
+
+            auto fixed = quat[fixed_index];
+            auto a = quat[(fixed_index + 1) % 4];
+            auto b = quat[(fixed_index + 2) % 4];
+            auto c = quat[(fixed_index + 3) % 4];
+
+
+            auto R = std::sqrt(1 - fixed * fixed); // Radius of target cicle
+            auto r = std::sqrt(a * a + b * b + c * c); // Radius of the circle point (a,b,c) is on
+            if(r != 0)
+            {
+                a = a * R / r;
+                b = b * R / r;
+                c = c * R / r;
+            }
+            else
+            {
+                a = R;
+                b = 0;
+                c = 0;
+            }
+
+            glm::quat res{};
+            res[fixed_index] = fixed;
+            res[(fixed_index + 1) % 4] = a;
+            res[(fixed_index + 2) % 4] = b;
+            res[(fixed_index + 3) % 4] = c;
+            return res;
         }
     }
 }

@@ -54,6 +54,38 @@ namespace arcadia
         {
             return -pos_unit_z();
         }
+
+        /// @brief Normalize vector with one axis fixed
+        /// @param vec Vector to normalize
+        /// @param fixed_index Index of fixed axis, must be 0, 1 or 2
+        /// @return Normalized vector
+        ARCADIA_API inline auto fixed_normalize(const glm::vec3& vec, glm::vec3::length_type fixed_index) -> glm::vec3
+        {
+            ARCADIA_ASSERT(fixed_index >= 0 && fixed_index < vec.length());
+
+            auto fixed = vec[fixed_index];
+            auto a = vec[(fixed_index + 1) % 3];
+            auto b = vec[(fixed_index + 2) % 3];
+
+            auto R = std::sqrt(1 - fixed * fixed); // Radius of target cicle
+            auto r = std::sqrt(a * a + b * b); // Radius of the circle point (a,b) is on
+            if(r != 0)
+            {
+                a = a * R / r;
+                b = b * R / r;
+            }
+            else
+            {
+                a = R;
+                b = 0;
+            }
+
+            glm::vec3 res{};
+            res[fixed_index] = fixed;
+            res[(fixed_index + 1) % 3] = a;
+            res[(fixed_index + 2) % 3] = b;
+            return res;
+        }
     }
 
     namespace dvec3
@@ -102,6 +134,38 @@ namespace arcadia
         ARCADIA_API constexpr auto neg_unit_z() -> glm::dvec3
         {
             return -pos_unit_z();
+        }
+
+        /// @brief Normalize vector with one axis fixed
+        /// @param vec Vector to normalize
+        /// @param fixed_index Index of fixed axis, must be 0, 1 or 2
+        /// @return Normalized vector
+        ARCADIA_API inline auto fixed_normalize(const glm::dvec3& vec, glm::dvec3::length_type fixed_index) -> glm::dvec3
+        {
+            ARCADIA_ASSERT(fixed_index >= 0 && fixed_index < vec.length());
+
+            auto fixed = vec[fixed_index];
+            auto a = vec[(fixed_index + 1) % 3];
+            auto b = vec[(fixed_index + 2) % 3];
+
+            auto R = std::sqrt(1 - fixed * fixed); // Radius of target cicle
+            auto r = std::sqrt(a * a + b * b); // Radius of the circle point (a,b) is on
+            if(r != 0)
+            {
+                a = a * R / r;
+                b = b * R / r;
+            }
+            else
+            {
+                a = R;
+                b = 0;
+            }
+
+            glm::dvec3 res{};
+            res[fixed_index] = fixed;
+            res[(fixed_index + 1) % 3] = a;
+            res[(fixed_index + 2) % 3] = b;
+            return res;
         }
     }
 
