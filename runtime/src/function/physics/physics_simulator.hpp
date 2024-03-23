@@ -86,9 +86,8 @@ namespace arcadia
         /// @note This function can only be called when the physics simulator is not in build
         void quary(physics_component& physics_comp);
 
-        /// @brief Clear all caches
-        /// @note In normal use of physics simulator, this function is not needed
-        void clear();
+        /// @brief Reset the physics simulator, all caches will be cleared
+        void reset();
 
         [[nodiscard]]
         inline auto get_jph_body_id_umap() const -> const jph_body_id_umap_type&

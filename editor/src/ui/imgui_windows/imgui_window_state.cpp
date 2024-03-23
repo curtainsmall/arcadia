@@ -70,7 +70,26 @@ void arcadia::imgui_window_state_physics_simulator::operator()(const std::shared
     ImGui::EndDisabled();
 
     ImGui::NewLine();
-    ImGui::Checkbox("Update", &physics_simulator_sptr->should_update);
+    if(physics_simulator_sptr->should_update)
+    {
+        if(ImGui::Button("Stop"))
+        {
+            physics_simulator_sptr->should_update = false;
+        }
+    }
+    else
+    {
+        if(ImGui::Button("Start"))
+        {
+            physics_simulator_sptr->should_update = true;
+        }
+    }
+    ImGui::SameLine();
+    if(ImGui::Button("Reset"))
+    {
+        physics_simulator_sptr->reset();
+        physics_simulator_sptr->should_update = false;
+    }
 
 }
 

@@ -363,7 +363,7 @@ void arcadia::gl_renderer::draw()
 
 }
 
-void arcadia::gl_renderer::clear()
+void arcadia::gl_renderer::reset()
 {
     _gl_render_unit_cameras.clear();
     _gl_render_unit_lights.clear();

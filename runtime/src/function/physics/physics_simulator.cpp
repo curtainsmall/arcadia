@@ -39,13 +39,13 @@ void arcadia::physics_simulator::finalize()
     _assert_frame_in_build();
     _in_build = false;
 
-    auto& body_interface = _jph_physics_system_uptr->GetBodyInterface();
+    auto& jph_body_interface = _jph_physics_system_uptr->GetBodyInterface();
     for(auto iter = _jph_body_id_umap.begin(); iter != _jph_body_id_umap.end();)
     {
         if(!_submitted_body_info_set.contains(iter->first))
         {
-            body_interface.RemoveBody(iter->second);
-            body_interface.DestroyBody(iter->second);
+            jph_body_interface.RemoveBody(iter->second);
+            jph_body_interface.DestroyBody(iter->second);
             iter = _jph_body_id_umap.erase(iter);
         }
         else
@@ -129,15 +129,15 @@ void arcadia::physics_simulator::quary(physics_component& physics_comp)
         const auto& [uuid, jph_body_info_initial] = physics_comp.get_identifiable_jph_body_info_initial();
         if(_jph_body_id_umap.contains(uuid))
         {
-            const auto& body_interface = _jph_physics_system_uptr->GetBodyInterface();
+            const auto& jph_body_interface = _jph_physics_system_uptr->GetBodyInterface();
             const auto& body_id = _jph_body_id_umap.at(uuid);
 
             auto& jph_body_info_ongoing = physics_comp.get_jph_body_info_ongoing();
-            jph_body_info_ongoing.active = body_interface.IsActive(body_id);
-            jph_body_info_ongoing.position = arcadia::from_jph_vec3(body_interface.GetPosition(body_id));
-            jph_body_info_ongoing.rotation = arcadia::from_jph_quat(body_interface.GetRotation(body_id));
-            jph_body_info_ongoing.linear_velocity = arcadia::from_jph_vec3(body_interface.GetLinearVelocity(body_id));
-            jph_body_info_ongoing.angular_velocity = arcadia::from_jph_vec3(body_interface.GetAngularVelocity(body_id));
+            jph_body_info_ongoing.active = jph_body_interface.IsActive(body_id);
+            jph_body_info_ongoing.position = arcadia::from_jph_vec3(jph_body_interface.GetPosition(body_id));
+            jph_body_info_ongoing.rotation = arcadia::from_jph_quat(jph_body_interface.GetRotation(body_id));
+            jph_body_info_ongoing.linear_velocity = arcadia::from_jph_vec3(jph_body_interface.GetLinearVelocity(body_id));
+            jph_body_info_ongoing.angular_velocity = arcadia::from_jph_vec3(jph_body_interface.GetAngularVelocity(body_id));
         }
         else
         {
@@ -146,8 +146,14 @@ void arcadia::physics_simulator::quary(physics_component& physics_comp)
     }
 }
 
-void arcadia::physics_simulator::clear()
+void arcadia::physics_simulator::reset()
 {
+    auto& jph_body_interface = _jph_physics_system_uptr->GetBodyInterface();
+    for(const auto& [uuid, body_id] : _jph_body_id_umap)
+    {
+        jph_body_interface.RemoveBody(body_id);
+        jph_body_interface.DestroyBody(body_id);
+    }
     _jph_body_id_umap.clear();
     _submitted_body_info_set.clear();
 }

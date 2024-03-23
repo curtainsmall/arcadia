@@ -61,9 +61,8 @@ namespace arcadia
         /// @note This function can only be called when the physics simulator is not in build
         virtual void draw() = 0;
 
-        /// @brief Clear all caches
-        /// @note In normal use of renderer, this function is not needed
-        virtual void clear() = 0;
+        /// @brief Reset the renderer, all caches will be cleared
+        virtual void reset() = 0;
 
         /// @brief Get the render result (the framebuffer) id
         /// @details Object id type for graphic APIs:

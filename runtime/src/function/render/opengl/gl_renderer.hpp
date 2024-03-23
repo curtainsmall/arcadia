@@ -84,8 +84,8 @@ namespace arcadia
         /// @copydoc arcadia::renderer::draw
         virtual void draw() override;
 
-        /// @copydoc arcadia::renderer::clear
-        virtual void clear() override;
+        /// @copydoc arcadia::renderer::reset
+        virtual void reset() override;
 
         [[nodiscard]]
         virtual auto get_render_result_id(std::size_t index) const->void* override;
