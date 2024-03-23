@@ -178,7 +178,7 @@ namespace std
         auto format(const glm::vec2& vec, std::format_context& ctx) const
         {
             return std::formatter<std::string>::format(
-                std::format("{:.2},{:.2}", vec.x, vec.y),
+                std::format("{:.2f}, {:.2f}", vec.x, vec.y),
                 ctx
             );
         }
@@ -190,7 +190,7 @@ namespace std
         auto format(const glm::dvec2& vec, std::format_context& ctx) const
         {
             return std::formatter<std::string>::format(
-                std::format("{:.2},{:.2}", vec.x, vec.y),
+                std::format("{:.2f}, {:.2f}", vec.x, vec.y),
                 ctx
             );
         }
@@ -202,7 +202,7 @@ namespace std
         auto format(const glm::ivec2& vec, std::format_context& ctx) const
         {
             return std::formatter<std::string>::format(
-                std::format("{:.2},{:.2}", vec.x, vec.y),
+                std::format("{:.2f}, {:.2f}", vec.x, vec.y),
                 ctx
             );
         }
@@ -214,7 +214,7 @@ namespace std
         auto format(const glm::uvec2& vec, std::format_context& ctx) const
         {
             return std::formatter<std::string>::format(
-                std::format("{:.2},{:.2}", vec.x, vec.y),
+                std::format("{:.2f}, {:.2f}", vec.x, vec.y),
                 ctx
             );
         }

@@ -49,7 +49,7 @@ namespace arcadia
     {
     public:
         ARCADIA_EXCEPTION(submit_fail);
-        ARCADIA_EXCEPTION(quary_fail);
+        ARCADIA_EXCEPTION(unknown_physics_component);
 
         using jph_body_id_umap_type = std::unordered_map<arcadia::uuid, JPH::BodyID>;
         using self_type = physics_simulator;
@@ -82,6 +82,7 @@ namespace arcadia
         void update();
 
         /// @brief Quary the updated data of the physics component from the physcis simulator
+        /// @throw unkonwn_physics_component if the physics component was not submitted before quary
         /// @note This function can only be called when the physics simulator is not in build
         void quary(physics_component& physics_comp);
 

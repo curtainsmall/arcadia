@@ -42,7 +42,7 @@ namespace arcadia
         [[nodiscard]]
         auto build_mat4(bool col_major = true) const->glm::mat4;
 
-        // Get forward vector by jph_position and target
+        // Get forward vector by position and target
         auto get_forward_dir() const->glm::vec3;
         auto get_left_dir() const->glm::vec3;
         auto get_up_dir() const->glm::vec3;

@@ -141,7 +141,7 @@ namespace std
         auto format(const glm::vec4& vec, std::format_context& ctx) const
         {
             return std::formatter<std::string>::format(
-                std::format("{:.2},{:.2},{:.2},{:.2}", vec.x, vec.y, vec.z, vec.w),
+                std::format("{:.2f}, {:.2f}, {:.2f}, {:.2f}", vec.x, vec.y, vec.z, vec.w),
                 ctx
             );
         }

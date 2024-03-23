@@ -132,6 +132,8 @@ void arcadia::imgui_window_popup_physics_component_create_body::operator()(arcad
             ImGui::EndCombo();
         }
 
+
+
         //Shape
         _jph_shape_info = arcadia::match<arcadia::physics_component::jph_shape_info_type>(
             _jph_shape_info,
@@ -141,6 +143,7 @@ void arcadia::imgui_window_popup_physics_component_create_body::operator()(arcad
             ImGui::SameLine();
             if(ImGui::BeginCombo("##shape_type", "Box Shape"))
             {
+                ImGui::Selectable("Box Shape");
                 if(ImGui::Selectable("Capsule Shape"))
                 {
                     ImGui::EndCombo();
@@ -162,17 +165,15 @@ void arcadia::imgui_window_popup_physics_component_create_body::operator()(arcad
             ImGui::SeparatorText("Box Shape");
 
             float
-                half_extent_x = info.half_extent.GetX(),
-                half_extent_y = info.half_extent.GetY(),
-                half_extent_z = info.half_extent.GetZ();
+                half_extent_x = info.half_extent.x,
+                half_extent_y = info.half_extent.y,
+                half_extent_z = info.half_extent.z;
             auto half_extent_min = std::max({ .01f,info.convex_radius });
             auto half_extent_max = (std::numeric_limits<float>::max)();
             ImGui::Text("Half Extent X"); ImGui::SameLine(); ImGui::DragFloat("##half_extent_x", &half_extent_x, speed, half_extent_min, half_extent_max, format, slider_flags);
             ImGui::Text("            Y"); ImGui::SameLine(); ImGui::DragFloat("##half_extent_y", &half_extent_y, speed, half_extent_min, half_extent_max, format, slider_flags);
             ImGui::Text("            Z"); ImGui::SameLine(); ImGui::DragFloat("##half_extent_z", &half_extent_z, speed, half_extent_min, half_extent_max, format, slider_flags);
-            info.half_extent.SetX(half_extent_x);
-            info.half_extent.SetY(half_extent_y);
-            info.half_extent.SetZ(half_extent_z);
+            info.half_extent = glm::vec3{ half_extent_x,half_extent_y,half_extent_z };
 
             ImGui::NewLine();
             auto convex_radius_min = .0f;
@@ -192,6 +193,7 @@ void arcadia::imgui_window_popup_physics_component_create_body::operator()(arcad
                     ImGui::EndCombo();
                     return arcadia::physics_component::jph_box_shape_info{};
                 }
+                ImGui::Selectable("Capsule Shape");
                 if(ImGui::Selectable("Cylinder Shape"))
                 {
                     ImGui::EndCombo();
@@ -234,6 +236,7 @@ void arcadia::imgui_window_popup_physics_component_create_body::operator()(arcad
                     ImGui::EndCombo();
                     return arcadia::physics_component::jph_capsule_shape_info{};
                 }
+                ImGui::Selectable("Cylinder Shape");
                 if(ImGui::Selectable("Sphere Shape"))
                 {
                     ImGui::EndCombo();
@@ -281,6 +284,7 @@ void arcadia::imgui_window_popup_physics_component_create_body::operator()(arcad
                     ImGui::EndCombo();
                     return arcadia::physics_component::jph_cylinder_shape_info{};
                 }
+                ImGui::Selectable("Sphere Shape");
                 ImGui::EndCombo();
             }
             ImGui::NewLine();
@@ -299,8 +303,8 @@ void arcadia::imgui_window_popup_physics_component_create_body::operator()(arcad
         if(confirmed)
         {
             physics_comp.build_identifiable_jph_body_info(
-                _jph_position,
-                _jph_rotation,
+                arcadia::from_jph_vec3(_jph_position),
+                arcadia::from_jph_quat(_jph_rotation),
                 _jph_motion_type,
                 _jph_object_layer,
                 std::move(_jph_shape_info)
@@ -330,6 +334,8 @@ void arcadia::imgui_window_property::on_event(arcadia::event_base& event)
         .dispatch<arcadia::event::scene_deactivated>(ARCADIA_BIND_MEMBER_FN(_on_scene_deactivated))
         .dispatch<arcadia::event::select_entity>(ARCADIA_BIND_MEMBER_FN(_on_select_entity))
         .dispatch<arcadia::event::delete_entity>(ARCADIA_BIND_MEMBER_FN(_on_delete_entity))
+        .dispatch<arcadia::event::physics_simulator_built>(ARCADIA_BIND_MEMBER_FN(_on_physics_simulator_built))
+        .dispatch<arcadia::event::physics_simulator_unbuilt>(ARCADIA_BIND_MEMBER_FN(_on_physics_simulator_unbuilt))
         .result();
 }
 
@@ -908,6 +914,9 @@ void arcadia::imgui_window_property::_display_physics_component()
         return;
     }
 
+    auto has_physics_simulator = !_physics_simulator_wptr.expired();
+    auto physics_simulator_sptr = _physics_simulator_wptr.lock();
+
     auto& physics_comp = _get_component<arcadia::physics_component>();
     ImGui::BeginGroup();
     ImGui::PushItemWidth(200.f);
@@ -915,17 +924,18 @@ void arcadia::imgui_window_property::_display_physics_component()
     ImGui::SeparatorText("Physics");
 
     _imgui_window_popup_physics_component_create_body(physics_comp);
-    if(physics_comp.has_identifiable_jph_body_info())
+    if(physics_comp.has_body_info())
     {
-        const auto& [uuid, jph_body_info] = physics_comp.get_identifiable_jph_body_info();
+        const auto& [uuid, jph_body_info_initial] = physics_comp.get_identifiable_jph_body_info_initial();
 
-        ImGui::Text("Initial state");
-        ImGui::Text(std::format("Position: {}", arcadia::from_jph_vec3(jph_body_info.jph_position)).c_str());
-        ImGui::Text(std::format("Rotation: {}", arcadia::from_jph_quat(jph_body_info.jph_rotation)).c_str());
+        ImGui::NewLine();
+        ImGui::Text(" -- Initial");
+        ImGui::Text(std::format("Position: {}", jph_body_info_initial.position).c_str());
+        ImGui::Text(std::format("Rotation: {}", jph_body_info_initial.rotation).c_str());
         ImGui::Text(std::format(
             "Motion Type: {}",
             arcadia::match<std::string>(
-                jph_body_info.jph_motion_type,
+                jph_body_info_initial.jph_motion_type,
                 JPH::EMotionType::Static,
                 [&]()
         {
@@ -943,31 +953,47 @@ void arcadia::imgui_window_property::_display_physics_component()
         }
             )
         ).c_str());
-        ImGui::Text(std::format("Object Layer: {}", jph_body_info.jph_object_layer).c_str());
-        ImGui::Text("Shape Info");
+        ImGui::Text(std::format("Object Layer: {}", jph_body_info_initial.jph_object_layer).c_str());
+
+        ImGui::NewLine();
+        ImGui::Text(" -- Ongoing");
+        const auto& jph_body_info_ongoing = physics_comp.get_jph_body_info_ongoing();
+        ImGui::Text(std::format("Active: {}", jph_body_info_ongoing.active).c_str());
+        ImGui::Text(std::format("Position: {}", jph_body_info_ongoing.position).c_str());
+        ImGui::Text(std::format("Rotation: {}", jph_body_info_ongoing.rotation).c_str());
+        ImGui::Text(std::format("Linear Velocity: {}", jph_body_info_ongoing.linear_velocity).c_str());
+        ImGui::Text(std::format("Angular Velocity: {}", jph_body_info_ongoing.angular_velocity).c_str());
+
+        ImGui::NewLine();
         arcadia::match<void>(
-            jph_body_info.jph_shape_info,
+            jph_body_info_initial.jph_shape_info,
             [&](const arcadia::physics_component::jph_box_shape_info& info)
         {
-            ImGui::Text(std::format("Half Extent: {}", arcadia::from_jph_vec3(info.half_extent)).c_str());
-            ImGui::Text(std::format("Convex Radius: {}", info.convex_radius).c_str());
+            ImGui::Text(" -- Box Shape");
+            ImGui::Text(std::format("Half Extent: {}", info.half_extent).c_str());
+            ImGui::Text(std::format("Convex Radius: {:.2f}", info.convex_radius).c_str());
         },
             [&](const arcadia::physics_component::jph_capsule_shape_info& info)
         {
-            ImGui::Text(std::format("Radius: {}", info.radius).c_str());
-            ImGui::Text(std::format("Half Height of Cylinder: {}", info.half_height_of_cylinder).c_str());
+            ImGui::Text(" -- Capsule Shape");
+            ImGui::Text(std::format("Radius: {:.2f}", info.radius).c_str());
+            ImGui::Text(std::format("Half Height of Cylinder: {:.2f}", info.half_height_of_cylinder).c_str());
         },
             [&](const arcadia::physics_component::jph_cylinder_shape_info& info)
         {
-            ImGui::Text(std::format("Half Height: {}", info.half_height).c_str());
-            ImGui::Text(std::format("Radius: {}", info.radius).c_str());
-            ImGui::Text(std::format("Convex Radius: {}", info.convex_radius).c_str());
+            ImGui::Text(" -- Cylinder Shape");
+            ImGui::Text(std::format("Half Height: {:.2f}", info.half_height).c_str());
+            ImGui::Text(std::format("Radius: {:.2f}", info.radius).c_str());
+            ImGui::Text(std::format("Convex Radius: {:.2f}", info.convex_radius).c_str());
         },
             [&](const arcadia::physics_component::jph_sphere_shape_info& info)
         {
-            ImGui::Text(std::format("Radius: {}", info.radius).c_str());
+            ImGui::Text(" -- Sphere Shape");
+            ImGui::Text(std::format("Radius: {:.2f}", info.radius).c_str());
         }
         );
+
+        ImGui::NewLine();
         if(ImGui::Button("Recreate Body"))
         {
             _imgui_window_popup_physics_component_create_body.open = true;
@@ -1019,4 +1045,15 @@ void arcadia::imgui_window_property::_on_delete_entity(arcadia::event::delete_en
     {
         _selected_entity = entt::null;
     }
+}
+
+void arcadia::imgui_window_property::_on_physics_simulator_built(arcadia::event::physics_simulator_built& e)
+{
+    const auto& [physics_simulator_wptr] = e.data_tuple;
+    _physics_simulator_wptr = physics_simulator_wptr;
+}
+
+void arcadia::imgui_window_property::_on_physics_simulator_unbuilt(arcadia::event::physics_simulator_unbuilt& e)
+{
+    _physics_simulator_wptr.reset();
 }

@@ -20,8 +20,10 @@
 struct ARCADIA_API event_name: arcadia::basic_event<__VA_ARGS__>\
 {\
 public:\
+    using self_type = event_name;\
+public:\
     using arcadia::basic_event<__VA_ARGS__>::basic_event;\
-}\
+}
 
 namespace arcadia
 {

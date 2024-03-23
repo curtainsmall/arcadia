@@ -35,7 +35,7 @@ namespace arcadia
         ARCADIA_EVENT(
             window_pos,
             arcadia::window_layer*,
-            glm::ivec2 // New jph_position
+            glm::ivec2 // New position
         );
         ARCADIA_EVENT(
             window_size_state,

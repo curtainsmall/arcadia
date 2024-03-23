@@ -7,7 +7,7 @@
 
 arcadia::physics_component::physics_component(const nlohmann::json& json)
 {
-    const auto& json_body_info = json.at("jph_body_info");
+    const auto& json_body_info = json.at("jph_body_info_initial");
     if(!json_body_info.is_null())
     {
         const auto& json_shape_info = json_body_info.at("jph_shape_info");
@@ -19,7 +19,7 @@ arcadia::physics_component::physics_component(const nlohmann::json& json)
             [&]() -> jph_shape_info_type
         {
             return jph_box_shape_info{
-                arcadia::to_jph_vec3(arcadia::vec3::from_json(json_shape_info_info.at("half_extent"))),
+                arcadia::vec3::from_json(json_shape_info_info.at("half_extent")),
                 json_shape_info_info.at("convex_radius")
             };
         },
@@ -48,9 +48,10 @@ arcadia::physics_component::physics_component(const nlohmann::json& json)
             };
         }
         );
-        _identifiable_jph_body_info_uptr = std::make_unique<identifiable_jph_body_info>(
-            arcadia::to_jph_vec3(arcadia::vec3::from_json(json_body_info.at("jph_position"))),
-            arcadia::to_jph_quat(arcadia::quat::from_json(json_body_info.at("jph_rotation"))),
+
+        build_identifiable_jph_body_info(
+            arcadia::vec3::from_json(json_body_info.at("position")),
+            arcadia::quat::from_json(json_body_info.at("rotation")),
             JPH::EMotionType{ json_body_info.at("jph_motion_type") },
             JPH::ObjectLayer{ json_body_info.at("jph_object_layer") },
             shape_info
@@ -60,9 +61,9 @@ arcadia::physics_component::physics_component(const nlohmann::json& json)
 
 auto arcadia::physics_component::to_json() const -> nlohmann::json
 {
-    if(has_identifiable_jph_body_info())
+    if(has_body_info())
     {
-        const auto& [uuid, body_info] = get_identifiable_jph_body_info();
+        const auto& [uuid, body_info] = get_identifiable_jph_body_info_initial();
         auto json_shape_info = arcadia::match<nlohmann::json>(
             body_info.jph_shape_info,
             [&](const jph_box_shape_info& info)
@@ -70,7 +71,7 @@ auto arcadia::physics_component::to_json() const -> nlohmann::json
             return nlohmann::json{
                 {"type","box"},
                 {"info", {
-                        {"half_extent",arcadia::vec3::to_json(arcadia::from_jph_vec3(info.half_extent))},
+                        {"half_extent",arcadia::vec3::to_json(info.half_extent)},
                         {"convex_radius",info.convex_radius}
                     }
                 }
@@ -113,9 +114,9 @@ auto arcadia::physics_component::to_json() const -> nlohmann::json
         }
         );
         return nlohmann::json{
-            {"jph_body_info",{
-                    {"jph_position",arcadia::vec3::to_json(arcadia::from_jph_vec3(body_info.jph_position))},
-                    {"jph_rotation",arcadia::quat::to_json(arcadia::from_jph_quat(body_info.jph_rotation))},
+            {"jph_body_info_initial",{
+                    {"position",arcadia::vec3::to_json(body_info.position)},
+                    {"rotation",arcadia::quat::to_json(body_info.rotation)},
                     {"jph_motion_type", arcadia::to_underlying(body_info.jph_motion_type)},
                     {"jph_object_layer",body_info.jph_object_layer},
                     {"jph_shape_info",json_shape_info}
@@ -126,7 +127,32 @@ auto arcadia::physics_component::to_json() const -> nlohmann::json
     else
     {
         return nlohmann::json{
-            {"jph_body_info", nullptr}
+            {"jph_body_info_initial", nullptr}
         };
     }
+}
+
+void arcadia::physics_component::build_identifiable_jph_body_info(
+    const glm::vec3& position,
+    const glm::quat& rotation,
+    JPH::EMotionType jph_motion_type,
+    JPH::ObjectLayer jph_object_layer,
+    const jph_shape_info_type& jph_shape_info
+)
+{
+    _identifiable_jph_body_info_initial_uptr = std::make_unique<identifiable_jph_body_info_initial>(
+        position,
+        rotation,
+        jph_motion_type,
+        jph_object_layer,
+        jph_shape_info
+    );
+
+    _jph_body_info_ongoing_uptr = std::make_unique<jph_body_info_ongoing>(
+        false,
+        position,
+        rotation,
+        arcadia::vec3::zero(),
+        arcadia::vec3::zero()
+    );
 }

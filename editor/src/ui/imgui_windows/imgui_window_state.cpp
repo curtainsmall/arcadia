@@ -53,20 +53,7 @@ void arcadia::imgui_window_state_physics_simulator::operator()(const std::shared
         ImGuiSliderFlags_AlwaysClamp;
 
     ImGui::NewLine();
-    bool prev_enable_modify = _enable_modifying_temp_allocator_size;
-    bool enable_modify = _enable_modifying_temp_allocator_size;
-    ImGui::Text("Enable modify"); ImGui::SameLine(); ImGui::Checkbox("##enable_modify", &enable_modify);
-    if(enable_modify && !prev_enable_modify)
-    {
-        enable_modify =
-            pfd::message{
-             "Arcadia",
-             "Modifying temporary allocator size should be careful",
-             pfd::choice::yes_no
-        }.result() == pfd::button::yes;
-    }
-    _enable_modifying_temp_allocator_size = enable_modify;
-    ImGui::BeginDisabled(!_enable_modifying_temp_allocator_size);
+    ImGui::BeginDisabled();
     int temp_allocator_size_in_kib = physics_simulator_sptr->jph_temp_allocator_size / 1024;
     ImGui::Text("Temporary Allocator Size (KiB)"); ImGui::SameLine(); ImGui::DragInt("##tas", &temp_allocator_size_in_kib, 1.f, 64 /* 64 KiB*/, 16 * 1024 * 1024 /* 16 GiB */, "%d", slider_flags);
     physics_simulator_sptr->jph_temp_allocator_size = temp_allocator_size_in_kib * 1024;
@@ -81,6 +68,9 @@ void arcadia::imgui_window_state_physics_simulator::operator()(const std::shared
     ImGui::BeginDisabled();
     ImGui::Text("    Collision Steps per Update"); ImGui::SameLine(); ImGui::DragInt("##spu", &physics_simulator_sptr->jph_physics_system_collision_steps_per_update, 1.f, 0, (std::numeric_limits<int>::max)(), "%d", slider_flags);
     ImGui::EndDisabled();
+
+    ImGui::NewLine();
+    ImGui::Checkbox("Update", &physics_simulator_sptr->should_update);
 
 }
 

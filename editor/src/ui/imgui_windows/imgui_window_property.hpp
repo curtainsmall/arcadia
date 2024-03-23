@@ -5,6 +5,7 @@
 
 #include"core/base.hpp"
 #include"core/event/event.hpp"
+#include"function/physics/physics_simulator.hpp"
 #include"function/ui/imgui_window.hpp"
 #include"platform/jolt/jolt_header.hpp"
 #include"resource/component/physics_component/physics_component.hpp"
@@ -73,11 +74,15 @@ namespace arcadia
         void _on_scene_deactivated(arcadia::event::scene_deactivated& e);
         void _on_select_entity(arcadia::event::select_entity& e);
         void _on_delete_entity(arcadia::event::delete_entity& e);
+        void _on_physics_simulator_built(arcadia::event::physics_simulator_built& e);
+        void _on_physics_simulator_unbuilt(arcadia::event::physics_simulator_unbuilt& e);
 
     private:
         arcadia::imgui_window_popup_physics_component_create_body _imgui_window_popup_physics_component_create_body{};
 
         std::weak_ptr<arcadia::scene> _scene_wptr{};
         entt::entity _selected_entity{ entt::null };
+
+        std::weak_ptr<arcadia::physics_simulator> _physics_simulator_wptr{};
     };
 }

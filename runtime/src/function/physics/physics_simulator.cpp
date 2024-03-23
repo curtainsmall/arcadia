@@ -61,9 +61,9 @@ void arcadia::physics_simulator::submit(const arcadia::physics_component& physic
 {
     _assert_frame_in_build();
 
-    if(physics_comp.has_identifiable_jph_body_info())
+    if(physics_comp.has_body_info())
     {
-        const auto& [uuid, body_info] = physics_comp.get_identifiable_jph_body_info();
+        const auto& [uuid, body_info] = physics_comp.get_identifiable_jph_body_info_initial();
         if(!_jph_body_id_umap.contains(uuid))
         {
             auto& jph_body_interface = _jph_physics_system_uptr->GetBodyInterface();
@@ -71,7 +71,7 @@ void arcadia::physics_simulator::submit(const arcadia::physics_component& physic
                 body_info.jph_shape_info,
                 [&](const arcadia::physics_component::jph_box_shape_info& info)
             {
-                return new JPH::BoxShape{ info.half_extent, info.convex_radius };
+                return new JPH::BoxShape{ arcadia::to_jph_vec3(info.half_extent), info.convex_radius };
             },
                 [&](const arcadia::physics_component::jph_capsule_shape_info& info)
             {
@@ -89,8 +89,8 @@ void arcadia::physics_simulator::submit(const arcadia::physics_component& physic
             auto body_id = jph_body_interface.CreateAndAddBody(
                 JPH::BodyCreationSettings{
                     jph_shape_refc,
-                    body_info.jph_position,
-                    body_info.jph_rotation,
+                    arcadia::to_jph_vec3(body_info.position),
+                    arcadia::to_jph_quat(body_info.rotation),
                     body_info.jph_motion_type,
                     body_info.jph_object_layer
                 },
@@ -124,20 +124,24 @@ void arcadia::physics_simulator::quary(physics_component& physics_comp)
 {
     _assert_frame_not_in_build();
 
-    if(physics_comp.has_identifiable_jph_body_info())
+    if(physics_comp.has_body_info())
     {
-        const auto& [uuid, prev_body_info] = physics_comp.get_identifiable_jph_body_info();
+        const auto& [uuid, jph_body_info_initial] = physics_comp.get_identifiable_jph_body_info_initial();
         if(_jph_body_id_umap.contains(uuid))
         {
-            auto& body_interface = _jph_physics_system_uptr->GetBodyInterface();
+            const auto& body_interface = _jph_physics_system_uptr->GetBodyInterface();
             const auto& body_id = _jph_body_id_umap.at(uuid);
-            physics_comp.build_identifiable_jph_body_info(
-                body_interface.GetPosition(body_id),
-                body_interface.GetRotation(body_id),
-                body_interface.GetMotionType(body_id),
-                body_interface.GetObjectLayer(body_id),
-                prev_body_info.jph_shape_info
-            );
+
+            auto& jph_body_info_ongoing = physics_comp.get_jph_body_info_ongoing();
+            jph_body_info_ongoing.active = body_interface.IsActive(body_id);
+            jph_body_info_ongoing.position = arcadia::from_jph_vec3(body_interface.GetPosition(body_id));
+            jph_body_info_ongoing.rotation = arcadia::from_jph_quat(body_interface.GetRotation(body_id));
+            jph_body_info_ongoing.linear_velocity = arcadia::from_jph_vec3(body_interface.GetLinearVelocity(body_id));
+            jph_body_info_ongoing.angular_velocity = arcadia::from_jph_vec3(body_interface.GetAngularVelocity(body_id));
+        }
+        else
+        {
+            throw unknown_physics_component{ "Cannot quary component that has not been submitted" };
         }
     }
 }

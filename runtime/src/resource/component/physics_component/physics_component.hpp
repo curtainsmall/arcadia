@@ -18,7 +18,7 @@ namespace arcadia
         struct ARCADIA_API jph_box_shape_info
         {
         public:
-            JPH::Vec3 half_extent{ 1.f,1.f,1.f };
+            glm::vec3 half_extent{ 1.f,1.f,1.f };
             float convex_radius{ JPH::cDefaultConvexRadius };
         };
         struct ARCADIA_API jph_capsule_shape_info
@@ -46,19 +46,32 @@ namespace arcadia
             jph_sphere_shape_info
         >;
 
-        struct ARCADIA_API jph_body_info
+        struct ARCADIA_API jph_body_info_initial
         {
         public:
-            using self_type = jph_body_info;
+            using self_type = jph_body_info_initial;
         public:
-            JPH::RVec3Arg jph_position{ JPH::RVec3::sZero() };
-            JPH::QuatArg jph_rotation{ JPH::Quat::sIdentity() };
+            glm::vec3 position{ arcadia::vec3::zero() };
+            glm::quat rotation{ arcadia::quat::identity() };
             JPH::EMotionType jph_motion_type{ JPH::EMotionType::Static };
             JPH::ObjectLayer jph_object_layer{ arcadia::jph_object_layers::non_moving };
             jph_shape_info_type jph_shape_info{ jph_box_shape_info{} };
         };
 
-        using identifiable_jph_body_info = arcadia::basic_identifiable<jph_body_info>;
+        struct ARCADIA_API jph_body_info_ongoing
+        {
+        public:
+            using self_type = jph_body_info_ongoing;
+        public:
+            bool active{ false };
+            glm::vec3 position{ arcadia::vec3::zero() };
+            glm::quat rotation{ arcadia::quat::identity() };
+            glm::vec3 linear_velocity{ arcadia::vec3::zero() };
+            glm::vec3 angular_velocity{ arcadia::vec3::zero() };
+
+        };
+
+        using identifiable_jph_body_info_initial = arcadia::basic_identifiable<jph_body_info_initial>;
         using self_type = physics_component;
     public:
         ARCADIA_COMPONENT_TYPE_STR_GETTERS("physics");
@@ -70,35 +83,40 @@ namespace arcadia
         auto to_json() const->nlohmann::json;
 
         [[nodiscard]]
-        inline auto has_identifiable_jph_body_info() const -> bool
+        inline auto has_body_info() const -> bool
         {
-            return _identifiable_jph_body_info_uptr.get();
+            return _identifiable_jph_body_info_initial_uptr.get();
         }
         [[nodiscard]]
-        inline auto get_identifiable_jph_body_info() const -> const identifiable_jph_body_info&
+        inline auto get_identifiable_jph_body_info_initial() const -> const identifiable_jph_body_info_initial&
         {
-            ARCADIA_ASSERT(has_identifiable_jph_body_info());
-            return *_identifiable_jph_body_info_uptr;
+            ARCADIA_ASSERT(has_body_info());
+            return *_identifiable_jph_body_info_initial_uptr;
+        }
+        [[nodiscard]]
+        inline auto get_jph_body_info_ongoing() const -> const jph_body_info_ongoing&
+        {
+            ARCADIA_ASSERT(has_body_info());
+            return *_jph_body_info_ongoing_uptr;
+        }
+        [[nodiscard]]
+        inline auto get_jph_body_info_ongoing() -> jph_body_info_ongoing&
+        {
+            ARCADIA_ASSERT(has_body_info());
+            return *_jph_body_info_ongoing_uptr;
         }
 
-        inline void build_identifiable_jph_body_info(
-            const JPH::RVec3Arg& jph_position,
-            const JPH::QuatArg& jph_rotation,
+        void build_identifiable_jph_body_info(
+            const glm::vec3& position,
+            const glm::quat& rotation,
             JPH::EMotionType jph_motion_type,
             JPH::ObjectLayer jph_object_layer,
             const jph_shape_info_type& jph_shape_info
-        )
-        {
-            _identifiable_jph_body_info_uptr = std::make_unique<identifiable_jph_body_info>(
-                jph_position,
-                jph_rotation,
-                jph_motion_type,
-                jph_object_layer,
-                jph_shape_info
-            );
-        }
+        );
+
 
     private:
-        std::unique_ptr<identifiable_jph_body_info> _identifiable_jph_body_info_uptr{};
+        std::unique_ptr<identifiable_jph_body_info_initial> _identifiable_jph_body_info_initial_uptr{};
+        std::unique_ptr<jph_body_info_ongoing> _jph_body_info_ongoing_uptr{};
     };
 }

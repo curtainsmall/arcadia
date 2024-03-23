@@ -18,11 +18,9 @@ namespace arcadia
 
         //==== Events for project ====//
 
-        // used to tell imgui to popup a window for inputting project info
         ARCADIA_EVENT(
             new_project
         );
-        // used to tell project layer to create project with inputted info
         ARCADIA_EVENT(
             create_project,
             std::string, // name
@@ -41,13 +39,18 @@ namespace arcadia
             close_project
         );
 
+        //==== Events for physics simulator ====//
+
+        ARCADIA_EVENT(
+            physics_simulator_should_update,
+            bool
+        );
+
         //==== Events for scene ====//
 
-        // used to tell imgui to popup a window for inputting scene info
         ARCADIA_EVENT(
             new_scene
         );
-        // used to tell project layer to create scene with inputted info
         ARCADIA_EVENT(
             create_scene,
             std::string, // name
