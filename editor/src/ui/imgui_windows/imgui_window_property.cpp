@@ -374,19 +374,45 @@ void arcadia::imgui_window_property::_display_components()
 {
     ARCADIA_ASSERT(!_scene_wptr.expired());
 
-    _display_camera_component();
-    _display_light_component();
-    _display_model_component();
-    _display_physics_component();
+    auto tab_bar_flags =
+        ImGuiTabBarFlags_NoCloseWithMiddleMouseButton
+        | ImGuiTabBarFlags_TabListPopupButton
+        | ImGuiTabBarFlags_AutoSelectNewTabs
+        | ImGuiTabBarFlags_FittingPolicyScroll
+        | ImGuiTabBarFlags_Reorderable;
+    if(_selected_entity != entt::null && ImGui::BeginTabBar("##component_name", tab_bar_flags))
+    {
+        ImGui::PushItemWidth(200.f);
+
+        if(_contains_component<arcadia::camera_component>() && ImGui::BeginTabItem("Camera"))
+        {
+            _display_camera_component();
+            ImGui::EndTabItem();
+        }
+        if(_contains_component<arcadia::light_component>() && ImGui::BeginTabItem("Light"))
+        {
+            _display_light_component();
+            ImGui::EndTabItem();
+        }
+        if(_contains_component<arcadia::model_component>() && ImGui::BeginTabItem("Model"))
+        {
+            _display_model_component();
+            ImGui::EndTabItem();
+        }
+        if(_contains_component<arcadia::physics_component>() && ImGui::BeginTabItem("Physics"))
+        {
+            _display_physics_component();
+            ImGui::EndTabItem();
+        }
+
+        ImGui::EndTabBar();
+
+        ImGui::PopItemWidth();
+    }
 }
 
 void arcadia::imgui_window_property::_display_camera_component()
 {
-    if(!_contains_component<arcadia::camera_component>())
-    {
-        return;
-    }
-
     const float speed = 1.f;
     const float min = .0;
     const float max = .0f;
@@ -395,10 +421,6 @@ void arcadia::imgui_window_property::_display_camera_component()
         ImGuiSliderFlags_AlwaysClamp;
     auto& camera_comp = _get_component<arcadia::camera_component>();
     ImGui::BeginGroup();
-
-    ImGui::PushItemWidth(200.f);
-
-    ImGui::SeparatorText("Camera");
 
     ImGui::NewLine();
     ImGui::Text("     Position X"); ImGui::SameLine(); ImGui::DragFloat("##pos_x", &camera_comp.pos.x, speed, min, max, format, flags);
@@ -445,22 +467,13 @@ void arcadia::imgui_window_property::_display_camera_component()
 
     //ImGui::DragFloat2("Cursor Move Offset Range", &camera_comp.cursor_move_offset_range.x);
 
-    ImGui::PopItemWidth();
-
     ImGui::EndGroup();
 }
 
 void arcadia::imgui_window_property::_display_light_component()
 {
-    if(!_contains_component<arcadia::light_component>())
-    {
-        return;
-    }
-
     auto& light_comp = _get_component<arcadia::light_component>();
     ImGui::BeginGroup();
-    ImGui::PushItemWidth(200.f);
-
 
     const float light_direction_drag_speed = .01f;
     const float light_direction_min = -1.f;
@@ -482,7 +495,9 @@ void arcadia::imgui_window_property::_display_light_component()
         light_comp.light,
         [&](arcadia::null_light& light)
     {
-        if(ImGui::BeginCombo("Light Type", "(No light)"))
+        ImGui::Text("Light Type");
+        ImGui::SameLine();
+        if(ImGui::BeginCombo("##light_type", "(No light)"))
         {
             if(ImGui::Selectable("Spot Light"))
             {
@@ -505,7 +520,9 @@ void arcadia::imgui_window_property::_display_light_component()
     },
         [&](arcadia::spot_light& light)
     {
-        if(ImGui::BeginCombo("Light Type", "Spot Light"))
+        ImGui::Text("         Light Type");
+        ImGui::SameLine();
+        if(ImGui::BeginCombo("##light_type", "Spot Light"))
         {
             if(ImGui::Selectable("Direct Light"))
             {
@@ -548,8 +565,6 @@ void arcadia::imgui_window_property::_display_light_component()
             }
             ImGui::EndCombo();
         }
-
-        ImGui::SeparatorText("Spot Light");
 
         ImGui::NewLine();
         ImGui::Text("         Position X"); ImGui::SameLine(); ImGui::DragFloat("##pos_x", &light.position.x, speed, min, max, format, flags);
@@ -604,7 +619,9 @@ void arcadia::imgui_window_property::_display_light_component()
     },
         [&](arcadia::direct_light& light)
     {
-        if(ImGui::BeginCombo("Light Type", "Direct Light"))
+        ImGui::Text("         Light Type");
+        ImGui::SameLine();
+        if(ImGui::BeginCombo("##light_type", "Direct Light"))
         {
             if(ImGui::Selectable("Spot Light"))
             {
@@ -648,8 +665,6 @@ void arcadia::imgui_window_property::_display_light_component()
             ImGui::EndCombo();
         }
 
-        ImGui::SeparatorText("Direct Light");
-
         ImGui::NewLine();
         ImGui::Text("        Direction X"); ImGui::SameLine(); ImGui::DragFloat("##dir_x", &light.direction.x, light_direction_drag_speed, light_direction_min, light_direction_max, format, flags);
         ImGui::Text("                  Y"); ImGui::SameLine(); ImGui::DragFloat("##dir_y", &light.direction.y, light_direction_drag_speed, light_direction_min, light_direction_max, format, flags);
@@ -677,7 +692,9 @@ void arcadia::imgui_window_property::_display_light_component()
     },
         [&](arcadia::area_light& light)
     {
-        if(ImGui::BeginCombo("Light Type", "Area Light"))
+        ImGui::Text("         Light Type");
+        ImGui::SameLine();
+        if(ImGui::BeginCombo("##light_type", "Area Light"))
         {
             if(ImGui::Selectable("Spot Light"))
             {
@@ -720,8 +737,6 @@ void arcadia::imgui_window_property::_display_light_component()
             }
             ImGui::EndCombo();
         }
-
-        ImGui::SeparatorText("Area Light");
 
         ImGui::NewLine();
         ImGui::Text("         Position X"); ImGui::SameLine(); ImGui::DragFloat("##pos_x", &light.position.x, speed, min, max, format, flags);
@@ -759,7 +774,9 @@ void arcadia::imgui_window_property::_display_light_component()
     },
         [&](arcadia::point_light& light)
     {
-        if(ImGui::BeginCombo("Light Type", "Point Light"))
+        ImGui::Text("         Light Type");
+        ImGui::SameLine();
+        if(ImGui::BeginCombo("##light_type", "Point Light"))
         {
             if(ImGui::Selectable("Spot Light"))
             {
@@ -803,8 +820,6 @@ void arcadia::imgui_window_property::_display_light_component()
             ImGui::EndCombo();
         }
 
-        ImGui::SeparatorText("Point Light");
-
         ImGui::NewLine();
         ImGui::Text("         Position X"); ImGui::SameLine(); ImGui::DragFloat("##pos_x", &light.position.x, speed, min, max, format, flags);
         ImGui::Text("                  Y"); ImGui::SameLine(); ImGui::DragFloat("##pos_y", &light.position.y, speed, min, max, format, flags);
@@ -838,17 +853,11 @@ void arcadia::imgui_window_property::_display_light_component()
     }
     );
 
-    ImGui::PopItemWidth();
     ImGui::EndGroup();
 }
 
 void arcadia::imgui_window_property::_display_model_component()
 {
-    if(!_contains_component<arcadia::model_component>())
-    {
-        return;
-    }
-
     const float speed = 1.f;
     const float min = .0f;
     const float max = 1.f;
@@ -858,11 +867,8 @@ void arcadia::imgui_window_property::_display_model_component()
 
     auto& model_comp = _get_component<arcadia::model_component>();
     ImGui::BeginGroup();
-    ImGui::PushItemWidth(200.f);
 
-    ImGui::SeparatorText("Model");
-
-    ImGui::Text("Filepath");
+    ImGui::SeparatorText("Filepath");
     auto filepath_str = model_comp.get_filepath().empty()
         ? "(No filepath)"s
         : model_comp.get_filepath().generic_string();
@@ -881,6 +887,7 @@ void arcadia::imgui_window_property::_display_model_component()
         }
     }
 
+    ImGui::SeparatorText("Transform");
     ImGui::NewLine();
     ImGui::Text("Location X"); ImGui::SameLine(); ImGui::DragFloat("##location_x", &model_comp.location.x, speed, min, max, format, flags);
     ImGui::Text("         Y"); ImGui::SameLine(); ImGui::DragFloat("##location_y", &model_comp.location.y, speed, min, max, format, flags);
@@ -902,36 +909,36 @@ void arcadia::imgui_window_property::_display_model_component()
     ImGui::Text("         Y"); ImGui::SameLine(); ImGui::DragFloat("##pivot_y", &model_comp.pivot.y, speed, min, max, format, flags);
     ImGui::Text("         Z"); ImGui::SameLine(); ImGui::DragFloat("##pivot_z", &model_comp.pivot.z, speed, min, max, format, flags);
 
-    ImGui::PopItemWidth();
     ImGui::EndGroup();
 
 }
 
 void arcadia::imgui_window_property::_display_physics_component()
 {
-    if(!_contains_component<arcadia::physics_component>())
-    {
-        return;
-    }
-
     auto has_physics_simulator = !_physics_simulator_wptr.expired();
     auto physics_simulator_sptr = _physics_simulator_wptr.lock();
 
     auto& physics_comp = _get_component<arcadia::physics_component>();
     ImGui::BeginGroup();
-    ImGui::PushItemWidth(200.f);
-
-    ImGui::SeparatorText("Physics");
 
     _imgui_window_popup_physics_component_create_body(physics_comp);
     if(physics_comp.has_body_info())
     {
         const auto& [uuid, jph_body_info_initial] = physics_comp.get_identifiable_jph_body_info_initial();
 
+        ImGui::SeparatorText("Initial");
+
+        ImGui::Text("Position X: %.2f", jph_body_info_initial.position.x);
+        ImGui::Text("         Y: %.2f", jph_body_info_initial.position.y);
+        ImGui::Text("         Z: %.2f", jph_body_info_initial.position.z);
+
         ImGui::NewLine();
-        ImGui::Text(" -- Initial");
-        ImGui::Text(std::format("Position: {}", jph_body_info_initial.position).c_str());
-        ImGui::Text(std::format("Rotation: {}", jph_body_info_initial.rotation).c_str());
+        ImGui::Text("Rotation W: %.2f", jph_body_info_initial.rotation.w);
+        ImGui::Text("         X: %.2f", jph_body_info_initial.rotation.x);
+        ImGui::Text("         Y: %.2f", jph_body_info_initial.rotation.y);
+        ImGui::Text("         Z: %.2f", jph_body_info_initial.rotation.z);
+
+        ImGui::NewLine();
         ImGui::Text(std::format(
             "Motion Type: {}",
             arcadia::match<std::string>(
@@ -955,40 +962,56 @@ void arcadia::imgui_window_property::_display_physics_component()
         ).c_str());
         ImGui::Text(std::format("Object Layer: {}", jph_body_info_initial.jph_object_layer).c_str());
 
-        ImGui::NewLine();
-        ImGui::Text(" -- Ongoing");
+        ImGui::SeparatorText("Ongoing");
+
         const auto& jph_body_info_ongoing = physics_comp.get_jph_body_info_ongoing();
         ImGui::Text(std::format("Active: {}", jph_body_info_ongoing.active).c_str());
-        ImGui::Text(std::format("Position: {}", jph_body_info_ongoing.position).c_str());
-        ImGui::Text(std::format("Rotation: {}", jph_body_info_ongoing.rotation).c_str());
-        ImGui::Text(std::format("Linear Velocity: {}", jph_body_info_ongoing.linear_velocity).c_str());
-        ImGui::Text(std::format("Angular Velocity: {}", jph_body_info_ongoing.angular_velocity).c_str());
 
         ImGui::NewLine();
+        ImGui::Text("Position X: %.2f", jph_body_info_ongoing.position.x);
+        ImGui::Text("         Y: %.2f", jph_body_info_ongoing.position.y);
+        ImGui::Text("         Z: %.2f", jph_body_info_ongoing.position.z);
+
+        ImGui::NewLine();
+        ImGui::Text("Rotation W: %.2f", jph_body_info_ongoing.rotation.w);
+        ImGui::Text("         X: %.2f", jph_body_info_ongoing.rotation.x);
+        ImGui::Text("         Y: %.2f", jph_body_info_ongoing.rotation.y);
+        ImGui::Text("         Z: %.2f", jph_body_info_ongoing.rotation.z);
+
+        ImGui::NewLine();
+        ImGui::Text("Linear Velocity X: %.2f", jph_body_info_ongoing.linear_velocity.x);
+        ImGui::Text("                Y: %.2f", jph_body_info_ongoing.linear_velocity.y);
+        ImGui::Text("                Z: %.2f", jph_body_info_ongoing.linear_velocity.z);
+
+        ImGui::NewLine();
+        ImGui::Text("Angular Velocity X: %.2f", jph_body_info_ongoing.angular_velocity.x);
+        ImGui::Text("                 Y: %.2f", jph_body_info_ongoing.angular_velocity.y);
+        ImGui::Text("                 Z: %.2f", jph_body_info_ongoing.angular_velocity.z);
+
         arcadia::match<void>(
             jph_body_info_initial.jph_shape_info,
             [&](const arcadia::physics_component::jph_box_shape_info& info)
         {
-            ImGui::Text(" -- Box Shape");
+            ImGui::SeparatorText("Body Shape - Box");
             ImGui::Text(std::format("Half Extent: {}", info.half_extent).c_str());
             ImGui::Text(std::format("Convex Radius: {:.2f}", info.convex_radius).c_str());
         },
             [&](const arcadia::physics_component::jph_capsule_shape_info& info)
         {
-            ImGui::Text(" -- Capsule Shape");
+            ImGui::SeparatorText("Body Shape - Capsule");
             ImGui::Text(std::format("Radius: {:.2f}", info.radius).c_str());
             ImGui::Text(std::format("Half Height of Cylinder: {:.2f}", info.half_height_of_cylinder).c_str());
         },
             [&](const arcadia::physics_component::jph_cylinder_shape_info& info)
         {
-            ImGui::Text(" -- Cylinder Shape");
+            ImGui::SeparatorText("Body Shape - Cylinder");
             ImGui::Text(std::format("Half Height: {:.2f}", info.half_height).c_str());
             ImGui::Text(std::format("Radius: {:.2f}", info.radius).c_str());
             ImGui::Text(std::format("Convex Radius: {:.2f}", info.convex_radius).c_str());
         },
             [&](const arcadia::physics_component::jph_sphere_shape_info& info)
         {
-            ImGui::Text(" -- Sphere Shape");
+            ImGui::SeparatorText("Body Shape - Sphere");
             ImGui::Text(std::format("Radius: {:.2f}", info.radius).c_str());
         }
         );
@@ -1007,7 +1030,6 @@ void arcadia::imgui_window_property::_display_physics_component()
         }
     }
 
-    ImGui::PopItemWidth();
     ImGui::EndGroup();
 }
 

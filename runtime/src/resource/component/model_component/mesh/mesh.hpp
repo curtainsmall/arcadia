@@ -17,6 +17,7 @@ namespace arcadia
         using index_type = unsigned int;
         using self_type = mesh;
     public:
+
         std::vector<arcadia::vertex> vertices{};
         std::vector<index_type> indices{};
 

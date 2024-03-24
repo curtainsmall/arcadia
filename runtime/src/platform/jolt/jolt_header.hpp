@@ -1,12 +1,8 @@
 #pragma once
 
-#include"core/base.hpp"
-
-#ifdef ARCADIA_IN_DEBUG
 #define JPH_FLOATING_POINT_EXCEPTIONS_ENABLED
 #define JPH_PROFILE_ENABLED
 #define JPH_DEBUG_RENDERER
-#endif
 
 #include"Jolt/Jolt.h"
 
@@ -20,8 +16,8 @@
 #include"Jolt/Physics/Collision/Shape/CapsuleShape.h"
 #include"Jolt/Physics/Collision/Shape/CylinderShape.h"
 #include"Jolt/Physics/Collision/Shape/SphereShape.h"
-#include"Jolt/Physics/PhysicsSystem.h"
 #include"Jolt/Physics/PhysicsSettings.h"
+#include"Jolt/Physics/PhysicsSystem.h"
 #include"Jolt/RegisterTypes.h"
 
 #include"core/math.hpp"

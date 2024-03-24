@@ -85,7 +85,7 @@ namespace std
         auto format(const glm::quat& quat, std::format_context& ctx) const
         {
             return std::formatter<std::string>::format(
-                std::format("{:.2},{:.2},{:.2},{:.2}", quat.w, quat.x, quat.y, quat.z),
+                std::format("{:.2f},{:.2f},{:.2f},{:.2f}", quat.w, quat.x, quat.y, quat.z),
                 ctx
             );
         }
