@@ -59,12 +59,38 @@ void arcadia::gl_vertex_array::unbind() const
     ARCADIA_GL_CALL(glBindVertexArray(0));
 }
 
+void arcadia::gl_vertex_array::draw(GLenum mode, GLsizei count) const
+{
+    if(_gl_index_buffer.get_index_count())
+    {
+        if(count < 0)
+        {
+            draw_indices(mode);
+        }
+        else
+        {
+            draw_indices_instanced(mode, count);
+        }
+    }
+    else
+    {
+        if(count < 0)
+        {
+            draw_arrays(mode);
+        }
+        else
+        {
+            draw_arrays_instanced(mode, count);
+        }
+    }
+}
+
 void arcadia::gl_vertex_array::draw_arrays(GLenum mode) const
 {
     ARCADIA_GL_CALL(glDrawArrays(mode, 0, _gl_vertex_buffer.get_vertex_count()));
 }
 
-void arcadia::gl_vertex_array::draw_arrays_instances(GLenum mode, GLsizei count)
+void arcadia::gl_vertex_array::draw_arrays_instanced(GLenum mode, GLsizei count) const
 {
     ARCADIA_GL_CALL(glDrawArraysInstanced(mode, 0, _gl_vertex_buffer.get_vertex_count(), count));
 }
@@ -74,7 +100,7 @@ void arcadia::gl_vertex_array::draw_indices(GLenum mode) const
     ARCADIA_GL_CALL(glDrawElements(mode, _gl_index_buffer.get_index_count(), GL_UNSIGNED_INT, 0));
 }
 
-void arcadia::gl_vertex_array::draw_indices_instanced(GLenum mode, GLsizei count)
+void arcadia::gl_vertex_array::draw_indices_instanced(GLenum mode, GLsizei count) const
 {
     ARCADIA_GL_CALL(glDrawElementsInstanced(mode, _gl_index_buffer.get_index_count(), GL_UNSIGNED_INT, 0, count));
 }

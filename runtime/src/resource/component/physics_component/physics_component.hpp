@@ -114,6 +114,8 @@ namespace arcadia
             const jph_shape_info_type& jph_shape_info
         );
 
+    public:
+        glm::vec3 body_shape_color{ .2f,.2f,.2f };
 
     private:
         std::unique_ptr<identifiable_jph_body_info_initial> _identifiable_jph_body_info_initial_uptr{};

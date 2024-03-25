@@ -258,6 +258,7 @@
     <ClCompile Include="src\resource\component\camera_component\camera_component.cpp" />
     <ClCompile Include="src\resource\component\light_component\light_component.cpp" />
     <ClCompile Include="src\resource\component\model_component\material\texture2d.cpp" />
+    <ClCompile Include="src\resource\component\model_component\mesh\mesh.cpp" />
     <ClCompile Include="src\resource\component\model_component\model_component.cpp" />
     <ClCompile Include="src\resource\component\physics_component\physics_component.cpp" />
     <ClCompile Include="src\resource\scene\scene.cpp" />

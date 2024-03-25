@@ -67,9 +67,11 @@ void arcadia::gl_uniform_buffer::bind_buffer_range(GLuint index, GLintptr offset
     unbind();
 }
 
-void arcadia::gl_uniform_buffer::sub_data(GLintptr offset, GLsizeiptr size, const GLvoid* data) const
+auto arcadia::gl_uniform_buffer::sub_data(GLintptr offset, GLsizeiptr size, const GLvoid* data) const -> const self_type&
 {
     bind();
     ARCADIA_GL_CALL(glBufferSubData(GL_UNIFORM_BUFFER, offset, size, data));
     unbind();
+
+    return *this;
 }

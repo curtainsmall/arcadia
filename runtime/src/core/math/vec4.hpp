@@ -8,6 +8,7 @@ namespace arcadia
 {
     namespace vec4
     {
+        [[nodiscard]]
         ARCADIA_API inline auto to_json(const glm::vec4& vec) -> nlohmann::json
         {
             return nlohmann::json{
@@ -17,6 +18,7 @@ namespace arcadia
                 {"w",vec.w}
             };
         }
+        [[nodiscard]]
         ARCADIA_API inline auto from_json(const nlohmann::json& json) -> glm::vec4
         {
             return glm::vec4{
@@ -27,6 +29,7 @@ namespace arcadia
             };
         }
 
+        [[nodiscard]]
         ARCADIA_API constexpr auto zero() -> glm::vec4
         {
             return glm::vec4{};
@@ -36,6 +39,7 @@ namespace arcadia
         /// @param vec Vector to normalize
         /// @param fixed_index Index of fixed axis, must be 0, 1, 2 or 3
         /// @return Normalized vector
+        [[nodiscard]]
         ARCADIA_API inline auto fixed_normalize(const glm::vec4& vec, glm::vec4::length_type fixed_index) -> glm::vec4
         {
             ARCADIA_ASSERT(fixed_index >= 0 && fixed_index < vec.length());
@@ -71,6 +75,7 @@ namespace arcadia
 
     namespace dvec4
     {
+        [[nodiscard]]
         ARCADIA_API inline auto to_json(const glm::dvec4& vec) -> nlohmann::json
         {
             return nlohmann::json{
@@ -80,6 +85,7 @@ namespace arcadia
                 {"w",vec.w}
             };
         }
+        [[nodiscard]]
         ARCADIA_API inline auto from_json(const nlohmann::json& json) -> glm::dvec4
         {
             return glm::dvec4{
@@ -90,6 +96,7 @@ namespace arcadia
             };
         }
 
+        [[nodiscard]]
         ARCADIA_API constexpr auto zero() -> glm::dvec4
         {
             return glm::dvec4{};
@@ -99,6 +106,7 @@ namespace arcadia
         /// @param vec Vector to normalize
         /// @param fixed_index Index of fixed axis, must be 0, 1, 2 or 3
         /// @return Normalized vector
+        [[nodiscard]]
         ARCADIA_API inline auto fixed_normalize(const glm::dvec4& vec, glm::dvec4::length_type fixed_index) -> glm::dvec4
         {
             ARCADIA_ASSERT(fixed_index >= 0 && fixed_index < vec.length());

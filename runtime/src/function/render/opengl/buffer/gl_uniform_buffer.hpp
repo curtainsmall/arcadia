@@ -28,7 +28,7 @@ namespace arcadia
         void bind_buffer_base(GLuint index) const;
         void bind_buffer_range(GLuint index, GLintptr offset, GLsizeiptr size) const;
 
-        void sub_data(GLintptr offset, GLsizeiptr size, const GLvoid* data) const;
+        auto sub_data(GLintptr offset, GLsizeiptr size, const GLvoid* data) const-> const self_type&;
 
     private:
         GLuint _gl_id{ 0 };

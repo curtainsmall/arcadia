@@ -97,6 +97,15 @@ void arcadia::imgui_window_viewport::on_update()
                 renderer_sptr->submit(model_comp);
             }
 
+            if(physics_simulator_sptr)
+            {
+                auto physics_comp_view = scene_sptr->component_view<arcadia::physics_component>();
+                for(auto [entity, physics_comp] : physics_comp_view.each())
+                {
+                    renderer_sptr->submit(physics_comp);
+                }
+            }
+
             renderer_sptr->finalize();
             renderer_sptr->draw();
 

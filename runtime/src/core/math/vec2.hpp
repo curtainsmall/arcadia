@@ -10,6 +10,7 @@ namespace arcadia
 {
     namespace vec2
     {
+        [[nodiscard]]
         ARCADIA_API inline auto to_json(const glm::vec2& vec) -> nlohmann::json
         {
             return nlohmann::json{
@@ -17,6 +18,7 @@ namespace arcadia
                  { "y",vec.y }
             };
         }
+        [[nodiscard]]
         ARCADIA_API inline auto from_json(const nlohmann::json& json) -> glm::vec2
         {
             return glm::vec2{
@@ -25,22 +27,27 @@ namespace arcadia
             };
         }
 
+        [[nodiscard]]
         ARCADIA_API constexpr auto zero() -> glm::vec2
         {
             return glm::vec2{};
         }
+        [[nodiscard]]
         ARCADIA_API constexpr auto pos_unit_x() -> glm::vec2
         {
             return glm::vec2{ 1.f,.0f };
         }
+        [[nodiscard]]
         ARCADIA_API constexpr auto pos_unit_y() -> glm::vec2
         {
             return glm::vec2{ .0f,1.f };
         }
+        [[nodiscard]]
         ARCADIA_API constexpr auto neg_unit_x() -> glm::vec2
         {
             return -pos_unit_x();
         }
+        [[nodiscard]]
         ARCADIA_API constexpr auto neg_unit_y() -> glm::vec2
         {
             return -pos_unit_y();
@@ -50,6 +57,7 @@ namespace arcadia
         /// @param vec Vector to normalize
         /// @param fixed_index Index of fixed axis, must be 0 or 1
         /// @return Normalized vector
+        [[nodiscard]]
         ARCADIA_API inline auto fixed_normalize(const glm::vec2& vec, glm::vec2::length_type fixed_idx) -> glm::vec2
         {
             ARCADIA_ASSERT(fixed_idx >= 0 && vec.length());
@@ -72,6 +80,7 @@ namespace arcadia
 
     namespace dvec2
     {
+        [[nodiscard]]
         ARCADIA_API inline auto to_json(const glm::dvec2& vec) -> nlohmann::json
         {
             return nlohmann::json{
@@ -79,6 +88,7 @@ namespace arcadia
                     { "y",vec.y }
             };
         }
+        [[nodiscard]]
         ARCADIA_API inline auto from_json(const nlohmann::json& json) -> glm::dvec2
         {
             return glm::dvec2{
@@ -87,22 +97,27 @@ namespace arcadia
             };
         }
 
+        [[nodiscard]]
         ARCADIA_API constexpr auto zero() -> glm::dvec2
         {
             return glm::dvec2{};
         }
+        [[nodiscard]]
         ARCADIA_API constexpr auto pos_unit_x() -> glm::dvec2
         {
             return glm::dvec2{ 1., .0 };
         }
+        [[nodiscard]]
         ARCADIA_API constexpr auto pos_unit_y() -> glm::dvec2
         {
             return glm::dvec2{ .0, 1. };
         }
+        [[nodiscard]]
         ARCADIA_API constexpr auto neg_unit_x() -> glm::dvec2
         {
             return -pos_unit_x();
         }
+        [[nodiscard]]
         ARCADIA_API constexpr auto neg_unit_y() -> glm::dvec2
         {
             return -pos_unit_y();
@@ -112,6 +127,7 @@ namespace arcadia
         /// @param vec Vector to normalize
         /// @param fixed_index Index of fixed axis, must be 0 or 1
         /// @return Normalized vector
+        [[nodiscard]]
         ARCADIA_API inline auto fixed_normalize(const glm::dvec2& vec, glm::dvec2::length_type fixed_index) -> glm::dvec2
         {
             ARCADIA_ASSERT(fixed_index >= 0 && fixed_index < vec.length());
@@ -135,6 +151,7 @@ namespace arcadia
     namespace ivec2
     {
 
+        [[nodiscard]]
         ARCADIA_API inline auto to_json(const glm::ivec2& vec) -> nlohmann::json
         {
             return nlohmann::json{
@@ -142,6 +159,7 @@ namespace arcadia
                 {"y",vec.y}
             };
         }
+        [[nodiscard]]
         ARCADIA_API inline auto from_json(const nlohmann::json& json) -> glm::ivec2
         {
             return glm::ivec2{
@@ -153,6 +171,7 @@ namespace arcadia
 
     namespace uvec2
     {
+        [[nodiscard]]
         ARCADIA_API inline auto to_json(const glm::uvec2& vec) -> nlohmann::json
         {
             return nlohmann::json{
@@ -160,6 +179,7 @@ namespace arcadia
                 {"y",vec.y}
             };
         }
+        [[nodiscard]]
         ARCADIA_API inline auto from_json(const nlohmann::json& json) -> glm::uvec2
         {
             return glm::uvec2{

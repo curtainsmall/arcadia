@@ -10,6 +10,7 @@ namespace arcadia
 {
     namespace quat
     {
+        [[nodiscard]]
         ARCADIA_API inline auto to_json(const glm::quat& quat) -> nlohmann::json
         {
             return nlohmann::json{
@@ -19,6 +20,7 @@ namespace arcadia
                 { "z",quat.z },
             };
         }
+        [[nodiscard]]
         ARCADIA_API inline auto from_json(const nlohmann::json& json) -> glm::quat
         {
             return glm::quat{
@@ -29,10 +31,12 @@ namespace arcadia
             };
         }
 
+        [[nodiscard]]
         ARCADIA_API constexpr auto zero() -> glm::quat
         {
             return glm::quat{};
         }
+        [[nodiscard]]
         ARCADIA_API constexpr auto identity() -> glm::quat
         {
             return glm::quat{ 1.f,.0f,.0f,.0f };
@@ -42,6 +46,7 @@ namespace arcadia
         /// @param vec Quaternion to normalize
         /// @param fixed_index Index of fixed axis, must be 0, 1, 2 or 3
         /// @return Normalized quaternion
+        [[nodiscard]]
         ARCADIA_API inline auto fixed_normalize(const glm::quat& quat, glm::quat::length_type fixed_index) -> glm::quat
         {
             ARCADIA_ASSERT(fixed_index >= 0 && fixed_index < quat.length());

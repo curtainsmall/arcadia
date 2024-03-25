@@ -326,6 +326,9 @@
     <ClCompile Include="src\function\physics\physics_simulator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\resource\component\model_component\mesh\mesh.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="src\core\string.hpp" />

@@ -48,14 +48,14 @@ namespace arcadia
     public:
         basic_identifiable() = default;
         basic_identifiable(const value_type& val):
-            _value(val)
+            value(val)
         {}
         basic_identifiable(value_type&& val):
-            _value(val)
+            value(val)
         {}
         template<class ...Args>
         basic_identifiable(Args&& ...args) :
-            _value(std::forward<Args>(args)...)
+            value(std::forward<Args>(args)...)
         {}
 
         basic_identifiable(self_type&&) noexcept = default;
@@ -69,28 +69,17 @@ namespace arcadia
 
             if constexpr(Index == 0)
             {
-                return get_uuid();
+                return uuid;
             }
             else
             {
-                return get_value();
+                return value;
             }
         }
 
-        [[nodiscard]]
-        inline auto get_uuid() const -> const arcadia::uuid&
-        {
-            return _uuid;
-        }
-
-        [[nodiscard]]
-        inline auto get_value() const -> const value_type&
-        {
-            return _value;
-        }
-    private:
-        arcadia::uuid _uuid{};
-        value_type _value{};
+    public:
+        const arcadia::uuid uuid{};
+        const value_type value{};
     };
 }
 

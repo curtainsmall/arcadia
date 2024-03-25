@@ -7,15 +7,15 @@
 
 arcadia::physics_component::physics_component(const nlohmann::json& json)
 {
-    const auto& json_body_info = json.at("jph_body_info_initial");
-    if(!json_body_info.is_null())
+    const auto& json_body_info_initial = json.at("jph_body_info_initial");
+    if(!json_body_info_initial.is_null())
     {
-        const auto& json_shape_info = json_body_info.at("jph_shape_info");
+        const auto& json_shape_info = json_body_info_initial.at("jph_shape_info");
         const std::string& json_shape_info_type_str = json_shape_info.at("type");
         const auto& json_shape_info_info = json_shape_info.at("info");
         auto shape_info = arcadia::match<jph_shape_info_type>(
             json_shape_info_type_str,
-            "box"s,
+            "box_shape"s,
             [&]() -> jph_shape_info_type
         {
             return jph_box_shape_info{
@@ -23,7 +23,7 @@ arcadia::physics_component::physics_component(const nlohmann::json& json)
                 json_shape_info_info.at("convex_radius")
             };
         },
-            "capsule"s,
+            "capsule_shape"s,
             [&]() -> jph_shape_info_type
         {
             return jph_capsule_shape_info{
@@ -50,17 +50,20 @@ arcadia::physics_component::physics_component(const nlohmann::json& json)
         );
 
         build_identifiable_jph_body_info(
-            arcadia::vec3::from_json(json_body_info.at("position")),
-            arcadia::quat::from_json(json_body_info.at("rotation")),
-            JPH::EMotionType{ json_body_info.at("jph_motion_type") },
-            JPH::ObjectLayer{ json_body_info.at("jph_object_layer") },
+            arcadia::vec3::from_json(json_body_info_initial.at("position")),
+            arcadia::quat::from_json(json_body_info_initial.at("rotation")),
+            JPH::EMotionType{ json_body_info_initial.at("jph_motion_type") },
+            JPH::ObjectLayer{ json_body_info_initial.at("jph_object_layer") },
             shape_info
         );
+
     }
+    body_shape_color = arcadia::vec3::from_json(json.at("body_shape_color"));
 }
 
 auto arcadia::physics_component::to_json() const -> nlohmann::json
 {
+    nlohmann::json json_body_info_initial{};
     if(has_body_info())
     {
         const auto& [uuid, body_info] = get_identifiable_jph_body_info_initial();
@@ -69,7 +72,7 @@ auto arcadia::physics_component::to_json() const -> nlohmann::json
             [&](const jph_box_shape_info& info)
         {
             return nlohmann::json{
-                {"type","box"},
+                {"type","box_shape"},
                 {"info", {
                         {"half_extent",arcadia::vec3::to_json(info.half_extent)},
                         {"convex_radius",info.convex_radius}
@@ -80,7 +83,7 @@ auto arcadia::physics_component::to_json() const -> nlohmann::json
             [&](const jph_capsule_shape_info& info)
         {
             return nlohmann::json{
-                {"type","capsule"},
+                {"type","capsule_shape"},
                 {"info", {
                         {"radius",info.radius},
                         {"half_height_of_cylinder",info.half_height_of_cylinder}
@@ -113,23 +116,23 @@ auto arcadia::physics_component::to_json() const -> nlohmann::json
             };
         }
         );
-        return nlohmann::json{
-            {"jph_body_info_initial",{
-                    {"position",arcadia::vec3::to_json(body_info.position)},
-                    {"rotation",arcadia::quat::to_json(body_info.rotation)},
-                    {"jph_motion_type", arcadia::to_underlying(body_info.jph_motion_type)},
-                    {"jph_object_layer",body_info.jph_object_layer},
-                    {"jph_shape_info",json_shape_info}
-                }
-            }
+        json_body_info_initial = nlohmann::json{
+            {"position",arcadia::vec3::to_json(body_info.position)},
+            {"rotation",arcadia::quat::to_json(body_info.rotation)},
+            {"jph_motion_type", arcadia::to_underlying(body_info.jph_motion_type)},
+            {"jph_object_layer",body_info.jph_object_layer},
+            {"jph_shape_info",json_shape_info}
         };
     }
     else
     {
-        return nlohmann::json{
-            {"jph_body_info_initial", nullptr}
-        };
+        json_body_info_initial = nullptr;
     }
+
+    return nlohmann::json{
+        {"jph_body_info_initial",json_body_info_initial},
+        {"body_shape_color",arcadia::vec3::to_json(body_shape_color)}
+    };
 }
 
 void arcadia::physics_component::build_identifiable_jph_body_info(

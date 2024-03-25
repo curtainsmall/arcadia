@@ -35,10 +35,15 @@ namespace arcadia
         void bind() const;
         void unbind() const;
 
+        /// @brief Call @ref draw_arrays, @ref draw_arrays_instanced, @ref draw_indices or @ref draw_indices_instatnced based on parameters and state of gl_vertex_array
+        /// @param mode OpenGL draw mode
+        /// @param count Count of instance to draw, use count < 0 to not draw instanced
+        void draw(GLenum mode, GLsizei count = -1) const;
+
         void draw_arrays(GLenum mode) const;
-        void draw_arrays_instances(GLenum mode, GLsizei count);
+        void draw_arrays_instanced(GLenum mode, GLsizei count) const;
         void draw_indices(GLenum mode) const;
-        void draw_indices_instanced(GLenum mode, GLsizei count);
+        void draw_indices_instanced(GLenum mode, GLsizei count) const;
 
     private:
         GLuint _gl_id{ 0 };
