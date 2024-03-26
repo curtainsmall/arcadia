@@ -99,41 +99,43 @@ void arcadia::gl_renderer::submit(const arcadia::model_component& model_comp)
     if(model_comp.has_identifiable_meshes())
     {
         const auto& [uuid, meshes] = model_comp.get_identifiable_meshes();
+
+        auto transform_mat =
+            // Translate
+            glm::translate(
+                // Move pivot back from origin
+                glm::translate(
+                    // Rotate about z-axis
+                    glm::rotate(
+                        // Rotate about y-axis
+                        glm::rotate(
+                            // Rotate about x-axis
+                            glm::rotate(
+                                // Scale about origin (same as pivot)
+                                glm::scale(
+                                    // Move pivot to origin
+                                    glm::translate(
+                                        arcadia::mat4::identity(),
+                                        -model_comp.pivot
+                                    ),
+                                    model_comp.scale
+                                ),
+                                model_comp.rotation.x,
+                                arcadia::vec3::pos_unit_x()
+                            ),
+                            model_comp.rotation.y,
+                            arcadia::vec3::pos_unit_y()
+                        ),
+                        model_comp.rotation.z,
+                        arcadia::vec3::pos_unit_z()
+                    ),
+                    model_comp.pivot
+                ),
+                model_comp.location
+            );
+
         if(!_gl_render_unit_meshes_umap.contains(uuid))
         {
-            auto transform_mat =
-                // Translate
-                glm::translate(
-                    // Move pivot back from origin
-                    glm::translate(
-                        // Rotate about z-axis
-                        glm::rotate(
-                            // Rotate about y-axis
-                            glm::rotate(
-                                // Rotate about x-axis
-                                glm::rotate(
-                                    // Scale about origin (same as pivot)
-                                    glm::scale(
-                                        // Move pivot to origin
-                                        glm::translate(
-                                            arcadia::mat4::identity(),
-                                            -model_comp.pivot
-                                        ),
-                                        model_comp.scale
-                                    ),
-                                    model_comp.rotation.x,
-                                    arcadia::vec3::pos_unit_x()
-                                ),
-                                model_comp.rotation.y,
-                                arcadia::vec3::pos_unit_y()
-                            ),
-                            model_comp.rotation.z,
-                            arcadia::vec3::pos_unit_z()
-                        ),
-                        model_comp.pivot
-                    ),
-                    model_comp.location
-                );
 
             std::vector<arcadia::gl_render_unit_mesh> gl_meshes{};
             for(const auto& mesh : meshes)
@@ -149,6 +151,14 @@ void arcadia::gl_renderer::submit(const arcadia::model_component& model_comp)
             }
             _gl_render_unit_meshes_umap.try_emplace(uuid, std::move(gl_meshes));
         }
+        else
+        {
+            for(auto& gl_render_unit_mesh : _gl_render_unit_meshes_umap.at(uuid))
+            {
+                std::get<1>(gl_render_unit_mesh) = transform_mat;
+            }
+        }
+
         _submitted_meshes_uuid_set.emplace(uuid);
     }
 }

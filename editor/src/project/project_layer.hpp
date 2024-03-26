@@ -32,7 +32,7 @@ namespace arcadia
         }
     private:
         [[nodiscard]]
-        auto _get_scene_or_assert() -> arcadia::scene&;
+        auto _assert_and_get_scene() -> arcadia::scene&;
 
         void _save_project();
         void _load_project();

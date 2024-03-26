@@ -57,7 +57,7 @@ namespace arcadia
         std::shared_ptr<const arcadia::scene> scene_sptr = _scene_wptr.lock();
 
         std::string type_str = Component::get_type_str_static();
-        bool existed = scene_sptr->contains_all_component_of<Component>(_selected_entity);
+        bool existed = scene_sptr->all_of<Component>(_selected_entity);
 
         if(!existed)
         {
@@ -76,7 +76,7 @@ namespace arcadia
         std::shared_ptr<const arcadia::scene> scene_sptr = _scene_wptr.lock();
 
         std::string type_str = Component::get_type_str_static();
-        bool existed = scene_sptr->contains_all_component_of<Component>(_selected_entity);
+        bool existed = scene_sptr->all_of<Component>(_selected_entity);
 
         if(existed)
         {

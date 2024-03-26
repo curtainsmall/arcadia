@@ -57,7 +57,7 @@ void arcadia::imgui_window_viewport::on_update()
             {
                 physics_simulator_sptr->prepare();
 
-                auto physics_comp_view = scene_sptr->component_view<arcadia::physics_component>();
+                auto physics_comp_view = scene_sptr->view<arcadia::physics_component>();
                 for(auto [entity, physics_comp] : physics_comp_view.each())
                 {
                     physics_simulator_sptr->submit(physics_comp);
@@ -74,35 +74,42 @@ void arcadia::imgui_window_viewport::on_update()
             }
 
             //==== Renderer ====//
-            auto& camera = project_sptr->viewport_camera;
+            auto& viewport_camera = project_sptr->viewport_camera;
 
-            camera.viewport_size = ImGui::GetContentRegionAvail();
-            //camera.should_display_grid = true;
+            viewport_camera.viewport_size = ImGui::GetContentRegionAvail();
+            //viewport_camera.should_display_grid = true;
             renderer_sptr->prepare();
 
             // Cameras
-            renderer_sptr->submit(camera);
+            renderer_sptr->submit(viewport_camera);
 
             // Lights
-            auto light_comp_view = scene_sptr->component_view<arcadia::light_component>();
-            for(auto [entity, light_comp] : light_comp_view.each())
+            for(auto [entity, light_comp] : scene_sptr->view<arcadia::light_component>().each())
             {
-                renderer_sptr->submit(light_comp);
+                if(scene_sptr->get_entity_info(entity).should_render_in_viewport)
+                {
+                    renderer_sptr->submit(light_comp);
+                }
             }
 
             // Models
-            auto model_comp_view = scene_sptr->component_view<arcadia::model_component>();
-            for(auto [entity, model_comp] : model_comp_view.each())
+            for(auto [entity, model_comp] : scene_sptr->view<arcadia::model_component>().each())
             {
-                renderer_sptr->submit(model_comp);
+                if(scene_sptr->get_entity_info(entity).should_render_in_viewport)
+                {
+                    renderer_sptr->submit(model_comp);
+                }
             }
 
+            // Physcis simulator 
             if(physics_simulator_sptr)
             {
-                auto physics_comp_view = scene_sptr->component_view<arcadia::physics_component>();
-                for(auto [entity, physics_comp] : physics_comp_view.each())
+                for(auto [entity, physics_comp] : scene_sptr->view<arcadia::physics_component>().each())
                 {
-                    renderer_sptr->submit(physics_comp);
+                    if(scene_sptr->get_entity_info(entity).should_render_in_viewport)
+                    {
+                        renderer_sptr->submit(physics_comp);
+                    }
                 }
             }
 
@@ -110,33 +117,33 @@ void arcadia::imgui_window_viewport::on_update()
             renderer_sptr->draw();
 
             auto image_cursor_pos = ImGui::GetCursorPos();
-            ImGui::Image(renderer_sptr->get_render_result_id(0), camera.viewport_size, { 0,1 }, { 1,0 });
+            ImGui::Image(renderer_sptr->get_render_result_id(0), viewport_camera.viewport_size, { 0,1 }, { 1,0 });
 
             if(ImGui::IsItemHovered())
             {
                 auto& io = ImGui::GetIO();
 
-                // Scroll to zoom (move camera forwards or backwards along direction)
+                // Scroll to zoom (move viewport_camera forwards or backwards along direction)
                 auto mouse_wheel_offset = io.MouseWheel;
-                camera.move(camera.get_forward_dir() * mouse_wheel_offset);
+                viewport_camera.move(viewport_camera.get_forward_dir() * mouse_wheel_offset);
 
                 if(ImGui::IsMouseDown(ImGuiMouseButton_Middle))
                 {
                     if(ImGui::IsKeyDown(ImGuiKey_LeftShift))
                     {
-                        camera.drag_view_move(_cursor_move * .05f);
+                        viewport_camera.drag_view_move(_cursor_move * .05f);
                     }
                     else
                     {
-                        camera.drag_view_rotate(_cursor_move * .005f);
+                        viewport_camera.drag_view_rotate(_cursor_move * .005f);
                     }
                 }
 
             }
 
-            // Display viewport camera info
+            // Display viewport viewport_camera info
             ImGui::SetCursorPos(image_cursor_pos);
-            ImGui::Text(std::format("Camera - Pos: {} - Direction: {}", camera.pos, camera.get_forward_dir()).c_str());
+            ImGui::Text(std::format("Camera - Pos: {} - Direction: {}", viewport_camera.pos, viewport_camera.get_forward_dir()).c_str());
             float fps = 1.f / std::chrono::duration_cast<std::chrono::duration<float>>(app_context.delta_time).count();
             ImGui::Text(std::format("FPS: {:.2f}", fps).c_str());
         }

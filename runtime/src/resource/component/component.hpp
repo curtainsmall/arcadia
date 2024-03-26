@@ -20,7 +20,6 @@ virtual inline auto get_type_str() const -> std::string override\
 
 namespace arcadia
 {
-
     struct ARCADIA_API component_base: arcadia::noncopyable
     {
     public:

@@ -347,7 +347,7 @@ void arcadia::imgui_window_property::on_update()
     }
 
     auto has_scene = !_scene_wptr.expired();
-    std::shared_ptr<const arcadia::scene> scene_sptr = _scene_wptr.lock();
+    auto scene_sptr = _scene_wptr.lock();
 
     auto imgui_title = has_scene && _selected_entity != entt::null
         ? _title + " - " + scene_sptr->get_name_of_entity(_selected_entity) + get_id_str()
@@ -364,15 +364,15 @@ void arcadia::imgui_window_property::on_update()
         }
         else
         {
-            _display_components();
+            _display_components(scene_sptr);
         }
     }
     ImGui::End();
 }
 
-void arcadia::imgui_window_property::_display_components()
+void arcadia::imgui_window_property::_display_components(const std::shared_ptr<arcadia::scene>& scene_sptr)
 {
-    ARCADIA_ASSERT(!_scene_wptr.expired());
+    ARCADIA_ASSERT(scene_sptr);
 
     auto tab_bar_flags =
         ImGuiTabBarFlags_NoCloseWithMiddleMouseButton
@@ -384,24 +384,24 @@ void arcadia::imgui_window_property::_display_components()
     {
         ImGui::PushItemWidth(200.f);
 
-        if(_contains_component<arcadia::camera_component>() && ImGui::BeginTabItem("Camera"))
+        if(_contains_component<arcadia::camera_component>(scene_sptr) && ImGui::BeginTabItem("Camera"))
         {
-            _display_camera_component();
+            _display_camera_component(scene_sptr);
             ImGui::EndTabItem();
         }
-        if(_contains_component<arcadia::light_component>() && ImGui::BeginTabItem("Light"))
+        if(_contains_component<arcadia::light_component>(scene_sptr) && ImGui::BeginTabItem("Light"))
         {
-            _display_light_component();
+            _display_light_component(scene_sptr);
             ImGui::EndTabItem();
         }
-        if(_contains_component<arcadia::model_component>() && ImGui::BeginTabItem("Model"))
+        if(_contains_component<arcadia::model_component>(scene_sptr) && ImGui::BeginTabItem("Model"))
         {
-            _display_model_component();
+            _display_model_component(scene_sptr);
             ImGui::EndTabItem();
         }
-        if(_contains_component<arcadia::physics_component>() && ImGui::BeginTabItem("Physics"))
+        if(_contains_component<arcadia::physics_component>(scene_sptr) && ImGui::BeginTabItem("Physics"))
         {
-            _display_physics_component();
+            _display_physics_component(scene_sptr);
             ImGui::EndTabItem();
         }
 
@@ -411,15 +411,17 @@ void arcadia::imgui_window_property::_display_components()
     }
 }
 
-void arcadia::imgui_window_property::_display_camera_component()
+void arcadia::imgui_window_property::_display_camera_component(const std::shared_ptr<arcadia::scene>& scene_sptr)
 {
+    ARCADIA_ASSERT(scene_sptr);
+
     const float speed = 1.f;
     const float min = .0;
     const float max = .0f;
     const char* format = "%.3f";
     const auto flags =
         ImGuiSliderFlags_AlwaysClamp;
-    auto& camera_comp = _get_component<arcadia::camera_component>();
+    auto& camera_comp = _get_component<arcadia::camera_component>(scene_sptr);
     ImGui::BeginGroup();
 
     ImGui::NewLine();
@@ -470,9 +472,11 @@ void arcadia::imgui_window_property::_display_camera_component()
     ImGui::EndGroup();
 }
 
-void arcadia::imgui_window_property::_display_light_component()
+void arcadia::imgui_window_property::_display_light_component(const std::shared_ptr<arcadia::scene>& scene_sptr)
 {
-    auto& light_comp = _get_component<arcadia::light_component>();
+    ARCADIA_ASSERT(scene_sptr);
+
+    auto& light_comp = _get_component<arcadia::light_component>(scene_sptr);
     ImGui::BeginGroup();
 
     const float light_direction_drag_speed = .01f;
@@ -848,16 +852,18 @@ void arcadia::imgui_window_property::_display_light_component()
     ImGui::EndGroup();
 }
 
-void arcadia::imgui_window_property::_display_model_component()
+void arcadia::imgui_window_property::_display_model_component(const std::shared_ptr<arcadia::scene>& scene_sptr)
 {
+    ARCADIA_ASSERT(scene_sptr);
+
     const float speed = 1.f;
     const float min = .0f;
-    const float max = 1.f;
+    const float max = .0f;
     const char* format = "%.3f";
     const auto flags =
         ImGuiSliderFlags_AlwaysClamp;
 
-    auto& model_comp = _get_component<arcadia::model_component>();
+    auto& model_comp = _get_component<arcadia::model_component>(scene_sptr);
     ImGui::BeginGroup();
 
     ImGui::SeparatorText("Filepath");
@@ -865,7 +871,6 @@ void arcadia::imgui_window_property::_display_model_component()
         ? "(No filepath)"s
         : model_comp.get_filepath().generic_string();
     ImGui::TextWrapped(filepath_str.c_str());
-    ImGui::SameLine();
     if(ImGui::Button("..."))
     {
         auto res = pfd::open_file{
@@ -905,12 +910,14 @@ void arcadia::imgui_window_property::_display_model_component()
 
 }
 
-void arcadia::imgui_window_property::_display_physics_component()
+void arcadia::imgui_window_property::_display_physics_component(const std::shared_ptr<arcadia::scene>& scene_sptr)
 {
+    ARCADIA_ASSERT(scene_sptr);
+
     auto has_physics_simulator = !_physics_simulator_wptr.expired();
     auto physics_simulator_sptr = _physics_simulator_wptr.lock();
 
-    auto& physics_comp = _get_component<arcadia::physics_component>();
+    auto& physics_comp = _get_component<arcadia::physics_component>(scene_sptr);
 
     _imgui_window_popup_physics_component_create_body(physics_comp);
 

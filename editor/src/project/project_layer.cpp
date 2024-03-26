@@ -68,7 +68,7 @@ void arcadia::project_layer::on_event(arcadia::event_base& event)
 void arcadia::project_layer::on_update()
 {}
 
-auto arcadia::project_layer::_get_scene_or_assert() -> arcadia::scene&
+auto arcadia::project_layer::_assert_and_get_scene() -> arcadia::scene&
 {
     ARCADIA_ASSERT(_project_sptr);
     ARCADIA_ASSERT(_project_sptr->has_active_scene());
@@ -358,68 +358,60 @@ void arcadia::project_layer::_on_delete_scene(arcadia::event::delete_scene& e)
 
 void arcadia::project_layer::_on_new_entity(arcadia::event::new_entity& e)
 {
-    auto& scene = _get_scene_or_assert();
+    auto& scene = _assert_and_get_scene();
 
     std::string name = "New Entity";
     std::string final_name = name;
     int postfix{ 1 };
-    while(scene.contains_entity(final_name))
+    while(scene.contains(final_name))
     {
         final_name = std::format("{} {}", name, ++postfix);
     }
 
-    ARCADIA_DISCARD(scene.create_entity(final_name));
+    ARCADIA_DISCARD(scene.create(final_name));
 }
 
 void arcadia::project_layer::_on_rename_entity(arcadia::event::rename_entity& e)
 {
     const auto& [old_name, new_name] = e.data_tuple;
 
-    auto& scene = _get_scene_or_assert();
-    if(!scene.rename_entity(old_name, new_name))
-    {
-        pfd::message{
-            "Rename Entity",
-            std::format("Failed to rename {} to {}, because the new name is already used",old_name,new_name),
-            pfd::choice::ok,
-            pfd::icon::info
-        };
-    }
+    auto& scene = _assert_and_get_scene();
+
 }
 
 void arcadia::project_layer::_on_delete_entity(arcadia::event::delete_entity& e)
 {
     const auto& [entity] = e.data_tuple;
-    auto& scene = _get_scene_or_assert();
-    scene.destroy_entity(entity);
+    auto& scene = _assert_and_get_scene();
+    scene.destroy(entity);
 }
 
 void arcadia::project_layer::_on_add_component(arcadia::event::add_component& e)
 {
     const auto& [entity, type_str] = e.data_tuple;
-    auto& scene = _get_scene_or_assert();
+    auto& scene = _assert_and_get_scene();
 
     arcadia::match<void>(
         type_str,
         arcadia::camera_component::get_type_str_static(),
         [&]()
     {
-        scene.emplace_component<arcadia::camera_component>(entity);
+        scene.emplace<arcadia::camera_component>(entity);
     },
         arcadia::light_component::get_type_str_static(),
         [&]()
     {
-        scene.emplace_component<arcadia::light_component>(entity);
+        scene.emplace<arcadia::light_component>(entity);
     },
         arcadia::model_component::get_type_str_static(),
         [&]()
     {
-        scene.emplace_component<arcadia::model_component>(entity);
+        scene.emplace<arcadia::model_component>(entity);
     },
         arcadia::physics_component::get_type_str_static(),
         [&]()
     {
-        scene.emplace_component<arcadia::physics_component>(entity);
+        scene.emplace<arcadia::physics_component>(entity);
     }
     );
 }
@@ -427,29 +419,29 @@ void arcadia::project_layer::_on_add_component(arcadia::event::add_component& e)
 void arcadia::project_layer::_on_remove_component(arcadia::event::remove_component& e)
 {
     const auto& [entity, type_str] = e.data_tuple;
-    auto& scene = _get_scene_or_assert();
+    auto& scene = _assert_and_get_scene();
 
     arcadia::match<void>(
         type_str,
         arcadia::camera_component::get_type_str_static(),
         [&]()
     {
-        scene.remove_conponent<arcadia::camera_component>(entity);
+        scene.remove<arcadia::camera_component>(entity);
     },
         arcadia::light_component::get_type_str_static(),
         [&]()
     {
-        scene.remove_conponent<arcadia::light_component>(entity);
+        scene.remove<arcadia::light_component>(entity);
     },
         arcadia::model_component::get_type_str_static(),
         [&]()
     {
-        scene.remove_conponent<arcadia::model_component>(entity);
+        scene.remove<arcadia::model_component>(entity);
     },
         arcadia::physics_component::get_type_str_static(),
         [&]()
     {
-        scene.remove_conponent<arcadia::physics_component>(entity);
+        scene.remove<arcadia::physics_component>(entity);
     }
     );
 }

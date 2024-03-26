@@ -51,23 +51,23 @@ namespace arcadia
         virtual void on_update() override;
     private:
         template<arcadia::component_like Component>
-        auto _contains_component() -> bool
+        auto _contains_component(const std::shared_ptr<arcadia::scene>& scene_sptr) -> bool
         {
-            ARCADIA_ASSERT(!_scene_wptr.expired());
-            return _scene_wptr.lock()->contains_all_component_of<Component>(_selected_entity);
+            ARCADIA_ASSERT(scene_sptr);
+            return scene_sptr->all_of<Component>(_selected_entity);
         }
         template<arcadia::component_like Component>
-        auto _get_component() -> Component&
+        auto _get_component(const std::shared_ptr<arcadia::scene>& scene_sptr) -> Component&
         {
-            ARCADIA_ASSERT(_contains_component<Component>());
-            return _scene_wptr.lock()->get_component<Component>(_selected_entity);
+            ARCADIA_ASSERT(_contains_component<Component>(scene_sptr));
+            return scene_sptr->get<Component>(_selected_entity);
         }
 
-        void _display_components();
-        void _display_camera_component();
-        void _display_light_component();
-        void _display_model_component();
-        void _display_physics_component();
+        void _display_components(const std::shared_ptr<arcadia::scene>& scene_sptr);
+        void _display_camera_component(const std::shared_ptr<arcadia::scene>& scene_sptr);
+        void _display_light_component(const std::shared_ptr<arcadia::scene>& scene_sptr);
+        void _display_model_component(const std::shared_ptr<arcadia::scene>& scene_sptr);
+        void _display_physics_component(const std::shared_ptr<arcadia::scene>& scene_sptr);
 
         void _on_open_imgui_window(arcadia::event::open_imgui_window& e);
         void _on_scene_activated(arcadia::event::scene_activated& e);

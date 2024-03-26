@@ -26,7 +26,7 @@ void arcadia::imgui_window_outliner::on_update()
     }
 
     auto has_scene = !_scene_wptr.expired();
-    std::shared_ptr<const arcadia::scene> scene_sptr = _scene_wptr.lock();
+    auto scene_sptr = _scene_wptr.lock();
 
     auto& event_queue = arcadia::event_queue::instance();
 
@@ -56,6 +56,7 @@ void arcadia::imgui_window_outliner::on_update()
         {
             for(const auto& [name, entity] : scene_sptr->get_name_entity_bimap())
             {
+                // Display text input
                 if(_entity_old_name == name)
                 {
                     _entity_new_name = _entity_old_name;
@@ -66,13 +67,25 @@ void arcadia::imgui_window_outliner::on_update()
                     ImGui::SetItemDefaultFocus();
                     if(!ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Left) || ImGui::IsKeyPressed(ImGuiKey_Enter))
                     {
-                        event_queue.signal<arcadia::event::rename_entity>(_entity_old_name, _entity_new_name);
+                        if(_entity_old_name != _entity_new_name && !scene_sptr->rename(_entity_old_name, _entity_new_name))
+                        {
+                            pfd::message msg{
+                                "Rename Entity",
+                                std::format("Failed to rename {} to {}, because the new name is already used",_entity_old_name,_entity_new_name),
+                                pfd::choice::ok,
+                                pfd::icon::info
+                            };
+                        }
                         _entity_old_name.clear();
                         _entity_new_name.clear();
                     }
                 }
+                // Display selectable
                 else
                 {
+                    auto& entity_info = scene_sptr->get_entity_info(entity);
+                    ImGui::Checkbox(std::format("##render_in_viewport_{}", entity).c_str(), &entity_info.should_render_in_viewport);
+                    ImGui::SameLine();
                     if(ImGui::Selectable(name.c_str(), _selected_entity == entity))
                     {
                         _selected_entity = entity;
