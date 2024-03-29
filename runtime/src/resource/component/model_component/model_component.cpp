@@ -14,12 +14,104 @@ auto arcadia::model_component::to_json() const -> nlohmann::json
 {
     nlohmann::json json{
         {"filepath", _filepath.generic_string() },
-        {"location",arcadia::vec3::to_json(location)},
-        {"rotation",arcadia::vec3::to_json(rotation)},
-        {"scale"   ,arcadia::vec3::to_json(scale)},
-        {"pivot"   ,arcadia::vec3::to_json(scale)}
+        {"location",arcadia::vec3::to_json(_location)},
+        {"rotation",arcadia::quat::to_json(_rotation)},
+        {"scale"   ,arcadia::vec3::to_json(_scale)},
+        {"pivot"   ,arcadia::vec3::to_json(_pivot)}
     };
     return json;
+}
+
+auto arcadia::model_component::snapshot() const -> memento_data_type
+{
+    memento_data_type memento{};
+
+    memento.location = _location;
+    memento.rotation = _rotation;
+    memento.scale = _scale;
+    memento.pivot = _pivot;
+    memento.filepath = _filepath;
+
+    return memento;
+}
+
+void arcadia::model_component::restore(const memento_data_type& memento)
+{
+    _location = memento.location;
+    _rotation = memento.rotation;
+    _scale = memento.scale;
+    _pivot = memento.pivot;
+
+    if(_filepath != memento.filepath)
+    {
+        if(!_filepath.empty())
+        {
+            _unload();
+        }
+
+        _filepath = memento.filepath;
+        if(!_filepath.empty())
+        {
+            _load();
+        }
+    }
+
+}
+
+auto arcadia::model_component::get_location() const -> const glm::vec3&
+{
+    return _location;
+}
+
+void arcadia::model_component::set_location(const glm::vec3& location)
+{
+    _location = location;
+}
+
+auto arcadia::model_component::get_rotation() const -> const glm::quat&
+{
+    return _rotation;
+}
+
+void arcadia::model_component::set_rotation(const glm::quat& rotation)
+{
+    _rotation = rotation;
+}
+
+auto arcadia::model_component::get_scale() const -> const glm::vec3&
+{
+    return _scale;
+}
+
+void arcadia::model_component::set_scale(const glm::vec3& scale)
+{
+    _scale = scale;
+}
+
+auto arcadia::model_component::get_pivot() const -> const glm::vec3&
+{
+    return _pivot;
+}
+
+void arcadia::model_component::set_pivot(const glm::vec3& pivot)
+{
+    _pivot = pivot;
+}
+
+auto arcadia::model_component::get_filepath() const -> const std::filesystem::path&
+{
+    return _filepath;
+}
+
+auto arcadia::model_component::has_identifiable_meshes() const -> bool
+{
+    return _identifiable_meshes_uptr.get();
+}
+
+auto arcadia::model_component::get_identifiable_meshes() const -> const identifiable_meshes&
+{
+    ARCADIA_ASSERT(has_identifiable_meshes());
+    return *_identifiable_meshes_uptr;
 }
 
 arcadia::model_component::model_component(const std::filesystem::path& filepath):
@@ -33,10 +125,10 @@ arcadia::model_component::model_component(const std::filesystem::path& filepath)
 
 arcadia::model_component::model_component(const nlohmann::json& json):
     _filepath(arcadia::to_filepath(json.at("filepath"))),
-    location(arcadia::vec3::from_json(json.at("location"))),
-    rotation(arcadia::vec3::from_json(json.at("rotation"))),
-    scale(arcadia::vec3::from_json(json.at("scale"))),
-    pivot(arcadia::vec3::from_json(json.at("pivot")))
+    _location(arcadia::vec3::from_json(json.at("location"))),
+    _rotation(arcadia::quat::from_json(json.at("rotation"))),
+    _scale(arcadia::vec3::from_json(json.at("scale"))),
+    _pivot(arcadia::vec3::from_json(json.at("pivot")))
 {
     if(!_filepath.empty())
     {

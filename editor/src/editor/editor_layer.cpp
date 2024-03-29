@@ -9,7 +9,11 @@
 #include"core/layer/layer.hpp"
 
 #include"editor/editor_context.hpp"
-#include"ui/imgui_windows/imgui_windows.hpp"
+#include"ui/imgui_windows/imgui_window_manubar.hpp"
+#include"ui/imgui_windows/imgui_window_outliner.hpp"
+#include"ui/imgui_windows/imgui_window_property.hpp"
+#include"ui/imgui_windows/imgui_window_state.hpp"
+#include"ui/imgui_windows/imgui_window_viewport.hpp"
 
 arcadia::editor_app_layer::editor_app_layer()
 {

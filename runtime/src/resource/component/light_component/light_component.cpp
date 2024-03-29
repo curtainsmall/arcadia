@@ -5,7 +5,7 @@ arcadia::light_component::light_component(const nlohmann::json& json)
 {
     std::string type_str = json.at("type");
     auto& json_light = json.at("light");
-    light = arcadia::match<arcadia::light_type>(
+    _light = arcadia::match<arcadia::light_type>(
         type_str,
         "null"s,
         [&]()
@@ -68,7 +68,7 @@ arcadia::light_component::light_component(const nlohmann::json& json)
 auto arcadia::light_component::to_json() const -> nlohmann::json
 {
     return arcadia::match<nlohmann::json>(
-        light,
+        _light,
         [&](const arcadia::null_light&)
     {
         return nlohmann::json{
@@ -139,4 +139,28 @@ auto arcadia::light_component::to_json() const -> nlohmann::json
         };
     }
     );
+}
+
+auto arcadia::light_component::snapshot() const -> memento_data_type
+{
+    memento_data_type memento{};
+
+    memento.light = _light;
+
+    return memento;
+}
+
+void arcadia::light_component::restore(const memento_data_type& memento)
+{
+    _light = memento.light;
+}
+
+auto arcadia::light_component::get_light() const -> const arcadia::light_type&
+{
+    return _light;
+}
+
+void arcadia::light_component::set_light(const arcadia::light_type& light)
+{
+    _light = light;
 }

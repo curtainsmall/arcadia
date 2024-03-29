@@ -8,6 +8,7 @@
 
 #include"core/base.hpp"
 #include"core/math.hpp"
+#include"core/memento/memento.hpp"
 #include"core/nlohmann_json_header.hpp"
 #include"core/uuid.hpp"
 #include"resource/component/component.hpp"
@@ -15,7 +16,21 @@
 
 namespace arcadia
 {
-    struct ARCADIA_API model_component: arcadia::component_base
+    struct model_component;
+    struct ARCADIA_API model_component_memento_data
+    {
+        friend struct arcadia::model_component;
+    private:
+        glm::vec3 location{ arcadia::vec3::zero() };
+        glm::quat rotation{ arcadia::quat::identity() };
+        glm::vec3 scale{ 1,1,1 };
+        glm::vec3 pivot{ arcadia::vec3::zero() };
+        std::filesystem::path filepath{};
+    };
+
+    struct ARCADIA_API model_component:
+        arcadia::component_base,
+        arcadia::memento_originator_interface<arcadia::model_component_memento_data>
     {
     public:
         using identifiable_meshes = arcadia::basic_identifiable<std::vector<arcadia::mesh>>;
@@ -31,26 +46,35 @@ namespace arcadia
         [[nodiscard]]
         auto to_json() const->nlohmann::json;
 
+        [[nodiscard]]
+        virtual auto snapshot() const->memento_data_type override;
+        virtual void restore(const memento_data_type& memento) override;
+
         model_component(self_type&&) noexcept = default;
         auto operator=(self_type&&) noexcept -> self_type & = default;
 
         [[nodiscard]]
-        inline auto has_identifiable_meshes() const -> bool
-        {
-            return _identifiable_meshes_uptr.get();
-        }
+        auto get_location() const -> const glm::vec3&;
+        void set_location(const glm::vec3& location);
 
         [[nodiscard]]
-        inline auto get_identifiable_meshes() const -> const identifiable_meshes&
-        {
-            return *_identifiable_meshes_uptr;
-        }
+        auto get_rotation() const -> const glm::quat&;
+        void set_rotation(const glm::quat& rotation);
 
         [[nodiscard]]
-        inline auto get_filepath() const -> const std::filesystem::path&
-        {
-            return _filepath;
-        }
+        auto get_scale() const -> const glm::vec3&;
+        void set_scale(const glm::vec3& scale);
+
+        [[nodiscard]]
+        auto get_pivot() const -> const glm::vec3&;
+        void set_pivot(const glm::vec3& pivot);
+
+        [[nodiscard]]
+        auto get_filepath() const -> const std::filesystem::path&;
+        [[nodiscard]]
+        auto has_identifiable_meshes() const -> bool;
+        [[nodiscard]]
+        auto get_identifiable_meshes() const -> const identifiable_meshes&;
 
         void import(const std::filesystem::path & filepath);
 
@@ -72,14 +96,13 @@ namespace arcadia
             texture2d& texture
         );
 
-    public:
-        glm::vec3 location{ arcadia::vec3::zero() };
-        glm::vec3 rotation{ arcadia::vec3::zero() };
-        glm::vec3 scale{ 1,1,1 };
-        glm::vec3 pivot{ arcadia::vec3::zero() };
-
     private:
-        std::unique_ptr<identifiable_meshes> _identifiable_meshes_uptr{};
+        glm::vec3 _location{ arcadia::vec3::zero() };
+        glm::quat _rotation{ arcadia::quat::identity() };
+        glm::vec3 _scale{ 1,1,1 };
+        glm::vec3 _pivot{ arcadia::vec3::zero() };
+
         std::filesystem::path _filepath{};
+        std::unique_ptr<identifiable_meshes> _identifiable_meshes_uptr{};
     };
 }

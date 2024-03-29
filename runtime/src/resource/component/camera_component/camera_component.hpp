@@ -4,12 +4,34 @@
 
 #include"core/base.hpp"
 #include"core/math.hpp"
+#include"core/memento/memento.hpp"
 #include"core/nlohmann_json_header.hpp"
 #include"resource/component/component.hpp"
 
 namespace arcadia
 {
-    struct ARCADIA_API camera_component: arcadia::component_base
+    struct camera_component;
+    struct ARCADIA_API camera_component_memento_data
+    {
+        friend struct arcadia::camera_component;
+    private:
+        glm::vec3 position{ arcadia::vec3::pos_unit_z() };
+        glm::vec3 target{ arcadia::vec3::zero() };
+        glm::vec3 up{ arcadia::vec3::pos_unit_y() };
+        float near_plane{ .1f };
+        float far_plane{ 100.f };
+        float fov{ 90.f };
+        float fov_min{ 1.f };
+        float fov_max{ 120.f };
+        float speed{ .25f };
+        glm::ivec2 viewport_size{ 800,600 };
+        bool fixed_up{ true };
+        float up_epsilon{ .1f };
+    };
+
+    struct ARCADIA_API camera_component:
+        arcadia::component_base,
+        arcadia::memento_originator_interface<arcadia::camera_component_memento_data>
     {
     public:
         using self_type = arcadia::camera_component;
@@ -23,6 +45,66 @@ namespace arcadia
         [[nodiscard]]
         auto to_json() const->nlohmann::json;
 
+        [[nodiscard]]
+        virtual auto snapshot() const->memento_data_type override;
+        virtual void restore(const memento_data_type& memento) override;
+
+        [[nodiscard]]
+        auto get_position() const -> const glm::vec3&;
+        void set_position(const glm::vec3& position);
+
+        [[nodiscard]]
+        auto get_target() const -> const glm::vec3&;
+        void set_target(const glm::vec3& target);
+
+        [[nodiscard]]
+        auto get_up() const -> const glm::vec3&;
+        void set_up(const glm::vec3& up);
+
+        [[nodiscard]]
+        auto get_near_plane() const -> float;
+        void set_near_plane(float near_plane);
+
+        [[nodiscard]]
+        auto get_far_plane() const -> float;
+        void set_far_plane(float far_plane);
+
+        [[nodiscard]]
+        auto get_fov() const -> float;
+        void set_fov(float fov);
+
+        [[nodiscard]]
+        auto get_fov_min() const -> float;
+        void set_fov_min(float fov_min);
+
+        [[nodiscard]]
+        auto get_fov_max() const -> float;
+        void set_fov_max(float fov_max);
+
+        [[nodiscard]]
+        auto get_speed() const -> float;
+        void set_speed(float speed);
+
+        [[nodiscard]]
+        auto get_viewport_size() const -> const glm::ivec2&;
+        void set_viewport_size(const glm::ivec2& viewport_size);
+
+        [[nodiscard]]
+        auto get_fixed_up() const -> bool;
+        void set_fixed_up(bool fixed_up);
+
+        [[nodiscard]]
+        auto get_up_epsilon() const -> float;
+        void set_up_epsilon(float up_epsilon);
+
+        [[nodiscard]]
+        auto get_cursor_move_offset_range() const -> const glm::vec2&;
+        void set_cursor_move_offset_range(const glm::vec2& cursor_move_offset_range);
+
+        [[nodiscard]]
+        auto get_should_display_grid() const -> bool;
+        void set_should_display_grid(bool should_display_grid);
+
         auto move_forward() -> self_type&;
         auto move_backward() -> self_type&;
         auto move_left() -> self_type&;
@@ -34,20 +116,19 @@ namespace arcadia
         auto drag_view_rotate(const glm::vec2& offset) -> self_type&;
 
         [[nodiscard]]
-        auto build_view_mat4() const->glm::mat4;
+        auto gen_view_mat4() const->glm::mat4;
 
         [[nodiscard]]
-        auto build_proj_mat4() const->glm::mat4;
+        auto gen_proj_mat4() const->glm::mat4;
 
         [[nodiscard]]
-        auto build_mat4(bool col_major = true) const->glm::mat4;
+        auto gen_mat4(bool col_major = true) const->glm::mat4;
 
         // Get forward vector by position and target
         auto get_forward_dir() const->glm::vec3;
         auto get_left_dir() const->glm::vec3;
         auto get_up_dir() const->glm::vec3;
     private:
-
         // Angle of pitch
         // Look from right:
         // increase when rotating counter-clockwise
@@ -66,48 +147,48 @@ namespace arcadia
         // Test whether a cursor move should be filtered
         auto _test_cursor_move(float x_offset, float y_offset) -> bool;
 
-    public:
+    private:
         /// @brief Position of camera
-        glm::vec3 pos{ arcadia::vec3::pos_unit_z() };
+        glm::vec3 _position{ arcadia::vec3::pos_unit_z() };
 
         /// @brief Target that the camera pointing to
-        glm::vec3 target{ arcadia::vec3::zero() };
+        glm::vec3 _target{ arcadia::vec3::zero() };
 
         /// @brief Direction of global up
         /// @note This should always be unit vector
-        glm::vec3 up{ arcadia::vec3::pos_unit_y() };
+        glm::vec3 _up{ arcadia::vec3::pos_unit_y() };
 
         /// @brief Near plane of clip space
-        float near_plane{ .1f };
+        float _near_plane{ .1f };
 
         /// @brief Far plane of clip space
-        float far_plane{ 100.f };
+        float _far_plane{ 100.f };
 
         /// @brief FOV angle in vertical direction
-        float fov{ 90.f };
+        float _fov{ 90.f };
 
         /// @brief Minimun value fo @ref arcadia::camera::fov
-        float fov_min{ 1.f };
+        float _fov_min{ 1.f };
 
         /// @brief Maximun value of @ref arcadia::camera::fov
-        float fov_max{ 120.f };
+        float _fov_max{ 120.f };
 
         /// @brief Move speed of free-camera
-        float speed{ .25f };
+        float _speed{ .25f };
 
         /// @brief Size of the viewport of this camera
-        glm::ivec2 viewport_size{ 800,600 };
+        glm::ivec2 _viewport_size{ 800,600 };
 
         /// @brief Whether @ref arcadia::camera::up should be fixed
-        bool fixed_up{ true };
+        bool _fixed_up{ true };
 
         /// @brief How small angle between @ref arcadia::camera::up and @ref arcadia::camera::target can be
-        float up_epsilon{ .1f };
+        float _up_epsilon{ .1f };
 
         /// @brief Cursor move offset that is out of this range will be silently ignored
-        glm::vec2 cursor_move_offset_range{ -100.f,100.f };
+        glm::vec2 _cursor_move_offset_range{ -100.f,100.f };
 
         /// @brief Display a grid a X-Z plane
-        bool should_display_grid{ false };
+        bool _should_display_grid{ false };
     };
 }

@@ -43,18 +43,19 @@ namespace arcadia
         }
 
         /// @brief Normalize quaternion with one axis fixed
+        /// @tparam Index Index of fixed axis, must be 0, 1, 2 or 3
         /// @param vec Quaternion to normalize
-        /// @param fixed_index Index of fixed axis, must be 0, 1, 2 or 3
         /// @return Normalized quaternion
+        template<std::size_t Index>
         [[nodiscard]]
-        ARCADIA_API inline auto fixed_normalize(const glm::quat& quat, glm::quat::length_type fixed_index) -> glm::quat
+        ARCADIA_API auto fixed_normalize(const glm::quat& quat) -> glm::quat
         {
-            ARCADIA_ASSERT(fixed_index >= 0 && fixed_index < quat.length());
+            static_assert(Index >= 0 && Index < 4);
 
-            auto fixed = quat[fixed_index];
-            auto a = quat[(fixed_index + 1) % 4];
-            auto b = quat[(fixed_index + 2) % 4];
-            auto c = quat[(fixed_index + 3) % 4];
+            auto fixed = quat[Index];
+            auto a = quat[(Index + 1) % 4];
+            auto b = quat[(Index + 2) % 4];
+            auto c = quat[(Index + 3) % 4];
 
 
             auto R = std::sqrt(1 - fixed * fixed); // Radius of target cicle
@@ -73,10 +74,10 @@ namespace arcadia
             }
 
             glm::quat res{};
-            res[fixed_index] = fixed;
-            res[(fixed_index + 1) % 4] = a;
-            res[(fixed_index + 2) % 4] = b;
-            res[(fixed_index + 3) % 4] = c;
+            res[Index] = fixed;
+            res[(Index + 1) % 4] = a;
+            res[(Index + 2) % 4] = b;
+            res[(Index + 3) % 4] = c;
             return res;
         }
     }

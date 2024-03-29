@@ -5,6 +5,7 @@
 #include"core/file/pfd_header.hpp"
 #include"core/hash.hpp"
 #include"core/log/log.hpp"
+#include"core/memento/memento.hpp"
 #include"function/render/opengl/gl_renderer.hpp"
 #include"function/window/window_events.hpp"
 #include"resource/component/camera_component/camera_component.hpp"
@@ -58,7 +59,6 @@ void arcadia::project_layer::on_event(arcadia::event_base& event)
         .dispatch<arcadia::event::close_scene>(ARCADIA_BIND_MEMBER_FN(_on_close_scene))
         .dispatch<arcadia::event::delete_scene>(ARCADIA_BIND_MEMBER_FN(_on_delete_scene))
         .dispatch<arcadia::event::new_entity>(ARCADIA_BIND_MEMBER_FN(_on_new_entity))
-        .dispatch<arcadia::event::rename_entity>(ARCADIA_BIND_MEMBER_FN(_on_rename_entity))
         .dispatch<arcadia::event::delete_entity>(ARCADIA_BIND_MEMBER_FN(_on_delete_entity))
         .dispatch<arcadia::event::add_component>(ARCADIA_BIND_MEMBER_FN(_on_add_component))
         .dispatch<arcadia::event::remove_component>(ARCADIA_BIND_MEMBER_FN(_on_remove_component))
@@ -105,7 +105,8 @@ void arcadia::project_layer::_on_window_should_close(arcadia::event::window_shou
     const auto& [wnd_ptr] = e.data_tuple;
     if(wnd_ptr == main_window_layer_sptr.get() && _project_sptr)
     {
-        if(_project_sptr->is_modified())
+        auto& memento_list = arcadia::memento_list::instance();
+        if(memento_list.size())
         {
             auto res = pfd::message{
                 "Unsaved",
@@ -167,7 +168,6 @@ void arcadia::project_layer::_on_create_project(arcadia::event::create_project& 
 
     const auto& [name, filepath_str] = e.data_tuple;
     _project_sptr = std::make_shared<arcadia::project>(name);
-    _project_sptr->set_modified(true);
     _project_filepath = filepath_str.size() ? arcadia::to_filepath(filepath_str) : std::filesystem::path{};
 
     arcadia::event_queue::instance()
@@ -213,7 +213,6 @@ void arcadia::project_layer::_on_open_project(arcadia::event::open_project& e)
     }
     _project_sptr.reset();
     _load_project();
-    _project_sptr->set_modified(false, true);
     arcadia::event_queue::instance()
         .signal<arcadia::event::project_built>(_project_sptr);
 }
@@ -233,7 +232,6 @@ void arcadia::project_layer::_on_save_project(arcadia::event::save_project& e)
         }
     }
     _save_project();
-    _project_sptr->set_modified(false, true);
 }
 
 void arcadia::project_layer::_on_save_project_as(arcadia::event::save_project_as& e)
@@ -248,7 +246,6 @@ void arcadia::project_layer::_on_save_project_as(arcadia::event::save_project_as
         return;
     }
     _save_project();
-    _project_sptr->set_modified(false, true);
 }
 
 void arcadia::project_layer::_on_close_project(arcadia::event::close_project& e)
@@ -257,7 +254,8 @@ void arcadia::project_layer::_on_close_project(arcadia::event::close_project& e)
 
     auto& event_queue = arcadia::event_queue::instance();
 
-    if(_project_sptr->is_modified())
+    auto& memento_list = arcadia::memento_list::instance();
+    if(memento_list.size())
     {
         auto res = pfd::message{
                         "Unsaved",
@@ -324,7 +322,7 @@ void arcadia::project_layer::_on_close_scene(arcadia::event::close_scene& e)
 {
     ARCADIA_ASSERT(_project_sptr);
 
-    _project_sptr->set_active_scene();
+    _project_sptr->get_active_scene();
 }
 
 void arcadia::project_layer::_on_delete_scene(arcadia::event::delete_scene& e)
@@ -344,7 +342,7 @@ void arcadia::project_layer::_on_delete_scene(arcadia::event::delete_scene& e)
         case pfd::button::ok:
         {
             _project_sptr->scene_sptr_umap.erase(scene_name);
-            _project_sptr->set_active_scene();
+            _project_sptr->get_active_scene();
             break;
         }
         case pfd::button::cancel:
@@ -369,14 +367,6 @@ void arcadia::project_layer::_on_new_entity(arcadia::event::new_entity& e)
     }
 
     ARCADIA_DISCARD(scene.create(final_name));
-}
-
-void arcadia::project_layer::_on_rename_entity(arcadia::event::rename_entity& e)
-{
-    const auto& [old_name, new_name] = e.data_tuple;
-
-    auto& scene = _assert_and_get_scene();
-
 }
 
 void arcadia::project_layer::_on_delete_entity(arcadia::event::delete_entity& e)

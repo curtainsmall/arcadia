@@ -65,17 +65,18 @@ namespace arcadia
         }
 
         /// @brief Normalize vector with one axis fixed
+        /// @tparam Index Index of fixed axis, must be 0, 1 or 2
         /// @param vec Vector to normalize
-        /// @param fixed_index Index of fixed axis, must be 0, 1 or 2
         /// @return Normalized vector
+        template<std::size_t Index>
         [[nodiscard]]
-        ARCADIA_API inline auto fixed_normalize(const glm::vec3& vec, glm::vec3::length_type fixed_index) -> glm::vec3
+        ARCADIA_API inline auto fixed_normalize(const glm::vec3& vec) -> glm::vec3
         {
-            ARCADIA_ASSERT(fixed_index >= 0 && fixed_index < vec.length());
+            static_assert(Index >= 0 && Index < 3);
 
-            auto fixed = vec[fixed_index];
-            auto a = vec[(fixed_index + 1) % 3];
-            auto b = vec[(fixed_index + 2) % 3];
+            auto fixed = vec[Index];
+            auto a = vec[(Index + 1) % 3];
+            auto b = vec[(Index + 2) % 3];
 
             auto R = std::sqrt(1 - fixed * fixed); // Radius of target cicle
             auto r = std::sqrt(a * a + b * b); // Radius of the circle point (a,b) is on
@@ -91,9 +92,9 @@ namespace arcadia
             }
 
             glm::vec3 res{};
-            res[fixed_index] = fixed;
-            res[(fixed_index + 1) % 3] = a;
-            res[(fixed_index + 2) % 3] = b;
+            res[Index] = fixed;
+            res[(Index + 1) % 3] = a;
+            res[(Index + 2) % 3] = b;
             return res;
         }
     }
@@ -156,17 +157,18 @@ namespace arcadia
         }
 
         /// @brief Normalize vector with one axis fixed
+        /// @tparam Index Index of fixed axis, must be 0, 1 or 2
         /// @param vec Vector to normalize
-        /// @param fixed_index Index of fixed axis, must be 0, 1 or 2
         /// @return Normalized vector
+        template<std::size_t Index>
         [[nodiscard]]
-        ARCADIA_API inline auto fixed_normalize(const glm::dvec3& vec, glm::dvec3::length_type fixed_index) -> glm::dvec3
+        ARCADIA_API inline auto fixed_normalize(const glm::dvec3& vec) -> glm::dvec3
         {
-            ARCADIA_ASSERT(fixed_index >= 0 && fixed_index < vec.length());
+            static_assert(Index >= 0 && Index < 3);
 
-            auto fixed = vec[fixed_index];
-            auto a = vec[(fixed_index + 1) % 3];
-            auto b = vec[(fixed_index + 2) % 3];
+            auto fixed = vec[Index];
+            auto a = vec[(Index + 1) % 3];
+            auto b = vec[(Index + 2) % 3];
 
             auto R = std::sqrt(1 - fixed * fixed); // Radius of target cicle
             auto r = std::sqrt(a * a + b * b); // Radius of the circle point (a,b) is on
@@ -181,10 +183,10 @@ namespace arcadia
                 b = 0;
             }
 
-            glm::dvec3 res{};
-            res[fixed_index] = fixed;
-            res[(fixed_index + 1) % 3] = a;
-            res[(fixed_index + 2) % 3] = b;
+            glm::vec3 res{};
+            res[Index] = fixed;
+            res[(Index + 1) % 3] = a;
+            res[(Index + 2) % 3] = b;
             return res;
         }
     }

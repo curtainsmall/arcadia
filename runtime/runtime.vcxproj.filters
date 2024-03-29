@@ -198,13 +198,7 @@
     <ClInclude Include="src\function\ui\imgui_layer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\function\ui\imgui_window.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\function\ui\imgui_style.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\resource\component\components.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\function\render\opengl\buffer\gl_renderbuffer.hpp">
@@ -223,6 +217,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\function\physics\physics_simulator.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\function\ui\imgui_window.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\command\command.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\memento\memento.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -329,8 +332,18 @@
     <ClCompile Include="src\resource\component\model_component\mesh\mesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\core\command\command.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\memento\memento.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\function\ui\imgui_wrapper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="src\core\string.hpp" />
+    <None Include="src\function\ui\imgui_wrapper.hpp" />
   </ItemGroup>
 </Project>

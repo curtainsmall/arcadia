@@ -69,19 +69,19 @@ void arcadia::physics_simulator::submit(const arcadia::physics_component& physic
             auto& jph_body_interface = _jph_physics_system_uptr->GetBodyInterface();
             JPH::ShapeRefC jph_shape_refc = arcadia::match<JPH::Shape*>(
                 body_info.jph_shape_info,
-                [&](const arcadia::physics_component::jph_box_shape_info& info)
+                [&](const arcadia::jph_box_shape_info& info)
             {
                 return new JPH::BoxShape{ arcadia::to_jph_vec3(info.half_extent), info.convex_radius };
             },
-                [&](const arcadia::physics_component::jph_capsule_shape_info& info)
+                [&](const arcadia::jph_capsule_shape_info& info)
             {
                 return new JPH::CapsuleShape{ info.half_height_of_cylinder,info.radius };
             },
-                [&](const arcadia::physics_component::jph_cylinder_shape_info& info)
+                [&](const arcadia::jph_cylinder_shape_info& info)
             {
                 return new JPH::CylinderShape{ info.half_height,info.radius,info.convex_radius };
             },
-                [&](const arcadia::physics_component::jph_sphere_shape_info& info)
+                [&](const arcadia::jph_sphere_shape_info& info)
             {
                 return new JPH::SphereShape{ info.radius };
             }
@@ -108,16 +108,16 @@ void arcadia::physics_simulator::submit(const arcadia::physics_component& physic
 
 void arcadia::physics_simulator::update()
 {
-    if(!should_update)
+    if(!_should_update)
     {
         return;
     }
 
-    JPH::TempAllocatorImpl temp_allocator{ jph_temp_allocator_size };
+    JPH::TempAllocatorImpl temp_allocator{ _jph_temp_allocator_size };
     JPH::JobSystemThreadPool job_system_thread_pool{ JPH::cMaxPhysicsJobs,JPH::cMaxPhysicsBarriers,static_cast<int>(std::thread::hardware_concurrency() - 1) };
 
 
-    _jph_physics_system_uptr->Update(1.f / jph_physics_system_updates_per_second, jph_physics_system_collision_steps_per_update, &temp_allocator, &job_system_thread_pool);
+    _jph_physics_system_uptr->Update(1.f / _jph_physics_system_updates_per_second, 60 / _jph_physics_system_updates_per_second, &temp_allocator, &job_system_thread_pool);
 }
 
 void arcadia::physics_simulator::quary(physics_component& physics_comp)
@@ -156,6 +156,41 @@ void arcadia::physics_simulator::reset()
     }
     _jph_body_id_umap.clear();
     _submitted_body_info_set.clear();
+}
+
+auto arcadia::physics_simulator::get_should_update() const -> bool
+{
+    return _should_update;
+}
+
+void arcadia::physics_simulator::set_should_update(bool should_update)
+{
+    _should_update = should_update;
+}
+
+auto arcadia::physics_simulator::get_jph_temp_allocator_size() const -> JPH::uint
+{
+    return _jph_temp_allocator_size;
+}
+
+void arcadia::physics_simulator::set_jph_temp_allocator_size(JPH::uint jph_temp_allocator_size)
+{
+    _jph_temp_allocator_size = jph_temp_allocator_size;
+}
+
+auto arcadia::physics_simulator::get_jph_physics_system_updates_per_second() const -> int
+{
+    return _jph_physics_system_updates_per_second;
+}
+
+void arcadia::physics_simulator::set_jph_physics_system_updates_per_second(int jph_physics_system_updates_per_second)
+{
+    _jph_physics_system_updates_per_second = jph_physics_system_updates_per_second;
+}
+
+auto arcadia::physics_simulator::get_jph_body_id_umap() const -> const jph_body_id_umap_type&
+{
+    return _jph_body_id_umap;
 }
 
 void arcadia::physics_simulator::_assert_frame_in_build() const

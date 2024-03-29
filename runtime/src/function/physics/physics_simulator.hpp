@@ -90,23 +90,32 @@ namespace arcadia
         void reset();
 
         [[nodiscard]]
-        inline auto get_jph_body_id_umap() const -> const jph_body_id_umap_type&
-        {
-            return _jph_body_id_umap;
-        }
+        auto get_should_update() const -> bool;
+        void set_should_update(bool should_update);
+
+        [[nodiscard]]
+        auto get_jph_temp_allocator_size() const->JPH::uint;
+        void set_jph_temp_allocator_size(JPH::uint jph_temp_allocator_size);
+
+        [[nodiscard]]
+        auto get_jph_physics_system_updates_per_second() const -> int;
+        void set_jph_physics_system_updates_per_second(int jph_physics_system_updates_per_second);
+
+        [[nodiscard]]
+        auto get_jph_body_id_umap() const -> const jph_body_id_umap_type&;
 
     private:
         void _assert_frame_in_build() const;
         void _assert_frame_not_in_build() const;
     public:
-        bool should_update{ false };
-
-        JPH::uint jph_temp_allocator_size{ 10 * 1024 * 1024 };
-
-        int jph_physics_system_updates_per_second{ 60 };
-        int jph_physics_system_collision_steps_per_update{ 1 };
     private:
         bool _in_build{ false };
+
+        bool _should_update{ false };
+
+        JPH::uint _jph_temp_allocator_size{ 10 * 1024 * 1024 };
+
+        int _jph_physics_system_updates_per_second{ 60 };
 
         jph_body_id_umap_type _jph_body_id_umap{};
         std::set<arcadia::uuid> _submitted_body_info_set{};

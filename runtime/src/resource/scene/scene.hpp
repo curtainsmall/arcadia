@@ -47,26 +47,8 @@ namespace arcadia
         auto operator=(self_type&&) noexcept -> self_type & = default;
 
         [[nodiscard]]
-        inline auto get_name() const -> const std::string&
-        {
-            return _name;
-        }
-        inline auto set_name(const std::string& name) -> self_type&
-        {
-            _name = name;
-            _modified = true;
-            return *this;
-        }
-
-        [[nodiscard]]
-        inline auto is_modified() const -> bool
-        {
-            return _modified;
-        }
-        inline void set_modified(bool modified)
-        {
-            _modified = modified;
-        }
+        auto get_name() const -> const std::string&;
+        void set_name(const std::string& name);
 
         [[nodiscard]]
         inline auto get_registry() const -> const registry_type&
@@ -135,7 +117,6 @@ namespace arcadia
         auto emplace(const entt::entity entity, Args&& ...args) -> Component&
         {
             auto& comp = _registry.emplace<Component>(entity, std::forward<Args>(args)...);
-            set_modified(true);
             return comp;
         }
 
@@ -151,7 +132,6 @@ namespace arcadia
             ARCADIA_ASSERT(all_of<Component>(entity));
 
             auto& comp = _registry.replace<Component>(entity, std::forward<Args>(args)...);
-            set_modified(true);
             return comp;
         }
 
@@ -165,7 +145,6 @@ namespace arcadia
         auto emplace_or_replace(const entt::entity entity, Args&& ...args) -> Component&
         {
             auto& comp = _registry.emplace_or_replace<Component>(entity, std::forward<Args>(args)...);
-            set_modified(true);
             return comp;
         }
 
@@ -190,7 +169,6 @@ namespace arcadia
             ARCADIA_ASSERT(all_of<Components...>(entity));
 
             auto& comp = _registry.get<Components...>(entity);
-            set_modified(true);
             return comp;
         }
 
@@ -215,10 +193,6 @@ namespace arcadia
         auto remove(const entt::entity entity) -> registry_type::size_type
         {
             auto count = _registry.remove<Component...>(entity);
-            if(count > 0)
-            {
-                set_modified(true);
-            }
             return count;
         }
 
@@ -232,7 +206,6 @@ namespace arcadia
         auto view(entt::exclude_t<ExcludeComponents...> exclude = entt::exclude_t{}) -> decltype(auto)
         {
             auto view = _registry.view<Components...>(exclude);
-            set_modified(true);
             return view;
         }
 
@@ -256,14 +229,12 @@ namespace arcadia
         auto group(entt::get_t<GetComponents...> get = entt::get_t{}, entt::exclude_t<ExcludeComponents...> exclude= entt::exclude_t{}) -> decltype(auto)
         {
             auto group = _registry.group<OwnedComponents...>(get, exclude);
-            set_modified(true);
             return group;
         }
 
     private:
         auto _create_json_components(const entt::entity entity) const->nlohmann::json;
     private:
-        bool _modified{ false };
         std::string _name;
         boost::bimap<std::string, entt::entity> _name_entity_bimap{};
         std::unordered_map<entt::entity, arcadia::entity_info> _entity_info_umap{};

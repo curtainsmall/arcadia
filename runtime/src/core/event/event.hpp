@@ -77,26 +77,6 @@ namespace arcadia
     template<arcadia::event_like Event>
     using event_handler = std::function<void(Event&)>;
 
-    /// @brief Dispatch @a event to handler that receives @a Event
-    /// @param event Event to dispatch
-    /// @param handler Handler
-    /// @return 
-    /// - @b true if successfully dispatched
-    /// - @b false if the event type does not match
-    template<arcadia::event_like Event>
-    ARCADIA_API auto dispatch_event(
-        arcadia::event_base& event,
-        const arcadia::event_handler<Event>& handler
-    ) -> bool
-    {
-        if(typeid(event) == typeid(Event))
-        {
-            handler(static_cast<Event&>(event));
-            return true;
-        }
-        return false;
-    }
-
     struct ARCADIA_API event_dispatcher: arcadia::noncopyable
     {
     public:

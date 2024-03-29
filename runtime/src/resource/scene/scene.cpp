@@ -75,13 +75,22 @@ auto arcadia::scene::to_json() const -> nlohmann::json
     }
 
     nlohmann::json json{
-        {"name",_name},
+        {"name",get_name()},
         {"entities",json_entities}
     };
 
     return json;
 }
 
+auto arcadia::scene::get_name() const -> const std::string&
+{
+    return _name;
+}
+
+void arcadia::scene::set_name(const std::string& name)
+{
+    _name = name;
+}
 
 auto arcadia::scene::get_name_of_entity(const entt::entity entity) const -> const std::string&
 {
@@ -105,7 +114,6 @@ auto arcadia::scene::get_entity_info(const entt::entity entity) -> arcadia::enti
     ARCADIA_ASSERT(_entity_info_umap.contains(entity));
 
     auto& entity_info = _entity_info_umap.at(entity);
-    set_modified(true);
     return entity_info;
 }
 
@@ -117,7 +125,6 @@ auto arcadia::scene::rename(const std::string& old_name, const std::string& new_
     }
 
     _name_entity_bimap.left.replace_key(_name_entity_bimap.left.find(old_name), new_name);
-    set_modified(true);
     return true;
 }
 
@@ -129,7 +136,6 @@ auto arcadia::scene::contains(const std::string& name) const -> bool
 auto arcadia::scene::create(const std::string& name) -> entt::entity
 {
     auto entity = _registry.create();
-    set_modified(true);
     _name_entity_bimap.left.insert(std::make_pair(name, entity));
     _entity_info_umap.try_emplace(entity);
     return entity;
@@ -138,7 +144,6 @@ auto arcadia::scene::create(const std::string& name) -> entt::entity
 auto arcadia::scene::create(const std::string& name, const nlohmann::json& json_entity_info) -> entt::entity
 {
     auto entity = _registry.create();
-    set_modified(true);
     _name_entity_bimap.left.insert(std::make_pair(name, entity));
     _entity_info_umap.try_emplace(entity, json_entity_info);
     return entity;
@@ -147,7 +152,6 @@ auto arcadia::scene::create(const std::string& name, const nlohmann::json& json_
 auto arcadia::scene::destroy(entt::entity entity) -> entt::registry::version_type
 {
     auto version = _registry.destroy(entity);
-    set_modified(true);
     _name_entity_bimap.right.erase(entity);
     _entity_info_umap.erase(entity);
     return version;

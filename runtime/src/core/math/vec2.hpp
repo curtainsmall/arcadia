@@ -54,16 +54,17 @@ namespace arcadia
         }
 
         /// @brief Normalize vector with one axis fixed
+        /// @tparam Index Index of fixed axis, must be 0 or 1
         /// @param vec Vector to normalize
-        /// @param fixed_index Index of fixed axis, must be 0 or 1
         /// @return Normalized vector
+        template<std::size_t Index>
         [[nodiscard]]
-        ARCADIA_API inline auto fixed_normalize(const glm::vec2& vec, glm::vec2::length_type fixed_idx) -> glm::vec2
+        ARCADIA_API auto fixed_normalize(const glm::vec2& vec) -> glm::vec2
         {
-            ARCADIA_ASSERT(fixed_idx >= 0 && vec.length());
+            static_assert(Index >= 0 && Index < 2);
 
-            auto fixed = vec[fixed_idx];
-            auto a = vec[1 - fixed_idx];
+            auto fixed = vec[Index];
+            auto a = vec[1 - Index];
 
             if(a != 0)
             {
@@ -71,8 +72,8 @@ namespace arcadia
             }
 
             glm::vec2 res{};
-            res[fixed_idx] = fixed;
-            res[1 - fixed_idx] = a;
+            res[Index] = fixed;
+            res[1 - Index] = a;
             return res;
         }
 
@@ -124,16 +125,17 @@ namespace arcadia
         }
 
         /// @brief Normalize vector with one axis fixed
+        /// @tparam Index Index of fixed axis, must be 0 or 1
         /// @param vec Vector to normalize
-        /// @param fixed_index Index of fixed axis, must be 0 or 1
         /// @return Normalized vector
+        template<std::size_t Index>
         [[nodiscard]]
-        ARCADIA_API inline auto fixed_normalize(const glm::dvec2& vec, glm::dvec2::length_type fixed_index) -> glm::dvec2
+        ARCADIA_API auto fixed_normalize(const glm::vec2& vec) -> glm::dvec2
         {
-            ARCADIA_ASSERT(fixed_index >= 0 && fixed_index < vec.length());
+            static_assert(Index >= 0 && Index < 2);
 
-            auto fixed = vec[fixed_index];
-            auto a = vec[1 - fixed_index];
+            auto fixed = vec[Index];
+            auto a = vec[1 - Index];
 
             if(a != 0)
             {
@@ -141,8 +143,8 @@ namespace arcadia
             }
 
             glm::dvec2 res{};
-            res[fixed_index] = fixed;
-            res[1 - fixed_index] = a;
+            res[Index] = fixed;
+            res[1 - Index] = a;
             return res;
         }
     }

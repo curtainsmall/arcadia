@@ -5,7 +5,8 @@
 
 #include"core/math.hpp"
 
-arcadia::physics_component::physics_component(const nlohmann::json& json)
+arcadia::physics_component::physics_component(const nlohmann::json& json):
+    _body_shape_color(arcadia::vec3::from_json(json.at("body_shape_color")))
 {
     const auto& json_body_info_initial = json.at("jph_body_info_initial");
     if(!json_body_info_initial.is_null())
@@ -13,37 +14,37 @@ arcadia::physics_component::physics_component(const nlohmann::json& json)
         const auto& json_shape_info = json_body_info_initial.at("jph_shape_info");
         const std::string& json_shape_info_type_str = json_shape_info.at("type");
         const auto& json_shape_info_info = json_shape_info.at("info");
-        auto shape_info = arcadia::match<jph_shape_info_type>(
+        auto shape_info = arcadia::match<arcadia::jph_shape_info_type>(
             json_shape_info_type_str,
             "box_shape"s,
-            [&]() -> jph_shape_info_type
+            [&]() -> arcadia::jph_shape_info_type
         {
-            return jph_box_shape_info{
+            return arcadia::jph_box_shape_info{
                 arcadia::vec3::from_json(json_shape_info_info.at("half_extent")),
                 json_shape_info_info.at("convex_radius")
             };
         },
             "capsule_shape"s,
-            [&]() -> jph_shape_info_type
+            [&]() -> arcadia::jph_shape_info_type
         {
-            return jph_capsule_shape_info{
+            return arcadia::jph_capsule_shape_info{
                 json_shape_info_info.at("radius"),
                 json_shape_info_info.at("half_height_of_cylinder")
             };
         },
             "cylinder"s,
-            [&]() -> jph_shape_info_type
+            [&]() -> arcadia::jph_shape_info_type
         {
-            return jph_cylinder_shape_info{
+            return arcadia::jph_cylinder_shape_info{
                 json_shape_info_info.at("half_height"),
                 json_shape_info_info.at("radius"),
                 json_shape_info_info.at("convex_radius")
             };
         },
             "sphere"s,
-            [&]() -> jph_shape_info_type
+            [&]() -> arcadia::jph_shape_info_type
         {
-            return jph_sphere_shape_info{
+            return arcadia::jph_sphere_shape_info{
                 json_shape_info_info.at("radius")
             };
         }
@@ -58,7 +59,6 @@ arcadia::physics_component::physics_component(const nlohmann::json& json)
         );
 
     }
-    body_shape_color = arcadia::vec3::from_json(json.at("body_shape_color"));
 }
 
 auto arcadia::physics_component::to_json() const -> nlohmann::json
@@ -69,7 +69,7 @@ auto arcadia::physics_component::to_json() const -> nlohmann::json
         const auto& [uuid, body_info] = get_identifiable_jph_body_info_initial();
         auto json_shape_info = arcadia::match<nlohmann::json>(
             body_info.jph_shape_info,
-            [&](const jph_box_shape_info& info)
+            [&](const arcadia::jph_box_shape_info& info)
         {
             return nlohmann::json{
                 {"type","box_shape"},
@@ -80,7 +80,7 @@ auto arcadia::physics_component::to_json() const -> nlohmann::json
                 }
             };
         },
-            [&](const jph_capsule_shape_info& info)
+            [&](const arcadia::jph_capsule_shape_info& info)
         {
             return nlohmann::json{
                 {"type","capsule_shape"},
@@ -91,7 +91,7 @@ auto arcadia::physics_component::to_json() const -> nlohmann::json
                 }
             };
         },
-            [&](const jph_cylinder_shape_info& info)
+            [&](const arcadia::jph_cylinder_shape_info& info)
         {
             return nlohmann::json{
                 {"type","cylinder"},
@@ -104,7 +104,7 @@ auto arcadia::physics_component::to_json() const -> nlohmann::json
 
             };
         },
-            [&](const jph_sphere_shape_info& info)
+            [&](const arcadia::jph_sphere_shape_info& info)
         {
             return nlohmann::json{
                 {"type","sphere"},
@@ -131,8 +131,71 @@ auto arcadia::physics_component::to_json() const -> nlohmann::json
 
     return nlohmann::json{
         {"jph_body_info_initial",json_body_info_initial},
-        {"body_shape_color",arcadia::vec3::to_json(body_shape_color)}
+        {"body_shape_color",arcadia::vec3::to_json(_body_shape_color)}
     };
+}
+
+auto arcadia::physics_component::snapshot() const -> memento_data_type
+{
+    memento_data_type memento{};
+
+    memento.body_shape_color = _body_shape_color;
+    if(has_body_info())
+    {
+        memento.jph_body_info_initial_uptr = std::make_unique<arcadia::jph_body_info_initial>(get_identifiable_jph_body_info_initial().get_value());
+    }
+
+    return memento;
+}
+
+void arcadia::physics_component::restore(const memento_data_type& memento)
+{
+    _body_shape_color = memento.body_shape_color;
+
+    auto& jph_body_info_initial_uptr = memento.jph_body_info_initial_uptr;
+    if(jph_body_info_initial_uptr)
+    {
+        build_identifiable_jph_body_info(
+            jph_body_info_initial_uptr->position,
+            jph_body_info_initial_uptr->rotation,
+            jph_body_info_initial_uptr->jph_motion_type,
+            jph_body_info_initial_uptr->jph_object_layer,
+            jph_body_info_initial_uptr->jph_shape_info
+        );
+    }
+}
+
+auto arcadia::physics_component::get_body_shape_color() const -> const glm::vec3&
+{
+    return _body_shape_color;
+}
+
+void arcadia::physics_component::set_body_shape_color(const glm::vec3& color)
+{
+    _body_shape_color = color;
+}
+
+auto arcadia::physics_component::has_body_info() const -> bool
+{
+    return _identifiable_jph_body_info_initial_uptr.get();
+}
+
+auto arcadia::physics_component::get_identifiable_jph_body_info_initial() const -> const identifiable_jph_body_info_initial_type&
+{
+    ARCADIA_ASSERT(has_body_info());
+    return *_identifiable_jph_body_info_initial_uptr;
+}
+
+auto arcadia::physics_component::get_jph_body_info_ongoing() const -> const arcadia::jph_body_info_ongoing&
+{
+    ARCADIA_ASSERT(has_body_info());
+    return *_jph_body_info_ongoing_uptr;
+}
+
+auto arcadia::physics_component::get_jph_body_info_ongoing() -> arcadia::jph_body_info_ongoing&
+{
+    ARCADIA_ASSERT(has_body_info());
+    return *_jph_body_info_ongoing_uptr;
 }
 
 void arcadia::physics_component::build_identifiable_jph_body_info(
@@ -140,10 +203,10 @@ void arcadia::physics_component::build_identifiable_jph_body_info(
     const glm::quat& rotation,
     JPH::EMotionType jph_motion_type,
     JPH::ObjectLayer jph_object_layer,
-    const jph_shape_info_type& jph_shape_info
+    const arcadia::jph_shape_info_type& jph_shape_info
 )
 {
-    _identifiable_jph_body_info_initial_uptr = std::make_unique<identifiable_jph_body_info_initial>(
+    _identifiable_jph_body_info_initial_uptr = std::make_unique<identifiable_jph_body_info_initial_type>(
         position,
         rotation,
         jph_motion_type,
@@ -151,7 +214,7 @@ void arcadia::physics_component::build_identifiable_jph_body_info(
         jph_shape_info
     );
 
-    _jph_body_info_ongoing_uptr = std::make_unique<jph_body_info_ongoing>(
+    _jph_body_info_ongoing_uptr = std::make_unique<arcadia::jph_body_info_ongoing>(
         false,
         position,
         rotation,

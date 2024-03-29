@@ -155,7 +155,6 @@
     <ClInclude Include="src\project\project.hpp" />
     <ClInclude Include="src\project\project_layer.hpp" />
     <ClInclude Include="src\project\project_events.hpp" />
-    <ClInclude Include="src\ui\imgui_windows\imgui_windows.hpp" />
     <ClInclude Include="src\ui\imgui_windows\imgui_window_manubar.hpp" />
     <ClInclude Include="src\ui\imgui_windows\imgui_window_outliner.hpp" />
     <ClInclude Include="src\ui\imgui_windows\imgui_window_property.hpp" />

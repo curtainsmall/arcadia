@@ -21,9 +21,6 @@
     <ClInclude Include="src\project\project_layer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\ui\imgui_windows\imgui_window_manubar.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\project\project_events.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -33,25 +30,25 @@
     <ClInclude Include="src\project\project.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\ui\imgui_windows\imgui_window_outliner.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ui\imgui_windows\imgui_window_viewport.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ui\imgui_windows\imgui_window_property.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\editor\editor_context.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\ui\imgui_windows\imgui_windows.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\editor\editor_config.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\ui\imgui_windows\imgui_window_manubar.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ui\imgui_windows\imgui_window_outliner.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ui\imgui_windows\imgui_window_property.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="src\ui\imgui_windows\imgui_window_state.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ui\imgui_windows\imgui_window_viewport.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -60,18 +57,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\project\project_layer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ui\imgui_windows\imgui_window_manubar.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ui\imgui_windows\imgui_window_outliner.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ui\imgui_windows\imgui_window_viewport.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ui\imgui_windows\imgui_window_property.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\editor\editor_context.cpp">
@@ -83,7 +68,19 @@
     <ClCompile Include="src\project\project.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\ui\imgui_windows\imgui_window_manubar.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui\imgui_windows\imgui_window_outliner.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui\imgui_windows\imgui_window_property.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="src\ui\imgui_windows\imgui_window_state.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui\imgui_windows\imgui_window_viewport.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -29,7 +29,7 @@ namespace arcadia
         JPH::Quat _jph_rotation{ JPH::Quat::sIdentity() };
         JPH::EMotionType _jph_motion_type{ JPH::EMotionType::Static };
         JPH::ObjectLayer _jph_object_layer{ arcadia::jph_object_layers::non_moving };
-        arcadia::physics_component::jph_shape_info_type _jph_shape_info{ arcadia::physics_component::jph_box_shape_info{} };
+        arcadia::jph_shape_info_type _jph_shape_info{ arcadia::jph_box_shape_info{} };
     };
 
     struct ARCADIA_API imgui_window_property: arcadia::imgui_window_interface

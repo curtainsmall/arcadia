@@ -30,33 +30,16 @@ auto arcadia::project::to_json() const -> nlohmann::json
     return json;
 }
 
-auto arcadia::project::is_modified() const -> bool
+auto arcadia::project::get_name() const -> const std::string&
 {
-    if(_modified)
-    {
-        return true;
-    }
-    for(const auto& [name, scene_sptr] : scene_sptr_umap)
-    {
-        if(scene_sptr->is_modified())
-        {
-            return true;
-        }
-    }
-    return false;
+    return _name;
 }
 
-void arcadia::project::set_modified(bool modified, bool recursively)
+void arcadia::project::set_name(const std::string& name)
 {
-    _modified = modified;
-    if(recursively)
-    {
-        for(auto& [name, scene_sptr] : scene_sptr_umap)
-        {
-            scene_sptr->set_modified(modified);
-        }
-    }
+    _name = name;
 }
+
 
 auto arcadia::project::has_active_scene() const -> bool
 {
@@ -65,20 +48,14 @@ auto arcadia::project::has_active_scene() const -> bool
 
 auto arcadia::project::get_active_scene() -> arcadia::scene&
 {
-    if(!has_active_scene())
-    {
-        throw no_active_scene{};
-    }
+    ARCADIA_ASSERT(has_active_scene());
     // If scene is modified, it will record it internally so we does not need to change _modified here
     return *_active_scene_wptr.lock();
 }
 
 auto arcadia::project::get_active_scene() const -> const arcadia::scene&
 {
-    if(!has_active_scene())
-    {
-        throw no_active_scene{};
-    }
+    ARCADIA_ASSERT(has_active_scene());
     return *_active_scene_wptr.lock();
 }
 
@@ -106,6 +83,5 @@ auto arcadia::project::set_active_scene(const std::string& name) -> std::weak_pt
         }
     }
 
-    set_modified(true);
     return _active_scene_wptr;
 }

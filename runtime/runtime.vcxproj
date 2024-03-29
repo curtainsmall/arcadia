@@ -153,12 +153,14 @@
   <ItemGroup>
     <ClInclude Include="src\core\app\app_config.hpp" />
     <ClInclude Include="src\core\app\app_context.hpp" />
+    <ClInclude Include="src\core\command\command.hpp" />
     <ClInclude Include="src\core\event\event.hpp" />
     <ClInclude Include="src\core\exception.hpp" />
     <ClInclude Include="src\core\file\file.hpp" />
     <ClInclude Include="src\core\file\pfd_header.hpp" />
     <ClInclude Include="src\core\math.hpp" />
     <ClInclude Include="src\core\math\numeric.hpp" />
+    <ClInclude Include="src\core\memento\memento.hpp" />
     <ClInclude Include="src\core\meta\meta.hpp" />
     <ClInclude Include="src\core\nlohmann_json_header.hpp" />
     <ClInclude Include="src\core\hash.hpp" />
@@ -184,7 +186,6 @@
     <ClInclude Include="src\platform\opengl\opengl_header.hpp" />
     <ClInclude Include="src\resource\component\camera_component\camera_component.hpp" />
     <ClInclude Include="src\resource\component\component.hpp" />
-    <ClInclude Include="src\resource\component\components.hpp" />
     <ClInclude Include="src\resource\component\light_component\light_component.hpp" />
     <ClInclude Include="src\resource\component\model_component\mesh\vertex.hpp" />
     <ClInclude Include="src\resource\component\model_component\model_component.hpp" />
@@ -226,8 +227,10 @@
     <ClCompile Include="src\core\app\app_context.cpp" />
     <ClCompile Include="src\core\app\app_layer.cpp" />
     <ClCompile Include="src\core\app\app_config.cpp" />
+    <ClCompile Include="src\core\command\command.cpp" />
     <ClCompile Include="src\core\event\event.cpp" />
     <ClCompile Include="src\core\file\file.cpp" />
+    <ClCompile Include="src\core\memento\memento.cpp" />
     <ClCompile Include="src\function\physics\physics_simulator.cpp" />
     <ClCompile Include="src\function\render\opengl\buffer\gl_cubemap.cpp" />
     <ClCompile Include="src\function\render\opengl\buffer\gl_framebuffer.cpp" />
@@ -242,6 +245,7 @@
     <ClCompile Include="src\function\render\opengl\pipeline\gl_shader.cpp" />
     <ClCompile Include="src\function\ui\imgui_backend.cpp" />
     <ClCompile Include="src\function\ui\imgui_layer.cpp" />
+    <ClCompile Include="src\function\ui\imgui_wrapper.cpp" />
     <ClCompile Include="src\platform\graphic_api\graphic_api.cpp" />
     <ClCompile Include="src\core\layer\layer.cpp" />
     <ClCompile Include="src\core\log\log.cpp" />
@@ -265,6 +269,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="src\core\string.hpp" />
+    <None Include="src\function\ui\imgui_wrapper.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

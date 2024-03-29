@@ -2,6 +2,7 @@
 
 #include"core/file/pfd_header.hpp"
 #include"function/ui/imgui_header.hpp"
+#include"function/ui/imgui_wrapper.hpp"
 
 void arcadia::imgui_window_state_scene::operator()(const std::shared_ptr<arcadia::scene>& scene_sptr)
 {
@@ -54,41 +55,51 @@ void arcadia::imgui_window_state_physics_simulator::operator()(const std::shared
 
     ImGui::NewLine();
     ImGui::BeginDisabled();
-    int temp_allocator_size_in_kib = physics_simulator_sptr->jph_temp_allocator_size / 1024;
-    ImGui::Text("Temporary Allocator Size (KiB)"); ImGui::SameLine(); ImGui::DragInt("##tas", &temp_allocator_size_in_kib, 1.f, 64 /* 64 KiB*/, 16 * 1024 * 1024 /* 16 GiB */, "%d", slider_flags);
-    physics_simulator_sptr->jph_temp_allocator_size = temp_allocator_size_in_kib * 1024;
+    int temp_allocator_size_in_kib = physics_simulator_sptr->get_jph_temp_allocator_size() / 1024;
+    arcadia::imgui_wrapper::drag_int(
+        "Temporary Allocator Size (KiB)",
+        temp_allocator_size_in_kib,
+        1.f,
+        64, // 64 KiB
+        16 * 1024 * 1024, // 16 GiB
+        "%d",
+        slider_flags
+    );
+    physics_simulator_sptr->set_jph_temp_allocator_size(temp_allocator_size_in_kib * 1024);
     ImGui::EndDisabled();
 
     ImGui::NewLine();
-    ImGui::Text("            Updates per Second"); ImGui::SameLine(); ImGui::DragInt("##ups", &physics_simulator_sptr->jph_physics_system_updates_per_second, 1.f, 0, (std::numeric_limits<int>::max)(), "%d", slider_flags);
-    if(_link_ups_and_spu)
-    {
-        physics_simulator_sptr->jph_physics_system_collision_steps_per_update = physics_simulator_sptr->jph_physics_system_updates_per_second / 60;
-    }
-    ImGui::BeginDisabled();
-    ImGui::Text("    Collision Steps per Update"); ImGui::SameLine(); ImGui::DragInt("##spu", &physics_simulator_sptr->jph_physics_system_collision_steps_per_update, 1.f, 0, (std::numeric_limits<int>::max)(), "%d", slider_flags);
-    ImGui::EndDisabled();
+    arcadia::imgui_wrapper::drag_int(
+        "            Updates per Second",
+        ARCADIA_BIND_MEMBER_FN_ARBITRARY_PTR(physics_simulator_sptr, get_jph_physics_system_updates_per_second),
+        ARCADIA_BIND_MEMBER_FN_ARBITRARY_PTR(physics_simulator_sptr, set_jph_physics_system_updates_per_second),
+        1.f,
+        0,
+        (std::numeric_limits<int>::max)(),
+        "%d",
+        slider_flags
+    );
 
     ImGui::NewLine();
-    if(physics_simulator_sptr->should_update)
+    if(physics_simulator_sptr->get_should_update())
     {
         if(ImGui::Button("Stop"))
         {
-            physics_simulator_sptr->should_update = false;
+            physics_simulator_sptr->set_should_update(false);
         }
     }
     else
     {
         if(ImGui::Button("Start"))
         {
-            physics_simulator_sptr->should_update = true;
+            physics_simulator_sptr->set_should_update(true);
         }
     }
     ImGui::SameLine();
     if(ImGui::Button("Reset"))
     {
         physics_simulator_sptr->reset();
-        physics_simulator_sptr->should_update = false;
+        physics_simulator_sptr->set_should_update(false);
     }
 
 }

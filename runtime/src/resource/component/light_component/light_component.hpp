@@ -4,6 +4,7 @@
 
 #include"core/base.hpp"
 #include"core/math.hpp"
+#include"core/memento/memento.hpp"
 #include"core/nlohmann_json_header.hpp"
 #include"resource/component/component.hpp"
 
@@ -27,6 +28,7 @@ namespace arcadia
 
     struct ARCADIA_API direct_light
     {
+    public:
         glm::vec3 direction{ arcadia::vec3::zero() };
         glm::vec3 color{ 1.f,1.f,1.f };
         glm::vec3 ambient_strength{ arcadia::vec3::zero() };
@@ -36,6 +38,7 @@ namespace arcadia
 
     struct ARCADIA_API area_light
     {
+    public:
         glm::vec3 position{ arcadia::vec3::zero() };
         glm::vec3 direction{ arcadia::vec3::zero() };
         glm::vec2 size{ arcadia::vec2::zero() };
@@ -47,6 +50,7 @@ namespace arcadia
 
     struct ARCADIA_API point_light
     {
+    public:
         glm::vec3 position{ arcadia::vec3::zero() };
         glm::vec3 attenuation_coefs{ 1.f,.045f,.0075f };
         glm::vec3 color{ 1.f,1.f,1.f };
@@ -63,7 +67,17 @@ namespace arcadia
         arcadia::point_light
     >;
 
-    struct ARCADIA_API light_component: arcadia::component_base
+    struct light_component;
+    struct ARCADIA_API light_component_memento_data
+    {
+        friend struct arcadia::light_component;
+    private:
+        arcadia::light_type light{ arcadia::null_light{} };
+    };
+
+    struct ARCADIA_API light_component:
+        arcadia::component_base,
+        arcadia::memento_originator_interface<arcadia::light_component_memento_data>
     {
     public:
         using self_type = light_component;
@@ -76,7 +90,15 @@ namespace arcadia
         [[nodiscard]]
         auto to_json() const->nlohmann::json;
 
-    public:
-        arcadia::light_type light{};
+        [[nodiscard]]
+        virtual auto snapshot() const->memento_data_type override;
+        virtual void restore(const memento_data_type& memento) override;
+
+        [[nodiscard]]
+        auto get_light() const->const arcadia::light_type&;
+        void set_light(const arcadia::light_type& light);
+
+    private:
+        arcadia::light_type _light{ arcadia::null_light{} };
     };
 }

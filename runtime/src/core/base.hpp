@@ -18,6 +18,8 @@
 #define ARCADIA_ASSERT(x) assert(x)
 
 #define ARCADIA_BIND_MEMBER_FN(fn) [this]<class ...Args>(Args&& ...args) -> decltype(auto) { return this->fn(std::forward<Args>(args)...); }
+#define ARCADIA_BIND_MEMBER_FN_ARBITRARY(obj, fn) [&obj]<class ...Args>(Args&& ...args) -> decltype(auto) { return obj.fn(std::forward<Args>(args)...); }
+#define ARCADIA_BIND_MEMBER_FN_ARBITRARY_PTR(obj_ptr, fn) [&obj_ptr]<class ...Args>(Args&& ...args) -> decltype(auto) { return obj_ptr->fn(std::forward<Args>(args)...); }
 
 #define ARCADIA_DISCARD(x) (void) x
 
@@ -50,13 +52,6 @@ namespace arcadia
     template<class Type, template<class ...> class Template>
     concept instantiated_from = arcadia::is_specialization_of<Type, Template>;
 
-    /*template<class Type, template<class ...> class Template>
-    concept instantiated_from = requires(Type t)
-    {
-        [] <class ...Types>(const Template<Types...>&)
-        {}(t);
-    };*/
-
     template<class ...Args>
     struct ARCADIA_API pack
     {
@@ -81,7 +76,7 @@ namespace arcadia
         arcadia::instantiated_from<std::variant> Variant,
         class ...BranchFns
     >
-    auto match(Variant& variant, BranchFns&& ...fns) -> Ret
+    ARCADIA_API auto match(Variant& variant, BranchFns&& ...fns) -> Ret
     {
         return std::visit<Ret>(
             arcadia::overloaded{
@@ -96,7 +91,7 @@ namespace arcadia
         arcadia::instantiated_from<std::variant> Variant,
         class ...BranchFns
     >
-    auto match(const Variant& variant, BranchFns&& ...fns) -> Ret
+    ARCADIA_API auto match(const Variant& variant, BranchFns&& ...fns) -> Ret
     {
         return std::visit<Ret>(
             arcadia::overloaded{
