@@ -1,5 +1,6 @@
 #pragma once
 
+#include<functional>
 #include<memory>
 #include<string>
 
@@ -25,11 +26,18 @@ namespace arcadia
     public:
         bool open{ false };
     private:
-        JPH::RVec3 _jph_position{ JPH::RVec3::sZero() };
-        JPH::Quat _jph_rotation{ JPH::Quat::sIdentity() };
-        JPH::EMotionType _jph_motion_type{ JPH::EMotionType::Static };
-        JPH::ObjectLayer _jph_object_layer{ arcadia::jph_object_layers::non_moving };
-        arcadia::jph_shape_info_type _jph_shape_info{ arcadia::jph_box_shape_info{} };
+        arcadia::jph_body_info_initial _temp_jph_body_info_initial{};
+    };
+
+    struct ARCADIA_API imgui_window_property_camera_component
+    {
+    public:
+        using self_type = imgui_window_property_camera_component;
+    public:
+        void operator()(arcadia::camera_component& camera_comp);
+
+    private:
+        arcadia::camera_component _temp_camera{};
     };
 
     struct ARCADIA_API imgui_window_property: arcadia::imgui_window_interface
@@ -51,23 +59,36 @@ namespace arcadia
         virtual void on_update() override;
     private:
         template<arcadia::component_like Component>
-        auto _contains_component(const std::shared_ptr<arcadia::scene>& scene_sptr) -> bool
+        auto _contains_component() -> bool
         {
-            ARCADIA_ASSERT(scene_sptr);
-            return scene_sptr->all_of<Component>(_selected_entity);
+            ARCADIA_ASSERT(!_scene_wptr.expired());
+            ARCADIA_ASSERT(_selected_entity != entt::null);
+            return _scene_wptr.lock()->all_of<Component>(_selected_entity);
         }
         template<arcadia::component_like Component>
-        auto _get_component(const std::shared_ptr<arcadia::scene>& scene_sptr) -> Component&
+        auto _get_component() -> Component&
         {
-            ARCADIA_ASSERT(_contains_component<Component>(scene_sptr));
-            return scene_sptr->get<Component>(_selected_entity);
+            ARCADIA_ASSERT(!_scene_wptr.expired());
+            ARCADIA_ASSERT(_contains_component<Component>());
+            ARCADIA_ASSERT(_selected_entity != entt::null);
+            return _scene_wptr.lock()->get<Component>(_selected_entity);
+        }
+        template<arcadia::component_like Component>
+        auto _get_component_retriever() -> std::function<Component& ()>
+        {
+            return [&]() -> Component&
+            {
+                ARCADIA_ASSERT(!_scene_wptr.expired());
+                ARCADIA_ASSERT(_contains_component<Component>());
+                return _get_component<Component>();
+            };
         }
 
-        void _display_components(const std::shared_ptr<arcadia::scene>& scene_sptr);
-        void _display_camera_component(const std::shared_ptr<arcadia::scene>& scene_sptr);
-        void _display_light_component(const std::shared_ptr<arcadia::scene>& scene_sptr);
-        void _display_model_component(const std::shared_ptr<arcadia::scene>& scene_sptr);
-        void _display_physics_component(const std::shared_ptr<arcadia::scene>& scene_sptr);
+        void _display_components();
+        void _display_camera_component();
+        void _display_light_component();
+        void _display_model_component();
+        void _display_physics_component();
 
         void _on_open_imgui_window(arcadia::event::open_imgui_window& e);
         void _on_scene_activated(arcadia::event::scene_activated& e);

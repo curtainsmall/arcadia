@@ -9,6 +9,7 @@
 #include"core/base.hpp"
 #include"core/event/event.hpp"
 #include"core/exception.hpp"
+#include"core/memento/memento.hpp"
 #include"core/nlohmann_json_header.hpp"
 #include"core/uuid.hpp"
 #include"resource/component/component.hpp"
@@ -29,6 +30,32 @@ namespace arcadia
         bool should_render_in_viewport{ true };
     };
 
+    struct scene;
+    struct ARCADIA_API scene_memento_data
+    {
+        friend struct arcadia::scene;
+    private:
+        struct ARCADIA_API emplaced_entity_info
+        {
+        public:
+            using self_type = emplaced_entity_info;
+        public:
+            std::string name{};
+        };
+        struct ARCADIA_API replaced_entity_info
+        {
+        public:
+            using self_type = replaced_entity_info;
+        public:
+            std::string prev_name{};
+            std::string current_name{};
+
+        };
+
+    private:
+        std::string name;
+    };
+
     struct ARCADIA_API scene: arcadia::noncopyable
     {
     public:
@@ -45,6 +72,7 @@ namespace arcadia
 
         scene(self_type&&) noexcept = default;
         auto operator=(self_type&&) noexcept -> self_type & = default;
+
 
         [[nodiscard]]
         auto get_name() const -> const std::string&;
@@ -236,6 +264,7 @@ namespace arcadia
         auto _create_json_components(const entt::entity entity) const->nlohmann::json;
     private:
         std::string _name;
+
         boost::bimap<std::string, entt::entity> _name_entity_bimap{};
         std::unordered_map<entt::entity, arcadia::entity_info> _entity_info_umap{};
         entt::registry _registry{};

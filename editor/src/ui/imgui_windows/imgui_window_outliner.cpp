@@ -1,5 +1,6 @@
 #include "imgui_window_outliner.hpp"
 
+#include"core/command/command.hpp"
 #include"core/event/event.hpp"
 #include"core/file/pfd_header.hpp"
 #include"function/ui/imgui_header.hpp"

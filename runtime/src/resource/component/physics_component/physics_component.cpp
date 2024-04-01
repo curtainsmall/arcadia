@@ -50,7 +50,7 @@ arcadia::physics_component::physics_component(const nlohmann::json& json):
         }
         );
 
-        build_identifiable_jph_body_info(
+        build_identifiable_jph_body_info_initial(
             arcadia::vec3::from_json(json_body_info_initial.at("position")),
             arcadia::quat::from_json(json_body_info_initial.at("rotation")),
             JPH::EMotionType{ json_body_info_initial.at("jph_motion_type") },
@@ -155,7 +155,7 @@ void arcadia::physics_component::restore(const memento_data_type& memento)
     auto& jph_body_info_initial_uptr = memento.jph_body_info_initial_uptr;
     if(jph_body_info_initial_uptr)
     {
-        build_identifiable_jph_body_info(
+        build_identifiable_jph_body_info_initial(
             jph_body_info_initial_uptr->position,
             jph_body_info_initial_uptr->rotation,
             jph_body_info_initial_uptr->jph_motion_type,
@@ -198,7 +198,7 @@ auto arcadia::physics_component::get_jph_body_info_ongoing() -> arcadia::jph_bod
     return *_jph_body_info_ongoing_uptr;
 }
 
-void arcadia::physics_component::build_identifiable_jph_body_info(
+void arcadia::physics_component::build_identifiable_jph_body_info_initial(
     const glm::vec3& position,
     const glm::quat& rotation,
     JPH::EMotionType jph_motion_type,
@@ -218,6 +218,21 @@ void arcadia::physics_component::build_identifiable_jph_body_info(
         false,
         position,
         rotation,
+        arcadia::vec3::zero(),
+        arcadia::vec3::zero()
+    );
+}
+
+void arcadia::physics_component::build_identifiable_jph_body_info_initial(const arcadia::jph_body_info_initial& jph_body_info_initial)
+{
+    _identifiable_jph_body_info_initial_uptr = std::make_unique<identifiable_jph_body_info_initial_type>(
+        jph_body_info_initial
+    );
+
+    _jph_body_info_ongoing_uptr = std::make_unique<arcadia::jph_body_info_ongoing>(
+        false,
+        jph_body_info_initial.position,
+        jph_body_info_initial.rotation,
         arcadia::vec3::zero(),
         arcadia::vec3::zero()
     );

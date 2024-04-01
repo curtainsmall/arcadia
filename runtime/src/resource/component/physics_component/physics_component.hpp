@@ -113,12 +113,16 @@ namespace arcadia
         [[nodiscard]]
         auto get_jph_body_info_ongoing() -> arcadia::jph_body_info_ongoing&;
 
-        void build_identifiable_jph_body_info(
+        void build_identifiable_jph_body_info_initial(
             const glm::vec3& position,
             const glm::quat& rotation,
             JPH::EMotionType jph_motion_type,
             JPH::ObjectLayer jph_object_layer,
             const jph_shape_info_type& jph_shape_info
+        );
+
+        void build_identifiable_jph_body_info_initial(
+            const arcadia::jph_body_info_initial& jph_body_info_initial
         );
 
     private:

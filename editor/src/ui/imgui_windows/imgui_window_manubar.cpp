@@ -1,5 +1,6 @@
 #include "imgui_window_manubar.hpp"
 
+#include"core/command/command.hpp"
 #include"core/file/pfd_header.hpp"
 #include"function/ui/imgui_header.hpp"
 #include"platform/graphic_api/graphic_api.hpp"
@@ -227,6 +228,24 @@ void arcadia::imgui_window_menubar::_edit_menu()
         {
             event_queue.signal<arcadia::event::delete_scene>();
         }
+
+        if(ImGui::BeginMenu("Undo List", has_scene))
+        {
+            auto& command_list = arcadia::command_list::instance();
+            if(command_list.size())
+            {
+                for(const auto& command_uptr : command_list)
+                {
+                    ImGui::MenuItem(command_uptr->get_description().c_str(), nullptr, nullptr);
+                }
+            }
+            else
+            {
+                ImGui::MenuItem("(Empty undo List)", nullptr, nullptr);
+            }
+            ImGui::EndMenu();
+        }
+
         ImGui::EndMenu();
     }
 }

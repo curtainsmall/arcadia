@@ -3,6 +3,7 @@
 #include<algorithm>
 #include<string>
 
+#include"core/command/command.hpp"
 #include"core/file/pfd_header.hpp"
 #include"function/ui/imgui_header.hpp"
 #include"function/ui/imgui_wrapper.hpp"
@@ -11,6 +12,28 @@
 #include"resource/component/model_component/model_component.hpp"
 #include"resource/component/physics_component/physics_component.hpp"
 #include"resource/component/skybox_component/skybox_component.hpp"
+
+#define ARCADIA_COMPONENT_MEMEBER_GETTER_AND_SETTER_WITH_COMMAND(comp_type, comp, getter, setter, val_type, description) \
+[&]() -> val_type\
+{\
+    return comp.getter();\
+},\
+[&](val_type val)\
+{\
+    auto origin_val = comp.getter();\
+    arcadia::command_list::instance()\
+        .emplace(\
+            description,\
+            [&]()\
+            {\
+                comp.setter(val);\
+            },\
+            [&]()\
+            {\
+                comp.setter(origin_val);\
+            }\
+        );\
+}
 
 void arcadia::imgui_window_popup_physics_component_create_body::operator()(arcadia::physics_component& physics_comp)
 {
@@ -37,24 +60,24 @@ void arcadia::imgui_window_popup_physics_component_create_body::operator()(arcad
             ImGuiSliderFlags_AlwaysClamp;
 
         // Position
-        auto pos = arcadia::from_jph_vec3(_jph_position);
+        auto pos = _temp_jph_body_info_initial.position;
         arcadia::imgui_wrapper::drag_vec3("Position", pos, speed, min, max, format, slider_flags);
-        _jph_position = arcadia::to_jph_vec3(pos);
+        _temp_jph_body_info_initial.position = pos;
 
         // Rotation
         ImGui::NewLine();
-        auto rot = arcadia::from_jph_quat(_jph_rotation);
+        auto rot = _temp_jph_body_info_initial.rotation;
         float
             rot_speed = .05f,
             rot_min = -1.f,
             rot_max = 1.f;
         arcadia::imgui_wrapper::drag_quat_normalized("Rotation", rot, rot_speed, rot_min, rot_max, format, slider_flags);
-        _jph_rotation = arcadia::to_jph_quat(rot);
+        _temp_jph_body_info_initial.rotation = rot;
 
         // Motion type
         ImGui::NewLine();
         auto jph_motion_type_preview = arcadia::match<std::string>(
-            _jph_motion_type,
+            _temp_jph_body_info_initial.jph_motion_type,
             JPH::EMotionType::Static,
             "Static"s,
             JPH::EMotionType::Dynamic,
@@ -68,22 +91,22 @@ void arcadia::imgui_window_popup_physics_component_create_body::operator()(arcad
         {
             if(ImGui::Selectable("Static"))
             {
-                _jph_motion_type = JPH::EMotionType::Static;
+                _temp_jph_body_info_initial.jph_motion_type = JPH::EMotionType::Static;
             }
             if(ImGui::Selectable("Dynamic"))
             {
-                _jph_motion_type = JPH::EMotionType::Dynamic;
+                _temp_jph_body_info_initial.jph_motion_type = JPH::EMotionType::Dynamic;
             }
             if(ImGui::Selectable("Kinematic"))
             {
-                _jph_motion_type = JPH::EMotionType::Kinematic;
+                _temp_jph_body_info_initial.jph_motion_type = JPH::EMotionType::Kinematic;
             }
             ImGui::EndCombo();
         }
 
         // Object layer
-        auto jph_object_layer_prview = arcadia::match<std::string>(
-            _jph_object_layer,
+        auto jph_object_layer_preview = arcadia::match<std::string>(
+            _temp_jph_body_info_initial.jph_object_layer,
             arcadia::jph_object_layers::non_moving,
             "Non Moving",
             arcadia::jph_object_layers::moving,
@@ -91,22 +114,22 @@ void arcadia::imgui_window_popup_physics_component_create_body::operator()(arcad
         );
         ImGui::Text("Object Layer");
         ImGui::SameLine();
-        if(ImGui::BeginCombo("##object_layer", jph_object_layer_prview.c_str()))
+        if(ImGui::BeginCombo("##object_layer", jph_object_layer_preview.c_str()))
         {
             if(ImGui::Selectable("Non Moving"))
             {
-                _jph_object_layer = arcadia::jph_object_layers::non_moving;
+                _temp_jph_body_info_initial.jph_object_layer = arcadia::jph_object_layers::non_moving;
             }
             if(ImGui::Selectable("Moving"))
             {
-                _jph_object_layer = arcadia::jph_object_layers::moving;
+                _temp_jph_body_info_initial.jph_object_layer = arcadia::jph_object_layers::moving;
             }
             ImGui::EndCombo();
         }
 
         //Shape
-        _jph_shape_info = arcadia::match<arcadia::jph_shape_info_type>(
-            _jph_shape_info,
+        _temp_jph_body_info_initial.jph_shape_info = arcadia::match<arcadia::jph_shape_info_type>(
+            _temp_jph_body_info_initial.jph_shape_info,
             [&](arcadia::jph_box_shape_info& info) -> arcadia::jph_shape_info_type
         {
             ImGui::Text("  Shape Type");
@@ -152,7 +175,7 @@ void arcadia::imgui_window_popup_physics_component_create_body::operator()(arcad
             auto convex_radius_max = std::min({ half_extent_x, half_extent_y, half_extent_z });
             ImGui::Text("Convex Radius"); ImGui::SameLine(); ImGui::DragFloat("##convex_radius", &info.convex_radius, speed, convex_radius_min, convex_radius_max, format, slider_flags);
 
-            return _jph_shape_info;
+            return _temp_jph_body_info_initial.jph_shape_info;
         },
             [&](arcadia::jph_capsule_shape_info& info) -> arcadia::jph_shape_info_type
         {
@@ -190,7 +213,7 @@ void arcadia::imgui_window_popup_physics_component_create_body::operator()(arcad
             auto half_height_of_cylinder_max = (std::numeric_limits<float>::max)();
             ImGui::Text("Half Height of Cylinder"); ImGui::SameLine(); ImGui::DragFloat("##half_height_of_cylinder", &info.half_height_of_cylinder, speed, half_height_of_cylinder_min, half_height_of_cylinder_max, format, slider_flags);
 
-            return _jph_shape_info;
+            return _temp_jph_body_info_initial.jph_shape_info;
         },
             [&](arcadia::jph_cylinder_shape_info& info) -> arcadia::jph_shape_info_type
         {
@@ -233,7 +256,7 @@ void arcadia::imgui_window_popup_physics_component_create_body::operator()(arcad
             auto convex_radius_max = (std::numeric_limits<float>::max)();
             ImGui::Text("Convex Radius"); ImGui::SameLine(); ImGui::DragFloat("##convex_radius", &info.convex_radius, speed, convex_radius_min, convex_radius_max, format, slider_flags);
 
-            return _jph_shape_info;
+            return _temp_jph_body_info_initial.jph_shape_info;
         },
             [&](arcadia::jph_sphere_shape_info& info) -> arcadia::jph_shape_info_type
         {
@@ -266,7 +289,7 @@ void arcadia::imgui_window_popup_physics_component_create_body::operator()(arcad
             auto radius_max = (std::numeric_limits<float>::max)();
             ImGui::Text("   Radius"); ImGui::SameLine(); ImGui::DragFloat("##radius", &info.radius, speed, radius_min, radius_max, format, slider_flags);
 
-            return _jph_shape_info;
+            return _temp_jph_body_info_initial.jph_shape_info;
         }
         );
 
@@ -274,12 +297,22 @@ void arcadia::imgui_window_popup_physics_component_create_body::operator()(arcad
         auto confirmed = ImGui::Button("Confirm");
         if(confirmed)
         {
-            physics_comp.build_identifiable_jph_body_info(
-                arcadia::from_jph_vec3(_jph_position),
-                arcadia::from_jph_quat(_jph_rotation),
-                _jph_motion_type,
-                _jph_object_layer,
-                std::move(_jph_shape_info)
+            auto& command_list = arcadia::command_list::instance();
+            arcadia::jph_body_info_initial origin_identifiable_jph_body_info_initial = physics_comp.get_identifiable_jph_body_info_initial().get_value();
+            command_list.emplace(
+                "New JPH Body Info Initial",
+                [&]()
+            {
+                physics_comp.build_identifiable_jph_body_info_initial(
+                    _temp_jph_body_info_initial
+                );
+            },
+                [&]()
+            {
+                physics_comp.build_identifiable_jph_body_info_initial(
+                    origin_identifiable_jph_body_info_initial
+                );
+            }
             );
         }
         ImGui::SameLine();
@@ -287,15 +320,153 @@ void arcadia::imgui_window_popup_physics_component_create_body::operator()(arcad
         {
             ImGui::CloseCurrentPopup();
             open = false;
-            _jph_position = JPH::RVec3::sZero();
-            _jph_rotation = JPH::Quat::sIdentity();
-            _jph_motion_type = JPH::EMotionType::Static;
-            _jph_object_layer = arcadia::jph_object_layers::non_moving;
-            _jph_shape_info = arcadia::jph_box_shape_info{};
+            _temp_jph_body_info_initial = arcadia::jph_body_info_initial{};
         }
 
         ImGui::EndPopup();
     }
+}
+
+#define ARCADIA_CAMERA_COMPONENT_MEMEBER_GETTER_AND_SETTER_WITH_COMMAND(comp, getter, setter, val_type, description) ARCADIA_COMPONENT_MEMEBER_GETTER_AND_SETTER_WITH_COMMAND(arcadia::camera_component, comp, getter, setter, val_type, description)
+void arcadia::imgui_window_property_camera_component::operator()(arcadia::camera_component& camera_comp)
+{
+    const float speed = 1.f;
+    const float min = .0;
+    const float max = .0f;
+    const char* format = "%.3f";
+    const auto flags =
+        ImGuiSliderFlags_AlwaysClamp;
+
+
+    ImGui::BeginGroup();
+
+    ImGui::NewLine();
+    arcadia::imgui_wrapper::drag_vec3(
+        "Position",
+        ARCADIA_CAMERA_COMPONENT_MEMEBER_GETTER_AND_SETTER_WITH_COMMAND(camera_comp, get_position, set_position, const glm::vec3&, "Camera Position"),
+        speed,
+        min,
+        max,
+        format,
+        flags
+    );
+
+    ImGui::NewLine();
+    arcadia::imgui_wrapper::drag_vec3(
+        "Target",
+        ARCADIA_CAMERA_COMPONENT_MEMEBER_GETTER_AND_SETTER_WITH_COMMAND(camera_comp, get_target, set_target, const glm::vec3&, "Caemra Target"),
+        speed,
+        min,
+        max, format,
+        flags
+    );
+
+    ImGui::NewLine();
+    arcadia::imgui_wrapper::drag_vec3(
+        "Up",
+        ARCADIA_CAMERA_COMPONENT_MEMEBER_GETTER_AND_SETTER_WITH_COMMAND(camera_comp, get_up, set_up, const glm::vec3&, "Camera Up"),
+        speed,
+        min,
+        max,
+        format,
+        flags
+    );
+
+    ImGui::NewLine();
+    arcadia::imgui_wrapper::drag_float(
+        "Near Plane",
+        ARCADIA_CAMERA_COMPONENT_MEMEBER_GETTER_AND_SETTER_WITH_COMMAND(camera_comp, get_near_plane, set_near_plane, float, "Camera Near Plane"),
+        speed,
+        min,
+        max,
+        format,
+        flags
+    );
+
+    ImGui::NewLine();
+    arcadia::imgui_wrapper::drag_float(
+        "Far Plane",
+        ARCADIA_CAMERA_COMPONENT_MEMEBER_GETTER_AND_SETTER_WITH_COMMAND(camera_comp, get_far_plane, set_far_plane, float, "Camera Far Plane"),
+        speed,
+        min,
+        max,
+        format,
+        flags
+    );
+
+    ImGui::NewLine();
+    arcadia::imgui_wrapper::drag_float(
+        "FOV",
+        ARCADIA_CAMERA_COMPONENT_MEMEBER_GETTER_AND_SETTER_WITH_COMMAND(camera_comp, get_fov, set_fov, float, "Camera FOV"),
+        speed,
+        camera_comp.get_fov_min(),
+        camera_comp.get_fov_max(),
+        format,
+        flags
+    );
+
+    ImGui::NewLine();
+    arcadia::imgui_wrapper::drag_float(
+        "FOV Min",
+        ARCADIA_CAMERA_COMPONENT_MEMEBER_GETTER_AND_SETTER_WITH_COMMAND(camera_comp, get_fov_min, set_fov_min, float, "Camera FOV Min"),
+        speed,
+        .0f,
+        180.f,
+        format,
+        flags
+    );
+
+    ImGui::NewLine();
+    arcadia::imgui_wrapper::drag_float(
+        "FOV Max",
+        ARCADIA_CAMERA_COMPONENT_MEMEBER_GETTER_AND_SETTER_WITH_COMMAND(camera_comp, get_fov_max, set_fov_max, float, "Camera FOV Max"),
+        speed,
+        .0f,
+        180.f,
+        format,
+        flags
+    );
+
+    ImGui::NewLine();
+    arcadia::imgui_wrapper::drag_float(
+        "Speed",
+        ARCADIA_CAMERA_COMPONENT_MEMEBER_GETTER_AND_SETTER_WITH_COMMAND(camera_comp, get_speed, set_speed, float, "Camera Speed"),
+        speed,
+        min,
+        max,
+        format,
+        flags
+    );
+
+    ImGui::NewLine();
+    arcadia::imgui_wrapper::drag_vec2(
+        "Viewport Size",
+        ARCADIA_CAMERA_COMPONENT_MEMEBER_GETTER_AND_SETTER_WITH_COMMAND(camera_comp, get_viewport_size, set_viewport_size, const glm::vec2&, "Camera Viewport Size"),
+        speed,
+        1.f,
+        std::numeric_limits<float>::max(),
+        format,
+        flags
+    );
+
+    ImGui::NewLine();
+    arcadia::imgui_wrapper::checkbox(
+        "Fixed Up",
+        ARCADIA_CAMERA_COMPONENT_MEMEBER_GETTER_AND_SETTER_WITH_COMMAND(camera_comp, get_fixed_up, set_fixed_up, bool, "Camera Fixed Up")
+    );
+
+    ImGui::NewLine();
+    arcadia::imgui_wrapper::drag_float(
+        "Up Epsilon",
+        ARCADIA_CAMERA_COMPONENT_MEMEBER_GETTER_AND_SETTER_WITH_COMMAND(camera_comp, get_up_epsilon, set_up_epsilon, float, "Camera Up Epsilon"),
+        speed,
+        min,
+        max,
+        format,
+        flags
+    );
+
+    ImGui::EndGroup();
 }
 
 void arcadia::imgui_window_property::on_event(arcadia::event_base& event)
@@ -336,16 +507,14 @@ void arcadia::imgui_window_property::on_update()
         }
         else
         {
-            _display_components(scene_sptr);
+            _display_components();
         }
     }
     ImGui::End();
 }
 
-void arcadia::imgui_window_property::_display_components(const std::shared_ptr<arcadia::scene>& scene_sptr)
+void arcadia::imgui_window_property::_display_components()
 {
-    ARCADIA_ASSERT(scene_sptr);
-
     auto tab_bar_flags =
         ImGuiTabBarFlags_NoCloseWithMiddleMouseButton
         | ImGuiTabBarFlags_TabListPopupButton
@@ -356,24 +525,24 @@ void arcadia::imgui_window_property::_display_components(const std::shared_ptr<a
     {
         ImGui::PushItemWidth(200.f);
 
-        if(_contains_component<arcadia::camera_component>(scene_sptr) && ImGui::BeginTabItem("Camera"))
+        if(_contains_component<arcadia::camera_component>() && ImGui::BeginTabItem("Camera"))
         {
-            _display_camera_component(scene_sptr);
+            _display_camera_component();
             ImGui::EndTabItem();
         }
-        if(_contains_component<arcadia::light_component>(scene_sptr) && ImGui::BeginTabItem("Light"))
+        if(_contains_component<arcadia::light_component>() && ImGui::BeginTabItem("Light"))
         {
-            _display_light_component(scene_sptr);
+            _display_light_component();
             ImGui::EndTabItem();
         }
-        if(_contains_component<arcadia::model_component>(scene_sptr) && ImGui::BeginTabItem("Model"))
+        if(_contains_component<arcadia::model_component>() && ImGui::BeginTabItem("Model"))
         {
-            _display_model_component(scene_sptr);
+            _display_model_component();
             ImGui::EndTabItem();
         }
-        if(_contains_component<arcadia::physics_component>(scene_sptr) && ImGui::BeginTabItem("Physics"))
+        if(_contains_component<arcadia::physics_component>() && ImGui::BeginTabItem("Physics"))
         {
-            _display_physics_component(scene_sptr);
+            _display_physics_component();
             ImGui::EndTabItem();
         }
 
@@ -383,165 +552,42 @@ void arcadia::imgui_window_property::_display_components(const std::shared_ptr<a
     }
 }
 
-void arcadia::imgui_window_property::_display_camera_component(const std::shared_ptr<arcadia::scene>& scene_sptr)
+void arcadia::imgui_window_property::_display_camera_component()
 {
+    auto scene_sptr = _scene_wptr.lock();
     ARCADIA_ASSERT(scene_sptr);
 
-    const float speed = 1.f;
-    const float min = .0;
-    const float max = .0f;
-    const char* format = "%.3f";
-    const auto flags =
-        ImGuiSliderFlags_AlwaysClamp;
-    auto& camera_comp = _get_component<arcadia::camera_component>(scene_sptr);
-    ImGui::BeginGroup();
 
-    ImGui::NewLine();
-    arcadia::imgui_wrapper::drag_vec3(
-        "Position",
-        ARCADIA_BIND_MEMBER_FN_ARBITRARY(camera_comp, get_position),
-        ARCADIA_BIND_MEMBER_FN_ARBITRARY(camera_comp, set_position),
-        speed,
-        min,
-        max,
-        format,
-        flags
-    );
+    auto& camera_comp = _get_component<arcadia::camera_component>();
 
-    ImGui::NewLine();
-    arcadia::imgui_wrapper::drag_vec3(
-        "Target",
-        ARCADIA_BIND_MEMBER_FN_ARBITRARY(camera_comp, get_target),
-        ARCADIA_BIND_MEMBER_FN_ARBITRARY(camera_comp, set_target),
-        speed,
-        min,
-        max, format,
-        flags
-    );
-
-    ImGui::NewLine();
-    arcadia::imgui_wrapper::drag_vec3(
-        "Up",
-        ARCADIA_BIND_MEMBER_FN_ARBITRARY(camera_comp, get_up),
-        ARCADIA_BIND_MEMBER_FN_ARBITRARY(camera_comp, set_up),
-        speed,
-        min,
-        max,
-        format,
-        flags
-    );
-
-    ImGui::NewLine();
-    arcadia::imgui_wrapper::drag_float(
-        "Near Plane",
-        ARCADIA_BIND_MEMBER_FN_ARBITRARY(camera_comp, get_near_plane),
-        ARCADIA_BIND_MEMBER_FN_ARBITRARY(camera_comp, set_near_plane),
-        speed,
-        min,
-        max,
-        format,
-        flags
-    );
-
-    ImGui::NewLine();
-    arcadia::imgui_wrapper::drag_float(
-        "Far Plane",
-        ARCADIA_BIND_MEMBER_FN_ARBITRARY(camera_comp, get_far_plane),
-        ARCADIA_BIND_MEMBER_FN_ARBITRARY(camera_comp, set_far_plane),
-        speed,
-        min,
-        max,
-        format,
-        flags
-    );
-
-    ImGui::NewLine();
-    arcadia::imgui_wrapper::drag_float(
-        "FOV",
-        ARCADIA_BIND_MEMBER_FN_ARBITRARY(camera_comp, get_fov),
-        ARCADIA_BIND_MEMBER_FN_ARBITRARY(camera_comp, set_fov),
-        speed,
-        camera_comp.get_fov_min(),
-        camera_comp.get_fov_max(),
-        format,
-        flags
-    );
-
-    ImGui::NewLine();
-    arcadia::imgui_wrapper::drag_float(
-        "FOV Min",
-        ARCADIA_BIND_MEMBER_FN_ARBITRARY(camera_comp, get_fov_min),
-        ARCADIA_BIND_MEMBER_FN_ARBITRARY(camera_comp, set_fov_min),
-        speed,
-        .0f,
-        180.f,
-        format,
-        flags
-    );
-
-    ImGui::NewLine();
-    arcadia::imgui_wrapper::drag_float(
-        "FOV Max",
-        ARCADIA_BIND_MEMBER_FN_ARBITRARY(camera_comp, get_fov_max),
-        ARCADIA_BIND_MEMBER_FN_ARBITRARY(camera_comp, set_fov_max),
-        speed,
-        .0f,
-        180.f,
-        format,
-        flags
-    );
-
-    ImGui::NewLine();
-    arcadia::imgui_wrapper::drag_float(
-        "Speed",
-        ARCADIA_BIND_MEMBER_FN_ARBITRARY(camera_comp, get_speed),
-        ARCADIA_BIND_MEMBER_FN_ARBITRARY(camera_comp, set_speed),
-        speed,
-        min,
-        max,
-        format,
-        flags
-    );
-
-    ImGui::NewLine();
-    arcadia::imgui_wrapper::drag_vec2(
-        "Viewport Size",
-        ARCADIA_BIND_MEMBER_FN_ARBITRARY(camera_comp, get_viewport_size),
-        ARCADIA_BIND_MEMBER_FN_ARBITRARY(camera_comp, set_viewport_size),
-        speed,
-        1.f,
-        std::numeric_limits<float>::max(),
-        format,
-        flags
-    );
-
-    ImGui::NewLine();
-    arcadia::imgui_wrapper::checkbox(
-        "Fixed Up",
-        ARCADIA_BIND_MEMBER_FN_ARBITRARY(camera_comp, get_fixed_up),
-        ARCADIA_BIND_MEMBER_FN_ARBITRARY(camera_comp, set_fixed_up)
-    );
-
-    ImGui::NewLine();
-    arcadia::imgui_wrapper::drag_float(
-        "Up Epsilon",
-        ARCADIA_BIND_MEMBER_FN_ARBITRARY(camera_comp, get_up_epsilon),
-        ARCADIA_BIND_MEMBER_FN_ARBITRARY(camera_comp, set_up_epsilon),
-        speed,
-        min,
-        max,
-        format,
-        flags
-    );
-
-    ImGui::EndGroup();
 }
 
-void arcadia::imgui_window_property::_display_light_component(const std::shared_ptr<arcadia::scene>& scene_sptr)
+#define ARCADIA_LIGHT_COMPONENT_LIGHT_SETTER_WITH_COMMAND(val, description) \
+[&]()\
+{\
+    auto& comp = _get_component<arcadia::light_component>();\
+    auto origin_light = comp.get_light();\
+    arcadia::command_list::instance()\
+        .emplace(\
+            description,\
+            [&]()\
+            {\
+                comp.set_light(val);\
+            },\
+            [&]()\
+            {\
+                comp.set_light(origin_light);\
+            }\
+        );\
+}
+void arcadia::imgui_window_property::_display_light_component()
 {
+    auto scene_sptr = _scene_wptr.lock();
     ARCADIA_ASSERT(scene_sptr);
 
-    auto& light_comp = _get_component<arcadia::light_component>(scene_sptr);
+
+    auto& light_comp = _get_component<arcadia::light_component>();
+    auto light_comp_retriever = _get_component_retriever<arcadia::light_component>();
     ImGui::BeginGroup();
 
     const float light_direction_drag_speed = .01f;
@@ -560,9 +606,10 @@ void arcadia::imgui_window_property::_display_light_component(const std::shared_
     const auto format = "%.3f";
     const auto flags =
         ImGuiSliderFlags_AlwaysClamp;
+    arcadia::light_type light_variant = light_comp.get_light();
     arcadia::match<void>(
-        light_comp.get_light(),
-        [&](const arcadia::null_light& light)
+        light_variant,
+        [&](arcadia::null_light&)
     {
         ImGui::Text("Light Type");
         ImGui::SameLine();
@@ -570,24 +617,24 @@ void arcadia::imgui_window_property::_display_light_component(const std::shared_
         {
             if(ImGui::Selectable("Spot Light"))
             {
-                light_comp.set_light(arcadia::spot_light{});
+                ARCADIA_LIGHT_COMPONENT_LIGHT_SETTER_WITH_COMMAND(arcadia::spot_light{}, "New Spot Lgiht");
             }
             if(ImGui::Selectable("Direct Light"))
             {
-                light_comp.set_light(arcadia::direct_light{});
+                ARCADIA_LIGHT_COMPONENT_LIGHT_SETTER_WITH_COMMAND(arcadia::direct_light{}, "New Direct Light");
             }
             if(ImGui::Selectable("Area Light"))
             {
-                light_comp.set_light(arcadia::area_light{});
+                ARCADIA_LIGHT_COMPONENT_LIGHT_SETTER_WITH_COMMAND(arcadia::area_light{}, "New Area Light");
             }
             if(ImGui::Selectable("Point Light"))
             {
-                light_comp.set_light(arcadia::point_light{});
+                ARCADIA_LIGHT_COMPONENT_LIGHT_SETTER_WITH_COMMAND(arcadia::point_light{}, "New Point Light");
             }
             ImGui::EndCombo();
         }
     },
-        [&](const arcadia::spot_light& light)
+        [&](arcadia::spot_light& light)
     {
         ImGui::Text("         Light Type");
         ImGui::SameLine();
@@ -603,7 +650,7 @@ void arcadia::imgui_window_property::_display_light_component(const std::shared_
                 }.result();
                 if(res == pfd::button::yes)
                 {
-                    light_comp.set_light(arcadia::direct_light{});
+                    ARCADIA_LIGHT_COMPONENT_LIGHT_SETTER_WITH_COMMAND(arcadia::direct_light{}, "New Direct Lgiht");
                     ImGui::EndCombo();
                     return;
                 }
@@ -618,7 +665,7 @@ void arcadia::imgui_window_property::_display_light_component(const std::shared_
                 }.result();
                 if(res == pfd::button::yes)
                 {
-                    light_comp.set_light(arcadia::area_light{});
+                    ARCADIA_LIGHT_COMPONENT_LIGHT_SETTER_WITH_COMMAND(arcadia::area_light{}, "New Area Lgiht");
                     ImGui::EndCombo();
                     return;
                 }
@@ -633,7 +680,7 @@ void arcadia::imgui_window_property::_display_light_component(const std::shared_
                 }.result();
                 if(res == pfd::button::yes)
                 {
-                    light_comp.set_light(arcadia::point_light{});
+                    ARCADIA_LIGHT_COMPONENT_LIGHT_SETTER_WITH_COMMAND(arcadia::point_light{}, "New Point Lgiht");
                     ImGui::EndCombo();
                     return;
                 }
@@ -641,12 +688,10 @@ void arcadia::imgui_window_property::_display_light_component(const std::shared_
             ImGui::EndCombo();
         }
 
-        auto temp_light = light;
-
         ImGui::NewLine();
         arcadia::imgui_wrapper::drag_vec3(
             "Position",
-            temp_light.position,
+            light.position,
             speed,
             min,
             max,
@@ -657,7 +702,7 @@ void arcadia::imgui_window_property::_display_light_component(const std::shared_
         ImGui::NewLine();
         arcadia::imgui_wrapper::drag_vec3(
             "Direction",
-            temp_light.direction,
+            light.direction,
             light_direction_drag_speed,
             light_direction_min,
             light_direction_max,
@@ -668,7 +713,7 @@ void arcadia::imgui_window_property::_display_light_component(const std::shared_
         ImGui::NewLine();
         arcadia::imgui_wrapper::drag_float(
             "Attenuation Contant",
-            temp_light.attenuation_coefs.x,
+            light.attenuation_coefs.x,
             speed,
             min,
             max,
@@ -677,7 +722,7 @@ void arcadia::imgui_window_property::_display_light_component(const std::shared_
         );
         arcadia::imgui_wrapper::drag_float(
             "             Linear",
-            temp_light.attenuation_coefs.x,
+            light.attenuation_coefs.x,
             speed,
             min,
             max,
@@ -686,7 +731,7 @@ void arcadia::imgui_window_property::_display_light_component(const std::shared_
         );
         arcadia::imgui_wrapper::drag_float(
             "          Quadratic",
-            temp_light.attenuation_coefs.x,
+            light.attenuation_coefs.x,
             speed,
             min,
             max,
@@ -697,15 +742,15 @@ void arcadia::imgui_window_property::_display_light_component(const std::shared_
         ImGui::NewLine();
 
         glm::vec2 cutoff_angles_degree{
-            glm::degrees(temp_light.cutoff_angles.x),
-            glm::degrees(temp_light.cutoff_angles.y)
+            glm::degrees(light.cutoff_angles.x),
+            glm::degrees(light.cutoff_angles.y)
         };
         const float cutoff_angle_drag_speend = .1f;
         const float cutoff_angle_min = 0.f;
         const float cutoff_angle_max = 180.f;
         arcadia::imgui_wrapper::drag_float(
             "Inner Cutoff Angle",
-            temp_light.attenuation_coefs.x,
+            light.attenuation_coefs.x,
             cutoff_angle_drag_speend,
             cutoff_angle_min,
             cutoff_angle_max,
@@ -714,14 +759,14 @@ void arcadia::imgui_window_property::_display_light_component(const std::shared_
         );
         arcadia::imgui_wrapper::drag_float(
             "Outer Cutoff Angle",
-            temp_light.attenuation_coefs.x,
+            light.attenuation_coefs.x,
             cutoff_angle_drag_speend,
             cutoff_angle_min,
             cutoff_angle_max,
             format,
             flags
         );
-        temp_light.cutoff_angles = glm::vec2{
+        light.cutoff_angles = glm::vec2{
             glm::radians(cutoff_angles_degree.x),
             glm::radians(cutoff_angles_degree.y)
         };
@@ -729,13 +774,13 @@ void arcadia::imgui_window_property::_display_light_component(const std::shared_
         ImGui::NewLine();
         arcadia::imgui_wrapper::color_edit3(
             "Color",
-            temp_light.color
+            light.color
         );
 
         ImGui::NewLine();
         arcadia::imgui_wrapper::drag_vec3_color(
             "Ambient Strength",
-            temp_light.ambient_strength,
+            light.ambient_strength,
             light_strength_speed,
             light_strength_min,
             light_strength_max,
@@ -746,7 +791,7 @@ void arcadia::imgui_window_property::_display_light_component(const std::shared_
         ImGui::NewLine();
         arcadia::imgui_wrapper::drag_vec3_color(
             "Diffuse Strength",
-            temp_light.diffuse_strength,
+            light.diffuse_strength,
             light_strength_speed,
             light_strength_min,
             light_strength_max,
@@ -757,7 +802,7 @@ void arcadia::imgui_window_property::_display_light_component(const std::shared_
         ImGui::NewLine();
         arcadia::imgui_wrapper::drag_vec3_color(
             "Specular Strength",
-            temp_light.specular_strength,
+            light.specular_strength,
             light_strength_speed,
             light_strength_min,
             light_strength_max,
@@ -765,9 +810,9 @@ void arcadia::imgui_window_property::_display_light_component(const std::shared_
             flags
         );
 
-        light_comp.set_light(temp_light);
+        ARCADIA_LIGHT_COMPONENT_LIGHT_SETTER_WITH_COMMAND(light, "New Light");
     },
-        [&](const arcadia::direct_light& light)
+        [&](arcadia::direct_light& light)
     {
         ImGui::Text("         Light Type");
         ImGui::SameLine();
@@ -783,7 +828,7 @@ void arcadia::imgui_window_property::_display_light_component(const std::shared_
                 }.result();
                 if(res == pfd::button::yes)
                 {
-                    light_comp.set_light(arcadia::spot_light{});
+                    ARCADIA_LIGHT_COMPONENT_LIGHT_SETTER_WITH_COMMAND(arcadia::spot_light{}, "New Spot Lgiht");
                     ImGui::EndCombo();
                     return;
                 }
@@ -798,7 +843,7 @@ void arcadia::imgui_window_property::_display_light_component(const std::shared_
                 }.result();
                 if(res == pfd::button::yes)
                 {
-                    light_comp.set_light(arcadia::area_light{});
+                    ARCADIA_LIGHT_COMPONENT_LIGHT_SETTER_WITH_COMMAND(arcadia::area_light{}, "New Area Lgiht");
                     ImGui::EndCombo();
                     return;
                 }
@@ -813,7 +858,7 @@ void arcadia::imgui_window_property::_display_light_component(const std::shared_
                 }.result();
                 if(res == pfd::button::yes)
                 {
-                    light_comp.set_light(arcadia::point_light{});
+                    ARCADIA_LIGHT_COMPONENT_LIGHT_SETTER_WITH_COMMAND(arcadia::point_light{}, "New Point Lgiht");
                     ImGui::EndCombo();
                     return;
                 }
@@ -821,12 +866,10 @@ void arcadia::imgui_window_property::_display_light_component(const std::shared_
             ImGui::EndCombo();
         }
 
-        auto temp_light = light;
-
         ImGui::NewLine();
         arcadia::imgui_wrapper::drag_vec3(
             "Direction",
-            temp_light.direction,
+            light.direction,
             light_direction_drag_speed,
             light_direction_min,
             light_direction_max,
@@ -837,13 +880,13 @@ void arcadia::imgui_window_property::_display_light_component(const std::shared_
         ImGui::NewLine();
         arcadia::imgui_wrapper::color_edit3(
             "Color",
-            temp_light.color
+            light.color
         );
 
         ImGui::NewLine();
         arcadia::imgui_wrapper::drag_vec3_color(
             "Ambient Strengt",
-            temp_light.ambient_strength,
+            light.ambient_strength,
             light_strength_speed,
             light_strength_min,
             light_strength_max,
@@ -854,7 +897,7 @@ void arcadia::imgui_window_property::_display_light_component(const std::shared_
         ImGui::NewLine();
         arcadia::imgui_wrapper::drag_vec3_color(
             "Diffuse Strength",
-            temp_light.diffuse_strength,
+            light.diffuse_strength,
             light_strength_speed,
             light_strength_min,
             light_strength_max,
@@ -865,7 +908,7 @@ void arcadia::imgui_window_property::_display_light_component(const std::shared_
         ImGui::NewLine();
         arcadia::imgui_wrapper::drag_vec3_color(
             "Specular Strength",
-            temp_light.specular_strength,
+            light.specular_strength,
             light_strength_speed,
             light_strength_min,
             light_strength_max,
@@ -873,9 +916,9 @@ void arcadia::imgui_window_property::_display_light_component(const std::shared_
             flags
         );
 
-        light_comp.set_light(temp_light);
+        ARCADIA_LIGHT_COMPONENT_LIGHT_SETTER_WITH_COMMAND(light, "New Light");
     },
-        [&](const arcadia::area_light& light)
+        [&](arcadia::area_light& light)
     {
         ImGui::Text("         Light Type");
         ImGui::SameLine();
@@ -891,7 +934,7 @@ void arcadia::imgui_window_property::_display_light_component(const std::shared_
                 }.result();
                 if(res == pfd::button::yes)
                 {
-                    light_comp.set_light(arcadia::spot_light{});
+                    ARCADIA_LIGHT_COMPONENT_LIGHT_SETTER_WITH_COMMAND(arcadia::spot_light{}, "New Spot Lgiht");
                     ImGui::EndCombo();
                     return;
                 }
@@ -906,7 +949,7 @@ void arcadia::imgui_window_property::_display_light_component(const std::shared_
                 }.result();
                 if(res == pfd::button::yes)
                 {
-                    light_comp.set_light(arcadia::direct_light{});
+                    ARCADIA_LIGHT_COMPONENT_LIGHT_SETTER_WITH_COMMAND(arcadia::direct_light{}, "New Direct Lgiht");
                     ImGui::EndCombo();
                     return;
                 }
@@ -921,7 +964,7 @@ void arcadia::imgui_window_property::_display_light_component(const std::shared_
                 }.result();
                 if(res == pfd::button::yes)
                 {
-                    light_comp.set_light(arcadia::point_light{});
+                    ARCADIA_LIGHT_COMPONENT_LIGHT_SETTER_WITH_COMMAND(arcadia::point_light{}, "New Point Lgiht");
                     ImGui::EndCombo();
                     return;
                 }
@@ -929,12 +972,10 @@ void arcadia::imgui_window_property::_display_light_component(const std::shared_
             ImGui::EndCombo();
         }
 
-        auto temp_light = light;
-
         ImGui::NewLine();
         arcadia::imgui_wrapper::drag_vec3(
             "Position",
-            temp_light.position,
+            light.position,
             speed,
             min,
             max,
@@ -945,7 +986,7 @@ void arcadia::imgui_window_property::_display_light_component(const std::shared_
         ImGui::NewLine();
         arcadia::imgui_wrapper::drag_vec3(
             "Direction",
-            temp_light.direction,
+            light.direction,
             light_direction_drag_speed,
             light_direction_min,
             light_direction_max,
@@ -956,7 +997,7 @@ void arcadia::imgui_window_property::_display_light_component(const std::shared_
         ImGui::NewLine();
         arcadia::imgui_wrapper::drag_float(
             "Width",
-            temp_light.size.x,
+            light.size.x,
             speed,
             min,
             max,
@@ -965,7 +1006,7 @@ void arcadia::imgui_window_property::_display_light_component(const std::shared_
         );
         arcadia::imgui_wrapper::drag_float(
             "Height",
-            temp_light.size.y,
+            light.size.y,
             speed,
             min,
             max,
@@ -976,13 +1017,13 @@ void arcadia::imgui_window_property::_display_light_component(const std::shared_
         ImGui::NewLine();
         arcadia::imgui_wrapper::color_edit3(
             "Color",
-            temp_light.color
+            light.color
         );
 
         ImGui::NewLine();
         arcadia::imgui_wrapper::drag_vec3_color(
             "Ambient Strength",
-            temp_light.ambient_strength,
+            light.ambient_strength,
             light_strength_speed,
             light_strength_min,
             light_strength_max,
@@ -993,7 +1034,7 @@ void arcadia::imgui_window_property::_display_light_component(const std::shared_
         ImGui::NewLine();
         arcadia::imgui_wrapper::drag_vec3_color(
             "Diffuse Strength",
-            temp_light.diffuse_strength,
+            light.diffuse_strength,
             light_strength_speed,
             light_strength_min,
             light_strength_max,
@@ -1004,7 +1045,7 @@ void arcadia::imgui_window_property::_display_light_component(const std::shared_
         ImGui::NewLine();
         arcadia::imgui_wrapper::drag_vec3_color(
             "Specular Strength",
-            temp_light.specular_strength,
+            light.specular_strength,
             light_strength_speed,
             light_strength_min,
             light_strength_max,
@@ -1012,9 +1053,9 @@ void arcadia::imgui_window_property::_display_light_component(const std::shared_
             flags
         );
 
-        light_comp.set_light(temp_light);
+        ARCADIA_LIGHT_COMPONENT_LIGHT_SETTER_WITH_COMMAND(light, "New Light");
     },
-        [&](const arcadia::point_light& light)
+        [&](arcadia::point_light& light)
     {
         ImGui::Text("         Light Type");
         ImGui::SameLine();
@@ -1030,7 +1071,7 @@ void arcadia::imgui_window_property::_display_light_component(const std::shared_
                 }.result();
                 if(res == pfd::button::yes)
                 {
-                    light_comp.set_light(arcadia::spot_light{});
+                    ARCADIA_LIGHT_COMPONENT_LIGHT_SETTER_WITH_COMMAND(arcadia::spot_light{}, "New Spot Lgiht");
                     ImGui::EndCombo();
                     return;
                 }
@@ -1045,7 +1086,7 @@ void arcadia::imgui_window_property::_display_light_component(const std::shared_
                 }.result();
                 if(res == pfd::button::yes)
                 {
-                    light_comp.set_light(arcadia::direct_light{});
+                    ARCADIA_LIGHT_COMPONENT_LIGHT_SETTER_WITH_COMMAND(arcadia::direct_light{}, "New Direct Lgiht");
                     ImGui::EndCombo();
                     return;
                 }
@@ -1060,7 +1101,7 @@ void arcadia::imgui_window_property::_display_light_component(const std::shared_
                 }.result();
                 if(res == pfd::button::yes)
                 {
-                    light_comp.set_light(arcadia::area_light{});
+                    ARCADIA_LIGHT_COMPONENT_LIGHT_SETTER_WITH_COMMAND(arcadia::area_light{}, "New Area Lgiht");
                     ImGui::EndCombo();
                     return;
                 }
@@ -1068,12 +1109,10 @@ void arcadia::imgui_window_property::_display_light_component(const std::shared_
             ImGui::EndCombo();
         }
 
-        auto temp_light = light;
-
         ImGui::NewLine();
         arcadia::imgui_wrapper::drag_vec3(
             "Position",
-            temp_light.position,
+            light.position,
             speed,
             min,
             max,
@@ -1084,7 +1123,7 @@ void arcadia::imgui_window_property::_display_light_component(const std::shared_
         ImGui::NewLine();
         arcadia::imgui_wrapper::drag_float(
             "Attenuation Contant",
-            temp_light.attenuation_coefs.x,
+            light.attenuation_coefs.x,
             speed,
             min,
             max,
@@ -1093,7 +1132,7 @@ void arcadia::imgui_window_property::_display_light_component(const std::shared_
         );
         arcadia::imgui_wrapper::drag_float(
             "             Linear",
-            temp_light.attenuation_coefs.x,
+            light.attenuation_coefs.x,
             speed,
             min,
             max,
@@ -1102,7 +1141,7 @@ void arcadia::imgui_window_property::_display_light_component(const std::shared_
         );
         arcadia::imgui_wrapper::drag_float(
             "          Quadratic",
-            temp_light.attenuation_coefs.x,
+            light.attenuation_coefs.x,
             speed,
             min,
             max,
@@ -1113,13 +1152,13 @@ void arcadia::imgui_window_property::_display_light_component(const std::shared_
         ImGui::NewLine();
         arcadia::imgui_wrapper::color_edit3(
             "Color",
-            temp_light.color
+            light.color
         );
 
         ImGui::NewLine();
         arcadia::imgui_wrapper::drag_vec3_color(
             "Ambient Strength",
-            temp_light.ambient_strength,
+            light.ambient_strength,
             light_strength_speed,
             light_strength_min,
             light_strength_max,
@@ -1130,7 +1169,7 @@ void arcadia::imgui_window_property::_display_light_component(const std::shared_
         ImGui::NewLine();
         arcadia::imgui_wrapper::drag_vec3_color(
             "Diffuse Strength",
-            temp_light.diffuse_strength,
+            light.diffuse_strength,
             light_strength_speed,
             light_strength_min,
             light_strength_max,
@@ -1141,7 +1180,7 @@ void arcadia::imgui_window_property::_display_light_component(const std::shared_
         ImGui::NewLine();
         arcadia::imgui_wrapper::drag_vec3_color(
             "Specular Strength",
-            temp_light.specular_strength,
+            light.specular_strength,
             light_strength_speed,
             light_strength_min,
             light_strength_max,
@@ -1149,15 +1188,17 @@ void arcadia::imgui_window_property::_display_light_component(const std::shared_
             flags
         );
 
-        light_comp.set_light(temp_light);
+        ARCADIA_LIGHT_COMPONENT_LIGHT_SETTER_WITH_COMMAND(light, "New Light");
     }
     );
 
     ImGui::EndGroup();
 }
 
-void arcadia::imgui_window_property::_display_model_component(const std::shared_ptr<arcadia::scene>& scene_sptr)
+#define ARCADIA_MODEL_COMPONENT_MEMEBER_GETTER_AND_SETTER_WITH_COMMAND(getter, setter, val_type, description) ARCADIA_COMPONENT_MEMEBER_GETTER_AND_SETTER_WITH_COMMAND(arcadia::model_component, getter, setter, val_type, description)
+void arcadia::imgui_window_property::_display_model_component()
 {
+    auto scene_sptr = _scene_wptr.lock();
     ARCADIA_ASSERT(scene_sptr);
 
     const float speed = 1.f;
@@ -1167,7 +1208,7 @@ void arcadia::imgui_window_property::_display_model_component(const std::shared_
     const auto flags =
         ImGuiSliderFlags_AlwaysClamp;
 
-    auto& model_comp = _get_component<arcadia::model_component>(scene_sptr);
+    auto& model_comp = _get_component<arcadia::model_component>();
     ImGui::BeginGroup();
 
     ImGui::SeparatorText("Filepath");
@@ -1192,8 +1233,7 @@ void arcadia::imgui_window_property::_display_model_component(const std::shared_
     ImGui::NewLine();
     arcadia::imgui_wrapper::drag_vec3(
         "Location",
-        ARCADIA_BIND_MEMBER_FN_ARBITRARY(model_comp, get_location),
-        ARCADIA_BIND_MEMBER_FN_ARBITRARY(model_comp, set_location),
+        ARCADIA_MODEL_COMPONENT_MEMEBER_GETTER_AND_SETTER_WITH_COMMAND(get_location, set_location, const glm::vec3&, "Model Location"),
         speed,
         min,
         max,
@@ -1205,8 +1245,7 @@ void arcadia::imgui_window_property::_display_model_component(const std::shared_
     float rotation_drag_speed{ .05f };
     arcadia::imgui_wrapper::drag_quat_normalized(
         "Rotation",
-        ARCADIA_BIND_MEMBER_FN_ARBITRARY(model_comp, get_rotation),
-        ARCADIA_BIND_MEMBER_FN_ARBITRARY(model_comp, set_rotation),
+        ARCADIA_MODEL_COMPONENT_MEMEBER_GETTER_AND_SETTER_WITH_COMMAND(get_rotation, set_rotation, const glm::quat&, "Model Rotation"),
         rotation_drag_speed,
         min,
         max,
@@ -1217,8 +1256,7 @@ void arcadia::imgui_window_property::_display_model_component(const std::shared_
     ImGui::NewLine();
     arcadia::imgui_wrapper::drag_vec3(
         "Scale",
-        ARCADIA_BIND_MEMBER_FN_ARBITRARY(model_comp, get_scale),
-        ARCADIA_BIND_MEMBER_FN_ARBITRARY(model_comp, set_scale),
+        ARCADIA_MODEL_COMPONENT_MEMEBER_GETTER_AND_SETTER_WITH_COMMAND(get_scale, set_scale, const glm::vec3&, "Model Scale"),
         speed,
         min,
         max,
@@ -1229,8 +1267,7 @@ void arcadia::imgui_window_property::_display_model_component(const std::shared_
     ImGui::NewLine();
     arcadia::imgui_wrapper::drag_vec3(
         "Pivot",
-        ARCADIA_BIND_MEMBER_FN_ARBITRARY(model_comp, get_pivot),
-        ARCADIA_BIND_MEMBER_FN_ARBITRARY(model_comp, set_pivot),
+        ARCADIA_MODEL_COMPONENT_MEMEBER_GETTER_AND_SETTER_WITH_COMMAND(get_pivot, set_pivot, const glm::vec3&, "Model Scale"),
         speed,
         min,
         max,
@@ -1242,14 +1279,16 @@ void arcadia::imgui_window_property::_display_model_component(const std::shared_
 
 }
 
-void arcadia::imgui_window_property::_display_physics_component(const std::shared_ptr<arcadia::scene>& scene_sptr)
+#define ARCADIA_PHYSICS_COMPONENT_MEMEBER_GETTER_AND_SETTER_WITH_COMMAND(getter, setter, val_type, description) ARCADIA_COMPONENT_MEMEBER_GETTER_AND_SETTER_WITH_COMMAND(arcadia::physics_component, getter, setter, val_type, description)
+void arcadia::imgui_window_property::_display_physics_component()
 {
+    auto scene_sptr = _scene_wptr.lock();
     ARCADIA_ASSERT(scene_sptr);
 
     auto has_physics_simulator = !_physics_simulator_wptr.expired();
     auto physics_simulator_sptr = _physics_simulator_wptr.lock();
 
-    auto& physics_comp = _get_component<arcadia::physics_component>(scene_sptr);
+    auto& physics_comp = _get_component<arcadia::physics_component>();
 
     _imgui_window_popup_physics_component_create_body(physics_comp);
 
@@ -1350,8 +1389,7 @@ void arcadia::imgui_window_property::_display_physics_component(const std::share
             {
                 arcadia::imgui_wrapper::color_edit3(
                     "Body Shape Color",
-                    ARCADIA_BIND_MEMBER_FN_ARBITRARY(physics_comp, get_body_shape_color),
-                    ARCADIA_BIND_MEMBER_FN_ARBITRARY(physics_comp, set_body_shape_color)
+                    ARCADIA_PHYSICS_COMPONENT_MEMEBER_GETTER_AND_SETTER_WITH_COMMAND(get_body_shape_color, set_body_shape_color, const glm::vec3&, "Physics Body Shape Color")
                 );
 
                 ImGui::NewLine();
@@ -1422,3 +1460,5 @@ void arcadia::imgui_window_property::_on_physics_simulator_unbuilt(arcadia::even
 {
     _physics_simulator_wptr.reset();
 }
+
+
