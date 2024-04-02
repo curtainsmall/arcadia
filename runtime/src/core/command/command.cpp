@@ -44,15 +44,11 @@ void arcadia::command_list::emplace(
     _list.erase(_list.begin(), _current_iter);
 
     // Emplace new command
-    _list.emplace_front(std::make_unique<arcadia::command>(description, execute_fn, unexecute_fn));
+    _list.emplace_front(description, execute_fn, unexecute_fn);
 
     // Relocate current position
     _current_iter = _list.begin();
-
-    //Resize list
-    _list.resize(_capacity);
 }
-
 
 auto arcadia::command_list::undo() -> bool
 {
@@ -61,7 +57,7 @@ auto arcadia::command_list::undo() -> bool
         return false;
     }
 
-    (*(_current_iter--))->unexecute();
+    (_current_iter--)->unexecute();
     return true;
 }
 
@@ -72,7 +68,7 @@ auto arcadia::command_list::redo() -> bool
         return false;
     }
 
-    (*(_current_iter++))->execute();
+    (_current_iter++)->execute();
     return true;
 }
 

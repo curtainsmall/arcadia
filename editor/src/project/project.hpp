@@ -36,7 +36,7 @@ namespace arcadia
         auto get_active_scene() -> arcadia::scene&;
         [[nodiscard]]
         auto get_active_scene() const -> const arcadia::scene&;
-        auto set_active_scene(const std::string& name) -> std::weak_ptr<arcadia::scene>&;
+        auto set_active_scene(const std::string& name={}) -> std::weak_ptr<arcadia::scene>&;
 
 
     public:

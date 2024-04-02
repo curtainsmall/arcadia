@@ -203,7 +203,7 @@ void arcadia::project_layer::_on_open_project(arcadia::event::open_project& e)
     }
     if(_project_filepath.extension() != ".acdaprj")
     {
-        pfd::message{
+        pfd::message msg{
             "Open Project",
             std::format("Arcadia project must ends with extension \".arcaprj\" while {} does not",_project_filepath.generic_string()),
             pfd::choice::ok,
@@ -322,7 +322,7 @@ void arcadia::project_layer::_on_close_scene(arcadia::event::close_scene& e)
 {
     ARCADIA_ASSERT(_project_sptr);
 
-    _project_sptr->get_active_scene();
+    _project_sptr->set_active_scene();
 }
 
 void arcadia::project_layer::_on_delete_scene(arcadia::event::delete_scene& e)
@@ -342,7 +342,7 @@ void arcadia::project_layer::_on_delete_scene(arcadia::event::delete_scene& e)
         case pfd::button::ok:
         {
             _project_sptr->scene_sptr_umap.erase(scene_name);
-            _project_sptr->get_active_scene();
+            _project_sptr->set_active_scene();
             break;
         }
         case pfd::button::cancel:

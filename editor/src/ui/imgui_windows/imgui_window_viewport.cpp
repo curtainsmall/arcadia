@@ -76,7 +76,7 @@ void arcadia::imgui_window_viewport::on_update()
             //==== Renderer ====//
             auto& viewport_camera = project_sptr->viewport_camera;
 
-            viewport_camera.set_viewport_size(ImGui::GetContentRegionAvail());
+            viewport_camera.viewport_size = ImGui::GetContentRegionAvail();
             //viewport_camera.should_display_grid = true;
             renderer_sptr->prepare();
 
@@ -117,7 +117,7 @@ void arcadia::imgui_window_viewport::on_update()
             renderer_sptr->draw();
 
             auto image_cursor_pos = ImGui::GetCursorPos();
-            ImGui::Image(renderer_sptr->get_render_result_id(0), viewport_camera.get_viewport_size(), { 0,1 }, { 1,0 });
+            ImGui::Image(renderer_sptr->get_render_result_id(0), viewport_camera.viewport_size, { 0,1 }, { 1,0 });
 
             if(ImGui::IsItemHovered())
             {
@@ -143,7 +143,7 @@ void arcadia::imgui_window_viewport::on_update()
 
             // Display viewport viewport_camera info
             ImGui::SetCursorPos(image_cursor_pos);
-            ImGui::Text(std::format("Camera - Pos: {} - Direction: {}", viewport_camera.get_position(), viewport_camera.get_forward_dir()).c_str());
+            ImGui::Text(std::format("Camera - Pos: {} - Direction: {}", viewport_camera.position, viewport_camera.get_forward_dir()).c_str());
             float fps = 1.f / std::chrono::duration_cast<std::chrono::duration<float>>(app_context.delta_time).count();
             ImGui::Text(std::format("FPS: {:.2f}", fps).c_str());
         }

@@ -3,6 +3,10 @@
 #include"core/file/pfd_header.hpp"
 #include"function/ui/imgui_header.hpp"
 #include"function/ui/imgui_wrapper.hpp"
+#include"resource/component/camera_component/camera_component.hpp"
+#include"resource/component/light_component/light_component.hpp"
+#include"resource/component/model_component/model_component.hpp"
+#include"resource/component/physics_component/physics_component.hpp"
 
 void arcadia::imgui_window_state_scene::operator()(const std::shared_ptr<arcadia::scene>& scene_sptr)
 {

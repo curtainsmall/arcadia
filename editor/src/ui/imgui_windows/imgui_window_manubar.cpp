@@ -1,7 +1,7 @@
 #include "imgui_window_manubar.hpp"
 
-#include"core/command/command.hpp"
 #include"core/file/pfd_header.hpp"
+#include"core/memento/memento.hpp"
 #include"function/ui/imgui_header.hpp"
 #include"platform/graphic_api/graphic_api.hpp"
 
@@ -231,12 +231,12 @@ void arcadia::imgui_window_menubar::_edit_menu()
 
         if(ImGui::BeginMenu("Undo List", has_scene))
         {
-            auto& command_list = arcadia::command_list::instance();
-            if(command_list.size())
+            auto& memento_list = arcadia::memento_list::instance();
+            if(memento_list.size())
             {
-                for(const auto& command_uptr : command_list)
+                for(const auto& memento : memento_list)
                 {
-                    ImGui::MenuItem(command_uptr->get_description().c_str(), nullptr, nullptr);
+                    ImGui::MenuItem(memento.get_description().c_str(), nullptr, nullptr);
                 }
             }
             else

@@ -48,14 +48,17 @@ namespace arcadia
             class ...Args
         >
         memento(
-            const std::function<arcadia::memento_originator_interface<MementoData>& ()>& originator_retriever,
+            const std::string& description,
+            arcadia::in_place_types_t<MementoData, MementoOriginator>,
+            const std::function<MementoOriginator& ()>& originator_retriever,
             Args&& ...args
         ):
+            _description(description),
             _originator_retriever_uptr(
-                new std::function<arcadia::memento_originator_interface<MementoData>& ()>{ originator_retriever },
+                new std::function<MementoOriginator& ()>{ originator_retriever },
                 [&](void* ptr)
         {
-            delete static_cast<std::function<arcadia::memento_originator_interface<MementoData>& ()>*>(ptr);
+            delete static_cast<std::function<MementoOriginator& ()>*>(ptr);
         }
             ),
             _memento_data_uptr(
@@ -68,8 +71,8 @@ namespace arcadia
             _originator_restore_fn(
                 [&]()
         {
-            arcadia::memento_originator_interface<MementoData>& originator =
-                (*static_cast<std::function<arcadia::memento_originator_interface<MementoData>&()>*>(_originator_retriever_uptr.get()))();
+            MementoOriginator& originator =
+                (*static_cast<std::function<MementoOriginator & ()>*>(_originator_retriever_uptr.get()))();
             MementoData& memento_data = *static_cast<MementoData*>(_memento_data_uptr.get());
 
             originator.restore(memento_data);
@@ -80,7 +83,11 @@ namespace arcadia
         /// @brief Restore originator with memento data
         void restore() const;
 
+        [[nodiscard]]
+        auto get_description() const -> const std::string&;
+
     private:
+        std::string _description{};
         std::unique_ptr<void, std::function<void(void*)>> _originator_retriever_uptr{}; // Used to store originator retriever with type erasure
         std::unique_ptr<void, std::function<void(void*)>> _memento_data_uptr; // Used to store memento data with type erasure
         std::function<void()> _originator_restore_fn; // 1. call originator retriever to get originator; 2. get memento data; 3. call restore() in originator with memento data
@@ -89,7 +96,7 @@ namespace arcadia
     struct ARCADIA_API memento_list: arcadia::noncopyable
     {
     public:
-        using container_type = std::list<std::unique_ptr<arcadia::memento>>; // We use unique_ptr as a wrapper here since we may need to resize the list (resizing list requires element type to be default contructable)
+        using container_type = std::list<arcadia::memento>;
         using self_type = memento_list;
     public:
         static auto instance() -> self_type&;
@@ -103,20 +110,18 @@ namespace arcadia
             arcadia::memento_originator_like<MementoData> MementoOriginator
         >
         void snapshot(
-            const std::function<arcadia::memento_originator_interface<MementoData>& ()>& originator_retriever
+            const std::string& description,
+            const std::function<MementoOriginator& ()>& originator_retriever
         )
         {
             // Erase restored mementos since a new memento should be on a new branch from current position
             _list.erase(_list.begin(), _current_iter);
 
             // Emplace new memento
-            _list.emplace_front(std::make_unique<arcadia::memento>(originator_retriever, originator_retriever().snapshot()));
+            _list.emplace_front(description, arcadia::in_place_types<MementoData, MementoOriginator>, originator_retriever, originator_retriever().snapshot());
 
             // Relocate current position
             _current_iter = _list.begin();
-
-            //Resize list
-            _list.resize(_capacity);
 
         }
 
@@ -138,6 +143,21 @@ namespace arcadia
         auto size() const->std::size_t;
 
         void clear();
+
+        [[nodiscard]]
+        auto begin() noexcept -> container_type::iterator;
+        [[nodiscard]]
+        auto end() noexcept -> container_type::iterator;
+
+        [[nodiscard]]
+        auto begin() const noexcept->container_type::const_iterator;
+        [[nodiscard]]
+        auto end() const noexcept->container_type::const_iterator;
+
+        [[nodiscard]]
+        auto cbegin() const noexcept->container_type::const_iterator;
+        [[nodiscard]]
+        auto cend() const noexcept->container_type::const_iterator;
 
     private:
         std::size_t _capacity{ 40 };

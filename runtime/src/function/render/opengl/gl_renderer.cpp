@@ -71,17 +71,17 @@ void arcadia::gl_renderer::submit(const arcadia::camera_component& camera_comp)
 
     _gl_render_unit_cameras.emplace_back(
         arcadia::gl_framebuffer{
-            camera_comp.get_viewport_size(),
-            camera_comp.get_near_plane(),
-            camera_comp.get_far_plane()
+            camera_comp.viewport_size,
+            camera_comp.near_plane,
+            camera_comp.far_plane
         },
-        camera_comp.get_viewport_size(),
+        camera_comp.viewport_size,
         camera_comp.gen_view_mat4(),
         camera_comp.gen_proj_mat4(),
-        camera_comp.get_position(),
-        camera_comp.get_should_display_grid(),
-        camera_comp.get_near_plane(),
-        camera_comp.get_far_plane()
+        camera_comp.position,
+        camera_comp.should_display_grid,
+        camera_comp.near_plane,
+        camera_comp.far_plane
     );
 }
 
@@ -89,7 +89,7 @@ void arcadia::gl_renderer::submit(const arcadia::light_component& light_comp)
 {
     _assert_frame_in_build();
 
-    _gl_render_unit_lights.emplace_back(light_comp.get_light());
+    _gl_render_unit_lights.emplace_back(light_comp.light);
 }
 
 void arcadia::gl_renderer::submit(const arcadia::model_component& model_comp)
@@ -106,19 +106,19 @@ void arcadia::gl_renderer::submit(const arcadia::model_component& model_comp)
                 // Move pivot back from origin
                 glm::translate(
                     // Rotate
-                    glm::mat4_cast(model_comp.get_rotation())
+                    glm::mat4_cast(model_comp.rotation)
                     // Scale about origin (same as pivot)
                     * glm::scale(
                         // Move pivot to origin
                         glm::translate(
                             arcadia::mat4::identity(),
-                            -model_comp.get_pivot()
+                            -model_comp.pivot
                         ),
-                        model_comp.get_scale()
+                        model_comp.scale
                     ),
-                    model_comp.get_pivot()
+                    model_comp.pivot
                 ),
-                model_comp.get_location()
+                model_comp.location
             );
 
         if(!_gl_render_unit_meshes_umap.contains(uuid))
@@ -204,7 +204,7 @@ void arcadia::gl_renderer::submit(const arcadia::physics_component& physcis_comp
             glm::mat4_cast(body_info_ongoing.rotation),
             body_info_ongoing.position
         );
-        color = physcis_comp.get_body_shape_color();
+        color = physcis_comp.body_shape_color;
 
         _submitted_physcis_body_shape_uuid_set.emplace(uuid);
     }

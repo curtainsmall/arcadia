@@ -67,17 +67,17 @@ namespace arcadia
         arcadia::point_light
     >;
 
-    struct light_component;
-    struct ARCADIA_API light_component_memento_data
+    struct ARCADIA_API light_component;
+    struct ARCADIA_API light_component_memento
     {
-        friend struct arcadia::light_component;
+        friend arcadia::light_component;
     private:
-        arcadia::light_type light{ arcadia::null_light{} };
+        arcadia::light_type light{};
     };
 
     struct ARCADIA_API light_component:
         arcadia::component_base,
-        arcadia::memento_originator_interface<arcadia::light_component_memento_data>
+        arcadia::memento_originator_interface<arcadia::light_component_memento>
     {
     public:
         using self_type = light_component;
@@ -94,11 +94,7 @@ namespace arcadia
         virtual auto snapshot() const->memento_data_type override;
         virtual void restore(const memento_data_type& memento) override;
 
-        [[nodiscard]]
-        auto get_light() const->const arcadia::light_type&;
-        void set_light(const arcadia::light_type& light);
-
-    private:
-        arcadia::light_type _light{ arcadia::null_light{} };
+    public:
+        arcadia::light_type light{ arcadia::null_light{} };
     };
 }

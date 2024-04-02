@@ -6,6 +6,11 @@ void arcadia::memento::restore() const
     _originator_restore_fn();
 }
 
+auto arcadia::memento::get_description() const -> const std::string&
+{
+    return _description;
+}
+
 auto arcadia::memento_list::instance() -> self_type&
 {
     static self_type memento_list{};
@@ -19,7 +24,7 @@ auto arcadia::memento_list::undo()  -> bool
         return false;
     }
 
-    (*(_current_iter++))->restore();
+    (_current_iter++)->restore();
 }
 
 auto arcadia::memento_list::redo()  -> bool
@@ -29,7 +34,7 @@ auto arcadia::memento_list::redo()  -> bool
         return false;
     }
 
-    (*(--_current_iter))->restore();
+    (--_current_iter)->restore();
 }
 
 auto arcadia::memento_list::get_capacity() const -> std::size_t
@@ -47,8 +52,37 @@ auto arcadia::memento_list::size() const -> std::size_t
     return _list.size();
 }
 
-
 void arcadia::memento_list::clear()
 {
     _list.clear();
+}
+
+auto arcadia::memento_list::begin() noexcept -> container_type::iterator
+{
+    return _list.begin();
+}
+
+auto arcadia::memento_list::end() noexcept -> container_type::iterator
+{
+    return _list.end();
+}
+
+auto arcadia::memento_list::begin() const noexcept -> container_type::const_iterator
+{
+    return _list.begin();
+}
+
+auto arcadia::memento_list::end() const noexcept -> container_type::const_iterator
+{
+    return _list.end();
+}
+
+auto arcadia::memento_list::cbegin() const noexcept -> container_type::const_iterator
+{
+    return _list.cbegin();
+}
+
+auto arcadia::memento_list::cend() const noexcept -> container_type::const_iterator
+{
+    return _list.cend();
 }

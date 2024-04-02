@@ -3,36 +3,903 @@
 #include<algorithm>
 #include<string>
 
-#include"core/command/command.hpp"
 #include"core/file/pfd_header.hpp"
+#include"core/memento/memento.hpp"
 #include"function/ui/imgui_header.hpp"
 #include"function/ui/imgui_wrapper.hpp"
-#include"resource/component/camera_component/camera_component.hpp"
-#include"resource/component/light_component/light_component.hpp"
-#include"resource/component/model_component/model_component.hpp"
-#include"resource/component/physics_component/physics_component.hpp"
-#include"resource/component/skybox_component/skybox_component.hpp"
 
-#define ARCADIA_COMPONENT_MEMEBER_GETTER_AND_SETTER_WITH_COMMAND(comp_type, comp, getter, setter, val_type, description) \
-[&]() -> val_type\
-{\
-    return comp.getter();\
-},\
-[&](val_type val)\
-{\
-    auto origin_val = comp.getter();\
-    arcadia::command_list::instance()\
-        .emplace(\
-            description,\
-            [&]()\
-            {\
-                comp.setter(val);\
-            },\
-            [&]()\
-            {\
-                comp.setter(origin_val);\
-            }\
-        );\
+auto arcadia::imgui_window_property_camera_component::operator()(arcadia::camera_component& camera_comp) -> std::string
+{
+    const float speed = 1.f;
+    const float min = .0;
+    const float max = .0f;
+    const char* format = "%.3f";
+    const auto flags =
+        ImGuiSliderFlags_AlwaysClamp;
+
+    std::string description{};
+    ImGui::BeginGroup();
+
+    ImGui::NewLine();
+    if(arcadia::imgui_wrapper::drag_vec3(
+        "Position",
+        camera_comp.position,
+        speed,
+        min,
+        max,
+        format,
+        flags
+    ))
+    {
+        description = "Position";
+    }
+
+    ImGui::NewLine();
+    if(arcadia::imgui_wrapper::drag_vec3(
+        "Target",
+        camera_comp.target,
+        speed,
+        min,
+        max, format,
+        flags
+    ))
+    {
+        description = "Target";
+    }
+
+    ImGui::NewLine();
+    if(arcadia::imgui_wrapper::drag_vec3(
+        "Up",
+        camera_comp.up,
+        speed,
+        min,
+        max,
+        format,
+        flags
+    ))
+    {
+        description = "Up";
+    }
+
+    ImGui::NewLine();
+    if(arcadia::imgui_wrapper::drag_float(
+        "Near Plane",
+        camera_comp.near_plane,
+        speed,
+        min,
+        max,
+        format,
+        flags
+    ))
+    {
+        description = "Near Plane";
+    }
+
+    ImGui::NewLine();
+    if(arcadia::imgui_wrapper::drag_float(
+        "Far Plane",
+        camera_comp.far_plane,
+        speed,
+        min,
+        max,
+        format,
+        flags
+    ))
+    {
+        description = "Far Plane";
+    }
+
+    ImGui::NewLine();
+    if(arcadia::imgui_wrapper::drag_float(
+        "FOV",
+        camera_comp.fov,
+        speed,
+        camera_comp.fov_min,
+        camera_comp.fov_max,
+        format,
+        flags
+    ))
+    {
+        description = "FOV";
+    }
+
+    ImGui::NewLine();
+    if(arcadia::imgui_wrapper::drag_float(
+        "FOV Min",
+        camera_comp.fov_min,
+        speed,
+        .0f,
+        180.f,
+        format,
+        flags
+    ))
+    {
+        description = "FOV Min";
+    }
+
+    ImGui::NewLine();
+    if(arcadia::imgui_wrapper::drag_float(
+        "FOV Max",
+        camera_comp.fov_max,
+        speed,
+        .0f,
+        180.f,
+        format,
+        flags
+    ))
+    {
+        description = "FOV Max";
+    }
+
+    ImGui::NewLine();
+    if(arcadia::imgui_wrapper::drag_float(
+        "Speed",
+        camera_comp.speed,
+        speed,
+        min,
+        max,
+        format,
+        flags
+    ))
+    {
+        description = "Speed";
+    }
+
+    ImGui::NewLine();
+    if(arcadia::imgui_wrapper::drag_ivec2(
+        "Viewport Size",
+        camera_comp.viewport_size,
+        speed,
+        1.f,
+        std::numeric_limits<float>::max(),
+        format,
+        flags
+    ))
+    {
+        description = "Viewport Size";
+    }
+
+    ImGui::NewLine();
+    if(arcadia::imgui_wrapper::checkbox(
+        "Fixed Up",
+        camera_comp.fixed_up
+    ))
+    {
+        description = "Fixed Up";
+    }
+
+    ImGui::NewLine();
+    if(arcadia::imgui_wrapper::drag_float(
+        "Up Epsilon",
+        camera_comp.up_epsilon,
+        speed,
+        min,
+        max,
+        format,
+        flags
+    ))
+    {
+        description = "Up Epsilon";
+    }
+
+    ImGui::EndGroup();
+
+    return description;
+}
+
+auto arcadia::imgui_window_property_light_component::operator()(arcadia::light_component& light_comp) -> std::string
+{
+    std::string description{};
+    ImGui::BeginGroup();
+
+    const float light_direction_drag_speed = .01f;
+    const float light_direction_min = -1.f;
+    const float light_direction_max = 1.f;
+    const float light_color_drag_speed = .005f;
+    const float light_color_min = .0f;
+    const float light_color_max = 1.f;
+    const float light_strength_speed = 1.f;
+    const float light_strength_min = 0.f;
+    const float light_strength_max = 100.f;
+
+    const float speed = 1.f;
+    const float min = .0f;
+    const float max = .0f;
+    const auto format = "%.3f";
+    const auto flags =
+        ImGuiSliderFlags_AlwaysClamp;
+    if(arcadia::match<bool>(
+        light_comp.light,
+        [&](arcadia::null_light&)
+    {
+        ImGui::Text("Light Type");
+        ImGui::SameLine();
+        if(ImGui::BeginCombo("##light_type", "(No light)"))
+        {
+            if(ImGui::Selectable("Spot Light"))
+            {
+                light_comp.light = arcadia::spot_light{};
+                ImGui::EndCombo();
+                return true;
+            }
+            if(ImGui::Selectable("Direct Light"))
+            {
+                light_comp.light = arcadia::direct_light{};
+                ImGui::EndCombo();
+                return true;
+            }
+            if(ImGui::Selectable("Area Light"))
+            {
+                light_comp.light = arcadia::area_light{};
+                ImGui::EndCombo();
+                return true;
+            }
+            if(ImGui::Selectable("Point Light"))
+            {
+                light_comp.light = arcadia::point_light{};
+                ImGui::EndCombo();
+                return true;
+            }
+            ImGui::EndCombo();
+        }
+        return false;
+    },
+        [&](arcadia::spot_light& light)
+    {
+        bool edited{ false };
+
+        ImGui::Text("         Light Type");
+        ImGui::SameLine();
+        if(ImGui::BeginCombo("##light_type", "Spot Light"))
+        {
+            if(ImGui::Selectable("Direct Light"))
+            {
+                auto res = pfd::message{
+                    "Changing Light Type",
+                    "Do you want to change light type to Direct Light? All properties for current light will be lost",
+                    pfd::choice::yes_no,
+                    pfd::icon::info
+                }.result();
+                if(res == pfd::button::yes)
+                {
+                    light_comp.light = arcadia::direct_light{};
+                    ImGui::EndCombo();
+                    return true;
+                }
+            }
+            if(ImGui::Selectable("Area Light"))
+            {
+                auto res = pfd::message{
+                    "Changing Light Type",
+                    "Do you want to change light type to Area Light? All properties for current light will be lost",
+                    pfd::choice::yes_no,
+                    pfd::icon::info
+                }.result();
+                if(res == pfd::button::yes)
+                {
+                    light_comp.light = arcadia::area_light{};
+                    ImGui::EndCombo();
+                    return true;
+                }
+            }
+            if(ImGui::Selectable("Point Light"))
+            {
+                auto res = pfd::message{
+                    "Changing Light Type",
+                    "Do you want to change light type to Point Light? All properties for current light will be lost",
+                    pfd::choice::yes_no,
+                    pfd::icon::info
+                }.result();
+                if(res == pfd::button::yes)
+                {
+                    light_comp.light = arcadia::point_light{};
+                    ImGui::EndCombo();
+                    return true;
+                }
+            }
+            ImGui::EndCombo();
+        }
+
+        ImGui::NewLine();
+        edited |= arcadia::imgui_wrapper::drag_vec3(
+            "Position",
+            light.position,
+            speed,
+            min,
+            max,
+            format,
+            flags
+        );
+
+        ImGui::NewLine();
+        edited |= arcadia::imgui_wrapper::drag_vec3(
+            "Direction",
+            light.direction,
+            light_direction_drag_speed,
+            light_direction_min,
+            light_direction_max,
+            format,
+            flags
+        );
+
+        ImGui::NewLine();
+        edited |= arcadia::imgui_wrapper::drag_float(
+            "Attenuation Contant",
+            light.attenuation_coefs.x,
+            speed,
+            min,
+            max,
+            format,
+            flags
+        );
+        edited |= arcadia::imgui_wrapper::drag_float(
+            "             Linear",
+            light.attenuation_coefs.x,
+            speed,
+            min,
+            max,
+            format,
+            flags
+        );
+        edited |= arcadia::imgui_wrapper::drag_float(
+            "          Quadratic",
+            light.attenuation_coefs.x,
+            speed,
+            min,
+            max,
+            format,
+            flags
+        );
+
+        ImGui::NewLine();
+
+        glm::vec2 cutoff_angles_degree{
+            glm::degrees(light.cutoff_angles.x),
+            glm::degrees(light.cutoff_angles.y)
+        };
+        const float cutoff_angle_drag_speend = .1f;
+        const float cutoff_angle_min = 0.f;
+        const float cutoff_angle_max = 180.f;
+        edited |= arcadia::imgui_wrapper::drag_float(
+            "Inner Cutoff Angle",
+            light.attenuation_coefs.x,
+            cutoff_angle_drag_speend,
+            cutoff_angle_min,
+            cutoff_angle_max,
+            format,
+            flags
+        );
+        edited |= arcadia::imgui_wrapper::drag_float(
+            "Outer Cutoff Angle",
+            light.attenuation_coefs.x,
+            cutoff_angle_drag_speend,
+            cutoff_angle_min,
+            cutoff_angle_max,
+            format,
+            flags
+        );
+        light.cutoff_angles = glm::vec2{
+            glm::radians(cutoff_angles_degree.x),
+            glm::radians(cutoff_angles_degree.y)
+        };
+
+        ImGui::NewLine();
+        edited |= arcadia::imgui_wrapper::color_edit3(
+            "Color",
+            light.color
+        );
+
+        ImGui::NewLine();
+        edited |= arcadia::imgui_wrapper::drag_vec3_color(
+            "Ambient Strength",
+            light.ambient_strength,
+            light_strength_speed,
+            light_strength_min,
+            light_strength_max,
+            format,
+            flags
+        );
+
+        ImGui::NewLine();
+        edited |= arcadia::imgui_wrapper::drag_vec3_color(
+            "Diffuse Strength",
+            light.diffuse_strength,
+            light_strength_speed,
+            light_strength_min,
+            light_strength_max,
+            format,
+            flags
+        );
+
+        ImGui::NewLine();
+        edited |= arcadia::imgui_wrapper::drag_vec3_color(
+            "Specular Strength",
+            light.specular_strength,
+            light_strength_speed,
+            light_strength_min,
+            light_strength_max,
+            format,
+            flags
+        );
+
+        return edited;
+    },
+        [&](arcadia::direct_light& light)
+    {
+        bool edited{ false };
+
+        ImGui::Text("         Light Type");
+        ImGui::SameLine();
+        if(ImGui::BeginCombo("##light_type", "Direct Light"))
+        {
+            if(ImGui::Selectable("Spot Light"))
+            {
+                auto res = pfd::message{
+                    "Changing Light Type",
+                    "Do you want to change light type to Spot Light? All properties for current light will be lost",
+                    pfd::choice::yes_no,
+                    pfd::icon::info
+                }.result();
+                if(res == pfd::button::yes)
+                {
+                    light_comp.light = arcadia::spot_light{};
+                    ImGui::EndCombo();
+                    return true;
+                }
+            }
+            if(ImGui::Selectable("Area Light"))
+            {
+                auto res = pfd::message{
+                    "Changing Light Type",
+                    "Do you want to change light type to Area Light? All properties for current light will be lost",
+                    pfd::choice::yes_no,
+                    pfd::icon::info
+                }.result();
+                if(res == pfd::button::yes)
+                {
+                    light_comp.light = arcadia::area_light{};
+                    ImGui::EndCombo();
+                    return true;
+                }
+            }
+            if(ImGui::Selectable("Point Light"))
+            {
+                auto res = pfd::message{
+                    "Changing Light Type",
+                    "Do you want to change light type to Point Light? All properties for current light will be lost",
+                    pfd::choice::yes_no,
+                    pfd::icon::info
+                }.result();
+                if(res == pfd::button::yes)
+                {
+                    light_comp.light = arcadia::point_light{};
+                    ImGui::EndCombo();
+                    return true;
+                }
+            }
+            ImGui::EndCombo();
+        }
+
+        ImGui::NewLine();
+        edited |= arcadia::imgui_wrapper::drag_vec3(
+            "Direction",
+            light.direction,
+            light_direction_drag_speed,
+            light_direction_min,
+            light_direction_max,
+            format,
+            flags
+        );
+
+        ImGui::NewLine();
+        edited |= arcadia::imgui_wrapper::color_edit3(
+            "Color",
+            light.color
+        );
+
+        ImGui::NewLine();
+        edited |= arcadia::imgui_wrapper::drag_vec3_color(
+            "Ambient Strengt",
+            light.ambient_strength,
+            light_strength_speed,
+            light_strength_min,
+            light_strength_max,
+            format,
+            flags
+        );
+
+        ImGui::NewLine();
+        edited |= arcadia::imgui_wrapper::drag_vec3_color(
+            "Diffuse Strength",
+            light.diffuse_strength,
+            light_strength_speed,
+            light_strength_min,
+            light_strength_max,
+            format,
+            flags
+        );
+
+        ImGui::NewLine();
+        edited |= arcadia::imgui_wrapper::drag_vec3_color(
+            "Specular Strength",
+            light.specular_strength,
+            light_strength_speed,
+            light_strength_min,
+            light_strength_max,
+            format,
+            flags
+        );
+        return edited;
+    },
+        [&](arcadia::area_light& light)
+    {
+        bool edited{ false };
+
+        ImGui::Text("         Light Type");
+        ImGui::SameLine();
+        if(ImGui::BeginCombo("##light_type", "Area Light"))
+        {
+            if(ImGui::Selectable("Spot Light"))
+            {
+                auto res = pfd::message{
+                    "Changing Light Type",
+                    "Do you want to change light type to Spot Light? All properties for current light will be lost",
+                    pfd::choice::yes_no,
+                    pfd::icon::info
+                }.result();
+                if(res == pfd::button::yes)
+                {
+                    light_comp.light = arcadia::spot_light{};
+                    ImGui::EndCombo();
+                    return true;
+                }
+            }
+            if(ImGui::Selectable("Direct Light"))
+            {
+                auto res = pfd::message{
+                    "Changing Light Type",
+                    "Do you want to change light type to Direct Light? All properties for current light will be lost",
+                    pfd::choice::yes_no,
+                    pfd::icon::info
+                }.result();
+                if(res == pfd::button::yes)
+                {
+                    light_comp.light = arcadia::direct_light{};
+                    ImGui::EndCombo();
+                    return true;
+                }
+            }
+            if(ImGui::Selectable("Point Light"))
+            {
+                auto res = pfd::message{
+                    "Changing Light Type",
+                    "Do you want to change light type to Point Light? All properties for current light will be lost",
+                    pfd::choice::yes_no,
+                    pfd::icon::info
+                }.result();
+                if(res == pfd::button::yes)
+                {
+                    light_comp.light = arcadia::point_light{};
+                    ImGui::EndCombo();
+                    return true;
+                }
+            }
+            ImGui::EndCombo();
+        }
+
+        ImGui::NewLine();
+        edited |= arcadia::imgui_wrapper::drag_vec3(
+            "Position",
+            light.position,
+            speed,
+            min,
+            max,
+            format,
+            flags
+        );
+
+        ImGui::NewLine();
+        edited |= arcadia::imgui_wrapper::drag_vec3(
+            "Direction",
+            light.direction,
+            light_direction_drag_speed,
+            light_direction_min,
+            light_direction_max,
+            format,
+            flags
+        );
+
+        ImGui::NewLine();
+        edited |= arcadia::imgui_wrapper::drag_float(
+            "Width",
+            light.size.x,
+            speed,
+            min,
+            max,
+            format,
+            flags
+        );
+        edited |= arcadia::imgui_wrapper::drag_float(
+            "Height",
+            light.size.y,
+            speed,
+            min,
+            max,
+            format,
+            flags
+        );
+
+        ImGui::NewLine();
+        edited |= arcadia::imgui_wrapper::color_edit3(
+            "Color",
+            light.color
+        );
+
+        ImGui::NewLine();
+        edited |= arcadia::imgui_wrapper::drag_vec3_color(
+            "Ambient Strength",
+            light.ambient_strength,
+            light_strength_speed,
+            light_strength_min,
+            light_strength_max,
+            format,
+            flags
+        );
+
+        ImGui::NewLine();
+        edited |= arcadia::imgui_wrapper::drag_vec3_color(
+            "Diffuse Strength",
+            light.diffuse_strength,
+            light_strength_speed,
+            light_strength_min,
+            light_strength_max,
+            format,
+            flags
+        );
+
+        ImGui::NewLine();
+        edited |= arcadia::imgui_wrapper::drag_vec3_color(
+            "Specular Strength",
+            light.specular_strength,
+            light_strength_speed,
+            light_strength_min,
+            light_strength_max,
+            format,
+            flags
+        );
+        return edited;
+    },
+        [&](arcadia::point_light& light)
+    {
+        bool edited{ false };
+
+        ImGui::Text("         Light Type");
+        ImGui::SameLine();
+        if(ImGui::BeginCombo("##light_type", "Point Light"))
+        {
+            if(ImGui::Selectable("Spot Light"))
+            {
+                auto res = pfd::message{
+                    "Changing Light Type",
+                    "Do you want to change light type to Spot Light? All properties for current light will be lost",
+                    pfd::choice::yes_no,
+                    pfd::icon::info
+                }.result();
+                if(res == pfd::button::yes)
+                {
+                    light_comp.light = arcadia::spot_light{};
+                    ImGui::EndCombo();
+                    return true;
+                }
+            }
+            if(ImGui::Selectable("Direct Light"))
+            {
+                auto res = pfd::message{
+                    "Changing Light Type",
+                    "Do you want to change light type to Direct Light? All properties for current light will be lost",
+                    pfd::choice::yes_no,
+                    pfd::icon::info
+                }.result();
+                if(res == pfd::button::yes)
+                {
+                    light_comp.light = arcadia::direct_light{};
+                    ImGui::EndCombo();
+                    return true;
+                }
+            }
+            if(ImGui::Selectable("Area Light"))
+            {
+                auto res = pfd::message{
+                    "Changing Light Type",
+                    "Do you want to change light type to Area Light? All properties for current light will be lost",
+                    pfd::choice::yes_no,
+                    pfd::icon::info
+                }.result();
+                if(res == pfd::button::yes)
+                {
+                    light_comp.light = arcadia::area_light{};
+                    ImGui::EndCombo();
+                    return true;
+                }
+            }
+            ImGui::EndCombo();
+        }
+
+        ImGui::NewLine();
+        edited |= arcadia::imgui_wrapper::drag_vec3(
+            "Position",
+            light.position,
+            speed,
+            min,
+            max,
+            format,
+            flags
+        );
+
+        ImGui::NewLine();
+        edited |= arcadia::imgui_wrapper::drag_float(
+            "Attenuation Contant",
+            light.attenuation_coefs.x,
+            speed,
+            min,
+            max,
+            format,
+            flags
+        );
+        edited |= arcadia::imgui_wrapper::drag_float(
+            "             Linear",
+            light.attenuation_coefs.x,
+            speed,
+            min,
+            max,
+            format,
+            flags
+        );
+        edited |= arcadia::imgui_wrapper::drag_float(
+            "          Quadratic",
+            light.attenuation_coefs.x,
+            speed,
+            min,
+            max,
+            format,
+            flags
+        );
+
+        ImGui::NewLine();
+        edited |= arcadia::imgui_wrapper::color_edit3(
+            "Color",
+            light.color
+        );
+
+        ImGui::NewLine();
+        edited |= arcadia::imgui_wrapper::drag_vec3_color(
+            "Ambient Strength",
+            light.ambient_strength,
+            light_strength_speed,
+            light_strength_min,
+            light_strength_max,
+            format,
+            flags
+        );
+
+        ImGui::NewLine();
+        edited |= arcadia::imgui_wrapper::drag_vec3_color(
+            "Diffuse Strength",
+            light.diffuse_strength,
+            light_strength_speed,
+            light_strength_min,
+            light_strength_max,
+            format,
+            flags
+        );
+
+        ImGui::NewLine();
+        edited |= arcadia::imgui_wrapper::drag_vec3_color(
+            "Specular Strength",
+            light.specular_strength,
+            light_strength_speed,
+            light_strength_min,
+            light_strength_max,
+            format,
+            flags
+        );
+
+        return edited;
+    }
+    )){
+        description = "Light";
+    }
+
+    ImGui::EndGroup();
+
+    return description;
+}
+
+auto arcadia::imgui_window_property_model_component::operator()(arcadia::model_component& model_comp) -> std::string
+{
+    std::string description{};
+    ImGui::BeginGroup();
+    const float speed = 1.f;
+    const float min = .0f;
+    const float max = .0f;
+    const char* format = "%.3f";
+    const auto flags =
+        ImGuiSliderFlags_AlwaysClamp;
+
+    ImGui::SeparatorText("Filepath");
+    auto filepath_str = model_comp.get_filepath().empty()
+        ? "(No filepath)"s
+        : model_comp.get_filepath().generic_string();
+    ImGui::TextWrapped(filepath_str.c_str());
+    if(ImGui::Button("..."))
+    {
+        auto res = pfd::open_file{
+            "Import Model"
+        }.result();
+        model_comp.import(res.size() ? res.at(0) : ""s);
+    }
+
+    ImGui::SeparatorText("Transform");
+    ImGui::NewLine();
+    if(arcadia::imgui_wrapper::drag_vec3(
+        "Location",
+        model_comp.location,
+        speed,
+        min,
+        max,
+        format,
+        flags
+    ))
+    {
+        description = "Location";
+    }
+
+    ImGui::NewLine();
+    float rotation_drag_speed{ .05f };
+    if(arcadia::imgui_wrapper::drag_quat_normalized(
+        "Rotation",
+        model_comp.rotation,
+        rotation_drag_speed,
+        min,
+        max,
+        format,
+        flags
+    ))
+    {
+        description = "Rotation";
+    }
+
+    ImGui::NewLine();
+    if(arcadia::imgui_wrapper::drag_vec3(
+        "Scale",
+        model_comp.scale,
+        speed,
+        min,
+        max,
+        format,
+        flags
+    ))
+    {
+        description = "Scale";
+    }
+
+    ImGui::NewLine();
+    if(arcadia::imgui_wrapper::drag_vec3(
+        "Pivot",
+        model_comp.pivot,
+        speed,
+        min,
+        max,
+        format,
+        flags
+    ))
+    {
+        description = "Pivot";
+    }
+
+    ImGui::EndGroup();
+
+    return description;
 }
 
 void arcadia::imgui_window_popup_physics_component_create_body::operator()(arcadia::physics_component& physics_comp)
@@ -297,23 +1164,10 @@ void arcadia::imgui_window_popup_physics_component_create_body::operator()(arcad
         auto confirmed = ImGui::Button("Confirm");
         if(confirmed)
         {
-            auto& command_list = arcadia::command_list::instance();
-            arcadia::jph_body_info_initial origin_identifiable_jph_body_info_initial = physics_comp.get_identifiable_jph_body_info_initial().get_value();
-            command_list.emplace(
-                "New JPH Body Info Initial",
-                [&]()
-            {
-                physics_comp.build_identifiable_jph_body_info_initial(
-                    _temp_jph_body_info_initial
-                );
-            },
-                [&]()
-            {
-                physics_comp.build_identifiable_jph_body_info_initial(
-                    origin_identifiable_jph_body_info_initial
-                );
-            }
+            physics_comp.build_identifiable_jph_body_info_initial(
+                _temp_jph_body_info_initial
             );
+
         }
         ImGui::SameLine();
         if(confirmed || ImGui::Button("Cancel"))
@@ -327,970 +1181,12 @@ void arcadia::imgui_window_popup_physics_component_create_body::operator()(arcad
     }
 }
 
-#define ARCADIA_CAMERA_COMPONENT_MEMEBER_GETTER_AND_SETTER_WITH_COMMAND(comp, getter, setter, val_type, description) ARCADIA_COMPONENT_MEMEBER_GETTER_AND_SETTER_WITH_COMMAND(arcadia::camera_component, comp, getter, setter, val_type, description)
-void arcadia::imgui_window_property_camera_component::operator()(arcadia::camera_component& camera_comp)
+auto arcadia::imgui_window_property_physics_component::operator()(arcadia::physics_component& physics_comp) -> std::string
 {
-    const float speed = 1.f;
-    const float min = .0;
-    const float max = .0f;
-    const char* format = "%.3f";
-    const auto flags =
-        ImGuiSliderFlags_AlwaysClamp;
-
-
-    ImGui::BeginGroup();
-
-    ImGui::NewLine();
-    arcadia::imgui_wrapper::drag_vec3(
-        "Position",
-        ARCADIA_CAMERA_COMPONENT_MEMEBER_GETTER_AND_SETTER_WITH_COMMAND(camera_comp, get_position, set_position, const glm::vec3&, "Camera Position"),
-        speed,
-        min,
-        max,
-        format,
-        flags
-    );
-
-    ImGui::NewLine();
-    arcadia::imgui_wrapper::drag_vec3(
-        "Target",
-        ARCADIA_CAMERA_COMPONENT_MEMEBER_GETTER_AND_SETTER_WITH_COMMAND(camera_comp, get_target, set_target, const glm::vec3&, "Caemra Target"),
-        speed,
-        min,
-        max, format,
-        flags
-    );
-
-    ImGui::NewLine();
-    arcadia::imgui_wrapper::drag_vec3(
-        "Up",
-        ARCADIA_CAMERA_COMPONENT_MEMEBER_GETTER_AND_SETTER_WITH_COMMAND(camera_comp, get_up, set_up, const glm::vec3&, "Camera Up"),
-        speed,
-        min,
-        max,
-        format,
-        flags
-    );
-
-    ImGui::NewLine();
-    arcadia::imgui_wrapper::drag_float(
-        "Near Plane",
-        ARCADIA_CAMERA_COMPONENT_MEMEBER_GETTER_AND_SETTER_WITH_COMMAND(camera_comp, get_near_plane, set_near_plane, float, "Camera Near Plane"),
-        speed,
-        min,
-        max,
-        format,
-        flags
-    );
-
-    ImGui::NewLine();
-    arcadia::imgui_wrapper::drag_float(
-        "Far Plane",
-        ARCADIA_CAMERA_COMPONENT_MEMEBER_GETTER_AND_SETTER_WITH_COMMAND(camera_comp, get_far_plane, set_far_plane, float, "Camera Far Plane"),
-        speed,
-        min,
-        max,
-        format,
-        flags
-    );
-
-    ImGui::NewLine();
-    arcadia::imgui_wrapper::drag_float(
-        "FOV",
-        ARCADIA_CAMERA_COMPONENT_MEMEBER_GETTER_AND_SETTER_WITH_COMMAND(camera_comp, get_fov, set_fov, float, "Camera FOV"),
-        speed,
-        camera_comp.get_fov_min(),
-        camera_comp.get_fov_max(),
-        format,
-        flags
-    );
-
-    ImGui::NewLine();
-    arcadia::imgui_wrapper::drag_float(
-        "FOV Min",
-        ARCADIA_CAMERA_COMPONENT_MEMEBER_GETTER_AND_SETTER_WITH_COMMAND(camera_comp, get_fov_min, set_fov_min, float, "Camera FOV Min"),
-        speed,
-        .0f,
-        180.f,
-        format,
-        flags
-    );
-
-    ImGui::NewLine();
-    arcadia::imgui_wrapper::drag_float(
-        "FOV Max",
-        ARCADIA_CAMERA_COMPONENT_MEMEBER_GETTER_AND_SETTER_WITH_COMMAND(camera_comp, get_fov_max, set_fov_max, float, "Camera FOV Max"),
-        speed,
-        .0f,
-        180.f,
-        format,
-        flags
-    );
-
-    ImGui::NewLine();
-    arcadia::imgui_wrapper::drag_float(
-        "Speed",
-        ARCADIA_CAMERA_COMPONENT_MEMEBER_GETTER_AND_SETTER_WITH_COMMAND(camera_comp, get_speed, set_speed, float, "Camera Speed"),
-        speed,
-        min,
-        max,
-        format,
-        flags
-    );
-
-    ImGui::NewLine();
-    arcadia::imgui_wrapper::drag_vec2(
-        "Viewport Size",
-        ARCADIA_CAMERA_COMPONENT_MEMEBER_GETTER_AND_SETTER_WITH_COMMAND(camera_comp, get_viewport_size, set_viewport_size, const glm::vec2&, "Camera Viewport Size"),
-        speed,
-        1.f,
-        std::numeric_limits<float>::max(),
-        format,
-        flags
-    );
-
-    ImGui::NewLine();
-    arcadia::imgui_wrapper::checkbox(
-        "Fixed Up",
-        ARCADIA_CAMERA_COMPONENT_MEMEBER_GETTER_AND_SETTER_WITH_COMMAND(camera_comp, get_fixed_up, set_fixed_up, bool, "Camera Fixed Up")
-    );
-
-    ImGui::NewLine();
-    arcadia::imgui_wrapper::drag_float(
-        "Up Epsilon",
-        ARCADIA_CAMERA_COMPONENT_MEMEBER_GETTER_AND_SETTER_WITH_COMMAND(camera_comp, get_up_epsilon, set_up_epsilon, float, "Camera Up Epsilon"),
-        speed,
-        min,
-        max,
-        format,
-        flags
-    );
-
-    ImGui::EndGroup();
-}
-
-void arcadia::imgui_window_property::on_event(arcadia::event_base& event)
-{
-    arcadia::event_dispatcher{ event }
-        .dispatch<arcadia::event::open_imgui_window>(ARCADIA_BIND_MEMBER_FN(_on_open_imgui_window))
-        .dispatch<arcadia::event::scene_activated>(ARCADIA_BIND_MEMBER_FN(_on_scene_activated))
-        .dispatch<arcadia::event::scene_deactivated>(ARCADIA_BIND_MEMBER_FN(_on_scene_deactivated))
-        .dispatch<arcadia::event::select_entity>(ARCADIA_BIND_MEMBER_FN(_on_select_entity))
-        .dispatch<arcadia::event::delete_entity>(ARCADIA_BIND_MEMBER_FN(_on_delete_entity))
-        .dispatch<arcadia::event::physics_simulator_built>(ARCADIA_BIND_MEMBER_FN(_on_physics_simulator_built))
-        .dispatch<arcadia::event::physics_simulator_unbuilt>(ARCADIA_BIND_MEMBER_FN(_on_physics_simulator_unbuilt))
-        .result();
-}
-
-void arcadia::imgui_window_property::on_update()
-{
-    if(!_open)
-    {
-        return;
-    }
-
-    auto has_scene = !_scene_wptr.expired();
-    auto scene_sptr = _scene_wptr.lock();
-
-    auto imgui_title = has_scene && _selected_entity != entt::null
-        ? _title + " - " + scene_sptr->get_name_of_entity(_selected_entity) + get_id_str()
-        : _title + get_id_str();
-
-    ImGui::SetNextWindowSize(glm::vec2{ 1024,768 }, ImGuiCond_Once);
-    auto window_flags =
-        ImGuiWindowFlags_NoCollapse;
-    if(ImGui::Begin(imgui_title.c_str(), &_open, window_flags))
-    {
-        if(!has_scene)
-        {
-            ImGui::Text("(No scene selected)");
-        }
-        else
-        {
-            _display_components();
-        }
-    }
-    ImGui::End();
-}
-
-void arcadia::imgui_window_property::_display_components()
-{
-    auto tab_bar_flags =
-        ImGuiTabBarFlags_NoCloseWithMiddleMouseButton
-        | ImGuiTabBarFlags_TabListPopupButton
-        | ImGuiTabBarFlags_AutoSelectNewTabs
-        | ImGuiTabBarFlags_FittingPolicyScroll
-        | ImGuiTabBarFlags_Reorderable;
-    if(_selected_entity != entt::null && ImGui::BeginTabBar("##component_name", tab_bar_flags))
-    {
-        ImGui::PushItemWidth(200.f);
-
-        if(_contains_component<arcadia::camera_component>() && ImGui::BeginTabItem("Camera"))
-        {
-            _display_camera_component();
-            ImGui::EndTabItem();
-        }
-        if(_contains_component<arcadia::light_component>() && ImGui::BeginTabItem("Light"))
-        {
-            _display_light_component();
-            ImGui::EndTabItem();
-        }
-        if(_contains_component<arcadia::model_component>() && ImGui::BeginTabItem("Model"))
-        {
-            _display_model_component();
-            ImGui::EndTabItem();
-        }
-        if(_contains_component<arcadia::physics_component>() && ImGui::BeginTabItem("Physics"))
-        {
-            _display_physics_component();
-            ImGui::EndTabItem();
-        }
-
-        ImGui::EndTabBar();
-
-        ImGui::PopItemWidth();
-    }
-}
-
-void arcadia::imgui_window_property::_display_camera_component()
-{
-    auto scene_sptr = _scene_wptr.lock();
-    ARCADIA_ASSERT(scene_sptr);
-
-
-    auto& camera_comp = _get_component<arcadia::camera_component>();
-
-}
-
-#define ARCADIA_LIGHT_COMPONENT_LIGHT_SETTER_WITH_COMMAND(val, description) \
-[&]()\
-{\
-    auto& comp = _get_component<arcadia::light_component>();\
-    auto origin_light = comp.get_light();\
-    arcadia::command_list::instance()\
-        .emplace(\
-            description,\
-            [&]()\
-            {\
-                comp.set_light(val);\
-            },\
-            [&]()\
-            {\
-                comp.set_light(origin_light);\
-            }\
-        );\
-}
-void arcadia::imgui_window_property::_display_light_component()
-{
-    auto scene_sptr = _scene_wptr.lock();
-    ARCADIA_ASSERT(scene_sptr);
-
-
-    auto& light_comp = _get_component<arcadia::light_component>();
-    auto light_comp_retriever = _get_component_retriever<arcadia::light_component>();
-    ImGui::BeginGroup();
-
-    const float light_direction_drag_speed = .01f;
-    const float light_direction_min = -1.f;
-    const float light_direction_max = 1.f;
-    const float light_color_drag_speed = .005f;
-    const float light_color_min = .0f;
-    const float light_color_max = 1.f;
-    const float light_strength_speed = 1.f;
-    const float light_strength_min = 0.f;
-    const float light_strength_max = 100.f;
-
-    const float speed = 1.f;
-    const float min = .0f;
-    const float max = .0f;
-    const auto format = "%.3f";
-    const auto flags =
-        ImGuiSliderFlags_AlwaysClamp;
-    arcadia::light_type light_variant = light_comp.get_light();
-    arcadia::match<void>(
-        light_variant,
-        [&](arcadia::null_light&)
-    {
-        ImGui::Text("Light Type");
-        ImGui::SameLine();
-        if(ImGui::BeginCombo("##light_type", "(No light)"))
-        {
-            if(ImGui::Selectable("Spot Light"))
-            {
-                ARCADIA_LIGHT_COMPONENT_LIGHT_SETTER_WITH_COMMAND(arcadia::spot_light{}, "New Spot Lgiht");
-            }
-            if(ImGui::Selectable("Direct Light"))
-            {
-                ARCADIA_LIGHT_COMPONENT_LIGHT_SETTER_WITH_COMMAND(arcadia::direct_light{}, "New Direct Light");
-            }
-            if(ImGui::Selectable("Area Light"))
-            {
-                ARCADIA_LIGHT_COMPONENT_LIGHT_SETTER_WITH_COMMAND(arcadia::area_light{}, "New Area Light");
-            }
-            if(ImGui::Selectable("Point Light"))
-            {
-                ARCADIA_LIGHT_COMPONENT_LIGHT_SETTER_WITH_COMMAND(arcadia::point_light{}, "New Point Light");
-            }
-            ImGui::EndCombo();
-        }
-    },
-        [&](arcadia::spot_light& light)
-    {
-        ImGui::Text("         Light Type");
-        ImGui::SameLine();
-        if(ImGui::BeginCombo("##light_type", "Spot Light"))
-        {
-            if(ImGui::Selectable("Direct Light"))
-            {
-                auto res = pfd::message{
-                    "Changing Light Type",
-                    "Do you want to change light type to Direct Light? All properties for current light will be lost",
-                    pfd::choice::yes_no,
-                    pfd::icon::info
-                }.result();
-                if(res == pfd::button::yes)
-                {
-                    ARCADIA_LIGHT_COMPONENT_LIGHT_SETTER_WITH_COMMAND(arcadia::direct_light{}, "New Direct Lgiht");
-                    ImGui::EndCombo();
-                    return;
-                }
-            }
-            if(ImGui::Selectable("Area Light"))
-            {
-                auto res = pfd::message{
-                    "Changing Light Type",
-                    "Do you want to change light type to Area Light? All properties for current light will be lost",
-                    pfd::choice::yes_no,
-                    pfd::icon::info
-                }.result();
-                if(res == pfd::button::yes)
-                {
-                    ARCADIA_LIGHT_COMPONENT_LIGHT_SETTER_WITH_COMMAND(arcadia::area_light{}, "New Area Lgiht");
-                    ImGui::EndCombo();
-                    return;
-                }
-            }
-            if(ImGui::Selectable("Point Light"))
-            {
-                auto res = pfd::message{
-                    "Changing Light Type",
-                    "Do you want to change light type to Point Light? All properties for current light will be lost",
-                    pfd::choice::yes_no,
-                    pfd::icon::info
-                }.result();
-                if(res == pfd::button::yes)
-                {
-                    ARCADIA_LIGHT_COMPONENT_LIGHT_SETTER_WITH_COMMAND(arcadia::point_light{}, "New Point Lgiht");
-                    ImGui::EndCombo();
-                    return;
-                }
-            }
-            ImGui::EndCombo();
-        }
-
-        ImGui::NewLine();
-        arcadia::imgui_wrapper::drag_vec3(
-            "Position",
-            light.position,
-            speed,
-            min,
-            max,
-            format,
-            flags
-        );
-
-        ImGui::NewLine();
-        arcadia::imgui_wrapper::drag_vec3(
-            "Direction",
-            light.direction,
-            light_direction_drag_speed,
-            light_direction_min,
-            light_direction_max,
-            format,
-            flags
-        );
-
-        ImGui::NewLine();
-        arcadia::imgui_wrapper::drag_float(
-            "Attenuation Contant",
-            light.attenuation_coefs.x,
-            speed,
-            min,
-            max,
-            format,
-            flags
-        );
-        arcadia::imgui_wrapper::drag_float(
-            "             Linear",
-            light.attenuation_coefs.x,
-            speed,
-            min,
-            max,
-            format,
-            flags
-        );
-        arcadia::imgui_wrapper::drag_float(
-            "          Quadratic",
-            light.attenuation_coefs.x,
-            speed,
-            min,
-            max,
-            format,
-            flags
-        );
-
-        ImGui::NewLine();
-
-        glm::vec2 cutoff_angles_degree{
-            glm::degrees(light.cutoff_angles.x),
-            glm::degrees(light.cutoff_angles.y)
-        };
-        const float cutoff_angle_drag_speend = .1f;
-        const float cutoff_angle_min = 0.f;
-        const float cutoff_angle_max = 180.f;
-        arcadia::imgui_wrapper::drag_float(
-            "Inner Cutoff Angle",
-            light.attenuation_coefs.x,
-            cutoff_angle_drag_speend,
-            cutoff_angle_min,
-            cutoff_angle_max,
-            format,
-            flags
-        );
-        arcadia::imgui_wrapper::drag_float(
-            "Outer Cutoff Angle",
-            light.attenuation_coefs.x,
-            cutoff_angle_drag_speend,
-            cutoff_angle_min,
-            cutoff_angle_max,
-            format,
-            flags
-        );
-        light.cutoff_angles = glm::vec2{
-            glm::radians(cutoff_angles_degree.x),
-            glm::radians(cutoff_angles_degree.y)
-        };
-
-        ImGui::NewLine();
-        arcadia::imgui_wrapper::color_edit3(
-            "Color",
-            light.color
-        );
-
-        ImGui::NewLine();
-        arcadia::imgui_wrapper::drag_vec3_color(
-            "Ambient Strength",
-            light.ambient_strength,
-            light_strength_speed,
-            light_strength_min,
-            light_strength_max,
-            format,
-            flags
-        );
-
-        ImGui::NewLine();
-        arcadia::imgui_wrapper::drag_vec3_color(
-            "Diffuse Strength",
-            light.diffuse_strength,
-            light_strength_speed,
-            light_strength_min,
-            light_strength_max,
-            format,
-            flags
-        );
-
-        ImGui::NewLine();
-        arcadia::imgui_wrapper::drag_vec3_color(
-            "Specular Strength",
-            light.specular_strength,
-            light_strength_speed,
-            light_strength_min,
-            light_strength_max,
-            format,
-            flags
-        );
-
-        ARCADIA_LIGHT_COMPONENT_LIGHT_SETTER_WITH_COMMAND(light, "New Light");
-    },
-        [&](arcadia::direct_light& light)
-    {
-        ImGui::Text("         Light Type");
-        ImGui::SameLine();
-        if(ImGui::BeginCombo("##light_type", "Direct Light"))
-        {
-            if(ImGui::Selectable("Spot Light"))
-            {
-                auto res = pfd::message{
-                    "Changing Light Type",
-                    "Do you want to change light type to Spot Light? All properties for current light will be lost",
-                    pfd::choice::yes_no,
-                    pfd::icon::info
-                }.result();
-                if(res == pfd::button::yes)
-                {
-                    ARCADIA_LIGHT_COMPONENT_LIGHT_SETTER_WITH_COMMAND(arcadia::spot_light{}, "New Spot Lgiht");
-                    ImGui::EndCombo();
-                    return;
-                }
-            }
-            if(ImGui::Selectable("Area Light"))
-            {
-                auto res = pfd::message{
-                    "Changing Light Type",
-                    "Do you want to change light type to Area Light? All properties for current light will be lost",
-                    pfd::choice::yes_no,
-                    pfd::icon::info
-                }.result();
-                if(res == pfd::button::yes)
-                {
-                    ARCADIA_LIGHT_COMPONENT_LIGHT_SETTER_WITH_COMMAND(arcadia::area_light{}, "New Area Lgiht");
-                    ImGui::EndCombo();
-                    return;
-                }
-            }
-            if(ImGui::Selectable("Point Light"))
-            {
-                auto res = pfd::message{
-                    "Changing Light Type",
-                    "Do you want to change light type to Point Light? All properties for current light will be lost",
-                    pfd::choice::yes_no,
-                    pfd::icon::info
-                }.result();
-                if(res == pfd::button::yes)
-                {
-                    ARCADIA_LIGHT_COMPONENT_LIGHT_SETTER_WITH_COMMAND(arcadia::point_light{}, "New Point Lgiht");
-                    ImGui::EndCombo();
-                    return;
-                }
-            }
-            ImGui::EndCombo();
-        }
-
-        ImGui::NewLine();
-        arcadia::imgui_wrapper::drag_vec3(
-            "Direction",
-            light.direction,
-            light_direction_drag_speed,
-            light_direction_min,
-            light_direction_max,
-            format,
-            flags
-        );
-
-        ImGui::NewLine();
-        arcadia::imgui_wrapper::color_edit3(
-            "Color",
-            light.color
-        );
-
-        ImGui::NewLine();
-        arcadia::imgui_wrapper::drag_vec3_color(
-            "Ambient Strengt",
-            light.ambient_strength,
-            light_strength_speed,
-            light_strength_min,
-            light_strength_max,
-            format,
-            flags
-        );
-
-        ImGui::NewLine();
-        arcadia::imgui_wrapper::drag_vec3_color(
-            "Diffuse Strength",
-            light.diffuse_strength,
-            light_strength_speed,
-            light_strength_min,
-            light_strength_max,
-            format,
-            flags
-        );
-
-        ImGui::NewLine();
-        arcadia::imgui_wrapper::drag_vec3_color(
-            "Specular Strength",
-            light.specular_strength,
-            light_strength_speed,
-            light_strength_min,
-            light_strength_max,
-            format,
-            flags
-        );
-
-        ARCADIA_LIGHT_COMPONENT_LIGHT_SETTER_WITH_COMMAND(light, "New Light");
-    },
-        [&](arcadia::area_light& light)
-    {
-        ImGui::Text("         Light Type");
-        ImGui::SameLine();
-        if(ImGui::BeginCombo("##light_type", "Area Light"))
-        {
-            if(ImGui::Selectable("Spot Light"))
-            {
-                auto res = pfd::message{
-                    "Changing Light Type",
-                    "Do you want to change light type to Spot Light? All properties for current light will be lost",
-                    pfd::choice::yes_no,
-                    pfd::icon::info
-                }.result();
-                if(res == pfd::button::yes)
-                {
-                    ARCADIA_LIGHT_COMPONENT_LIGHT_SETTER_WITH_COMMAND(arcadia::spot_light{}, "New Spot Lgiht");
-                    ImGui::EndCombo();
-                    return;
-                }
-            }
-            if(ImGui::Selectable("Direct Light"))
-            {
-                auto res = pfd::message{
-                    "Changing Light Type",
-                    "Do you want to change light type to Direct Light? All properties for current light will be lost",
-                    pfd::choice::yes_no,
-                    pfd::icon::info
-                }.result();
-                if(res == pfd::button::yes)
-                {
-                    ARCADIA_LIGHT_COMPONENT_LIGHT_SETTER_WITH_COMMAND(arcadia::direct_light{}, "New Direct Lgiht");
-                    ImGui::EndCombo();
-                    return;
-                }
-            }
-            if(ImGui::Selectable("Point Light"))
-            {
-                auto res = pfd::message{
-                    "Changing Light Type",
-                    "Do you want to change light type to Point Light? All properties for current light will be lost",
-                    pfd::choice::yes_no,
-                    pfd::icon::info
-                }.result();
-                if(res == pfd::button::yes)
-                {
-                    ARCADIA_LIGHT_COMPONENT_LIGHT_SETTER_WITH_COMMAND(arcadia::point_light{}, "New Point Lgiht");
-                    ImGui::EndCombo();
-                    return;
-                }
-            }
-            ImGui::EndCombo();
-        }
-
-        ImGui::NewLine();
-        arcadia::imgui_wrapper::drag_vec3(
-            "Position",
-            light.position,
-            speed,
-            min,
-            max,
-            format,
-            flags
-        );
-
-        ImGui::NewLine();
-        arcadia::imgui_wrapper::drag_vec3(
-            "Direction",
-            light.direction,
-            light_direction_drag_speed,
-            light_direction_min,
-            light_direction_max,
-            format,
-            flags
-        );
-
-        ImGui::NewLine();
-        arcadia::imgui_wrapper::drag_float(
-            "Width",
-            light.size.x,
-            speed,
-            min,
-            max,
-            format,
-            flags
-        );
-        arcadia::imgui_wrapper::drag_float(
-            "Height",
-            light.size.y,
-            speed,
-            min,
-            max,
-            format,
-            flags
-        );
-
-        ImGui::NewLine();
-        arcadia::imgui_wrapper::color_edit3(
-            "Color",
-            light.color
-        );
-
-        ImGui::NewLine();
-        arcadia::imgui_wrapper::drag_vec3_color(
-            "Ambient Strength",
-            light.ambient_strength,
-            light_strength_speed,
-            light_strength_min,
-            light_strength_max,
-            format,
-            flags
-        );
-
-        ImGui::NewLine();
-        arcadia::imgui_wrapper::drag_vec3_color(
-            "Diffuse Strength",
-            light.diffuse_strength,
-            light_strength_speed,
-            light_strength_min,
-            light_strength_max,
-            format,
-            flags
-        );
-
-        ImGui::NewLine();
-        arcadia::imgui_wrapper::drag_vec3_color(
-            "Specular Strength",
-            light.specular_strength,
-            light_strength_speed,
-            light_strength_min,
-            light_strength_max,
-            format,
-            flags
-        );
-
-        ARCADIA_LIGHT_COMPONENT_LIGHT_SETTER_WITH_COMMAND(light, "New Light");
-    },
-        [&](arcadia::point_light& light)
-    {
-        ImGui::Text("         Light Type");
-        ImGui::SameLine();
-        if(ImGui::BeginCombo("##light_type", "Point Light"))
-        {
-            if(ImGui::Selectable("Spot Light"))
-            {
-                auto res = pfd::message{
-                    "Changing Light Type",
-                    "Do you want to change light type to Spot Light? All properties for current light will be lost",
-                    pfd::choice::yes_no,
-                    pfd::icon::info
-                }.result();
-                if(res == pfd::button::yes)
-                {
-                    ARCADIA_LIGHT_COMPONENT_LIGHT_SETTER_WITH_COMMAND(arcadia::spot_light{}, "New Spot Lgiht");
-                    ImGui::EndCombo();
-                    return;
-                }
-            }
-            if(ImGui::Selectable("Direct Light"))
-            {
-                auto res = pfd::message{
-                    "Changing Light Type",
-                    "Do you want to change light type to Direct Light? All properties for current light will be lost",
-                    pfd::choice::yes_no,
-                    pfd::icon::info
-                }.result();
-                if(res == pfd::button::yes)
-                {
-                    ARCADIA_LIGHT_COMPONENT_LIGHT_SETTER_WITH_COMMAND(arcadia::direct_light{}, "New Direct Lgiht");
-                    ImGui::EndCombo();
-                    return;
-                }
-            }
-            if(ImGui::Selectable("Area Light"))
-            {
-                auto res = pfd::message{
-                    "Changing Light Type",
-                    "Do you want to change light type to Area Light? All properties for current light will be lost",
-                    pfd::choice::yes_no,
-                    pfd::icon::info
-                }.result();
-                if(res == pfd::button::yes)
-                {
-                    ARCADIA_LIGHT_COMPONENT_LIGHT_SETTER_WITH_COMMAND(arcadia::area_light{}, "New Area Lgiht");
-                    ImGui::EndCombo();
-                    return;
-                }
-            }
-            ImGui::EndCombo();
-        }
-
-        ImGui::NewLine();
-        arcadia::imgui_wrapper::drag_vec3(
-            "Position",
-            light.position,
-            speed,
-            min,
-            max,
-            format,
-            flags
-        );
-
-        ImGui::NewLine();
-        arcadia::imgui_wrapper::drag_float(
-            "Attenuation Contant",
-            light.attenuation_coefs.x,
-            speed,
-            min,
-            max,
-            format,
-            flags
-        );
-        arcadia::imgui_wrapper::drag_float(
-            "             Linear",
-            light.attenuation_coefs.x,
-            speed,
-            min,
-            max,
-            format,
-            flags
-        );
-        arcadia::imgui_wrapper::drag_float(
-            "          Quadratic",
-            light.attenuation_coefs.x,
-            speed,
-            min,
-            max,
-            format,
-            flags
-        );
-
-        ImGui::NewLine();
-        arcadia::imgui_wrapper::color_edit3(
-            "Color",
-            light.color
-        );
-
-        ImGui::NewLine();
-        arcadia::imgui_wrapper::drag_vec3_color(
-            "Ambient Strength",
-            light.ambient_strength,
-            light_strength_speed,
-            light_strength_min,
-            light_strength_max,
-            format,
-            flags
-        );
-
-        ImGui::NewLine();
-        arcadia::imgui_wrapper::drag_vec3_color(
-            "Diffuse Strength",
-            light.diffuse_strength,
-            light_strength_speed,
-            light_strength_min,
-            light_strength_max,
-            format,
-            flags
-        );
-
-        ImGui::NewLine();
-        arcadia::imgui_wrapper::drag_vec3_color(
-            "Specular Strength",
-            light.specular_strength,
-            light_strength_speed,
-            light_strength_min,
-            light_strength_max,
-            format,
-            flags
-        );
-
-        ARCADIA_LIGHT_COMPONENT_LIGHT_SETTER_WITH_COMMAND(light, "New Light");
-    }
-    );
-
-    ImGui::EndGroup();
-}
-
-#define ARCADIA_MODEL_COMPONENT_MEMEBER_GETTER_AND_SETTER_WITH_COMMAND(getter, setter, val_type, description) ARCADIA_COMPONENT_MEMEBER_GETTER_AND_SETTER_WITH_COMMAND(arcadia::model_component, getter, setter, val_type, description)
-void arcadia::imgui_window_property::_display_model_component()
-{
-    auto scene_sptr = _scene_wptr.lock();
-    ARCADIA_ASSERT(scene_sptr);
-
-    const float speed = 1.f;
-    const float min = .0f;
-    const float max = .0f;
-    const char* format = "%.3f";
-    const auto flags =
-        ImGuiSliderFlags_AlwaysClamp;
-
-    auto& model_comp = _get_component<arcadia::model_component>();
-    ImGui::BeginGroup();
-
-    ImGui::SeparatorText("Filepath");
-    auto filepath_str = model_comp.get_filepath().empty()
-        ? "(No filepath)"s
-        : model_comp.get_filepath().generic_string();
-    ImGui::TextWrapped(filepath_str.c_str());
-    if(ImGui::Button("..."))
-    {
-        auto res = pfd::open_file{
-            "Import Model"
-        }.result();
-        std::filesystem::path filepath = res.size() ? res.at(0) : "";
-
-        if(!filepath.empty())
-        {
-            model_comp.import(filepath);
-        }
-    }
-
-    ImGui::SeparatorText("Transform");
-    ImGui::NewLine();
-    arcadia::imgui_wrapper::drag_vec3(
-        "Location",
-        ARCADIA_MODEL_COMPONENT_MEMEBER_GETTER_AND_SETTER_WITH_COMMAND(get_location, set_location, const glm::vec3&, "Model Location"),
-        speed,
-        min,
-        max,
-        format,
-        flags
-    );
-
-    ImGui::NewLine();
-    float rotation_drag_speed{ .05f };
-    arcadia::imgui_wrapper::drag_quat_normalized(
-        "Rotation",
-        ARCADIA_MODEL_COMPONENT_MEMEBER_GETTER_AND_SETTER_WITH_COMMAND(get_rotation, set_rotation, const glm::quat&, "Model Rotation"),
-        rotation_drag_speed,
-        min,
-        max,
-        format,
-        flags
-    );
-
-    ImGui::NewLine();
-    arcadia::imgui_wrapper::drag_vec3(
-        "Scale",
-        ARCADIA_MODEL_COMPONENT_MEMEBER_GETTER_AND_SETTER_WITH_COMMAND(get_scale, set_scale, const glm::vec3&, "Model Scale"),
-        speed,
-        min,
-        max,
-        format,
-        flags
-    );
-
-    ImGui::NewLine();
-    arcadia::imgui_wrapper::drag_vec3(
-        "Pivot",
-        ARCADIA_MODEL_COMPONENT_MEMEBER_GETTER_AND_SETTER_WITH_COMMAND(get_pivot, set_pivot, const glm::vec3&, "Model Scale"),
-        speed,
-        min,
-        max,
-        format,
-        flags
-    );
-
-    ImGui::EndGroup();
-
-}
-
-#define ARCADIA_PHYSICS_COMPONENT_MEMEBER_GETTER_AND_SETTER_WITH_COMMAND(getter, setter, val_type, description) ARCADIA_COMPONENT_MEMEBER_GETTER_AND_SETTER_WITH_COMMAND(arcadia::physics_component, getter, setter, val_type, description)
-void arcadia::imgui_window_property::_display_physics_component()
-{
-    auto scene_sptr = _scene_wptr.lock();
-    ARCADIA_ASSERT(scene_sptr);
-
-    auto has_physics_simulator = !_physics_simulator_wptr.expired();
-    auto physics_simulator_sptr = _physics_simulator_wptr.lock();
-
-    auto& physics_comp = _get_component<arcadia::physics_component>();
-
     _imgui_window_popup_physics_component_create_body(physics_comp);
+
+    std::string description{};
+    ImGui::BeginGroup();
 
     if(ImGui::BeginTabBar("##physics_comp"))
     {
@@ -1387,10 +1283,13 @@ void arcadia::imgui_window_property::_display_physics_component()
         {
             if(physics_comp.has_body_info())
             {
-                arcadia::imgui_wrapper::color_edit3(
+                if(arcadia::imgui_wrapper::color_edit3(
                     "Body Shape Color",
-                    ARCADIA_PHYSICS_COMPONENT_MEMEBER_GETTER_AND_SETTER_WITH_COMMAND(get_body_shape_color, set_body_shape_color, const glm::vec3&, "Physics Body Shape Color")
-                );
+                    physics_comp.body_shape_color
+                ))
+                {
+                    description = "Body Shape Color";
+                }
 
                 ImGui::NewLine();
                 if(ImGui::Button("Recreate Body"))
@@ -1412,6 +1311,134 @@ void arcadia::imgui_window_property::_display_physics_component()
         ImGui::EndTabBar();
     }
 
+    ImGui::EndGroup();
+
+    return description;
+}
+
+void arcadia::imgui_window_property::on_event(arcadia::event_base& event)
+{
+    arcadia::event_dispatcher{ event }
+        .dispatch<arcadia::event::open_imgui_window>(ARCADIA_BIND_MEMBER_FN(_on_open_imgui_window))
+        .dispatch<arcadia::event::scene_activated>(ARCADIA_BIND_MEMBER_FN(_on_scene_activated))
+        .dispatch<arcadia::event::scene_deactivated>(ARCADIA_BIND_MEMBER_FN(_on_scene_deactivated))
+        .dispatch<arcadia::event::select_entity>(ARCADIA_BIND_MEMBER_FN(_on_select_entity))
+        .dispatch<arcadia::event::delete_entity>(ARCADIA_BIND_MEMBER_FN(_on_delete_entity))
+        .dispatch<arcadia::event::physics_simulator_built>(ARCADIA_BIND_MEMBER_FN(_on_physics_simulator_built))
+        .dispatch<arcadia::event::physics_simulator_unbuilt>(ARCADIA_BIND_MEMBER_FN(_on_physics_simulator_unbuilt))
+        .result();
+}
+
+void arcadia::imgui_window_property::on_update()
+{
+    if(!_open)
+    {
+        return;
+    }
+
+    auto has_scene = !_scene_wptr.expired();
+    auto scene_sptr = _scene_wptr.lock();
+
+    auto imgui_title = has_scene && _selected_entity != entt::null
+        ? _title + " - " + scene_sptr->get_name_of_entity(_selected_entity) + get_id_str()
+        : _title + get_id_str();
+
+    ImGui::SetNextWindowSize(glm::vec2{ 1024,768 }, ImGuiCond_Once);
+    auto window_flags =
+        ImGuiWindowFlags_NoCollapse;
+    if(ImGui::Begin(imgui_title.c_str(), &_open, window_flags))
+    {
+        if(!has_scene)
+        {
+            ImGui::Text("(No scene selected)");
+        }
+        else
+        {
+            auto tab_bar_flags =
+                ImGuiTabBarFlags_NoCloseWithMiddleMouseButton
+                | ImGuiTabBarFlags_TabListPopupButton
+                | ImGuiTabBarFlags_AutoSelectNewTabs
+                | ImGuiTabBarFlags_FittingPolicyScroll
+                | ImGuiTabBarFlags_Reorderable;
+            if(_selected_entity != entt::null && ImGui::BeginTabBar("##component_name", tab_bar_flags))
+            {
+                ImGui::PushItemWidth(200.f);
+
+                auto& memento_list = arcadia::memento_list::instance();
+                if(_contains_component<arcadia::camera_component>() && ImGui::BeginTabItem("Camera"))
+                {
+                    auto description = _imgui_window_property_camera_component(_get_component<arcadia::camera_component>());
+                    if(!description.empty())
+                    {
+                        memento_list
+                            .snapshot<arcadia::camera_component_memento, arcadia::camera_component>(
+                                std::format("Camera - {}", description),
+                                [&]() -> arcadia::camera_component&
+                        {
+                            return _get_component<arcadia::camera_component>();
+                        }
+                        );
+                    }
+                    ImGui::EndTabItem();
+                }
+                if(_contains_component<arcadia::light_component>() && ImGui::BeginTabItem("Light"))
+                {
+                    auto description = _imgui_window_property_light_component(_get_component<arcadia::light_component>());
+                    if(!description.empty())
+                    {
+                        memento_list
+                            .snapshot<arcadia::light_component_memento, arcadia::light_component>(
+                                std::format("Light - {}", description),
+                                [&]() -> arcadia::light_component&
+                        {
+                            return _get_component<arcadia::light_component>();
+                        }
+                        );
+                    }
+                    ImGui::EndTabItem();
+                }
+                if(_contains_component<arcadia::model_component>() && ImGui::BeginTabItem("Model"))
+                {
+                    auto description = _imgui_window_property_model_component(_get_component<arcadia::model_component>());
+                    if(!description.empty())
+                    {
+                        memento_list
+                            .snapshot<arcadia::model_component_memento, arcadia::model_component>(
+                                std::format("Model - {}", description),
+                                [&]() -> arcadia::model_component&
+                        {
+                            return _get_component<arcadia::model_component>();
+                        }
+                        );
+                    }
+                    ImGui::EndTabItem();
+                }
+                if(_contains_component<arcadia::physics_component>() && ImGui::BeginTabItem("Physics"))
+                {
+                    auto description = _imgui_window_property_physics_component(_get_component<arcadia::physics_component>());
+                    if(!description.empty())
+                    {
+                        memento_list
+                            .snapshot<arcadia::physics_component_memento, arcadia::physics_component>(
+                                std::format("Physics - {}", description),
+                                [&]() -> arcadia::physics_component&
+                        {
+                            return _get_component<arcadia::physics_component>();
+                        }
+                        );
+                    }
+                    ImGui::EndTabItem();
+                }
+
+                ImGui::EndTabBar();
+
+                ImGui::PopItemWidth();
+
+            }
+
+        }
+    }
+    ImGui::End();
 }
 
 void arcadia::imgui_window_property::_on_open_imgui_window(arcadia::event::open_imgui_window& e)

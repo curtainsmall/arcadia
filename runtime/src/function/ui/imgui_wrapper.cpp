@@ -1,16 +1,18 @@
 #include "pch.hpp"
 #include "imgui_wrapper.hpp"
 
-ARCADIA_API void arcadia::imgui_wrapper::checkbox(const std::string& name, bool& b)
+ARCADIA_API auto arcadia::imgui_wrapper::checkbox(const std::string& name, bool& b)  -> bool
 {
     ImGui::Text(name.c_str()); ImGui::SameLine(); ImGui::Checkbox(std::format("##{}", name).c_str(), &b);
+    return ImGui::IsItemDeactivatedAfterEdit();
 }
 
-ARCADIA_API void arcadia::imgui_wrapper::checkbox(const std::string& name, std::function<bool()> getter, std::function<void(bool)> setter)
+ARCADIA_API auto arcadia::imgui_wrapper::checkbox(const std::string& name, std::function<bool()> getter, std::function<void(bool)> setter) -> bool
 {
     auto b = getter();
-    arcadia::imgui_wrapper::checkbox(name, b);
+    auto deactivated = arcadia::imgui_wrapper::checkbox(name, b);
     setter(b);
+    return deactivated;
 }
 
 ARCADIA_API auto arcadia::imgui_wrapper::drag_int(const std::string& name, int& i, float speed, float min, float max, const char* format, ImGuiSliderFlags flags) -> bool
@@ -337,7 +339,7 @@ ARCADIA_API auto arcadia::imgui_wrapper::color_edit4(const std::string& name, st
     return deactivated;
 }
 
-ARCADIA_API auto arcadia::imgui_wrapper::text_vec3(const std::string& name, const glm::vec3& vec) -> bool
+ARCADIA_API void arcadia::imgui_wrapper::text_vec3(const std::string& name, const glm::vec3& vec)
 {
     ImGui::Text(std::format("{:>{}} X: {:.2f}", name, name.size(), vec.x).c_str());
     ImGui::Text(std::format("{:>{}} Y: {:.2f}", ""s, name.size(), vec.y).c_str());
@@ -345,7 +347,7 @@ ARCADIA_API auto arcadia::imgui_wrapper::text_vec3(const std::string& name, cons
 
 }
 
-ARCADIA_API auto arcadia::imgui_wrapper::text_vec4(const std::string& name, const glm::vec4& vec) -> bool
+ARCADIA_API void arcadia::imgui_wrapper::text_vec4(const std::string& name, const glm::vec4& vec)
 {
     ImGui::Text(std::format("{:>{}} X: {:.2f}", name, name.size(), vec.x).c_str());
     ImGui::Text(std::format("{:>{}} Y: {:.2f}", ""s, name.size(), vec.y).c_str());
@@ -353,7 +355,7 @@ ARCADIA_API auto arcadia::imgui_wrapper::text_vec4(const std::string& name, cons
     ImGui::Text(std::format("{:>{}} W: {:.2f}", ""s, name.size(), vec.w).c_str());
 }
 
-ARCADIA_API auto arcadia::imgui_wrapper::text_quat(const std::string& name, const glm::quat& quat) -> bool
+ARCADIA_API void arcadia::imgui_wrapper::text_quat(const std::string& name, const glm::quat& quat)
 {
     ImGui::Text(std::format("{:>{}} W: {:.2f}", name, name.size(), quat.w).c_str());
     ImGui::Text(std::format("{:>{}} X: {:.2f}", ""s, name.size(), quat.x).c_str());

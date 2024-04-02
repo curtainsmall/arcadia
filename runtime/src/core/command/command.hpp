@@ -41,7 +41,7 @@ namespace arcadia
     {
     public:
         using function_type = arcadia::command::function_type;
-        using container_type = std::list<std::unique_ptr<arcadia::command>>; // We use unique_ptr as a wrapper here since we may need to resize the list (resizing list requires element type to be default contructable)
+        using container_type = std::list<arcadia::command>;
         using self_type = command_list;
     public:
         [[nodiscard]]

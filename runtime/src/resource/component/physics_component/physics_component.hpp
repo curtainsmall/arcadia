@@ -69,18 +69,17 @@ namespace arcadia
 
     };
 
-    struct physics_component;
-    struct ARCADIA_API physics_component_memento_data
+    struct ARCADIA_API physics_component;
+    struct ARCADIA_API physics_component_memento
     {
-        friend struct arcadia::physics_component;
+        friend arcadia::physics_component;
     private:
-        glm::vec3 body_shape_color{ .2f,.2f,.2f };
-        std::unique_ptr<arcadia::jph_body_info_initial> jph_body_info_initial_uptr{};
+        glm::vec3 body_shape_color{};
     };
 
     struct ARCADIA_API physics_component:
         arcadia::component_base,
-        arcadia::memento_originator_interface<arcadia::physics_component_memento_data>
+        arcadia::memento_originator_interface<arcadia::physics_component_memento>
     {
     public:
         using identifiable_jph_body_info_initial_type = arcadia::basic_identifiable<jph_body_info_initial>;
@@ -97,10 +96,6 @@ namespace arcadia
         [[nodiscard]]
         virtual auto snapshot() const->memento_data_type override;
         virtual void restore(const memento_data_type& memento) override;
-
-        [[nodiscard]]
-        auto get_body_shape_color() const -> const glm::vec3&;
-        void set_body_shape_color(const glm::vec3& color);
 
         [[nodiscard]]
         auto has_body_info() const -> bool;
@@ -125,8 +120,9 @@ namespace arcadia
             const arcadia::jph_body_info_initial& jph_body_info_initial
         );
 
+    public:
+        glm::vec3 body_shape_color{ .2f,.2f,.2f };
     private:
-        glm::vec3 _body_shape_color{ .2f,.2f,.2f };
         std::unique_ptr<identifiable_jph_body_info_initial_type> _identifiable_jph_body_info_initial_uptr{};
         std::unique_ptr<arcadia::jph_body_info_ongoing> _jph_body_info_ongoing_uptr{};
     };

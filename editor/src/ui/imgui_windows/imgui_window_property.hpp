@@ -9,7 +9,11 @@
 #include"function/physics/physics_simulator.hpp"
 #include"function/ui/imgui_window.hpp"
 #include"platform/jolt/jolt_header.hpp"
+#include"resource/component/camera_component/camera_component.hpp"
+#include"resource/component/light_component/light_component.hpp"
+#include"resource/component/model_component/model_component.hpp"
 #include"resource/component/physics_component/physics_component.hpp"
+#include"resource/component/skybox_component/skybox_component.hpp"
 #include"resource/scene/scene.hpp"
 
 #include"project/project_events.hpp"
@@ -17,6 +21,30 @@
 
 namespace arcadia
 {
+    struct ARCADIA_API imgui_window_property_camera_component
+    {
+    public:
+        using self_type = imgui_window_property_camera_component;
+    public:
+        auto operator()(arcadia::camera_component& camera_comp)->std::string;
+    };
+
+    struct ARCADIA_API imgui_window_property_light_component
+    {
+    public:
+        using self_type = imgui_window_property_light_component;
+    public:
+        auto operator()(arcadia::light_component& light_comp)->std::string;
+    };
+
+    struct ARCADIA_API imgui_window_property_model_component
+    {
+    public:
+        using self_type = imgui_window_property_model_component;
+    public:
+        auto operator()(arcadia::model_component& model_comp)->std::string;
+    };
+
     struct ARCADIA_API imgui_window_popup_physics_component_create_body
     {
     public:
@@ -29,15 +57,14 @@ namespace arcadia
         arcadia::jph_body_info_initial _temp_jph_body_info_initial{};
     };
 
-    struct ARCADIA_API imgui_window_property_camera_component
+    struct ARCADIA_API imgui_window_property_physics_component
     {
     public:
-        using self_type = imgui_window_property_camera_component;
+        using self_type = imgui_window_property_physics_component;
     public:
-        void operator()(arcadia::camera_component& camera_comp);
-
+        auto operator()(arcadia::physics_component& physics_comp)->std::string;
     private:
-        arcadia::camera_component _temp_camera{};
+        arcadia::imgui_window_popup_physics_component_create_body _imgui_window_popup_physics_component_create_body{};
     };
 
     struct ARCADIA_API imgui_window_property: arcadia::imgui_window_interface
@@ -63,6 +90,7 @@ namespace arcadia
         {
             ARCADIA_ASSERT(!_scene_wptr.expired());
             ARCADIA_ASSERT(_selected_entity != entt::null);
+
             return _scene_wptr.lock()->all_of<Component>(_selected_entity);
         }
         template<arcadia::component_like Component>
@@ -71,24 +99,9 @@ namespace arcadia
             ARCADIA_ASSERT(!_scene_wptr.expired());
             ARCADIA_ASSERT(_contains_component<Component>());
             ARCADIA_ASSERT(_selected_entity != entt::null);
+
             return _scene_wptr.lock()->get<Component>(_selected_entity);
         }
-        template<arcadia::component_like Component>
-        auto _get_component_retriever() -> std::function<Component& ()>
-        {
-            return [&]() -> Component&
-            {
-                ARCADIA_ASSERT(!_scene_wptr.expired());
-                ARCADIA_ASSERT(_contains_component<Component>());
-                return _get_component<Component>();
-            };
-        }
-
-        void _display_components();
-        void _display_camera_component();
-        void _display_light_component();
-        void _display_model_component();
-        void _display_physics_component();
 
         void _on_open_imgui_window(arcadia::event::open_imgui_window& e);
         void _on_scene_activated(arcadia::event::scene_activated& e);
@@ -99,11 +112,15 @@ namespace arcadia
         void _on_physics_simulator_unbuilt(arcadia::event::physics_simulator_unbuilt& e);
 
     private:
-        arcadia::imgui_window_popup_physics_component_create_body _imgui_window_popup_physics_component_create_body{};
 
         std::weak_ptr<arcadia::scene> _scene_wptr{};
         entt::entity _selected_entity{ entt::null };
 
         std::weak_ptr<arcadia::physics_simulator> _physics_simulator_wptr{};
+
+        arcadia::imgui_window_property_camera_component _imgui_window_property_camera_component{};
+        arcadia::imgui_window_property_light_component _imgui_window_property_light_component{};
+        arcadia::imgui_window_property_model_component _imgui_window_property_model_component{};
+        arcadia::imgui_window_property_physics_component _imgui_window_property_physics_component{};
     };
 }

@@ -44,6 +44,16 @@ namespace arcadia
         using Fns::operator()...;
     };
 
+    template<class ...Types>
+    struct ARCADIA_API in_place_types_t
+    {
+    public:
+        explicit in_place_types_t() = default;
+    };
+
+    template<class ...Types>
+    inline constexpr arcadia::in_place_types_t<Types...> in_place_types{};
+
     template<class, template<class ...> class>
     inline constexpr bool is_specialization_of = false;
     template<template<class...> class T, class ...Args>

@@ -6,7 +6,7 @@
 #include"core/math.hpp"
 
 arcadia::physics_component::physics_component(const nlohmann::json& json):
-    _body_shape_color(arcadia::vec3::from_json(json.at("body_shape_color")))
+    body_shape_color(arcadia::vec3::from_json(json.at("body_shape_color")))
 {
     const auto& json_body_info_initial = json.at("jph_body_info_initial");
     if(!json_body_info_initial.is_null())
@@ -131,7 +131,7 @@ auto arcadia::physics_component::to_json() const -> nlohmann::json
 
     return nlohmann::json{
         {"jph_body_info_initial",json_body_info_initial},
-        {"body_shape_color",arcadia::vec3::to_json(_body_shape_color)}
+        {"body_shape_color",arcadia::vec3::to_json(body_shape_color)}
     };
 }
 
@@ -139,40 +139,14 @@ auto arcadia::physics_component::snapshot() const -> memento_data_type
 {
     memento_data_type memento{};
 
-    memento.body_shape_color = _body_shape_color;
-    if(has_body_info())
-    {
-        memento.jph_body_info_initial_uptr = std::make_unique<arcadia::jph_body_info_initial>(get_identifiable_jph_body_info_initial().get_value());
-    }
+    memento.body_shape_color = body_shape_color;
 
     return memento;
 }
 
 void arcadia::physics_component::restore(const memento_data_type& memento)
 {
-    _body_shape_color = memento.body_shape_color;
-
-    auto& jph_body_info_initial_uptr = memento.jph_body_info_initial_uptr;
-    if(jph_body_info_initial_uptr)
-    {
-        build_identifiable_jph_body_info_initial(
-            jph_body_info_initial_uptr->position,
-            jph_body_info_initial_uptr->rotation,
-            jph_body_info_initial_uptr->jph_motion_type,
-            jph_body_info_initial_uptr->jph_object_layer,
-            jph_body_info_initial_uptr->jph_shape_info
-        );
-    }
-}
-
-auto arcadia::physics_component::get_body_shape_color() const -> const glm::vec3&
-{
-    return _body_shape_color;
-}
-
-void arcadia::physics_component::set_body_shape_color(const glm::vec3& color)
-{
-    _body_shape_color = color;
+    body_shape_color = memento.body_shape_color;
 }
 
 auto arcadia::physics_component::has_body_info() const -> bool

@@ -10,8 +10,8 @@ namespace arcadia
 {
     namespace imgui_wrapper
     {
-        ARCADIA_API void checkbox(const std::string& name, bool& b);
-        ARCADIA_API void checkbox(const std::string& name, std::function<bool()> getter, std::function<void(bool)> setter);
+        ARCADIA_API auto checkbox(const std::string& name, bool& b) -> bool;
+        ARCADIA_API auto checkbox(const std::string& name, std::function<bool()> getter, std::function<void(bool)> setter) -> bool;
 
         ARCADIA_API auto drag_int(const std::string& name, int& i, float speed, float min, float max, const char* format, ImGuiSliderFlags flags) -> bool;
         ARCADIA_API auto drag_int(const std::string& name, std::function<int()> getter, std::function<void(int)> setter, float speed, float min, float max, const char* format, ImGuiSliderFlags flags) -> bool;
@@ -51,9 +51,9 @@ namespace arcadia
         ARCADIA_API auto color_edit4(const std::string& name, glm::vec4& color) -> bool;
         ARCADIA_API auto color_edit4(const std::string& name, std::function<glm::vec4()> getter, std::function<void(const glm::vec4&)> setter) -> bool;
 
-        ARCADIA_API auto text_vec3(const std::string& name, const glm::vec3& vec) -> bool;
-        ARCADIA_API auto text_vec4(const std::string& name, const glm::vec4& vec) -> bool;
-        ARCADIA_API auto text_quat(const std::string& name, const glm::quat& quat) -> bool;
+        ARCADIA_API void text_vec3(const std::string& name, const glm::vec3& vec);
+        ARCADIA_API void text_vec4(const std::string& name, const glm::vec4& vec);
+        ARCADIA_API void text_quat(const std::string& name, const glm::quat& quat);
 
     }
 }

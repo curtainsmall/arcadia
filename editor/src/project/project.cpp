@@ -75,7 +75,7 @@ auto arcadia::project::set_active_scene(const std::string& name) -> std::weak_pt
                 .signal<arcadia::event::scene_deactivated>();
         }
 
-        if(name.size() && scene_sptr_umap.find(name) != scene_sptr_umap.end())
+        if(!name.empty() && scene_sptr_umap.find(name) != scene_sptr_umap.end())
         {
             _active_scene_wptr = scene_sptr_umap.at(name);
             arcadia::event_queue::instance()
