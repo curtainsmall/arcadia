@@ -3,6 +3,7 @@
 
 #include"function/input/input_events.hpp"
 #include"function/ui/imgui_backend.hpp"
+#include"resource/fonts/icon_header.hpp"
 
 arcadia::imgui_layer::imgui_layer(
     const std::shared_ptr<const arcadia::window_layer>& window_layer_sptr,
@@ -21,6 +22,11 @@ arcadia::imgui_layer::imgui_layer(
         ImGuiConfigFlags_DockingEnable
         | ImGuiConfigFlags_NoMouseCursorChange
         | ImGuiConfigFlags_ViewportsEnable;
+    io.Fonts->AddFontDefault();
+    ImFontConfig imgui_font_config{};
+    imgui_font_config.MergeMode = true;
+    static const ImWchar imgui_icon_ranges[] ={ ICON_MIN_FA, ICON_MAX_FA,0 };
+    io.Fonts->AddFontFromFileTTF(arcadia::font_filepath_str.c_str(), arcadia::font_size, &imgui_font_config, imgui_icon_ranges);
     arcadia::imgui_backend::initialize(*_window_wptr.lock());
 
     imgui_style_setter();

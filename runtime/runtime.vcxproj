@@ -196,6 +196,8 @@
     <ClInclude Include="src\resource\component\model_component\material\texture2d.hpp" />
     <ClInclude Include="src\resource\component\model_component\mesh\mesh.hpp" />
     <ClInclude Include="src\resource\component\skybox_component\skybox_component.hpp" />
+    <ClInclude Include="src\resource\fonts\IconsFontAwesome5.h" />
+    <ClInclude Include="src\resource\fonts\icon_header.hpp" />
     <ClInclude Include="src\resource\scene\entt_header.hpp" />
     <ClInclude Include="src\function\render\renderer.hpp" />
     <ClInclude Include="src\platform\graphic_api\graphic_api.hpp" />
@@ -270,6 +272,9 @@
   <ItemGroup>
     <None Include="src\core\string.hpp" />
     <None Include="src\function\ui\imgui_wrapper.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="src\resource\fonts\fa-brands-400.ttf" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

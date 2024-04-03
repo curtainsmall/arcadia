@@ -57,6 +57,11 @@ void arcadia::memento_list::clear()
     _list.clear();
 }
 
+auto arcadia::memento_list::is_current(const container_type::const_iterator& iter) const -> bool
+{
+    return iter == _current_iter;
+}
+
 auto arcadia::memento_list::begin() noexcept -> container_type::iterator
 {
     return _list.begin();

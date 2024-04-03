@@ -144,6 +144,15 @@ namespace arcadia
 
         void clear();
 
+        /// @brief Check whether the memento refered by @a iter is current memento
+        /// @param iter Iterator referring to a memento
+        /// @note @a Current @a memento is the next memento to use when undo:
+        ///                                                   current
+        ///     memento#1 <--- memento#2 <--- memento#3 <--- memento#4 <---   ---> memento#5
+        ///               undo           undo           undo           undo   redo
+        [[nodiscard]]
+        auto is_current(const container_type::const_iterator& iter) const -> bool;
+
         [[nodiscard]]
         auto begin() noexcept -> container_type::iterator;
         [[nodiscard]]

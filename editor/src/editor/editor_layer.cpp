@@ -45,8 +45,7 @@ arcadia::editor_app_layer::editor_app_layer()
         editor_context.main_imgui_layer_wptr = layer_stack
             .push_layer<arcadia::imgui_layer>(
                 editor_context.main_window_layer_wptr.lock(),
-                ARCADIA_BIND_MEMBER_FN(_imgui_window_installer),
-                arcadia::imgui_style_dark
+                ARCADIA_BIND_MEMBER_FN(_imgui_window_installer)
             )
             .top<arcadia::imgui_layer>();
 

@@ -4,6 +4,7 @@
 #include"core/memento/memento.hpp"
 #include"function/ui/imgui_header.hpp"
 #include"platform/graphic_api/graphic_api.hpp"
+#include"resource/fonts/icon_header.hpp"
 
 #include"ui/ui_events.hpp"
 
@@ -234,14 +235,22 @@ void arcadia::imgui_window_menubar::_edit_menu()
             auto& memento_list = arcadia::memento_list::instance();
             if(memento_list.size())
             {
-                for(const auto& memento : memento_list)
+                for(auto iter = memento_list.begin(); iter != memento_list.end(); ++iter)
                 {
-                    ImGui::MenuItem(memento.get_description().c_str(), nullptr, nullptr);
+
+                    if(memento_list.is_current(iter))
+                    {
+                        ImGui::MenuItem(std::format("{} {}", ICON_FA_CHECK, iter->get_description()).c_str());
+                    }
+                    else
+                    {
+                        ImGui::MenuItem(std::format("  {}", iter->get_description()).c_str());
+                    }
                 }
             }
             else
             {
-                ImGui::MenuItem("(Empty undo List)", nullptr, nullptr);
+                ImGui::MenuItem("(Empty undo List)");
             }
             ImGui::EndMenu();
         }
