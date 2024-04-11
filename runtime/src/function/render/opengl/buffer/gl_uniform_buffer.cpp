@@ -3,75 +3,75 @@
 
 #include"core/log/log.hpp"
 
-arcadia::gl_uniform_buffer::gl_uniform_buffer(
+Arcadia::GlUniformBuffer::GlUniformBuffer(
     GLsizeiptr size
 )
 {
-    ARCADIA_GL_CALL(glGenBuffers(1, &_gl_id));
+    ARCADIA_GL_CALL(glGenBuffers(1, &_GlId));
 
-    bind();
+    Bind();
     ARCADIA_GL_CALL(glBufferData(GL_UNIFORM_BUFFER, size, nullptr, GL_STATIC_DRAW));
-    unbind();
+    Unbind();
 }
 
-arcadia::gl_uniform_buffer::gl_uniform_buffer(GLsizeiptr size, const GLvoid* data):
-    gl_uniform_buffer(size)
+Arcadia::GlUniformBuffer::GlUniformBuffer(GLsizeiptr size, const GLvoid* data):
+    GlUniformBuffer(size)
 {
-    sub_data(0, size, data);
+    SubData(0, size, data);
 }
 
-arcadia::gl_uniform_buffer::~gl_uniform_buffer()
+Arcadia::GlUniformBuffer::~GlUniformBuffer()
 {
-    ARCADIA_GL_CALL(glDeleteBuffers(1, &_gl_id));
+    ARCADIA_GL_CALL(glDeleteBuffers(1, &_GlId));
 }
 
-arcadia::gl_uniform_buffer::gl_uniform_buffer(self_type&& rhs) noexcept:
-    _gl_id(rhs._gl_id)
+Arcadia::GlUniformBuffer::GlUniformBuffer(self_type&& rhs) noexcept:
+    _GlId(rhs._GlId)
 {
-    rhs._gl_id = 0;
+    rhs._GlId = 0;
 }
 
-auto arcadia::gl_uniform_buffer::operator=(self_type&& rhs) noexcept -> self_type&
+auto Arcadia::GlUniformBuffer::operator=(self_type&& rhs) noexcept -> self_type&
 {
-    _gl_id = rhs._gl_id;
-    rhs._gl_id = 0;
+    _GlId = rhs._GlId;
+    rhs._GlId = 0;
     return *this;
 }
 
-void arcadia::gl_uniform_buffer::bind() const
+void Arcadia::GlUniformBuffer::Bind() const
 {
-    if(_gl_id == 0)
+    if(_GlId == 0)
     {
-        throw arcadia::gl_invalid{ "Cannot bind null OpenGL uniform buffer" };
+        throw Arcadia::GlInvalid{ "Cannot bind null OpenGL uniform buffer" };
     }
 
-    ARCADIA_GL_CALL(glBindBuffer(GL_UNIFORM_BUFFER, _gl_id));
+    ARCADIA_GL_CALL(glBindBuffer(GL_UNIFORM_BUFFER, _GlId));
 }
 
-void arcadia::gl_uniform_buffer::unbind() const
+void Arcadia::GlUniformBuffer::Unbind() const
 {
     ARCADIA_GL_CALL(glBindBuffer(GL_UNIFORM_BUFFER, 0));
 }
 
-void arcadia::gl_uniform_buffer::bind_buffer_base(GLuint index) const
+void Arcadia::GlUniformBuffer::BindBufferBase(GLuint index) const
 {
-    bind();
-    ARCADIA_GL_CALL(glBindBufferBase(GL_UNIFORM_BUFFER, index, _gl_id));
-    unbind();
+    Bind();
+    ARCADIA_GL_CALL(glBindBufferBase(GL_UNIFORM_BUFFER, index, _GlId));
+    Unbind();
 }
 
-void arcadia::gl_uniform_buffer::bind_buffer_range(GLuint index, GLintptr offset, GLsizeiptr size) const
+void Arcadia::GlUniformBuffer::BindBufferRange(GLuint index, GLintptr Offset, GLsizeiptr size) const
 {
-    bind();
-    ARCADIA_GL_CALL(glBindBufferRange(GL_UNIFORM_BUFFER, index, _gl_id, offset, size));
-    unbind();
+    Bind();
+    ARCADIA_GL_CALL(glBindBufferRange(GL_UNIFORM_BUFFER, index, _GlId, Offset, size));
+    Unbind();
 }
 
-auto arcadia::gl_uniform_buffer::sub_data(GLintptr offset, GLsizeiptr size, const GLvoid* data) const -> const self_type&
+auto Arcadia::GlUniformBuffer::SubData(GLintptr Offset, GLsizeiptr size, const GLvoid* data) const -> const self_type&
 {
-    bind();
-    ARCADIA_GL_CALL(glBufferSubData(GL_UNIFORM_BUFFER, offset, size, data));
-    unbind();
+    Bind();
+    ARCADIA_GL_CALL(glBufferSubData(GL_UNIFORM_BUFFER, Offset, size, data));
+    Unbind();
 
     return *this;
 }

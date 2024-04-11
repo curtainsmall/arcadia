@@ -1,97 +1,97 @@
 #include "pch.hpp"
 #include "gl_texture2d.hpp"
 
-arcadia::gl_texture2d::gl_texture2d(
+Arcadia::GlTexture2d::GlTexture2d(
     const glm::ivec2& size,
     void* ptr
 )
 {
-    ARCADIA_GL_CALL(glGenTextures(1, &_gl_id));
-    bind();
+    ARCADIA_GL_CALL(glGenTextures(1, &_GlId));
+    Bind();
 
     // TODO: Multisample count ?
     ARCADIA_GL_CALL(glTexImage2D(GL_TEXTURE_2D, 0/* TODO: Mipmap level ?*/, GL_RGBA, size.x, size.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, ptr));
     // TODO: Generate mipmap ?
-    set_tex_parameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    SetTexParameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
-    unbind();
+    Unbind();
 }
 
-arcadia::gl_texture2d::gl_texture2d(const arcadia::texture2d& texture2d)
+Arcadia::GlTexture2d::GlTexture2d(const Arcadia::Texture2d& texture2d)
 {
-    ARCADIA_GL_CALL(glGenTextures(1, &_gl_id));
-    bind();
+    ARCADIA_GL_CALL(glGenTextures(1, &_GlId));
+    Bind();
 
     // TODO: Multisample count ?
-    ARCADIA_GL_CALL(glTexImage2D(GL_TEXTURE_2D, 0/* TODO: Mipmap level ?*/, GL_RGBA, texture2d.size.x, texture2d.size.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, texture2d.pixels.data()));
+    ARCADIA_GL_CALL(glTexImage2D(GL_TEXTURE_2D, 0/* TODO: Mipmap level ?*/, GL_RGBA, texture2d.Size.x, texture2d.Size.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, texture2d.Pixels.data()));
     // TODO: Generate mipmap ?
-    set_tex_parameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    SetTexParameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
-    unbind();
+    Unbind();
 }
 
-arcadia::gl_texture2d::~gl_texture2d()
+Arcadia::GlTexture2d::~GlTexture2d()
 {
-    ARCADIA_GL_CALL(glDeleteTextures(1, &_gl_id));
+    ARCADIA_GL_CALL(glDeleteTextures(1, &_GlId));
 }
 
-arcadia::gl_texture2d::gl_texture2d(self_type&& rhs) noexcept:
-    _gl_id(rhs._gl_id),
-    _slot(rhs._slot)
+Arcadia::GlTexture2d::GlTexture2d(self_type&& rhs) noexcept:
+    _GlId(rhs._GlId),
+    _Slot(rhs._Slot)
 {
-    rhs._gl_id = 0;
-    rhs._slot = -1u;
+    rhs._GlId = 0;
+    rhs._Slot = -1u;
 }
 
-auto arcadia::gl_texture2d::operator=(self_type&& rhs) noexcept -> self_type&
+auto Arcadia::GlTexture2d::operator=(self_type&& rhs) noexcept -> self_type&
 {
-    _gl_id = rhs._gl_id;
-    rhs._gl_id = 0;
+    _GlId = rhs._GlId;
+    rhs._GlId = 0;
 
-    _slot = rhs._slot;
-    rhs._slot = -1u;
+    _Slot = rhs._Slot;
+    rhs._Slot = -1u;
 
     return *this;
 }
 
-void arcadia::gl_texture2d::bind(GLenum slot)
+void Arcadia::GlTexture2d::Bind(GLenum slot)
 {
-    if(_gl_id == 0)
+    if(_GlId == 0)
     {
-        throw arcadia::gl_invalid{ "Cannot bind null OpenGL texture2d" };
+        throw Arcadia::GlInvalid{ "Cannot bind null OpenGL texture2d" };
     }
-    _slot = slot;
+    _Slot = slot;
     ARCADIA_GL_CALL(glActiveTexture(GL_TEXTURE0 + slot));
-    ARCADIA_GL_CALL(glBindTexture(GL_TEXTURE_2D, _gl_id));
+    ARCADIA_GL_CALL(glBindTexture(GL_TEXTURE_2D, _GlId));
 }
 
-void arcadia::gl_texture2d::unbind()
+void Arcadia::GlTexture2d::Unbind()
 {
-    if(_slot == -1)
+    if(_Slot == -1)
     {
         return;
     }
 
-    ARCADIA_GL_CALL(glActiveTexture(GL_TEXTURE0 + _slot));
+    ARCADIA_GL_CALL(glActiveTexture(GL_TEXTURE0 + _Slot));
     ARCADIA_GL_CALL(glBindTexture(GL_TEXTURE_2D, 0));
-    _slot = -1;
+    _Slot = -1;
 }
 
-void arcadia::gl_texture2d::set_tex_parameter(GLenum pname, GLint param) const
+void Arcadia::GlTexture2d::SetTexParameter(GLenum pname, GLint param) const
 {
-    if(_gl_id == 0 || _slot == -1)
+    if(_GlId == 0 || _Slot == -1)
     {
-        throw arcadia::gl_invalid{ "Cannot set texture parameter to an unbound OpenGL Texture" };
+        throw Arcadia::GlInvalid{ "Cannot set texture parameter to an unbound OpenGL Texture" };
     }
 
     ARCADIA_GL_CALL(glTexParameteri(GL_TEXTURE_2D, pname, param));
 }
 
-void arcadia::gl_texture2d::set_tex_parameter(GLenum pname, GLfloat param) const
+void Arcadia::GlTexture2d::SetTexParameter(GLenum pname, GLfloat param) const
 {
-    if(_gl_id == 0 || _slot == -1)
+    if(_GlId == 0 || _Slot == -1)
     {
-        throw arcadia::gl_invalid{ "Cannot set texture parameter to an unbound OpenGL Texture" };
+        throw Arcadia::GlInvalid{ "Cannot set texture parameter to an unbound OpenGL Texture" };
     }
 
     ARCADIA_GL_CALL(glTexParameterf(GL_TEXTURE_2D, pname, param));

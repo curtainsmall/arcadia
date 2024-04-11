@@ -9,135 +9,137 @@
 #include"core/layer/layer.hpp"
 
 #include"editor/editor_context.hpp"
-#include"ui/imgui_windows/imgui_window_manubar.hpp"
+#include"ui/imgui_windows/imgui_window_main_manubar.hpp"
+#include"ui/imgui_windows/imgui_window_main_toolbar.hpp"
 #include"ui/imgui_windows/imgui_window_outliner.hpp"
 #include"ui/imgui_windows/imgui_window_property.hpp"
 #include"ui/imgui_windows/imgui_window_state.hpp"
 #include"ui/imgui_windows/imgui_window_viewport.hpp"
 
-arcadia::editor_app_layer::editor_app_layer()
+Arcadia::EditorAppLayer::EditorAppLayer()
 {
-    auto& layer_stack = arcadia::layer_stack::instance();
-    const auto& app_config = arcadia::app_config::instance();
-    auto& app_context = arcadia::app_context::instance();
-    auto& editor_context = arcadia::editor_context::instance();
+    auto& layer_stack = Arcadia::LayerStack::Instance();
+    const auto& app_config = Arcadia::AppConfig::Instance();
+    auto& app_context = Arcadia::AppContext::Instance();
+    auto& editor_context = Arcadia::EditorContext::Instance();
 
     // Window layer
     {
-        editor_context.main_window_layer_wptr = layer_stack
-            .push_layer<arcadia::window_layer>(
-                app_config.window_size,
-                app_config.window_title,
-                app_config.window_multisample_count
+        editor_context._wpMainWindowLayer = layer_stack
+            .PushLayer<Arcadia::WindowLayer>(
+                app_config.WindowSize,
+                app_config.WindowTitle,
+                app_config.WindowMultisampleCount
             )
-            .top<arcadia::window_layer>();
+            .Top<Arcadia::WindowLayer>();
     }
 
     // Project layer
     {
-        editor_context.main_project_layer_wptr = layer_stack
-            .push_layer<arcadia::project_layer>()
-            .top<arcadia::project_layer>();
+        editor_context._wpMainProjectLayer = layer_stack
+            .PushLayer<Arcadia::ProjectLayer>()
+            .Top<Arcadia::ProjectLayer>();
     }
 
     // Editor ImGui layer
     {
-        editor_context.main_imgui_layer_wptr = layer_stack
-            .push_layer<arcadia::imgui_layer>(
-                editor_context.main_window_layer_wptr.lock(),
-                ARCADIA_BIND_MEMBER_FN(_imgui_window_installer)
+        editor_context._wpMainImguiLayer = layer_stack
+            .PushLayer<Arcadia::ImguiLayer>(
+                editor_context._wpMainWindowLayer.lock(),
+                ARCADIA_BIND_MEMBER_FN(_ImguiWindowInstaller)
             )
-            .top<arcadia::imgui_layer>();
+            .Top<Arcadia::ImguiLayer>();
 
         //editor_context.main_imgui_layer_wptr.lock()->show_demo_window = true;
     }
-    app_context.running = true;
+    app_context.Running = true;
 }
 
-void arcadia::editor_app_layer::on_update()
+void Arcadia::EditorAppLayer::OnUpdate()
 {}
 
-void arcadia::editor_app_layer::on_event(arcadia::event_base& event)
+void Arcadia::EditorAppLayer::OnEvent(Arcadia::EventBase& event)
 {
-    arcadia::event_dispatcher{ event }
-        .dispatch<arcadia::event::window_should_close>(ARCADIA_BIND_MEMBER_FN(_on_window_should_close))
-        .dispatch<arcadia::event::project_unbuilt>(ARCADIA_BIND_MEMBER_FN(_on_project_unbuilt))
-        .result();
+    Arcadia::EventDispatcher{ event }
+        .Dispatch<Arcadia::Event::WindowShouldClose>(ARCADIA_BIND_MEMBER_FN(_OnWindowShouldClose))
+        .Dispatch<Arcadia::Event::ProjectUnbuilt>(ARCADIA_BIND_MEMBER_FN(_OnProjectUnbuilt))
+        .Result();
 }
 
-void arcadia::editor_app_layer::_imgui_window_installer(arcadia::imgui_layer& imgui_layer)
+void Arcadia::EditorAppLayer::_ImguiWindowInstaller(Arcadia::ImguiLayer& imgui_layer)
 {
-    const auto& app_config = arcadia::app_config::instance();
-    const auto& id_strs = app_config.imgui_opened_window_id_strs;
+    const auto& app_config = Arcadia::AppConfig::Instance();
+    const auto& id_strs = app_config.ImguiOpenedWindowIdStrs;
 
     std::initializer_list<std::tuple<std::string, std::string>> imgui_window_ids{
-        std::make_tuple("Outliner"s,arcadia::imgui_window_outliner::get_id_str_static()),
-        std::make_tuple("Viewport"s,arcadia::imgui_window_viewport::get_id_str_static()),
-        std::make_tuple("Property"s,arcadia::imgui_window_property::get_id_str_static()),
-        std::make_tuple("State"s,arcadia::imgui_window_state::get_id_str_static())
+        std::make_tuple("Outliner"s,Arcadia::ImguiWindowOutliner::GetIdStrStatic()),
+        std::make_tuple("Viewport"s,Arcadia::ImguiWindowViewport::GetIdStrStatic()),
+        std::make_tuple("Property"s,Arcadia::ImguiWindowProperty::GetIdStrStatic()),
+        std::make_tuple("State"s,Arcadia::ImguiWindowState::GetIdStrStatic())
     };
     imgui_layer
-        .emplace_imgui_window<arcadia::imgui_window_menubar>(true, imgui_window_ids)
-        .emplace_imgui_window<arcadia::imgui_window_outliner>(id_strs.contains(arcadia::imgui_window_outliner::get_id_str_static()), "Outliner")
-        .emplace_imgui_window<arcadia::imgui_window_viewport>(id_strs.contains(arcadia::imgui_window_viewport::get_id_str_static()), "Viewport")
-        .emplace_imgui_window<arcadia::imgui_window_property>(id_strs.contains(arcadia::imgui_window_property::get_id_str_static()), "Property")
-        .emplace_imgui_window<arcadia::imgui_window_state>(id_strs.contains(arcadia::imgui_window_state::get_id_str_static()), "State");
+        .EmplaceImguiWindow<Arcadia::ImguiWindowMainMenubar>(imgui_window_ids)
+        .EmplaceImguiWindow<Arcadia::ImguiWindowMainToolbar>()
+        .EmplaceImguiWindow<Arcadia::ImguiWindowOutliner>(id_strs.contains(Arcadia::ImguiWindowOutliner::GetIdStrStatic()), "Outliner")
+        .EmplaceImguiWindow<Arcadia::ImguiWindowViewport>(id_strs.contains(Arcadia::ImguiWindowViewport::GetIdStrStatic()), "Viewport")
+        .EmplaceImguiWindow<Arcadia::ImguiWindowProperty>(id_strs.contains(Arcadia::ImguiWindowProperty::GetIdStrStatic()), "Property")
+        .EmplaceImguiWindow<Arcadia::ImguiWindowState>(id_strs.contains(Arcadia::ImguiWindowState::GetIdStrStatic()), "State");
 }
 
-void arcadia::editor_app_layer::_stop()
+void Arcadia::EditorAppLayer::_Stop()
 {
-    auto& editor_context = arcadia::editor_context::instance();
-    auto main_window_layer_sptr = editor_context.main_window_layer_wptr.lock();
-    auto main_imgui_layer_sptr = editor_context.main_imgui_layer_wptr.lock();
+    auto& editor_context = Arcadia::EditorContext::Instance();
+    auto sp_main_window_layer = editor_context._wpMainWindowLayer.lock();
+    auto sp_main_imgui_layer = editor_context._wpMainImguiLayer.lock();
 
-    auto& app_config = arcadia::app_config::instance();
-    app_config.window_size = main_window_layer_sptr->get_size();
-    app_config.window_pos = main_window_layer_sptr->get_pos();
-    app_config.window_maxmized = main_window_layer_sptr->get_size_state() == arcadia::window_size_state::maxmized;
+    auto& app_config = Arcadia::AppConfig::Instance();
+    app_config.WindowSize = sp_main_window_layer->GetSize();
+    app_config.WindowPos = sp_main_window_layer->GetPos();
+    app_config.WindowMaxmized = sp_main_window_layer->GetSizeState() == Arcadia::WindowSizeState::Maxmized;
 
-    for(const auto& imgui_window_uptr : main_imgui_layer_sptr->get_imgui_window_uptrs())
+    for(const auto& up_imgui_window : sp_main_imgui_layer->get_imgui_window_uptrs())
     {
-        if(imgui_window_uptr->is_open())
+        if(up_imgui_window->IsOpen())
         {
-            app_config.imgui_opened_window_id_strs.emplace(imgui_window_uptr->get_id_str());
+            app_config.ImguiOpenedWindowIdStrs.emplace(up_imgui_window->GetIdStr());
         }
     }
 
-    auto& app_context = arcadia::app_context::instance();
-    app_context.running = false;
+    auto& app_context = Arcadia::AppContext::Instance();
+    app_context.Running = false;
 }
 
-void arcadia::editor_app_layer::_on_window_should_close(arcadia::event::window_should_close& e)
+void Arcadia::EditorAppLayer::_OnWindowShouldClose(Arcadia::Event::WindowShouldClose& e)
 {
-    auto& editor_context = arcadia::editor_context::instance();
-    auto main_window_layer_sptr = editor_context.main_window_layer_wptr.lock();
-    auto main_project_layer_sptr = editor_context.main_project_layer_wptr.lock();
+    auto& editor_context = Arcadia::EditorContext::Instance();
+    auto sp_main_window_layer = editor_context._wpMainWindowLayer.lock();
+    auto sp_main_project_layer = editor_context._wpMainProjectLayer.lock();
 
     const auto& [wnd_ptr] = e.data_tuple;
-    if(wnd_ptr == main_window_layer_sptr.get() && main_project_layer_sptr->has_project())
+    if(wnd_ptr == sp_main_window_layer.get() && sp_main_project_layer->HasProject())
     {
-        _waiting_for_project_unbuilt_before_closing = true;
+        _WaitingForProjectUnbuiltBeforeClosing = true;
     }
     else
     {
-        _stop();
+        _Stop();
     }
 }
 
-void arcadia::editor_app_layer::_on_project_unbuilt(arcadia::event::project_unbuilt& e)
+void Arcadia::EditorAppLayer::_OnProjectUnbuilt(Arcadia::Event::ProjectUnbuilt& e)
 {
-    if(_waiting_for_project_unbuilt_before_closing)
+    if(_WaitingForProjectUnbuiltBeforeClosing)
     {
-        _stop();
+        _Stop();
     }
 }
 
-void arcadia::editor_app_layer::_on_window_close_canceled(arcadia::event::window_close_canceled& e)
+void Arcadia::EditorAppLayer::_OnWindowCloseCanceled(Arcadia::Event::WindowCloseCanceled& e)
 {
-    _waiting_for_project_unbuilt_before_closing = false;
+    _WaitingForProjectUnbuiltBeforeClosing = false;
 }
 
-auto arcadia::create_application_uptr() -> std::unique_ptr<arcadia::app_layer>
+auto Arcadia::CreateApplicationUptr() -> std::unique_ptr<Arcadia::iAppLayer>
 {
-    return std::make_unique<arcadia::editor_app_layer>();
+    return std::make_unique<Arcadia::EditorAppLayer>();
 }

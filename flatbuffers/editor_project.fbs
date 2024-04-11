@@ -1,7 +1,7 @@
 include"scene.fbs";
 include"renderer.fbs";
 
-namespace arcadia.serialization;
+namespace Arcadia.serialization;
 
 table project{
     name:string;

@@ -1,125 +1,125 @@
 #include "pch.hpp"
 #include "command.hpp"
 
-arcadia::command::command(
+Arcadia::Command::Command(
     const std::string& description,
     const function_type& execute_fn,
     const function_type& unexecute_fn
 ):
-    _description(description),
-    _execute_fn(execute_fn),
-    _unexecute_fn(unexecute_fn)
+    _Description(description),
+    _ExecuteFn(execute_fn),
+    _UnexecuteFn(unexecute_fn)
 {
-    execute();
+    Execute();
 }
 
-void arcadia::command::execute() const
+void Arcadia::Command::Execute() const
 {
-    _execute_fn();
+    _ExecuteFn();
 }
 
-void arcadia::command::unexecute() const
+void Arcadia::Command::Unexecute() const
 {
-    _unexecute_fn();
+    _UnexecuteFn();
 }
 
-auto arcadia::command::get_description() const -> const std::string&
+auto Arcadia::Command::GetDescription() const -> const std::string&
 {
-    return _description;
+    return _Description;
 }
 
-auto arcadia::command_list::instance() -> self_type&
+auto Arcadia::CommandList::Instance() -> self_type&
 {
     self_type command_list{};
     return command_list;
 }
 
-void arcadia::command_list::emplace(
+void Arcadia::CommandList::emplace(
     const std::string& description,
     const function_type& execute_fn,
     const function_type& unexecute_fn
 )
 {
     // Erase restored command since a new command should be on a new branch from current position
-    _list.erase(_list.begin(), _current_iter);
+    _List.erase(_List.begin(), _CurrentIter);
 
     // Emplace new command
-    _list.emplace_front(description, execute_fn, unexecute_fn);
+    _List.emplace_front(description, execute_fn, unexecute_fn);
 
     // Relocate current position
-    _current_iter = _list.begin();
+    _CurrentIter = _List.begin();
 }
 
-auto arcadia::command_list::undo() -> bool
+auto Arcadia::CommandList::Undo() -> bool
 {
-    if(_current_iter == _list.begin())
+    if(_CurrentIter == _List.begin())
     {
         return false;
     }
 
-    (_current_iter--)->unexecute();
+    (_CurrentIter--)->Unexecute();
     return true;
 }
 
-auto arcadia::command_list::redo() -> bool
+auto Arcadia::CommandList::Redo() -> bool
 {
-    if((++_current_iter)-- == _list.end())
+    if((++_CurrentIter)-- == _List.end())
     {
         return false;
     }
 
-    (_current_iter++)->execute();
+    (_CurrentIter++)->Execute();
     return true;
 }
 
-auto arcadia::command_list::get_capacity() const -> std::size_t
+auto Arcadia::CommandList::GetCapacity() const -> std::size_t
 {
-    return _capacity;
+    return _Capacity;
 }
 
-void arcadia::command_list::set_capacity(std::size_t capacity)
+void Arcadia::CommandList::SetCapacity(std::size_t capacity)
 {
-    _capacity = capacity;
+    _Capacity = capacity;
 }
 
-auto arcadia::command_list::size() const -> std::size_t
+auto Arcadia::CommandList::Size() const -> std::size_t
 {
-    return _list.size();
+    return _List.size();
 }
 
-void arcadia::command_list::clear()
+void Arcadia::CommandList::Clear()
 {
-    _list.clear();
+    _List.clear();
 }
 
-auto arcadia::command_list::begin() noexcept -> container_type::iterator
+auto Arcadia::CommandList::begin() noexcept -> container_type::iterator
 {
-    return _list.begin();
+    return _List.begin();
 }
 
-auto arcadia::command_list::end() noexcept -> container_type::iterator
+auto Arcadia::CommandList::end() noexcept -> container_type::iterator
 {
-    return _list.end();
+    return _List.end();
 }
 
-auto arcadia::command_list::begin() const noexcept -> container_type::const_iterator
+auto Arcadia::CommandList::begin() const noexcept -> container_type::const_iterator
 {
-    return _list.begin();
+    return _List.begin();
 }
 
-auto arcadia::command_list::end() const noexcept -> container_type::const_iterator
+auto Arcadia::CommandList::end() const noexcept -> container_type::const_iterator
 {
-    return _list.end();
+    return _List.end();
 }
 
-auto arcadia::command_list::cbegin() const noexcept -> container_type::const_iterator
+auto Arcadia::CommandList::cbegin() const noexcept -> container_type::const_iterator
 {
-    return _list.cbegin();
+    return _List.cbegin();
 }
 
-auto arcadia::command_list::cend() const noexcept -> container_type::const_iterator
+auto Arcadia::CommandList::cend() const noexcept -> container_type::const_iterator
 {
-    return _list.cend();
+    return _List.cend();
 }
 
 

@@ -7,150 +7,150 @@
 #include"platform/opengl/opengl_header.hpp"
 #include"resource/component/model_component/mesh/vertex.hpp"
 
-namespace arcadia
+namespace Arcadia
 {
-    struct ARCADIA_API gl_buffer_layout
+    struct ARCADIA_API GlBufferLayout
     {
     public:
-        struct ARCADIA_API attribute
+        struct ARCADIA_API Attribute
         {
             GLuint count;
-            GLenum type;
+            GLenum Type;
             GLboolean normalized;
             GLuint divisor;
         };
-        using self_type = gl_buffer_layout;
+        using self_type = GlBufferLayout;
     public:
-        gl_buffer_layout() = default;
-        ~gl_buffer_layout() = default;
+        GlBufferLayout() = default;
+        ~GlBufferLayout() = default;
 
         template<class Type>
-        auto push(GLuint count = 1, GLuint dividor = 0) -> self_type&
+        auto Push(GLuint count = 1, GLuint dividor = 0) -> self_type&
         {
             ARCADIA_ASSERT(false && "This generic template should never be occured");
             return *this;
         }
 
         template<>
-        auto push<glm::vec4>(GLuint count, GLuint divisor) -> self_type&
+        auto Push<glm::vec4>(GLuint count, GLuint divisor) -> self_type&
         {
             for(GLuint i = 0; i < count; ++i)
             {
-                push<float>(4, divisor);
+                Push<float>(4, divisor);
             }
             return *this;
         }
 
         template<>
-        auto push<glm::vec3>(GLuint count, GLuint divisor) -> self_type&
+        auto Push<glm::vec3>(GLuint count, GLuint divisor) -> self_type&
         {
             for(GLuint i = 0; i < count; ++i)
             {
-                push<float>(3, divisor);
+                Push<float>(3, divisor);
             }
             return *this;
         }
 
         template<>
-        auto push<glm::vec2>(GLuint count, GLuint divisor) -> self_type&
+        auto Push<glm::vec2>(GLuint count, GLuint divisor) -> self_type&
         {
             for(GLuint i = 0; i < count; ++i)
             {
-                push<float>(2, divisor);
+                Push<float>(2, divisor);
             }
             return *this;
         }
 
         template<>
-        auto push<glm::mat4>(GLuint count, GLuint divisor) -> self_type&
+        auto Push<glm::mat4>(GLuint count, GLuint divisor) -> self_type&
         {
             for(GLuint i = 0; i < count; i++)
             {
-                push<glm::vec4>(4, divisor);
+                Push<glm::vec4>(4, divisor);
             }
             return *this;
         }
 
         template<>
-        auto push<glm::mat3>(GLuint count, GLuint divisor) -> self_type&
+        auto Push<glm::mat3>(GLuint count, GLuint divisor) -> self_type&
         {
             for(GLuint i = 0; i < count; i++)
             {
-                push<glm::vec3>(3, divisor);
+                Push<glm::vec3>(3, divisor);
             }
             return *this;
         }
 
         template<>
-        auto push<glm::mat2>(GLuint count, GLuint divisor) -> self_type&
+        auto Push<glm::mat2>(GLuint count, GLuint divisor) -> self_type&
         {
             for(GLuint i = 0; i < count; i++)
             {
-                push<glm::vec2>(2, divisor);
+                Push<glm::vec2>(2, divisor);
             }
             return *this;
         }
 
         template<>
-        auto push<float>(GLuint count, GLuint divisor) -> self_type&
+        auto Push<float>(GLuint count, GLuint divisor) -> self_type&
         {
-            layout_attributes.emplace_back(count, GL_FLOAT, GL_FALSE, divisor);
-            stride += arcadia::get_gl_type_size(GL_FLOAT) * count;
+            LayoutAttributes.emplace_back(count, GL_FLOAT, GL_FALSE, divisor);
+            Stride += Arcadia::GetGlTypeSize(GL_FLOAT) * count;
             return *this;
         }
 
         template<>
-        auto push<unsigned int>(GLuint count, GLuint divisor) -> self_type&
+        auto Push<unsigned int>(GLuint count, GLuint divisor) -> self_type&
         {
-            layout_attributes.emplace_back(count, GL_UNSIGNED_INT, GL_FALSE, divisor);
-            stride += arcadia::get_gl_type_size(GL_UNSIGNED_INT) * count;
+            LayoutAttributes.emplace_back(count, GL_UNSIGNED_INT, GL_FALSE, divisor);
+            Stride += Arcadia::GetGlTypeSize(GL_UNSIGNED_INT) * count;
             return *this;
         }
 
         template<>
-        auto push<unsigned char>(GLuint count, GLuint divisor) -> self_type&
+        auto Push<unsigned char>(GLuint count, GLuint divisor) -> self_type&
         {
-            layout_attributes.emplace_back(count, GL_UNSIGNED_BYTE, GL_FALSE, divisor);
-            stride += arcadia::get_gl_type_size(GL_UNSIGNED_BYTE) * count;
+            LayoutAttributes.emplace_back(count, GL_UNSIGNED_BYTE, GL_FALSE, divisor);
+            Stride += Arcadia::GetGlTypeSize(GL_UNSIGNED_BYTE) * count;
             return *this;
         }
     public:
-        std::vector<attribute> layout_attributes{};
-        GLsizei stride{};
+        std::vector<Attribute> LayoutAttributes{};
+        GLsizei Stride{};
 
     };
 
-    struct ARCADIA_API gl_vertex_buffer: arcadia::noncopyable
+    struct ARCADIA_API GlVertexBuffer: Arcadia::Noncopyable
     {
     public:
-        using self_type = gl_vertex_buffer;
+        using self_type = GlVertexBuffer;
     public:
-        gl_vertex_buffer(const std::vector<arcadia::vertex>& vertices);
-        ~gl_vertex_buffer();
+        GlVertexBuffer(const std::vector<Arcadia::Vertex>& vertices);
+        ~GlVertexBuffer();
 
-        gl_vertex_buffer(self_type&& rhs) noexcept;
+        GlVertexBuffer(self_type&& rhs) noexcept;
         auto operator=(self_type&& rhs) noexcept -> self_type&;
 
         [[nodiscard]]
-        inline auto get_gl_id() const -> GLuint
+        auto GetGlId() const -> GLuint
         {
-            return _gl_id;
+            return _GlId;
         }
 
         [[nodiscard]]
-        inline auto get_vertex_count() const -> GLsizei
+        auto GetVertexCount() const -> GLsizei
         {
-            return _vertex_count;
+            return _VertexCount;
         }
 
-        void bind() const;
-        void unbind() const;
+        void Bind() const;
+        void Unbind() const;
 
         /// @note Call this function @b after the OpenGL vertex array you want to use has been bound
-        void setup_vertex_attrib_array() const;
+        void SetupVertexAttribArray() const;
     private:
-        GLuint _gl_id{ 0 };
-        arcadia::gl_buffer_layout _buffer_layout{};
-        GLsizei _vertex_count{ 0 };
+        GLuint _GlId{ 0 };
+        Arcadia::GlBufferLayout _BufferLayout{};
+        GLsizei _VertexCount{ 0 };
     };
 }

@@ -1,47 +1,47 @@
 #include "pch.hpp"
 #include "gl_shader.hpp"
 
-arcadia::gl_shader::gl_shader(const std::string& source_code, GLenum shader_type)
+Arcadia::GlShader::GlShader(const std::string& source_code, GLenum shader_type)
 {
     const char* src = source_code.c_str();
-    ARCADIA_GL_CALL(_gl_id = glCreateShader(shader_type));
-    ARCADIA_GL_CALL(glShaderSource(_gl_id, 1, &src, nullptr));
+    ARCADIA_GL_CALL(_GlId = glCreateShader(shader_type));
+    ARCADIA_GL_CALL(glShaderSource(_GlId, 1, &src, nullptr));
 
     // Compile
-    ARCADIA_GL_CALL(glCompileShader(_gl_id));
+    ARCADIA_GL_CALL(glCompileShader(_GlId));
 
     // Check whether compile success
     GLint compile_status{ 0 };
-    ARCADIA_GL_CALL(glGetShaderiv(_gl_id, GL_COMPILE_STATUS, &compile_status));
+    ARCADIA_GL_CALL(glGetShaderiv(_GlId, GL_COMPILE_STATUS, &compile_status));
     if(compile_status == GL_FALSE)
     {
         GLint length{ 0 };
-        ARCADIA_GL_CALL(glGetShaderiv(_gl_id, GL_INFO_LOG_LENGTH, &length));
+        ARCADIA_GL_CALL(glGetShaderiv(_GlId, GL_INFO_LOG_LENGTH, &length));
         std::string msg{};
         msg.reserve(length);
-        ARCADIA_GL_CALL(glGetShaderInfoLog(_gl_id, length, nullptr, msg.data()));
-        ARCADIA_GL_CALL(glDeleteShader(_gl_id));
-        _gl_id = 0;
-        throw compile_fail{ msg };
+        ARCADIA_GL_CALL(glGetShaderInfoLog(_GlId, length, nullptr, msg.data()));
+        ARCADIA_GL_CALL(glDeleteShader(_GlId));
+        _GlId = 0;
+        throw CompileFail{ msg };
     }
 
 }
 
-arcadia::gl_shader::~gl_shader()
+Arcadia::GlShader::~GlShader()
 {
-    ARCADIA_GL_CALL(glDeleteShader(_gl_id));
+    ARCADIA_GL_CALL(glDeleteShader(_GlId));
 }
 
-arcadia::gl_shader::gl_shader(self_type&& rhs) noexcept
+Arcadia::GlShader::GlShader(self_type&& rhs) noexcept
 {
-    _gl_id = rhs._gl_id;
-    rhs._gl_id = 0;
+    _GlId = rhs._GlId;
+    rhs._GlId = 0;
 }
 
-auto arcadia::gl_shader::operator=(self_type&& rhs) noexcept -> self_type&
+auto Arcadia::GlShader::operator=(self_type&& rhs) noexcept -> self_type&
 {
-    _gl_id = rhs._gl_id;
-    rhs._gl_id = 0;
+    _GlId = rhs._GlId;
+    rhs._GlId = 0;
 
     return *this;
 }

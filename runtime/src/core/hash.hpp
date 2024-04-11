@@ -4,28 +4,28 @@
 
 #include"core/base.hpp"
 
-namespace arcadia
+namespace Arcadia
 {
     template<class Type>
-    ARCADIA_API auto hash_combine(const std::size_t& val, const Type& type) -> std::size_t
+    ARCADIA_API auto HashCombine(const std::size_t& seed, const Type& val) -> std::size_t
     {
-        std::size_t res{ val };
-        boost::hash_combine(res, type);
+        std::size_t res{ seed };
+        boost::hash_combine(res, val);
         return res;
     }
 
     template<class Type, class ...Types>
-    ARCADIA_API auto hash(const Type& type, const Types& ...types) -> std::size_t
+    ARCADIA_API auto Hash(const Type& val, const Types& ...vals) -> std::size_t
     {
         if constexpr(sizeof...(Types) == 0)
         {
-            return std::hash<Type>{}(type);
+            return std::hash<Type>{}(val);
         }
         else
         {
-            return arcadia::hash_combine(
-                arcadia::hash(types...),
-                type
+            return Arcadia::HashCombine(
+                Arcadia::Hash(vals...),
+                val
             );
         }
     }

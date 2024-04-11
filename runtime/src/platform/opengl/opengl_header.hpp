@@ -11,25 +11,25 @@
 #endif
 
 #if !defined(NDEBUG) && !ARCADIA_GL_USE_DEBUG_CALLBACK
-#   define ARCADIA_GL_CALL(x) x;arcadia::gl_check_error(#x,__FILE__,__LINE__)
+#   define ARCADIA_GL_CALL(x) x;Arcadia::GlCheckError(#x,__FILE__,__LINE__)
 #else 
 #   define ARCADIA_GL_CALL(x) x
 #endif
 
-namespace arcadia
+namespace Arcadia
 {
-    ARCADIA_EXCEPTION(gl_error);
-    ARCADIA_EXCEPTION(gl_invalid);
+    ARCADIA_EXCEPTION(GlError);
+    ARCADIA_EXCEPTION(GlInvalid);
 
-    /// @brief Check OpenGL error and throw arcadia exception if found
+    /// @brief Check OpenGL error and throw Arcadia exception if found
     /// @param fn_name Name of the API call that generated error
     /// @param file_name File where the error generated
     /// @param line Line where the error generated
-    ARCADIA_API void gl_check_error(const char* fn_name, const char* file_name, int line);
+    ARCADIA_API void GlCheckError(const char* fn_name, const char* file_name, int line);
 
-    ARCADIA_API auto get_gl_type_size(GLenum type) -> std::size_t;
+    ARCADIA_API auto GetGlTypeSize(GLenum Type) -> std::size_t;
 
-    ARCADIA_API auto get_gl_version() -> arcadia::version;
+    ARCADIA_API auto SetGlVersion() -> Arcadia::Version;
 
     /// @brief Opengl debug callback
     ///
@@ -40,23 +40,23 @@ namespace arcadia
     /// @param length     Length of the error message
     /// @param message    Pointer to a null-terminate string representing error message
     /// @param user_param User defined external parameter
-    ARCADIA_API void GLAPIENTRY gl_debug_callback(GLenum source,
-                                                  GLenum type,
-                                                  GLuint id,
-                                                  GLenum severity,
-                                                  GLsizei length,
-                                                  const GLchar* message,
-                                                  const void* user_param);
+    ARCADIA_API void GLAPIENTRY GlDebugCallback(GLenum source,
+                                                GLenum Type,
+                                                GLuint id,
+                                                GLenum severity,
+                                                GLsizei length,
+                                                const GLchar* message,
+                                                const void* user_param);
 
-    ARCADIA_API auto gl_get_max_combined_texture_image_units_count() -> GLint;
+    ARCADIA_API auto GetGlMaxCombinedTextureImageUnitsCount() -> GLint;
 
-    ARCADIA_API auto gl_get_max_texture_image_units_count() -> GLint;
+    ARCADIA_API auto GetGlMaxTextureImageUnitsCount() -> GLint;
 
-    struct ARCADIA_API opengl_context: arcadia::noncopyable
+    struct ARCADIA_API OpenglContext: Arcadia::Noncopyable
     {
     public:
-        opengl_context();
-        ~opengl_context() = default;
+        OpenglContext();
+        ~OpenglContext() = default;
     };
 }
 

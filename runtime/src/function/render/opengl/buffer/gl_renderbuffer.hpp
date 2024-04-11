@@ -4,35 +4,35 @@
 #include"core/math.hpp"
 #include"platform/opengl/opengl_header.hpp"
 
-namespace arcadia
+namespace Arcadia
 {
-    struct ARCADIA_API gl_renderbuffer: arcadia::noncopyable
+    struct ARCADIA_API GlRenderbuffer: Arcadia::Noncopyable
     {
     public:
-        using self_type = gl_renderbuffer;
+        using self_type = GlRenderbuffer;
     public:
-        gl_renderbuffer();
-        gl_renderbuffer(GLenum format, const glm::ivec2& size);
-        ~gl_renderbuffer();
+        GlRenderbuffer();
+        GlRenderbuffer(GLenum format, const glm::ivec2& size);
+        ~GlRenderbuffer();
 
-        gl_renderbuffer(self_type&&) noexcept = default;
+        GlRenderbuffer(self_type&&) noexcept = default;
         auto operator=(self_type&&) noexcept -> self_type & = default;
 
         [[nodiscard]]
-        auto get_gl_id() const ->GLuint
+        auto GetGlId() const ->GLuint
         {
-            return _gl_id;
+            return _GlId;
         }
 
-        void bind() const;
-        void unbind() const;
+        void Bind() const;
+        void Unbind() const;
 
-        void set_storage(
+        void SetStorage(
             GLenum format,
             const glm::ivec2& size
         );
 
     private:
-        GLuint _gl_id{ 0 };
+        GLuint _GlId{ 0 };
     };
 }

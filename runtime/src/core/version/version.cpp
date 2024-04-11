@@ -1,40 +1,22 @@
 #include "pch.hpp"
 #include "version.hpp"
 
-auto arcadia::version::to_flatbuffers(const self_type& version) -> serialization_type
-{
-    return {
-        version.major,
-        version.minor,
-        version.patch
-    };
-}
-
-auto arcadia::version::from_flatbuffers(const serialization_type& flat_version) -> self_type
-{
-    return {
-        flat_version.major(),
-        flat_version.minor(),
-        flat_version.patch()
-    };
-}
-
-arcadia::version::version(const nlohmann::json& json):
-    major(json.at("major")),
-    minor(json.at("minor")),
-    patch(json.at("patch"))
+Arcadia::Version::Version(const nlohmann::json& json):
+    Major(json.at("major")),
+    Minor(json.at("minor")),
+    Patch(json.at("patch"))
 {}
 
-auto arcadia::version::to_json() const -> nlohmann::json
+auto Arcadia::Version::ToJson() const -> nlohmann::json
 {
     return nlohmann::json{
-        {"major",major},
-        {"minor",minor},
-        {"patch",patch}
+        {"major",Major},
+        {"minor",Minor},
+        {"patch",Patch}
     };
 }
 
-arcadia::version::operator std::string() const
+Arcadia::Version::operator std::string() const
 {
-    return std::format("{0}.{1}.{2}", major, minor, patch);
+    return std::format("{0}.{1}.{2}", Major, Minor, Patch);
 }

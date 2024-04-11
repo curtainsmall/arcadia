@@ -16,6 +16,7 @@
     <ProjectGuid>{7588c67f-dcb6-4464-9dea-e2ff896d20a6}</ProjectGuid>
     <RootNamespace>imgui</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.22621.0</WindowsTargetPlatformVersion>
+    <ProjectName>ImGui</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
@@ -103,6 +104,7 @@
     <ClInclude Include="backends\imgui_impl_opengl3.h" />
     <ClInclude Include="backends\imgui_impl_vulkan.h" />
     <ClInclude Include="imgui.h" />
+    <ClInclude Include="imgui_internal.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

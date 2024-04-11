@@ -17,125 +17,117 @@
 #endif // ARCADIA_IN_DEBUG
 
 #define ARCADIA_EVENT(event_name,...) \
-struct ARCADIA_API event_name: arcadia::basic_event<__VA_ARGS__>\
+struct ARCADIA_API event_name: Arcadia::BasicEvent<__VA_ARGS__>\
 {\
 public:\
     using self_type = event_name;\
 public:\
-    using arcadia::basic_event<__VA_ARGS__>::basic_event;\
+    using Arcadia::BasicEvent<__VA_ARGS__>::BasicEvent;\
 }
 
-namespace arcadia
+namespace Arcadia
 {
-    struct ARCADIA_API event_base: arcadia::noncopyable
+    struct ARCADIA_API EventBase: Arcadia::Noncopyable
     {
     public:
-        event_base() = default;
+        EventBase() = default;
         // Virtual destructor that make event type virtual
-        virtual ~event_base()
+        virtual ~EventBase()
         {};
     public:
-        bool handled{ false };
+        bool Handled{ false };
     };
 
     template<class Event>
-    concept event_like = requires{
-        std::derived_from<Event, arcadia::event_base>;
+    concept cEvent = requires{
+        std::derived_from<Event, Arcadia::EventBase>;
     };
 
     template<class ...Args>
-    struct ARCADIA_API basic_event: arcadia::event_base
+    struct ARCADIA_API BasicEvent: Arcadia::EventBase
     {
     public:
         using data_tuple_type = std::tuple<Args...>;
 
-        using self_type = basic_event<Args...>;
+        using self_type = BasicEvent<Args...>;
     public:
         /// @brief Construct a signaled event
-        basic_event(Args ...args):
+        BasicEvent(Args ...args):
             data_tuple(std::make_tuple<Args...>(std::forward<Args>(args)...))
         {}
-        virtual ~basic_event() = default;
+        virtual ~BasicEvent() = default;
 
         operator const data_tuple_type() const
         {
             return data_tuple;
         }
 
-        template<std::size_t Index>
-        auto get() const -> const auto&
-        {
-            static_assert(Index < std::tuple_size_v<data_tuple_type>);
-            return std::get<Index>(data_tuple);
-        }
-
     public:
         const data_tuple_type data_tuple;
-
     };
 
-    template<arcadia::event_like Event>
-    using event_handler = std::function<void(Event&)>;
+    template<Arcadia::cEvent Event>
+    using EventHandler = std::function<void(Event&)>;
 
-    struct ARCADIA_API event_dispatcher: arcadia::noncopyable
+    struct ARCADIA_API EventDispatcher: Arcadia::Noncopyable
     {
     public:
-        using self_type = event_dispatcher;
+        using self_type = EventDispatcher;
     public:
-        inline event_dispatcher(arcadia::event_base& event):
-            _event_ptr(&event)
+        EventDispatcher(Arcadia::EventBase& event):
+            _pEvent(&event)
         {}
-        ~event_dispatcher() = default;
+        ~EventDispatcher() = default;
 
         /// @brief Dispatch stored event to given handler. If their types match, the handler will be excuted at once
         /// @tparam Event Event type to match
         /// @param handler Event handler
         /// @return Self
-        template<arcadia::event_like Event>
-        auto dispatch(const arcadia::event_handler<Event>& handler) -> self_type&
+        template<Arcadia::cEvent Event>
+        auto Dispatch(const Arcadia::EventHandler<Event>& handler) -> self_type&
         {
-            if(typeid(*_event_ptr) == typeid(Event))
+            if(typeid(*_pEvent) == typeid(Event))
             {
-                handler(static_cast<Event&>(*_event_ptr));
-                _result = true;
+                handler(static_cast<Event&>(*_pEvent));
+                _Result = true;
             }
             return *this;
         }
 
         /// @brief Whether any dispatch succedded
-        inline auto result() const -> bool
+        auto Result() const -> bool
         {
-            return _result;
+            return _Result;
         }
 
     private:
-        arcadia::event_base* _event_ptr;
-        bool _result{ false };
+        Arcadia::EventBase* _pEvent;
+        bool _Result{ false };
     };
 
-    struct ARCADIA_API event_queue
+    struct ARCADIA_API EventQueue
     {
     public:
         ARCADIA_EXCEPTION(empty_queue);
 
-        using self_type = event_queue;
+        using self_type = EventQueue;
     private:
-        using _event_uptr_queue_type = std::queue<std::unique_ptr<arcadia::event_base>>;
+        using _event_uptr_queue_type = std::queue<std::unique_ptr<Arcadia::EventBase>>;
 
     public:
-        static auto instance() -> self_type&;
+        static auto Instance() -> self_type&;
 
         /// @brief Signal @a Event
         /// @param ...args Argument to construct @a Event
-        template<arcadia::event_like Event, class ...Args>
-        auto signal(Args&& ...args) -> self_type&
+        template<Arcadia::cEvent Event, class ...Args>
+        auto Signal(Args&& ...args) -> self_type&
         {
             _current_queue_ptr->emplace(std::make_unique<Event>(std::forward<Args>(args)...));
 
         #ifdef ARCADIA_IN_DEBUG
             if(!debug_excluded_event_type_set.contains(typeid(Event)))
             {
-                arcadia::log::debug(std::format("Event signaled: {}", typeid(Event).name()));
+                Arcadia::Log::Debug(std::format("Event signaled: {}", typeid(Event).name()));
             }
         #endif
             return *this;
@@ -143,18 +135,18 @@ namespace arcadia
 
         /// @brief Swap current queue and processing queue
         /// @return whether the processing queue contains event after swap
-        auto swap_queue() -> bool;
+        auto SwapQueue() -> bool;
 
         /// @brief Check whther the proceessing queue contains event
-        auto size() const->std::size_t;
+        auto Size() const->std::size_t;
 
         /// @brief Read the front event in event queue
         /// @return Event at front
-        auto read() -> arcadia::event_base&;
+        auto Read() -> Arcadia::EventBase&;
 
         /// @brief Pop front event
         /// @return whether the processing queue contains event after pop;
-        auto pop() -> bool;
+        auto Pop() -> bool;
 
     public:
     #ifdef ARCADIA_IN_DEBUG

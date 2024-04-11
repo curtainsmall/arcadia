@@ -6,35 +6,35 @@
 #include"platform/opengl/opengl_header.hpp"
 #include"resource/component/model_component/mesh/mesh.hpp"
 
-namespace arcadia
+namespace Arcadia
 {
-    struct ARCADIA_API gl_index_buffer: arcadia::noncopyable
+    struct ARCADIA_API GlIndexBuffer: Arcadia::Noncopyable
     {
     public:
-        using self_type = gl_index_buffer;
+        using self_type = GlIndexBuffer;
     public:
-        gl_index_buffer(const std::vector<arcadia::mesh::index_type>& indices);
-        ~gl_index_buffer();
+        GlIndexBuffer(const std::vector<Arcadia::Mesh::index_type>& indices);
+        ~GlIndexBuffer();
 
-        gl_index_buffer(self_type&& rhs) noexcept;
+        GlIndexBuffer(self_type&& rhs) noexcept;
         auto operator=(self_type&& rhs) noexcept -> self_type&;
 
         [[nodiscard]]
-        inline auto get_gl_id() const -> GLuint
+        auto GetGlId() const -> GLuint
         {
-            return _gl_id;
+            return _GlId;
         }
 
         [[nodiscard]]
-        inline auto get_index_count() const -> GLsizei
+        auto GetIndexCount() const -> GLsizei
         {
-            return _index_count;
+            return _IndexCount;
         }
 
-        void bind() const;
-        void unbind() const;
+        void Bind() const;
+        void Unbind() const;
     private:
-        GLuint _gl_id{ 0 };
-        GLsizei _index_count{ 0 };
+        GLuint _GlId{ 0 };
+        GLsizei _IndexCount{ 0 };
     };
 }

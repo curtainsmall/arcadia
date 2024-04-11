@@ -10,49 +10,49 @@
 #include"function/ui/imgui_window.hpp"
 #include"function/window/window_layer.hpp"
 
-namespace arcadia
+namespace Arcadia
 {
-    ARCADIA_EXCEPTION(imgui_error);
+    ARCADIA_EXCEPTION(ImguiError);
 
-    struct ARCADIA_API imgui_layer: arcadia::layer_interface
+    struct ARCADIA_API ImguiLayer: Arcadia::iLayer
     {
     public:
-        using self_type = imgui_layer;
+        using self_type = ImguiLayer;
     public:
-        imgui_layer(
-            const std::shared_ptr<const arcadia::window_layer>& window_layer_sptr,
-            const std::function<void(arcadia::imgui_layer&)>& imgui_window_installer ={},
-            const std::function<void()>& imgui_style_setter = arcadia::imgui_style::default_dark
+        ImguiLayer(
+            const std::shared_ptr<const Arcadia::WindowLayer>& window_layer_sptr,
+            const std::function<void(Arcadia::ImguiLayer&)>& imgui_window_installer ={},
+            const std::function<void()>& imgui_style_setter = Arcadia::ImguiStyle::DefaultDark
         );
-        virtual ~imgui_layer();
+        virtual ~ImguiLayer();
 
         [[nodiscard]]
-        inline auto get_window_sptr() const -> std::shared_ptr<const arcadia::window_layer>
+        auto get_window_sptr() const -> std::shared_ptr<const Arcadia::WindowLayer>
         {
-            return _window_wptr.lock();
+            return _wpWindow.lock();
         }
 
         [[nodiscard]]
-        inline auto get_imgui_window_uptrs() const -> const std::vector<std::unique_ptr<arcadia::imgui_window_interface>>&
+        auto get_imgui_window_uptrs() const -> const std::vector<std::unique_ptr<Arcadia::iImguiWindow>>&
         {
-            return _imgui_window_uptrs;
+            return _upImguiWindow;
         }
 
-        virtual void on_event(arcadia::event_base& event) override;
-        virtual void on_update() override;
+        virtual void OnEvent(Arcadia::EventBase& event) override;
+        virtual void OnUpdate() override;
 
-        template<arcadia::imgui_window_like ImGuiWindow, class ...Args>
-        auto emplace_imgui_window(Args&& ...args) -> self_type&
+        template<Arcadia::cImguiWindow ImGuiWindow, class ...Args>
+        auto EmplaceImguiWindow(Args&& ...args) -> self_type&
         {
-            _imgui_window_uptrs.emplace_back(std::make_unique<ImGuiWindow>(std::forward<Args>(args)...));
+            _upImguiWindow.emplace_back(std::make_unique<ImGuiWindow>(std::forward<Args>(args)...));
             return *this;
         }
     public:
-        bool show_demo_window{ false };
-        bool show_debug_info{ false };
+        bool ShowDemoWindow{ false };
+        bool ShowDebugInfo{ false };
     private:
-        std::weak_ptr<const arcadia::window_layer> _window_wptr;
-        ImGuiContext* _imgui_context_ptr{ nullptr };
-        std::vector<std::unique_ptr<arcadia::imgui_window_interface>> _imgui_window_uptrs{};
+        std::weak_ptr<const Arcadia::WindowLayer> _wpWindow;
+        ImGuiContext* _pImguiContext{ nullptr };
+        std::vector<std::unique_ptr<Arcadia::iImguiWindow>> _upImguiWindow{};
     };
 }

@@ -6,31 +6,31 @@
 
 #include"core/app/app_config.hpp"
 
-ARCADIA_API void arcadia::imgui_backend::initialize(const arcadia::window_layer& window)
+ARCADIA_API void Arcadia::imgui_backend::Initialize(const Arcadia::WindowLayer& window)
 {
-    const auto& app_config = arcadia::app_config::instance();
+    const auto& app_config = Arcadia::AppConfig::Instance();
 
-    arcadia::match<void>(
-        app_config.graphic_api,
-        [&](const arcadia::graphic_api::opengl& opengl) -> void
+    Arcadia::Match<void>(
+        app_config.GraphicApi,
+        [&](const Arcadia::GraphicApi::Opengl& Opengl) -> void
     {
         std::string glsl_version{};
-        if(opengl.version >= arcadia::version{ 3,3,0 })
+        if(Opengl.version >= Arcadia::Version{ 3,3,0 })
         {
-            glsl_version = std::format("#version {0}{1}0", opengl.version.major, opengl.version.minor);
+            glsl_version = std::format("#version {0}{1}0", Opengl.version.Major, Opengl.version.Minor);
         }
         else
         {
-            if(opengl.version >= arcadia::version{ 3,0,0 })
+            if(Opengl.version >= Arcadia::Version{ 3,0,0 })
             {
-                glsl_version = std::format("#version 1{}0", opengl.version.minor + 3);
+                glsl_version = std::format("#version 1{}0", Opengl.version.Minor + 3);
             }
             else
             {
-                glsl_version = std::format("#version 1{}0", opengl.version.minor + 1);
+                glsl_version = std::format("#version 1{}0", Opengl.version.Minor + 1);
             }
         }
-        ImGui_ImplGlfw_InitForOpenGL(window.get_glfw_window_ptr(), false);
+        ImGui_ImplGlfw_InitForOpenGL(window.GetGlfwWindowPtr(), false);
         ImGui_ImplOpenGL3_Init(glsl_version.c_str());
     },
         [](auto&&) -> void
@@ -39,13 +39,13 @@ ARCADIA_API void arcadia::imgui_backend::initialize(const arcadia::window_layer&
     );
 }
 
-ARCADIA_API void arcadia::imgui_backend::new_frame(const arcadia::window_layer& window)
+ARCADIA_API void Arcadia::imgui_backend::NewFrame(const Arcadia::WindowLayer& window)
 {
-    const auto& app_config = arcadia::app_config::instance();
+    const auto& app_config = Arcadia::AppConfig::Instance();
 
-    arcadia::match<void>(
-        app_config.graphic_api,
-        [](const arcadia::graphic_api::opengl&) -> void
+    Arcadia::Match<void>(
+        app_config.GraphicApi,
+        [](const Arcadia::GraphicApi::Opengl&) -> void
     {
         ImGui_ImplGlfw_NewFrame();
         ImGui_ImplOpenGL3_NewFrame();
@@ -56,13 +56,13 @@ ARCADIA_API void arcadia::imgui_backend::new_frame(const arcadia::window_layer& 
     );
 }
 
-ARCADIA_API void arcadia::imgui_backend::render_draw_data(const arcadia::window_layer& window)
+ARCADIA_API void Arcadia::imgui_backend::RenderDrawData(const Arcadia::WindowLayer& window)
 {
-    const auto& app_config = arcadia::app_config::instance();
+    const auto& app_config = Arcadia::AppConfig::Instance();
 
-    arcadia::match<void>(
-        app_config.graphic_api,
-        [](const arcadia::graphic_api::opengl&) -> void
+    Arcadia::Match<void>(
+        app_config.GraphicApi,
+        [](const Arcadia::GraphicApi::Opengl&) -> void
     {
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
     },
@@ -72,13 +72,13 @@ ARCADIA_API void arcadia::imgui_backend::render_draw_data(const arcadia::window_
     );
 }
 
-ARCADIA_API void arcadia::imgui_backend::shutdown(const arcadia::window_layer& window)
+ARCADIA_API void Arcadia::imgui_backend::Shutdown(const Arcadia::WindowLayer& window)
 {
-    const auto& app_config = arcadia::app_config::instance();
+    const auto& app_config = Arcadia::AppConfig::Instance();
 
-    arcadia::match<void>(
-        app_config.graphic_api,
-        [](const arcadia::graphic_api::opengl&) -> void
+    Arcadia::Match<void>(
+        app_config.GraphicApi,
+        [](const Arcadia::GraphicApi::Opengl&) -> void
     {
         ImGui_ImplOpenGL3_Shutdown();
         ImGui_ImplGlfw_Shutdown();
@@ -89,77 +89,77 @@ ARCADIA_API void arcadia::imgui_backend::shutdown(const arcadia::window_layer& w
     );
 }
 
-ARCADIA_API void arcadia::imgui_backend::imgui_on_event(arcadia::event_base& event)
+ARCADIA_API void Arcadia::imgui_backend::ImguiOnEvent(Arcadia::EventBase& event)
 {
 
     if(
-        arcadia::event_dispatcher{ event }
-        .dispatch<arcadia::event::window_focus>(arcadia::imgui_backend::imgui_on_window_focus)
-        .dispatch<arcadia::event::input_cursor_enter>(arcadia::imgui_backend::imgui_on_cursor_enter)
-        .dispatch<arcadia::event::input_cursor_pos>(arcadia::imgui_backend::imgui_on_cursor_pos)
-        .dispatch<arcadia::event::input_mouse_button>(arcadia::imgui_backend::imgui_on_mouse_button)
-        .dispatch<arcadia::event::input_scroll>(arcadia::imgui_backend::imgui_on_scroll)
-        .dispatch<arcadia::event::input_key>(arcadia::imgui_backend::imgui_on_key)
-        .dispatch<arcadia::event::input_char>(arcadia::imgui_backend::imgui_on_char)
-        //.dispatch<arcadia::event::monitor_connection>(arcadia::imgui_backend::imgui_on_monitor); // We will manage monitors ourselves for now
-        .result()
+        Arcadia::EventDispatcher{ event }
+        .Dispatch<Arcadia::Event::WindowFocus>(Arcadia::imgui_backend::ImguiOnWindowFocus)
+        .Dispatch<Arcadia::Event::InputCursorEnter>(Arcadia::imgui_backend::ImguiOnCursorEnter)
+        .Dispatch<Arcadia::Event::InputCursorPos>(Arcadia::imgui_backend::ImguiOnCursorPos)
+        .Dispatch<Arcadia::Event::InputMouseButton>(Arcadia::imgui_backend::ImguiOnMouseButton)
+        .Dispatch<Arcadia::Event::InputScroll>(Arcadia::imgui_backend::ImguiOnScroll)
+        .Dispatch<Arcadia::Event::InputKey>(Arcadia::imgui_backend::ImguiOnKey)
+        .Dispatch<Arcadia::Event::InputChar>(Arcadia::imgui_backend::ImguiOnChar)
+        //.dispatch<Arcadia::event::monitor_connection>(Arcadia::imgui_backend::imgui_on_monitor); // We will manage monitors ourselves for now
+        .Result()
         )
     {
         auto& io = ImGui::GetIO();
         if(io.WantCaptureMouse || io.WantCaptureKeyboard)
         {
-            event.handled = true;
+            event.Handled = true;
         }
         else
         {
-            event.handled = false;
+            event.Handled = false;
         }
     }
 }
 
-ARCADIA_API void arcadia::imgui_backend::imgui_on_window_focus(arcadia::event::window_focus& window_focus)
+ARCADIA_API void Arcadia::imgui_backend::ImguiOnWindowFocus(Arcadia::Event::WindowFocus& WindowFocus)
 {
-    const auto& [wnd_ptr, focused] = window_focus.data_tuple;
-    ImGui_ImplGlfw_WindowFocusCallback(wnd_ptr->get_glfw_window_ptr(), focused);
+    const auto& [wnd_ptr, focused] = WindowFocus.data_tuple;
+    ImGui_ImplGlfw_WindowFocusCallback(wnd_ptr->GetGlfwWindowPtr(), focused);
 }
 
-ARCADIA_API void arcadia::imgui_backend::imgui_on_cursor_enter(arcadia::event::input_cursor_enter& input_cursor_enter)
+ARCADIA_API void Arcadia::imgui_backend::ImguiOnCursorEnter(Arcadia::Event::InputCursorEnter& input_cursor_enter)
 {
     const auto& [wnd_ptr, entered] = input_cursor_enter.data_tuple;
-    ImGui_ImplGlfw_CursorEnterCallback(wnd_ptr->get_glfw_window_ptr(), entered);
+    ImGui_ImplGlfw_CursorEnterCallback(wnd_ptr->GetGlfwWindowPtr(), entered);
 }
 
-ARCADIA_API void arcadia::imgui_backend::imgui_on_cursor_pos(arcadia::event::input_cursor_pos& input_cursor_pos)
+ARCADIA_API void Arcadia::imgui_backend::ImguiOnCursorPos(Arcadia::Event::InputCursorPos& input_cursor_pos)
 {
     const auto& [wnd_ptr, pos] = input_cursor_pos.data_tuple;
-    ImGui_ImplGlfw_CursorPosCallback(wnd_ptr->get_glfw_window_ptr(), pos.x, pos.y);
+    ImGui_ImplGlfw_CursorPosCallback(wnd_ptr->GetGlfwWindowPtr(), pos.x, pos.y);
 }
 
-ARCADIA_API void arcadia::imgui_backend::imgui_on_mouse_button(arcadia::event::input_mouse_button& input_mouse_button)
+ARCADIA_API void Arcadia::imgui_backend::ImguiOnMouseButton(Arcadia::Event::InputMouseButton& input_mouse_button)
 {
     const auto& [wnd_ptr, button, action, mods] = input_mouse_button.data_tuple;
-    ImGui_ImplGlfw_MouseButtonCallback(wnd_ptr->get_glfw_window_ptr(), button, action, mods);
+    ImGui_ImplGlfw_MouseButtonCallback(wnd_ptr->GetGlfwWindowPtr(), button, action, mods);
 }
 
-ARCADIA_API void arcadia::imgui_backend::imgui_on_scroll(arcadia::event::input_scroll& input_scroll)
+ARCADIA_API void Arcadia::imgui_backend::ImguiOnScroll(Arcadia::Event::InputScroll& input_scroll)
 {
-    const auto& [wnd_ptr, offset] = input_scroll.data_tuple;
-    ImGui_ImplGlfw_ScrollCallback(wnd_ptr->get_glfw_window_ptr(), offset.x, offset.y);
+    const auto& [wnd_ptr, Offset] = input_scroll.data_tuple;
+    ImGui_ImplGlfw_ScrollCallback(wnd_ptr->GetGlfwWindowPtr(), Offset.x, Offset.y);
 }
 
-ARCADIA_API void arcadia::imgui_backend::imgui_on_key(arcadia::event::input_key& input_key)
+ARCADIA_API void Arcadia::imgui_backend::ImguiOnKey(Arcadia::Event::InputKey& input_key)
 {
     const auto& [wnd_ptr, key, scancode, action, mods] = input_key.data_tuple;
-    ImGui_ImplGlfw_KeyCallback(wnd_ptr->get_glfw_window_ptr(), key, scancode, action, mods);
+    ImGui_ImplGlfw_KeyCallback(wnd_ptr->GetGlfwWindowPtr(), key, scancode, action, mods);
 }
 
-ARCADIA_API void arcadia::imgui_backend::imgui_on_char(arcadia::event::input_char& input_char)
+ARCADIA_API void Arcadia::imgui_backend::ImguiOnChar(Arcadia::Event::InputChar& input_char)
 {
     const auto& [wnd_ptr, code] = input_char.data_tuple;
-    ImGui_ImplGlfw_CharCallback(wnd_ptr->get_glfw_window_ptr(), code);
+    ImGui_ImplGlfw_CharCallback(wnd_ptr->GetGlfwWindowPtr(), code);
 }
 
-ARCADIA_API void arcadia::imgui_backend::imgui_on_monitor(arcadia::event::monitor_connection& monitor_connection)
+ARCADIA_API void Arcadia::imgui_backend::ImguiOnMonitor(Arcadia::Event::MonitorConnection& monitor_connection)
 {
     const auto& [glfw_monitor_ptr, connection] = monitor_connection.data_tuple;
     ImGui_ImplGlfw_MonitorCallback(glfw_monitor_ptr, connection);

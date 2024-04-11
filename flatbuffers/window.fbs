@@ -1,18 +1,18 @@
 include"math.fbs";
 
-namespace arcadia.serialization;
+namespace Arcadia.Serialization;
 
-table window{
-    title:string;
-    size:uvec2;
-    pos:uvec2;
-    swap_interval:int;
-    visible:bool;
-    cursor_mode:int;
-    sticky_keys:bool;
-    sticky_mouse_buttons:bool;
-    lock_key_mode:bool;
-    raw_mouse_motion:bool;
+table Window{
+    Title:string;
+    Size:uvec2;
+    Pos:uvec2;
+    SwapInterval:int;
+    Visible:bool;
+    CursorMode:int;
+    StickyKeys:bool;
+    StickyMouseButtons:bool;
+    LockKeyMode:bool;
+    RawMouseMotion:bool;
 }
 
-root_type window;
+root_type Window;

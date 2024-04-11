@@ -6,61 +6,61 @@
 #include"core/base.hpp"
 #include"core/event/event.hpp"
 
-#define ARCADIA_IMGUI_WINDOW_ID_STR_GETTERS(IdStr) \
+#define ARCADIA_IMGUI_WINDOW_ID_STR_GETTERS(id_str) \
 [[nodiscard]]\
-static constexpr auto get_id_str_static() -> std::string\
+static constexpr auto GetIdStrStatic() -> std::string\
 {\
-    return IdStr;\
+    return id_str;\
 }\
 [[nodiscard]]\
-virtual inline auto get_id_str() const -> std::string override\
+virtual auto GetIdStr() const -> std::string override\
 {\
-    return get_id_str_static();\
+    return GetIdStrStatic();\
 }
 
-namespace arcadia
+namespace Arcadia
 {
-    struct ARCADIA_API imgui_window_interface
+    struct ARCADIA_API iImguiWindow
     {
     public:
-        using self_type = imgui_window_interface;
+        using self_type = iImguiWindow;
     public:
-        inline imgui_window_interface(
+        iImguiWindow(
             bool open = false,
             const std::string& title={}
         ):
-            _open(open),
-            _title(title)
+            _Open(open),
+            _Title(title)
         {}
-        virtual ~imgui_window_interface() = default;
+        virtual ~iImguiWindow() = default;
 
         [[nodiscard]]
-        auto is_open() const -> bool
+        auto IsOpen() const -> bool
         {
-            return _open;
+            return _Open;
         }
 
         [[nodiscard]]
-        auto get_title() const -> const std::string&
+        auto GetTitle() const -> const std::string&
         {
-            return _title;
+            return _Title;
         }
 
-        virtual void on_event(arcadia::event_base& event)
+        virtual void OnEvent(Arcadia::EventBase& event)
         {}
-        virtual void on_update() = 0;
-        virtual auto get_id_str() const->std::string = 0;
+        virtual void OnUpdate() = 0;
+        virtual auto GetIdStr() const->std::string = 0;
 
     protected:
-        bool _open;
-        std::string _title{};
+        bool _Open;
+        std::string _Title{};
     };
 
     template<class ImGuiWindow>
-    concept imgui_window_like = requires{
-        std::derived_from<ImGuiWindow, arcadia::imgui_window_interface>;
+    concept cImguiWindow = requires{
+        std::derived_from<ImGuiWindow, Arcadia::iImguiWindow>;
         {
-            ImGuiWindow::get_id_str_static()
+            ImGuiWindow::GetIdStrStatic()
         } -> std::same_as<std::string>;
     };
 

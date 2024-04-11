@@ -12,69 +12,69 @@
 #include"project/project_events.hpp"
 #include"ui/ui_events.hpp"
 
-namespace arcadia
+namespace Arcadia
 {
-    struct ARCADIA_API imgui_window_state_scene
+    struct ARCADIA_API ImguiWindowStateScene
     {
     public:
-        using self_type = imgui_window_state_scene;
+        using self_type = ImguiWindowStateScene;
     public:
-        void operator()(const std::shared_ptr<arcadia::scene>& scene_sptr);
+        void operator()(const std::shared_ptr<Arcadia::Scene>& sp_scene);
     };
 
-    struct ARCADIA_API imgui_window_state_renderer
+    struct ARCADIA_API ImguiWindowStateRenderer
     {
     public:
-        using self_type = imgui_window_state_renderer;
+        using self_type = ImguiWindowStateRenderer;
     public:
-        void operator()(const std::shared_ptr<arcadia::renderer_interface>& renderer_sptr);
+        void operator()(const std::shared_ptr<Arcadia::iRenderer>& sp_renderer);
     };
 
-    struct ARCADIA_API imgui_window_state_physics_simulator
+    struct ARCADIA_API ImguiWindowStatePhysicsSimulator
     {
     public:
-        using self_type = imgui_window_state_physics_simulator;
+        using self_type = ImguiWindowStatePhysicsSimulator;
     public:
-        void operator()(const std::shared_ptr<arcadia::physics_simulator>& physics_simulator_sptr);
+        void operator()(const std::shared_ptr<Arcadia::PhysicsSimulator>& sp_physics_simulator);
     private:
-        bool _enable_modifying_temp_allocator_size{ false };
-        bool _link_ups_and_spu{ true };
+        bool _EnableModifyingTempAllocatorSize{ false };
+        bool _LinkUpsAndSpu{ true };
     };
 
-    struct ARCADIA_API imgui_window_state:arcadia::imgui_window_interface
+    struct ARCADIA_API ImguiWindowState: Arcadia::iImguiWindow
     {
     public:
-        using self_type = imgui_window_state;
+        using self_type = ImguiWindowState;
     public:
         ARCADIA_IMGUI_WINDOW_ID_STR_GETTERS("###state");
 
-        inline imgui_window_state(
+        inline ImguiWindowState(
             bool open,
             const std::string& title
         ):
-            imgui_window_interface(open, title)
+            Arcadia::iImguiWindow(open, title)
         {}
-        virtual ~imgui_window_state() = default;
+        virtual ~ImguiWindowState() = default;
 
-        virtual void on_event(arcadia::event_base& event) override;
-        virtual void on_update() override;
-
-    private:
-        void _on_open_imgui_window(arcadia::event::open_imgui_window& e);
-        void _on_scene_activated(arcadia::event::scene_activated& e);
-        void _on_scene_deactivated(arcadia::event::scene_deactivated& e);
-        void _on_renderer_built(arcadia::event::renderer_built& e);
-        void _on_renderer_unbuilt(arcadia::event::renderer_unbuilt& e);
-        void _on_physics_simulator_built(arcadia::event::physics_simulator_built& e);
-        void _on_physics_simulator_unbuilt(arcadia::event::physics_simulator_unbuilt& e);
+        virtual void OnEvent(Arcadia::EventBase& event) override;
+        virtual void OnUpdate() override;
 
     private:
-        std::weak_ptr<arcadia::scene> _scene_wptr{};
-        std::weak_ptr<arcadia::renderer_interface> _renderer_wptr{};
-        std::weak_ptr<arcadia::physics_simulator> _physics_simulator_wptr{};
+        void _OnOpenImguiWindow(Arcadia::Event::OpenImguiWindow& e);
+        void _OnSceneActivated(Arcadia::Event::SceneActivated& e);
+        void _OnSceneDeactivated(Arcadia::Event::SceneDeactivated& e);
+        void _OnRendererBuilt(Arcadia::Event::RendererBuilt& e);
+        void _OnRendererUnbuilt(Arcadia::Event::RendererUnbuilt& e);
+        void _OnPhysicsSimualtorBuilt(Arcadia::Event::PhysicsSimulatorBuilt& e);
+        void _OnPhysicsSimulatorUnbuilt(Arcadia::Event::PhysicsSimulatorUnbuilt& e);
 
-        arcadia::imgui_window_state_scene _imgui_window_state_scene{};
-        arcadia::imgui_window_state_renderer _imgui_window_state_renderer{};
-        arcadia::imgui_window_state_physics_simulator _imgui_window_state_physics_simulator{};
+    private:
+        std::weak_ptr<Arcadia::Scene> _wpScene{};
+        std::weak_ptr<Arcadia::iRenderer> _wpRenderer{};
+        std::weak_ptr<Arcadia::PhysicsSimulator> _wpPhysicsSimulator{};
+
+        Arcadia::ImguiWindowStateScene _ImguiWindowStateScene{};
+        Arcadia::ImguiWindowStateRenderer _ImguiWindowStateRenderer{};
+        Arcadia::ImguiWindowStatePhysicsSimulator _ImguiWindowStatePhysicsSimulator{};
     };
 }

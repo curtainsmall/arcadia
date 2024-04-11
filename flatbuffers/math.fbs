@@ -1,4 +1,4 @@
-namespace arcadia.serialization;
+namespace Arcadia.Serialization;
 
 struct vec2{
     x:float;

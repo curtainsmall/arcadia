@@ -5,39 +5,39 @@
 #include"platform/opengl/opengl_header.hpp"
 #include"resource/component/model_component/material/texture2d.hpp"
 
-namespace arcadia
+namespace Arcadia
 {
-    struct ARCADIA_API gl_texture2d: arcadia::noncopyable
+    struct ARCADIA_API GlTexture2d: Arcadia::Noncopyable
     {
     public:
-        using self_type = gl_texture2d;
+        using self_type = GlTexture2d;
     public:
-        gl_texture2d(
+        GlTexture2d(
             const glm::ivec2& size,
             void* ptr = nullptr
         );
-        gl_texture2d(
-            const arcadia::texture2d& texture2d
+        GlTexture2d(
+            const Arcadia::Texture2d& texture2d
         );
-        ~gl_texture2d();
+        ~GlTexture2d();
 
-        gl_texture2d(self_type&& rhs) noexcept;
+        GlTexture2d(self_type&& rhs) noexcept;
         auto operator=(self_type&& rhs) noexcept -> self_type&;
 
         [[nodiscard]]
-        inline auto get_gl_id() const -> GLuint
+        auto GetGlId() const -> GLuint
         {
-            return _gl_id;
+            return _GlId;
         }
 
-        void bind(GLenum slot = 0);
-        void unbind();
+        void Bind(GLenum slot = 0);
+        void Unbind();
 
-        void set_tex_parameter(GLenum pname, GLint param) const;
-        void set_tex_parameter(GLenum pname, GLfloat param) const;
+        void SetTexParameter(GLenum pname, GLint param) const;
+        void SetTexParameter(GLenum pname, GLfloat param) const;
     private:
-        GLuint _gl_id{ 0 };
-        GLenum _slot{ -1u };
+        GLuint _GlId{ 0 };
+        GLenum _Slot{ -1u };
 
     };
 }

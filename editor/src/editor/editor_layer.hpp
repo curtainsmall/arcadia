@@ -10,27 +10,27 @@
 #include"project/project_events.hpp"
 #include"project/project_layer.hpp"
 
-namespace arcadia
+namespace Arcadia
 {
-    struct ARCADIA_API editor_app_layer: arcadia::app_layer
+    struct ARCADIA_API EditorAppLayer: Arcadia::iAppLayer
     {
     public:
-        editor_app_layer();
-        virtual ~editor_app_layer() = default;
+        EditorAppLayer();
+        virtual ~EditorAppLayer() = default;
 
-        virtual void on_event(arcadia::event_base& event) override;
-        virtual void on_update() override;
+        virtual void OnEvent(Arcadia::EventBase& event) override;
+        virtual void OnUpdate() override;
     private:
-        void _imgui_window_installer(arcadia::imgui_layer& imgui_layer);
-        void _stop();
+        void _ImguiWindowInstaller(Arcadia::ImguiLayer& imgui_layer);
+        void _Stop();
 
-        void _on_window_should_close(arcadia::event::window_should_close& e);
-        void _on_project_unbuilt(arcadia::event::project_unbuilt& e);
-        void _on_window_close_canceled(arcadia::event::window_close_canceled& e);
+        void _OnWindowShouldClose(Arcadia::Event::WindowShouldClose& e);
+        void _OnProjectUnbuilt(Arcadia::Event::ProjectUnbuilt& e);
+        void _OnWindowCloseCanceled(Arcadia::Event::WindowCloseCanceled& e);
 
     private:
-        bool _waiting_for_project_unbuilt_before_closing{ false };
+        bool _WaitingForProjectUnbuiltBeforeClosing{ false };
     };
 
-    ARCADIA_API auto create_application_uptr() -> std::unique_ptr<arcadia::app_layer>;
+    ARCADIA_API auto CreateApplicationUptr() -> std::unique_ptr<Arcadia::iAppLayer>;
 }

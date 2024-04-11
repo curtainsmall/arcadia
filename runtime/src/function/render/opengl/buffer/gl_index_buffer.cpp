@@ -1,51 +1,51 @@
 #include "pch.hpp"
 #include "gl_index_buffer.hpp"
 
-arcadia::gl_index_buffer::gl_index_buffer(const std::vector<arcadia::mesh::index_type>& indices):
-    _index_count(indices.size())
+Arcadia::GlIndexBuffer::GlIndexBuffer(const std::vector<Arcadia::Mesh::index_type>& indices):
+    _IndexCount(indices.size())
 {
-    ARCADIA_GL_CALL(glGenBuffers(1, &_gl_id));
-    bind();
-    ARCADIA_GL_CALL(glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(arcadia::mesh::index_type), indices.data(), GL_STATIC_DRAW));
-    unbind();
+    ARCADIA_GL_CALL(glGenBuffers(1, &_GlId));
+    Bind();
+    ARCADIA_GL_CALL(glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(Arcadia::Mesh::index_type), indices.data(), GL_STATIC_DRAW));
+    Unbind();
 }
 
-arcadia::gl_index_buffer::~gl_index_buffer()
+Arcadia::GlIndexBuffer::~GlIndexBuffer()
 {
-    ARCADIA_GL_CALL(glDeleteBuffers(1, &_gl_id));
+    ARCADIA_GL_CALL(glDeleteBuffers(1, &_GlId));
 }
 
-arcadia::gl_index_buffer::gl_index_buffer(self_type&& rhs) noexcept
+Arcadia::GlIndexBuffer::GlIndexBuffer(self_type&& rhs) noexcept
 {
-    _gl_id = rhs._gl_id;
-    rhs._gl_id = 0;
+    _GlId = rhs._GlId;
+    rhs._GlId = 0;
 
-    _index_count = rhs._index_count;
-    rhs._index_count = 0;
+    _IndexCount = rhs._IndexCount;
+    rhs._IndexCount = 0;
 }
 
-auto arcadia::gl_index_buffer::operator=(self_type&& rhs) noexcept -> self_type&
+auto Arcadia::GlIndexBuffer::operator=(self_type&& rhs) noexcept -> self_type&
 {
-    _gl_id = rhs._gl_id;
-    rhs._gl_id = 0;
+    _GlId = rhs._GlId;
+    rhs._GlId = 0;
 
-    _index_count = rhs._index_count;
-    rhs._index_count = 0;
+    _IndexCount = rhs._IndexCount;
+    rhs._IndexCount = 0;
 
     return *this;
 }
 
-void arcadia::gl_index_buffer::bind() const
+void Arcadia::GlIndexBuffer::Bind() const
 {
-    if(_gl_id == 0)
+    if(_GlId == 0)
     {
-        throw arcadia::gl_invalid{ "Cannot bind null OpenGL index buffer" };
+        throw Arcadia::GlInvalid{ "Cannot bind null OpenGL index buffer" };
     }
 
-    ARCADIA_GL_CALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _gl_id));
+    ARCADIA_GL_CALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _GlId));
 }
 
-void arcadia::gl_index_buffer::unbind() const
+void Arcadia::GlIndexBuffer::Unbind() const
 {
     ARCADIA_GL_CALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
 }

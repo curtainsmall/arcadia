@@ -11,80 +11,80 @@
 #include"project/project_events.hpp"
 #include"ui/ui_events.hpp"
 
-namespace arcadia
+namespace Arcadia
 {
-    struct ARCADIA_API imgui_window_outliner: arcadia::imgui_window_interface
+    struct ARCADIA_API ImguiWindowOutliner: Arcadia::iImguiWindow
     {
     public:
-        using self_type = imgui_window_outliner;
+        using self_type = ImguiWindowOutliner;
     public:
         ARCADIA_IMGUI_WINDOW_ID_STR_GETTERS("###outliner");
 
-        inline imgui_window_outliner(
+        inline ImguiWindowOutliner(
             bool open,
             const std::string& title
         ):
-            imgui_window_interface(open, title)
+            Arcadia::iImguiWindow(open, title)
         {}
-        virtual ~imgui_window_outliner() = default;
+        virtual ~ImguiWindowOutliner() = default;
 
-        virtual void on_event(arcadia::event_base& event);
-        virtual void on_update();
-
-    private:
-        template<arcadia::component_like Component>
-        void _add_component_menu_item(int& item_count);
-        template<arcadia::component_like Component>
-        void _remove_component_menu_item(int& item_count);
-
-        void _on_open_imgui_window(arcadia::event::open_imgui_window& e);
-        void _on_scene_activated(arcadia::event::scene_activated& e);
-        void _on_scene_deactivated(arcadia::event::scene_deactivated& e);
+        virtual void OnEvent(Arcadia::EventBase& event);
+        virtual void OnUpdate();
 
     private:
-        std::weak_ptr<arcadia::scene> _scene_wptr{};
+        template<Arcadia::cComponent Component>
+        void _AddComponentMenuItem(int& item_count);
+        template<Arcadia::cComponent Component>
+        void _RemoveComponentMenuItem(int& item_count);
 
-        entt::entity _selected_entity{ entt::null };
+        void _OnOpenImguiWindow(Arcadia::Event::OpenImguiWindow& e);
+        void _OnSceneActivated(Arcadia::Event::SceneActivated& e);
+        void _OnSceneDeactivated(Arcadia::Event::SceneDeactivated& e);
 
-        std::string _entity_old_name{};
-        std::string _entity_new_name{};
+    private:
+        std::weak_ptr<Arcadia::Scene> _wpScene{};
+
+        entt::entity _SelectedEntity{ entt::null };
+
+        std::string _EntityOldName{};
+        std::string _EntityNewName{};
 
     };
 
-    template<arcadia::component_like Component>
-    inline void imgui_window_outliner::_add_component_menu_item(int& item_count)
+    template<Arcadia::cComponent Component>
+    inline void ImguiWindowOutliner::_AddComponentMenuItem(int& item_count)
     {
-        std::shared_ptr<const arcadia::scene> scene_sptr = _scene_wptr.lock();
+        std::shared_ptr<const Arcadia::Scene> scene_sptr = _wpScene.lock();
 
-        std::string type_str = Component::get_type_str_static();
-        bool existed = scene_sptr->all_of<Component>(_selected_entity);
+        std::string type_str = Component::GetTypeStrStatic();
+        bool existed = scene_sptr->AllOf<Component>(_SelectedEntity);
 
         if(!existed)
         {
             ++item_count;
             if(ImGui::MenuItem(type_str.c_str()))
             {
-                arcadia::event_queue::instance()
-                    .signal<arcadia::event::add_component>(_selected_entity, type_str);
+                Arcadia::EventQueue::Instance()
+                    .Signal<Arcadia::Event::AddComponent>(_SelectedEntity, type_str);
             }
         }
     }
 
-    template<arcadia::component_like Component>
-    inline void imgui_window_outliner::_remove_component_menu_item(int& item_count)
+    template<Arcadia::cComponent Component>
+    inline void ImguiWindowOutliner::_RemoveComponentMenuItem(int& item_count)
     {
-        std::shared_ptr<const arcadia::scene> scene_sptr = _scene_wptr.lock();
+        std::shared_ptr<const Arcadia::Scene> scene_sptr = _wpScene.lock();
 
-        std::string type_str = Component::get_type_str_static();
-        bool existed = scene_sptr->all_of<Component>(_selected_entity);
+        std::string type_str = Component::GetTypeStrStatic();
+        bool existed = scene_sptr->AllOf<Component>(_SelectedEntity);
 
         if(existed)
         {
             ++item_count;
             if(existed && ImGui::MenuItem(type_str.c_str()))
             {
-                arcadia::event_queue::instance()
-                    .signal<arcadia::event::remove_component>(_selected_entity, type_str);
+                Arcadia::EventQueue::Instance()
+                    .Signal<Arcadia::Event::RemoveComponent>(_SelectedEntity, type_str);
             }
         }
     }

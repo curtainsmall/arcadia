@@ -5,18 +5,18 @@
 #include"function/ui/imgui_backend.hpp"
 #include"resource/fonts/icon_header.hpp"
 
-arcadia::imgui_layer::imgui_layer(
-    const std::shared_ptr<const arcadia::window_layer>& window_layer_sptr,
-    const std::function<void(arcadia::imgui_layer&)>& imgui_window_installer,
+Arcadia::ImguiLayer::ImguiLayer(
+    const std::shared_ptr<const Arcadia::WindowLayer>& window_layer_sptr,
+    const std::function<void(Arcadia::ImguiLayer&)>& imgui_window_installer,
     const std::function<void()>& imgui_style_setter
 ):
-    arcadia::layer_interface("imgui"),
-    _window_wptr(window_layer_sptr)
+    Arcadia::iLayer("imgui"),
+    _wpWindow(window_layer_sptr)
 {
-    _imgui_context_ptr = ImGui::CreateContext();
-    ImGui::SetCurrentContext(_imgui_context_ptr);
+    _pImguiContext = ImGui::CreateContext();
+    ImGui::SetCurrentContext(_pImguiContext);
 
-    auto& io = _imgui_context_ptr->IO;
+    auto& io = _pImguiContext->IO;
     io.ConfigWindowsMoveFromTitleBarOnly = true;
     io.ConfigFlags =
         ImGuiConfigFlags_DockingEnable
@@ -26,64 +26,64 @@ arcadia::imgui_layer::imgui_layer(
     ImFontConfig imgui_font_config{};
     imgui_font_config.MergeMode = true;
     static const ImWchar imgui_icon_ranges[] ={ ICON_MIN_FA, ICON_MAX_FA,0 };
-    io.Fonts->AddFontFromFileTTF(arcadia::font_filepath_str.c_str(), arcadia::font_size, &imgui_font_config, imgui_icon_ranges);
-    arcadia::imgui_backend::initialize(*_window_wptr.lock());
+    io.Fonts->AddFontFromFileTTF(Arcadia::FontFilepathStr.c_str(), Arcadia::FontSize, &imgui_font_config, imgui_icon_ranges);
+    Arcadia::imgui_backend::Initialize(*_wpWindow.lock());
 
     imgui_style_setter();
 
     imgui_window_installer(*this);
 }
 
-arcadia::imgui_layer::~imgui_layer()
+Arcadia::ImguiLayer::~ImguiLayer()
 {
-    if(_imgui_context_ptr)
+    if(_pImguiContext)
     {
-        arcadia::imgui_backend::shutdown(*_window_wptr.lock());
-        ImGui::DestroyContext(_imgui_context_ptr);
+        Arcadia::imgui_backend::Shutdown(*_wpWindow.lock());
+        ImGui::DestroyContext(_pImguiContext);
     }
 }
 
-void arcadia::imgui_layer::on_event(arcadia::event_base& event)
+void Arcadia::ImguiLayer::OnEvent(Arcadia::EventBase& event)
 {
-    arcadia::imgui_backend::imgui_on_event(event);
-    for(auto& imgui_window_uptr : _imgui_window_uptrs)
+    Arcadia::imgui_backend::ImguiOnEvent(event);
+    for(auto& imgui_window_uptr : _upImguiWindow)
     {
-        imgui_window_uptr->on_event(event);
+        imgui_window_uptr->OnEvent(event);
     }
 }
 
-void arcadia::imgui_layer::on_update()
+void Arcadia::ImguiLayer::OnUpdate()
 {
-    auto window_sptr = _window_wptr.lock();
+    auto window_sptr = _wpWindow.lock();
 
-    ImGui::SetCurrentContext(_imgui_context_ptr);
+    ImGui::SetCurrentContext(_pImguiContext);
 
-    arcadia::imgui_backend::new_frame(*window_sptr);
+    Arcadia::imgui_backend::NewFrame(*window_sptr);
     ImGui::NewFrame();
 
     ImGui::DockSpaceOverViewport();
 
-    if(show_debug_info)
+    if(ShowDebugInfo)
     {
         ImGui::ShowStackToolWindow();
         ImGui::ShowMetricsWindow();
     }
 
-    if(show_demo_window)
+    if(ShowDemoWindow)
     {
         ImGui::ShowDemoWindow();
     }
     else
     {
 
-        for(auto& imgui_window_uptr : _imgui_window_uptrs)
+        for(auto& imgui_window_uptr : _upImguiWindow)
         {
-            imgui_window_uptr->on_update();
+            imgui_window_uptr->OnUpdate();
         }
     }
 
     ImGui::Render();
-    arcadia::imgui_backend::render_draw_data(*window_sptr);
+    Arcadia::imgui_backend::RenderDrawData(*window_sptr);
 
     if(ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
     {

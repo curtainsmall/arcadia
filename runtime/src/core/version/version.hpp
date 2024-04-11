@@ -2,53 +2,46 @@
 
 #include <string>
 
-#include"flatbuffers_generated/meta_generated.h"
-
 #include"core/base.hpp"
 #include"core/nlohmann_json_header.hpp"
 
-namespace arcadia
+namespace Arcadia
 {
-    struct ARCADIA_API version
+    struct ARCADIA_API Version
     {
     public:
         using num_type = int;
-
-        using self_type = arcadia::version;
-        using serialization_type = arcadia::serialization::version;
+        using self_type = Version;
     public:
-        static auto to_flatbuffers(const self_type& version) -> serialization_type;
-        static auto from_flatbuffers(const serialization_type& flat_version) -> self_type;
-
-        version() = default;
-        inline version(num_type major, num_type minor, num_type patch):
-            major(major),
-            minor(minor),
-            patch(patch)
+        Version() = default;
+        Version(num_type major, num_type minor, num_type patch):
+            Major(major),
+            Minor(minor),
+            Patch(patch)
         {}
-        version(const nlohmann::json& json);
-        auto to_json() const->nlohmann::json;
+        Version(const nlohmann::json& json);
+        auto ToJson() const->nlohmann::json;
 
         auto operator<=>(const self_type& rhs) const = default;
 
         operator std::string() const;
 
     public:
-        num_type major{ 0 };
-        num_type minor{ 0 };
-        num_type patch{ 0 };
+        num_type Major{ 0 };
+        num_type Minor{ 0 };
+        num_type Patch{ 0 };
     };
 }
 
 namespace std
 {
     template<>
-    struct std::formatter<arcadia::version>: std::formatter<std::string>
+    struct std::formatter<Arcadia::Version>: std::formatter<std::string>
     {
-        auto format(const arcadia::version& version, std::format_context& ctx) const
+        auto format(const Arcadia::Version& version, std::format_context& ctx) const
         {
             return std::formatter<std::string>::format(
-                std::format("{}.{}.{}", version.major, version.minor, version.patch),
+                std::format("{}.{}.{}", version.Major, version.Minor, version.Patch),
                 ctx
             );
         }

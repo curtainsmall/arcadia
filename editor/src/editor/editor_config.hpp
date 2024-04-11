@@ -2,14 +2,14 @@
 
 #include"core/base.hpp"
 
-namespace arcadia
+namespace Arcadia
 {
-    struct ARCADIA_API editor_config
+    struct ARCADIA_API EditorConfig
     {
     public:
-        using self_type = editor_config;
+        using self_type = EditorConfig;
     public:
-        static auto instance() -> self_type&;
+        static auto Instance() -> self_type&;
     public:
     };
 }

@@ -5,51 +5,51 @@
 
 struct GLFWmonitor;
 
-namespace arcadia
+namespace Arcadia
 {
-    struct window_layer;
+    struct WindowLayer;
 
-    enum struct window_size_state: int8_t
+    enum struct WindowSizeState: std::int8_t
     {
-        minimized = -1,
-        restored = 0,
-        maxmized = 1,
+        Minimized = -1,
+        Restored = 0,
+        Maxmized = 1,
     };
 
-    namespace event
+    namespace Event
     {
         ARCADIA_EVENT(
-            window_should_close,
-            arcadia::window_layer* // Window to close
+            WindowShouldClose,
+            Arcadia::WindowLayer* // Window to close
         );
         ARCADIA_EVENT(
-            window_close_canceled,
-            arcadia::window_layer* // Window to cancel close
+            WindowCloseCanceled,
+            Arcadia::WindowLayer* // Window to cancel close
         );
 
         ARCADIA_EVENT(
-            window_size,
-            arcadia::window_layer*,
+            WindowSize,
+            Arcadia::WindowLayer*,
             glm::ivec2 // New size
         );
         ARCADIA_EVENT(
-            window_pos,
-            arcadia::window_layer*,
+            WindowPos,
+            Arcadia::WindowLayer*,
             glm::ivec2 // New position
         );
         ARCADIA_EVENT(
-            window_size_state,
-            arcadia::window_layer*,
-            arcadia::window_size_state // New state
+            WindowSizeState,
+            Arcadia::WindowLayer*,
+            Arcadia::WindowSizeState // New state
         );
         ARCADIA_EVENT(
-            window_focus,
-            arcadia::window_layer*,
+            WindowFocus,
+            Arcadia::WindowLayer*,
             bool
         );
 
         ARCADIA_EVENT(
-            monitor_connection,
+            MonitorConnection,
             GLFWmonitor*, // TODO: Use custom monitor type
             bool // Whether the monitor is connected or not
         );

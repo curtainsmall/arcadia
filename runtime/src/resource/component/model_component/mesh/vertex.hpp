@@ -3,15 +3,15 @@
 #include"core/base.hpp"
 #include"core/math.hpp"
 
-namespace arcadia
+namespace Arcadia
 {
-    struct ARCADIA_API vertex
+    struct ARCADIA_API Vertex
     {
     public:
-        using self_type = vertex;
+        using self_type = Vertex;
     public:
-        glm::vec3 coord{ arcadia::vec3::zero() };
-        glm::vec3 normal{ arcadia::vec3::zero() };
-        glm::vec2 tex_coord{ arcadia::vec2::zero() };
+        glm::vec3 Coord{ Arcadia::Vec3::Zero() };
+        glm::vec3 Normal{ Arcadia::Vec3::Zero() };
+        glm::vec2 TexCoord{ Arcadia::Vec2::Zero() };
     };
 }

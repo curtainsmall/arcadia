@@ -5,14 +5,14 @@
 #include"core/base.hpp"
 #include"platform/opengl/opengl_header.hpp"
 
-namespace arcadia
+namespace Arcadia
 {
-    struct ARCADIA_API gl_shader: arcadia::noncopyable
+    struct ARCADIA_API GlShader: Arcadia::Noncopyable
     {
     public:
-        ARCADIA_EXCEPTION(compile_fail);
+        ARCADIA_EXCEPTION(CompileFail);
 
-        using self_type = gl_shader;
+        using self_type = GlShader;
     public:
         /// @brief Create an OpenGL shader object
         /// @param source_code Source code of the shader
@@ -23,21 +23,21 @@ namespace arcadia
         /// - GL_TESS_CONTROL_SHADER
         /// - GL_TESS_EVALUATION_SHADER
         /// - GL_VERTEX_SHADER
-        gl_shader(
+        GlShader(
             const std::string& source_code,
             GLenum shader_type
         );
-        ~gl_shader();
+        ~GlShader();
 
-        gl_shader(self_type&& rhs) noexcept;
+        GlShader(self_type&& rhs) noexcept;
         auto operator=(self_type&& rhs) noexcept -> self_type&;
 
         [[nodiscard]]
-        inline auto get_gl_id() const -> GLuint
+        auto GetGlId() const -> GLuint
         {
-            return _gl_id;
+            return _GlId;
         }
     private:
-        GLuint _gl_id{ 0 };
+        GLuint _GlId{ 0 };
     };
 }

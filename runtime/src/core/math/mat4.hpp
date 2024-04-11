@@ -3,17 +3,17 @@
 #include"core/base.hpp"
 #include"core/math/glm_header.hpp"
 
-namespace arcadia
+namespace Arcadia
 {
-    namespace mat4
+    namespace Mat4
     {
         [[nodiscard]]
-        ARCADIA_API constexpr auto zero() -> glm::mat4
+        ARCADIA_API constexpr auto Zero() -> glm::mat4
         {
             return glm::mat4{ .0f };
         }
         [[nodiscard]]
-        ARCADIA_API constexpr auto zero_affine() -> glm::mat4
+        ARCADIA_API constexpr auto ZeroAffine() -> glm::mat4
         {
             return glm::mat4{
                 glm::vec4{},
@@ -23,34 +23,9 @@ namespace arcadia
             };
         }
         [[nodiscard]]
-        ARCADIA_API constexpr auto identity() -> glm::mat4
+        ARCADIA_API constexpr auto Identity() -> glm::mat4
         {
             return glm::mat4{};
         }
     }
-
-    namespace dmat4
-    {
-        [[nodiscard]]
-        ARCADIA_API constexpr auto zero() -> glm::dmat4
-        {
-            return glm::dmat4{ .0f };
-        }
-        [[nodiscard]]
-        ARCADIA_API constexpr auto zero_affine() -> glm::dmat4
-        {
-            return glm::dmat4{
-                glm::dvec4{},
-                glm::dvec4{},
-                glm::dvec4{},
-                glm::dvec4{ .0,.0,.0,1. }
-            };
-        }
-        [[nodiscard]]
-        ARCADIA_API constexpr auto identity() -> glm::dmat4
-        {
-            return glm::dmat4{};
-        }
-    }
-
 }

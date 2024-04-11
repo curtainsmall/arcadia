@@ -5,19 +5,19 @@
 #include<fstream>
 #include<sstream>
 
-ARCADIA_API auto arcadia::to_filepath(const std::string& string) -> std::filesystem::path
+ARCADIA_API auto Arcadia::ToFilepath(const std::string& string) -> std::filesystem::path
 {
     std::filesystem::path path{ string };
     return path.make_preferred();
 }
 
-ARCADIA_API auto arcadia::to_filepath(const char* str) -> std::filesystem::path
+ARCADIA_API auto Arcadia::ToFilepath(const char* str) -> std::filesystem::path
 {
     std::filesystem::path path{ str };
     return path.make_preferred();
 }
 
-ARCADIA_API auto arcadia::load_text(const std::filesystem::path& filepath) -> std::string
+ARCADIA_API auto Arcadia::LoadText(const std::filesystem::path& filepath) -> std::string
 {
     std::ifstream ifs{ filepath };
     std::stringstream sstream{};
@@ -27,52 +27,52 @@ ARCADIA_API auto arcadia::load_text(const std::filesystem::path& filepath) -> st
     return sstream.str();
 }
 
-auto arcadia::file::create_ifstream() -> std::ifstream
+auto Arcadia::File::CreateIFstream() -> std::ifstream
 {
     std::ifstream ifs{};
     ifs.exceptions(std::ios::failbit);
     return ifs;
 }
 
-auto arcadia::file::create_ifstream(const std::filesystem::path& filepath) -> std::ifstream
+auto Arcadia::File::CreateIFstream(const std::filesystem::path& filepath) -> std::ifstream
 {
-    auto ifs = create_ifstream();
+    auto ifs = CreateIFstream();
     ifs.open(filepath);
     return ifs;
 }
 
-auto arcadia::file::create_ofstream() -> std::ofstream
+auto Arcadia::File::CreateOFstream() -> std::ofstream
 {
     std::ofstream ofs{};
     ofs.exceptions(std::ios::failbit);
     return ofs;
 }
 
-auto arcadia::file::create_ofstream(const std::filesystem::path& filepath) -> std::ofstream
+auto Arcadia::File::CreateOFstream(const std::filesystem::path& filepath) -> std::ofstream
 {
-    auto ofs = create_ofstream();
+    auto ofs = CreateOFstream();
     ofs.open(filepath);
     return ofs;
 }
 
-arcadia::file::file(const std::filesystem::path& filepath):
-    _filepath(filepath)
+Arcadia::File::File(const std::filesystem::path& filepath):
+    _Filepath(filepath)
 {}
 
-arcadia::file::~file()
+Arcadia::File::~File()
 {
-    for(auto& [section_name, section] : _section_umap)
+    for(auto& [section_name, section] : _umapSection)
     {
         section.clear();
     }
 }
 
-auto arcadia::file::load() -> self_type&
+auto Arcadia::File::Load() -> self_type&
 {
-    std::ifstream ifs{ _filepath,std::ios_base::binary };
+    std::ifstream ifs{ _Filepath,std::ios_base::binary };
     if(ifs.fail())
     {
-        throw load_failed(std::format("Cannot open file at", _filepath.generic_string()));
+        throw load_failed(std::format("Cannot open file at", _Filepath.generic_string()));
     }
     ifs.exceptions(std::ios_base::badbit);
 
@@ -94,7 +94,7 @@ auto arcadia::file::load() -> self_type&
         ifs.read(reinterpret_cast<char*>(&len), sizeof(len));
         section_type section{ len };
         ifs.read(reinterpret_cast<char*>(section.data()), section.size());
-        _section_umap.insert_or_assign(section_name, section);
+        _umapSection.insert_or_assign(section_name, section);
 
     }
 
@@ -102,21 +102,21 @@ auto arcadia::file::load() -> self_type&
 
 }
 
-auto arcadia::file::save() -> self_type&
+auto Arcadia::File::Save() -> self_type&
 {
-    std::ofstream ofs{ _filepath, std::ios_base::binary };
+    std::ofstream ofs{ _Filepath, std::ios_base::binary };
     if(ofs.fail())
     {
-        throw save_failed{ std::format("Cannot open file at {}",_filepath.generic_string()) };
+        throw save_failed{ std::format("Cannot open file at {}",_Filepath.generic_string()) };
     }
     ofs.exceptions(std::ios_base::badbit);
 
     // Section count
-    auto section_count = _section_umap.size();
+    auto section_count = _umapSection.size();
     ofs.write(reinterpret_cast<const char*>(&section_count), sizeof(section_count));
 
     // For each section
-    for(const auto& [section_name, section] : _section_umap)
+    for(const auto& [section_name, section] : _umapSection)
     {
         // Section name
         std::size_t len = section_name.size();
@@ -132,20 +132,20 @@ auto arcadia::file::save() -> self_type&
     return *this;
 }
 
-auto arcadia::file::get_section_or_create(const std::string& section_name) -> section_type&
+auto Arcadia::File::GetSectionOrCreate(const std::string& section_name) -> section_type&
 {
-    if(_section_umap.contains(section_name))
+    if(_umapSection.contains(section_name))
     {
-        _section_umap.insert_or_assign(section_name, section_type{});
+        _umapSection.insert_or_assign(section_name, section_type{});
     }
-    return get_section(section_name);
+    return GetSection(section_name);
 }
 
-auto arcadia::file::get_section(const std::string& section_name) -> section_type&
+auto Arcadia::File::GetSection(const std::string& section_name) -> section_type&
 {
     try
     {
-        return _section_umap.at(section_name);
+        return _umapSection.at(section_name);
     }
     catch(const std::out_of_range)
     {
@@ -153,11 +153,11 @@ auto arcadia::file::get_section(const std::string& section_name) -> section_type
     }
 }
 
-auto arcadia::file::get_section(const std::string& section_name) const -> const section_type&
+auto Arcadia::File::GetSection(const std::string& section_name) const -> const section_type&
 {
     try
     {
-        return _section_umap.at(section_name);
+        return _umapSection.at(section_name);
     }
     catch(const std::out_of_range)
     {
@@ -165,14 +165,14 @@ auto arcadia::file::get_section(const std::string& section_name) const -> const 
     }
 }
 
-auto arcadia::file::has_section(const std::string& section_name) const -> bool
+auto Arcadia::File::HasSection(const std::string& section_name) const -> bool
 {
-    return _section_umap.contains(section_name);
+    return _umapSection.contains(section_name);
 }
 
-auto arcadia::file::erase_section(const std::string& section_name) -> self_type&
+auto Arcadia::File::EraseSection(const std::string& section_name) -> self_type&
 {
-    _section_umap.erase(section_name);
+    _umapSection.erase(section_name);
     return *this;
 }
 

@@ -1,10 +1,10 @@
 include "meta.fbs";
-namespace arcadia.serialization;
+namespace Arcadia.Serialization;
 
-table renderer_config{
-    name:string;
-    scene_name:string;
-    back_face_culling:bool;
+table RendererConfig{
+    Name:string;
+    SceneName:string;
+    BackFaceCulling:bool;
 }
 
-root_type renderer_config;
+root_type RendererConfig;

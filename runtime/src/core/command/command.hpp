@@ -7,45 +7,45 @@
 
 #include"core/base.hpp"
 
-namespace arcadia
+namespace Arcadia
 {
 
-    struct ARCADIA_API command: arcadia::noncopyable
+    struct ARCADIA_API Command: Arcadia::Noncopyable
     {
     public:
         using function_type = std::function<void()>;
-        using self_type = command;
+        using self_type = Command;
     public:
-        command(
+        Command(
             const std::string& description,
             const function_type& execute_fn,
             const function_type& unexecute_fn
         );
 
-        command(self_type&&) noexcept = default;
+        Command(self_type&&) noexcept = default;
         auto operator=(self_type&&) noexcept -> self_type & = default;
 
-        void execute() const;
-        void unexecute() const;
+        void Execute() const;
+        void Unexecute() const;
 
         [[nodiscard]]
-        auto get_description() const -> const std::string&;
+        auto GetDescription() const -> const std::string&;
 
     private:
-        std::string _description{};
-        function_type _execute_fn;
-        function_type _unexecute_fn;
+        std::string _Description{};
+        function_type _ExecuteFn;
+        function_type _UnexecuteFn;
     };
 
-    struct ARCADIA_API command_list: arcadia::noncopyable
+    struct ARCADIA_API CommandList: Arcadia::Noncopyable
     {
     public:
-        using function_type = arcadia::command::function_type;
-        using container_type = std::list<arcadia::command>;
-        using self_type = command_list;
+        using function_type = Arcadia::Command::function_type;
+        using container_type = std::list<Arcadia::Command>;
+        using self_type = CommandList;
     public:
         [[nodiscard]]
-        static auto instance() -> self_type&;
+        static auto Instance() -> self_type&;
 
         /// @brief Create a command
         /// @param execute_fn Function to execute
@@ -59,23 +59,23 @@ namespace arcadia
 
         /// @brief Call unexecute() and move to the previous command
         /// @return Whether succeed
-        auto undo() -> bool;
+        auto Undo() -> bool;
 
         /// @brief Call execute() and move to the next command
         /// @return Whether succeed
-        auto redo() -> bool;
+        auto Redo() -> bool;
 
         [[nodiscard]]
-        auto get_capacity() const->std::size_t;
-        void set_capacity(std::size_t capacity);
+        auto GetCapacity() const->std::size_t;
+        void SetCapacity(std::size_t capacity);
 
         /// @brief Get size of command list
         /// @return Size
         [[nodiscard]]
-        auto size() const->std::size_t;
+        auto Size() const->std::size_t;
 
         /// @brief Clear command list (when you saved the project and no longer needs previous commands)
-        void clear();
+        void Clear();
 
         [[nodiscard]]
         auto begin() noexcept -> container_type::iterator;
@@ -93,8 +93,8 @@ namespace arcadia
         auto cend() const noexcept->container_type::const_iterator;
 
     private:
-        std::size_t _capacity{ 40 };
-        container_type _list{};
-        container_type::const_iterator _current_iter{};
+        std::size_t _Capacity{ 40 };
+        container_type _List{};
+        container_type::const_iterator _CurrentIter{};
     };
 }

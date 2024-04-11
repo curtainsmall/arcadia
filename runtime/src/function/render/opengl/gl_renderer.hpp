@@ -18,10 +18,10 @@
 #include"function/render/renderer.hpp"
 #include"platform/opengl/opengl_header.hpp"
 
-namespace arcadia
+namespace Arcadia
 {
-    using gl_render_unit_camera = std::tuple<
-        arcadia::gl_framebuffer, // gl_framebuffer
+    using GlRenderUnitCamera = std::tuple<
+        Arcadia::GlFramebuffer, // gl_framebuffer
         glm::ivec2, // viewport_size
         glm::mat4, // camera_view_mat4
         glm::mat4, // camera_proj_mat4
@@ -31,130 +31,130 @@ namespace arcadia
         float // far_plane
     >;
 
-    using gl_render_unit_light = std::tuple<
-        arcadia::light_type // light
+    using GlRenderUnitLight = std::tuple<
+        Arcadia::LightType // light
     >;
 
-    using gl_render_unit_mesh = std::tuple<
-        arcadia::gl_vertex_array, // gl_vertex_array
+    using GlRenderUnitMesh = std::tuple<
+        Arcadia::GlVertexArray, // gl_vertex_array
         glm::mat4, // transform_mat
-        arcadia::gl_texture2d, // gl_texture2d_ambient
-        arcadia::gl_texture2d, // gl_texture2d_diffuse
-        arcadia::gl_texture2d  // gl_texture2d_specular
+        Arcadia::GlTexture2d, // gl_texture2d_ambient
+        Arcadia::GlTexture2d, // gl_texture2d_diffuse
+        Arcadia::GlTexture2d  // gl_texture2d_specular
     >;
 
-    using gl_render_unit_skybox = std::tuple<
-        arcadia::gl_vertex_array, // gl_vertex_array
-        arcadia::gl_cubemap // gl_cubemap
+    using GlRenderUnitSkybox = std::tuple<
+        Arcadia::GlVertexArray, // gl_vertex_array
+        Arcadia::GlCubemap // gl_cubemap
     >;
 
-    using gl_render_unit_physcis_body_shape = std::tuple<
-        arcadia::gl_vertex_array, // gl_vertex_array
+    using GlRenderUnitPhysicsBodyShape = std::tuple<
+        Arcadia::GlVertexArray, // gl_vertex_array
         glm::mat4, // transform_mat
         glm::vec3 // color
     >;
 
-    struct ARCADIA_API gl_renderer: arcadia::renderer_interface
+    struct ARCADIA_API GlRenderer: Arcadia::iRenderer
     {
     public:
         ARCADIA_EXCEPTION(too_many_lights);
-        using self_type = gl_renderer;
+        using self_type = GlRenderer;
     public:
-        gl_renderer(const std::filesystem::path& gl_shader_folder_path);
-        virtual ~gl_renderer() = default;
+        GlRenderer(const std::filesystem::path& gl_shader_folder_path);
+        virtual ~GlRenderer() = default;
 
-        /// @copydoc arcadia::renderer::is_in_build
+        /// @copydoc Arcadia::renderer::is_in_build
         [[nodiscard]]
-        virtual inline auto is_in_build() const -> bool override
+        virtual auto IsInBuild() const -> bool override
         {
-            return _in_build;
+            return _InBuild;
         }
 
-        /// @copydoc arcadia::renderer::prepare
-        virtual void prepare() override;
-        /// @copydoc arcadia::renderer::finalize
-        virtual void finalize() override;
+        /// @copydoc Arcadia::renderer::prepare
+        virtual void Prepare() override;
+        /// @copydoc Arcadia::renderer::finalize
+        virtual void Finalize() override;
 
-        /// @copydoc arcadia::renderer::submit
-        virtual void submit(const arcadia::camera_component& camera_comp) override;
+        /// @copydoc Arcadia::renderer::submit
+        virtual void Submit(const Arcadia::CameraComponent& camera_comp) override;
 
-        /// @copydoc arcadia::renderer::submit
-        virtual void submit(const arcadia::light_component& light_comp) override;
+        /// @copydoc Arcadia::renderer::submit
+        virtual void Submit(const Arcadia::LightComponent& light_comp) override;
 
-        /// @copydoc arcadia::renderer::submit
-        virtual void submit(const arcadia::model_component& model_comp) override;
+        /// @copydoc Arcadia::renderer::submit
+        virtual void Submit(const Arcadia::ModelComponent& model_comp) override;
 
-        /// @copydoc arcadia::renderer::submit
-        virtual void submit(const arcadia::skybox_component& skybox_comp) override;
+        /// @copydoc Arcadia::renderer::submit
+        virtual void Submit(const Arcadia::SkyboxComponent& skybox_comp) override;
 
-        /// @copydoc arcadia::renderer::submit
-        virtual void submit(const arcadia::physics_component& physcis_comp) override;
+        /// @copydoc Arcadia::renderer::submit
+        virtual void Submit(const Arcadia::PhysicsComponent& physcis_comp) override;
 
-        /// @copydoc arcadia::renderer::draw
-        virtual void draw() override;
+        /// @copydoc Arcadia::renderer::draw
+        virtual void Draw() override;
 
-        /// @copydoc arcadia::renderer::reset
-        virtual void reset() override;
-
-        [[nodiscard]]
-        virtual auto get_render_result_id(std::size_t index) const->void* override;
+        /// @copydoc Arcadia::renderer::reset
+        virtual void Reset() override;
 
         [[nodiscard]]
-        virtual inline auto get_graphic_api_type() const->arcadia::graphic_api::type override
+        virtual auto GetRenderResultId(std::size_t index) const->void* override;
+
+        [[nodiscard]]
+        virtual auto GetGraphicApiType() const->Arcadia::GraphicApi::Type override
         {
-            return arcadia::graphic_api::opengl{ arcadia::version{4, 6, 0} };
+            return Arcadia::GraphicApi::Opengl{ Arcadia::Version{4, 6, 0} };
         }
 
     public:
-        void _assert_frame_in_build() const;
-        void _assert_frame_not_in_build() const;
+        void _AssertFrameInBuild() const;
+        void _AssertFrameNotInBuild() const;
 
-        void _draw_grid(
-            const arcadia::gl_vertex_array& gl_grid_vertex_array,
+        void _DrawGrid(
+            const Arcadia::GlVertexArray& gl_grid_vertex_array,
             const glm::mat4& camera_view,
             const glm::mat4& camera_proj,
             float near_plane,
             float far_plane
         );
-        void _draw_lights(
+        void _DrawLights(
             const GLsizeiptr light_t_size,
             const int max_light_count,
             const int light_count_size_aligned,
-            arcadia::gl_uniform_buffer& gl_light_uniform_buffer,
-            const arcadia::gl_vertex_array& gl_light_shape_vertex_array,
+            Arcadia::GlUniformBuffer& gl_light_uniform_buffer,
+            const Arcadia::GlVertexArray& gl_light_shape_vertex_array,
             const glm::mat4& camera_view,
             const glm::mat4& camera_proj
         );
-        void _draw_models(
+        void _DrawModels(
             const glm::mat4& camera_view,
             const glm::mat4& camera_proj,
             const glm::vec3& camera_pos
         );
-        void _draw_skybox(
+        void _DrawSkybox(
             const glm::mat4& camera_view,
             const glm::mat4& camera_proj
         );
-        void _draw_physics_body_shape(
+        void _DrawPhysicsBodyShape(
             const glm::mat4& camera_view,
             const glm::mat4& camera_proj
         );
 
     private:
-        bool _in_build{ false };
+        bool _InBuild{ false };
 
-        std::unordered_map<arcadia::uuid, std::vector<arcadia::gl_render_unit_mesh>> _gl_render_unit_meshes_umap{};
-        std::set<arcadia::uuid> _submitted_meshes_uuid_set{};
+        std::unordered_map<Arcadia::Uuid, std::vector<Arcadia::GlRenderUnitMesh>> _umapGlRenderUnitMeshes{};
+        std::set<Arcadia::Uuid> _setSubmittedMeshesUuid{};
 
-        std::unordered_map<arcadia::uuid, arcadia::gl_render_unit_physcis_body_shape> _gl_render_unit_physics_body_shape_umap{};
-        std::set<arcadia::uuid> _submitted_physcis_body_shape_uuid_set{};
+        std::unordered_map<Arcadia::Uuid, Arcadia::GlRenderUnitPhysicsBodyShape> _umapGlRenderUnitPhysicsBodyShape{};
+        std::set<Arcadia::Uuid> _setSubmittedPhysicsBodyShapeUuid{};
 
-        std::vector<arcadia::gl_render_unit_camera> _gl_render_unit_cameras{};
-        std::vector<arcadia::gl_render_unit_light> _gl_render_unit_lights{};
-        std::optional<arcadia::gl_render_unit_skybox> _gl_render_unit_skybox_opt{};
+        std::vector<Arcadia::GlRenderUnitCamera> _GlRenderUnitCameras{};
+        std::vector<Arcadia::GlRenderUnitLight> _GlRenderUnitLights{};
+        std::optional<Arcadia::GlRenderUnitSkybox> _optGlRenderUnitSkybox{};
 
-        arcadia::gl_pipeline _gl_model_pipeline;
-        arcadia::gl_pipeline _gl_skybox_pipeline;
-        arcadia::gl_pipeline _gl_grid_pipeline;
-        arcadia::gl_pipeline _gl_shape_pipeline;
+        Arcadia::GlPipeline _GlModelPipeline;
+        Arcadia::GlPipeline _GlSkyboxPipeline;
+        Arcadia::GlPipeline _GlGridPipeline;
+        Arcadia::GlPipeline _GlShapePipeline;
     };
 }

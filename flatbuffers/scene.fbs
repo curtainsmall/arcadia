@@ -1,20 +1,20 @@
 include "asset.fbs";
 
-namespace arcadia.serialization;
+namespace Arcadia.Serialization;
 
-table scene{
-    name:string;
+table Scene{
+    Name:string;
 
-    cubemaps:[cubemap];
-    materials:[material];
-    meshes:[mesh];
-    texture2ds:[texture2d];
+    Cubemaps:[Cubemap];
+    Materials:[Material];
+    Meshes:[Mesh];
+    Texture2ds:[Texture2d];
     
-    cameras:[camera];
-    models:[model];
-    skyboxes:[skybox];
-    current_skybox_name:string;
+    Cameras:[Camera];
+    Models:[Model];
+    Skyboxes:[Skybox];
+    CurrentSkyboxName:string;
 
 }
 
-root_type scene;
+root_type Scene;

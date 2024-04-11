@@ -6,36 +6,36 @@
 #include"core/base.hpp"
 #include"core/nlohmann_json_header.hpp"
 
-#define ARCADIA_COMPONENT_TYPE_STR_GETTERS(TypeStr) \
+#define ARCADIA_COMPONENT_TYPE_STR_GETTERS(type_str) \
 [[nodiscard]]\
-static constexpr auto get_type_str_static() -> std::string\
+static constexpr auto GetTypeStrStatic() -> std::string\
 {\
-    return TypeStr;\
+    return type_str;\
 }\
 [[nodiscard]]\
-virtual inline auto get_type_str() const -> std::string override\
+virtual auto GetTypeStr() const -> std::string override\
 {\
-    return get_type_str_static();\
+    return GetTypeStrStatic();\
 }
 
-namespace arcadia
+namespace Arcadia
 {
-    struct ARCADIA_API component_base: arcadia::noncopyable
+    struct ARCADIA_API iComponent: Arcadia::Noncopyable
     {
     public:
-        virtual auto get_type_str() const->std::string = 0;
+        virtual auto GetTypeStr() const->std::string = 0;
     };
 
     template<class Component>
-    concept component_like = requires(const Component comp, const nlohmann::json json)
+    concept cComponent = requires(const Component comp, const nlohmann::json json)
     {
-        std::derived_from<Component, arcadia::component_base>;
+        std::derived_from<Component, Arcadia::iComponent>;
         {
-            Component::get_type_str_static()
+            Component::GetTypeStrStatic()
         }->std::same_as<std::string>;
 
         {
-            comp.to_json()
+            comp.ToJson()
         }->std::same_as<nlohmann::json>;
         {
             Component(json)

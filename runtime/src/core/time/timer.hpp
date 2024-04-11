@@ -4,48 +4,48 @@
 
 #include"core/base.hpp"
 
-namespace arcadia
+namespace Arcadia
 {
-    struct ARCADIA_API timer
+    struct ARCADIA_API Timer
     {
     public:
         using clock_type = std::chrono::steady_clock;
         using duration_type = std::chrono::milliseconds;
         using time_point_type = std::chrono::time_point<clock_type, duration_type>;
     public:
-        inline timer()
+        Timer()
         {
-            reset();
+            Reset();
         }
 
-        inline void reset()
+        void Reset()
         {
-            _start = _now();
-            _last = _start;
-        }
-
-        template<class ToDuration = duration_type>
-        auto since_start() -> duration_type
-        {
-            return std::chrono::duration_cast<ToDuration>(_now() - _start);
+            _Start = _Now();
+            _Last = _Start;
         }
 
         template<class ToDuration = duration_type>
-        auto since_last() -> duration_type
+        auto SinceStart() -> duration_type
         {
-            auto now = _now();
-            auto diff = now - _last;
-            _last = now;
+            return std::chrono::duration_cast<ToDuration>(_Now() - _Start);
+        }
+
+        template<class ToDuration = duration_type>
+        auto SinceLast() -> duration_type
+        {
+            auto now = _Now();
+            auto diff = now - _Last;
+            _Last = now;
             return std::chrono::duration_cast<ToDuration>(diff);
         }
 
     private:
-        inline auto _now() const->time_point_type
+        auto _Now() const->time_point_type
         {
             return std::chrono::time_point_cast<duration_type>(std::chrono::steady_clock::now());
         }
     private:
-        time_point_type _start{};
-        time_point_type _last{};
+        time_point_type _Start{};
+        time_point_type _Last{};
     };
 }

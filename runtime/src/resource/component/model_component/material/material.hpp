@@ -3,15 +3,15 @@
 #include"core/base.hpp"
 #include"resource/component/model_component/material/texture2d.hpp"
 
-namespace arcadia
+namespace Arcadia
 {
-    struct ARCADIA_API material
+    struct ARCADIA_API Material
     {
     public:
-        using self_type = material;
+        using self_type = Material;
     public:
-        arcadia::texture2d ambient_texture2d{};
-        arcadia::texture2d diffuse_texture2d{};
-        arcadia::texture2d specular_texture2d{};
+        Arcadia::Texture2d AmbientTexture2d{};
+        Arcadia::Texture2d DiffuseTexture2d{};
+        Arcadia::Texture2d SpecularTexture2d{};
     };
 }

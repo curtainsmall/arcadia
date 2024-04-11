@@ -8,50 +8,47 @@
 #include"core/base.hpp"
 #include"core/layer/layer.hpp"
 
-extern auto create_application_uptr() -> std::unique_ptr<arcadia::app_layer>;
+extern auto CreateApplicationUptr() -> std::unique_ptr<Arcadia::iAppLayer>;
 
-auto main(
-    int argc,
-    const char** argv
-) -> int
+auto main() -> int
 {
     // Add app_layer
-    auto& layer_stack = arcadia::layer_stack::instance();
-    layer_stack.push_layer<arcadia::app_layer>(layer_stack.end(), std::shared_ptr<arcadia::app_layer>(arcadia::create_application_uptr()));
+    auto& layer_stack = Arcadia::LayerStack::Instance();
+    layer_stack.PushLayer<Arcadia::iAppLayer>(layer_stack.end(), std::shared_ptr<Arcadia::iAppLayer>(Arcadia::CreateApplicationUptr()));
 
     // Main loop
-    auto& app_context = arcadia::app_context::instance();
-    while(app_context.running)
+    auto& app_context = Arcadia::AppContext::Instance();
+    while(app_context.Running)
     {
-        app_context.delta_time = app_context.timer.since_last();
+        app_context.DeltaTime = app_context.Timer.SinceLast();
 
         // Process event 
-        auto& event_queue = arcadia::event_queue::instance();
-        event_queue.swap_queue();
-        while(event_queue.size())
+        auto& event_queue = Arcadia::EventQueue::Instance();
+        event_queue.SwapQueue();
+        while(event_queue.Size())
         {
-            auto& event = event_queue.read();
+            auto& event = event_queue.Read();
 
-            for(auto& layer_sptr : arcadia::layer_stack::instance())
+            for(auto& layer_sptr : Arcadia::LayerStack::Instance())
             {
-                layer_sptr->on_event(event);
-                if(event.handled)
+                layer_sptr->OnEvent(event);
+                if(event.Handled)
                 {
                     break;
                 }
 
             }
-            event_queue.pop();
+            event_queue.Pop();
         }
 
         // Updates
-        for(auto& layer_sptr : std::ranges::reverse_view{ arcadia::layer_stack::instance() })
+        for(auto& layer_sptr : std::ranges::reverse_view{ Arcadia::LayerStack::Instance() })
         {
-            layer_sptr->on_update();
+            layer_sptr->OnUpdate();
         }
     }
 
     // Clear layer_stack
-    layer_stack.pop_all();
+    layer_stack.PopAll();
     return 0;
 }

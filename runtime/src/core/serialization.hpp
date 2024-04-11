@@ -1,18 +1,17 @@
 #pragma once
 
 #include<memory>
-
-#include"flatbuffers/flatbuffers.h"
+#include<vector>
 
 #include"core/base.hpp"
 
-namespace arcadia
+namespace Arcadia
 {
-    namespace serialization
+    namespace Serialization
     {
         using buffer_type = std::vector<std::byte>;
 
-        template<class Data, class ...Args>
+        /*template<class Data, class ...Args>
             requires requires (flatbuffers::FlatBufferBuilder builder, Data data, Args&& ...args)
         {
             {
@@ -65,6 +64,6 @@ namespace arcadia
                 *flatbuffers::GetRoot<typename Data::serialization_type>(buf.data()),
                 std::forward<Args>(args)...
             );
-        }
+        }*/
     }
 }

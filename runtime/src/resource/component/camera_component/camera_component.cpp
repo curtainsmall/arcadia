@@ -3,261 +3,261 @@
 
 #include"core/math.hpp"
 
-arcadia::camera_component::camera_component(const nlohmann::json& json)
+Arcadia::CameraComponent::CameraComponent(const nlohmann::json& json)
 {
-    position                 = arcadia::vec3::from_json(json.at("position"));
-    target                   = arcadia::vec3::from_json(json.at("target"));
-    up                       = arcadia::vec3::from_json(json.at("up"));
-    near_plane               = json.at("near_plane");
-    far_plane                = json.at("far_plane");
-    fov                      = json.at("fov");
-    fov_min                  = json.at("fov_min");
-    fov_max                  = json.at("fov_max");
-    speed                    = json.at("speed");
-    viewport_size            = arcadia::ivec2::from_json(json.at("viewport_size"));
-    fixed_up                 = json.at("fixed_up");
-    up_epsilon               = json.at("up_epsilon");
-    cursor_move_offset_range = arcadia::vec2::from_json(json.at("cursor_move_offset_range"));
+    Position              = Arcadia::Vec3::FromJson(json.at("Position"));
+    Target                = Arcadia::Vec3::FromJson(json.at("Target"));
+    Up                    = Arcadia::Vec3::FromJson(json.at("Up"));
+    NearPlane             = json.at("near_plane");
+    FarPlane              = json.at("far_plane");
+    Fov                   = json.at("fov");
+    FovMin                = json.at("fov_min");
+    FovMax                = json.at("fov_max");
+    Speed                 = json.at("Speed");
+    ViewportSize          = Arcadia::IVec2::FromJson(json.at("viewport_size"));
+    FixedUp               = json.at("fixed_Up");
+    UpEpsilon             = json.at("UpEpsilon");
+    CursorMoveOffsetRange = Arcadia::Vec2::FromJson(json.at("cursor_move_offset_range"));
 }
 
-auto arcadia::camera_component::to_json() const -> nlohmann::json
+auto Arcadia::CameraComponent::ToJson() const -> nlohmann::json
 {
     return nlohmann::json{
-        { "position"                ,arcadia::vec3::to_json(position) },
-        { "target"                  ,arcadia::vec3::to_json(target) },
-        { "up"                      ,arcadia::vec3::to_json(up) },
-        { "near_plane"              ,near_plane },
-        { "far_plane"               ,far_plane },
-        { "fov"                     ,fov },
-        { "fov_min"                 ,fov_min },
-        { "fov_max"                 ,fov_max },
-        { "speed"                   ,speed},
-        { "viewport_size"           ,arcadia::ivec2::to_json(viewport_size) },
-        { "fixed_up"                ,fixed_up },
-        { "up_epsilon"              ,up_epsilon },
-        { "cursor_move_offset_range",arcadia::vec2::to_json(cursor_move_offset_range) }
+        { "Position"                ,Arcadia::Vec3::ToJson(Position) },
+        { "Target"                  ,Arcadia::Vec3::ToJson(Target) },
+        { "Up"                      ,Arcadia::Vec3::ToJson(Up) },
+        { "near_plane"              ,NearPlane },
+        { "far_plane"               ,FarPlane },
+        { "fov"                     ,Fov },
+        { "fov_min"                 ,FovMin },
+        { "fov_max"                 ,FovMax },
+        { "Speed"                   ,Speed},
+        { "viewport_size"           ,Arcadia::IVec2::ToJson(ViewportSize) },
+        { "fixed_Up"                ,FixedUp },
+        { "UpEpsilon"              ,UpEpsilon },
+        { "cursor_move_offset_range",Arcadia::Vec2::ToJson(CursorMoveOffsetRange) }
     };
 }
 
-auto arcadia::camera_component::snapshot() const -> memento_data_type
+auto Arcadia::CameraComponent::OnSnapshot() const -> memento_data_type
 {
     memento_data_type memento{};
 
-    memento.position                 = position;
-    memento.target                   = target;
-    memento.up                       = up;
-    memento.near_plane               = near_plane;
-    memento.far_plane                = far_plane;
-    memento.fov                      = fov;
-    memento.fov_min                  = fov_min;
-    memento.fov_max                  = fov_max;
-    memento.speed                    = speed;
-    memento.viewport_size            = viewport_size;
-    memento.fixed_up                 = fixed_up;
-    memento.up_epsilon               = up_epsilon;
-    memento.cursor_move_offset_range = cursor_move_offset_range;
-    memento.should_display_grid      = should_display_grid;
+    memento.Position              = Position;
+    memento.Target                = Target;
+    memento.Up                    = Up;
+    memento.NearPlane             = NearPlane;
+    memento.FarPlane              = FarPlane;
+    memento.Fov                   = Fov;
+    memento.FovMin                = FovMin;
+    memento.FovMax                = FovMax;
+    memento.Speed                 = Speed;
+    memento.ViewportSize          = ViewportSize;
+    memento.FixedUp               = FixedUp;
+    memento.UpEpsilon             = UpEpsilon;
+    memento.CursorMoveOffsetRange = CursorMoveOffsetRange;
+    memento.ShouldDisplayGrid     = ShouldDisplayGrid;
 
     return memento;
 }
 
-void arcadia::camera_component::restore(const memento_data_type& memento)
+void Arcadia::CameraComponent::OnRestore(const memento_data_type& memento)
 {
-    position                 = memento.position;
-    target                   = memento.target;
-    up                       = memento.up;
-    near_plane               = memento.near_plane;
-    far_plane                = memento.far_plane;
-    fov                      = memento.fov;
-    fov_min                  = memento.fov_min;
-    fov_max                  = memento.fov_max;
-    speed                    = memento.speed;
-    viewport_size            = memento.viewport_size;
-    fixed_up                 = memento.fixed_up;
-    up_epsilon               = memento.up_epsilon;
-    cursor_move_offset_range = memento.cursor_move_offset_range;
-    should_display_grid      = memento.should_display_grid;
+    Position              = memento.Position;
+    Target                = memento.Target;
+    Up                    = memento.Up;
+    NearPlane             = memento.NearPlane;
+    FarPlane              = memento.FarPlane;
+    Fov                   = memento.Fov;
+    FovMin                = memento.FovMin;
+    FovMax                = memento.FovMax;
+    Speed                 = memento.Speed;
+    ViewportSize          = memento.ViewportSize;
+    FixedUp               = memento.FixedUp;
+    UpEpsilon             = memento.UpEpsilon;
+    CursorMoveOffsetRange = memento.CursorMoveOffsetRange;
+    ShouldDisplayGrid     = memento.ShouldDisplayGrid;
 }
 
 
 
 
-auto arcadia::camera_component::move_forward() -> self_type&
+auto Arcadia::CameraComponent::MoveForward() -> self_type&
 {
-    const auto movement = get_forward_dir() * speed;
-    position += movement;
-    target += movement;
+    const auto movement = GetForwardDir() * Speed;
+    Position += movement;
+    Target += movement;
     return *this;
 }
 
-auto arcadia::camera_component::move_backward() -> self_type&
+auto Arcadia::CameraComponent::MoveBackward() -> self_type&
 {
-    const auto movement = get_forward_dir() * speed;
-    position -= movement;
-    target -= movement;
+    const auto movement = GetForwardDir() * Speed;
+    Position -= movement;
+    Target -= movement;
     return *this;
 }
 
-auto arcadia::camera_component::move_left() -> self_type&
+auto Arcadia::CameraComponent::MoveLeft() -> self_type&
 {
-    const auto movement = glm::cross(get_forward_dir(), up) * speed;
-    position -= movement;
-    target -= movement;
+    const auto movement = glm::cross(GetForwardDir(), Up) * Speed;
+    Position -= movement;
+    Target -= movement;
     return *this;
 }
 
-auto arcadia::camera_component::move_right() -> self_type&
+auto Arcadia::CameraComponent::MoveRight() -> self_type&
 {
-    const auto movement = glm::cross(get_forward_dir(), up) * speed;
-    position += movement;
-    target += movement;
+    const auto movement = glm::cross(GetForwardDir(), Up) * Speed;
+    Position += movement;
+    Target += movement;
     return *this;
 }
 
-auto arcadia::camera_component::move(const glm::vec3& offset) -> self_type&
+auto Arcadia::CameraComponent::Move(const glm::vec3& Offset) -> self_type&
 {
-    position += offset;
-    target += offset;
+    Position += Offset;
+    Target += Offset;
     return *this;
 }
 
-auto arcadia::camera_component::drag_view_move(const glm::vec2& offset) -> self_type&
+auto Arcadia::CameraComponent::DragViewMove(const glm::vec2& Offset) -> self_type&
 {
-    move(
-        get_left_dir() * offset.x
-        + get_up_dir() * offset.y
+    Move(
+        GetLeftDir() * Offset.x
+        + GetUpDir() * Offset.y
     );
     return *this;
 }
 
-auto arcadia::camera_component::rotate_view(const glm::vec2& offset) -> self_type&
+auto Arcadia::CameraComponent::RotateView(const glm::vec2& Offset) -> self_type&
 {
-    if(_test_cursor_move(offset.x, offset.y))
+    if(_TestCursorMove(Offset.x, Offset.y))
     {
-        auto forward = get_forward_dir();
+        auto forward = GetForwardDir();
 
         //Horizontal
-        auto x_angle_offset = -offset.x;
-        forward = glm::angleAxis(x_angle_offset, up) * forward;
+        auto x_angle_offset = -Offset.x;
+        forward = glm::angleAxis(x_angle_offset, Up) * forward;
 
         //Vertical
         auto y_angle_offset =
             glm::clamp(
-                -offset.y + _pitch_angle(),
-                -glm::half_pi<float>() + up_epsilon,
-                glm::half_pi<float>() - up_epsilon
+                -Offset.y + _PitchAngle(),
+                -glm::half_pi<float>() + UpEpsilon,
+                glm::half_pi<float>() - UpEpsilon
             )
-            - _pitch_angle();
-        forward = glm::angleAxis(y_angle_offset, glm::cross(forward, up)) * forward;
+            - _PitchAngle();
+        forward = glm::angleAxis(y_angle_offset, glm::cross(forward, Up)) * forward;
 
-        target = position + forward;
+        Target = Position + forward;
     }
     return *this;
 }
 
-auto arcadia::camera_component::drag_view_rotate(const glm::vec2& offset) -> self_type&
+auto Arcadia::CameraComponent::DragViewRotate(const glm::vec2& Offset) -> self_type&
 {
-    if(_test_cursor_move(offset.x, offset.y))
+    if(_TestCursorMove(Offset.x, Offset.y))
     {
-        const auto& forward = get_forward_dir();
+        const auto& forward = GetForwardDir();
 
         //Horizontal
-        auto x_angle_offset = -offset.x;
-        auto rotation = glm::angleAxis(x_angle_offset, up);
-        position = rotation * position;
-        target = rotation * target;
+        auto x_angle_offset = -Offset.x;
+        auto rotation = glm::angleAxis(x_angle_offset, Up);
+        Position = rotation * Position;
+        Target = rotation * Target;
 
         //Vertical
         auto y_angle_offset =
             glm::clamp(
-                -offset.y + _pitch_angle(),
-                -glm::half_pi<float>() + up_epsilon,
-                glm::half_pi<float>() - up_epsilon
+                -Offset.y + _PitchAngle(),
+                -glm::half_pi<float>() + UpEpsilon,
+                glm::half_pi<float>() - UpEpsilon
             )
-            - _pitch_angle();
-        rotation = glm::angleAxis(y_angle_offset, glm::cross(forward, up));
-        position = rotation * position;
-        target = rotation * target;
+            - _PitchAngle();
+        rotation = glm::angleAxis(y_angle_offset, glm::cross(forward, Up));
+        Position = rotation * Position;
+        Target = rotation * Target;
     }
 
     return *this;
 }
 
-auto arcadia::camera_component::gen_view_mat4() const -> glm::mat4
+auto Arcadia::CameraComponent::GenerateViewMat4() const -> glm::mat4
 {
-    return glm::lookAt(position, target, up);
+    return glm::lookAt(Position, Target, Up);
 }
 
-auto arcadia::camera_component::gen_proj_mat4() const -> glm::mat4
+auto Arcadia::CameraComponent::GenerateProjMat4() const -> glm::mat4
 {
     return glm::perspective(
-        fov,
-        viewport_size.x * 1.f / viewport_size.y,
-        near_plane,
-        far_plane
+        Fov,
+        ViewportSize.x * 1.f / ViewportSize.y,
+        NearPlane,
+        FarPlane
     );
 }
 
-auto arcadia::camera_component::gen_mat4(bool col_major) const -> glm::mat4
+auto Arcadia::CameraComponent::GenerateMat4(bool col_major) const -> glm::mat4
 {
     if(col_major)
     {
-        return gen_proj_mat4() * gen_view_mat4();
+        return GenerateProjMat4() * GenerateViewMat4();
     }
     else
     {
-        return glm::transpose(gen_view_mat4()) * glm::transpose(gen_proj_mat4());
+        return glm::transpose(GenerateViewMat4()) * glm::transpose(GenerateProjMat4());
     }
 }
 
-auto arcadia::camera_component::get_forward_dir() const -> glm::vec3
+auto Arcadia::CameraComponent::GetForwardDir() const -> glm::vec3
 {
-    return glm::normalize(target - position);
+    return glm::normalize(Target - Position);
 }
 
-auto arcadia::camera_component::get_left_dir() const -> glm::vec3
+auto Arcadia::CameraComponent::GetLeftDir() const -> glm::vec3
 {
-    return glm::normalize(glm::cross(up, get_forward_dir()));
+    return glm::normalize(glm::cross(Up, GetForwardDir()));
 }
 
-auto arcadia::camera_component::get_up_dir() const -> glm::vec3
+auto Arcadia::CameraComponent::GetUpDir() const -> glm::vec3
 {
-    return glm::normalize(glm::cross(get_forward_dir(), get_left_dir()));
+    return glm::normalize(glm::cross(GetForwardDir(), GetLeftDir()));
 }
 
-auto arcadia::camera_component::_pitch_angle() const -> float
+auto Arcadia::CameraComponent::_PitchAngle() const -> float
 {
-    const auto& forward = get_forward_dir();
-    return glm::angle(forward, up) - glm::half_pi<float>();
+    const auto& forward = GetForwardDir();
+    return glm::angle(forward, Up) - glm::half_pi<float>();
 }
 
-auto arcadia::camera_component::_yaw_angle() const -> float
+auto Arcadia::CameraComponent::_YawAngle() const -> float
 {
-    const auto& forward = get_forward_dir();
-    auto yaw_vec = forward - glm::dot(forward, arcadia::vec3::pos_unit_y());
+    const auto& forward = GetForwardDir();
+    auto yaw_vec = forward - glm::dot(forward, Arcadia::Vec3::PosY());
 
     auto coef =
-        glm::angle(yaw_vec, arcadia::vec3::pos_unit_x()) < glm::half_pi<float>() ?
+        glm::angle(yaw_vec, Arcadia::Vec3::PosX()) < glm::half_pi<float>() ?
         1 : -1;
-    return coef * glm::angle(yaw_vec, arcadia::vec3::neg_unit_z());
+    return coef * glm::angle(yaw_vec, Arcadia::Vec3::NegZ());
 }
 
-auto arcadia::camera_component::_roll_angle() const -> float
+auto Arcadia::CameraComponent::_RollAngle() const -> float
 {
-    const auto& forward = get_forward_dir();
-    auto normal_of_forward_and_up = glm::cross(forward, up);
-    auto pos_uni_y_proj_on_forward_and_up = up - glm::dot(up, normal_of_forward_and_up);
+    const auto& forward = GetForwardDir();
+    auto normal_of_forward_and_Up = glm::cross(forward, Up);
+    auto pos_uni_y_proj_on_forward_and_Up = Up - glm::dot(Up, normal_of_forward_and_Up);
 
     auto coef =
-        glm::angle(up, normal_of_forward_and_up) < glm::half_pi<float>() ?
+        glm::angle(Up, normal_of_forward_and_Up) < glm::half_pi<float>() ?
         1 : -1;
-    return coef * glm::angle(up, pos_uni_y_proj_on_forward_and_up);
+    return coef * glm::angle(Up, pos_uni_y_proj_on_forward_and_Up);
 }
 
-auto arcadia::camera_component::_test_cursor_move(float x_offset, float y_offset) -> bool
+auto Arcadia::CameraComponent::_TestCursorMove(float x_offset, float y_offset) -> bool
 {
 
-    return arcadia::is_in_range(x_offset, cursor_move_offset_range.x, cursor_move_offset_range.y)
-        && arcadia::is_in_range(y_offset, cursor_move_offset_range.x, cursor_move_offset_range.y);
+    return Arcadia::IsInRange(x_offset, CursorMoveOffsetRange.x, CursorMoveOffsetRange.y)
+        && Arcadia::IsInRange(y_offset, CursorMoveOffsetRange.x, CursorMoveOffsetRange.y);
 
 }

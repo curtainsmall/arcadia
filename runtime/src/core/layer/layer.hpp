@@ -11,78 +11,78 @@
 #include"core/event/event.hpp"
 #include"core/exception.hpp"
 
-namespace arcadia
+namespace Arcadia
 {
-    struct ARCADIA_API layer_interface: arcadia::noncopyable
+    struct ARCADIA_API iLayer: Arcadia::Noncopyable
     {
     public:
-        using self_type = layer_interface;
+        using self_type = iLayer;
     public:
-        layer_interface(const std::string& name = "layer");
-        virtual ~layer_interface() = default;
+        iLayer(const std::string& name = "layer");
+        virtual ~iLayer() = default;
 
         [[nodiscard]]
-        inline auto get_name() const -> const std::string&
+        auto GetName() const -> const std::string&
         {
-            return _name;
+            return _Name;
         }
 
         /// @brief Process event
         /// @param event Event to be processed
-        virtual void on_event(arcadia::event_base& event) = 0;
+        virtual void OnEvent(Arcadia::EventBase& event) = 0;
 
         /// @brief Update layer
-        virtual void on_update() = 0;
+        virtual void OnUpdate() = 0;
 
     private:
-        std::string _name{};
+        std::string _Name{};
     };
 
     template<class Layer>
-    concept layer_like = requires{
-        std::derived_from<Layer, arcadia::layer_interface>;
+    concept cLayer = requires{
+        std::derived_from<Layer, Arcadia::iLayer>;
     };
 
-    struct ARCADIA_API layer_stack
+    struct ARCADIA_API LayerStack
     {
     public:
-        ARCADIA_EXCEPTION(out_of_range);
-        ARCADIA_EXCEPTION(empty_stack);
+        ARCADIA_EXCEPTION(OutOfRange);
+        ARCADIA_EXCEPTION(EmptyStack);
 
-        using layer_sptr_vector_type = std::vector<std::shared_ptr<layer_interface>>;
+        using layer_sptr_vector_type = std::vector<std::shared_ptr<iLayer>>;
 
-        using self_type = layer_stack;
+        using self_type = LayerStack;
     public:
-        static auto instance() -> self_type&;
+        static auto Instance() -> self_type&;
 
         template<
-            arcadia::layer_like Layer,
+            Arcadia::cLayer Layer,
             class ...Args
         >
-        auto push_layer(Args&& ...args) -> self_type&
+        auto PushLayer(Args&& ...args) -> self_type&
         {
-            return push_layer(std::make_shared<Layer>(std::forward<Args>(args)...));
+            return PushLayer(std::make_shared<Layer>(std::forward<Args>(args)...));
         }
         template<
-            arcadia::layer_like Layer
+            Arcadia::cLayer Layer
         >
-        auto push_layer(std::shared_ptr<Layer>&& sptr) -> self_type&
+        auto PushLayer(std::shared_ptr<Layer>&& sptr) -> self_type&
         {
             _layer_sptrs.emplace(_layer_sptrs.begin(), std::move(sptr));
             return *this;
         }
         template<
-            arcadia::layer_like Layer,
+            Arcadia::cLayer Layer,
             class ...Args
         >
-        auto push_layer(layer_sptr_vector_type::const_iterator iter, Args&& ...args) -> self_type&
+        auto PushLayer(layer_sptr_vector_type::const_iterator iter, Args&& ...args) -> self_type&
         {
-            return push_layer(iter, std::make_shared<Layer>(std::forward<Args>(args)...));
+            return PushLayer(iter, std::make_shared<Layer>(std::forward<Args>(args)...));
         }
         template<
-            arcadia::layer_like Layer
+            Arcadia::cLayer Layer
         >
-        auto push_layer(layer_sptr_vector_type::const_iterator iter, std::shared_ptr<Layer>&& sptr) -> self_type&
+        auto PushLayer(layer_sptr_vector_type::const_iterator iter, std::shared_ptr<Layer>&& sptr) -> self_type&
         {
             _layer_sptrs.emplace(
                 iter,
@@ -90,43 +90,43 @@ namespace arcadia
             );
             return *this;
         }
-        auto pop_layer() -> self_type&;
-        auto pop_layer(layer_sptr_vector_type::const_iterator iter) -> self_type&;
-        auto pop_all() -> self_type&;
+        auto PopLayer() -> self_type&;
+        auto PopLayer(layer_sptr_vector_type::const_iterator iter) -> self_type&;
+        auto PopAll() -> self_type&;
 
-        template<arcadia::layer_like Layer = arcadia::layer_interface>
-        auto at(std::size_t idx) -> Layer&
+        template<Arcadia::cLayer Layer = Arcadia::iLayer>
+        auto At(std::size_t idx) -> Layer&
         {
-            if(idx >= size())
+            if(idx >= Size())
             {
-                throw out_of_range{ std::format("Index out of range: {}",idx) };
+                throw OutOfRange{ std::format("Index out of range: {}",idx) };
             }
 
-            return static_cast<Layer&>(*_layer_sptrs.at(size() - idx - 1));
+            return static_cast<Layer&>(*_layer_sptrs.at(Size() - idx - 1));
         }
 
-        template<arcadia::layer_like Layer = arcadia::layer_interface>
-        auto top() -> std::shared_ptr<Layer>
+        template<Arcadia::cLayer Layer = Arcadia::iLayer>
+        auto Top() -> std::shared_ptr<Layer>
         {
-            if(!size())
+            if(!Size())
             {
-                throw empty_stack{};
+                throw EmptyStack{};
             }
             return std::static_pointer_cast<Layer>(_layer_sptrs.front());
         }
 
-        template<arcadia::layer_like Layer = arcadia::layer_interface>
-        auto buttom() -> std::shared_ptr<Layer>
+        template<Arcadia::cLayer Layer = Arcadia::iLayer>
+        auto Buttom() -> std::shared_ptr<Layer>
         {
-            if(!size())
+            if(!Size())
             {
-                throw empty_stack{};
+                throw EmptyStack{};
             }
             return std::static_pointer_cast<Layer>(_layer_sptrs.back());
         }
 
 
-        auto size() -> std::size_t;
+        auto Size() -> std::size_t;
 
         auto begin() -> layer_sptr_vector_type::const_iterator;
         auto end() -> layer_sptr_vector_type::const_iterator;

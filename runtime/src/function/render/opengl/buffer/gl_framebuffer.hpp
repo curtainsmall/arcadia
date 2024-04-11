@@ -6,44 +6,44 @@
 #include"function/render/opengl/buffer/gl_texture2d.hpp"
 #include"platform/opengl/opengl_header.hpp"
 
-namespace arcadia
+namespace Arcadia
 {
-    struct ARCADIA_API gl_framebuffer:arcadia::noncopyable
+    struct ARCADIA_API GlFramebuffer:Arcadia::Noncopyable
     {
     public:
-        ARCADIA_EXCEPTION(imcomplete);
+        ARCADIA_EXCEPTION(Imcomplete);
 
-        using self_type = gl_framebuffer;
+        using self_type = GlFramebuffer;
     public:
-        gl_framebuffer(
+        GlFramebuffer(
             const glm::ivec2& viewport_size,
             float near_plane,
             float far_plane
         );
-        ~gl_framebuffer();
+        ~GlFramebuffer();
 
-        gl_framebuffer(self_type&& rhs) noexcept;
+        GlFramebuffer(self_type&& rhs) noexcept;
         auto operator=(self_type&& rhs) noexcept -> self_type&;
 
         [[nodiscard]]
-        inline auto get_gl_id() const -> GLuint
+        auto GetGlID() const -> GLuint
         {
-            return _gl_id;
+            return _GlId;
         }
 
         [[nodiscard]]
-        inline auto get_gl_texture2d() const -> const arcadia::gl_texture2d&
+        auto GetGlTexture2d() const -> const Arcadia::GlTexture2d&
         {
-            return _gl_texture2d;
+            return _GlTexture2d;
         }
 
-        void bind() const;
-        void unbind() const;
+        void Bind() const;
+        void Unbind() const;
 
-        auto is_complete() const->GLenum;
+        auto IsComplete() const->GLenum;
     private:
-        GLuint _gl_id{ 0 };
-        arcadia::gl_texture2d _gl_texture2d;
-        arcadia::gl_renderbuffer _gl_depth_stencil_renderbuffer{};
+        GLuint _GlId{ 0 };
+        Arcadia::GlTexture2d _GlTexture2d;
+        Arcadia::GlRenderbuffer _GlDepthStencilRenderbuffer{};
     };
 }

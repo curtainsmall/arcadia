@@ -10,97 +10,97 @@
 #include"platform/glfw/glfw_header.hpp"
 #include"platform/graphic_api/graphic_api.hpp"
 
-namespace arcadia
+namespace Arcadia
 {
-    struct ARCADIA_API window_layer: arcadia::layer_interface
+    struct ARCADIA_API WindowLayer: Arcadia::iLayer
     {
     public:
-        using self_type = arcadia::window_layer;
+        using self_type = Arcadia::WindowLayer;
     public:
-        window_layer(
+        WindowLayer(
             glm::ivec2 size ={ 800,600 },
             std::string title = "Untitled",
             int multisample_count = 0
         );
-        virtual ~window_layer();
+        virtual ~WindowLayer();
 
         [[nodiscard]]
-        inline auto get_glfw_window_ptr() const -> GLFWwindow*
+        auto GetGlfwWindowPtr() const -> GLFWwindow*
         {
-            return _glfw_window_ptr;
+            return _pGlfwWindow;
         }
 
-        virtual void on_event(arcadia::event_base& event) override;
-        virtual void on_update() override;
+        virtual void OnEvent(Arcadia::EventBase& event) override;
+        virtual void OnUpdate() override;
 
         [[nodiscard]]
-        auto get_title() const->const std::string&;
-        auto set_title(const std::string& title) -> self_type&;
+        auto GetTitle() const->const std::string&;
+        auto SetTitle(const std::string& title) -> self_type&;
 
         [[nodiscard]]
-        auto get_size() const->glm::ivec2;
-        auto set_size(const glm::ivec2& size) -> self_type&;
+        auto GetSize() const->glm::ivec2;
+        auto SetSize(const glm::ivec2& size) -> self_type&;
 
         [[nodiscard]]
-        auto get_size_state() const->arcadia::window_size_state;
-        auto set_size_state(arcadia::window_size_state state) -> self_type&;
+        auto GetSizeState() const->Arcadia::WindowSizeState;
+        auto SetSizeState(Arcadia::WindowSizeState state) -> self_type&;
 
         [[nodiscard]]
-        auto get_pos() const->glm::ivec2;
-        auto set_pos(const glm::ivec2& pos) -> self_type&;
+        auto GetPos() const->glm::ivec2;
+        auto SetPos(const glm::ivec2& pos) -> self_type&;
 
         [[nodiscard]]
-        auto get_swap_interval() const -> int;
-        auto set_swap_interval(int interval) -> self_type&;
+        auto GetSwapInterval() const -> int;
+        auto SetSwapInterval(int interval) -> self_type&;
 
         [[nodiscard]]
-        auto get_visible() const -> bool;
-        auto set_visible(bool visible) -> self_type&;
+        auto GetVisible() const -> bool;
+        auto SetVisible(bool visible) -> self_type&;
 
         [[nodiscard]]
-        auto get_input_mode_cursor() const -> int;
-        auto set_input_mode_cursor(int value) -> self_type&;
+        auto GetInputModeCursor() const -> int;
+        auto SetInputModeCursor(int Value) -> self_type&;
 
         [[nodiscard]]
-        auto get_input_mode_sticky_keys() const -> int;
-        auto set_input_mode_sticky_keys(int value) -> self_type&;
+        auto GetInputModeStickyKeys() const -> int;
+        auto SetInputModeStickyKeys(int Value) -> self_type&;
 
         [[nodiscard]]
-        auto get_input_mode_sticky_mouse_buttons() const -> int;
-        auto set_input_mode_sticky_mouse_buttons(int value) -> self_type&;
+        auto GetInputModeStickyMouseButtons() const -> int;
+        auto SetInputModeStickMouseButtons(int Value) -> self_type&;
 
         [[nodiscard]]
-        auto get_input_mode_lock_key_mods() const -> int;
-        auto set_input_mode_lock_key_mods(int value) -> self_type&;
+        auto GetInputModeLockKeyMods() const -> int;
+        auto SetInputModeLockKeyMods(int Value) -> self_type&;
 
         [[nodiscard]]
-        auto get_input_mode_raw_mouse_motion() const -> int;
-        auto set_input_mode_raw_mouse_motion(int value) -> self_type&;
+        auto GetInputModeRawMouseMotion() const -> int;
+        auto SetInputModeRawMouseMotion(int Value) -> self_type&;
 
-        auto get_multisample_count() const -> int;
+        auto GetMultisampleCount() const -> int;
 
     private:
-        static inline auto _get_window_ptr_from_glfw_user_pointer(GLFWwindow* glfw_window_ptr) -> self_type*
+        static auto _GetWindowPtrFromGlfwUserPtr(GLFWwindow* glfw_window_ptr) -> self_type*
         {
             return static_cast<self_type*>(glfwGetWindowUserPointer(glfw_window_ptr));
         }
 
-        void _setup_callbacks();
+        void _SetupCallbacks();
 
         /// @brief Call [glfwSwapBuffers](https://www.glfw.org/docs/3.3/group__window.html#ga15a5a1ee5b3c2ca6b15ca209a12efd14)
-        void _swap_buffers();
+        void _SwapBuffers();
 
-        void _on_window_close_canceled(arcadia::event::window_close_canceled& e);
+        void _OnWindowCloseCanceled(Arcadia::Event::WindowCloseCanceled& e);
 
     private:
-        static inline glfw_context _glfw_context{};
+        static inline GlfwContext _GlfwContext{};
 
-        std::string _title;
-        int _swap_interval{ 0 };
+        std::string _Title;
+        int _SwapInterval{ 0 };
 
-        GLFWwindow* _glfw_window_ptr{ nullptr };
-        glm::dvec2 _last_cursor_pos{ .0f };
-        const int _multisample_count;
+        GLFWwindow* _pGlfwWindow{ nullptr };
+        glm::vec2 _LastCursorPos{ .0f };
+        const int _MultisampleCount;
     };
 
 

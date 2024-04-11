@@ -19,108 +19,106 @@
 #include"project/project_events.hpp"
 #include"ui/ui_events.hpp"
 
-namespace arcadia
+namespace Arcadia
 {
-    struct ARCADIA_API imgui_window_property_camera_component
+    struct ARCADIA_API ImguiWindowPropertyCameraComponent
     {
     public:
-        using self_type = imgui_window_property_camera_component;
+        using self_type = ImguiWindowPropertyCameraComponent;
     public:
-        auto operator()(arcadia::camera_component& camera_comp)->std::string;
+        auto operator()(Arcadia::CameraComponent& camera_comp)->std::string;
     };
 
-    struct ARCADIA_API imgui_window_property_light_component
+    struct ARCADIA_API ImguiWindowPropertyLightComponent
     {
     public:
-        using self_type = imgui_window_property_light_component;
+        using self_type = ImguiWindowPropertyLightComponent;
     public:
-        auto operator()(arcadia::light_component& light_comp)->std::string;
+        auto operator()(Arcadia::LightComponent& light_comp)->std::string;
     };
 
-    struct ARCADIA_API imgui_window_property_model_component
+    struct ARCADIA_API ImguiWindowPropertyModelComponent
     {
     public:
-        using self_type = imgui_window_property_model_component;
+        using self_type = ImguiWindowPropertyModelComponent;
     public:
-        auto operator()(arcadia::model_component& model_comp)->std::string;
+        auto operator()(Arcadia::ModelComponent& model_comp)->std::string;
     };
 
-    struct ARCADIA_API imgui_window_popup_physics_component_create_body
+    struct ARCADIA_API ImguiWindowPopupPhysicsComponentCreateBody
     {
     public:
-        using self_type = imgui_window_popup_physics_component_create_body;
+        using self_type = ImguiWindowPopupPhysicsComponentCreateBody;
     public:
-        void operator()(arcadia::physics_component& physics_comp);
+        void operator()(Arcadia::PhysicsComponent& physics_comp);
     public:
-        bool open{ false };
+        bool Open{ false };
     private:
-        arcadia::jph_body_info_initial _temp_jph_body_info_initial{};
+        Arcadia::JphBodyInfoInitial _TempJphBodyInfoInitial{};
     };
 
-    struct ARCADIA_API imgui_window_property_physics_component
+    struct ARCADIA_API ImguiWindowPropertyPhysicsComponent
     {
     public:
-        using self_type = imgui_window_property_physics_component;
+        using self_type = ImguiWindowPropertyPhysicsComponent;
     public:
-        auto operator()(arcadia::physics_component& physics_comp)->std::string;
+        auto operator()(Arcadia::PhysicsComponent& physics_comp)->std::string;
     private:
-        arcadia::imgui_window_popup_physics_component_create_body _imgui_window_popup_physics_component_create_body{};
+        Arcadia::ImguiWindowPopupPhysicsComponentCreateBody _imgui_window_popup_physics_component_create_body{};
     };
 
-    struct ARCADIA_API imgui_window_property: arcadia::imgui_window_interface
+    struct ARCADIA_API ImguiWindowProperty: Arcadia::iImguiWindow
     {
     public:
-        using self_type = imgui_window_property;
+        using self_type = ImguiWindowProperty;
     public:
         ARCADIA_IMGUI_WINDOW_ID_STR_GETTERS("###property");
 
-        inline imgui_window_property(
+        inline ImguiWindowProperty(
             bool open,
             const std::string& title
         ):
-            imgui_window_interface(open, title)
+            Arcadia::iImguiWindow(open, title)
         {}
-        virtual ~imgui_window_property() = default;
+        virtual ~ImguiWindowProperty() = default;
 
-        virtual void on_event(arcadia::event_base& event) override;
-        virtual void on_update() override;
+        virtual void OnEvent(Arcadia::EventBase& event) override;
+        virtual void OnUpdate() override;
     private:
-        template<arcadia::component_like Component>
-        auto _contains_component() -> bool
+        template<Arcadia::cComponent Component>
+        auto _contains_component(const entt::entity entity) -> bool
         {
-            ARCADIA_ASSERT(!_scene_wptr.expired());
-            ARCADIA_ASSERT(_selected_entity != entt::null);
+            ARCADIA_ASSERT(!_wpScene.expired());
 
-            return _scene_wptr.lock()->all_of<Component>(_selected_entity);
+            return _wpScene.lock()->AllOf<Component>(entity);
         }
-        template<arcadia::component_like Component>
-        auto _get_component() -> Component&
+        template<Arcadia::cComponent Component>
+        auto _get_component(const entt::entity entity) -> Component&
         {
-            ARCADIA_ASSERT(!_scene_wptr.expired());
-            ARCADIA_ASSERT(_contains_component<Component>());
-            ARCADIA_ASSERT(_selected_entity != entt::null);
+            ARCADIA_ASSERT(!_wpScene.expired());
+            ARCADIA_ASSERT(_contains_component<Component>(entity));
 
-            return _scene_wptr.lock()->get<Component>(_selected_entity);
+            return _wpScene.lock()->Get<Component>(entity);
         }
 
-        void _on_open_imgui_window(arcadia::event::open_imgui_window& e);
-        void _on_scene_activated(arcadia::event::scene_activated& e);
-        void _on_scene_deactivated(arcadia::event::scene_deactivated& e);
-        void _on_select_entity(arcadia::event::select_entity& e);
-        void _on_delete_entity(arcadia::event::delete_entity& e);
-        void _on_physics_simulator_built(arcadia::event::physics_simulator_built& e);
-        void _on_physics_simulator_unbuilt(arcadia::event::physics_simulator_unbuilt& e);
+        void _OnOpenImguiWindow(Arcadia::Event::OpenImguiWindow& e);
+        void _OnSceneActivated(Arcadia::Event::SceneActivated& e);
+        void _OnSceneDeactivated(Arcadia::Event::SceneDeactivated& e);
+        void _on_select_entity(Arcadia::Event::SelectEntity& e);
+        void _on_delete_entity(Arcadia::Event::DeleteEntity& e);
+        void _OnPhysicsSimualtorBuilt(Arcadia::Event::PhysicsSimulatorBuilt& e);
+        void _OnPhysicsSimulatorUnbuilt(Arcadia::Event::PhysicsSimulatorUnbuilt& e);
 
     private:
 
-        std::weak_ptr<arcadia::scene> _scene_wptr{};
-        entt::entity _selected_entity{ entt::null };
+        std::weak_ptr<Arcadia::Scene> _wpScene{};
+        entt::entity _SelectedEntity{ entt::null };
 
-        std::weak_ptr<arcadia::physics_simulator> _physics_simulator_wptr{};
+        std::weak_ptr<Arcadia::PhysicsSimulator> _wpPhysicsSimulator{};
 
-        arcadia::imgui_window_property_camera_component _imgui_window_property_camera_component{};
-        arcadia::imgui_window_property_light_component _imgui_window_property_light_component{};
-        arcadia::imgui_window_property_model_component _imgui_window_property_model_component{};
-        arcadia::imgui_window_property_physics_component _imgui_window_property_physics_component{};
+        Arcadia::ImguiWindowPropertyCameraComponent _imgui_window_property_camera_component{};
+        Arcadia::ImguiWindowPropertyLightComponent _imgui_window_property_light_component{};
+        Arcadia::ImguiWindowPropertyModelComponent _imgui_window_property_model_component{};
+        Arcadia::ImguiWindowPropertyPhysicsComponent _imgui_window_property_physics_component{};
     };
 }

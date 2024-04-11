@@ -15,98 +15,102 @@
 
 #include"editor/editor_context.hpp"
 
-arcadia::project_layer::project_layer():
-    arcadia::layer_interface("project")
+Arcadia::ProjectLayer::ProjectLayer():
+    Arcadia::iLayer("project")
 {
-    const auto& app_config = arcadia::app_config::instance();
-    auto& event_queue = arcadia::event_queue::instance();
+    const auto& app_config = Arcadia::AppConfig::Instance();
+    auto& event_queue = Arcadia::EventQueue::Instance();
 
-    arcadia::match<void>(
-        app_config.graphic_api,
-        [&](const arcadia::graphic_api::opengl&)
+    Arcadia::Match<void>(
+        app_config.GraphicApi,
+        [&](const Arcadia::GraphicApi::Opengl&)
     {
-        static arcadia::opengl_context gl_context{};
-        _renderer_sptr = std::make_shared<arcadia::gl_renderer>(app_config.working_directory / arcadia::to_filepath("shaders/opengl"));
+        static Arcadia::OpenglContext gl_context{};
+        _spRenderer = std::make_shared<Arcadia::GlRenderer>(app_config.WorkingDirectory / Arcadia::ToFilepath("shaders/opengl"));
     },
         [](auto&&)
     {
     }
     );
-    event_queue.signal<arcadia::event::renderer_built>(_renderer_sptr);
+    event_queue.Signal<Arcadia::Event::RendererBuilt>(_spRenderer);
 
-    _physics_simulator_sptr = std::make_shared<arcadia::physics_simulator>();
-    event_queue.signal<arcadia::event::physics_simulator_built>(_physics_simulator_sptr);
+    _spPhysicsSimulator = std::make_shared<Arcadia::PhysicsSimulator>();
+    event_queue.Signal<Arcadia::Event::PhysicsSimulatorBuilt>(_spPhysicsSimulator);
 }
 
-arcadia::project_layer::~project_layer()
+Arcadia::ProjectLayer::~ProjectLayer()
 {
-    auto& event_queue = arcadia::event_queue::instance();
-    event_queue.signal<arcadia::event::renderer_unbuilt>();
-    event_queue.signal<arcadia::event::physics_simulator_unbuilt>();
+    auto& event_queue = Arcadia::EventQueue::Instance();
+    event_queue.Signal<Arcadia::Event::RendererUnbuilt>();
+    event_queue.Signal<Arcadia::Event::PhysicsSimulatorUnbuilt>();
 }
 
-void arcadia::project_layer::on_event(arcadia::event_base& event)
+void Arcadia::ProjectLayer::OnEvent(Arcadia::EventBase& event)
 {
-    arcadia::event_dispatcher{ event }
-        .dispatch<arcadia::event::window_should_close>(ARCADIA_BIND_MEMBER_FN(_on_window_should_close))
-        .dispatch<arcadia::event::create_project>(ARCADIA_BIND_MEMBER_FN(_on_create_project))
-        .dispatch<arcadia::event::open_project>(ARCADIA_BIND_MEMBER_FN(_on_open_project))
-        .dispatch<arcadia::event::save_project>(ARCADIA_BIND_MEMBER_FN(_on_save_project))
-        .dispatch<arcadia::event::save_project_as>(ARCADIA_BIND_MEMBER_FN(_on_save_project_as))
-        .dispatch<arcadia::event::close_project>(ARCADIA_BIND_MEMBER_FN(_on_close_project))
-        .dispatch<arcadia::event::create_scene>(ARCADIA_BIND_MEMBER_FN(_on_create_scene))
-        .dispatch<arcadia::event::select_scene>(ARCADIA_BIND_MEMBER_FN(_on_select_scene))
-        .dispatch<arcadia::event::close_scene>(ARCADIA_BIND_MEMBER_FN(_on_close_scene))
-        .dispatch<arcadia::event::delete_scene>(ARCADIA_BIND_MEMBER_FN(_on_delete_scene))
-        .dispatch<arcadia::event::new_entity>(ARCADIA_BIND_MEMBER_FN(_on_new_entity))
-        .dispatch<arcadia::event::delete_entity>(ARCADIA_BIND_MEMBER_FN(_on_delete_entity))
-        .dispatch<arcadia::event::add_component>(ARCADIA_BIND_MEMBER_FN(_on_add_component))
-        .dispatch<arcadia::event::remove_component>(ARCADIA_BIND_MEMBER_FN(_on_remove_component))
-        .result();
+    Arcadia::EventDispatcher{ event }
+        .Dispatch<Arcadia::Event::WindowShouldClose>(ARCADIA_BIND_MEMBER_FN(_OnWindowShouldClose))
+        .Dispatch<Arcadia::Event::CreateProject>(ARCADIA_BIND_MEMBER_FN(_OnCreateProject))
+        .Dispatch<Arcadia::Event::OpenProject>(ARCADIA_BIND_MEMBER_FN(_OnOpenProject))
+        .Dispatch<Arcadia::Event::SaveProject>(ARCADIA_BIND_MEMBER_FN(_OnSaveProject))
+        .Dispatch<Arcadia::Event::SaveProjectAs>(ARCADIA_BIND_MEMBER_FN(_OnSaveProjectAs))
+        .Dispatch<Arcadia::Event::CloseProject>(ARCADIA_BIND_MEMBER_FN(_OnCloseProject))
+        .Dispatch<Arcadia::Event::ProjectSaved>(ARCADIA_BIND_MEMBER_FN(_OnProjectSaved))
+        .Dispatch<Arcadia::Event::CreateScene>(ARCADIA_BIND_MEMBER_FN(_OnCreateScene))
+        .Dispatch<Arcadia::Event::SelectScene>(ARCADIA_BIND_MEMBER_FN(_OnSelectScene))
+        .Dispatch<Arcadia::Event::CloseScene>(ARCADIA_BIND_MEMBER_FN(_OnCloseScene))
+        .Dispatch<Arcadia::Event::DeleteScene>(ARCADIA_BIND_MEMBER_FN(_OnDeleteScene))
+        .Dispatch<Arcadia::Event::NewEntity>(ARCADIA_BIND_MEMBER_FN(_OnNewEntity))
+        .Dispatch<Arcadia::Event::DeleteEntity>(ARCADIA_BIND_MEMBER_FN(_OnDeleteEntity))
+        .Dispatch<Arcadia::Event::AddComponent>(ARCADIA_BIND_MEMBER_FN(_OnAddComponent))
+        .Dispatch<Arcadia::Event::RemoveComponent>(ARCADIA_BIND_MEMBER_FN(_OnRemoveComponent))
+        .Result();
 }
 
-void arcadia::project_layer::on_update()
+void Arcadia::ProjectLayer::OnUpdate()
 {}
 
-auto arcadia::project_layer::_assert_and_get_scene() -> arcadia::scene&
+auto Arcadia::ProjectLayer::_AssertAndGetScene() -> Arcadia::Scene&
 {
-    ARCADIA_ASSERT(_project_sptr);
-    ARCADIA_ASSERT(_project_sptr->has_active_scene());
+    ARCADIA_ASSERT(_spProject);
+    ARCADIA_ASSERT(_spProject->HasActiveScene());
 
-    return _project_sptr->get_active_scene();
+    return _spProject->GetActiveScene();
 }
 
-void arcadia::project_layer::_save_project()
+void Arcadia::ProjectLayer::_SaveProject()
 {
-    ARCADIA_ASSERT(_project_sptr);
+    ARCADIA_ASSERT(_spProject);
 
-    auto json = _project_sptr->to_json();
+    auto json = _spProject->ToJson();
 
-    auto ofs = arcadia::file::create_ofstream(_project_filepath);
+    auto ofs = Arcadia::File::CreateOFstream(_ProjectFilepath);
     ofs << std::setw(4) << json;
+
+    Arcadia::EventQueue::Instance().Signal<Arcadia::Event::ProjectSaved>();
 }
 
-void arcadia::project_layer::_load_project()
+void Arcadia::ProjectLayer::_LoadProject()
 {
-    ARCADIA_ASSERT(!_project_sptr);
+    ARCADIA_ASSERT(!_spProject);
 
-    auto ifs = arcadia::file::create_ifstream(_project_filepath);
+    auto ifs = Arcadia::File::CreateIFstream(_ProjectFilepath);
     auto json = nlohmann::json::parse(ifs);
 
-    _project_sptr = std::make_shared<arcadia::project>(json);
+    _spProject = std::make_shared<Arcadia::Project>(json);
+    Arcadia::EventQueue::Instance().Signal<Arcadia::Event::ProjectLoaded>();
 }
 
-void arcadia::project_layer::_on_window_should_close(arcadia::event::window_should_close& e)
+void Arcadia::ProjectLayer::_OnWindowShouldClose(Arcadia::Event::WindowShouldClose& e)
 {
-    auto& event_queue = arcadia::event_queue::instance();
+    auto& event_queue = Arcadia::EventQueue::Instance();
 
-    auto main_window_layer_sptr = arcadia::editor_context::instance().main_window_layer_wptr.lock();
+    auto main_window_layer_sptr = Arcadia::EditorContext::Instance()._wpMainWindowLayer.lock();
 
     const auto& [wnd_ptr] = e.data_tuple;
-    if(wnd_ptr == main_window_layer_sptr.get() && _project_sptr)
+    if(wnd_ptr == main_window_layer_sptr.get() && _spProject)
     {
-        auto& memento_list = arcadia::memento_list::instance();
-        if(memento_list.size())
+        auto& memento_list = Arcadia::MementoList::Instance();
+        if(memento_list.Size())
         {
             auto res = pfd::message{
                 "Unsaved",
@@ -119,22 +123,22 @@ void arcadia::project_layer::_on_window_should_close(arcadia::event::window_shou
             {
                 case pfd::button::cancel:
                 {
-                    event_queue.signal<arcadia::event::window_close_canceled>(wnd_ptr);
+                    event_queue.Signal<Arcadia::Event::WindowCloseCanceled>(wnd_ptr);
                     return;
                 }
                 case pfd::button::yes:
                 {
-                    if(_project_filepath.empty())
+                    if(_ProjectFilepath.empty())
                     {
-                        _project_filepath = pfd::save_file{
+                        _ProjectFilepath = pfd::save_file{
                             "Save as"
                         }.result();
-                        if(_project_filepath.empty())
+                        if(_ProjectFilepath.empty())
                         {
                             return;
                         }
                     }
-                    _save_project();
+                    _SaveProject();
                     break;
                 }
                 case pfd::button::no:
@@ -142,53 +146,53 @@ void arcadia::project_layer::_on_window_should_close(arcadia::event::window_shou
             }
 
         }
-        _project_sptr.reset();
-        arcadia::event_queue::instance()
-            .signal<arcadia::event::project_unbuilt>();
+        _spProject.reset();
+        Arcadia::EventQueue::Instance()
+            .Signal<Arcadia::Event::ProjectUnbuilt>();
     }
 }
 
-void arcadia::project_layer::_on_create_project(arcadia::event::create_project& e)
+void Arcadia::ProjectLayer::_OnCreateProject(Arcadia::Event::CreateProject& e)
 {
-    if(_project_sptr)
+    if(_spProject)
     {
-        if(_project_filepath.empty())
+        if(_ProjectFilepath.empty())
         {
-            _project_filepath = pfd::save_file{
+            _ProjectFilepath = pfd::save_file{
                 "Save as"
             }.result();
-            if(_project_filepath.empty())
+            if(_ProjectFilepath.empty())
             {
                 return;
             }
         }
-        _save_project();
-        _project_sptr.reset();
+        _SaveProject();
+        _spProject.reset();
     }
 
     const auto& [name, filepath_str] = e.data_tuple;
-    _project_sptr = std::make_shared<arcadia::project>(name);
-    _project_filepath = filepath_str.size() ? arcadia::to_filepath(filepath_str) : std::filesystem::path{};
+    _spProject = std::make_shared<Arcadia::Project>(name);
+    _ProjectFilepath = filepath_str.size() ? Arcadia::ToFilepath(filepath_str) : std::filesystem::path{};
 
-    arcadia::event_queue::instance()
-        .signal<arcadia::event::project_built>(_project_sptr);
+    Arcadia::EventQueue::Instance()
+        .Signal<Arcadia::Event::ProjectBuilt>(_spProject);
 }
 
-void arcadia::project_layer::_on_open_project(arcadia::event::open_project& e)
+void Arcadia::ProjectLayer::_OnOpenProject(Arcadia::Event::OpenProject& e)
 {
-    if(_project_sptr)
+    if(_spProject)
     {
-        if(_project_filepath.empty())
+        if(_ProjectFilepath.empty())
         {
-            _project_filepath = pfd::save_file{
+            _ProjectFilepath = pfd::save_file{
                 "Save as"
             }.result();
-            if(_project_filepath.empty())
+            if(_ProjectFilepath.empty())
             {
                 return;
             }
         }
-        _save_project();
+        _SaveProject();
     }
 
     auto filepathes = pfd::open_file{
@@ -196,66 +200,66 @@ void arcadia::project_layer::_on_open_project(arcadia::event::open_project& e)
         "",
         std::vector<std::string>{"Arcadia Project","*.acdaprj"}
     }.result();
-    _project_filepath = filepathes.size() ? filepathes.at(0) : std::string{};
-    if(_project_filepath.empty())
+    _ProjectFilepath = filepathes.size() ? filepathes.at(0) : std::string{};
+    if(_ProjectFilepath.empty())
     {
         return;
     }
-    if(_project_filepath.extension() != ".acdaprj")
+    if(_ProjectFilepath.extension() != ".acdaprj")
     {
         pfd::message msg{
             "Open Project",
-            std::format("Arcadia project must ends with extension \".arcaprj\" while {} does not",_project_filepath.generic_string()),
+            std::format("Arcadia project must ends with extension \".arcaprj\" while {} does not",_ProjectFilepath.generic_string()),
             pfd::choice::ok,
             pfd::icon::info
         };
         return;
     }
-    _project_sptr.reset();
-    _load_project();
-    arcadia::event_queue::instance()
-        .signal<arcadia::event::project_built>(_project_sptr);
+    _spProject.reset();
+    _LoadProject();
+    Arcadia::EventQueue::Instance()
+        .Signal<Arcadia::Event::ProjectBuilt>(_spProject);
 }
 
-void arcadia::project_layer::_on_save_project(arcadia::event::save_project& e)
+void Arcadia::ProjectLayer::_OnSaveProject(Arcadia::Event::SaveProject& e)
 {
-    ARCADIA_ASSERT(_project_sptr);
+    ARCADIA_ASSERT(_spProject);
 
-    if(_project_filepath.empty())
+    if(_ProjectFilepath.empty())
     {
-        _project_filepath = pfd::save_file{
+        _ProjectFilepath = pfd::save_file{
             "Save as"
         }.result();
-        if(_project_filepath.empty())
+        if(_ProjectFilepath.empty())
         {
             return;
         }
     }
-    _save_project();
+    _SaveProject();
 }
 
-void arcadia::project_layer::_on_save_project_as(arcadia::event::save_project_as& e)
+void Arcadia::ProjectLayer::_OnSaveProjectAs(Arcadia::Event::SaveProjectAs& e)
 {
-    ARCADIA_ASSERT(_project_sptr);
+    ARCADIA_ASSERT(_spProject);
 
-    _project_filepath = pfd::save_file{
+    _ProjectFilepath = pfd::save_file{
         "Save as"
     }.result();
-    if(_project_filepath.empty())
+    if(_ProjectFilepath.empty())
     {
         return;
     }
-    _save_project();
+    _SaveProject();
 }
 
-void arcadia::project_layer::_on_close_project(arcadia::event::close_project& e)
+void Arcadia::ProjectLayer::_OnCloseProject(Arcadia::Event::CloseProject& e)
 {
-    ARCADIA_ASSERT(_project_sptr);
+    ARCADIA_ASSERT(_spProject);
 
-    auto& event_queue = arcadia::event_queue::instance();
+    auto& event_queue = Arcadia::EventQueue::Instance();
 
-    auto& memento_list = arcadia::memento_list::instance();
-    if(memento_list.size())
+    auto& memento_list = Arcadia::MementoList::Instance();
+    if(memento_list.Size())
     {
         auto res = pfd::message{
                         "Unsaved",
@@ -272,65 +276,70 @@ void arcadia::project_layer::_on_close_project(arcadia::event::close_project& e)
             }
             case pfd::button::yes:
             {
-                if(_project_filepath.empty())
+                if(_ProjectFilepath.empty())
                 {
-                    _project_filepath = pfd::save_file{
+                    _ProjectFilepath = pfd::save_file{
                         "Save as"
                     }.result();
-                    if(_project_filepath.empty())
+                    if(_ProjectFilepath.empty())
                     {
                         return;
                     }
                 }
-                _save_project();
+                _SaveProject();
                 break;
             }
             case pfd::button::no:
                 break;
         }
     }
-    _project_sptr.reset();
-    arcadia::event_queue::instance()
-        .signal<arcadia::event::project_unbuilt>();
+    _spProject.reset();
+    Arcadia::EventQueue::Instance()
+        .Signal<Arcadia::Event::ProjectUnbuilt>();
 }
 
-void arcadia::project_layer::_on_create_scene(arcadia::event::create_scene& e)
+void Arcadia::ProjectLayer::_OnProjectSaved(Arcadia::Event::ProjectSaved& e)
 {
-    ARCADIA_ASSERT(_project_sptr);
+    Arcadia::MementoList::Instance().Clear();
+}
+
+void Arcadia::ProjectLayer::_OnCreateScene(Arcadia::Event::CreateScene& e)
+{
+    ARCADIA_ASSERT(_spProject);
 
     const auto& [name, as_current] = e.data_tuple;
-    auto& scene_sptr = _project_sptr->scene_sptr_umap.try_emplace(
+    auto& scene_sptr = _spProject->umapSceneSptr.try_emplace(
         name,
-        std::make_shared<arcadia::scene>(name)
+        std::make_shared<Arcadia::Scene>(name)
     ).first->second;
 
     if(as_current)
     {
-        _project_sptr->set_active_scene(name);
+        _spProject->SetActiveScene(name);
     }
 }
 
-void arcadia::project_layer::_on_select_scene(arcadia::event::select_scene& e)
+void Arcadia::ProjectLayer::_OnSelectScene(Arcadia::Event::SelectScene& e)
 {
-    ARCADIA_ASSERT(_project_sptr);
+    ARCADIA_ASSERT(_spProject);
 
     const auto& [name] = e.data_tuple;
-    auto& active_scene_wptr = _project_sptr->set_active_scene(name);
+    auto& active_scene_wptr = _spProject->SetActiveScene(name);
 }
 
-void arcadia::project_layer::_on_close_scene(arcadia::event::close_scene& e)
+void Arcadia::ProjectLayer::_OnCloseScene(Arcadia::Event::CloseScene& e)
 {
-    ARCADIA_ASSERT(_project_sptr);
+    ARCADIA_ASSERT(_spProject);
 
-    _project_sptr->set_active_scene();
+    _spProject->SetActiveScene();
 }
 
-void arcadia::project_layer::_on_delete_scene(arcadia::event::delete_scene& e)
+void Arcadia::ProjectLayer::_OnDeleteScene(Arcadia::Event::DeleteScene& e)
 {
-    ARCADIA_ASSERT(_project_sptr);
-    ARCADIA_ASSERT(_project_sptr->has_active_scene());
+    ARCADIA_ASSERT(_spProject);
+    ARCADIA_ASSERT(_spProject->HasActiveScene());
 
-    const auto& scene_name = _project_sptr->get_active_scene().get_name();
+    const auto& scene_name = _spProject->GetActiveScene().GetName();
 
     auto res = pfd::message{
         "Delete Scene",
@@ -341,8 +350,8 @@ void arcadia::project_layer::_on_delete_scene(arcadia::event::delete_scene& e)
     {
         case pfd::button::ok:
         {
-            _project_sptr->scene_sptr_umap.erase(scene_name);
-            _project_sptr->set_active_scene();
+            _spProject->umapSceneSptr.erase(scene_name);
+            _spProject->SetActiveScene();
             break;
         }
         case pfd::button::cancel:
@@ -354,84 +363,84 @@ void arcadia::project_layer::_on_delete_scene(arcadia::event::delete_scene& e)
 
 }
 
-void arcadia::project_layer::_on_new_entity(arcadia::event::new_entity& e)
+void Arcadia::ProjectLayer::_OnNewEntity(Arcadia::Event::NewEntity& e)
 {
-    auto& scene = _assert_and_get_scene();
+    auto& scene = _AssertAndGetScene();
 
     std::string name = "New Entity";
     std::string final_name = name;
     int postfix{ 1 };
-    while(scene.contains(final_name))
+    while(scene.Contains(final_name))
     {
         final_name = std::format("{} {}", name, ++postfix);
     }
 
-    ARCADIA_DISCARD(scene.create(final_name));
+    ARCADIA_DISCARD(scene.Create(final_name));
 }
 
-void arcadia::project_layer::_on_delete_entity(arcadia::event::delete_entity& e)
+void Arcadia::ProjectLayer::_OnDeleteEntity(Arcadia::Event::DeleteEntity& e)
 {
     const auto& [entity] = e.data_tuple;
-    auto& scene = _assert_and_get_scene();
-    scene.destroy(entity);
+    auto& scene = _AssertAndGetScene();
+    scene.Destroy(entity);
 }
 
-void arcadia::project_layer::_on_add_component(arcadia::event::add_component& e)
+void Arcadia::ProjectLayer::_OnAddComponent(Arcadia::Event::AddComponent& e)
 {
     const auto& [entity, type_str] = e.data_tuple;
-    auto& scene = _assert_and_get_scene();
+    auto& scene = _AssertAndGetScene();
 
-    arcadia::match<void>(
+    Arcadia::Match<void>(
         type_str,
-        arcadia::camera_component::get_type_str_static(),
+        Arcadia::CameraComponent::GetTypeStrStatic(),
         [&]()
     {
-        scene.emplace<arcadia::camera_component>(entity);
+        scene.Emplace<Arcadia::CameraComponent>(entity);
     },
-        arcadia::light_component::get_type_str_static(),
+        Arcadia::LightComponent::GetTypeStrStatic(),
         [&]()
     {
-        scene.emplace<arcadia::light_component>(entity);
+        scene.Emplace<Arcadia::LightComponent>(entity);
     },
-        arcadia::model_component::get_type_str_static(),
+        Arcadia::ModelComponent::GetTypeStrStatic(),
         [&]()
     {
-        scene.emplace<arcadia::model_component>(entity);
+        scene.Emplace<Arcadia::ModelComponent>(entity);
     },
-        arcadia::physics_component::get_type_str_static(),
+        Arcadia::PhysicsComponent::GetTypeStrStatic(),
         [&]()
     {
-        scene.emplace<arcadia::physics_component>(entity);
+        scene.Emplace<Arcadia::PhysicsComponent>(entity);
     }
     );
 }
 
-void arcadia::project_layer::_on_remove_component(arcadia::event::remove_component& e)
+void Arcadia::ProjectLayer::_OnRemoveComponent(Arcadia::Event::RemoveComponent& e)
 {
     const auto& [entity, type_str] = e.data_tuple;
-    auto& scene = _assert_and_get_scene();
+    auto& scene = _AssertAndGetScene();
 
-    arcadia::match<void>(
+    Arcadia::Match<void>(
         type_str,
-        arcadia::camera_component::get_type_str_static(),
+        Arcadia::CameraComponent::GetTypeStrStatic(),
         [&]()
     {
-        scene.remove<arcadia::camera_component>(entity);
+        scene.Remove<Arcadia::CameraComponent>(entity);
     },
-        arcadia::light_component::get_type_str_static(),
+        Arcadia::LightComponent::GetTypeStrStatic(),
         [&]()
     {
-        scene.remove<arcadia::light_component>(entity);
+        scene.Remove<Arcadia::LightComponent>(entity);
     },
-        arcadia::model_component::get_type_str_static(),
+        Arcadia::ModelComponent::GetTypeStrStatic(),
         [&]()
     {
-        scene.remove<arcadia::model_component>(entity);
+        scene.Remove<Arcadia::ModelComponent>(entity);
     },
-        arcadia::physics_component::get_type_str_static(),
+        Arcadia::PhysicsComponent::GetTypeStrStatic(),
         [&]()
     {
-        scene.remove<arcadia::physics_component>(entity);
+        scene.Remove<Arcadia::PhysicsComponent>(entity);
     }
     );
 }

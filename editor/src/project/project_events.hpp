@@ -4,62 +4,68 @@
 
 #include"core/event/event.hpp"
 
-namespace arcadia
+namespace Arcadia
 {
-    struct project;
-    struct renderer_interface;
-    struct physics_simulator;
-    struct scene;
+    struct Project;
+    struct iRenderer;
+    struct PhysicsSimulator;
+    struct Scene;
 
-    namespace event
+    namespace Event
     {
 
         //==== Event for project ====//
 
         ARCADIA_EVENT(
-            project_built,
-            std::weak_ptr<arcadia::project>
+            ProjectBuilt,
+            std::weak_ptr<Arcadia::Project>
         );
         ARCADIA_EVENT(
-            project_unbuilt
+            ProjectUnbuilt
+        );
+        ARCADIA_EVENT(
+            ProjectLoaded
+        );
+        ARCADIA_EVENT(
+            ProjectSaved
         );
 
         //==== Event for renderer ====//
 
         ARCADIA_EVENT(
-            renderer_built,
-            std::weak_ptr<arcadia::renderer_interface>
+            RendererBuilt,
+            std::weak_ptr<Arcadia::iRenderer>
         );
         ARCADIA_EVENT(
-            renderer_unbuilt
+            RendererUnbuilt
         );
 
         //==== Event for physics simulator ====//
 
         ARCADIA_EVENT(
-            physics_simulator_built,
-            std::weak_ptr<arcadia::physics_simulator>
+            PhysicsSimulatorBuilt,
+            std::weak_ptr<Arcadia::PhysicsSimulator>
         );
 
         ARCADIA_EVENT(
-            physics_simulator_unbuilt
+            PhysicsSimulatorUnbuilt
         );
 
         //==== Event for scene ====//
 
         ARCADIA_EVENT(
-            scene_built,
-            std::weak_ptr<arcadia::scene>
+            SceneBuilt,
+            std::weak_ptr<Arcadia::Scene>
         );
         ARCADIA_EVENT(
-            scene_activated,
-            std::weak_ptr<arcadia::scene>
+            SceneActivated,
+            std::weak_ptr<Arcadia::Scene>
         );
         ARCADIA_EVENT(
-            scene_deactivated
+            SceneDeactivated
         );
         ARCADIA_EVENT(
-            scene_unbuilt
+            SceneUnbuilt
         );
     }
 }

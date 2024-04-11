@@ -4,18 +4,18 @@
 #include"resource/component/component.hpp"
 #include"resource/component/skybox_component/cubemap.hpp"
 
-namespace arcadia
+namespace Arcadia
 {
-    struct ARCADIA_API skybox_component: arcadia::component_base
+    struct ARCADIA_API SkyboxComponent: Arcadia::iComponent
     {
     public:
-        using self_type = skybox_component;
+        using self_type = SkyboxComponent;
     public:
         ARCADIA_COMPONENT_TYPE_STR_GETTERS("Skybox");
 
-        skybox_component() = default;
-        ~skybox_component() = default;
+        SkyboxComponent() = default;
+        ~SkyboxComponent() = default;
     public:
-        arcadia::cubemap cubemap{};
+        Arcadia::Cubemap Cubemap{};
     };
 }

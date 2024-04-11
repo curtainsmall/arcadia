@@ -1,4 +1,4 @@
-namespace arcadia.serialization;
+namespace Arcadia.Serialization;
 
 enum ui_style: ubyte{
     dark = 0,

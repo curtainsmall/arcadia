@@ -4,25 +4,25 @@
 #include<format>
 
 
-arcadia::glfw_context::glfw_context()
+Arcadia::GlfwContext::GlfwContext()
 {
     if(!glfwInit())
     {
         const char* desr{ nullptr };
         auto err_code = glfwGetError(&desr);
-        throw arcadia::glfw_error{ std::format("Failed to init GLFW, because {}",desr) };
+        throw Arcadia::GlfwError{ std::format("Failed to init GLFW, because {}",desr) };
     }
 
     glfwSetErrorCallback(
         [](int err_type, const char* desr) -> void
     {
-        throw arcadia::glfw_error{ std::format("GLFW error[{0}]: {1}", err_type,desr) };
+        throw Arcadia::GlfwError{ std::format("GLFW error[{0}]: {1}", err_type,desr) };
     }
     );
 
 }
 
-arcadia::glfw_context::~glfw_context()
+Arcadia::GlfwContext::~GlfwContext()
 {
     glfwTerminate();
 }

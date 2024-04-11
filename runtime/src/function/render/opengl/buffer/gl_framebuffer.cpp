@@ -1,74 +1,74 @@
 #include "pch.hpp"
 #include "gl_framebuffer.hpp"
 
-arcadia::gl_framebuffer::gl_framebuffer(
+Arcadia::GlFramebuffer::GlFramebuffer(
     const glm::ivec2& viewport_size,
     float near_plane,
     float far_plane
 ):
-    _gl_texture2d(viewport_size),
-    _gl_depth_stencil_renderbuffer(GL_DEPTH24_STENCIL8, viewport_size)
+    _GlTexture2d(viewport_size),
+    _GlDepthStencilRenderbuffer(GL_DEPTH24_STENCIL8, viewport_size)
 {
-    ARCADIA_GL_CALL(glGenFramebuffers(1, &_gl_id));
+    ARCADIA_GL_CALL(glGenFramebuffers(1, &_GlId));
 
-    bind();
-    ARCADIA_GL_CALL(glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, _gl_texture2d.get_gl_id(), 0));
-    ARCADIA_GL_CALL(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, _gl_depth_stencil_renderbuffer.get_gl_id()));
-    unbind();
+    Bind();
+    ARCADIA_GL_CALL(glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, _GlTexture2d.GetGlId(), 0));
+    ARCADIA_GL_CALL(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, _GlDepthStencilRenderbuffer.GetGlId()));
+    Unbind();
 
-    if(auto res = is_complete(); res != GL_FRAMEBUFFER_COMPLETE)
+    if(auto res = IsComplete(); res != GL_FRAMEBUFFER_COMPLETE)
     {
-        throw arcadia::gl_invalid{ std::format("OpenGL framebuffer incomplete: {}",res) };
+        throw Arcadia::GlInvalid{ std::format("OpenGL framebuffer incomplete: {}",res) };
     }
 }
 
-arcadia::gl_framebuffer::~gl_framebuffer()
+Arcadia::GlFramebuffer::~GlFramebuffer()
 {
-    ARCADIA_GL_CALL(glDeleteFramebuffers(1, &_gl_id));
+    ARCADIA_GL_CALL(glDeleteFramebuffers(1, &_GlId));
 }
 
-arcadia::gl_framebuffer::gl_framebuffer(self_type&& rhs) noexcept:
-    _gl_texture2d(std::move(rhs._gl_texture2d))
+Arcadia::GlFramebuffer::GlFramebuffer(self_type&& rhs) noexcept:
+    _GlTexture2d(std::move(rhs._GlTexture2d))
 {
-    _gl_id = rhs._gl_id;
-    rhs._gl_id = 0;
+    _GlId = rhs._GlId;
+    rhs._GlId = 0;
 }
 
-auto arcadia::gl_framebuffer::operator=(self_type&& rhs) noexcept -> self_type&
+auto Arcadia::GlFramebuffer::operator=(self_type&& rhs) noexcept -> self_type&
 {
-    _gl_texture2d = std::move(rhs._gl_texture2d);
+    _GlTexture2d = std::move(rhs._GlTexture2d);
 
-    _gl_id = rhs._gl_id;
-    rhs._gl_id = 0;
+    _GlId = rhs._GlId;
+    rhs._GlId = 0;
 
     return *this;
 }
 
-void arcadia::gl_framebuffer::bind() const
+void Arcadia::GlFramebuffer::Bind() const
 {
-    if(_gl_id == 0)
+    if(_GlId == 0)
     {
-        throw arcadia::gl_invalid{ "Cannot bind null OpenGL framebuffer" };
+        throw Arcadia::GlInvalid{ "Cannot bind null OpenGL framebuffer" };
     }
 
-    ARCADIA_GL_CALL(glBindFramebuffer(GL_FRAMEBUFFER, _gl_id));
+    ARCADIA_GL_CALL(glBindFramebuffer(GL_FRAMEBUFFER, _GlId));
 }
 
-void arcadia::gl_framebuffer::unbind() const
+void Arcadia::GlFramebuffer::Unbind() const
 {
     ARCADIA_GL_CALL(glBindFramebuffer(GL_FRAMEBUFFER, 0));
 }
 
-auto arcadia::gl_framebuffer::is_complete() const -> GLenum
+auto Arcadia::GlFramebuffer::IsComplete() const -> GLenum
 {
-    if(_gl_id == 0)
+    if(_GlId == 0)
     {
-        throw arcadia::gl_invalid{ "Cannot check completeness of null OpenGL framebuffer" };
+        throw Arcadia::GlInvalid{ "Cannot check completeness of null OpenGL framebuffer" };
     }
 
-    bind();
+    Bind();
     ARCADIA_GL_CALL(auto res = glCheckFramebufferStatus(GL_FRAMEBUFFER));
-    unbind();
+    Unbind();
 
     return res;
 }

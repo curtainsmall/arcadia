@@ -10,41 +10,41 @@
 #include"resource/component/physics_component/physics_component.hpp"
 #include"resource/component/skybox_component/skybox_component.hpp"
 
-void arcadia::imgui_window_outliner::on_event(arcadia::event_base& event)
+void Arcadia::ImguiWindowOutliner::OnEvent(Arcadia::EventBase& event)
 {
-    arcadia::event_dispatcher{ event }
-        .dispatch<arcadia::event::open_imgui_window>(ARCADIA_BIND_MEMBER_FN(_on_open_imgui_window))
-        .dispatch<arcadia::event::scene_activated>(ARCADIA_BIND_MEMBER_FN(_on_scene_activated))
-        .dispatch<arcadia::event::scene_deactivated>(ARCADIA_BIND_MEMBER_FN(_on_scene_deactivated))
-        .result();
+    Arcadia::EventDispatcher{ event }
+        .Dispatch<Arcadia::Event::OpenImguiWindow>(ARCADIA_BIND_MEMBER_FN(_OnOpenImguiWindow))
+        .Dispatch<Arcadia::Event::SceneActivated>(ARCADIA_BIND_MEMBER_FN(_OnSceneActivated))
+        .Dispatch<Arcadia::Event::SceneDeactivated>(ARCADIA_BIND_MEMBER_FN(_OnSceneDeactivated))
+        .Result();
 }
 
-void arcadia::imgui_window_outliner::on_update()
+void Arcadia::ImguiWindowOutliner::OnUpdate()
 {
     if(!_open)
     {
         return;
     }
 
-    auto has_scene = !_scene_wptr.expired();
-    auto scene_sptr = _scene_wptr.lock();
+    auto has_scene = !_wpScene.expired();
+    auto scene_sptr = _wpScene.lock();
 
-    auto& event_queue = arcadia::event_queue::instance();
+    auto& event_queue = Arcadia::EventQueue::Instance();
 
     auto imgui_window_title = has_scene
-        ? _title + " - " + scene_sptr->get_name() + get_id_str()
-        : _title + get_id_str();
+        ? _Title + " - " + scene_sptr->GetName() + GetIdStr()
+        : _Title + GetIdStr();
 
     ImGui::SetNextWindowSize(glm::vec2{ 1024,768 }, ImGuiCond_Once);
     auto window_flags =
         ImGuiWindowFlags_NoCollapse;
-    if(ImGui::Begin(imgui_window_title.c_str(), &_open, window_flags))
+    if(ImGui::Begin(imgui_window_title.c_str(), &_Open, window_flags))
     {
         if(has_scene && ImGui::BeginPopupContextWindow())
         {
             if(ImGui::Selectable("New Entity"))
             {
-                event_queue.signal<arcadia::event::new_entity>();
+                event_queue.Signal<Arcadia::Event::NewEntity>();
             }
             ImGui::EndPopup();
         }
@@ -55,64 +55,64 @@ void arcadia::imgui_window_outliner::on_update()
         }
         else
         {
-            for(const auto& [name, entity] : scene_sptr->get_name_entity_bimap())
+            for(const auto& [name, entity] : scene_sptr->GetNameEntityBimap())
             {
                 // Display text input
-                if(_entity_old_name == name)
+                if(_EntityOldName == name)
                 {
-                    _entity_new_name = _entity_old_name;
+                    _EntityNewName = _EntityOldName;
 
                     auto input_text_flags =
                         ImGuiInputTextFlags_AutoSelectAll;
-                    ImGui::InputText("###rename_entity", &_entity_new_name, input_text_flags);
+                    ImGui::InputText("###rename_entity", &_EntityNewName, input_text_flags);
                     ImGui::SetItemDefaultFocus();
                     if(!ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Left) || ImGui::IsKeyPressed(ImGuiKey_Enter))
                     {
-                        if(_entity_old_name != _entity_new_name && !scene_sptr->rename(_entity_old_name, _entity_new_name))
+                        if(_EntityOldName != _EntityNewName && !scene_sptr->Rename(_EntityOldName, _EntityNewName))
                         {
                             pfd::message msg{
                                 "Rename Entity",
-                                std::format("Failed to rename {} to {}, because the new name is already used",_entity_old_name,_entity_new_name),
+                                std::format("Failed to rename {} to {}, because the new name is already used",_EntityOldName,_EntityNewName),
                                 pfd::choice::ok,
                                 pfd::icon::info
                             };
                         }
-                        _entity_old_name.clear();
-                        _entity_new_name.clear();
+                        _EntityOldName.clear();
+                        _EntityNewName.clear();
                     }
                 }
                 // Display selectable
                 else
                 {
-                    auto& entity_info = scene_sptr->get_entity_info(entity);
-                    ImGui::Checkbox(std::format("##render_in_viewport_{}", entity).c_str(), &entity_info.should_render_in_viewport);
+                    auto& entity_info = scene_sptr->GetEntityInfo(entity);
+                    ImGui::Checkbox(std::format("##render_in_viewport_{}", entity).c_str(), &entity_info.ShouldRenderInViewport);
                     ImGui::SameLine();
-                    if(ImGui::Selectable(name.c_str(), _selected_entity == entity))
+                    if(ImGui::Selectable(name.c_str(), _SelectedEntity == entity))
                     {
-                        _selected_entity = entity;
-                        event_queue.signal<arcadia::event::select_entity>(entity);
+                        _SelectedEntity = entity;
+                        event_queue.Signal<Arcadia::Event::SelectEntity>(entity);
                     }
 
                     if(ImGui::BeginPopupContextItem())
                     {
                         if(ImGui::Selectable("Delete Entity"))
                         {
-                            event_queue.signal<arcadia::event::delete_entity>(entity);
+                            event_queue.Signal<Arcadia::Event::DeleteEntity>(entity);
                         }
                         if(ImGui::Selectable("Rename Entity"))
                         {
-                            _entity_old_name = name;
+                            _EntityOldName = name;
                         }
-                        if(_selected_entity != entt::null)
+                        if(_SelectedEntity != entt::null)
                         {
                             ImGui::Separator();
                             if(ImGui::BeginMenu("Add Component"))
                             {
                                 int item_count{ 0 };
-                                _add_component_menu_item<arcadia::camera_component>(item_count);
-                                _add_component_menu_item<arcadia::light_component>(item_count);
-                                _add_component_menu_item<arcadia::model_component>(item_count);
-                                _add_component_menu_item<arcadia::physics_component>(item_count);
+                                _AddComponentMenuItem<Arcadia::CameraComponent>(item_count);
+                                _AddComponentMenuItem<Arcadia::LightComponent>(item_count);
+                                _AddComponentMenuItem<Arcadia::ModelComponent>(item_count);
+                                _AddComponentMenuItem<Arcadia::PhysicsComponent>(item_count);
 
                                 if(item_count == 0)
                                 {
@@ -124,10 +124,10 @@ void arcadia::imgui_window_outliner::on_update()
                             if(ImGui::BeginMenu("Remove Component"))
                             {
                                 int item_count{ 0 };
-                                _remove_component_menu_item<arcadia::camera_component>(item_count);
-                                _remove_component_menu_item<arcadia::light_component>(item_count);
-                                _remove_component_menu_item<arcadia::model_component>(item_count);
-                                _remove_component_menu_item<arcadia::physics_component>(item_count);
+                                _RemoveComponentMenuItem<Arcadia::CameraComponent>(item_count);
+                                _RemoveComponentMenuItem<Arcadia::LightComponent>(item_count);
+                                _RemoveComponentMenuItem<Arcadia::ModelComponent>(item_count);
+                                _RemoveComponentMenuItem<Arcadia::PhysicsComponent>(item_count);
 
                                 if(item_count == 0)
                                 {
@@ -148,23 +148,23 @@ void arcadia::imgui_window_outliner::on_update()
 
 }
 
-void arcadia::imgui_window_outliner::_on_open_imgui_window(arcadia::event::open_imgui_window& e)
+void Arcadia::ImguiWindowOutliner::_OnOpenImguiWindow(Arcadia::Event::OpenImguiWindow& e)
 {
     const auto& [id_str] = e.data_tuple;
-    if(id_str == get_id_str())
+    if(id_str == GetIdStr())
     {
-        _open = true;
+        _Open = true;
     }
 }
 
-void arcadia::imgui_window_outliner::_on_scene_activated(arcadia::event::scene_activated& e)
+void Arcadia::ImguiWindowOutliner::_OnSceneActivated(Arcadia::Event::SceneActivated& e)
 {
     const auto& [scene_wptr] = e.data_tuple;
-    _scene_wptr = scene_wptr;
+    _wpScene = scene_wptr;
 }
 
-void arcadia::imgui_window_outliner::_on_scene_deactivated(arcadia::event::scene_deactivated& e)
+void Arcadia::ImguiWindowOutliner::_OnSceneDeactivated(Arcadia::Event::SceneDeactivated& e)
 {
-    _scene_wptr.reset();
-    _selected_entity = entt::null;
+    _wpScene.reset();
+    _SelectedEntity = entt::null;
 }

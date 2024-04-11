@@ -1,40 +1,40 @@
 #include "pch.hpp"
 #include "gl_renderbuffer.hpp"
 
-arcadia::gl_renderbuffer::gl_renderbuffer()
+Arcadia::GlRenderbuffer::GlRenderbuffer()
 {
-    ARCADIA_GL_CALL(glGenRenderbuffers(1, &_gl_id));
+    ARCADIA_GL_CALL(glGenRenderbuffers(1, &_GlId));
 }
 
-arcadia::gl_renderbuffer::gl_renderbuffer(GLenum format, const glm::ivec2& size):
-    gl_renderbuffer()
+Arcadia::GlRenderbuffer::GlRenderbuffer(GLenum format, const glm::ivec2& size):
+    GlRenderbuffer()
 {
-    set_storage(format, size);
+    SetStorage(format, size);
 }
 
-arcadia::gl_renderbuffer::~gl_renderbuffer()
+Arcadia::GlRenderbuffer::~GlRenderbuffer()
 {
-    ARCADIA_GL_CALL(glDeleteRenderbuffers(1, &_gl_id));
+    ARCADIA_GL_CALL(glDeleteRenderbuffers(1, &_GlId));
 }
 
-void arcadia::gl_renderbuffer::bind() const
+void Arcadia::GlRenderbuffer::Bind() const
 {
-    if(_gl_id == 0)
+    if(_GlId == 0)
     {
-        throw arcadia::gl_invalid{ "Cannot bind null OpenGL renderbuffer" };
+        throw Arcadia::GlInvalid{ "Cannot bind null OpenGL renderbuffer" };
     }
 
-    ARCADIA_GL_CALL(glBindRenderbuffer(GL_RENDERBUFFER, _gl_id));
+    ARCADIA_GL_CALL(glBindRenderbuffer(GL_RENDERBUFFER, _GlId));
 }
 
-void arcadia::gl_renderbuffer::unbind() const
+void Arcadia::GlRenderbuffer::Unbind() const
 {
     ARCADIA_GL_CALL(glBindRenderbuffer(GL_RENDERBUFFER, 0));
 }
 
-void arcadia::gl_renderbuffer::set_storage(GLenum format, const glm::ivec2& size)
+void Arcadia::GlRenderbuffer::SetStorage(GLenum format, const glm::ivec2& size)
 {
-    bind();
+    Bind();
     ARCADIA_GL_CALL(glRenderbufferStorage(GL_RENDERBUFFER, format, size.x, size.y));
-    unbind();
+    Unbind();
 }

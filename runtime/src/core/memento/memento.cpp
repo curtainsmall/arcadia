@@ -1,93 +1,93 @@
 #include "pch.hpp"
 #include "memento.hpp"
 
-void arcadia::memento::restore() const
+void Arcadia::Memento::Restore() const
 {
-    _originator_restore_fn();
+    _OriginatorRestoreFn();
 }
 
-auto arcadia::memento::get_description() const -> const std::string&
+auto Arcadia::Memento::GetDescription() const -> const std::string&
 {
-    return _description;
+    return _Description;
 }
 
-auto arcadia::memento_list::instance() -> self_type&
+auto Arcadia::MementoList::Instance() -> self_type&
 {
     static self_type memento_list{};
     return memento_list;
 }
 
-auto arcadia::memento_list::undo()  -> bool
+auto Arcadia::MementoList::Undo()  -> bool
 {
-    if(_current_iter == _list.end())
+    if(_CurrentIter == _List.end())
     {
         return false;
     }
 
-    (_current_iter++)->restore();
+    (_CurrentIter++)->Restore();
 }
 
-auto arcadia::memento_list::redo()  -> bool
+auto Arcadia::MementoList::Redo()  -> bool
 {
-    if(_current_iter == _list.begin())
+    if(_CurrentIter == _List.begin())
     {
         return false;
     }
 
-    (--_current_iter)->restore();
+    (--_CurrentIter)->Restore();
 }
 
-auto arcadia::memento_list::get_capacity() const -> std::size_t
+auto Arcadia::MementoList::GetCapacity() const -> std::size_t
 {
-    return _capacity;
+    return _Capacity;
 }
 
-void arcadia::memento_list::set_capacity(std::size_t capacity)
+void Arcadia::MementoList::SetCapacity(std::size_t capacity)
 {
-    _capacity = capacity;
+    _Capacity = capacity;
 }
 
-auto arcadia::memento_list::size() const -> std::size_t
+auto Arcadia::MementoList::Size() const -> std::size_t
 {
-    return _list.size();
+    return _List.size();
 }
 
-void arcadia::memento_list::clear()
+void Arcadia::MementoList::Clear()
 {
-    _list.clear();
+    _List.clear();
 }
 
-auto arcadia::memento_list::is_current(const container_type::const_iterator& iter) const -> bool
+auto Arcadia::MementoList::IsCurrent(const container_type::const_iterator& iter) const -> bool
 {
-    return iter == _current_iter;
+    return iter == _CurrentIter;
 }
 
-auto arcadia::memento_list::begin() noexcept -> container_type::iterator
+auto Arcadia::MementoList::begin() noexcept -> container_type::iterator
 {
-    return _list.begin();
+    return _List.begin();
 }
 
-auto arcadia::memento_list::end() noexcept -> container_type::iterator
+auto Arcadia::MementoList::end() noexcept -> container_type::iterator
 {
-    return _list.end();
+    return _List.end();
 }
 
-auto arcadia::memento_list::begin() const noexcept -> container_type::const_iterator
+auto Arcadia::MementoList::begin() const noexcept -> container_type::const_iterator
 {
-    return _list.begin();
+    return _List.begin();
 }
 
-auto arcadia::memento_list::end() const noexcept -> container_type::const_iterator
+auto Arcadia::MementoList::end() const noexcept -> container_type::const_iterator
 {
-    return _list.end();
+    return _List.end();
 }
 
-auto arcadia::memento_list::cbegin() const noexcept -> container_type::const_iterator
+auto Arcadia::MementoList::cbegin() const noexcept -> container_type::const_iterator
 {
-    return _list.cbegin();
+    return _List.cbegin();
 }
 
-auto arcadia::memento_list::cend() const noexcept -> container_type::const_iterator
+auto Arcadia::MementoList::cend() const noexcept -> container_type::const_iterator
 {
-    return _list.cend();
+    return _List.cend();
 }

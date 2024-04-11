@@ -14,54 +14,55 @@
 #include"project/project_events.hpp"
 #include"ui/ui_events.hpp"
 
-namespace arcadia
+namespace Arcadia
 {
-    struct ARCADIA_API project_layer: arcadia::layer_interface
+    struct ARCADIA_API ProjectLayer: Arcadia::iLayer
     {
     public:
-        project_layer();
-        virtual ~project_layer();
+        ProjectLayer();
+        virtual ~ProjectLayer();
 
-        virtual void on_event(arcadia::event_base& event) override;
-        virtual void on_update() override;
+        virtual void OnEvent(Arcadia::EventBase& event) override;
+        virtual void OnUpdate() override;
 
         [[nodiscard]]
-        inline auto has_project() const noexcept -> bool
+        inline auto HasProject() const noexcept -> bool
         {
-            return _project_sptr.get();
+            return !!_spProject;
         }
     private:
         [[nodiscard]]
-        auto _assert_and_get_scene() -> arcadia::scene&;
+        auto _AssertAndGetScene() -> Arcadia::Scene&;
 
-        void _save_project();
-        void _load_project();
+        void _SaveProject();
+        void _LoadProject();
 
-        void _on_window_should_close(arcadia::event::window_should_close& e);
+        void _OnWindowShouldClose(Arcadia::Event::WindowShouldClose& e);
 
-        void _on_create_project(arcadia::event::create_project& e);
-        void _on_open_project(arcadia::event::open_project& e);
-        void _on_save_project(arcadia::event::save_project& e);
-        void _on_save_project_as(arcadia::event::save_project_as& e);
-        void _on_close_project(arcadia::event::close_project& e);
+        void _OnCreateProject(Arcadia::Event::CreateProject& e);
+        void _OnOpenProject(Arcadia::Event::OpenProject& e);
+        void _OnSaveProject(Arcadia::Event::SaveProject& e);
+        void _OnSaveProjectAs(Arcadia::Event::SaveProjectAs& e);
+        void _OnCloseProject(Arcadia::Event::CloseProject& e);
+        void _OnProjectSaved(Arcadia::Event::ProjectSaved& e);
 
-        void _on_create_scene(arcadia::event::create_scene& e);
-        void _on_select_scene(arcadia::event::select_scene& e);
-        void _on_close_scene(arcadia::event::close_scene& e);
-        void _on_delete_scene(arcadia::event::delete_scene& e);
+        void _OnCreateScene(Arcadia::Event::CreateScene& e);
+        void _OnSelectScene(Arcadia::Event::SelectScene& e);
+        void _OnCloseScene(Arcadia::Event::CloseScene& e);
+        void _OnDeleteScene(Arcadia::Event::DeleteScene& e);
 
-        void _on_new_entity(arcadia::event::new_entity& e);
-        void _on_delete_entity(arcadia::event::delete_entity& e);
+        void _OnNewEntity(Arcadia::Event::NewEntity& e);
+        void _OnDeleteEntity(Arcadia::Event::DeleteEntity& e);
 
-        void _on_add_component(arcadia::event::add_component& e);
-        void _on_remove_component(arcadia::event::remove_component& e);
+        void _OnAddComponent(Arcadia::Event::AddComponent& e);
+        void _OnRemoveComponent(Arcadia::Event::RemoveComponent& e);
 
     private:
-        std::filesystem::path _project_filepath{};
-        std::shared_ptr<arcadia::project> _project_sptr{};
+        std::filesystem::path _ProjectFilepath{};
+        std::shared_ptr<Arcadia::Project> _spProject{};
 
-        std::shared_ptr<arcadia::renderer_interface> _renderer_sptr{};
+        std::shared_ptr<Arcadia::iRenderer> _spRenderer{};
 
-        std::shared_ptr<arcadia::physics_simulator> _physics_simulator_sptr{};
+        std::shared_ptr<Arcadia::PhysicsSimulator> _spPhysicsSimulator{};
     };
 }

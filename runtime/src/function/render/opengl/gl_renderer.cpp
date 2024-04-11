@@ -3,48 +3,48 @@
 
 #include<vector>
 
-arcadia::gl_renderer::gl_renderer(const std::filesystem::path& gl_shader_folder_path):
-    _gl_model_pipeline(gl_shader_folder_path, arcadia::get_model_shaders_builder()),
-    _gl_skybox_pipeline(gl_shader_folder_path, arcadia::get_skybox_shaders_builder()),
-    _gl_grid_pipeline(gl_shader_folder_path, arcadia::get_grid_shaders_builder()),
-    _gl_shape_pipeline(gl_shader_folder_path, arcadia::get_shape_shaders_builder())
+Arcadia::GlRenderer::GlRenderer(const std::filesystem::path& gl_shader_folder_path):
+    _GlModelPipeline(gl_shader_folder_path, Arcadia::GetModelShadersBuilder()),
+    _GlSkyboxPipeline(gl_shader_folder_path, Arcadia::GetSkyboxShadersBuilder()),
+    _GlGridPipeline(gl_shader_folder_path, Arcadia::GetGridShadersBuilder()),
+    _GlShapePipeline(gl_shader_folder_path, Arcadia::GetShapeShadersBuilder())
 {
     ARCADIA_GL_CALL(glEnable(GL_DEPTH_TEST));
     ARCADIA_GL_CALL(glEnable(GL_CULL_FACE));
 }
 
-void arcadia::gl_renderer::prepare()
+void Arcadia::GlRenderer::Prepare()
 {
-    _assert_frame_not_in_build();
-    _in_build = true;
+    _AssertFrameNotInBuild();
+    _InBuild = true;
 
     // Clear submitted meshes uuids
-    _submitted_meshes_uuid_set.clear();
+    _setSubmittedMeshesUuid.clear();
 
     // Clear cameras
-    _gl_render_unit_cameras.clear();
+    _GlRenderUnitCameras.clear();
 
     // Clear lights
-    _gl_render_unit_lights.clear();
+    _GlRenderUnitLights.clear();
 
     // Clear skybox
-    _gl_render_unit_skybox_opt.reset();
+    _optGlRenderUnitSkybox.reset();
 
     // Clear submitted physics body shape uuids
-    _submitted_physcis_body_shape_uuid_set.clear();
+    _setSubmittedPhysicsBodyShapeUuid.clear();
 
 }
 
-void arcadia::gl_renderer::finalize()
+void Arcadia::GlRenderer::Finalize()
 {
-    _assert_frame_in_build();
-    _in_build = false;
+    _AssertFrameInBuild();
+    _InBuild = false;
 
-    for(auto iter = _gl_render_unit_meshes_umap.begin(); iter != _gl_render_unit_meshes_umap.end();)
+    for(auto iter = _umapGlRenderUnitMeshes.begin(); iter != _umapGlRenderUnitMeshes.end();)
     {
-        if(!_submitted_meshes_uuid_set.contains(iter->first))
+        if(!_setSubmittedMeshesUuid.contains(iter->first))
         {
-            iter = _gl_render_unit_meshes_umap.erase(iter);
+            iter = _umapGlRenderUnitMeshes.erase(iter);
         }
         else
         {
@@ -52,11 +52,11 @@ void arcadia::gl_renderer::finalize()
         }
     }
 
-    for(auto iter = _gl_render_unit_physics_body_shape_umap.begin(); iter != _gl_render_unit_physics_body_shape_umap.end();)
+    for(auto iter = _umapGlRenderUnitPhysicsBodyShape.begin(); iter != _umapGlRenderUnitPhysicsBodyShape.end();)
     {
-        if(!_submitted_physcis_body_shape_uuid_set.contains(iter->first))
+        if(!_setSubmittedPhysicsBodyShapeUuid.contains(iter->first))
         {
-            iter = _gl_render_unit_physics_body_shape_umap.erase(iter);
+            iter = _umapGlRenderUnitPhysicsBodyShape.erase(iter);
         }
         else
         {
@@ -65,40 +65,40 @@ void arcadia::gl_renderer::finalize()
     }
 }
 
-void arcadia::gl_renderer::submit(const arcadia::camera_component& camera_comp)
+void Arcadia::GlRenderer::Submit(const Arcadia::CameraComponent& camera_comp)
 {
-    _assert_frame_in_build();
+    _AssertFrameInBuild();
 
-    _gl_render_unit_cameras.emplace_back(
-        arcadia::gl_framebuffer{
-            camera_comp.viewport_size,
-            camera_comp.near_plane,
-            camera_comp.far_plane
+    _GlRenderUnitCameras.emplace_back(
+        Arcadia::GlFramebuffer{
+            camera_comp.ViewportSize,
+            camera_comp.NearPlane,
+            camera_comp.FarPlane
         },
-        camera_comp.viewport_size,
-        camera_comp.gen_view_mat4(),
-        camera_comp.gen_proj_mat4(),
-        camera_comp.position,
-        camera_comp.should_display_grid,
-        camera_comp.near_plane,
-        camera_comp.far_plane
+        camera_comp.ViewportSize,
+        camera_comp.GenerateViewMat4(),
+        camera_comp.GenerateProjMat4(),
+        camera_comp.Position,
+        camera_comp.ShouldDisplayGrid,
+        camera_comp.NearPlane,
+        camera_comp.FarPlane
     );
 }
 
-void arcadia::gl_renderer::submit(const arcadia::light_component& light_comp)
+void Arcadia::GlRenderer::Submit(const Arcadia::LightComponent& light_comp)
 {
-    _assert_frame_in_build();
+    _AssertFrameInBuild();
 
-    _gl_render_unit_lights.emplace_back(light_comp.light);
+    _GlRenderUnitLights.emplace_back(light_comp.Light);
 }
 
-void arcadia::gl_renderer::submit(const arcadia::model_component& model_comp)
+void Arcadia::GlRenderer::Submit(const Arcadia::ModelComponent& model_comp)
 {
-    _assert_frame_in_build();
+    _AssertFrameInBuild();
 
-    if(model_comp.has_identifiable_meshes())
+    if(model_comp.HasIdentifiableMeshes())
     {
-        const auto& [uuid, meshes] = model_comp.get_identifiable_meshes();
+        const auto& [Uuid, meshes] = model_comp.GetIdentifiableMeshes();
 
         auto transform_mat =
             // Translate
@@ -106,118 +106,118 @@ void arcadia::gl_renderer::submit(const arcadia::model_component& model_comp)
                 // Move pivot back from origin
                 glm::translate(
                     // Rotate
-                    glm::mat4_cast(model_comp.rotation)
+                    glm::mat4_cast(model_comp.Rotation)
                     // Scale about origin (same as pivot)
                     * glm::scale(
                         // Move pivot to origin
                         glm::translate(
-                            arcadia::mat4::identity(),
-                            -model_comp.pivot
+                            Arcadia::Mat4::Identity(),
+                            -model_comp.Pivot
                         ),
-                        model_comp.scale
+                        model_comp.Scale
                     ),
-                    model_comp.pivot
+                    model_comp.Pivot
                 ),
-                model_comp.location
+                model_comp.Location
             );
 
-        if(!_gl_render_unit_meshes_umap.contains(uuid))
+        if(!_umapGlRenderUnitMeshes.contains(Uuid))
         {
 
-            std::vector<arcadia::gl_render_unit_mesh> gl_meshes{};
+            std::vector<Arcadia::GlRenderUnitMesh> gl_meshes{};
             for(const auto& mesh : meshes)
             {
                 // For any uuid, its corresponding meshes must be the same
                 gl_meshes.emplace_back(
-                    arcadia::gl_vertex_array{ mesh.vertices, mesh.indices },
+                    Arcadia::GlVertexArray{ mesh.Vertices, mesh.Indices },
                     transform_mat,
-                    mesh.material.ambient_texture2d,
-                    mesh.material.diffuse_texture2d,
-                    mesh.material.specular_texture2d
+                    mesh.Material.AmbientTexture2d,
+                    mesh.Material.DiffuseTexture2d,
+                    mesh.Material.SpecularTexture2d
                 );
             }
-            _gl_render_unit_meshes_umap.try_emplace(uuid, std::move(gl_meshes));
+            _umapGlRenderUnitMeshes.try_emplace(Uuid, std::move(gl_meshes));
         }
         else
         {
-            for(auto& gl_render_unit_mesh : _gl_render_unit_meshes_umap.at(uuid))
+            for(auto& gl_render_unit_mesh : _umapGlRenderUnitMeshes.at(Uuid))
             {
                 std::get<1>(gl_render_unit_mesh) = transform_mat;
             }
         }
 
-        _submitted_meshes_uuid_set.emplace(uuid);
+        _setSubmittedMeshesUuid.emplace(Uuid);
     }
 }
 
-void arcadia::gl_renderer::submit(const arcadia::skybox_component& skybox_comp)
+void Arcadia::GlRenderer::Submit(const Arcadia::SkyboxComponent& skybox_comp)
 {
-    _assert_frame_in_build();
+    _AssertFrameInBuild();
 
-    const auto skybox_box_shape = arcadia::mesh::box(glm::vec3{ 1,1,1 });
-    _gl_render_unit_skybox_opt.emplace(
-        arcadia::gl_vertex_array{ skybox_box_shape.vertices, skybox_box_shape.indices },
-        skybox_comp.cubemap
+    const auto skybox_box_shape = Arcadia::Mesh::Box(glm::vec3{ 1,1,1 });
+    _optGlRenderUnitSkybox.emplace(
+        Arcadia::GlVertexArray{ skybox_box_shape.Vertices, skybox_box_shape.Indices },
+        skybox_comp.Cubemap
     );
 }
 
-void arcadia::gl_renderer::submit(const arcadia::physics_component& physcis_comp)
+void Arcadia::GlRenderer::Submit(const Arcadia::PhysicsComponent& physcis_comp)
 {
-    _assert_frame_in_build();
+    _AssertFrameInBuild();
 
-    if(physcis_comp.has_body_info())
+    if(physcis_comp.HasBodyInfo())
     {
-        const auto& [uuid, jph_body] = physcis_comp.get_identifiable_jph_body_info_initial();
-        if(!_gl_render_unit_physics_body_shape_umap.contains(uuid))
+        const auto& [Uuid, jph_body] = physcis_comp.GetIdentifiableJphBodyInfoInitial();
+        if(!_umapGlRenderUnitPhysicsBodyShape.contains(Uuid))
         {
-            const auto& shape_info = jph_body.jph_shape_info;
-            const auto& shape_mesh = arcadia::match<arcadia::mesh>(
+            const auto& shape_info = jph_body.JphShapeInfo;
+            const auto& shape_mesh = Arcadia::Match<Arcadia::Mesh>(
                 shape_info,
-                [&](const arcadia::jph_box_shape_info& info)
+                [&](const Arcadia::JphBoxShapeInfo& info)
             {
-                return arcadia::mesh::box(info.half_extent);
+                return Arcadia::Mesh::Box(info.HalfExtent);
             },
-                [&](const arcadia::jph_capsule_shape_info& info)
+                [&](const Arcadia::JphCapsuleShapeInfo& info)
             {
-                return arcadia::mesh{};
+                return Arcadia::Mesh{};
             },
-                [&](const arcadia::jph_cylinder_shape_info& info)
+                [&](const Arcadia::JphCylinderShapeInfo& info)
             {
-                return arcadia::mesh{};
+                return Arcadia::Mesh{};
             },
-                [&](const arcadia::jph_sphere_shape_info& info)
+                [&](const Arcadia::JphSphereShapeInfo& info)
             {
-                return arcadia::mesh::sphere(info.radius);
+                return Arcadia::Mesh::Sphere(info.Radius);
             }
             );
 
-            _gl_render_unit_physics_body_shape_umap.try_emplace(
-                uuid, arcadia::gl_vertex_array{ shape_mesh.vertices,shape_mesh.indices },
+            _umapGlRenderUnitPhysicsBodyShape.try_emplace(
+                Uuid, Arcadia::GlVertexArray{ shape_mesh.Vertices,shape_mesh.Indices },
                 glm::mat4{},
                 glm::vec3{}
             );
         }
 
-        const auto& body_info_ongoing = physcis_comp.get_jph_body_info_ongoing();
-        auto& [gl_vertex_array, transform_mat, color] = _gl_render_unit_physics_body_shape_umap.at(uuid);
+        const auto& body_info_ongoing = physcis_comp.GetJphBodyInfoOngoing();
+        auto& [GlVertexBuffer, transform_mat, color] = _umapGlRenderUnitPhysicsBodyShape.at(Uuid);
         transform_mat = glm::translate(
-            glm::mat4_cast(body_info_ongoing.rotation),
-            body_info_ongoing.position
+            glm::mat4_cast(body_info_ongoing.Rotation),
+            body_info_ongoing.Position
         );
-        color = physcis_comp.body_shape_color;
+        color = physcis_comp.BodyShapeColor;
 
-        _submitted_physcis_body_shape_uuid_set.emplace(uuid);
+        _setSubmittedPhysicsBodyShapeUuid.emplace(Uuid);
     }
 }
 
-void arcadia::gl_renderer::draw()
+void Arcadia::GlRenderer::Draw()
 {
-    _assert_frame_not_in_build();
+    _AssertFrameNotInBuild();
 
 
-    if(_gl_render_unit_cameras.empty())
+    if(_GlRenderUnitCameras.empty())
     {
-        throw draw_fail{ "No framebuffer to draw to" };
+        throw DrawFail{ "No framebuffer to draw to" };
     }
 
 
@@ -233,9 +233,9 @@ void arcadia::gl_renderer::draw()
             should_display_grid,
             near_plane,
             far_plane
-    ] : _gl_render_unit_cameras)
+    ] : _GlRenderUnitCameras)
     {
-        gl_framebuffer.bind();
+        gl_framebuffer.Bind();
 
         // Clear framebufers
         ARCADIA_GL_CALL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
@@ -244,19 +244,19 @@ void arcadia::gl_renderer::draw()
         // Draw grid
         if(should_display_grid)
         {
-            std::vector<arcadia::vertex> grid_vertices{
-                   arcadia::vertex{ glm::vec3{-1,1,0} },
-                    arcadia::vertex{ glm::vec3{-1,-1,0} },
-                    arcadia::vertex{ glm::vec3{1,-1,0} },
-                    arcadia::vertex{ glm::vec3{1,1,0} }
+            std::vector<Arcadia::Vertex> grid_vertices{
+                   Arcadia::Vertex{ glm::vec3{-1,1,0} },
+                    Arcadia::Vertex{ glm::vec3{-1,-1,0} },
+                    Arcadia::Vertex{ glm::vec3{1,-1,0} },
+                    Arcadia::Vertex{ glm::vec3{1,1,0} }
             };
-            std::vector<arcadia::mesh::index_type> grid_indices{
+            std::vector<Arcadia::Mesh::index_type> grid_indices{
                 0,1,2,
                 2,3,0
             };
-            arcadia::gl_vertex_array gl_grid_vertex_array{ grid_vertices, grid_indices };
+            Arcadia::GlVertexArray gl_grid_vertex_array{ grid_vertices, grid_indices };
 
-            _draw_grid(
+            _DrawGrid(
                 gl_grid_vertex_array,
                 camera_view,
                 camera_proj,
@@ -269,99 +269,99 @@ void arcadia::gl_renderer::draw()
         const GLsizeiptr light_t_size{ 128 };
         const int max_light_count = 32;
         const int light_count_size_aligned = 16; // Sizeof `u_light_count` in fragment shader with alignment considered
-        arcadia::gl_uniform_buffer gl_uniform_buffer{ light_count_size_aligned + light_t_size * max_light_count };
+        Arcadia::GlUniformBuffer GlUniformBuffer{ light_count_size_aligned + light_t_size * max_light_count };
 
-        auto light_box_shape = arcadia::mesh::box(glm::vec3{ 1,1,1 });
-        arcadia::gl_vertex_array gl_light_box_shape_vertex_array{ light_box_shape.vertices ,light_box_shape.indices };
+        auto light_box_shape = Arcadia::Mesh::Box(glm::vec3{ 1,1,1 });
+        Arcadia::GlVertexArray gl_light_box_shape_vertex_array{ light_box_shape.Vertices ,light_box_shape.Indices };
 
-        _draw_lights(
+        _DrawLights(
             light_t_size,
             max_light_count,
             light_count_size_aligned,
-            gl_uniform_buffer,
+            GlUniformBuffer,
             gl_light_box_shape_vertex_array,
             camera_view,
             camera_proj
         );
 
         // Draw with mesh pipeline
-        _draw_models(
+        _DrawModels(
             camera_view,
             camera_proj,
             camera_position
         );
 
-        _draw_physics_body_shape(
+        _DrawPhysicsBodyShape(
             camera_view,
             camera_proj
         );
 
         // Draw with skybox pipeline
-        if(_gl_render_unit_skybox_opt)
+        if(_optGlRenderUnitSkybox)
         {
-            _draw_skybox(
+            _DrawSkybox(
                 camera_view,
                 camera_proj
             );
         }
 
-        gl_framebuffer.unbind();
+        gl_framebuffer.Unbind();
     }
 
 }
 
-void arcadia::gl_renderer::reset()
+void Arcadia::GlRenderer::Reset()
 {
-    _gl_render_unit_cameras.clear();
-    _gl_render_unit_lights.clear();
-    _gl_render_unit_meshes_umap.clear();
-    _submitted_meshes_uuid_set.clear();
-    _gl_render_unit_skybox_opt.reset();
+    _GlRenderUnitCameras.clear();
+    _GlRenderUnitLights.clear();
+    _umapGlRenderUnitMeshes.clear();
+    _setSubmittedMeshesUuid.clear();
+    _optGlRenderUnitSkybox.reset();
 }
 
-auto arcadia::gl_renderer::get_render_result_id(std::size_t index) const -> void*
+auto Arcadia::GlRenderer::GetRenderResultId(std::size_t index) const -> void*
 {
-    return reinterpret_cast<void*>(std::get<0>(_gl_render_unit_cameras.at(index)).get_gl_texture2d().get_gl_id());
+    return reinterpret_cast<void*>(std::get<0>(_GlRenderUnitCameras.at(index)).GetGlTexture2d().GetGlId());
 }
 
-void arcadia::gl_renderer::_assert_frame_in_build() const
+void Arcadia::GlRenderer::_AssertFrameInBuild() const
 {
-    ARCADIA_ASSERT(_in_build && "Frame is not in build, did you call `prepare()`?");
+    ARCADIA_ASSERT(_InBuild && "Frame is not in build, did you call `prepare()`?");
 }
 
-void arcadia::gl_renderer::_assert_frame_not_in_build() const
+void Arcadia::GlRenderer::_AssertFrameNotInBuild() const
 {
-    ARCADIA_ASSERT(!_in_build && "Frame is in build, did you call `finalize()`?");
+    ARCADIA_ASSERT(!_InBuild && "Frame is in build, did you call `finalize()`?");
 }
 
-void arcadia::gl_renderer::_draw_grid(
-    const arcadia::gl_vertex_array& gl_grid_vertex_array,
+void Arcadia::GlRenderer::_DrawGrid(
+    const Arcadia::GlVertexArray& gl_grid_vertex_array,
     const glm::mat4& camera_view,
     const glm::mat4& camera_proj,
     float near_plane,
     float far_plane
 )
 {
-    _gl_grid_pipeline.use();
-    _gl_grid_pipeline
-        .set_uniform("u_view_mat4", camera_view)
-        .set_uniform("u_proj_mat4", camera_proj)
-        .set_uniform("u_near_plane", near_plane)
-        .set_uniform("u_far_plane", far_plane);
+    _GlGridPipeline.Use();
+    _GlGridPipeline
+        .SetUniform("u_view_mat4", camera_view)
+        .SetUniform("u_proj_mat4", camera_proj)
+        .SetUniform("u_near_plane", near_plane)
+        .SetUniform("u_far_plane", far_plane);
 
-    gl_grid_vertex_array.bind();
-    gl_grid_vertex_array.draw(GL_TRIANGLES);
-    gl_grid_vertex_array.unbind();
+    gl_grid_vertex_array.Bind();
+    gl_grid_vertex_array.Draw(GL_TRIANGLES);
+    gl_grid_vertex_array.Unbind();
 
-    _gl_grid_pipeline.unuse();
+    _GlGridPipeline.Unuse();
 }
 
-void arcadia::gl_renderer::_draw_lights(
+void Arcadia::GlRenderer::_DrawLights(
     const GLsizeiptr light_t_size,
     const int max_light_count,
     const int light_count_size_aligned,
-    arcadia::gl_uniform_buffer& gl_light_uniform_buffer,
-    const arcadia::gl_vertex_array& gl_light_shape_vertex_array,
+    Arcadia::GlUniformBuffer& gl_light_uniform_buffer,
+    const Arcadia::GlVertexArray& gl_light_shape_vertex_array,
     const glm::mat4& camera_view,
     const glm::mat4& camera_proj
 )
@@ -372,181 +372,181 @@ void arcadia::gl_renderer::_draw_lights(
     const int light_type_area = 3;
     const int light_type_point = 4;
 
-    _gl_shape_pipeline.use();
-    _gl_shape_pipeline
-        .set_uniform("u_view_mat", camera_view)
-        .set_uniform("u_proj_mat", camera_proj);
-    gl_light_shape_vertex_array.bind();
+    _GlShapePipeline.Use();
+    _GlShapePipeline
+        .SetUniform("u_view_mat", camera_view)
+        .SetUniform("u_proj_mat", camera_proj);
+    gl_light_shape_vertex_array.Bind();
 
     GLsizeiptr light_count = 0;
-    for(const auto& [light] : _gl_render_unit_lights)
+    for(const auto& [light] : _GlRenderUnitLights)
     {
         if(light_count > max_light_count)
         {
             throw too_many_lights{ std::format("The max light count is {}",max_light_count) };
         }
 
-        arcadia::match<void>(
+        Arcadia::Match<void>(
             light,
-            [&](const arcadia::null_light& light)
+            [&](const Arcadia::NullLight& light)
         {},
-            [&](const arcadia::spot_light& light)
+            [&](const Arcadia::SpotLight& light)
         {
             GLintptr base_offfset = light_count_size_aligned + light_count * light_t_size;
-            gl_light_uniform_buffer.sub_data(base_offfset + 0, sizeof(int), &light_type_spot);
-            float cosine_inner_cutoff_angle = glm::cos(light.cutoff_angles.x);
-            float cosine_outer_cutoff_angle = glm::cos(light.cutoff_angles.y);
+            gl_light_uniform_buffer.SubData(base_offfset + 0, sizeof(int), &light_type_spot);
+            float cosine_inner_cutoff_angle = glm::cos(light.CutoffAngles.x);
+            float cosine_outer_cutoff_angle = glm::cos(light.CutoffAngles.y);
             gl_light_uniform_buffer
-                .sub_data(base_offfset + 4, sizeof(float), &cosine_inner_cutoff_angle)
-                .sub_data(base_offfset + 8, sizeof(float), &cosine_outer_cutoff_angle)
-                .sub_data(base_offfset + 16, sizeof(glm::vec3), &light.position)
-                .sub_data(base_offfset + 32, sizeof(glm::vec3), &light.direction)
-                .sub_data(base_offfset + 48, sizeof(glm::vec3), &light.attenuation_coefs)
-                .sub_data(base_offfset + 64, sizeof(glm::vec3), &light.color)
-                .sub_data(base_offfset + 80, sizeof(glm::vec3), &light.ambient_strength)
-                .sub_data(base_offfset + 96, sizeof(glm::vec3), &light.diffuse_strength)
-                .sub_data(base_offfset + 112, sizeof(glm::vec3), &light.specular_strength);
+                .SubData(base_offfset + 4, sizeof(float), &cosine_inner_cutoff_angle)
+                .SubData(base_offfset + 8, sizeof(float), &cosine_outer_cutoff_angle)
+                .SubData(base_offfset + 16, sizeof(glm::vec3), &light.Position)
+                .SubData(base_offfset + 32, sizeof(glm::vec3), &light.Direction)
+                .SubData(base_offfset + 48, sizeof(glm::vec3), &light.AttenuationCoefs)
+                .SubData(base_offfset + 64, sizeof(glm::vec3), &light.Color)
+                .SubData(base_offfset + 80, sizeof(glm::vec3), &light.AmbientStrength)
+                .SubData(base_offfset + 96, sizeof(glm::vec3), &light.DiffuseStrength)
+                .SubData(base_offfset + 112, sizeof(glm::vec3), &light.SpecularStrength);
             ++light_count;
 
-            _gl_shape_pipeline
-                .set_uniform("u_transform_mat", glm::translate(arcadia::mat4::identity(), light.position))
-                .set_uniform("u_color", light.color);
+            _GlShapePipeline
+                .SetUniform("u_transform_mat", glm::translate(Arcadia::Mat4::Identity(), light.Position))
+                .SetUniform("u_color", light.Color);
         },
-            [&](const arcadia::direct_light& light)
+            [&](const Arcadia::DirectLight& light)
         {
             GLintptr base_offfset = light_count_size_aligned + light_count * light_t_size;
             gl_light_uniform_buffer
-                .sub_data(base_offfset + 0, sizeof(int), &light_type_direct)
-                .sub_data(base_offfset + 32, sizeof(glm::vec3), &light.direction)
-                .sub_data(base_offfset + 64, sizeof(glm::vec3), &light.color)
-                .sub_data(base_offfset + 80, sizeof(glm::vec3), &light.ambient_strength)
-                .sub_data(base_offfset + 96, sizeof(glm::vec3), &light.diffuse_strength)
-                .sub_data(base_offfset + 112, sizeof(glm::vec3), &light.specular_strength);
+                .SubData(base_offfset + 0, sizeof(int), &light_type_direct)
+                .SubData(base_offfset + 32, sizeof(glm::vec3), &light.Direction)
+                .SubData(base_offfset + 64, sizeof(glm::vec3), &light.Color)
+                .SubData(base_offfset + 80, sizeof(glm::vec3), &light.AmbientStrength)
+                .SubData(base_offfset + 96, sizeof(glm::vec3), &light.DiffuseStrength)
+                .SubData(base_offfset + 112, sizeof(glm::vec3), &light.SpecularStrength);
             ++light_count;
         },
-            [&](const arcadia::area_light& light)
+            [&](const Arcadia::AreaLight& light)
         {},
-            [&](const arcadia::point_light& light)
+            [&](const Arcadia::PointLight& light)
         {
             GLintptr base_offfset = light_count_size_aligned + light_count * light_t_size;
             gl_light_uniform_buffer
-                .sub_data(base_offfset + 0, sizeof(int), &light_type_point)
-                .sub_data(base_offfset + 16, sizeof(glm::vec3), &light.position)
-                .sub_data(base_offfset + 48, sizeof(glm::vec3), &light.attenuation_coefs)
-                .sub_data(base_offfset + 64, sizeof(glm::vec3), &light.color)
-                .sub_data(base_offfset + 80, sizeof(glm::vec3), &light.ambient_strength)
-                .sub_data(base_offfset + 96, sizeof(glm::vec3), &light.diffuse_strength)
-                .sub_data(base_offfset + 112, sizeof(glm::vec3), &light.specular_strength);
+                .SubData(base_offfset + 0, sizeof(int), &light_type_point)
+                .SubData(base_offfset + 16, sizeof(glm::vec3), &light.Position)
+                .SubData(base_offfset + 48, sizeof(glm::vec3), &light.AttenuationCoefs)
+                .SubData(base_offfset + 64, sizeof(glm::vec3), &light.Color)
+                .SubData(base_offfset + 80, sizeof(glm::vec3), &light.AmbientStrength)
+                .SubData(base_offfset + 96, sizeof(glm::vec3), &light.DiffuseStrength)
+                .SubData(base_offfset + 112, sizeof(glm::vec3), &light.SpecularStrength);
             ++light_count;
 
-            _gl_shape_pipeline
-                .set_uniform("u_transform_mat", glm::translate(arcadia::mat4::identity(), light.position))
-                .set_uniform("u_color", light.color);
+            _GlShapePipeline
+                .SetUniform("u_transform_mat", glm::translate(Arcadia::Mat4::Identity(), light.Position))
+                .SetUniform("u_color", light.Color);
         }
         );
 
-        gl_light_shape_vertex_array.draw(GL_TRIANGLES);
+        gl_light_shape_vertex_array.Draw(GL_TRIANGLES);
 
     }
-    gl_light_shape_vertex_array.unbind();
-    _gl_shape_pipeline.unuse();
-    gl_light_uniform_buffer.sub_data(0, sizeof(int), &light_count);
-    gl_light_uniform_buffer.bind_buffer_base(0);
+    gl_light_shape_vertex_array.Unbind();
+    _GlShapePipeline.Unuse();
+    gl_light_uniform_buffer.SubData(0, sizeof(int), &light_count);
+    gl_light_uniform_buffer.BindBufferBase(0);
 }
 
-void arcadia::gl_renderer::_draw_models(
+void Arcadia::GlRenderer::_DrawModels(
     const glm::mat4& camera_view,
     const glm::mat4& camera_proj,
     const glm::vec3& camera_pos
 )
 {
-    _gl_model_pipeline.use();
+    _GlModelPipeline.Use();
     auto tex_uniform_index = 0;
-    _gl_model_pipeline
-        .set_uniform("u_view_mat", camera_view)
-        .set_uniform("u_proj_mat", camera_proj)
-        .set_uniform("u_view_pos", camera_pos);
-    for(auto& [uuid, gl_meshes] : _gl_render_unit_meshes_umap)
+    _GlModelPipeline
+        .SetUniform("u_view_mat", camera_view)
+        .SetUniform("u_proj_mat", camera_proj)
+        .SetUniform("u_view_pos", camera_pos);
+    for(auto& [Uuid, gl_meshes] : _umapGlRenderUnitMeshes)
     {
         for(auto& [
-            gl_vertex_array,
+            GlVertexBuffer,
                 transform_mat4,
                 gl_texture2d_ambient,
                 gl_texture2d_diffuse,
                 gl_texture2d_specular
         ] : gl_meshes)
         {
-            _gl_model_pipeline
-                .set_uniform("u_transform_mat", transform_mat4)
-                .set_uniform("u_normal_mat", glm::mat3{ glm::transpose(glm::inverse(transform_mat4)) });
+            _GlModelPipeline
+                .SetUniform("u_transform_mat", transform_mat4)
+                .SetUniform("u_normal_mat", glm::mat3{ glm::transpose(glm::inverse(transform_mat4)) });
 
-            _gl_model_pipeline.set_uniform("u_material.ambient", tex_uniform_index);
-            gl_texture2d_ambient.bind(tex_uniform_index++);
+            _GlModelPipeline.SetUniform("u_material.ambient", tex_uniform_index);
+            gl_texture2d_ambient.Bind(tex_uniform_index++);
 
-            _gl_model_pipeline.set_uniform("u_material.diffuse", tex_uniform_index);
-            gl_texture2d_diffuse.bind(tex_uniform_index++);
+            _GlModelPipeline.SetUniform("u_material.diffuse", tex_uniform_index);
+            gl_texture2d_diffuse.Bind(tex_uniform_index++);
 
-            _gl_model_pipeline.set_uniform("u_material.specular", tex_uniform_index);
-            gl_texture2d_specular.bind(tex_uniform_index++);
+            _GlModelPipeline.SetUniform("u_material.specular", tex_uniform_index);
+            gl_texture2d_specular.Bind(tex_uniform_index++);
 
-            _gl_model_pipeline.set_uniform("u_material.shininess", 32.f);
+            _GlModelPipeline.SetUniform("u_material.shininess", 32.f);
 
-            gl_vertex_array.bind();
-            gl_vertex_array.draw(GL_TRIANGLES);
-            gl_vertex_array.unbind();
+            GlVertexBuffer.Bind();
+            GlVertexBuffer.Draw(GL_TRIANGLES);
+            GlVertexBuffer.Unbind();
 
-            gl_texture2d_ambient.unbind();
-            gl_texture2d_diffuse.unbind();
-            gl_texture2d_specular.unbind();
+            gl_texture2d_ambient.Unbind();
+            gl_texture2d_diffuse.Unbind();
+            gl_texture2d_specular.Unbind();
 
         }
     }
-    _gl_model_pipeline.unuse();
+    _GlModelPipeline.Unuse();
 }
 
-void arcadia::gl_renderer::_draw_skybox(
+void Arcadia::GlRenderer::_DrawSkybox(
     const glm::mat4& camera_view,
     const glm::mat4& camera_proj
 )
 {
-    _gl_skybox_pipeline.use();
-    auto& [gl_vertex_array, gl_cubemap] = *_gl_render_unit_skybox_opt;
+    _GlSkyboxPipeline.Use();
+    auto& [GlVertexBuffer, gl_cubemap] = *_optGlRenderUnitSkybox;
 
-    _gl_skybox_pipeline.set_uniform("u_skybox", 0);
-    gl_cubemap.bind(0);
+    _GlSkyboxPipeline.SetUniform("u_skybox", 0);
+    gl_cubemap.Bind(0);
 
-    _gl_skybox_pipeline
-        .set_uniform("u_view_mat", glm::mat4{ glm::mat3{camera_view} })
-        .set_uniform("u_proj_mat", camera_proj);
+    _GlSkyboxPipeline
+        .SetUniform("u_view_mat", glm::mat4{ glm::mat3{camera_view} })
+        .SetUniform("u_proj_mat", camera_proj);
 
-    gl_vertex_array.bind();
+    GlVertexBuffer.Bind();
     ARCADIA_GL_CALL(glDepthFunc(GL_LEQUAL));
-    gl_vertex_array.draw(GL_TRIANGLES);
+    GlVertexBuffer.Draw(GL_TRIANGLES);
     ARCADIA_GL_CALL(glDepthFunc(GL_LESS));
-    gl_vertex_array.unbind();
+    GlVertexBuffer.Unbind();
 
-    _gl_skybox_pipeline.unuse();
+    _GlSkyboxPipeline.Unuse();
 }
 
-void arcadia::gl_renderer::_draw_physics_body_shape(
+void Arcadia::GlRenderer::_DrawPhysicsBodyShape(
     const glm::mat4& camera_view,
     const glm::mat4& camera_proj
 )
 {
-    _gl_shape_pipeline.use();
-    for(const auto& [gl_vertex_array, transform_mat, color] : _gl_render_unit_physics_body_shape_umap | std::views::values)
+    _GlShapePipeline.Use();
+    for(const auto& [GlVertexBuffer, transform_mat, color] : _umapGlRenderUnitPhysicsBodyShape | std::views::values)
     {
-        _gl_shape_pipeline
-            .set_uniform("u_transform_mat", transform_mat)
-            .set_uniform("u_view_mat", camera_view)
-            .set_uniform("u_proj_mat", camera_proj)
-            .set_uniform("u_color", color);
+        _GlShapePipeline
+            .SetUniform("u_transform_mat", transform_mat)
+            .SetUniform("u_view_mat", camera_view)
+            .SetUniform("u_proj_mat", camera_proj)
+            .SetUniform("u_color", color);
 
-        gl_vertex_array.bind();
-        gl_vertex_array.draw(GL_TRIANGLES);
-        gl_vertex_array.unbind();
+        GlVertexBuffer.Bind();
+        GlVertexBuffer.Draw(GL_TRIANGLES);
+        GlVertexBuffer.Unbind();
     }
-    _gl_shape_pipeline.unuse();
+    _GlShapePipeline.Unuse();
 }
 
 

@@ -6,90 +6,90 @@
 #include"core/event/event.hpp"
 #include"resource/scene/entt_header.hpp"
 
-namespace arcadia
+namespace Arcadia
 {
-    namespace event
+    namespace Event
     {
         //==== Events for imgui window ====//
         ARCADIA_EVENT(
-            open_imgui_window,
+            OpenImguiWindow,
             std::string // Title of the imgui window to open
         );
 
         //==== Events for project ====//
 
         ARCADIA_EVENT(
-            new_project
+            NewProject
         );
         ARCADIA_EVENT(
-            create_project,
+            CreateProject,
             std::string, // name
             std::string  // filepath
         );
         ARCADIA_EVENT(
-            open_project
+            OpenProject
         );
         ARCADIA_EVENT(
-            save_project
+            SaveProject
         );
         ARCADIA_EVENT(
-            save_project_as
+            SaveProjectAs
         );
         ARCADIA_EVENT(
-            close_project
+            CloseProject
         );
 
         //==== Events for physics simulator ====//
 
         ARCADIA_EVENT(
-            physics_simulator_should_update,
+            PhysicsSimulatorShouldUpdate,
             bool
         );
 
         //==== Events for scene ====//
 
         ARCADIA_EVENT(
-            new_scene
+            NewScene
         );
         ARCADIA_EVENT(
-            create_scene,
+            CreateScene,
             std::string, // name
             bool        // as_current
         );
         ARCADIA_EVENT(
-            select_scene,
+            SelectScene,
             std::string // name
         );
         ARCADIA_EVENT(
-            close_scene
+            CloseScene
         );
         ARCADIA_EVENT(
-            delete_scene
+            DeleteScene
         );
 
         //==== Events for entity ====//
 
         ARCADIA_EVENT(
-            new_entity
+            NewEntity
         );
         ARCADIA_EVENT(
-            select_entity,
+            SelectEntity,
             entt::entity // entity
         );
         ARCADIA_EVENT(
-            delete_entity,
+            DeleteEntity,
             entt::entity // entity
         );
 
         //==== Events for component ====//
 
         ARCADIA_EVENT(
-            add_component,
+            AddComponent,
             entt::entity, // entity
             std::string // type_str
         );
         ARCADIA_EVENT(
-            remove_component,
+            RemoveComponent,
             entt::entity, // entity
             std::string // type_str
         );
@@ -97,7 +97,7 @@ namespace arcadia
         //==== Events for physics component ====//
 
         ARCADIA_EVENT(
-            physics_component_new_body
+            PhysicsComponentNewBody
         );
     }
 }

@@ -3,27 +3,26 @@
 #include"core/base.hpp"
 #include"function/ui/imgui_header.hpp"
 
-namespace arcadia
+namespace Arcadia
 {
-    namespace imgui_style
+    namespace ImguiStyle
     {
-
-        inline ARCADIA_API void default_dark()
+        static inline ARCADIA_API void DefaultDark()
         {
             ImGui::StyleColorsDark();
         }
 
-        inline ARCADIA_API void default_classic()
+        static inline ARCADIA_API void DefaultClassic()
         {
             ImGui::StyleColorsClassic();
         }
-        inline ARCADIA_API void default_light()
+        static inline ARCADIA_API void DefaultLight()
         {
             ImGui::StyleColorsLight();
         }
 
         /// @brief From https://github.com/ocornut/imgui/issues/707#issuecomment-917151020
-        inline ARCADIA_API void embrace_darkness()
+        static inline ARCADIA_API void EmbraceDarkness()
         {
             ImGuiStyle& style = ImGui::GetStyle();
             style.WindowPadding                     = ImVec2(8.00f, 8.00f);

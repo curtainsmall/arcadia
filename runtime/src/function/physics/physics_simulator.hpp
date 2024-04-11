@@ -8,19 +8,19 @@
 #include"platform/jolt/jolt_header.hpp"
 #include"resource/component/physics_component/physics_component.hpp"
 
-namespace arcadia
+namespace Arcadia
 {
-    struct ARCADIA_API jph_object_layer_pair_filter_impl: JPH::ObjectLayerPairFilter
+    struct ARCADIA_API JphObjectLayerPairFilerImpl: JPH::ObjectLayerPairFilter
     {
     public:
         virtual auto ShouldCollide(JPH::ObjectLayer obj_1, JPH::ObjectLayer obj_2) const -> bool override;
 
     };
 
-    struct ARCADIA_API jph_broad_phase_layer_impl final: JPH::BroadPhaseLayerInterface
+    struct ARCADIA_API JphBroadPhaseLayerImpl final: JPH::BroadPhaseLayerInterface
     {
     public:
-        jph_broad_phase_layer_impl();
+        JphBroadPhaseLayerImpl();
 
         [[nodiscard]]
         virtual auto GetNumBroadPhaseLayers() const->JPH::uint override;
@@ -29,101 +29,101 @@ namespace arcadia
         virtual auto GetBroadPhaseLayer(JPH::ObjectLayer layer) const->JPH::BroadPhaseLayer override;
 
         [[nodiscard]]
-        virtual inline auto GetBroadPhaseLayerName(JPH::BroadPhaseLayer inLayer) const -> const char*
+        virtual auto GetBroadPhaseLayerName(JPH::BroadPhaseLayer inLayer) const -> const char*
         {
             return nullptr;
         }
 
     private:
-        JPH::BroadPhaseLayer _object_to_broad_phase[arcadia::jph_object_layers::num_layers];
+        JPH::BroadPhaseLayer _ObjectToBroadPhase[Arcadia::JphObjectLayers::NumLayers];
     };
 
-    struct ARCADIA_API jph_object_vs_broad_phase_layer_filter_impl: JPH::ObjectVsBroadPhaseLayerFilter
+    struct ARCADIA_API JphObjectVsBroadPhaseLayerFilterImpl: JPH::ObjectVsBroadPhaseLayerFilter
     {
     public:
         virtual auto ShouldCollide(JPH::ObjectLayer obj, JPH::BroadPhaseLayer bp) const -> bool override;
 
     };
 
-    struct ARCADIA_API physics_simulator
+    struct ARCADIA_API PhysicsSimulator
     {
     public:
-        ARCADIA_EXCEPTION(submit_fail);
-        ARCADIA_EXCEPTION(unknown_physics_component);
+        ARCADIA_EXCEPTION(SubmitFail);
+        ARCADIA_EXCEPTION(UnknownPhysicsComponent);
 
-        using jph_body_id_umap_type = std::unordered_map<arcadia::uuid, JPH::BodyID>;
-        using self_type = physics_simulator;
+        using jph_body_id_umap_type = std::unordered_map<Arcadia::Uuid, JPH::BodyID>;
+        using self_type = PhysicsSimulator;
     public:
-        physics_simulator();
-        ~physics_simulator();
+        PhysicsSimulator();
+        ~PhysicsSimulator();
 
         /// @brief Check whether the physcis simulator is in build
         [[nodiscard]]
-        inline auto is_in_build() const -> bool
+        auto IsInBuild() const -> bool
         {
-            return _in_build;
+            return _InBuild;
         }
 
         /// @brief Start building the physics simulator
         /// @details This function signs that the physics simulator is in build
         /// @note This function can only be called when the physics simulator is not in build
-        void prepare();
+        void Prepare();
 
         /// @brief Finish building the physcis simulator
         /// @note This function can only be called when the physics simulator is in build
-        void finalize();
+        void Finalize();
 
         /// @brief Submit a physics component to the physics simulator
         /// @note This function can only be called when the physics simulator is in build
-        void submit(const arcadia::physics_component& physics_comp);
+        void Submit(const Arcadia::PhysicsComponent& physics_comp);
 
         /// @brief Update physcis simulator for one step
         /// @note This function can only be called when the physics simulator is not in build
-        void update();
+        void Update();
 
         /// @brief Quary the updated data of the physics component from the physcis simulator
         /// @throw unkonwn_physics_component if the physics component was not submitted before quary
         /// @note This function can only be called when the physics simulator is not in build
-        void quary(physics_component& physics_comp);
+        void Quary(PhysicsComponent& physics_comp);
 
         /// @brief Reset the physics simulator, all caches will be cleared
-        void reset();
+        void Reset();
 
         [[nodiscard]]
-        auto get_should_update() const -> bool;
-        void set_should_update(bool should_update);
+        auto ShouldUpdate() const -> bool;
+        void ShouldUpdate(bool should_update);
 
         [[nodiscard]]
-        auto get_jph_temp_allocator_size() const->JPH::uint;
-        void set_jph_temp_allocator_size(JPH::uint jph_temp_allocator_size);
+        auto GetJphTempAllocatorSize() const->JPH::uint;
+        void SetJphTempAllocatorSize(JPH::uint jph_temp_allocator_size);
 
         [[nodiscard]]
-        auto get_jph_physics_system_updates_per_second() const -> int;
-        void set_jph_physics_system_updates_per_second(int jph_physics_system_updates_per_second);
+        auto GetJphPhysicsSystemUpdatesPerSecond() const -> int;
+        void SetJphPhysicsSystemUpdatesPerSecond(int jph_physics_system_updates_per_second);
 
         [[nodiscard]]
-        auto get_jph_body_id_umap() const -> const jph_body_id_umap_type&;
+        auto GetJphBodyIdUmap() const -> const jph_body_id_umap_type&;
 
     private:
-        void _assert_frame_in_build() const;
-        void _assert_frame_not_in_build() const;
+        void _AssertFrameInBuild() const;
+        void _AssertFrameNotInBuild() const;
     public:
     private:
-        bool _in_build{ false };
+        bool _InBuild{ false };
 
-        bool _should_update{ false };
+        bool _ShouldUpdate{ false };
 
-        JPH::uint _jph_temp_allocator_size{ 10 * 1024 * 1024 };
+        JPH::uint _JphTempAllocatorSize{ 10 * 1024 * 1024 };
 
-        int _jph_physics_system_updates_per_second{ 60 };
+        int _JphPhysicsSystemUpdatesPerSecond{ 60 };
 
-        jph_body_id_umap_type _jph_body_id_umap{};
-        std::set<arcadia::uuid> _submitted_body_info_set{};
+        jph_body_id_umap_type _umapJphBodyId{};
+        std::set<Arcadia::Uuid> _setSubmittedBodyInfo{};
 
-        arcadia::jph_broad_phase_layer_impl _jph_broad_phase_layer{};
-        arcadia::jph_object_vs_broad_phase_layer_filter_impl _jph_object_vs_broad_phase_layer_filter{};
-        arcadia::jph_object_layer_pair_filter_impl _jph_object_layer_pair_filter{};
+        Arcadia::JphBroadPhaseLayerImpl _JphBroadPhaseLayer{};
+        Arcadia::JphObjectVsBroadPhaseLayerFilterImpl _JphObjectVsBroadLayerFilter{};
+        Arcadia::JphObjectLayerPairFilerImpl _JphObjectLayerPairFilter{};
 
-        std::unique_ptr<JPH::PhysicsSystem> _jph_physics_system_uptr{};
+        std::unique_ptr<JPH::PhysicsSystem> _upJphPhysicsSystem{};
     };
 }

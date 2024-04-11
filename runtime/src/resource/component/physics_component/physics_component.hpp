@@ -11,119 +11,121 @@
 #include"platform/jolt/jolt_header.hpp"
 #include"resource/component/component.hpp"
 
-namespace arcadia
+namespace Arcadia
 {
-    struct ARCADIA_API jph_box_shape_info
+    struct ARCADIA_API JphBoxShapeInfo
     {
     public:
-        glm::vec3 half_extent{ 1.f,1.f,1.f };
-        float convex_radius{ JPH::cDefaultConvexRadius };
+        glm::vec3 HalfExtent{ 1.f,1.f,1.f };
+        float ConvexRadius{ JPH::cDefaultConvexRadius };
     };
-    struct ARCADIA_API jph_capsule_shape_info
+    struct ARCADIA_API JphCapsuleShapeInfo
     {
     public:
-        float radius{ 1.f };
-        float half_height_of_cylinder{ 1.f };
+        float Radius{ 1.f };
+        float HalfHeightOfCylinder{ 1.f };
     };
-    struct ARCADIA_API jph_cylinder_shape_info
+    struct ARCADIA_API JphCylinderShapeInfo
     {
     public:
-        float half_height{ 1.f };
-        float radius{ 1.f };
-        float convex_radius{ JPH::cDefaultConvexRadius };
+        float HalfHeight{ 1.f };
+        float Radius{ 1.f };
+        float ConvexRadius{ JPH::cDefaultConvexRadius };
     };
-    struct ARCADIA_API jph_sphere_shape_info
+    struct ARCADIA_API JphSphereShapeInfo
     {
     public:
-        float radius{ 1.f };
+        float Radius{ 1.f };
     };
-    using jph_shape_info_type = std::variant<
-        jph_box_shape_info,
-        jph_capsule_shape_info,
-        jph_cylinder_shape_info,
-        jph_sphere_shape_info
+    using JphShapeInfo = std::variant<
+        JphBoxShapeInfo,
+        JphCapsuleShapeInfo,
+        JphCylinderShapeInfo,
+        JphSphereShapeInfo
     >;
 
-    struct ARCADIA_API jph_body_info_initial
+    struct ARCADIA_API JphBodyInfoInitial
     {
     public:
-        using self_type = jph_body_info_initial;
+        using self_type = JphBodyInfoInitial;
     public:
-        glm::vec3 position{ arcadia::vec3::zero() };
-        glm::quat rotation{ arcadia::quat::identity() };
-        JPH::EMotionType jph_motion_type{ JPH::EMotionType::Static };
-        JPH::ObjectLayer jph_object_layer{ arcadia::jph_object_layers::non_moving };
-        jph_shape_info_type jph_shape_info{ jph_box_shape_info{} };
+        glm::vec3 Position{ Arcadia::Vec3::Zero() };
+        glm::quat Rotation{ Arcadia::Quat::Identity() };
+        JPH::EMotionType JphMotionType{ JPH::EMotionType::Static };
+        JPH::ObjectLayer JphObjectLayer{ Arcadia::JphObjectLayers::NonMoving };
+        JphShapeInfo JphShapeInfo{ Arcadia::JphBoxShapeInfo{} };
     };
 
-    struct ARCADIA_API jph_body_info_ongoing
+    struct ARCADIA_API JphBodyInfoOngoing
     {
     public:
-        using self_type = jph_body_info_ongoing;
+        using self_type = JphBodyInfoOngoing;
     public:
-        bool active{ false };
-        glm::vec3 position{ arcadia::vec3::zero() };
-        glm::quat rotation{ arcadia::quat::identity() };
-        glm::vec3 linear_velocity{ arcadia::vec3::zero() };
-        glm::vec3 angular_velocity{ arcadia::vec3::zero() };
+        bool Active{ false };
+        glm::vec3 Position{ Arcadia::Vec3::Zero() };
+        glm::quat Rotation{ Arcadia::Quat::Identity() };
+        glm::vec3 LinearVelocity{ Arcadia::Vec3::Zero() };
+        glm::vec3 AngularVelocity{ Arcadia::Vec3::Zero() };
 
     };
 
-    struct ARCADIA_API physics_component;
-    struct ARCADIA_API physics_component_memento
+    struct ARCADIA_API PhysicsComponent;
+    struct ARCADIA_API PhysicsComponentMemento
     {
-        friend arcadia::physics_component;
+        friend Arcadia::PhysicsComponent;
+    public:
+        auto operator==(const PhysicsComponentMemento&) const -> bool = default;
     private:
-        glm::vec3 body_shape_color{};
+        glm::vec3 BodyShapeColor{};
     };
 
-    struct ARCADIA_API physics_component:
-        arcadia::component_base,
-        arcadia::memento_originator_interface<arcadia::physics_component_memento>
+    struct ARCADIA_API PhysicsComponent:
+        Arcadia::iComponent,
+        Arcadia::iMementoOriginator<Arcadia::PhysicsComponentMemento>
     {
     public:
-        using identifiable_jph_body_info_initial_type = arcadia::basic_identifiable<jph_body_info_initial>;
-        using self_type = physics_component;
+        using identifiable_jph_body_info_initial_type = Arcadia::BasicIdentifiable<JphBodyInfoInitial>;
+        using self_type = PhysicsComponent;
     public:
         ARCADIA_COMPONENT_TYPE_STR_GETTERS("physics");
 
-        physics_component() = default;
-        physics_component(const nlohmann::json& json);
-        ~physics_component() = default;
+        PhysicsComponent() = default;
+        PhysicsComponent(const nlohmann::json& json);
+        ~PhysicsComponent() = default;
         [[nodiscard]]
-        auto to_json() const->nlohmann::json;
+        auto ToJson() const->nlohmann::json;
 
         [[nodiscard]]
-        virtual auto snapshot() const->memento_data_type override;
-        virtual void restore(const memento_data_type& memento) override;
+        virtual auto OnSnapshot() const->memento_data_type override;
+        virtual void OnRestore(const memento_data_type& memento) override;
 
         [[nodiscard]]
-        auto has_body_info() const -> bool;
+        auto HasBodyInfo() const -> bool;
 
         [[nodiscard]]
-        auto get_identifiable_jph_body_info_initial() const -> const identifiable_jph_body_info_initial_type&;
+        auto GetIdentifiableJphBodyInfoInitial() const -> const identifiable_jph_body_info_initial_type&;
 
         [[nodiscard]]
-        auto get_jph_body_info_ongoing() const -> const arcadia::jph_body_info_ongoing&;
+        auto GetJphBodyInfoOngoing() const -> const Arcadia::JphBodyInfoOngoing&;
         [[nodiscard]]
-        auto get_jph_body_info_ongoing() -> arcadia::jph_body_info_ongoing&;
+        auto GetJphBodyInfoOngoing() -> Arcadia::JphBodyInfoOngoing&;
 
-        void build_identifiable_jph_body_info_initial(
+        void BuildIdentifiableJphBodyInfoInitial(
             const glm::vec3& position,
             const glm::quat& rotation,
             JPH::EMotionType jph_motion_type,
             JPH::ObjectLayer jph_object_layer,
-            const jph_shape_info_type& jph_shape_info
+            const JphShapeInfo& jph_shape_info
         );
 
-        void build_identifiable_jph_body_info_initial(
-            const arcadia::jph_body_info_initial& jph_body_info_initial
+        void BuildIdentifiableJphBodyInfoInitial(
+            const Arcadia::JphBodyInfoInitial& jph_body_info_initial
         );
 
     public:
-        glm::vec3 body_shape_color{ .2f,.2f,.2f };
+        glm::vec3 BodyShapeColor{ .2f,.2f,.2f };
     private:
-        std::unique_ptr<identifiable_jph_body_info_initial_type> _identifiable_jph_body_info_initial_uptr{};
-        std::unique_ptr<arcadia::jph_body_info_ongoing> _jph_body_info_ongoing_uptr{};
+        std::unique_ptr<identifiable_jph_body_info_initial_type> _upIdentifiableJphBodyInfoInitial{};
+        std::unique_ptr<Arcadia::JphBodyInfoOngoing> _upJphBodyInfoOngoing{};
     };
 }

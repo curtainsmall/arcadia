@@ -3,7 +3,7 @@
 
 #include<thread>
 
-arcadia::physics_simulator::physics_simulator()
+Arcadia::PhysicsSimulator::PhysicsSimulator()
 {
     JPH::RegisterDefaultAllocator();
     JPH::Factory::sInstance = new JPH::Factory{};
@@ -14,39 +14,39 @@ arcadia::physics_simulator::physics_simulator()
     const unsigned int max_body_pair = 65535;
     const unsigned int max_contact_constraints = 10240;
 
-    _jph_physics_system_uptr = std::make_unique<JPH::PhysicsSystem>();
-    _jph_physics_system_uptr->Init(max_bodies, num_body_mutexes, max_body_pair, max_contact_constraints, _jph_broad_phase_layer, _jph_object_vs_broad_phase_layer_filter, _jph_object_layer_pair_filter);
+    _upJphPhysicsSystem = std::make_unique<JPH::PhysicsSystem>();
+    _upJphPhysicsSystem->Init(max_bodies, num_body_mutexes, max_body_pair, max_contact_constraints, _JphBroadPhaseLayer, _JphObjectVsBroadLayerFilter, _JphObjectLayerPairFilter);
 }
 
-arcadia::physics_simulator::~physics_simulator()
+Arcadia::PhysicsSimulator::~PhysicsSimulator()
 {
     JPH::UnregisterTypes();
     delete JPH::Factory::sInstance;
     JPH::Factory::sInstance = nullptr;
 }
 
-void arcadia::physics_simulator::prepare()
+void Arcadia::PhysicsSimulator::Prepare()
 {
-    _assert_frame_not_in_build();
-    _in_build = true;
+    _AssertFrameNotInBuild();
+    _InBuild = true;
 
     // Clear submitted body uuids
-    _submitted_body_info_set.clear();
+    _setSubmittedBodyInfo.clear();
 }
 
-void arcadia::physics_simulator::finalize()
+void Arcadia::PhysicsSimulator::Finalize()
 {
-    _assert_frame_in_build();
-    _in_build = false;
+    _AssertFrameInBuild();
+    _InBuild = false;
 
-    auto& jph_body_interface = _jph_physics_system_uptr->GetBodyInterface();
-    for(auto iter = _jph_body_id_umap.begin(); iter != _jph_body_id_umap.end();)
+    auto& jph_body_interface = _upJphPhysicsSystem->GetBodyInterface();
+    for(auto iter = _umapJphBodyId.begin(); iter != _umapJphBodyId.end();)
     {
-        if(!_submitted_body_info_set.contains(iter->first))
+        if(!_setSubmittedBodyInfo.contains(iter->first))
         {
             jph_body_interface.RemoveBody(iter->second);
             jph_body_interface.DestroyBody(iter->second);
-            iter = _jph_body_id_umap.erase(iter);
+            iter = _umapJphBodyId.erase(iter);
         }
         else
         {
@@ -54,164 +54,164 @@ void arcadia::physics_simulator::finalize()
         }
     }
 
-    _jph_physics_system_uptr->OptimizeBroadPhase();
+    _upJphPhysicsSystem->OptimizeBroadPhase();
 }
 
-void arcadia::physics_simulator::submit(const arcadia::physics_component& physics_comp)
+void Arcadia::PhysicsSimulator::Submit(const Arcadia::PhysicsComponent& physics_comp)
 {
-    _assert_frame_in_build();
+    _AssertFrameInBuild();
 
-    if(physics_comp.has_body_info())
+    if(physics_comp.HasBodyInfo())
     {
-        const auto& [uuid, body_info] = physics_comp.get_identifiable_jph_body_info_initial();
-        if(!_jph_body_id_umap.contains(uuid))
+        const auto& [Uuid, body_info] = physics_comp.GetIdentifiableJphBodyInfoInitial();
+        if(!_umapJphBodyId.contains(Uuid))
         {
-            auto& jph_body_interface = _jph_physics_system_uptr->GetBodyInterface();
-            JPH::ShapeRefC jph_shape_refc = arcadia::match<JPH::Shape*>(
-                body_info.jph_shape_info,
-                [&](const arcadia::jph_box_shape_info& info)
+            auto& jph_body_interface = _upJphPhysicsSystem->GetBodyInterface();
+            JPH::ShapeRefC jph_shape_refc = Arcadia::Match<JPH::Shape*>(
+                body_info.JphShapeInfo,
+                [&](const Arcadia::JphBoxShapeInfo& info)
             {
-                return new JPH::BoxShape{ arcadia::to_jph_vec3(info.half_extent), info.convex_radius };
+                return new JPH::BoxShape{ Arcadia::ToJphVec3(info.HalfExtent), info.ConvexRadius };
             },
-                [&](const arcadia::jph_capsule_shape_info& info)
+                [&](const Arcadia::JphCapsuleShapeInfo& info)
             {
-                return new JPH::CapsuleShape{ info.half_height_of_cylinder,info.radius };
+                return new JPH::CapsuleShape{ info.HalfHeightOfCylinder,info.Radius };
             },
-                [&](const arcadia::jph_cylinder_shape_info& info)
+                [&](const Arcadia::JphCylinderShapeInfo& info)
             {
-                return new JPH::CylinderShape{ info.half_height,info.radius,info.convex_radius };
+                return new JPH::CylinderShape{ info.HalfHeight,info.Radius,info.ConvexRadius };
             },
-                [&](const arcadia::jph_sphere_shape_info& info)
+                [&](const Arcadia::JphSphereShapeInfo& info)
             {
-                return new JPH::SphereShape{ info.radius };
+                return new JPH::SphereShape{ info.Radius };
             }
             );
             auto body_id = jph_body_interface.CreateAndAddBody(
                 JPH::BodyCreationSettings{
                     jph_shape_refc,
-                    arcadia::to_jph_vec3(body_info.position),
-                    arcadia::to_jph_quat(body_info.rotation),
-                    body_info.jph_motion_type,
-                    body_info.jph_object_layer
+                    Arcadia::ToJphVec3(body_info.Position),
+                    Arcadia::ToJphQuat(body_info.Rotation),
+                    body_info.JphMotionType,
+                    body_info.JphObjectLayer
                 },
                 JPH::EActivation::Activate
             );
             if(body_id.IsInvalid())
             {
-                throw submit_fail{ std::format("Failed to create body; Its uuid is {}",uuid) };
+                throw SubmitFail{ std::format("Failed to create body; Its uuid is {}",Uuid) };
             }
-            _jph_body_id_umap.try_emplace(uuid, body_id);
+            _umapJphBodyId.try_emplace(Uuid, body_id);
         }
-        _submitted_body_info_set.emplace(uuid);
+        _setSubmittedBodyInfo.emplace(Uuid);
     }
 }
 
-void arcadia::physics_simulator::update()
+void Arcadia::PhysicsSimulator::Update()
 {
-    if(!_should_update)
+    if(!_ShouldUpdate)
     {
         return;
     }
 
-    JPH::TempAllocatorImpl temp_allocator{ _jph_temp_allocator_size };
+    JPH::TempAllocatorImpl temp_allocator{ _JphTempAllocatorSize };
     JPH::JobSystemThreadPool job_system_thread_pool{ JPH::cMaxPhysicsJobs,JPH::cMaxPhysicsBarriers,static_cast<int>(std::thread::hardware_concurrency() - 1) };
 
 
-    _jph_physics_system_uptr->Update(1.f / _jph_physics_system_updates_per_second, 60 / _jph_physics_system_updates_per_second, &temp_allocator, &job_system_thread_pool);
+    _upJphPhysicsSystem->Update(1.f / _JphPhysicsSystemUpdatesPerSecond, 60 / _JphPhysicsSystemUpdatesPerSecond, &temp_allocator, &job_system_thread_pool);
 }
 
-void arcadia::physics_simulator::quary(physics_component& physics_comp)
+void Arcadia::PhysicsSimulator::Quary(PhysicsComponent& physics_comp)
 {
-    _assert_frame_not_in_build();
+    _AssertFrameNotInBuild();
 
-    if(physics_comp.has_body_info())
+    if(physics_comp.HasBodyInfo())
     {
-        const auto& [uuid, jph_body_info_initial] = physics_comp.get_identifiable_jph_body_info_initial();
-        if(_jph_body_id_umap.contains(uuid))
+        const auto& [Uuid, jph_body_info_initial] = physics_comp.GetIdentifiableJphBodyInfoInitial();
+        if(_umapJphBodyId.contains(Uuid))
         {
-            const auto& jph_body_interface = _jph_physics_system_uptr->GetBodyInterface();
-            const auto& body_id = _jph_body_id_umap.at(uuid);
+            const auto& jph_body_interface = _upJphPhysicsSystem->GetBodyInterface();
+            const auto& body_id = _umapJphBodyId.at(Uuid);
 
-            auto& jph_body_info_ongoing = physics_comp.get_jph_body_info_ongoing();
-            jph_body_info_ongoing.active = jph_body_interface.IsActive(body_id);
-            jph_body_info_ongoing.position = arcadia::from_jph_vec3(jph_body_interface.GetPosition(body_id));
-            jph_body_info_ongoing.rotation = arcadia::from_jph_quat(jph_body_interface.GetRotation(body_id));
-            jph_body_info_ongoing.linear_velocity = arcadia::from_jph_vec3(jph_body_interface.GetLinearVelocity(body_id));
-            jph_body_info_ongoing.angular_velocity = arcadia::from_jph_vec3(jph_body_interface.GetAngularVelocity(body_id));
+            auto& jph_body_info_ongoing = physics_comp.GetJphBodyInfoOngoing();
+            jph_body_info_ongoing.Active = jph_body_interface.IsActive(body_id);
+            jph_body_info_ongoing.Position = Arcadia::FromJphVec3(jph_body_interface.GetPosition(body_id));
+            jph_body_info_ongoing.Rotation = Arcadia::FromJphQuat(jph_body_interface.GetRotation(body_id));
+            jph_body_info_ongoing.LinearVelocity = Arcadia::FromJphVec3(jph_body_interface.GetLinearVelocity(body_id));
+            jph_body_info_ongoing.AngularVelocity = Arcadia::FromJphVec3(jph_body_interface.GetAngularVelocity(body_id));
         }
         else
         {
-            throw unknown_physics_component{ "Cannot quary component that has not been submitted" };
+            throw UnknownPhysicsComponent{ "Cannot quary component that has not been submitted" };
         }
     }
 }
 
-void arcadia::physics_simulator::reset()
+void Arcadia::PhysicsSimulator::Reset()
 {
-    auto& jph_body_interface = _jph_physics_system_uptr->GetBodyInterface();
-    for(const auto& [uuid, body_id] : _jph_body_id_umap)
+    auto& jph_body_interface = _upJphPhysicsSystem->GetBodyInterface();
+    for(const auto& [Uuid, body_id] : _umapJphBodyId)
     {
         jph_body_interface.RemoveBody(body_id);
         jph_body_interface.DestroyBody(body_id);
     }
-    _jph_body_id_umap.clear();
-    _submitted_body_info_set.clear();
+    _umapJphBodyId.clear();
+    _setSubmittedBodyInfo.clear();
 }
 
-auto arcadia::physics_simulator::get_should_update() const -> bool
+auto Arcadia::PhysicsSimulator::ShouldUpdate() const -> bool
 {
-    return _should_update;
+    return _ShouldUpdate;
 }
 
-void arcadia::physics_simulator::set_should_update(bool should_update)
+void Arcadia::PhysicsSimulator::ShouldUpdate(bool should_update)
 {
-    _should_update = should_update;
+    _ShouldUpdate = should_update;
 }
 
-auto arcadia::physics_simulator::get_jph_temp_allocator_size() const -> JPH::uint
+auto Arcadia::PhysicsSimulator::GetJphTempAllocatorSize() const -> JPH::uint
 {
-    return _jph_temp_allocator_size;
+    return _JphTempAllocatorSize;
 }
 
-void arcadia::physics_simulator::set_jph_temp_allocator_size(JPH::uint jph_temp_allocator_size)
+void Arcadia::PhysicsSimulator::SetJphTempAllocatorSize(JPH::uint jph_temp_allocator_size)
 {
-    _jph_temp_allocator_size = jph_temp_allocator_size;
+    _JphTempAllocatorSize = jph_temp_allocator_size;
 }
 
-auto arcadia::physics_simulator::get_jph_physics_system_updates_per_second() const -> int
+auto Arcadia::PhysicsSimulator::GetJphPhysicsSystemUpdatesPerSecond() const -> int
 {
-    return _jph_physics_system_updates_per_second;
+    return _JphPhysicsSystemUpdatesPerSecond;
 }
 
-void arcadia::physics_simulator::set_jph_physics_system_updates_per_second(int jph_physics_system_updates_per_second)
+void Arcadia::PhysicsSimulator::SetJphPhysicsSystemUpdatesPerSecond(int jph_physics_system_updates_per_second)
 {
-    _jph_physics_system_updates_per_second = jph_physics_system_updates_per_second;
+    _JphPhysicsSystemUpdatesPerSecond = jph_physics_system_updates_per_second;
 }
 
-auto arcadia::physics_simulator::get_jph_body_id_umap() const -> const jph_body_id_umap_type&
+auto Arcadia::PhysicsSimulator::GetJphBodyIdUmap() const -> const jph_body_id_umap_type&
 {
-    return _jph_body_id_umap;
+    return _umapJphBodyId;
 }
 
-void arcadia::physics_simulator::_assert_frame_in_build() const
+void Arcadia::PhysicsSimulator::_AssertFrameInBuild() const
 {
-    ARCADIA_ASSERT(_in_build && "Frame is not in build, did you call `prepare()`?");
+    ARCADIA_ASSERT(_InBuild && "Frame is not in build, did you call `prepare()`?");
 }
 
-void arcadia::physics_simulator::_assert_frame_not_in_build() const
+void Arcadia::PhysicsSimulator::_AssertFrameNotInBuild() const
 {
-    ARCADIA_ASSERT(!_in_build && "Frame is in build, did you call `finalize()`?");
+    ARCADIA_ASSERT(!_InBuild && "Frame is in build, did you call `finalize()`?");
 }
 
-auto arcadia::jph_object_layer_pair_filter_impl::ShouldCollide(JPH::ObjectLayer obj_1, JPH::ObjectLayer obj_2) const -> bool
+auto Arcadia::JphObjectLayerPairFilerImpl::ShouldCollide(JPH::ObjectLayer obj_1, JPH::ObjectLayer obj_2) const -> bool
 {
     switch(obj_1)
     {
-        case arcadia::jph_object_layers::non_moving:
+        case Arcadia::JphObjectLayers::NonMoving:
         {
-            return obj_2 == arcadia::jph_object_layers::moving; // Non moving only collides with moving
+            return obj_2 == Arcadia::JphObjectLayers::Moving; // Non moving only collides with moving
         }
-        case arcadia::jph_object_layers::moving:
+        case Arcadia::JphObjectLayers::Moving:
         {
             return true; // Moving collides with everything
         }
@@ -222,32 +222,32 @@ auto arcadia::jph_object_layer_pair_filter_impl::ShouldCollide(JPH::ObjectLayer 
     }
 }
 
-arcadia::jph_broad_phase_layer_impl::jph_broad_phase_layer_impl()
+Arcadia::JphBroadPhaseLayerImpl::JphBroadPhaseLayerImpl()
 {
-    _object_to_broad_phase[arcadia::jph_object_layers::non_moving] = arcadia::jph_broad_phase_layers::non_moving;
-    _object_to_broad_phase[arcadia::jph_object_layers::moving] = arcadia::jph_broad_phase_layers::moving;
+    _ObjectToBroadPhase[Arcadia::JphObjectLayers::NonMoving] = Arcadia::JphBroadPhaseLayers::NonMoving;
+    _ObjectToBroadPhase[Arcadia::JphObjectLayers::Moving] = Arcadia::JphBroadPhaseLayers::Moving;
 }
 
-auto arcadia::jph_broad_phase_layer_impl::GetNumBroadPhaseLayers() const -> JPH::uint
+auto Arcadia::JphBroadPhaseLayerImpl::GetNumBroadPhaseLayers() const -> JPH::uint
 {
-    return arcadia::jph_broad_phase_layers::num_layers;
+    return Arcadia::JphBroadPhaseLayers::NumLayers;
 }
 
-auto arcadia::jph_broad_phase_layer_impl::GetBroadPhaseLayer(JPH::ObjectLayer layer) const -> JPH::BroadPhaseLayer
+auto Arcadia::JphBroadPhaseLayerImpl::GetBroadPhaseLayer(JPH::ObjectLayer layer) const -> JPH::BroadPhaseLayer
 {
     ARCADIA_ASSERT(layer < GetNumBroadPhaseLayers());
-    return _object_to_broad_phase[layer];
+    return _ObjectToBroadPhase[layer];
 }
 
-auto arcadia::jph_object_vs_broad_phase_layer_filter_impl::ShouldCollide(JPH::ObjectLayer obj, JPH::BroadPhaseLayer bp) const -> bool
+auto Arcadia::JphObjectVsBroadPhaseLayerFilterImpl::ShouldCollide(JPH::ObjectLayer obj, JPH::BroadPhaseLayer bp) const -> bool
 {
     switch(obj)
     {
-        case arcadia::jph_object_layers::non_moving:
+        case Arcadia::JphObjectLayers::NonMoving:
         {
-            return bp == arcadia::jph_broad_phase_layers::moving;
+            return bp == Arcadia::JphBroadPhaseLayers::Moving;
         }
-        case arcadia::jph_object_layers::moving:
+        case Arcadia::JphObjectLayers::Moving:
         {
             return true;
         }

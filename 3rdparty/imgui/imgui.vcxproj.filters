@@ -56,5 +56,8 @@
     <ClInclude Include="imgui.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="imgui_internal.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

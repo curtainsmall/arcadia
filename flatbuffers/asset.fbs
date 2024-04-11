@@ -1,7 +1,7 @@
 include"math.fbs";
 include"meta.fbs";
 
-namespace arcadia.serialization;
+namespace Arcadia.Serialization;
 
 struct vertex{
     coord:vec3;

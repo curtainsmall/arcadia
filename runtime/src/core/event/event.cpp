@@ -1,26 +1,26 @@
 #include "pch.hpp"
 #include "event.hpp"
 
-auto arcadia::event_queue::instance() -> self_type&
+auto Arcadia::EventQueue::Instance() -> self_type&
 {
     static self_type event_queue{};
     return event_queue;
 }
 
-auto arcadia::event_queue::swap_queue() -> bool
+auto Arcadia::EventQueue::SwapQueue() -> bool
 {
     std::swap(_current_queue_ptr, _processing_queue_ptr);
-    return size();
+    return Size();
 }
 
-auto arcadia::event_queue::size() const -> std::size_t
+auto Arcadia::EventQueue::Size() const -> std::size_t
 {
     return _processing_queue_ptr->size();
 }
 
-auto arcadia::event_queue::read() -> arcadia::event_base&
+auto Arcadia::EventQueue::Read() -> Arcadia::EventBase&
 {
-    if(!size())
+    if(!Size())
     {
         throw empty_queue{};
     }
@@ -28,8 +28,8 @@ auto arcadia::event_queue::read() -> arcadia::event_base&
     return *_processing_queue_ptr->front();
 }
 
-auto arcadia::event_queue::pop() -> bool
+auto Arcadia::EventQueue::Pop() -> bool
 {
     _processing_queue_ptr->pop();
-    return size();
+    return Size();
 }

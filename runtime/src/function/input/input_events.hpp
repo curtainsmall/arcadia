@@ -8,217 +8,194 @@
 #include"function/window/window_layer.hpp"
 
 
-namespace arcadia
+namespace Arcadia
 {
-    namespace key_code
+    namespace KeyCode
     {
-        enum:int
+        enum Type:int
         {
-
-            unknown       = GLFW_KEY_UNKNOWN,
-            space         = GLFW_KEY_SPACE,
-            apostrophe    = GLFW_KEY_APOSTROPHE, // '
-            comma         = GLFW_KEY_COMMA, // ,
-            minus         = GLFW_KEY_MINUS, // -
-            period        = GLFW_KEY_PERIOD, // .
-            slash         = GLFW_KEY_SLASH, // /
-            _0            = GLFW_KEY_0,
-            _1            = GLFW_KEY_1,
-            _2            = GLFW_KEY_2,
-            _3            = GLFW_KEY_3,
-            _4            = GLFW_KEY_4,
-            _5            = GLFW_KEY_5,
-            _6            = GLFW_KEY_6,
-            _7            = GLFW_KEY_7,
-            _8            = GLFW_KEY_8,
-            _9            = GLFW_KEY_9,
-            semicolon     = GLFW_KEY_SEMICOLON, // ;
-            equal         = GLFW_KEY_EQUAL, // =
-            a             = GLFW_KEY_A,
-            b             = GLFW_KEY_B,
-            c             = GLFW_KEY_C,
-            d             = GLFW_KEY_D,
-            e             = GLFW_KEY_E,
-            f             = GLFW_KEY_F,
-            g             = GLFW_KEY_G,
-            h             = GLFW_KEY_H,
-            i             = GLFW_KEY_I,
-            j             = GLFW_KEY_J,
-            k             = GLFW_KEY_K,
-            l             = GLFW_KEY_L,
-            m             = GLFW_KEY_M,
-            n             = GLFW_KEY_N,
-            o             = GLFW_KEY_O,
-            p             = GLFW_KEY_P,
-            q             = GLFW_KEY_Q,
-            r             = GLFW_KEY_R,
-            s             = GLFW_KEY_S,
-            t             = GLFW_KEY_T,
-            u             = GLFW_KEY_U,
-            v             = GLFW_KEY_V,
-            w             = GLFW_KEY_W,
-            x             = GLFW_KEY_X,
-            y             = GLFW_KEY_Y,
-            z             = GLFW_KEY_Z,
-            left_bracket  = GLFW_KEY_BACKSLASH, // [
-            backslash     = GLFW_KEY_BACKSLASH, /* \ */
-            right_bracket = GLFW_KEY_RIGHT_BRACKET,
-            grave_accent  = GLFW_KEY_GRAVE_ACCENT, // `
-            world_1       = GLFW_KEY_WORLD_1,
-            world_2       = GLFW_KEY_WORLD_2,
-            escape        = GLFW_KEY_ESCAPE,
-            enter         = GLFW_KEY_ENTER,
-            tab           = GLFW_KEY_TAB,
-            backspace     = GLFW_KEY_BACKSPACE,
-            insert        = GLFW_KEY_INSERT,
-            delete_       = GLFW_KEY_DELETE,
-            right         = GLFW_KEY_RIGHT,
-            left          = GLFW_KEY_LEFT,
-            down          = GLFW_KEY_DOWN,
-            up            = GLFW_KEY_UP,
-            page_up       = GLFW_KEY_PAGE_UP,
-            page_down     = GLFW_KEY_PAGE_DOWN,
-            home          = GLFW_KEY_HOME,
-            end           = GLFW_KEY_END,
-            caps_lock     = GLFW_KEY_CAPS_LOCK,
-            scroll_lock   = GLFW_KEY_SCROLL_LOCK,
-            num_lock      = GLFW_KEY_NUM_LOCK,
-            print_screen  = GLFW_KEY_PRINT_SCREEN,
-            pause         = GLFW_KEY_PAUSE,
-            f1            = GLFW_KEY_F1,
-            f2            = GLFW_KEY_F2,
-            f3            = GLFW_KEY_F3,
-            f4            = GLFW_KEY_F4,
-            f5            = GLFW_KEY_F5,
-            f6            = GLFW_KEY_F6,
-            f7            = GLFW_KEY_F7,
-            f8            = GLFW_KEY_F8,
-            f9            = GLFW_KEY_F9,
-            f10           = GLFW_KEY_F10,
-            f11           = GLFW_KEY_F11,
-            f12           = GLFW_KEY_F12,
-            f13           = GLFW_KEY_F13,
-            f14           = GLFW_KEY_F14,
-            f15           = GLFW_KEY_F15,
-            f16           = GLFW_KEY_F16,
-            f17           = GLFW_KEY_F17,
-            f18           = GLFW_KEY_F18,
-            f19           = GLFW_KEY_F19,
-            f20           = GLFW_KEY_F20,
-            f21           = GLFW_KEY_F21,
-            f22           = GLFW_KEY_F22,
-            f23           = GLFW_KEY_F23,
-            f24           = GLFW_KEY_F24,
-            f25           = GLFW_KEY_F25,
-            kp_0          = GLFW_KEY_KP_0,
-            kp_1          = GLFW_KEY_KP_1,
-            kp_2          = GLFW_KEY_KP_2,
-            kp_3          = GLFW_KEY_KP_3,
-            kp_4          = GLFW_KEY_KP_4,
-            kp_5          = GLFW_KEY_KP_5,
-            kp_6          = GLFW_KEY_KP_6,
-            kp_7          = GLFW_KEY_KP_7,
-            kp_8          = GLFW_KEY_KP_8,
-            kp_9          = GLFW_KEY_KP_9,
-            kp_decimal    = GLFW_KEY_KP_DECIMAL,
-            kp_divide     = GLFW_KEY_KP_DIVIDE,
-            kp_multiply   = GLFW_KEY_KP_MULTIPLY,
-            kp_subtract   = GLFW_KEY_KP_SUBTRACT,
-            kp_add        = GLFW_KEY_KP_ADD,
-            kp_enter      = GLFW_KEY_KP_ENTER,
-            kp_equal      = GLFW_KEY_KP_EQUAL,
-            left_shift    = GLFW_KEY_LEFT_SHIFT,
-            left_control  = GLFW_KEY_LEFT_CONTROL,
-            left_alt      = GLFW_KEY_LEFT_ALT,
-            left_super    = GLFW_KEY_LEFT_SUPER,
-            right_shift   = GLFW_KEY_RIGHT_SHIFT,
-            right_control = GLFW_KEY_RIGHT_CONTROL,
-            right_alt     = GLFW_KEY_RIGHT_ALT,
-            right_super   = GLFW_KEY_RIGHT_SUPER,
-            menu          = GLFW_KEY_MENU,
+            Unknown          = GLFW_KEY_UNKNOWN,
+            Space            = GLFW_KEY_SPACE,
+            Apostrophe       = GLFW_KEY_APOSTROPHE, // '
+            Comma            = GLFW_KEY_COMMA, // ,
+            Minus            = GLFW_KEY_MINUS, // -
+            Period           = GLFW_KEY_PERIOD, // .
+            Slash            = GLFW_KEY_SLASH, // /
+            Num0             = GLFW_KEY_0,
+            Num1             = GLFW_KEY_1,
+            Num2             = GLFW_KEY_2,
+            Num3             = GLFW_KEY_3,
+            Num4             = GLFW_KEY_4,
+            Num5             = GLFW_KEY_5,
+            Num6             = GLFW_KEY_6,
+            Num7             = GLFW_KEY_7,
+            Num8             = GLFW_KEY_8,
+            Num9             = GLFW_KEY_9,
+            Semicolon        = GLFW_KEY_SEMICOLON, // ;
+            Equal            = GLFW_KEY_EQUAL, // =
+            A                = GLFW_KEY_A,
+            B                = GLFW_KEY_B,
+            C                = GLFW_KEY_C,
+            D                = GLFW_KEY_D,
+            E                = GLFW_KEY_E,
+            F                = GLFW_KEY_F,
+            G                = GLFW_KEY_G,
+            H                = GLFW_KEY_H,
+            I                = GLFW_KEY_I,
+            J                = GLFW_KEY_J,
+            K                = GLFW_KEY_K,
+            L                = GLFW_KEY_L,
+            M                = GLFW_KEY_M,
+            N                = GLFW_KEY_N,
+            O                = GLFW_KEY_O,
+            P                = GLFW_KEY_P,
+            Q                = GLFW_KEY_Q,
+            R                = GLFW_KEY_R,
+            S                = GLFW_KEY_S,
+            T                = GLFW_KEY_T,
+            U                = GLFW_KEY_U,
+            V                = GLFW_KEY_V,
+            W                = GLFW_KEY_W,
+            X                = GLFW_KEY_X,
+            Y                = GLFW_KEY_Y,
+            Z                = GLFW_KEY_Z,
+            LeftBracket      = GLFW_KEY_LEFT_BRACKET, // [
+            Backslash        = GLFW_KEY_BACKSLASH, /* \ */
+            RightBracket     = GLFW_KEY_RIGHT_BRACKET,
+            GraveAccent      = GLFW_KEY_GRAVE_ACCENT, // `
+            World1           = GLFW_KEY_WORLD_1,
+            World2           = GLFW_KEY_WORLD_2,
+            Escape           = GLFW_KEY_ESCAPE,
+            Enter            = GLFW_KEY_ENTER,
+            Tab              = GLFW_KEY_TAB,
+            Backspace        = GLFW_KEY_BACKSPACE,
+            Insert           = GLFW_KEY_INSERT,
+            Delete           = GLFW_KEY_DELETE,
+            Right            = GLFW_KEY_RIGHT,
+            Left             = GLFW_KEY_LEFT,
+            Down             = GLFW_KEY_DOWN,
+            Up               = GLFW_KEY_UP,
+            PageUp           = GLFW_KEY_PAGE_UP,
+            PageDown         = GLFW_KEY_PAGE_DOWN,
+            Home             = GLFW_KEY_HOME,
+            End              = GLFW_KEY_END,
+            CapsLock         = GLFW_KEY_CAPS_LOCK,
+            ScrollLock       = GLFW_KEY_SCROLL_LOCK,
+            NumLock          = GLFW_KEY_NUM_LOCK,
+            PrintScreen      = GLFW_KEY_PRINT_SCREEN,
+            Pause            = GLFW_KEY_PAUSE,
+            F1               = GLFW_KEY_F1,
+            F2               = GLFW_KEY_F2,
+            F3               = GLFW_KEY_F3,
+            F4               = GLFW_KEY_F4,
+            F5               = GLFW_KEY_F5,
+            F6               = GLFW_KEY_F6,
+            F7               = GLFW_KEY_F7,
+            F8               = GLFW_KEY_F8,
+            F9               = GLFW_KEY_F9,
+            F10              = GLFW_KEY_F10,
+            F11              = GLFW_KEY_F11,
+            F12              = GLFW_KEY_F12,
+            Keypad0          = GLFW_KEY_KP_0,
+            Keypad1          = GLFW_KEY_KP_1,
+            Keypad2          = GLFW_KEY_KP_2,
+            Keypad3          = GLFW_KEY_KP_3,
+            Keypad4          = GLFW_KEY_KP_4,
+            Keypad5          = GLFW_KEY_KP_5,
+            Keypad6          = GLFW_KEY_KP_6,
+            Keypad7          = GLFW_KEY_KP_7,
+            Keypad8          = GLFW_KEY_KP_8,
+            Keypad9          = GLFW_KEY_KP_9,
+            Keypaddecimal    = GLFW_KEY_KP_DECIMAL,
+            Keypaddivide     = GLFW_KEY_KP_DIVIDE,
+            Keypadmultiply   = GLFW_KEY_KP_MULTIPLY,
+            Keypadsubtract   = GLFW_KEY_KP_SUBTRACT,
+            Keypadadd        = GLFW_KEY_KP_ADD,
+            Keypadenter      = GLFW_KEY_KP_ENTER,
+            Keypadequal      = GLFW_KEY_KP_EQUAL,
+            LeftShift        = GLFW_KEY_LEFT_SHIFT,
+            LeftCtrl         = GLFW_KEY_LEFT_CONTROL,
+            LeftAlt          = GLFW_KEY_LEFT_ALT,
+            LeftSuper        = GLFW_KEY_LEFT_SUPER,
+            RightShift       = GLFW_KEY_RIGHT_SHIFT,
+            RightCtrl        = GLFW_KEY_RIGHT_CONTROL,
+            RightAlt         = GLFW_KEY_RIGHT_ALT,
+            RightSuper       = GLFW_KEY_RIGHT_SUPER,
+            Menu             = GLFW_KEY_MENU,
         };
 
     };
-    namespace mouse_code
+    namespace MouseCode
     {
-        enum: int
+        enum Type: int
         {
-            button_1      = GLFW_MOUSE_BUTTON_1,
-            button_2      = GLFW_MOUSE_BUTTON_2,
-            button_3      = GLFW_MOUSE_BUTTON_3,
-            button_4      = GLFW_MOUSE_BUTTON_4,
-            button_5      = GLFW_MOUSE_BUTTON_5,
-            button_6      = GLFW_MOUSE_BUTTON_6,
-            button_7      = GLFW_MOUSE_BUTTON_7,
-            button_8      = GLFW_MOUSE_BUTTON_8,
-            button_last   = button_8,
-            button_left   = button_1,
-            button_right  = button_2,
-            button_middle = button_3,
+            ButtonLeft   = GLFW_MOUSE_BUTTON_LEFT,
+            ButtonRight  = GLFW_MOUSE_BUTTON_RIGHT,
+            ButtonMiddle = GLFW_MOUSE_BUTTON_MIDDLE,
         };
     }
-    namespace input_action
+    namespace InputAction
     {
-        enum: int
+        enum Type: int
         {
-            release = GLFW_RELEASE,
-            press = GLFW_PRESS,
-            repeat = GLFW_REPEAT,
+            Release = GLFW_RELEASE,
+            Press   = GLFW_PRESS,
+            Repeat  = GLFW_REPEAT,
         };
     }
-    namespace input_modifier
+    namespace InputModifier
     {
-        enum: int
+        enum Type: int
         {
-            shift = GLFW_MOD_SHIFT,
-            control = GLFW_MOD_CONTROL,
-            alt = GLFW_MOD_ALT,
-            super = GLFW_MOD_SUPER,
-            caps_lock = GLFW_MOD_CAPS_LOCK,
-            num_lock = GLFW_MOD_NUM_LOCK,
+            Shift     = GLFW_MOD_SHIFT,
+            Ctrl      = GLFW_MOD_CONTROL,
+            Alt       = GLFW_MOD_ALT,
+            Super     = GLFW_MOD_SUPER,
+            CapsLock  = GLFW_MOD_CAPS_LOCK,
+            NumLock   = GLFW_MOD_NUM_LOCK,
         };
     }
 
-    namespace event
+    namespace Event
     {
         ARCADIA_EVENT(
-            input_key,
-            arcadia::window_layer*, // Input window
+            InputKey,
+            Arcadia::WindowLayer*, // Input window
             int, // Key code
             int, // Key scancode
             int, // Input action
             int  // Input modifiers
         );
         ARCADIA_EVENT(
-            input_cursor_pos,
-            arcadia::window_layer*, // Input window
-            glm::dvec2 // Cursor position
+            InputCursorPos,
+            Arcadia::WindowLayer*, // Input window
+            glm::vec2 // Cursor position
         );
         ARCADIA_EVENT(
-            input_cursor_move,
-            arcadia::window_layer*, // Input window
-            glm::dvec2 // Cursor movement
+            InputCursorMove,
+            Arcadia::WindowLayer*, // Input window
+            glm::vec2 // Cursor movement
         );
         ARCADIA_EVENT(
-            input_scroll,
-            arcadia::window_layer*, // Input window
-            glm::dvec2 // Scroll offset (a vertical mouse wheel provides offset along the y-axis
+            InputScroll,
+            Arcadia::WindowLayer*, // Input window
+            glm::vec2 // Scroll offset (a vertical mouse wheel provides offset along the y-axis
         );
         ARCADIA_EVENT(
-            input_mouse_button,
-            arcadia::window_layer*, // Input window
+            InputMouseButton,
+            Arcadia::WindowLayer*, // Input window
             int, // Mouse code
             int, // Input action
             int  // Input modifiers
         );
         ARCADIA_EVENT(
-            input_cursor_enter,
-            arcadia::window_layer*,
+            InputCursorEnter,
+            Arcadia::WindowLayer*,
             bool // Whether the cursor entered or not
         );
         ARCADIA_EVENT(
-            input_char,
-            arcadia::window_layer*,
+            InputChar,
+            Arcadia::WindowLayer*,
             unsigned int // Unicode code points
         );
 

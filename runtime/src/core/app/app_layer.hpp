@@ -6,25 +6,22 @@
 #include"core/event/event.hpp"
 #include"core/layer/layer.hpp"
 
-auto main(int argc, const char** argv) -> int;
+auto main() -> int;
 
-#define ARCADIA ::arcadia::
-#define STD ::std::
-
-namespace arcadia
+namespace Arcadia
 {
-    struct ARCADIA_API app_layer: arcadia::layer_interface
+    struct ARCADIA_API iAppLayer: Arcadia::iLayer
     {
-        friend auto ::main(int, const char**) -> int;
+        friend auto ::main() -> int;
     public:
-        using self_type = arcadia::app_layer;
+        using self_type = Arcadia::iAppLayer;
     public:
-        app_layer();
-        virtual ~app_layer();
+        iAppLayer();
+        virtual ~iAppLayer();
 
-        virtual void on_event(arcadia::event_base&) override = 0;
-        virtual void on_update() override = 0;
+        virtual void OnEvent(Arcadia::EventBase&) override = 0;
+        virtual void OnUpdate() override = 0;
     };
 
-    ARCADIA_API auto create_application_uptr() -> std::unique_ptr<arcadia::app_layer>;
+    ARCADIA_API auto CreateApplicationUptr() -> std::unique_ptr<Arcadia::iAppLayer>;
 }

@@ -1,4 +1,4 @@
-namespace arcadia.serialization;
+namespace Arcadia.Serialization;
 
 struct version{
     major:int;

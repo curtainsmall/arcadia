@@ -9,37 +9,37 @@
 #include"resource/component/model_component/material/material.hpp"
 #include"resource/component/model_component/mesh/vertex.hpp"
 
-namespace arcadia
+namespace Arcadia
 {
-    struct ARCADIA_API mesh
+    struct ARCADIA_API Mesh
     {
     public:
         using index_type = unsigned int;
-        using self_type = mesh;
+        using self_type = Mesh;
     public:
-        static auto box(
+        static auto Box(
             const glm::vec3& half_extent
-        ) -> arcadia::mesh;
+        ) -> Arcadia::Mesh;
 
-        static auto capsule(
+        static auto Capsule(
             float radius,
             float half_height_of_sylinder
-        ) -> arcadia::mesh;
+        ) -> Arcadia::Mesh;
 
-        static auto cylinder(
+        static auto Cylinder(
             float half_height,
             float radius
-        ) -> arcadia::mesh;
+        ) -> Arcadia::Mesh;
 
-        static auto sphere(
+        static auto Sphere(
             float radius,
             std::size_t stack_count  = 36, // Along latitude
             std::size_t sector_count = 36  // Alone longitude
-        ) -> arcadia::mesh;
+        ) -> Arcadia::Mesh;
 
-        std::vector<arcadia::vertex> vertices{};
-        std::vector<index_type> indices{};
+        std::vector<Arcadia::Vertex> Vertices{};
+        std::vector<index_type> Indices{};
 
-        arcadia::material material{};
+        Arcadia::Material Material{};
     };
 }

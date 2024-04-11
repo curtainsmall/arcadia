@@ -8,68 +8,68 @@
 #include"core/exception.hpp"
 #include"core/serialization.hpp"
 
-namespace arcadia
+namespace Arcadia
 {
     [[nodiscard]]
-    ARCADIA_API auto to_filepath(const std::string& string) -> std::filesystem::path;
+    ARCADIA_API auto ToFilepath(const std::string& string) -> std::filesystem::path;
 
     [[nodiscard]]
-    ARCADIA_API auto to_filepath(const char* str) -> std::filesystem::path;
+    ARCADIA_API auto ToFilepath(const char* str) -> std::filesystem::path;
 
     [[nodiscard]]
-    ARCADIA_API auto load_text(const std::filesystem::path& filepath) -> std::string;
+    ARCADIA_API auto LoadText(const std::filesystem::path& filepath) -> std::string;
 
-    struct ARCADIA_API file
+    struct ARCADIA_API File
     {
     public:
         ARCADIA_EXCEPTION(load_failed);
         ARCADIA_EXCEPTION(save_failed);
         ARCADIA_EXCEPTION(section_not_found);
 
-        using section_type = arcadia::serialization::buffer_type;
+        using section_type = Arcadia::Serialization::buffer_type;
         using section_umap_type = std::unordered_map<std::string, section_type>;
 
-        using self_type = arcadia::file;
+        using self_type = Arcadia::File;
     public:
 
-        static auto create_ifstream() -> std::ifstream;
-        static auto create_ifstream(const std::filesystem::path& filepath) -> std::ifstream;
-        static auto create_ofstream() -> std::ofstream;
-        static auto create_ofstream(const std::filesystem::path& filepath) -> std::ofstream;
+        static auto CreateIFstream() -> std::ifstream;
+        static auto CreateIFstream(const std::filesystem::path& filepath) -> std::ifstream;
+        static auto CreateOFstream() -> std::ofstream;
+        static auto CreateOFstream(const std::filesystem::path& filepath) -> std::ofstream;
 
-        file(const std::filesystem::path& filepath);
-        file(const self_type&) = default;
-        file(self_type&&) = default;
-        ~file();
+        File(const std::filesystem::path& filepath);
+        File(const self_type&) = default;
+        File(self_type&&) = default;
+        ~File();
 
         auto operator=(const self_type&)->self_type & = default;
         auto operator=(self_type&&)->self_type & = default;
 
         /// @brief Load file from disk
         /// 
-        /// @throw arcadia::file::load_failed if failed to load
-        auto load() -> self_type&;
+        /// @throw Arcadia::file::load_failed if failed to load
+        auto Load() -> self_type&;
 
         /// @brief Save file to disk
         ///
-        /// @throw arcadia::file::load_failed if failed to load
-        auto save() -> self_type&;
+        /// @throw Arcadia::file::load_failed if failed to load
+        auto Save() -> self_type&;
 
         [[nodiscard]]
-        auto get_section_or_create(const std::string& section_name) -> section_type&;
+        auto GetSectionOrCreate(const std::string& section_name) -> section_type&;
 
         [[nodiscard]]
-        auto get_section(const std::string& section_name) -> section_type&;
+        auto GetSection(const std::string& section_name) -> section_type&;
         [[nodiscard]]
-        auto get_section(const std::string& section_name) const -> const section_type&;
+        auto GetSection(const std::string& section_name) const -> const section_type&;
 
-        auto has_section(const std::string& section_name) const -> bool;
+        auto HasSection(const std::string& section_name) const -> bool;
 
-        auto erase_section(const std::string& section_name) -> self_type&;
+        auto EraseSection(const std::string& section_name) -> self_type&;
 
     private:
-        std::filesystem::path _filepath{};
-        section_umap_type _section_umap{};
+        std::filesystem::path _Filepath{};
+        section_umap_type _umapSection{};
     };
 
 }

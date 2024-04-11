@@ -42,9 +42,6 @@
     <ClInclude Include="src\core\exception.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\serialization.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\platform\graphic_api\graphic_api.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -186,9 +183,6 @@
     <ClInclude Include="src\core\hash.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\meta\meta.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\function\ui\imgui_backend.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -234,6 +228,9 @@
     <ClInclude Include="src\resource\fonts\icon_header.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\core\serialization.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\pch.cpp">
@@ -246,9 +243,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\core\version\version.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\platform\graphic_api\graphic_api.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\function\window\window_layer.cpp">

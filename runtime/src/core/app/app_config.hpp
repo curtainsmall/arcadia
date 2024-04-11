@@ -9,30 +9,30 @@
 #include"core/math.hpp"
 #include"platform/graphic_api/graphic_api.hpp"
 
-namespace arcadia
+namespace Arcadia
 {
-    struct ARCADIA_API app_config
+    struct ARCADIA_API AppConfig
     {
     public:
-        using self_type = app_config;
+        using self_type = AppConfig;
     public:
-        static auto instance() -> self_type&;
+        static auto Instance() -> self_type&;
     public:
-        static inline std::filesystem::path filepath{ arcadia::to_filepath(".acdacfg") };
+        static inline std::filesystem::path Filepath{ Arcadia::ToFilepath(".acdacfg") };
 
-        std::filesystem::path working_directory{ arcadia::to_filepath("./") };
-        arcadia::graphic_api::type graphic_api{};
+        std::filesystem::path WorkingDirectory{ Arcadia::ToFilepath("./") };
+        Arcadia::GraphicApi::Type GraphicApi{};
 
         // Window
-        glm::ivec2 window_pos{ -1,-1 }; // Use negative value for `don't care`
-        glm::ivec2 window_size{ 1280,768 };
-        glm::ivec2 window_min_size{ 800,600 };
-        glm::ivec2 window_max_size{ -1,-1 }; // Use negative value for `don't care`
-        std::string window_title{ "Arcadia" };
-        int window_multisample_count{ 0 };
-        bool window_maxmized{ true };
+        glm::ivec2 WindowPos{ -1,-1 }; // Use negative value for `don't care`
+        glm::ivec2 WindowSize{ 1280,768 };
+        glm::ivec2 WindowMinSize{ 800,600 };
+        glm::ivec2 WindowMaxSize{ -1,-1 }; // Use negative value for `don't care`
+        std::string WindowTitle{ "Arcadia" };
+        int WindowMultisampleCount{ 0 };
+        bool WindowMaxmized{ true };
 
         // ImGui
-        std::set<std::string> imgui_opened_window_id_strs{};
+        std::set<std::string> ImguiOpenedWindowIdStrs{};
     };
 }

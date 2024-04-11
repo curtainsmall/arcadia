@@ -28,18 +28,18 @@ using namespace std::string_view_literals;
 using namespace std::chrono_literals;
 using namespace std::complex_literals;
 
-namespace arcadia
+namespace Arcadia
 {
-    struct ARCADIA_API noncopyable
+    struct ARCADIA_API Noncopyable
     {
     protected:
-        noncopyable() = default;
-        noncopyable(const noncopyable&) = delete;
-        auto operator=(const noncopyable&) = delete;
+        Noncopyable() = default;
+        Noncopyable(const Noncopyable&) = delete;
+        auto operator=(const Noncopyable&) = delete;
     };
 
     template<class ...Fns>
-    struct ARCADIA_API overloaded: Fns...
+    struct ARCADIA_API Overloaded: Fns...
     {
         using Fns::operator()...;
     };
@@ -52,18 +52,18 @@ namespace arcadia
     };
 
     template<class ...Types>
-    inline constexpr arcadia::in_place_types_t<Types...> in_place_types{};
+    constexpr Arcadia::in_place_types_t<Types...> in_place_types{};
 
     template<class, template<class ...> class>
-    inline constexpr bool is_specialization_of = false;
+    constexpr bool is_specialization_of = false;
     template<template<class...> class T, class ...Args>
-    inline constexpr bool is_specialization_of<T<Args...>, T> = true;
+    constexpr bool is_specialization_of<T<Args...>, T> = true;
 
     template<class Type, template<class ...> class Template>
-    concept instantiated_from = arcadia::is_specialization_of<Type, Template>;
+    concept instantiated_from = Arcadia::is_specialization_of<Type, Template>;
 
     template<class ...Args>
-    struct ARCADIA_API pack
+    struct ARCADIA_API ParameterPack
     {
     public:
         using tuple_type = std::tuple<Args...>;
@@ -83,13 +83,13 @@ namespace arcadia
 
     template<
         class Ret,
-        arcadia::instantiated_from<std::variant> Variant,
+        Arcadia::instantiated_from<std::variant> Variant,
         class ...BranchFns
     >
-    ARCADIA_API auto match(Variant& variant, BranchFns&& ...fns) -> Ret
+    ARCADIA_API auto Match(Variant& variant, BranchFns&& ...fns) -> Ret
     {
         return std::visit<Ret>(
-            arcadia::overloaded{
+            Arcadia::Overloaded{
                 std::forward<BranchFns>(fns)...
             },
             variant
@@ -98,13 +98,13 @@ namespace arcadia
 
     template<
         class Ret,
-        arcadia::instantiated_from<std::variant> Variant,
+        Arcadia::instantiated_from<std::variant> Variant,
         class ...BranchFns
     >
-    ARCADIA_API auto match(const Variant& variant, BranchFns&& ...fns) -> Ret
+    ARCADIA_API auto Match(const Variant& variant, BranchFns&& ...fns) -> Ret
     {
         return std::visit<Ret>(
-            arcadia::overloaded{
+            Arcadia::Overloaded{
                 std::forward<BranchFns>(fns)...
             },
             variant
@@ -118,7 +118,7 @@ namespace arcadia
         class ...Cases
     >
         requires (sizeof...(Cases) % 2 == 0)
-    ARCADIA_API auto match(const Cond& cond, const Case& case_expr, const std::function<Ret()>& case_fn, Cases&& ...cases) -> Ret
+    ARCADIA_API auto Match(const Cond& cond, const Case& case_expr, const std::function<Ret()>& case_fn, Cases&& ...cases) -> Ret
     {
         if constexpr(sizeof...(Cases) == 0)
         {
@@ -126,7 +126,7 @@ namespace arcadia
         }
         else
         {
-            return cond == case_expr ? case_fn() : arcadia::match<Ret, Cond, Case>(cond, std::forward<Cases>(cases)...);
+            return cond == case_expr ? case_fn() : Arcadia::Match<Ret, Cond, Case>(cond, std::forward<Cases>(cases)...);
         }
     }
 
@@ -137,7 +137,7 @@ namespace arcadia
         class ...Cases
     >
         requires (sizeof...(Cases) % 2 == 0)
-    ARCADIA_API auto match(const Cond& cond, const std::function<Ret()>& default_fn, const Case& case_expr, const std::function<Ret()>& case_fn, Cases&& ...cases) -> Ret
+    ARCADIA_API auto Match(const Cond& cond, const std::function<Ret()>& default_fn, const Case& case_expr, const std::function<Ret()>& case_fn, Cases&& ...cases) -> Ret
     {
         if constexpr(sizeof...(Cases) == 0)
         {
@@ -145,7 +145,7 @@ namespace arcadia
         }
         else
         {
-            return cond == case_expr ? case_fn() : arcadia::match<Ret, Cond, Case>(cond, std::forward<Cases>(cases)...);
+            return cond == case_expr ? case_fn() : Arcadia::Match<Ret, Cond, Case>(cond, std::forward<Cases>(cases)...);
         }
     }
 
@@ -156,7 +156,7 @@ namespace arcadia
         class ...Cases
     >
         requires (sizeof...(Cases) % 2 == 0)
-    ARCADIA_API auto match(const Cond& cond, const Case& case_expr, const Res& case_res, Cases&& ...cases) -> Res
+    ARCADIA_API auto Match(const Cond& cond, const Case& case_expr, const Res& case_res, Cases&& ...cases) -> Res
     {
         if constexpr(sizeof...(Cases) == 0)
         {
@@ -164,7 +164,7 @@ namespace arcadia
         }
         else
         {
-            return cond == case_expr ? case_res : arcadia::match<Res, Cond, Case>(cond, std::forward<Cases>(cases)...);
+            return cond == case_expr ? case_res : Arcadia::Match<Res, Cond, Case>(cond, std::forward<Cases>(cases)...);
         }
     }
 
@@ -175,7 +175,7 @@ namespace arcadia
         class ...Cases
     >
         requires (sizeof...(Cases) % 2 == 0)
-    ARCADIA_API auto match(const Cond& cond, const Res& default_res, const Case& case_expr, const Res& case_res, Cases&& ...cases) -> Res
+    ARCADIA_API auto Match(const Cond& cond, const Res& default_res, const Case& case_expr, const Res& case_res, Cases&& ...cases) -> Res
     {
         if constexpr(sizeof...(Cases) == 0)
         {
@@ -183,7 +183,7 @@ namespace arcadia
         }
         else
         {
-            return cond == case_expr ? case_res : arcadia::match<Res, Cond, Case>(cond, std::forward<Cases>(cases)...);
+            return cond == case_expr ? case_res : Arcadia::Match<Res, Cond, Case>(cond, std::forward<Cases>(cases)...);
         }
     }
 }

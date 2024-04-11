@@ -3,34 +3,34 @@
 #include"core/base.hpp"
 #include"platform/opengl/opengl_header.hpp"
 
-namespace arcadia
+namespace Arcadia
 {
-    struct ARCADIA_API gl_uniform_buffer: arcadia::noncopyable
+    struct ARCADIA_API GlUniformBuffer: Arcadia::Noncopyable
     {
     public:
-        using self_type = gl_uniform_buffer;
+        using self_type = GlUniformBuffer;
     public:
-        gl_uniform_buffer(
+        GlUniformBuffer(
             GLsizeiptr size
         );
-        gl_uniform_buffer(
+        GlUniformBuffer(
             GLsizeiptr size,
             const GLvoid* data
         );
-        ~gl_uniform_buffer();
+        ~GlUniformBuffer();
 
-        gl_uniform_buffer(self_type&& rhs)noexcept;
+        GlUniformBuffer(self_type&& rhs)noexcept;
         auto operator=(self_type&& rhs) noexcept -> self_type&;
 
-        void bind() const;
-        void unbind() const;
+        void Bind() const;
+        void Unbind() const;
 
-        void bind_buffer_base(GLuint index) const;
-        void bind_buffer_range(GLuint index, GLintptr offset, GLsizeiptr size) const;
+        void BindBufferBase(GLuint index) const;
+        void BindBufferRange(GLuint index, GLintptr Offset, GLsizeiptr size) const;
 
-        auto sub_data(GLintptr offset, GLsizeiptr size, const GLvoid* data) const-> const self_type&;
+        auto SubData(GLintptr Offset, GLsizeiptr size, const GLvoid* data) const-> const self_type&;
 
     private:
-        GLuint _gl_id{ 0 };
+        GLuint _GlId{ 0 };
     };
 }

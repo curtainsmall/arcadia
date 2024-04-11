@@ -5,16 +5,16 @@
 #include"core/base.hpp"
 #include"core/exception.hpp"
 
-namespace arcadia
+namespace Arcadia
 {
-    ARCADIA_EXCEPTION(glfw_error);
+    ARCADIA_EXCEPTION(GlfwError);
 
-    struct ARCADIA_API glfw_context: arcadia::noncopyable
+    struct ARCADIA_API GlfwContext: Arcadia::Noncopyable
     {
     public:
-        using self_type = glfw_context;
+        using self_type = GlfwContext;
     public:
-        glfw_context();
-        ~glfw_context();
+        GlfwContext();
+        ~GlfwContext();
     };
 }

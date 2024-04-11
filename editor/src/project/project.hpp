@@ -9,41 +9,41 @@
 #include"resource/component/camera_component/camera_component.hpp"
 #include"resource/scene/scene.hpp"
 
-namespace arcadia
+namespace Arcadia
 {
-    struct ARCADIA_API project: arcadia::noncopyable
+    struct ARCADIA_API Project: Arcadia::Noncopyable
     {
     public:
-        using self_type = project;
+        using self_type = Project;
     public:
-        inline project(
+        inline Project(
             std::string name
         ):
-            _name(name)
+            _Name(name)
         {}
-        project(nlohmann::json& json);
-        ~project() = default;
+        Project(nlohmann::json& json);
+        ~Project() = default;
         [[nodiscard]]
-        auto to_json() const->nlohmann::json;
+        auto ToJson() const->nlohmann::json;
 
         [[nodiscard]]
-        auto get_name() const -> const std::string&;
-        void set_name(const std::string& name);
+        auto GetName() const -> const std::string&;
+        void SetName(const std::string& name);
 
         [[nodiscard]]
-        auto has_active_scene() const -> bool;
+        auto HasActiveScene() const -> bool;
         [[nodiscard]]
-        auto get_active_scene() -> arcadia::scene&;
+        auto GetActiveScene() -> Arcadia::Scene&;
         [[nodiscard]]
-        auto get_active_scene() const -> const arcadia::scene&;
-        auto set_active_scene(const std::string& name={}) -> std::weak_ptr<arcadia::scene>&;
+        auto GetActiveScene() const -> const Arcadia::Scene&;
+        auto SetActiveScene(const std::string& name={}) -> std::weak_ptr<Arcadia::Scene>&;
 
 
     public:
-        std::unordered_map<std::string, std::shared_ptr<arcadia::scene>> scene_sptr_umap{};
-        arcadia::camera_component viewport_camera{};
+        std::unordered_map<std::string, std::shared_ptr<Arcadia::Scene>> umapSceneSptr{};
+        Arcadia::CameraComponent ViewportCamera{};
     private:
-        std::string _name;
-        std::weak_ptr<arcadia::scene> _active_scene_wptr{};
+        std::string _Name;
+        std::weak_ptr<Arcadia::Scene> _wpActiveScene{};
     };
 }

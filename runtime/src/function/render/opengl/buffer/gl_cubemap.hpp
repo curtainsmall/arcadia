@@ -5,34 +5,34 @@
 #include"platform/opengl/opengl_header.hpp"
 #include"resource/component/skybox_component/cubemap.hpp"
 
-namespace arcadia
+namespace Arcadia
 {
-    struct ARCADIA_API gl_cubemap: arcadia::noncopyable
+    struct ARCADIA_API GlCubemap: Arcadia::Noncopyable
     {
     public:
-        using self_type = gl_cubemap;
+        using self_type = GlCubemap;
     public:
-        gl_cubemap(const arcadia::cubemap& cubemap);
-        ~gl_cubemap();
+        GlCubemap(const Arcadia::Cubemap& cubemap);
+        ~GlCubemap();
 
-        gl_cubemap(self_type&& rhs) noexcept;
+        GlCubemap(self_type&& rhs) noexcept;
         auto operator=(self_type&& rhs) noexcept -> self_type&;
 
         [[nodiscard]]
-        inline auto get_gl_id() const -> GLuint
+        auto GetGlId() const -> GLuint
         {
-            return _gl_id;
+            return _GlId;
         }
 
-        void bind(GLenum slot = 0);
-        void unbind();
+        void Bind(GLenum slot = 0);
+        void Unbind();
 
-        void set_tex_parameter(GLenum pname, GLint param);
-        void set_tex_parameter(GLenum pname, GLfloat param);
+        void SetTexParameter(GLenum pname, GLint param);
+        void SetTexParameter(GLenum pname, GLfloat param);
 
     private:
-        GLuint _gl_id{};
-        GLenum _slot{ -1u };
+        GLuint _GlId{};
+        GLenum _Slot{ -1u };
 
     };
 }

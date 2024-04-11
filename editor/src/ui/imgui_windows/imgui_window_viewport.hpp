@@ -15,43 +15,43 @@
 #include"project/project_events.hpp"
 #include"ui/ui_events.hpp"
 
-namespace arcadia
+namespace Arcadia
 {
-    struct ARCADIA_API imgui_window_viewport: arcadia::imgui_window_interface
+    struct ARCADIA_API ImguiWindowViewport: Arcadia::iImguiWindow
     {
     public:
-        using self_type = imgui_window_viewport;
+        using self_type = ImguiWindowViewport;
     public:
         ARCADIA_IMGUI_WINDOW_ID_STR_GETTERS("###viewport");
 
-        inline imgui_window_viewport(
-            bool open,
+        inline ImguiWindowViewport(
+            bool Open,
             const std::string& title
         ):
-            imgui_window_interface(open, title)
+            Arcadia::iImguiWindow(Open, title)
         {}
-        virtual ~imgui_window_viewport() = default;
+        virtual ~ImguiWindowViewport() = default;
 
-        virtual void on_event(arcadia::event_base& event) override;
-        virtual void on_update() override;
+        virtual void OnEvent(Arcadia::EventBase& event) override;
+        virtual void OnUpdate() override;
 
     private:
-        void _on_input_cursor_move(arcadia::event::input_cursor_move& e);
-        void _on_open_imgui_window(arcadia::event::open_imgui_window& e);
-        void _on_project_built(arcadia::event::project_built& e);
-        void _on_project_unbuilt(arcadia::event::project_unbuilt& e);
-        void _on_scene_activated(arcadia::event::scene_activated& e);
-        void _on_scene_deactivated(arcadia::event::scene_deactivated& e);
-        void _on_renderer_built(arcadia::event::renderer_built& e);
-        void _on_renderer_unbuilt(arcadia::event::renderer_unbuilt& e);
-        void _on_physics_simulator_built(arcadia::event::physics_simulator_built& e);
-        void _on_physics_simulator_unbuilt(arcadia::event::physics_simulator_unbuilt& e);
+        void _OnInputCursorMove(Arcadia::Event::InputCursorMove& e);
+        void _OnOpenImguiWindow(Arcadia::Event::OpenImguiWindow& e);
+        void _OnProjectBuilt(Arcadia::Event::ProjectBuilt& e);
+        void _OnProjectUnbuilt(Arcadia::Event::ProjectUnbuilt& e);
+        void _OnSceneActivated(Arcadia::Event::SceneActivated& e);
+        void _OnSceneDeactivated(Arcadia::Event::SceneDeactivated& e);
+        void _OnRendererBuilt(Arcadia::Event::RendererBuilt& e);
+        void _OnRendererUnbuilt(Arcadia::Event::RendererUnbuilt& e);
+        void _OnPhysicsSimualtorBuilt(Arcadia::Event::PhysicsSimulatorBuilt& e);
+        void _OnPhysicsSimulatorUnbuilt(Arcadia::Event::PhysicsSimulatorUnbuilt& e);
     private:
-        std::weak_ptr<arcadia::project> _project_wptr{};
-        std::weak_ptr<arcadia::scene> _scene_wptr{};
-        std::weak_ptr<arcadia::renderer_interface> _renderer_wptr{};
-        std::weak_ptr<arcadia::physics_simulator> _physics_simulator_wptr{};
+        std::weak_ptr<Arcadia::Project> _wpProject{};
+        std::weak_ptr<Arcadia::Scene> _wpScene{};
+        std::weak_ptr<Arcadia::iRenderer> _wpRenderer{};
+        std::weak_ptr<Arcadia::PhysicsSimulator> _wpPhysicsSimulator{};
 
-        glm::vec2 _cursor_move{};
+        glm::vec2 _CursorMove{};
     };
 }

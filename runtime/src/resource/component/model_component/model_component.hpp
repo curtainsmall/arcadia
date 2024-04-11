@@ -14,79 +14,81 @@
 #include"resource/component/component.hpp"
 #include"resource/component/model_component/mesh/mesh.hpp"
 
-namespace arcadia
+namespace Arcadia
 {
-    struct ARCADIA_API model_component;
-    struct ARCADIA_API model_component_memento
+    struct ARCADIA_API ModelComponent;
+    struct ARCADIA_API ModelComponentMemento
     {
-        friend arcadia::model_component;
+        friend Arcadia::ModelComponent;
+    public:
+        auto operator==(const ModelComponentMemento&) const -> bool = default;
     private:
-        glm::vec3             location{ arcadia::vec3::zero() };
-        glm::quat             rotation{ arcadia::quat::identity() };
-        glm::vec3             scale{ 1,1,1 };
-        glm::vec3             pivot{ arcadia::vec3::zero() };
+        glm::vec3 Location{ Arcadia::Vec3::Zero() };
+        glm::quat Rotation{ Arcadia::Quat::Identity() };
+        glm::vec3 Scale{ 1,1,1 };
+        glm::vec3 Pivot{ Arcadia::Vec3::Zero() };
     };
 
-    struct ARCADIA_API model_component:
-        arcadia::component_base,
-        arcadia::memento_originator_interface<arcadia::model_component_memento>
+    struct ARCADIA_API ModelComponent:
+        Arcadia::iComponent,
+        Arcadia::iMementoOriginator<Arcadia::ModelComponentMemento>
     {
     public:
-        using identifiable_meshes = arcadia::basic_identifiable<std::vector<arcadia::mesh>>;
+        using identifiable_meshes = Arcadia::BasicIdentifiable<std::vector<Arcadia::Mesh>>;
 
-        using self_type = model_component;
+        using self_type = ModelComponent;
     public:
         ARCADIA_COMPONENT_TYPE_STR_GETTERS("model");
 
-        model_component() = default;
-        model_component(const std::filesystem::path& filepath);
-        model_component(const nlohmann::json& json);
-        ~model_component() = default;
+        ModelComponent() = default;
+        ModelComponent(const std::filesystem::path& filepath);
+        ModelComponent(const nlohmann::json& json);
+        ~ModelComponent() = default;
         [[nodiscard]]
-        auto to_json() const->nlohmann::json;
+        auto ToJson() const->nlohmann::json;
 
         [[nodiscard]]
-        virtual auto snapshot() const->memento_data_type override;
-        virtual void restore(const memento_data_type& memento) override;
+        virtual auto OnSnapshot() const->memento_data_type override;
+        virtual void OnRestore(const memento_data_type& memento) override;
 
-        model_component(self_type&&) noexcept = default;
+        ModelComponent(self_type&&) noexcept = default;
         auto operator=(self_type&&) noexcept -> self_type & = default;
 
         [[nodiscard]]
-        auto get_filepath() const -> const std::filesystem::path&;
+        auto GetFilepath() const -> const std::filesystem::path&;
         [[nodiscard]]
-        auto has_identifiable_meshes() const -> bool;
+        auto HasIdentifiableMeshes() const -> bool;
         [[nodiscard]]
-        auto get_identifiable_meshes() const -> const identifiable_meshes&;
+        auto GetIdentifiableMeshes() const -> const identifiable_meshes&;
 
-        void import(const std::filesystem::path & filepath);
+        void Import(const std::filesystem::path& filepath);
 
     private:
-        void _load();
-        void _unload();
+        void _Load();
+        void _Unload();
 
-        void _process_assimp_node(
-            std::vector<arcadia::mesh>& meshes,
+        void _ProcessAssimpNode(
+            std::vector<Arcadia::Mesh>& meshes,
             const aiScene* const ai_scene,
             const aiNode* const ai_node,
             std::size_t& next_mesh_index
         );
 
-        void _load_texture(
+        void _LoadTexture(
             const std::filesystem::path& directory,
             const aiMaterial* const ai_material,
             aiTextureType ai_texture_type,
-            texture2d& texture
+            Texture2d& texture
         );
 
     public:
-        glm::vec3 location{ arcadia::vec3::zero() };
-        glm::quat rotation{ arcadia::quat::identity() };
-        glm::vec3 scale{ 1,1,1 };
-        glm::vec3 pivot{ arcadia::vec3::zero() };
+        glm::vec3 Location{ Arcadia::Vec3::Zero() };
+        glm::quat Rotation{ Arcadia::Quat::Identity() };
+        glm::vec3 Scale{ 1,1,1 };
+        glm::vec3 Pivot{ Arcadia::Vec3::Zero() };
 
     private:
-        std::filesystem::path _filepath{};
-        std::unique_ptr<identifiable_meshes> _identifiable_meshes_uptr{};
+        std::filesystem::path _Filepath{};
+        std::unique_ptr<identifiable_meshes> _upIdentifiableMeshes{};
     };
 }
