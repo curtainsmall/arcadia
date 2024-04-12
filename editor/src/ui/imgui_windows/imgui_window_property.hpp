@@ -88,33 +88,34 @@ namespace Arcadia
         template<Arcadia::cComponent Component>
         auto _contains_component(const entt::entity entity) -> bool
         {
-            ARCADIA_ASSERT(!_wpScene.expired());
+            ARCADIA_ASSERT(_spScene);
 
-            return _wpScene.lock()->AllOf<Component>(entity);
+            return _spScene->AllOf<Component>(entity);
         }
         template<Arcadia::cComponent Component>
         auto _get_component(const entt::entity entity) -> Component&
         {
-            ARCADIA_ASSERT(!_wpScene.expired());
+            ARCADIA_ASSERT(_spScene);
             ARCADIA_ASSERT(_contains_component<Component>(entity));
 
-            return _wpScene.lock()->Get<Component>(entity);
+            return _spScene->Get<Component>(entity);
         }
 
         void _OnOpenImguiWindow(Arcadia::Event::OpenImguiWindow& e);
         void _OnSceneActivated(Arcadia::Event::SceneActivated& e);
         void _OnSceneDeactivated(Arcadia::Event::SceneDeactivated& e);
-        void _on_select_entity(Arcadia::Event::SelectEntity& e);
-        void _on_delete_entity(Arcadia::Event::DeleteEntity& e);
+        void _OnSelectEntity(Arcadia::Event::SelectEntity& e);
+        void _OnDeleteEntity(Arcadia::Event::DeleteEntity& e);
         void _OnPhysicsSimualtorBuilt(Arcadia::Event::PhysicsSimulatorBuilt& e);
         void _OnPhysicsSimulatorUnbuilt(Arcadia::Event::PhysicsSimulatorUnbuilt& e);
 
+
     private:
 
-        std::weak_ptr<Arcadia::Scene> _wpScene{};
+        std::shared_ptr<Arcadia::Scene> _spScene{};
         entt::entity _SelectedEntity{ entt::null };
 
-        std::weak_ptr<Arcadia::PhysicsSimulator> _wpPhysicsSimulator{};
+        std::shared_ptr<Arcadia::PhysicsSimulator> _spPhysicsSimulator{};
 
         Arcadia::ImguiWindowPropertyCameraComponent _imgui_window_property_camera_component{};
         Arcadia::ImguiWindowPropertyLightComponent _imgui_window_property_light_component{};

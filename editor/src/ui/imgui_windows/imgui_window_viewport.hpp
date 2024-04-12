@@ -47,10 +47,10 @@ namespace Arcadia
         void _OnPhysicsSimualtorBuilt(Arcadia::Event::PhysicsSimulatorBuilt& e);
         void _OnPhysicsSimulatorUnbuilt(Arcadia::Event::PhysicsSimulatorUnbuilt& e);
     private:
-        std::weak_ptr<Arcadia::Project> _wpProject{};
-        std::weak_ptr<Arcadia::Scene> _wpScene{};
-        std::weak_ptr<Arcadia::iRenderer> _wpRenderer{};
-        std::weak_ptr<Arcadia::PhysicsSimulator> _wpPhysicsSimulator{};
+        std::shared_ptr<Arcadia::Project> _spProject{};
+        std::shared_ptr<Arcadia::Scene> _spScene{};
+        std::shared_ptr<Arcadia::iRenderer> _spRenderer{};
+        std::shared_ptr<Arcadia::PhysicsSimulator> _spPhysicsSimulator{};
 
         glm::vec2 _CursorMove{};
     };

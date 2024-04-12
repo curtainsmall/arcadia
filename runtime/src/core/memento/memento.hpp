@@ -8,61 +8,49 @@
 
 namespace Arcadia
 {
+    struct ARCADIA_API MementoDataBase;
+
     template<class MementoData>
     concept cMementoData = requires{
+        std::derived_from<MementoData, MementoDataBase>;
         std::equality_comparable<MementoData>;
     };
 
-    template<cMementoData MementoData>
+    struct ARCADIA_API MementoDataBase
+    {
+    public:
+        template<class MementoData>
+        auto As() -> MementoData&
+        {
+            return static_cast<MementoData&>(*this);
+        }
+    };
+
     struct ARCADIA_API iMementoOriginator
     {
     public:
-        using memento_data_type = MementoData;
         using self_type = iMementoOriginator;
     public:
+        auto Snapshot() -> std::shared_ptr<Arcadia::MementoDataBase>;
+        void Restore(const std::shared_ptr<Arcadia::MementoDataBase>& sp_memento_data);
 
-        iMementoOriginator():
-            _prev_memento_data(OnSnapshot())
-        {}
-
-        auto Snapshot() -> memento_data_type
-        {
-            auto memento_data = OnSnapshot();
-            if(memento_data != _prev_memento_data)
-            {
-                auto t = memento_data;
-                memento_data = _prev_memento_data;
-                _prev_memento_data = t;
-            }
-            return memento_data;
-        }
-
-        auto Restore(const memento_data_type& memento_data)
-        {
-            OnRestore(memento_data);
-            _prev_memento_data = memento_data;
-        }
-
+    protected:
         /// @brief Generate a memento data
         /// @return Memento data
         [[nodiscard]]
-        virtual auto OnSnapshot() const->memento_data_type = 0;
+        virtual auto OnSnapshot() const->std::shared_ptr<Arcadia::MementoDataBase> = 0;
 
         /// @brief Restore self with memento data
         /// @param memento_data Memento data to restore with
-        virtual void OnRestore(const memento_data_type& memento_data) = 0;
+        virtual void OnRestore(const std::shared_ptr<Arcadia::MementoDataBase>& memento_data) = 0;
 
     private:
-        memento_data_type _prev_memento_data{};
+        std::shared_ptr<MementoDataBase> _spPreviousMementoData{};
     };
 
-    template<
-        class MementoOriginator,
-        class MementoData
-    >
+    template<class MementoOriginator>
     concept cMementoOriginator = requires{
-        Arcadia::cMementoData<MementoData>;
-        std::derived_from<MementoOriginator, Arcadia::iMementoOriginator<MementoData>>;
+        std::derived_from<MementoOriginator, Arcadia::iMementoOriginator>;
     };
 
     struct ARCADIA_API Memento: Arcadia::Noncopyable
@@ -71,21 +59,24 @@ namespace Arcadia
         using self_type = Memento;
     public:
         /// @brief Create a memento
-        /// @tparam MementoData Type of memento data
-        /// @tparam ...Args Types of argument to construct memento data
         /// @tparam MementoOriginator Type of memento originator
         /// @param originator_retriever Function used to return referece to the originator (in case the originator is in an opaque structure, or may be destroyed and recreated so that its address is unreliable)
         /// @param ...args Arguments to construct memento data
+
+        /// @brief Create a memento
+        /// @tparam MementoOriginator Type of memento originator
+        /// @param description Description
+        /// @param in_place_type_originator Type deduction helper for @a MementoOriginator
+        /// @param originator_retriever Originator retriever
+        /// @param sp_memento_data Memento data
         template<
-            Arcadia::cMementoData MementoData,
-            Arcadia::cMementoOriginator<MementoData> MementoOriginator,
-            class ...Args
+            Arcadia::cMementoOriginator MementoOriginator
         >
         Memento(
             const std::string& description,
-            Arcadia::in_place_types_t<MementoData, MementoOriginator>,
+            std::in_place_type_t<MementoOriginator> in_place_type_originator,
             const std::function<MementoOriginator& ()>& originator_retriever,
-            Args&& ...args
+            const std::shared_ptr<Arcadia::MementoDataBase>& sp_memento_data
         ):
             _Description(description),
             _upOriginatorRetriever(
@@ -95,20 +86,12 @@ namespace Arcadia
             delete static_cast<std::function<MementoOriginator& ()>*>(ptr);
         }
             ),
-            _upMementoData(
-                new MementoData(std::forward<Args>(args)...),
-                [&](void* data_ptr)
-        {
-            delete static_cast<MementoData*>(data_ptr);
-        }
-            ),
+            _spMementoData(sp_memento_data),
             _OriginatorRestoreFn(
                 [&]()
         {
             MementoOriginator& originator = (*static_cast<std::function<MementoOriginator & ()>*>(_upOriginatorRetriever.get()))();
-            MementoData& memento_data = *static_cast<MementoData*>(_upMementoData.get());
-
-            originator.Restore(memento_data);
+            originator.Restore(_spMementoData);
         }
             )
         {}
@@ -122,7 +105,7 @@ namespace Arcadia
     private:
         std::string _Description{};
         std::unique_ptr<void, std::function<void(void*)>> _upOriginatorRetriever{}; // Used to store originator retriever with type erasure
-        std::unique_ptr<void, std::function<void(void*)>> _upMementoData; // Used to store memento data with type erasure
+        std::shared_ptr<Arcadia::MementoDataBase> _spMementoData; // Used to store memento data with type erasure
         std::function<void()> _OriginatorRestoreFn; // 1. call originator retriever to get originator; 2. get memento data; 3. call restore() in originator with memento data
     };
 
@@ -135,13 +118,10 @@ namespace Arcadia
         static auto Instance() -> self_type&;
 
         /// @brief Snapshot @a MementoOriginator
-        /// @tparam MementaData Type of memento data
         /// @tparam MementoOriginator Type of memento originator
-        /// @param originator Originator to snapshot
-        template<
-            Arcadia::cMementoData MementoData,
-            Arcadia::cMementoOriginator<MementoData> MementoOriginator
-        >
+        /// @param description Description
+        /// @param originator_retriever Originator to snapshot
+        template<Arcadia::cMementoOriginator MementoOriginator>
         void Snapshot(
             const std::string& description,
             const std::function<MementoOriginator& ()>& originator_retriever
@@ -151,7 +131,7 @@ namespace Arcadia
             _List.erase(_List.begin(), _CurrentIter);
 
             // Emplace new memento
-            _List.emplace_front(description, Arcadia::in_place_types<MementoData, MementoOriginator>, originator_retriever, originator_retriever().Snapshot());
+            _List.emplace_front(description, std::in_place_type<MementoOriginator>, originator_retriever, originator_retriever().Snapshot());
 
             // Relocate current position
             _CurrentIter = _List.begin();

@@ -464,8 +464,8 @@ void Arcadia::WindowLayer::_SwapBuffers()
 
 void Arcadia::WindowLayer::_OnWindowCloseCanceled(Arcadia::Event::WindowCloseCanceled& e)
 {
-    const auto& [wnd_ptr] = e.data_tuple;
-    if(wnd_ptr == this)
+    const auto& [p_wnd] = e.data_tuple;
+    if(p_wnd == this)
     {
         glfwSetWindowShouldClose(_pGlfwWindow, GLFW_FALSE);
     }

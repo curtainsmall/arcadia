@@ -33,16 +33,16 @@ namespace Arcadia
 
     private:
         template<Arcadia::cComponent Component>
-        void _AddComponentMenuItem(int& item_count);
+        void _MenuItemAddComponent(int& item_count);
         template<Arcadia::cComponent Component>
-        void _RemoveComponentMenuItem(int& item_count);
+        void _MenuItemRemoveComponent(int& item_count);
 
         void _OnOpenImguiWindow(Arcadia::Event::OpenImguiWindow& e);
         void _OnSceneActivated(Arcadia::Event::SceneActivated& e);
         void _OnSceneDeactivated(Arcadia::Event::SceneDeactivated& e);
 
     private:
-        std::weak_ptr<Arcadia::Scene> _wpScene{};
+        std::shared_ptr<Arcadia::Scene> _spScene{};
 
         entt::entity _SelectedEntity{ entt::null };
 
@@ -52,12 +52,10 @@ namespace Arcadia
     };
 
     template<Arcadia::cComponent Component>
-    inline void ImguiWindowOutliner::_AddComponentMenuItem(int& item_count)
+    inline void ImguiWindowOutliner::_MenuItemAddComponent(int& item_count)
     {
-        std::shared_ptr<const Arcadia::Scene> scene_sptr = _wpScene.lock();
-
         std::string type_str = Component::GetTypeStrStatic();
-        bool existed = scene_sptr->AllOf<Component>(_SelectedEntity);
+        bool existed = _spScene->AllOf<Component>(_SelectedEntity);
 
         if(!existed)
         {
@@ -71,12 +69,11 @@ namespace Arcadia
     }
 
     template<Arcadia::cComponent Component>
-    inline void ImguiWindowOutliner::_RemoveComponentMenuItem(int& item_count)
+    inline void ImguiWindowOutliner::_MenuItemRemoveComponent(int& item_count)
     {
-        std::shared_ptr<const Arcadia::Scene> scene_sptr = _wpScene.lock();
 
         std::string type_str = Component::GetTypeStrStatic();
-        bool existed = scene_sptr->AllOf<Component>(_SelectedEntity);
+        bool existed = _spScene->AllOf<Component>(_SelectedEntity);
 
         if(existed)
         {

@@ -154,9 +154,6 @@ void Arcadia::ImguiWindowMainMenubar::OnUpdate()
 
 void Arcadia::ImguiWindowMainMenubar::_FileMenu()
 {
-    auto has_project = !_wpProject.expired();
-    auto project_sptr = _wpProject.lock();
-
     auto& event_queue = Arcadia::EventQueue::Instance();
 
     _ImguiWindowPopupCreateProject();
@@ -170,15 +167,15 @@ void Arcadia::ImguiWindowMainMenubar::_FileMenu()
         {
             event_queue.Signal<Arcadia::Event::OpenProject>();
         }
-        if(ImGui::MenuItem("Save Project", nullptr, nullptr, has_project))
+        if(ImGui::MenuItem("Save Project", nullptr, nullptr, !!_spProject))
         {
             event_queue.Signal<Arcadia::Event::SaveProject>();
         }
-        if(ImGui::MenuItem("Save Project As...", nullptr, nullptr, has_project))
+        if(ImGui::MenuItem("Save Project As...", nullptr, nullptr, !!_spProject))
         {
             event_queue.Signal<Arcadia::Event::SaveProjectAs>();
         }
-        if(ImGui::MenuItem("Close Project", nullptr, nullptr, has_project))
+        if(ImGui::MenuItem("Close Project", nullptr, nullptr, !!_spProject))
         {
             event_queue.Signal<Arcadia::Event::CloseProject>();
         }
@@ -189,29 +186,26 @@ void Arcadia::ImguiWindowMainMenubar::_FileMenu()
 
 void Arcadia::ImguiWindowMainMenubar::_EditMenu()
 {
-    auto has_project = !_wpProject.expired();
-    auto project_sptr = _wpProject.lock();
-
-    if(has_project)
+    if(_spProject)
     {
-        _ImguiWindowPopupCreateScene(project_sptr);
+        _ImguiWindowPopupCreateScene(_spProject);
     }
     auto& event_queue = Arcadia::EventQueue::Instance();
     if(ImGui::BeginMenu("Edit"))
     {
-        if(ImGui::MenuItem("New Scene ...", nullptr, nullptr, has_project))
+        if(ImGui::MenuItem("New Scene ...", nullptr, nullptr, !!_spProject))
         {
             _ImguiWindowPopupCreateScene.Open = true;
         }
 
-        bool has_scene = has_project && project_sptr->umapSceneSptr.size();
-        bool has_active_scene = has_scene && project_sptr->HasActiveScene();
+        bool has_scene = _spProject && _spProject->umapSceneSptr.size();
+        bool has_active_scene = has_scene && _spProject->HasActiveScene();
 
         if(ImGui::BeginMenu("Select Scene", has_scene))
         {
-            ARCADIA_ASSERT(project_sptr.get());
+            ARCADIA_ASSERT(_spProject.get());
 
-            for(const auto& [key, scene] : project_sptr->umapSceneSptr)
+            for(const auto& [key, scene] : _spProject->umapSceneSptr)
             {
                 if(ImGui::MenuItem(key.c_str()))
                 {
@@ -254,12 +248,12 @@ void Arcadia::ImguiWindowMainMenubar::_ViewMenu()
 void Arcadia::ImguiWindowMainMenubar::_OnProjectBuilt(Arcadia::Event::ProjectBuilt& e)
 {
     const auto& [project_wptr] = e.data_tuple;
-    _wpProject = project_wptr;
+    _spProject = project_wptr;
 }
 
 void Arcadia::ImguiWindowMainMenubar::_OnProjectUnbuilt(Arcadia::Event::ProjectUnbuilt& e)
 {
-    _wpProject.reset();
+    _spProject.reset();
 }
 
 

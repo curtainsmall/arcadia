@@ -119,7 +119,7 @@ auto Arcadia::PhysicsComponent::ToJson() const -> nlohmann::json
         json_body_info_initial = nlohmann::json{
             {"position",Arcadia::Vec3::ToJson(body_info.Position)},
             {"rotation",Arcadia::Quat::ToJson(body_info.Rotation)},
-            {"jph_motion_type", Arcadia::to_underlying(body_info.JphMotionType)},
+            {"jph_motion_type", Arcadia::ToUnderlying(body_info.JphMotionType)},
             {"jph_object_layer",body_info.JphObjectLayer},
             {"jph_shape_info",json_shape_info}
         };
@@ -135,18 +135,20 @@ auto Arcadia::PhysicsComponent::ToJson() const -> nlohmann::json
     };
 }
 
-auto Arcadia::PhysicsComponent::OnSnapshot() const -> memento_data_type
+auto Arcadia::PhysicsComponent::OnSnapshot() const -> std::shared_ptr<MementoDataBase>
 {
-    memento_data_type memento{};
+    auto sp_memento = std::make_shared<Arcadia::PhysicsComponentMementoData>();
 
-    memento.BodyShapeColor = BodyShapeColor;
+    sp_memento->BodyShapeColor = BodyShapeColor;
 
-    return memento;
+    return sp_memento;
 }
 
-void Arcadia::PhysicsComponent::OnRestore(const memento_data_type& memento)
+void Arcadia::PhysicsComponent::OnRestore(const std::shared_ptr<MementoDataBase>& sp_memento_data)
 {
-    BodyShapeColor = memento.BodyShapeColor;
+    auto& memento_data = sp_memento_data->As<Arcadia::PhysicsComponentMementoData>();
+
+    BodyShapeColor = memento_data.BodyShapeColor;
 }
 
 auto Arcadia::PhysicsComponent::HasBodyInfo() const -> bool

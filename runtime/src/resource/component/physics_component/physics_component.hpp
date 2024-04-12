@@ -69,19 +69,17 @@ namespace Arcadia
 
     };
 
-    struct ARCADIA_API PhysicsComponent;
-    struct ARCADIA_API PhysicsComponentMemento
+    struct ARCADIA_API PhysicsComponentMementoData: Arcadia::MementoDataBase
     {
-        friend Arcadia::PhysicsComponent;
     public:
-        auto operator==(const PhysicsComponentMemento&) const -> bool = default;
-    private:
+        auto operator==(const PhysicsComponentMementoData&) const -> bool = default;
+    public:
         glm::vec3 BodyShapeColor{};
     };
 
     struct ARCADIA_API PhysicsComponent:
         Arcadia::iComponent,
-        Arcadia::iMementoOriginator<Arcadia::PhysicsComponentMemento>
+        Arcadia::iMementoOriginator
     {
     public:
         using identifiable_jph_body_info_initial_type = Arcadia::BasicIdentifiable<JphBodyInfoInitial>;
@@ -94,10 +92,6 @@ namespace Arcadia
         ~PhysicsComponent() = default;
         [[nodiscard]]
         auto ToJson() const->nlohmann::json;
-
-        [[nodiscard]]
-        virtual auto OnSnapshot() const->memento_data_type override;
-        virtual void OnRestore(const memento_data_type& memento) override;
 
         [[nodiscard]]
         auto HasBodyInfo() const -> bool;
@@ -121,6 +115,11 @@ namespace Arcadia
         void BuildIdentifiableJphBodyInfoInitial(
             const Arcadia::JphBodyInfoInitial& jph_body_info_initial
         );
+
+    protected:
+        [[nodiscard]]
+        virtual auto OnSnapshot() const->std::shared_ptr<MementoDataBase> override;
+        virtual void OnRestore(const std::shared_ptr<MementoDataBase>& sp_memento_data) override;
 
     public:
         glm::vec3 BodyShapeColor{ .2f,.2f,.2f };

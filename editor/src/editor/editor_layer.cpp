@@ -115,8 +115,8 @@ void Arcadia::EditorAppLayer::_OnWindowShouldClose(Arcadia::Event::WindowShouldC
     auto sp_main_window_layer = editor_context._wpMainWindowLayer.lock();
     auto sp_main_project_layer = editor_context._wpMainProjectLayer.lock();
 
-    const auto& [wnd_ptr] = e.data_tuple;
-    if(wnd_ptr == sp_main_window_layer.get() && sp_main_project_layer->HasProject())
+    const auto& [p_wnd] = e.data_tuple;
+    if(p_wnd == sp_main_window_layer.get() && sp_main_project_layer->HasProject())
     {
         _WaitingForProjectUnbuiltBeforeClosing = true;
     }

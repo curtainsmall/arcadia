@@ -141,17 +141,19 @@ auto Arcadia::LightComponent::ToJson() const -> nlohmann::json
     );
 }
 
-auto Arcadia::LightComponent::OnSnapshot() const -> memento_data_type
+auto Arcadia::LightComponent::OnSnapshot() const -> std::shared_ptr<Arcadia::MementoDataBase>
 {
-    memento_data_type memento{};
+    auto sp_memento_data = std::make_shared<Arcadia::LightComponentMementoData>();
 
-    memento.Light = Light;
+    sp_memento_data->Light = Light;
 
-    return memento;
+    return sp_memento_data;
 }
 
-void Arcadia::LightComponent::OnRestore(const memento_data_type& memento)
+void Arcadia::LightComponent::OnRestore(const std::shared_ptr<Arcadia::MementoDataBase>& sp_memento_data)
 {
-    Light = memento.Light;
+    auto& memento_data = sp_memento_data->As<Arcadia::LightComponentMementoData>();
+
+    Light = memento_data.Light;
 }
 

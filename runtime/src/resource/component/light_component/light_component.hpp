@@ -78,19 +78,17 @@ namespace Arcadia
         Arcadia::PointLight
     >;
 
-    struct ARCADIA_API LightComponent;
-    struct ARCADIA_API LightComponentMemento
+    struct ARCADIA_API LightComponentMementoData: Arcadia::MementoDataBase
     {
-        friend Arcadia::LightComponent;
     public:
-        auto operator==(const LightComponentMemento&) const -> bool = default;
-    private:
+        auto operator==(const LightComponentMementoData&) const -> bool = default;
+    public:
         Arcadia::LightType Light{};
     };
 
     struct ARCADIA_API LightComponent:
         Arcadia::iComponent,
-        Arcadia::iMementoOriginator<Arcadia::LightComponentMemento>
+        Arcadia::iMementoOriginator
     {
     public:
         using self_type = LightComponent;
@@ -103,9 +101,10 @@ namespace Arcadia
         [[nodiscard]]
         auto ToJson() const->nlohmann::json;
 
+    protected:
         [[nodiscard]]
-        virtual auto OnSnapshot() const->memento_data_type override;
-        virtual void OnRestore(const memento_data_type& memento) override;
+        virtual auto OnSnapshot() const->std::shared_ptr<Arcadia::MementoDataBase> override;
+        virtual void OnRestore(const std::shared_ptr<Arcadia::MementoDataBase>& sp_memento_data) override;
 
     public:
         Arcadia::LightType Light{ Arcadia::NullLight{} };

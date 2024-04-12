@@ -129,15 +129,6 @@ void Arcadia::ImguiWindowState::OnUpdate()
         return;
     }
 
-    auto has_active_scene = !_wpScene.expired();
-    auto active_scene_sptr = _wpScene.lock();
-
-    auto has_renderer = !_wpRenderer.expired();
-    auto renderer_sptr = _wpRenderer.lock();
-
-    auto has_physics_simulator = !_wpPhysicsSimulator.expired();
-    auto physics_simulator_sptr = _wpPhysicsSimulator.lock();
-
     auto imgui_window_title = _Title + GetIdStr();
 
     ImGui::SetNextWindowSize(glm::vec2{ 1024,768 }, ImGuiCond_Once);
@@ -154,9 +145,9 @@ void Arcadia::ImguiWindowState::OnUpdate()
             if(ImGui::BeginTabItem("Scene"))
             {
                 ImGui::SeparatorText("Scene State");
-                if(has_active_scene)
+                if(_spScene)
                 {
-                    _ImguiWindowStateScene(active_scene_sptr);
+                    _ImguiWindowStateScene(_spScene);
                 }
                 else
                 {
@@ -168,9 +159,9 @@ void Arcadia::ImguiWindowState::OnUpdate()
             if(ImGui::BeginTabItem("Renderer"))
             {
                 ImGui::SeparatorText("Renderer State");
-                if(has_renderer)
+                if(_spRenderer)
                 {
-                    _ImguiWindowStateRenderer(renderer_sptr);
+                    _ImguiWindowStateRenderer(_spRenderer);
                 }
                 else
                 {
@@ -182,9 +173,9 @@ void Arcadia::ImguiWindowState::OnUpdate()
             if(ImGui::BeginTabItem("Physics Simulator"))
             {
                 ImGui::SeparatorText("Physics Simulator State");
-                if(has_physics_simulator)
+                if(_spPhysicsSimulator)
                 {
-                    _ImguiWindowStatePhysicsSimulator(physics_simulator_sptr);
+                    _ImguiWindowStatePhysicsSimulator(_spPhysicsSimulator);
                 }
                 else
                 {
@@ -209,34 +200,34 @@ void Arcadia::ImguiWindowState::_OnOpenImguiWindow(Arcadia::Event::OpenImguiWind
 void Arcadia::ImguiWindowState::_OnSceneActivated(Arcadia::Event::SceneActivated& e)
 {
     const auto& [scene_wptr] = e.data_tuple;
-    _wpScene = scene_wptr;
+    _spScene = scene_wptr;
 }
 
 void Arcadia::ImguiWindowState::_OnSceneDeactivated(Arcadia::Event::SceneDeactivated& e)
 {
-    _wpScene.reset();
+    _spScene.reset();
 }
 
 void Arcadia::ImguiWindowState::_OnRendererBuilt(Arcadia::Event::RendererBuilt& e)
 {
     const auto& [renderer_wptr] = e.data_tuple;
-    _wpRenderer = renderer_wptr;
+    _spRenderer = renderer_wptr;
 }
 
 void Arcadia::ImguiWindowState::_OnRendererUnbuilt(Arcadia::Event::RendererUnbuilt& e)
 {
-    _wpRenderer.reset();
+    _spRenderer.reset();
 }
 
 void Arcadia::ImguiWindowState::_OnPhysicsSimualtorBuilt(Arcadia::Event::PhysicsSimulatorBuilt& e)
 {
     const auto& [physics_simulator_wptr] = e.data_tuple;
-    _wpPhysicsSimulator = physics_simulator_wptr;
+    _spPhysicsSimulator = physics_simulator_wptr;
 }
 
 void Arcadia::ImguiWindowState::_OnPhysicsSimulatorUnbuilt(Arcadia::Event::PhysicsSimulatorUnbuilt& e)
 {
-    _wpPhysicsSimulator.reset();
+    _spPhysicsSimulator.reset();
 }
 
 

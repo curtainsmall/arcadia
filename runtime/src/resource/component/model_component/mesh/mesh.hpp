@@ -2,8 +2,6 @@
 
 #include<vector>
 
-#include"flatbuffers_generated/asset_generated.h"
-
 #include"core/base.hpp"
 #include"resource/component/component.hpp"
 #include"resource/component/model_component/material/material.hpp"

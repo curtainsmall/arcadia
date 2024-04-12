@@ -5,78 +5,80 @@
 
 Arcadia::CameraComponent::CameraComponent(const nlohmann::json& json)
 {
-    Position              = Arcadia::Vec3::FromJson(json.at("Position"));
-    Target                = Arcadia::Vec3::FromJson(json.at("Target"));
-    Up                    = Arcadia::Vec3::FromJson(json.at("Up"));
+    Position              = Arcadia::Vec3::FromJson(json.at("position"));
+    Target                = Arcadia::Vec3::FromJson(json.at("target"));
+    Up                    = Arcadia::Vec3::FromJson(json.at("up"));
     NearPlane             = json.at("near_plane");
     FarPlane              = json.at("far_plane");
     Fov                   = json.at("fov");
     FovMin                = json.at("fov_min");
     FovMax                = json.at("fov_max");
-    Speed                 = json.at("Speed");
+    Speed                 = json.at("speed");
     ViewportSize          = Arcadia::IVec2::FromJson(json.at("viewport_size"));
-    FixedUp               = json.at("fixed_Up");
-    UpEpsilon             = json.at("UpEpsilon");
+    FixedUp               = json.at("fixed_up");
+    UpEpsilon             = json.at("up_epsilon");
     CursorMoveOffsetRange = Arcadia::Vec2::FromJson(json.at("cursor_move_offset_range"));
 }
 
 auto Arcadia::CameraComponent::ToJson() const -> nlohmann::json
 {
     return nlohmann::json{
-        { "Position"                ,Arcadia::Vec3::ToJson(Position) },
-        { "Target"                  ,Arcadia::Vec3::ToJson(Target) },
-        { "Up"                      ,Arcadia::Vec3::ToJson(Up) },
+        { "position"                ,Arcadia::Vec3::ToJson(Position) },
+        { "target"                  ,Arcadia::Vec3::ToJson(Target) },
+        { "up"                      ,Arcadia::Vec3::ToJson(Up) },
         { "near_plane"              ,NearPlane },
         { "far_plane"               ,FarPlane },
         { "fov"                     ,Fov },
         { "fov_min"                 ,FovMin },
         { "fov_max"                 ,FovMax },
-        { "Speed"                   ,Speed},
+        { "speed"                   ,Speed},
         { "viewport_size"           ,Arcadia::IVec2::ToJson(ViewportSize) },
         { "fixed_Up"                ,FixedUp },
-        { "UpEpsilon"              ,UpEpsilon },
+        { "up_epsilon"              ,UpEpsilon },
         { "cursor_move_offset_range",Arcadia::Vec2::ToJson(CursorMoveOffsetRange) }
     };
 }
 
-auto Arcadia::CameraComponent::OnSnapshot() const -> memento_data_type
+auto Arcadia::CameraComponent::OnSnapshot() const -> std::shared_ptr<Arcadia::MementoDataBase>
 {
-    memento_data_type memento{};
+    auto sp_memento = std::make_shared<Arcadia::CameraComponentMementoData>();
 
-    memento.Position              = Position;
-    memento.Target                = Target;
-    memento.Up                    = Up;
-    memento.NearPlane             = NearPlane;
-    memento.FarPlane              = FarPlane;
-    memento.Fov                   = Fov;
-    memento.FovMin                = FovMin;
-    memento.FovMax                = FovMax;
-    memento.Speed                 = Speed;
-    memento.ViewportSize          = ViewportSize;
-    memento.FixedUp               = FixedUp;
-    memento.UpEpsilon             = UpEpsilon;
-    memento.CursorMoveOffsetRange = CursorMoveOffsetRange;
-    memento.ShouldDisplayGrid     = ShouldDisplayGrid;
+    sp_memento->Position              = Position;
+    sp_memento->Target                = Target;
+    sp_memento->Up                    = Up;
+    sp_memento->NearPlane             = NearPlane;
+    sp_memento->FarPlane              = FarPlane;
+    sp_memento->Fov                   = Fov;
+    sp_memento->FovMin                = FovMin;
+    sp_memento->FovMax                = FovMax;
+    sp_memento->Speed                 = Speed;
+    sp_memento->ViewportSize          = ViewportSize;
+    sp_memento->FixedUp               = FixedUp;
+    sp_memento->UpEpsilon             = UpEpsilon;
+    sp_memento->CursorMoveOffsetRange = CursorMoveOffsetRange;
+    sp_memento->ShouldDisplayGrid     = ShouldDisplayGrid;
 
-    return memento;
+    return sp_memento;
 }
 
-void Arcadia::CameraComponent::OnRestore(const memento_data_type& memento)
+void Arcadia::CameraComponent::OnRestore(const std::shared_ptr<Arcadia::MementoDataBase>& sp_memento_data)
 {
-    Position              = memento.Position;
-    Target                = memento.Target;
-    Up                    = memento.Up;
-    NearPlane             = memento.NearPlane;
-    FarPlane              = memento.FarPlane;
-    Fov                   = memento.Fov;
-    FovMin                = memento.FovMin;
-    FovMax                = memento.FovMax;
-    Speed                 = memento.Speed;
-    ViewportSize          = memento.ViewportSize;
-    FixedUp               = memento.FixedUp;
-    UpEpsilon             = memento.UpEpsilon;
-    CursorMoveOffsetRange = memento.CursorMoveOffsetRange;
-    ShouldDisplayGrid     = memento.ShouldDisplayGrid;
+    auto& memento_data = sp_memento_data->As<Arcadia::CameraComponentMementoData>();
+
+    Position              = memento_data.Position;
+    Target                = memento_data.Target;
+    Up                    = memento_data.Up;
+    NearPlane             = memento_data.NearPlane;
+    FarPlane              = memento_data.FarPlane;
+    Fov                   = memento_data.Fov;
+    FovMin                = memento_data.FovMin;
+    FovMax                = memento_data.FovMax;
+    Speed                 = memento_data.Speed;
+    ViewportSize          = memento_data.ViewportSize;
+    FixedUp               = memento_data.FixedUp;
+    UpEpsilon             = memento_data.UpEpsilon;
+    CursorMoveOffsetRange = memento_data.CursorMoveOffsetRange;
+    ShouldDisplayGrid     = memento_data.ShouldDisplayGrid;
 }
 
 

@@ -8,13 +8,11 @@
 
 namespace Arcadia
 {
-    struct ARCADIA_API CameraComponent;
-    struct ARCADIA_API CameraComponentMemento
+    struct ARCADIA_API CameraComponentMementoData: Arcadia::MementoDataBase
     {
-        friend Arcadia::CameraComponent;
     public:
-        auto operator==(const CameraComponentMemento&) const -> bool = default;
-    private:
+        auto operator==(const CameraComponentMementoData&) const -> bool = default;
+    public:
         glm::vec3  Position{ Arcadia::Vec3::PosZ() };
         glm::vec3  Target{ Arcadia::Vec3::Zero() };
         glm::vec3  Up{ Arcadia::Vec3::PosY() };
@@ -33,7 +31,7 @@ namespace Arcadia
 
     struct ARCADIA_API CameraComponent:
         Arcadia::iComponent,
-        Arcadia::iMementoOriginator<Arcadia::CameraComponentMemento>
+        Arcadia::iMementoOriginator
     {
     public:
         using self_type = CameraComponent;
@@ -46,9 +44,6 @@ namespace Arcadia
         [[nodiscard]]
         auto ToJson() const->nlohmann::json;
 
-        [[noddiscard]]
-        virtual auto OnSnapshot() const->memento_data_type override;
-        virtual void OnRestore(const memento_data_type& memento) override;
 
         auto MoveForward() -> self_type&;
         auto MoveBackward() -> self_type&;
@@ -73,6 +68,12 @@ namespace Arcadia
         auto GetForwardDir() const->glm::vec3;
         auto GetLeftDir() const->glm::vec3;
         auto GetUpDir() const->glm::vec3;
+
+    protected:
+        [[noddiscard]]
+        virtual auto OnSnapshot() const->std::shared_ptr<Arcadia::MementoDataBase> override;
+        virtual void OnRestore(const std::shared_ptr<Arcadia::MementoDataBase>& sp_memento_data) override;
+
     private:
         // Angle of pitch
         // Look from right:

@@ -104,10 +104,10 @@ void Arcadia::ProjectLayer::_OnWindowShouldClose(Arcadia::Event::WindowShouldClo
 {
     auto& event_queue = Arcadia::EventQueue::Instance();
 
-    auto main_window_layer_sptr = Arcadia::EditorContext::Instance()._wpMainWindowLayer.lock();
+    auto sp_main_window_layer = Arcadia::EditorContext::Instance()._wpMainWindowLayer.lock();
 
-    const auto& [wnd_ptr] = e.data_tuple;
-    if(wnd_ptr == main_window_layer_sptr.get() && _spProject)
+    const auto& [p_wnd] = e.data_tuple;
+    if(p_wnd == sp_main_window_layer.get() && _spProject)
     {
         auto& memento_list = Arcadia::MementoList::Instance();
         if(memento_list.Size())
@@ -123,7 +123,7 @@ void Arcadia::ProjectLayer::_OnWindowShouldClose(Arcadia::Event::WindowShouldClo
             {
                 case pfd::button::cancel:
                 {
-                    event_queue.Signal<Arcadia::Event::WindowCloseCanceled>(wnd_ptr);
+                    event_queue.Signal<Arcadia::Event::WindowCloseCanceled>(p_wnd);
                     return;
                 }
                 case pfd::button::yes:
@@ -139,16 +139,17 @@ void Arcadia::ProjectLayer::_OnWindowShouldClose(Arcadia::Event::WindowShouldClo
                         }
                     }
                     _SaveProject();
+
                     break;
                 }
                 case pfd::button::no:
                     break;
             }
-
         }
         _spProject.reset();
         Arcadia::EventQueue::Instance()
             .Signal<Arcadia::Event::ProjectUnbuilt>();
+
     }
 }
 
@@ -324,7 +325,7 @@ void Arcadia::ProjectLayer::_OnSelectScene(Arcadia::Event::SelectScene& e)
     ARCADIA_ASSERT(_spProject);
 
     const auto& [name] = e.data_tuple;
-    auto& active_scene_wptr = _spProject->SetActiveScene(name);
+    _spProject->SetActiveScene(name);
 }
 
 void Arcadia::ProjectLayer::_OnCloseScene(Arcadia::Event::CloseScene& e)

@@ -16,13 +16,11 @@
 
 namespace Arcadia
 {
-    struct ARCADIA_API ModelComponent;
-    struct ARCADIA_API ModelComponentMemento
+    struct ARCADIA_API ModelComponentMementoData: Arcadia::MementoDataBase
     {
-        friend Arcadia::ModelComponent;
     public:
-        auto operator==(const ModelComponentMemento&) const -> bool = default;
-    private:
+        auto operator==(const ModelComponentMementoData&) const -> bool = default;
+    public:
         glm::vec3 Location{ Arcadia::Vec3::Zero() };
         glm::quat Rotation{ Arcadia::Quat::Identity() };
         glm::vec3 Scale{ 1,1,1 };
@@ -31,7 +29,7 @@ namespace Arcadia
 
     struct ARCADIA_API ModelComponent:
         Arcadia::iComponent,
-        Arcadia::iMementoOriginator<Arcadia::ModelComponentMemento>
+        Arcadia::iMementoOriginator
     {
     public:
         using identifiable_meshes = Arcadia::BasicIdentifiable<std::vector<Arcadia::Mesh>>;
@@ -47,10 +45,6 @@ namespace Arcadia
         [[nodiscard]]
         auto ToJson() const->nlohmann::json;
 
-        [[nodiscard]]
-        virtual auto OnSnapshot() const->memento_data_type override;
-        virtual void OnRestore(const memento_data_type& memento) override;
-
         ModelComponent(self_type&&) noexcept = default;
         auto operator=(self_type&&) noexcept -> self_type & = default;
 
@@ -62,6 +56,11 @@ namespace Arcadia
         auto GetIdentifiableMeshes() const -> const identifiable_meshes&;
 
         void Import(const std::filesystem::path& filepath);
+
+    protected:
+        [[nodiscard]]
+        virtual auto OnSnapshot() const->std::shared_ptr<Arcadia::MementoDataBase> override;
+        virtual void OnRestore(const std::shared_ptr<Arcadia::MementoDataBase>& sp_memento_data) override;
 
     private:
         void _Load();

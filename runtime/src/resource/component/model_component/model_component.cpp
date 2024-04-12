@@ -44,24 +44,26 @@ auto Arcadia::ModelComponent::ToJson() const -> nlohmann::json
     return json;
 }
 
-auto Arcadia::ModelComponent::OnSnapshot() const -> memento_data_type
+auto Arcadia::ModelComponent::OnSnapshot() const -> std::shared_ptr<Arcadia::MementoDataBase>
 {
-    memento_data_type memento{};
+    auto sp_memento_data = std::make_shared<Arcadia::ModelComponentMementoData>();
 
-    memento.Location = Location;
-    memento.Rotation = Rotation;
-    memento.Scale    = Scale;
-    memento.Pivot    = Pivot;
+    sp_memento_data->Location = Location;
+    sp_memento_data->Rotation = Rotation;
+    sp_memento_data->Scale    = Scale;
+    sp_memento_data->Pivot    = Pivot;
 
-    return memento;
+    return sp_memento_data;
 }
 
-void Arcadia::ModelComponent::OnRestore(const memento_data_type& memento)
+void Arcadia::ModelComponent::OnRestore(const std::shared_ptr<Arcadia::MementoDataBase>& sp_memento_data)
 {
-    Location = memento.Location;
-    Rotation = memento.Rotation;
-    Scale = memento.Scale;
-    Pivot = memento.Pivot;
+    auto& memento_data = sp_memento_data->As<Arcadia::ModelComponentMementoData>();
+
+    Location = memento_data.Location;
+    Rotation = memento_data.Rotation;
+    Scale = memento_data.Scale;
+    Pivot = memento_data.Pivot;
 }
 
 auto Arcadia::ModelComponent::GetFilepath() const -> const std::filesystem::path&

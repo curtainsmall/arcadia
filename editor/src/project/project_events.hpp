@@ -18,7 +18,7 @@ namespace Arcadia
 
         ARCADIA_EVENT(
             ProjectBuilt,
-            std::weak_ptr<Arcadia::Project>
+            std::shared_ptr<Arcadia::Project>
         );
         ARCADIA_EVENT(
             ProjectUnbuilt
@@ -34,7 +34,7 @@ namespace Arcadia
 
         ARCADIA_EVENT(
             RendererBuilt,
-            std::weak_ptr<Arcadia::iRenderer>
+            std::shared_ptr<Arcadia::iRenderer>
         );
         ARCADIA_EVENT(
             RendererUnbuilt
@@ -44,7 +44,7 @@ namespace Arcadia
 
         ARCADIA_EVENT(
             PhysicsSimulatorBuilt,
-            std::weak_ptr<Arcadia::PhysicsSimulator>
+            std::shared_ptr<Arcadia::PhysicsSimulator>
         );
 
         ARCADIA_EVENT(
@@ -55,11 +55,11 @@ namespace Arcadia
 
         ARCADIA_EVENT(
             SceneBuilt,
-            std::weak_ptr<Arcadia::Scene>
+            std::shared_ptr<Arcadia::Scene>
         );
         ARCADIA_EVENT(
             SceneActivated,
-            std::weak_ptr<Arcadia::Scene>
+            std::shared_ptr<Arcadia::Scene>
         );
         ARCADIA_EVENT(
             SceneDeactivated

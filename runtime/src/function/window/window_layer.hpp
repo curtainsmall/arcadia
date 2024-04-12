@@ -1,7 +1,5 @@
 #pragma once
 
-#include"flatbuffers_generated/window_generated.h"
-
 #include"core/base.hpp"
 #include"core/event/event.hpp"
 #include"core/layer/layer.hpp"

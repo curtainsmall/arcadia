@@ -44,16 +44,6 @@ namespace Arcadia
         using Fns::operator()...;
     };
 
-    template<class ...Types>
-    struct ARCADIA_API in_place_types_t
-    {
-    public:
-        explicit in_place_types_t() = default;
-    };
-
-    template<class ...Types>
-    constexpr Arcadia::in_place_types_t<Types...> in_place_types{};
-
     template<class, template<class ...> class>
     constexpr bool is_specialization_of = false;
     template<template<class...> class T, class ...Args>
@@ -76,7 +66,7 @@ namespace Arcadia
 
     template<class Enum>
         requires std::is_enum_v<Enum>
-    ARCADIA_API auto to_underlying(Enum e) -> std::underlying_type_t<Enum>
+    ARCADIA_API auto ToUnderlying(Enum e) -> std::underlying_type_t<Enum>
     {
         return static_cast<std::underlying_type_t<Enum>>(e);
     }

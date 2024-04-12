@@ -36,7 +36,9 @@ namespace Arcadia
         auto GetActiveScene() -> Arcadia::Scene&;
         [[nodiscard]]
         auto GetActiveScene() const -> const Arcadia::Scene&;
-        auto SetActiveScene(const std::string& name={}) -> std::weak_ptr<Arcadia::Scene>&;
+        void SetActiveScene(const std::string& name={});
+
+        void _SnapshotEntities();
 
 
     public:
@@ -44,6 +46,6 @@ namespace Arcadia
         Arcadia::CameraComponent ViewportCamera{};
     private:
         std::string _Name;
-        std::weak_ptr<Arcadia::Scene> _wpActiveScene{};
+        std::shared_ptr<Arcadia::Scene> _spActiveScene{};
     };
 }
