@@ -86,34 +86,32 @@ void Arcadia::CameraComponent::OnRestore(const std::shared_ptr<Arcadia::MementoD
 
 auto Arcadia::CameraComponent::MoveForward() -> self_type&
 {
-    const auto movement = GetForwardDir() * Speed;
-    Position += movement;
-    Target += movement;
-    return *this;
+    return Move(GetForwardDir() * Speed);
 }
 
 auto Arcadia::CameraComponent::MoveBackward() -> self_type&
 {
-    const auto movement = GetForwardDir() * Speed;
-    Position -= movement;
-    Target -= movement;
-    return *this;
+    return Move(-GetForwardDir() * Speed);
 }
 
 auto Arcadia::CameraComponent::MoveLeft() -> self_type&
 {
-    const auto movement = glm::cross(GetForwardDir(), Up) * Speed;
-    Position -= movement;
-    Target -= movement;
-    return *this;
+    return Move(GetLeftDir() * Speed);
 }
 
 auto Arcadia::CameraComponent::MoveRight() -> self_type&
 {
-    const auto movement = glm::cross(GetForwardDir(), Up) * Speed;
-    Position += movement;
-    Target += movement;
-    return *this;
+    return Move(-GetLeftDir() * Speed);
+}
+
+auto Arcadia::CameraComponent::MoveUp() -> self_type&
+{
+    return Move(GetUpDir() * Speed);
+}
+
+auto Arcadia::CameraComponent::MoveDown() -> self_type&
+{
+    return Move(-GetUpDir() * Speed);
 }
 
 auto Arcadia::CameraComponent::Move(const glm::vec3& Offset) -> self_type&

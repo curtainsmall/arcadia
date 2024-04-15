@@ -18,14 +18,17 @@ void Arcadia::ImguiWindowMainToolbar::OnUpdate()
     if(ImGui::BeginViewportSideBar("##toolbar", ImGui::GetMainViewport(), ImGuiDir_Up, ImGui::GetFrameHeight(), window_flags))
     {
         auto& memento_list = Arcadia::MementoList::Instance();
+
+        ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, glm::vec2{ 0,4 });
         if(ImGui::Button(ICON_FA_ARROW_CIRCLE_LEFT))
         {
-            memento_list.Undo();
+            ARCADIA_ASSERT(memento_list.Undo());
         }
+        ImGui::SetItemTooltip(" Undo ");
         ImGui::SameLine();
-        ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, glm::vec2{ 0,4 });
         auto combo_flags =
             ImGuiComboFlags_NoPreview;
+        //ImGui::SetNextItemWidth(1.f);
         if(ImGui::BeginCombo("##undo_list", nullptr, combo_flags))
         {
             if(memento_list.Size())
@@ -50,12 +53,14 @@ void Arcadia::ImguiWindowMainToolbar::OnUpdate()
 
             ImGui::EndCombo();
         }
+        ImGui::SetItemTooltip(" Undo List ");
         ImGui::PopStyleVar();
         ImGui::SameLine();
         if(ImGui::Button(ICON_FA_ARROW_CIRCLE_RIGHT))
         {
-            memento_list.Redo();
+            ARCADIA_ASSERT(memento_list.Redo());
         }
+        ImGui::SetItemTooltip(" Redo ");
 
         ImGui::End();
     }

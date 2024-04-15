@@ -198,56 +198,56 @@ auto Arcadia::WindowLayer::SetVisible(bool visible) -> self_type&
     return *this;
 }
 
-auto Arcadia::WindowLayer::GetInputModeCursor() const -> int
+auto Arcadia::WindowLayer::GetInputModeCursor() const -> CursorMode
 {
-    return glfwGetInputMode(_pGlfwWindow, GLFW_CURSOR);
+    return CursorMode{ glfwGetInputMode(_pGlfwWindow, GLFW_CURSOR) };
 }
 
-auto Arcadia::WindowLayer::SetInputModeCursor(int Value) -> self_type&
+auto Arcadia::WindowLayer::SetInputModeCursor(CursorMode Value) -> self_type&
 {
-    glfwSetInputMode(_pGlfwWindow, GLFW_CURSOR, Value);
+    glfwSetInputMode(_pGlfwWindow, GLFW_CURSOR, Arcadia::ToUnderlying(Value));
     return *this;
 }
 
-auto Arcadia::WindowLayer::GetInputModeStickyKeys() const -> int
+auto Arcadia::WindowLayer::GetInputModeStickyKeys() const -> bool
 {
     return glfwGetInputMode(_pGlfwWindow, GLFW_STICKY_KEYS);
 }
 
-auto Arcadia::WindowLayer::SetInputModeStickyKeys(int Value) -> self_type&
+auto Arcadia::WindowLayer::SetInputModeStickyKeys(bool Value) -> self_type&
 {
     glfwSetInputMode(_pGlfwWindow, GLFW_STICKY_KEYS, Value);
     return *this;
 }
 
-auto Arcadia::WindowLayer::GetInputModeStickyMouseButtons() const -> int
+auto Arcadia::WindowLayer::GetInputModeStickyMouseButtons() const -> bool
 {
     return glfwGetInputMode(_pGlfwWindow, GLFW_STICKY_MOUSE_BUTTONS);
 }
 
-auto Arcadia::WindowLayer::SetInputModeStickMouseButtons(int Value) -> self_type&
+auto Arcadia::WindowLayer::SetInputModeStickMouseButtons(bool Value) -> self_type&
 {
     glfwSetInputMode(_pGlfwWindow, GLFW_STICKY_MOUSE_BUTTONS, Value);
     return *this;
 }
 
-auto Arcadia::WindowLayer::GetInputModeLockKeyMods() const -> int
+auto Arcadia::WindowLayer::GetInputModeLockKeyMods() const -> bool
 {
     return glfwGetInputMode(_pGlfwWindow, GLFW_LOCK_KEY_MODS);
 }
 
-auto Arcadia::WindowLayer::SetInputModeLockKeyMods(int Value) -> self_type&
+auto Arcadia::WindowLayer::SetInputModeLockKeyMods(bool Value) -> self_type&
 {
     glfwSetInputMode(_pGlfwWindow, GLFW_LOCK_KEY_MODS, Value);
     return *this;
 }
 
-auto Arcadia::WindowLayer::GetInputModeRawMouseMotion() const -> int
+auto Arcadia::WindowLayer::GetInputModeRawMouseMotion() const -> bool
 {
     return glfwGetInputMode(_pGlfwWindow, GLFW_RAW_MOUSE_MOTION);
 }
 
-auto Arcadia::WindowLayer::SetInputModeRawMouseMotion(int Value) -> self_type&
+auto Arcadia::WindowLayer::SetInputModeRawMouseMotion(bool Value) -> self_type&
 {
     glfwSetInputMode(_pGlfwWindow, GLFW_RAW_MOUSE_MOTION, Value);
     return *this;

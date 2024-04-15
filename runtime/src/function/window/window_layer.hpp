@@ -13,6 +13,14 @@ namespace Arcadia
     struct ARCADIA_API WindowLayer: Arcadia::iLayer
     {
     public:
+        enum struct CursorMode: int
+        {
+            Nomal = GLFW_CURSOR_NORMAL,
+            Hidden = GLFW_CURSOR_HIDDEN,
+            Disabled = GLFW_CURSOR_DISABLED,
+            Captured = GLFW_CURSOR_CAPTURED,
+        };
+
         using self_type = Arcadia::WindowLayer;
     public:
         WindowLayer(
@@ -56,25 +64,26 @@ namespace Arcadia
         auto SetVisible(bool visible) -> self_type&;
 
         [[nodiscard]]
-        auto GetInputModeCursor() const -> int;
-        auto SetInputModeCursor(int Value) -> self_type&;
+        auto GetInputModeCursor() const->CursorMode;
+        auto SetInputModeCursor(CursorMode Value) -> self_type&;
 
         [[nodiscard]]
-        auto GetInputModeStickyKeys() const -> int;
-        auto SetInputModeStickyKeys(int Value) -> self_type&;
+        auto GetInputModeStickyKeys() const -> bool;
+        auto SetInputModeStickyKeys(bool Value) -> self_type&;
 
         [[nodiscard]]
-        auto GetInputModeStickyMouseButtons() const -> int;
-        auto SetInputModeStickMouseButtons(int Value) -> self_type&;
+        auto GetInputModeStickyMouseButtons() const -> bool;
+        auto SetInputModeStickMouseButtons(bool Value) -> self_type&;
 
         [[nodiscard]]
-        auto GetInputModeLockKeyMods() const -> int;
-        auto SetInputModeLockKeyMods(int Value) -> self_type&;
+        auto GetInputModeLockKeyMods() const -> bool;
+        auto SetInputModeLockKeyMods(bool Value) -> self_type&;
 
         [[nodiscard]]
-        auto GetInputModeRawMouseMotion() const -> int;
-        auto SetInputModeRawMouseMotion(int Value) -> self_type&;
+        auto GetInputModeRawMouseMotion() const -> bool;
+        auto SetInputModeRawMouseMotion(bool Value) -> self_type&;
 
+        [[nodiscard]]
         auto GetMultisampleCount() const -> int;
 
     private:

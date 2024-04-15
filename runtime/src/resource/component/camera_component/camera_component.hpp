@@ -49,6 +49,8 @@ namespace Arcadia
         auto MoveBackward() -> self_type&;
         auto MoveLeft() -> self_type&;
         auto MoveRight() -> self_type&;
+        auto MoveUp() -> self_type&;
+        auto MoveDown() -> self_type&;
         auto Move(const glm::vec3& Offset) -> self_type&;
         auto DragViewMove(const glm::vec2& Offset) -> self_type&;
 

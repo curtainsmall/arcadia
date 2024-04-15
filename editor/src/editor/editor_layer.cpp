@@ -46,11 +46,12 @@ Arcadia::EditorAppLayer::EditorAppLayer()
         editor_context._wpMainImguiLayer = layer_stack
             .PushLayer<Arcadia::ImguiLayer>(
                 editor_context._wpMainWindowLayer.lock(),
-                ARCADIA_BIND_MEMBER_FN(_ImguiWindowInstaller)
+                ARCADIA_BIND_MEMBER_FN(_ImguiWindowInstaller),
+                Arcadia::ImguiStyle::Dark
             )
             .Top<Arcadia::ImguiLayer>();
 
-        //editor_context.main_imgui_layer_wptr.lock()->show_demo_window = true;
+        //editor_context._wpMainImguiLayer.lock()->ShowDemoWindow = true;
     }
     app_context.Running = true;
 }

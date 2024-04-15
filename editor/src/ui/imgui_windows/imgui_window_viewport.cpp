@@ -114,25 +114,39 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
             auto image_cursor_pos = ImGui::GetCursorPos();
             ImGui::Image(_spRenderer->GetRenderResultId(0), viewport_camera.ViewportSize, { 0,1 }, { 1,0 });
 
-            if(ImGui::IsItemHovered())
+            if(ImGui::IsItemHovered() && ImGui::IsMouseDown(ImGuiMouseButton_Right))
             {
                 auto& io = ImGui::GetIO();
 
                 // Scroll to zoom (move viewport_camera forwards or backwards along direction)
-                auto mouse_wheel_offset = io.MouseWheel;
-                viewport_camera.Move(viewport_camera.GetForwardDir() * mouse_wheel_offset);
-
-                if(ImGui::IsMouseDown(ImGuiMouseButton_Middle))
+                if(ImGui::IsKeyDown(ImGuiKey_W))
                 {
-                    if(ImGui::IsKeyDown(ImGuiKey_LeftShift))
-                    {
-                        viewport_camera.DragViewMove(_CursorMove * .05f);
-                    }
-                    else
-                    {
-                        viewport_camera.DragViewRotate(_CursorMove * .005f);
-                    }
+                    viewport_camera.MoveForward();
                 }
+                else if(ImGui::IsKeyDown(ImGuiKey_S))
+                {
+                    viewport_camera.MoveBackward();
+                }
+                else if(ImGui::IsKeyDown(ImGuiKey_A))
+                {
+                    viewport_camera.MoveLeft();
+                }
+                else if(ImGui::IsKeyDown(ImGuiKey_D))
+                {
+                    viewport_camera.MoveRight();
+                }
+                else if(ImGui::IsKeyDown(ImGuiKey_E))
+                {
+                    viewport_camera.MoveUp();
+                }
+                else if(ImGui::IsKeyDown(ImGuiKey_Q))
+                {
+                    viewport_camera.MoveDown();
+                }
+
+                viewport_camera.DragViewRotate(_CursorMove * .005f);
+                _CursorMove = Arcadia::Vec2::Zero();
+
 
             }
 

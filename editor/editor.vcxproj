@@ -125,7 +125,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(SolutionDir)3rdparty\glew\lib\Release\x64\glew32s.lib;$(SolutionDir)3rdparty\glfw\_build\src\MinSizeRel\glfw3.lib;$(SolutionDir)3rdparty\spdlog\build\Release\spdlog.lib;$(SolutionDir)3rdparty\imgui\lib\imgui.lib;$(SolutionDir)bin\$(Configuration)\$(Platform)\arcadia\runtime\ArcadiaRuntime.lib;User32.lib;Gdi32.lib;Shell32.lib;opengl32.lib;$(SolutionDir)3rdparty\assimp\_build\lib\Debug\assimp-vc143-mtd.lib;$(SolutionDir)3rdparty\assimp\_build\contrib\zlib\Debug\zlibstaticd.lib;$(SolutionDir)3rdparty\JoltPhysics-master\Build\VS2022_CL\Debug\Jolt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(SolutionDir)3rdparty\glew\lib\Release\x64\glew32s.lib;$(SolutionDir)3rdparty\glfw\build\src\MinSizeRel\glfw3.lib;$(SolutionDir)3rdparty\spdlog\build\Release\spdlog.lib;$(SolutionDir)3rdparty\imgui\lib\imgui.lib;$(SolutionDir)bin\$(Configuration)\$(Platform)\arcadia\runtime\ArcadiaRuntime.lib;User32.lib;Gdi32.lib;Shell32.lib;opengl32.lib;$(SolutionDir)3rdparty\assimp\_build\lib\Debug\assimp-vc143-mtd.lib;$(SolutionDir)3rdparty\assimp\_build\contrib\zlib\Debug\zlibstaticd.lib;$(SolutionDir)3rdparty\JoltPhysics-master\Build\VS2022_CL\Debug\Jolt.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -148,7 +148,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(SolutionDir)3rdparty\glew\lib\Release\x64\glew32s.lib;$(SolutionDir)3rdparty\glfw\_build\src\MinSizeRel\glfw3.lib;$(SolutionDir)3rdparty\spdlog\build\Release\spdlog.lib;$(SolutionDir)3rdparty\imgui\lib\imgui.lib;$(SolutionDir)bin\$(Configuration)\$(Platform)\arcadia\runtime\arcadia_runtime.lib;User32.lib;Gdi32.lib;Shell32.lib;opengl32.lib;$(SolutionDir)3rdparty\assimp\_build\lib\MinSizeRel\assimp-vc143-mt.lib;$(SolutionDir)3rdparty\assimp\_build\contrib\zlib\MinSizeRel\zlibstatic.lib;$(SolutionDir)3rdparty\JoltPhysics-master\Build\VS2022_CL\Release\Jolt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(SolutionDir)3rdparty\glew\lib\Release\x64\glew32s.lib;$(SolutionDir)3rdparty\glfw\build\src\MinSizeRel\glfw3.lib;$(SolutionDir)3rdparty\spdlog\build\Release\spdlog.lib;$(SolutionDir)3rdparty\imgui\lib\imgui.lib;$(SolutionDir)bin\$(Configuration)\$(Platform)\arcadia\runtime\ArcadiaRuntime.lib;User32.lib;Gdi32.lib;Shell32.lib;opengl32.lib;$(SolutionDir)3rdparty\assimp\_build\lib\MinSizeRel\assimp-vc143-mt.lib;$(SolutionDir)3rdparty\assimp\_build\contrib\zlib\MinSizeRel\zlibstatic.lib;$(SolutionDir)3rdparty\JoltPhysics-master\Build\VS2022_CL\Release\Jolt.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <EntryPointSymbol>
       </EntryPointSymbol>
     </Link>

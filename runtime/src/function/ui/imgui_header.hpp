@@ -15,6 +15,7 @@
     operator glm::ivec4() const { return glm::ivec4(static_cast<int>(x), static_cast<int>(y),static_cast<unsigned int>(z), static_cast<unsigned int>(w)); }
 
 #define IMGUI_DISABLE_OBSOLETE_FUNCTIONS
+#define IMGUI_DISABLE_OBSOLETE_KEYIO
 #include"imgui/imgui.h"
 #include"imgui/imgui_internal.h"
 #include"imgui/misc/cpp/imgui_stdlib.h"
