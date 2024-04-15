@@ -94,20 +94,20 @@ auto Arcadia::MementoList::cend() const noexcept -> container_type::const_iterat
 
 auto Arcadia::iMementoOriginator::Snapshot() -> std::shared_ptr<Arcadia::MementoDataBase>
 {
-    auto sp_memento_data = OnSnapshot();
-    if(!_spPreviousMementoData)
+    auto memento_data = OnSnapshot();
+    if(!_PreviousMementoData)
     {
-        _spPreviousMementoData = sp_memento_data;
+        _PreviousMementoData = memento_data;
     }
-    else if(sp_memento_data != _spPreviousMementoData)
+    else if(memento_data != _PreviousMementoData)
     {
-        std::swap(sp_memento_data, _spPreviousMementoData);
+        std::swap(memento_data, _PreviousMementoData);
     }
-    return sp_memento_data;
+    return memento_data;
 }
 
-void Arcadia::iMementoOriginator::Restore(const std::shared_ptr<Arcadia::MementoDataBase>& sp_memento_data)
+void Arcadia::iMementoOriginator::Restore(const std::shared_ptr<Arcadia::MementoDataBase>& memento_data)
 {
-    OnRestore(sp_memento_data);
-    _spPreviousMementoData = sp_memento_data;
+    OnRestore(memento_data);
+    _PreviousMementoData = memento_data;
 }

@@ -13,14 +13,6 @@ namespace Arcadia
     struct ARCADIA_API WindowLayer: Arcadia::iLayer
     {
     public:
-        enum struct CursorMode: int
-        {
-            Nomal = GLFW_CURSOR_NORMAL,
-            Hidden = GLFW_CURSOR_HIDDEN,
-            Disabled = GLFW_CURSOR_DISABLED,
-            Captured = GLFW_CURSOR_CAPTURED,
-        };
-
         using self_type = Arcadia::WindowLayer;
     public:
         WindowLayer(
@@ -33,7 +25,7 @@ namespace Arcadia
         [[nodiscard]]
         auto GetGlfwWindowPtr() const -> GLFWwindow*
         {
-            return _pGlfwWindow;
+            return _GlfwWindow;
         }
 
         virtual void OnEvent(Arcadia::EventBase& event) override;
@@ -41,56 +33,29 @@ namespace Arcadia
 
         [[nodiscard]]
         auto GetTitle() const->const std::string&;
-        auto SetTitle(const std::string& title) -> self_type&;
-
-        [[nodiscard]]
-        auto GetSize() const->glm::ivec2;
-        auto SetSize(const glm::ivec2& size) -> self_type&;
 
         [[nodiscard]]
         auto GetSizeState() const->Arcadia::WindowSizeState;
-        auto SetSizeState(Arcadia::WindowSizeState state) -> self_type&;
+
+        [[nodiscard]]
+        auto GetSize() const->glm::ivec2;
 
         [[nodiscard]]
         auto GetPos() const->glm::ivec2;
-        auto SetPos(const glm::ivec2& pos) -> self_type&;
-
-        [[nodiscard]]
-        auto GetSwapInterval() const -> int;
-        auto SetSwapInterval(int interval) -> self_type&;
-
-        [[nodiscard]]
-        auto GetVisible() const -> bool;
-        auto SetVisible(bool visible) -> self_type&;
-
-        [[nodiscard]]
-        auto GetInputModeCursor() const->CursorMode;
-        auto SetInputModeCursor(CursorMode Value) -> self_type&;
-
-        [[nodiscard]]
-        auto GetInputModeStickyKeys() const -> bool;
-        auto SetInputModeStickyKeys(bool Value) -> self_type&;
-
-        [[nodiscard]]
-        auto GetInputModeStickyMouseButtons() const -> bool;
-        auto SetInputModeStickMouseButtons(bool Value) -> self_type&;
-
-        [[nodiscard]]
-        auto GetInputModeLockKeyMods() const -> bool;
-        auto SetInputModeLockKeyMods(bool Value) -> self_type&;
-
-        [[nodiscard]]
-        auto GetInputModeRawMouseMotion() const -> bool;
-        auto SetInputModeRawMouseMotion(bool Value) -> self_type&;
 
         [[nodiscard]]
         auto GetMultisampleCount() const -> int;
 
+        [[nodiscard]]
+        auto GetInputModeCursor() const->Arcadia::WindowInputModeCursor;
+
     private:
-        static auto _GetWindowPtrFromGlfwUserPtr(GLFWwindow* glfw_window_ptr) -> self_type*
+        static auto _GetWindowPtrFromGlfwUserPtr(GLFWwindow* glfw_window) -> self_type*
         {
-            return static_cast<self_type*>(glfwGetWindowUserPointer(glfw_window_ptr));
+            return static_cast<self_type*>(glfwGetWindowUserPointer(glfw_window));
         }
+
+        void _OnWindowSetInputModeCursor(Arcadia::Event::WindowSetInputModeCursor& e);
 
         void _SetupCallbacks();
 
@@ -101,13 +66,16 @@ namespace Arcadia
 
     private:
         static inline GlfwContext _GlfwContext{};
+        /// @brief Cursor move offset that is out of this range will be silently ignored
+        static constexpr glm::vec2 _LegalCursorMoveRange{ -20.f,20.f };
 
         std::string _Title;
         int _SwapInterval{ 0 };
 
-        GLFWwindow* _pGlfwWindow{ nullptr };
+        GLFWwindow* _GlfwWindow{ nullptr };
         glm::vec2 _LastCursorPos{ .0f };
         const int _MultisampleCount;
+
     };
 
 

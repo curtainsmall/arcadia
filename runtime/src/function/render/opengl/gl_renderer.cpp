@@ -19,7 +19,7 @@ void Arcadia::GlRenderer::Prepare()
     _InBuild = true;
 
     // Clear submitted meshes uuids
-    _setSubmittedMeshesUuid.clear();
+    _SubmittedMeshesUuids.clear();
 
     // Clear cameras
     _GlRenderUnitCameras.clear();
@@ -31,7 +31,7 @@ void Arcadia::GlRenderer::Prepare()
     _optGlRenderUnitSkybox.reset();
 
     // Clear submitted physics body shape uuids
-    _setSubmittedPhysicsBodyShapeUuid.clear();
+    _SubmittedPhysicsBodyShapeUuids.clear();
 
 }
 
@@ -40,11 +40,11 @@ void Arcadia::GlRenderer::Finalize()
     _AssertFrameInBuild();
     _InBuild = false;
 
-    for(auto iter = _umapGlRenderUnitMeshes.begin(); iter != _umapGlRenderUnitMeshes.end();)
+    for(auto iter = _GlRenderUnitMeshStorage.begin(); iter != _GlRenderUnitMeshStorage.end();)
     {
-        if(!_setSubmittedMeshesUuid.contains(iter->first))
+        if(!_SubmittedMeshesUuids.contains(iter->first))
         {
-            iter = _umapGlRenderUnitMeshes.erase(iter);
+            iter = _GlRenderUnitMeshStorage.erase(iter);
         }
         else
         {
@@ -52,11 +52,11 @@ void Arcadia::GlRenderer::Finalize()
         }
     }
 
-    for(auto iter = _umapGlRenderUnitPhysicsBodyShape.begin(); iter != _umapGlRenderUnitPhysicsBodyShape.end();)
+    for(auto iter = _GlRenderUnitPhysicsBodyShapeStorage.begin(); iter != _GlRenderUnitPhysicsBodyShapeStorage.end();)
     {
-        if(!_setSubmittedPhysicsBodyShapeUuid.contains(iter->first))
+        if(!_SubmittedPhysicsBodyShapeUuids.contains(iter->first))
         {
-            iter = _umapGlRenderUnitPhysicsBodyShape.erase(iter);
+            iter = _GlRenderUnitPhysicsBodyShapeStorage.erase(iter);
         }
         else
         {
@@ -121,7 +121,7 @@ void Arcadia::GlRenderer::Submit(const Arcadia::ModelComponent& model_comp)
                 model_comp.Location
             );
 
-        if(!_umapGlRenderUnitMeshes.contains(Uuid))
+        if(!_GlRenderUnitMeshStorage.contains(Uuid))
         {
 
             std::vector<Arcadia::GlRenderUnitMesh> gl_meshes{};
@@ -136,17 +136,17 @@ void Arcadia::GlRenderer::Submit(const Arcadia::ModelComponent& model_comp)
                     mesh.Material.SpecularTexture2d
                 );
             }
-            _umapGlRenderUnitMeshes.try_emplace(Uuid, std::move(gl_meshes));
+            _GlRenderUnitMeshStorage.try_emplace(Uuid, std::move(gl_meshes));
         }
         else
         {
-            for(auto& gl_render_unit_mesh : _umapGlRenderUnitMeshes.at(Uuid))
+            for(auto& gl_render_unit_mesh : _GlRenderUnitMeshStorage.at(Uuid))
             {
                 std::get<1>(gl_render_unit_mesh) = transform_mat;
             }
         }
 
-        _setSubmittedMeshesUuid.emplace(Uuid);
+        _SubmittedMeshesUuids.emplace(Uuid);
     }
 }
 
@@ -168,7 +168,7 @@ void Arcadia::GlRenderer::Submit(const Arcadia::PhysicsComponent& physcis_comp)
     if(physcis_comp.HasBodyInfo())
     {
         const auto& [Uuid, jph_body] = physcis_comp.GetIdentifiableJphBodyInfoInitial();
-        if(!_umapGlRenderUnitPhysicsBodyShape.contains(Uuid))
+        if(!_GlRenderUnitPhysicsBodyShapeStorage.contains(Uuid))
         {
             const auto& shape_info = jph_body.JphShapeInfo;
             const auto& shape_mesh = Arcadia::Match<Arcadia::Mesh>(
@@ -191,7 +191,7 @@ void Arcadia::GlRenderer::Submit(const Arcadia::PhysicsComponent& physcis_comp)
             }
             );
 
-            _umapGlRenderUnitPhysicsBodyShape.try_emplace(
+            _GlRenderUnitPhysicsBodyShapeStorage.try_emplace(
                 Uuid, Arcadia::GlVertexArray{ shape_mesh.Vertices,shape_mesh.Indices },
                 glm::mat4{},
                 glm::vec3{}
@@ -199,14 +199,14 @@ void Arcadia::GlRenderer::Submit(const Arcadia::PhysicsComponent& physcis_comp)
         }
 
         const auto& body_info_ongoing = physcis_comp.GetJphBodyInfoOngoing();
-        auto& [GlVertexBuffer, transform_mat, color] = _umapGlRenderUnitPhysicsBodyShape.at(Uuid);
+        auto& [GlVertexBuffer, transform_mat, color] = _GlRenderUnitPhysicsBodyShapeStorage.at(Uuid);
         transform_mat = glm::translate(
             glm::mat4_cast(body_info_ongoing.Rotation),
             body_info_ongoing.Position
         );
         color = physcis_comp.BodyShapeColor;
 
-        _setSubmittedPhysicsBodyShapeUuid.emplace(Uuid);
+        _SubmittedPhysicsBodyShapeUuids.emplace(Uuid);
     }
 }
 
@@ -314,8 +314,8 @@ void Arcadia::GlRenderer::Reset()
 {
     _GlRenderUnitCameras.clear();
     _GlRenderUnitLights.clear();
-    _umapGlRenderUnitMeshes.clear();
-    _setSubmittedMeshesUuid.clear();
+    _GlRenderUnitMeshStorage.clear();
+    _SubmittedMeshesUuids.clear();
     _optGlRenderUnitSkybox.reset();
 }
 
@@ -466,7 +466,7 @@ void Arcadia::GlRenderer::_DrawModels(
         .SetUniform("u_view_mat", camera_view)
         .SetUniform("u_proj_mat", camera_proj)
         .SetUniform("u_view_pos", camera_pos);
-    for(auto& [Uuid, gl_meshes] : _umapGlRenderUnitMeshes)
+    for(auto& [Uuid, gl_meshes] : _GlRenderUnitMeshStorage)
     {
         for(auto& [
             GlVertexBuffer,
@@ -534,7 +534,7 @@ void Arcadia::GlRenderer::_DrawPhysicsBodyShape(
 )
 {
     _GlShapePipeline.Use();
-    for(const auto& [GlVertexBuffer, transform_mat, color] : _umapGlRenderUnitPhysicsBodyShape | std::views::values)
+    for(const auto& [GlVertexBuffer, transform_mat, color] : _GlRenderUnitPhysicsBodyShapeStorage | std::views::values)
     {
         _GlShapePipeline
             .SetUniform("u_transform_mat", transform_mat)

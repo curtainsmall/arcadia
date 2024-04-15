@@ -88,6 +88,6 @@ namespace Arcadia
 
     private:
         std::filesystem::path _Filepath{};
-        std::unique_ptr<identifiable_meshes> _upIdentifiableMeshes{};
+        std::unique_ptr<identifiable_meshes> _IdentifiableMeshes{};
     };
 }

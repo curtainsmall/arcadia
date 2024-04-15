@@ -132,26 +132,23 @@ auto Arcadia::CameraComponent::DragViewMove(const glm::vec2& Offset) -> self_typ
 
 auto Arcadia::CameraComponent::RotateView(const glm::vec2& Offset) -> self_type&
 {
-    if(_TestCursorMove(Offset.x, Offset.y))
-    {
-        auto forward = GetForwardDir();
+    auto forward = GetForwardDir();
 
-        //Horizontal
-        auto x_angle_offset = -Offset.x;
-        forward = glm::angleAxis(x_angle_offset, Up) * forward;
+    //Horizontal
+    auto x_angle_offset = -Offset.x;
+    forward = glm::angleAxis(x_angle_offset, Up) * forward;
 
-        //Vertical
-        auto y_angle_offset =
-            glm::clamp(
-                -Offset.y + _PitchAngle(),
-                -glm::half_pi<float>() + UpEpsilon,
-                glm::half_pi<float>() - UpEpsilon
-            )
-            - _PitchAngle();
-        forward = glm::angleAxis(y_angle_offset, glm::cross(forward, Up)) * forward;
+    //Vertical
+    auto y_angle_offset =
+        glm::clamp(
+            -Offset.y + _PitchAngle(),
+            -glm::half_pi<float>() + UpEpsilon,
+            glm::half_pi<float>() - UpEpsilon
+        )
+        - _PitchAngle();
+    forward = glm::angleAxis(y_angle_offset, glm::cross(forward, Up)) * forward;
 
-        Target = Position + forward;
-    }
+    Target = Position + forward;
     return *this;
 }
 
@@ -228,11 +225,13 @@ auto Arcadia::CameraComponent::GetUpDir() const -> glm::vec3
 auto Arcadia::CameraComponent::_PitchAngle() const -> float
 {
     const auto& forward = GetForwardDir();
-    return glm::angle(forward, Up) - glm::half_pi<float>();
+    return glm::half_pi<float>() - glm::angle(forward, Up);
 }
 
 auto Arcadia::CameraComponent::_YawAngle() const -> float
 {
+    ARCADIA_ASSERT(false && "This function is not working");
+
     const auto& forward = GetForwardDir();
     auto yaw_vec = forward - glm::dot(forward, Arcadia::Vec3::PosY());
 
@@ -244,6 +243,8 @@ auto Arcadia::CameraComponent::_YawAngle() const -> float
 
 auto Arcadia::CameraComponent::_RollAngle() const -> float
 {
+    ARCADIA_ASSERT(false && "This function is not working");
+
     const auto& forward = GetForwardDir();
     auto normal_of_forward_and_Up = glm::cross(forward, Up);
     auto pos_uni_y_proj_on_forward_and_Up = Up - glm::dot(Up, normal_of_forward_and_Up);

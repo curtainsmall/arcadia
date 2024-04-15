@@ -25,7 +25,7 @@ Arcadia::EditorAppLayer::EditorAppLayer()
 
     // Window layer
     {
-        editor_context._wpMainWindowLayer = layer_stack
+        editor_context._MainWindowLayer = layer_stack
             .PushLayer<Arcadia::WindowLayer>(
                 app_config.WindowSize,
                 app_config.WindowTitle,
@@ -36,16 +36,16 @@ Arcadia::EditorAppLayer::EditorAppLayer()
 
     // Project layer
     {
-        editor_context._wpMainProjectLayer = layer_stack
+        editor_context._MainProjectLayer = layer_stack
             .PushLayer<Arcadia::ProjectLayer>()
             .Top<Arcadia::ProjectLayer>();
     }
 
     // Editor ImGui layer
     {
-        editor_context._wpMainImguiLayer = layer_stack
+        editor_context._MainImguiLayer = layer_stack
             .PushLayer<Arcadia::ImguiLayer>(
-                editor_context._wpMainWindowLayer.lock(),
+                editor_context._MainWindowLayer.lock(),
                 ARCADIA_BIND_MEMBER_FN(_ImguiWindowInstaller),
                 Arcadia::ImguiStyle::Dark
             )
@@ -90,19 +90,19 @@ void Arcadia::EditorAppLayer::_ImguiWindowInstaller(Arcadia::ImguiLayer& imgui_l
 void Arcadia::EditorAppLayer::_Stop()
 {
     auto& editor_context = Arcadia::EditorContext::Instance();
-    auto sp_main_window_layer = editor_context._wpMainWindowLayer.lock();
-    auto sp_main_imgui_layer = editor_context._wpMainImguiLayer.lock();
+    auto main_window_layer = editor_context._MainWindowLayer.lock();
+    auto main_imgui_layer = editor_context._MainImguiLayer.lock();
 
     auto& app_config = Arcadia::AppConfig::Instance();
-    app_config.WindowSize = sp_main_window_layer->GetSize();
-    app_config.WindowPos = sp_main_window_layer->GetPos();
-    app_config.WindowMaxmized = sp_main_window_layer->GetSizeState() == Arcadia::WindowSizeState::Maxmized;
+    app_config.WindowSize = main_window_layer->GetSize();
+    app_config.WindowPos = main_window_layer->GetPos();
+    app_config.WindowMaxmized = main_window_layer->GetSizeState() == Arcadia::WindowSizeState::Maxmized;
 
-    for(const auto& up_imgui_window : sp_main_imgui_layer->get_imgui_window_uptrs())
+    for(const auto& imgui_window : main_imgui_layer->GetImguiWindow())
     {
-        if(up_imgui_window->IsOpen())
+        if(imgui_window->IsOpen())
         {
-            app_config.ImguiOpenedWindowIdStrs.emplace(up_imgui_window->GetIdStr());
+            app_config.ImguiOpenedWindowIdStrs.emplace(imgui_window->GetIdStr());
         }
     }
 
@@ -113,11 +113,11 @@ void Arcadia::EditorAppLayer::_Stop()
 void Arcadia::EditorAppLayer::_OnWindowShouldClose(Arcadia::Event::WindowShouldClose& e)
 {
     auto& editor_context = Arcadia::EditorContext::Instance();
-    auto sp_main_window_layer = editor_context._wpMainWindowLayer.lock();
-    auto sp_main_project_layer = editor_context._wpMainProjectLayer.lock();
+    auto main_window_layer = editor_context._MainWindowLayer.lock();
+    auto main_project_layer = editor_context._MainProjectLayer.lock();
 
     const auto& [p_wnd] = e.data_tuple;
-    if(p_wnd == sp_main_window_layer.get() && sp_main_project_layer->HasProject())
+    if(p_wnd == main_window_layer.get() && main_project_layer->HasProject())
     {
         _WaitingForProjectUnbuiltBeforeClosing = true;
     }

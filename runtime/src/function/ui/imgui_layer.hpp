@@ -20,22 +20,22 @@ namespace Arcadia
         using self_type = ImguiLayer;
     public:
         ImguiLayer(
-            const std::shared_ptr<const Arcadia::WindowLayer>& window_layer_sptr,
+            const std::shared_ptr<const Arcadia::WindowLayer>& window_layer,
             const std::function<void(Arcadia::ImguiLayer&)>& imgui_window_installer ={},
             const std::function<void()>& imgui_style_setter = Arcadia::ImguiStyle::DefaultDark
         );
         virtual ~ImguiLayer();
 
         [[nodiscard]]
-        auto get_window_sptr() const -> std::shared_ptr<const Arcadia::WindowLayer>
+        auto GetWindow() const -> std::shared_ptr<const Arcadia::WindowLayer>
         {
-            return _wpWindow.lock();
+            return _Window.lock();
         }
 
         [[nodiscard]]
-        auto get_imgui_window_uptrs() const -> const std::vector<std::unique_ptr<Arcadia::iImguiWindow>>&
+        auto GetImguiWindow() const -> const std::vector<std::unique_ptr<Arcadia::iImguiWindow>>&
         {
-            return _upImguiWindow;
+            return _ImguiWindow;
         }
 
         virtual void OnEvent(Arcadia::EventBase& event) override;
@@ -44,15 +44,15 @@ namespace Arcadia
         template<Arcadia::cImguiWindow ImGuiWindow, class ...Args>
         auto EmplaceImguiWindow(Args&& ...args) -> self_type&
         {
-            _upImguiWindow.emplace_back(std::make_unique<ImGuiWindow>(std::forward<Args>(args)...));
+            _ImguiWindow.emplace_back(std::make_unique<ImGuiWindow>(std::forward<Args>(args)...));
             return *this;
         }
     public:
         bool ShowDemoWindow{ false };
         bool ShowDebugInfo{ false };
     private:
-        std::weak_ptr<const Arcadia::WindowLayer> _wpWindow;
-        ImGuiContext* _pImguiContext{ nullptr };
-        std::vector<std::unique_ptr<Arcadia::iImguiWindow>> _upImguiWindow{};
+        std::weak_ptr<const Arcadia::WindowLayer> _Window;
+        ImGuiContext* _ImguiContext{ nullptr };
+        std::vector<std::unique_ptr<Arcadia::iImguiWindow>> _ImguiWindow{};
     };
 }

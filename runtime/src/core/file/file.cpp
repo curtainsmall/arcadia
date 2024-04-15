@@ -61,7 +61,7 @@ Arcadia::File::File(const std::filesystem::path& filepath):
 
 Arcadia::File::~File()
 {
-    for(auto& [section_name, section] : _umapSection)
+    for(auto& [section_name, section] : _SectionStorage)
     {
         section.clear();
     }
@@ -94,7 +94,7 @@ auto Arcadia::File::Load() -> self_type&
         ifs.read(reinterpret_cast<char*>(&len), sizeof(len));
         section_type section{ len };
         ifs.read(reinterpret_cast<char*>(section.data()), section.size());
-        _umapSection.insert_or_assign(section_name, section);
+        _SectionStorage.insert_or_assign(section_name, section);
 
     }
 
@@ -112,11 +112,11 @@ auto Arcadia::File::Save() -> self_type&
     ofs.exceptions(std::ios_base::badbit);
 
     // Section count
-    auto section_count = _umapSection.size();
+    auto section_count = _SectionStorage.size();
     ofs.write(reinterpret_cast<const char*>(&section_count), sizeof(section_count));
 
     // For each section
-    for(const auto& [section_name, section] : _umapSection)
+    for(const auto& [section_name, section] : _SectionStorage)
     {
         // Section name
         std::size_t len = section_name.size();
@@ -134,9 +134,9 @@ auto Arcadia::File::Save() -> self_type&
 
 auto Arcadia::File::GetSectionOrCreate(const std::string& section_name) -> section_type&
 {
-    if(_umapSection.contains(section_name))
+    if(_SectionStorage.contains(section_name))
     {
-        _umapSection.insert_or_assign(section_name, section_type{});
+        _SectionStorage.insert_or_assign(section_name, section_type{});
     }
     return GetSection(section_name);
 }
@@ -145,7 +145,7 @@ auto Arcadia::File::GetSection(const std::string& section_name) -> section_type&
 {
     try
     {
-        return _umapSection.at(section_name);
+        return _SectionStorage.at(section_name);
     }
     catch(const std::out_of_range)
     {
@@ -157,7 +157,7 @@ auto Arcadia::File::GetSection(const std::string& section_name) const -> const s
 {
     try
     {
-        return _umapSection.at(section_name);
+        return _SectionStorage.at(section_name);
     }
     catch(const std::out_of_range)
     {
@@ -167,12 +167,12 @@ auto Arcadia::File::GetSection(const std::string& section_name) const -> const s
 
 auto Arcadia::File::HasSection(const std::string& section_name) const -> bool
 {
-    return _umapSection.contains(section_name);
+    return _SectionStorage.contains(section_name);
 }
 
 auto Arcadia::File::EraseSection(const std::string& section_name) -> self_type&
 {
-    _umapSection.erase(section_name);
+    _SectionStorage.erase(section_name);
     return *this;
 }
 

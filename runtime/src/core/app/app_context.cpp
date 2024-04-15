@@ -15,7 +15,7 @@ Arcadia::AppContext::AppContext()
 {
 #ifdef ARCADIA_IN_DEBUG
     auto& set = Arcadia::EventQueue::Instance()
-        .debug_excluded_event_type_set;
+        .DebugExcludedEventTypes;
     set.emplace(typeid(Arcadia::Event::InputCursorPos));
     set.emplace(typeid(Arcadia::Event::InputCursorMove));
     set.emplace(typeid(Arcadia::Event::WindowPos));

@@ -18,8 +18,8 @@ namespace Arcadia
         static auto Instance() -> self_type&;
 
     public:
-        std::weak_ptr<Arcadia::WindowLayer> _wpMainWindowLayer{};
-        std::weak_ptr<Arcadia::ImguiLayer> _wpMainImguiLayer{};
-        std::weak_ptr<Arcadia::ProjectLayer> _wpMainProjectLayer{};
+        std::weak_ptr<Arcadia::WindowLayer> _MainWindowLayer{};
+        std::weak_ptr<Arcadia::ImguiLayer> _MainImguiLayer{};
+        std::weak_ptr<Arcadia::ProjectLayer> _MainProjectLayer{};
     };
 }

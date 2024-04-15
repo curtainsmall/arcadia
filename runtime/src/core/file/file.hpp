@@ -27,7 +27,7 @@ namespace Arcadia
         ARCADIA_EXCEPTION(section_not_found);
 
         using section_type = Arcadia::Serialization::buffer_type;
-        using section_umap_type = std::unordered_map<std::string, section_type>;
+        using section_storage_type = std::unordered_map<std::string, section_type>;
 
         using self_type = Arcadia::File;
     public:
@@ -69,7 +69,7 @@ namespace Arcadia
 
     private:
         std::filesystem::path _Filepath{};
-        section_umap_type _umapSection{};
+        section_storage_type _SectionStorage{};
     };
 
 }

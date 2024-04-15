@@ -28,8 +28,8 @@ void Arcadia::ImguiWindowOutliner::OnUpdate()
 
     auto& event_queue = Arcadia::EventQueue::Instance();
 
-    auto imgui_window_title = _spScene
-        ? _Title + " - " + _spScene->GetName() + GetIdStr()
+    auto imgui_window_title = _Scene
+        ? _Title + " - " + _Scene->GetName() + GetIdStr()
         : _Title + GetIdStr();
 
     ImGui::SetNextWindowSize(glm::vec2{ 1024,768 }, ImGuiCond_Once);
@@ -37,7 +37,7 @@ void Arcadia::ImguiWindowOutliner::OnUpdate()
         ImGuiWindowFlags_NoCollapse;
     if(ImGui::Begin(imgui_window_title.c_str(), &_Open, window_flags))
     {
-        if(_spScene && ImGui::BeginPopupContextWindow())
+        if(_Scene && ImGui::BeginPopupContextWindow())
         {
             if(ImGui::Selectable("New Entity"))
             {
@@ -46,13 +46,13 @@ void Arcadia::ImguiWindowOutliner::OnUpdate()
             ImGui::EndPopup();
         }
 
-        if(!_spScene)
+        if(!_Scene)
         {
             ImGui::Text("No scene to outline here");
         }
         else
         {
-            for(const auto& [name, entity] : _spScene->GetNameEntityBimap())
+            for(const auto& [name, entity] : _Scene->GetNameEntityBimap())
             {
                 // Display text input
                 if(_EntityOldName == name)
@@ -65,7 +65,7 @@ void Arcadia::ImguiWindowOutliner::OnUpdate()
                     ImGui::SetItemDefaultFocus();
                     if(!ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Left) || ImGui::IsKeyPressed(ImGuiKey_Enter))
                     {
-                        if(_EntityOldName != _EntityNewName && !_spScene->Rename(_EntityOldName, _EntityNewName))
+                        if(_EntityOldName != _EntityNewName && !_Scene->Rename(_EntityOldName, _EntityNewName))
                         {
                             pfd::message msg{
                                 "Rename Entity",
@@ -81,7 +81,7 @@ void Arcadia::ImguiWindowOutliner::OnUpdate()
                 // Display selectable
                 else
                 {
-                    auto& entity_info = _spScene->GetEntityInfo(entity);
+                    auto& entity_info = _Scene->GetEntityInfo(entity);
                     ImGui::Checkbox(std::format("##render_in_viewport_{}", entity).c_str(), &entity_info.ShouldRenderInViewport);
                     ImGui::SameLine();
                     if(ImGui::Selectable(name.c_str(), _SelectedEntity == entity))
@@ -156,12 +156,12 @@ void Arcadia::ImguiWindowOutliner::_OnOpenImguiWindow(Arcadia::Event::OpenImguiW
 
 void Arcadia::ImguiWindowOutliner::_OnSceneActivated(Arcadia::Event::SceneActivated& e)
 {
-    const auto& [sp_scene] = e.data_tuple;
-    _spScene = sp_scene;
+    const auto& [scene] = e.data_tuple;
+    _Scene = scene;
 }
 
 void Arcadia::ImguiWindowOutliner::_OnSceneDeactivated(Arcadia::Event::SceneDeactivated& e)
 {
-    _spScene.reset();
+    _Scene.reset();
     _SelectedEntity = entt::null;
 }

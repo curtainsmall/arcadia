@@ -88,17 +88,17 @@ namespace Arcadia
         template<Arcadia::cComponent Component>
         auto _contains_component(const entt::entity entity) -> bool
         {
-            ARCADIA_ASSERT(_spScene);
+            ARCADIA_ASSERT(_Scene);
 
-            return _spScene->AllOf<Component>(entity);
+            return _Scene->AllOf<Component>(entity);
         }
         template<Arcadia::cComponent Component>
         auto _get_component(const entt::entity entity) -> Component&
         {
-            ARCADIA_ASSERT(_spScene);
+            ARCADIA_ASSERT(_Scene);
             ARCADIA_ASSERT(_contains_component<Component>(entity));
 
-            return _spScene->Get<Component>(entity);
+            return _Scene->Get<Component>(entity);
         }
 
         void _OnOpenImguiWindow(Arcadia::Event::OpenImguiWindow& e);
@@ -112,10 +112,10 @@ namespace Arcadia
 
     private:
 
-        std::shared_ptr<Arcadia::Scene> _spScene{};
+        std::shared_ptr<Arcadia::Scene> _Scene{};
         entt::entity _SelectedEntity{ entt::null };
 
-        std::shared_ptr<Arcadia::PhysicsSimulator> _spPhysicsSimulator{};
+        std::shared_ptr<Arcadia::PhysicsSimulator> _PhysicsSimulator{};
 
         Arcadia::ImguiWindowPropertyCameraComponent _imgui_window_property_camera_component{};
         Arcadia::ImguiWindowPropertyLightComponent _imgui_window_property_light_component{};

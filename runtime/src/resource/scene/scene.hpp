@@ -265,7 +265,7 @@ namespace Arcadia
         std::string _Name;
 
         boost::bimap<std::string, entt::entity> _NameEntityBimap{};
-        std::unordered_map<entt::entity, Arcadia::EntityInfo> _umapEntityInfo{};
+        std::unordered_map<entt::entity, Arcadia::EntityInfo> _EntityInfoStorage{};
         entt::registry _Registry{};
     };
 

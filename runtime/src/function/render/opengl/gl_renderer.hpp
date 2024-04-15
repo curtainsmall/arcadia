@@ -142,11 +142,11 @@ namespace Arcadia
     private:
         bool _InBuild{ false };
 
-        std::unordered_map<Arcadia::Uuid, std::vector<Arcadia::GlRenderUnitMesh>> _umapGlRenderUnitMeshes{};
-        std::set<Arcadia::Uuid> _setSubmittedMeshesUuid{};
+        std::unordered_map<Arcadia::Uuid, std::vector<Arcadia::GlRenderUnitMesh>> _GlRenderUnitMeshStorage{};
+        std::set<Arcadia::Uuid> _SubmittedMeshesUuids{};
 
-        std::unordered_map<Arcadia::Uuid, Arcadia::GlRenderUnitPhysicsBodyShape> _umapGlRenderUnitPhysicsBodyShape{};
-        std::set<Arcadia::Uuid> _setSubmittedPhysicsBodyShapeUuid{};
+        std::unordered_map<Arcadia::Uuid, Arcadia::GlRenderUnitPhysicsBodyShape> _GlRenderUnitPhysicsBodyShapeStorage{};
+        std::set<Arcadia::Uuid> _SubmittedPhysicsBodyShapeUuids{};
 
         std::vector<Arcadia::GlRenderUnitCamera> _GlRenderUnitCameras{};
         std::vector<Arcadia::GlRenderUnitLight> _GlRenderUnitLights{};

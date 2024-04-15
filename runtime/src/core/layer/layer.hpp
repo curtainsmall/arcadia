@@ -49,7 +49,7 @@ namespace Arcadia
         ARCADIA_EXCEPTION(OutOfRange);
         ARCADIA_EXCEPTION(EmptyStack);
 
-        using layer_sptr_vector_type = std::vector<std::shared_ptr<iLayer>>;
+        using layer_vector_type = std::vector<std::shared_ptr<iLayer>>;
 
         using self_type = LayerStack;
     public:
@@ -68,30 +68,30 @@ namespace Arcadia
         >
         auto PushLayer(std::shared_ptr<Layer>&& sptr) -> self_type&
         {
-            _layer_sptrs.emplace(_layer_sptrs.begin(), std::move(sptr));
+            _layers.emplace(_layers.begin(), std::move(sptr));
             return *this;
         }
         template<
             Arcadia::cLayer Layer,
             class ...Args
         >
-        auto PushLayer(layer_sptr_vector_type::const_iterator iter, Args&& ...args) -> self_type&
+        auto PushLayer(layer_vector_type::const_iterator iter, Args&& ...args) -> self_type&
         {
             return PushLayer(iter, std::make_shared<Layer>(std::forward<Args>(args)...));
         }
         template<
             Arcadia::cLayer Layer
         >
-        auto PushLayer(layer_sptr_vector_type::const_iterator iter, std::shared_ptr<Layer>&& sptr) -> self_type&
+        auto PushLayer(layer_vector_type::const_iterator iter, std::shared_ptr<Layer>&& sptr) -> self_type&
         {
-            _layer_sptrs.emplace(
+            _layers.emplace(
                 iter,
                 std::move(sptr)
             );
             return *this;
         }
         auto PopLayer() -> self_type&;
-        auto PopLayer(layer_sptr_vector_type::const_iterator iter) -> self_type&;
+        auto PopLayer(layer_vector_type::const_iterator iter) -> self_type&;
         auto PopAll() -> self_type&;
 
         template<Arcadia::cLayer Layer = Arcadia::iLayer>
@@ -102,7 +102,7 @@ namespace Arcadia
                 throw OutOfRange{ std::format("Index out of range: {}",idx) };
             }
 
-            return static_cast<Layer&>(*_layer_sptrs.at(Size() - idx - 1));
+            return static_cast<Layer&>(*_layers.at(Size() - idx - 1));
         }
 
         template<Arcadia::cLayer Layer = Arcadia::iLayer>
@@ -112,7 +112,7 @@ namespace Arcadia
             {
                 throw EmptyStack{};
             }
-            return std::static_pointer_cast<Layer>(_layer_sptrs.front());
+            return std::static_pointer_cast<Layer>(_layers.front());
         }
 
         template<Arcadia::cLayer Layer = Arcadia::iLayer>
@@ -122,18 +122,18 @@ namespace Arcadia
             {
                 throw EmptyStack{};
             }
-            return std::static_pointer_cast<Layer>(_layer_sptrs.back());
+            return std::static_pointer_cast<Layer>(_layers.back());
         }
 
 
         auto Size() -> std::size_t;
 
-        auto begin() -> layer_sptr_vector_type::const_iterator;
-        auto end() -> layer_sptr_vector_type::const_iterator;
-        auto rbegin() -> layer_sptr_vector_type::const_reverse_iterator;
-        auto rend() -> layer_sptr_vector_type::const_reverse_iterator;
+        auto begin() -> layer_vector_type::const_iterator;
+        auto end() -> layer_vector_type::const_iterator;
+        auto rbegin() -> layer_vector_type::const_reverse_iterator;
+        auto rend() -> layer_vector_type::const_reverse_iterator;
 
     private:
-        layer_sptr_vector_type _layer_sptrs{};
+        layer_vector_type _layers{};
     };
 }

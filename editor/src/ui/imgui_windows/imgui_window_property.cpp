@@ -1328,8 +1328,8 @@ void Arcadia::ImguiWindowProperty::OnUpdate()
         return;
     }
 
-    auto imgui_title = _spScene && _SelectedEntity != entt::null
-        ? _Title + " - " + _spScene->GetNameOfEntity(_SelectedEntity) + GetIdStr()
+    auto imgui_title = _Scene && _SelectedEntity != entt::null
+        ? _Title + " - " + _Scene->GetNameOfEntity(_SelectedEntity) + GetIdStr()
         : _Title + GetIdStr();
 
     ImGui::SetNextWindowSize(glm::vec2{ 1024,768 }, ImGuiCond_Once);
@@ -1337,7 +1337,7 @@ void Arcadia::ImguiWindowProperty::OnUpdate()
         ImGuiWindowFlags_NoCollapse;
     if(ImGui::Begin(imgui_title.c_str(), &_Open, window_flags))
     {
-        if(!_spScene)
+        if(!_Scene)
         {
             ImGui::Text("(No scene selected)");
         }
@@ -1362,9 +1362,9 @@ void Arcadia::ImguiWindowProperty::OnUpdate()
                         memento_list
                             .Snapshot<Arcadia::CameraComponent>(
                                 std::format("Camera - {}", description),
-                                [&, entity_name = _spScene->GetNameOfEntity(_SelectedEntity), sp_scene = _spScene]() -> Arcadia::CameraComponent&
+                                [&, entity_name = _Scene->GetNameOfEntity(_SelectedEntity), scene = _Scene]() -> Arcadia::CameraComponent&
                         {
-                            return _get_component<Arcadia::CameraComponent>(sp_scene->GetEntityOfName(entity_name));
+                            return _get_component<Arcadia::CameraComponent>(scene->GetEntityOfName(entity_name));
                         }
                         );
                     }
@@ -1378,9 +1378,9 @@ void Arcadia::ImguiWindowProperty::OnUpdate()
                         memento_list
                             .Snapshot<Arcadia::LightComponent>(
                                 std::format("Light - {}", description),
-                                [&, entity_name = _spScene->GetNameOfEntity(_SelectedEntity), sp_scene = _spScene]() -> Arcadia::LightComponent&
+                                [&, entity_name = _Scene->GetNameOfEntity(_SelectedEntity), scene = _Scene]() -> Arcadia::LightComponent&
                         {
-                            return _get_component<Arcadia::LightComponent>(sp_scene->GetEntityOfName(entity_name));
+                            return _get_component<Arcadia::LightComponent>(scene->GetEntityOfName(entity_name));
                         }
                         );
                     }
@@ -1394,9 +1394,9 @@ void Arcadia::ImguiWindowProperty::OnUpdate()
                         memento_list
                             .Snapshot<Arcadia::ModelComponent>(
                                 std::format("Model - {}", description),
-                                [&, entity_name = _spScene->GetNameOfEntity(_SelectedEntity), sp_scene = _spScene]() -> Arcadia::ModelComponent&
+                                [&, entity_name = _Scene->GetNameOfEntity(_SelectedEntity), scene = _Scene]() -> Arcadia::ModelComponent&
                         {
-                            return _get_component<Arcadia::ModelComponent>(sp_scene->GetEntityOfName(entity_name));
+                            return _get_component<Arcadia::ModelComponent>(scene->GetEntityOfName(entity_name));
                         }
                         );
                     }
@@ -1410,9 +1410,9 @@ void Arcadia::ImguiWindowProperty::OnUpdate()
                         memento_list
                             .Snapshot<Arcadia::PhysicsComponent>(
                                 std::format("Physics - {}", description),
-                                [&, entity_name = _spScene->GetNameOfEntity(_SelectedEntity), sp_scene = _spScene]() -> Arcadia::PhysicsComponent&
+                                [&, entity_name = _Scene->GetNameOfEntity(_SelectedEntity), scene = _Scene]() -> Arcadia::PhysicsComponent&
                         {
-                            return _get_component<Arcadia::PhysicsComponent>(sp_scene->GetEntityOfName(entity_name));
+                            return _get_component<Arcadia::PhysicsComponent>(scene->GetEntityOfName(entity_name));
                         }
                         );
                     }
@@ -1441,13 +1441,13 @@ void Arcadia::ImguiWindowProperty::_OnOpenImguiWindow(Arcadia::Event::OpenImguiW
 
 void Arcadia::ImguiWindowProperty::_OnSceneActivated(Arcadia::Event::SceneActivated& e)
 {
-    const auto& [scene_wptr] = e.data_tuple;
-    _spScene = scene_wptr;
+    const auto& [scene] = e.data_tuple;
+    _Scene = scene;
 }
 
 void Arcadia::ImguiWindowProperty::_OnSceneDeactivated(Arcadia::Event::SceneDeactivated& e)
 {
-    _spScene.reset();
+    _Scene.reset();
     _SelectedEntity = entt::null;
 }
 
@@ -1468,13 +1468,13 @@ void Arcadia::ImguiWindowProperty::_OnDeleteEntity(Arcadia::Event::DeleteEntity&
 
 void Arcadia::ImguiWindowProperty::_OnPhysicsSimualtorBuilt(Arcadia::Event::PhysicsSimulatorBuilt& e)
 {
-    const auto& [physics_simulator_wptr] = e.data_tuple;
-    _spPhysicsSimulator = physics_simulator_wptr;
+    const auto& [physics_simulator] = e.data_tuple;
+    _PhysicsSimulator = physics_simulator;
 }
 
 void Arcadia::ImguiWindowProperty::_OnPhysicsSimulatorUnbuilt(Arcadia::Event::PhysicsSimulatorUnbuilt& e)
 {
-    _spPhysicsSimulator.reset();
+    _PhysicsSimulator.reset();
 }
 
 

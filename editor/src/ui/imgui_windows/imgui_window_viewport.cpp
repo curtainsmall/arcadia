@@ -2,6 +2,7 @@
 
 #include"core/app/app_context.hpp"
 #include"function/ui/imgui_header.hpp"
+#include"function/window/window_events.hpp"
 #include"resource/component/camera_component/camera_component.hpp"
 #include"resource/component/model_component/model_component.hpp"
 
@@ -37,84 +38,95 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
         ImGuiWindowFlags_NoCollapse;
     if(ImGui::Begin(imgui_title.c_str(), &_Open, window_flags))
     {
-        if(!_spScene)
+        if(!_Scene)
         {
             ImGui::Text("No scene to render here");
         }
-        else if(!_spRenderer)
+        else if(!_Renderer)
         {
             ImGui::Text("No renderer to use here");
         }
         else
         {
             //==== Physics Simulator ====// 
-            if(_spPhysicsSimulator)
+            if(_PhysicsSimulator)
             {
-                _spPhysicsSimulator->Prepare();
+                _PhysicsSimulator->Prepare();
 
-                auto physics_comp_view = _spScene->View<Arcadia::PhysicsComponent>();
+                auto physics_comp_view = _Scene->View<Arcadia::PhysicsComponent>();
                 for(auto [entity, physics_comp] : physics_comp_view.each())
                 {
-                    _spPhysicsSimulator->Submit(physics_comp);
+                    _PhysicsSimulator->Submit(physics_comp);
                 }
 
-                _spPhysicsSimulator->Finalize();
+                _PhysicsSimulator->Finalize();
 
-                _spPhysicsSimulator->Update();
+                _PhysicsSimulator->Update();
                 for(auto [entity, physics_comp] : physics_comp_view.each())
                 {
-                    _spPhysicsSimulator->Quary(physics_comp);
+                    _PhysicsSimulator->Quary(physics_comp);
                 }
 
             }
 
             //==== Renderer ====//
-            auto& viewport_camera = _spProject->ViewportCamera;
+            auto& viewport_camera = _Project->ViewportCamera;
 
             viewport_camera.ViewportSize = ImGui::GetContentRegionAvail();
             //viewport_camera.should_display_grid = true;
-            _spRenderer->Prepare();
+            _Renderer->Prepare();
 
             // Cameras
-            _spRenderer->Submit(viewport_camera);
+            _Renderer->Submit(viewport_camera);
 
             // Lights
-            for(auto [entity, light_comp] : _spScene->View<Arcadia::LightComponent>().each())
+            for(auto [entity, light_comp] : _Scene->View<Arcadia::LightComponent>().each())
             {
-                if(_spScene->GetEntityInfo(entity).ShouldRenderInViewport)
+                if(_Scene->GetEntityInfo(entity).ShouldRenderInViewport)
                 {
-                    _spRenderer->Submit(light_comp);
+                    _Renderer->Submit(light_comp);
                 }
             }
 
             // Models
-            for(auto [entity, model_comp] : _spScene->View<Arcadia::ModelComponent>().each())
+            for(auto [entity, model_comp] : _Scene->View<Arcadia::ModelComponent>().each())
             {
-                if(_spScene->GetEntityInfo(entity).ShouldRenderInViewport)
+                if(_Scene->GetEntityInfo(entity).ShouldRenderInViewport)
                 {
-                    _spRenderer->Submit(model_comp);
+                    _Renderer->Submit(model_comp);
                 }
             }
 
             // Physcis simulator 
-            if(_spPhysicsSimulator)
+            if(_PhysicsSimulator)
             {
-                for(auto [entity, physics_comp] : _spScene->View<Arcadia::PhysicsComponent>().each())
+                for(auto [entity, physics_comp] : _Scene->View<Arcadia::PhysicsComponent>().each())
                 {
-                    if(_spScene->GetEntityInfo(entity).ShouldRenderInViewport)
+                    if(_Scene->GetEntityInfo(entity).ShouldRenderInViewport)
                     {
-                        _spRenderer->Submit(physics_comp);
+                        _Renderer->Submit(physics_comp);
                     }
                 }
             }
 
-            _spRenderer->Finalize();
-            _spRenderer->Draw();
+            _Renderer->Finalize();
+            _Renderer->Draw();
 
             auto image_cursor_pos = ImGui::GetCursorPos();
-            ImGui::Image(_spRenderer->GetRenderResultId(0), viewport_camera.ViewportSize, { 0,1 }, { 1,0 });
+            ImGui::Image(_Renderer->GetRenderResultId(0), viewport_camera.ViewportSize, { 0,1 }, { 1,0 });
 
-            if(ImGui::IsItemHovered() && ImGui::IsMouseDown(ImGuiMouseButton_Right))
+            if(!_InViewportFreeCam && ImGui::IsItemHovered() && ImGui::IsMouseDown(ImGuiMouseButton_Right))
+            {
+                Arcadia::EventQueue::Instance().Signal<Arcadia::Event::WindowSetInputModeCursor>(Arcadia::WindowInputModeCursor::Disabled);
+                _InViewportFreeCam = true;
+            }
+            if(_InViewportFreeCam && !ImGui::IsMouseDown(ImGuiMouseButton_Right))
+            {
+                Arcadia::EventQueue::Instance().Signal<Arcadia::Event::WindowSetInputModeCursor>(Arcadia::WindowInputModeCursor::Normal);
+                _InViewportFreeCam = false;
+            }
+
+            if(_InViewportFreeCam)
             {
                 auto& io = ImGui::GetIO();
 
@@ -144,10 +156,9 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
                     viewport_camera.MoveDown();
                 }
 
-                viewport_camera.DragViewRotate(_CursorMove * .005f);
+                //Arcadia::Log::Debug(std::format("Cursor Move: {}", _CursorMove));
+                viewport_camera.RotateView(_CursorMove * .005f);
                 _CursorMove = Arcadia::Vec2::Zero();
-
-
             }
 
             // Display viewport viewport_camera info
@@ -177,44 +188,44 @@ void Arcadia::ImguiWindowViewport::_OnOpenImguiWindow(Arcadia::Event::OpenImguiW
 
 void Arcadia::ImguiWindowViewport::_OnProjectBuilt(Arcadia::Event::ProjectBuilt& e)
 {
-    const auto& [project_wptr] = e.data_tuple;
-    _spProject = project_wptr;
+    const auto& [project] = e.data_tuple;
+    _Project = project;
 }
 
 void Arcadia::ImguiWindowViewport::_OnProjectUnbuilt(Arcadia::Event::ProjectUnbuilt& e)
 {
-    _spProject.reset();
+    _Project.reset();
 }
 
 void Arcadia::ImguiWindowViewport::_OnSceneActivated(Arcadia::Event::SceneActivated& e)
 {
-    const auto& [scene_wptr] = e.data_tuple;
-    _spScene = scene_wptr;
+    const auto& [scene] = e.data_tuple;
+    _Scene = scene;
 }
 
 void Arcadia::ImguiWindowViewport::_OnSceneDeactivated(Arcadia::Event::SceneDeactivated& e)
 {
-    _spScene.reset();
+    _Scene.reset();
 }
 
 void Arcadia::ImguiWindowViewport::_OnRendererBuilt(Arcadia::Event::RendererBuilt& e)
 {
-    const auto& [renderer_wptr] = e.data_tuple;
-    _spRenderer = renderer_wptr;
+    const auto& [renderer] = e.data_tuple;
+    _Renderer = renderer;
 }
 
 void Arcadia::ImguiWindowViewport::_OnRendererUnbuilt(Arcadia::Event::RendererUnbuilt& e)
 {
-    _spRenderer.reset();
+    _Renderer.reset();
 }
 
 void Arcadia::ImguiWindowViewport::_OnPhysicsSimualtorBuilt(Arcadia::Event::PhysicsSimulatorBuilt& e)
 {
-    const auto& [physics_simulator_wptr] = e.data_tuple;
-    _spPhysicsSimulator = physics_simulator_wptr;
+    const auto& [physics_simulator] = e.data_tuple;
+    _PhysicsSimulator = physics_simulator;
 }
 
 void Arcadia::ImguiWindowViewport::_OnPhysicsSimulatorUnbuilt(Arcadia::Event::PhysicsSimulatorUnbuilt& e)
 {
-    _spPhysicsSimulator.reset();
+    _PhysicsSimulator.reset();
 }

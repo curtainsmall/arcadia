@@ -112,7 +112,7 @@ namespace Arcadia
 
         using self_type = EventQueue;
     private:
-        using _event_uptr_queue_type = std::queue<std::unique_ptr<Arcadia::EventBase>>;
+        using _event_queue_type = std::queue<std::unique_ptr<Arcadia::EventBase>>;
 
     public:
         static auto Instance() -> self_type&;
@@ -122,10 +122,10 @@ namespace Arcadia
         template<Arcadia::cEvent Event, class ...Args>
         auto Signal(Args&& ...args) -> self_type&
         {
-            _current_queue_ptr->emplace(std::make_unique<Event>(std::forward<Args>(args)...));
+            _CurrentQueue->emplace(std::make_unique<Event>(std::forward<Args>(args)...));
 
         #ifdef ARCADIA_IN_DEBUG
-            if(!debug_excluded_event_type_set.contains(typeid(Event)))
+            if(!DebugExcludedEventTypes.contains(typeid(Event)))
             {
                 Arcadia::Log::Debug(std::format("Event signaled: {}", typeid(Event).name()));
             }
@@ -150,14 +150,14 @@ namespace Arcadia
 
     public:
     #ifdef ARCADIA_IN_DEBUG
-        std::unordered_set<std::type_index> debug_excluded_event_type_set{};
+        std::unordered_set<std::type_index> DebugExcludedEventTypes{};
     #endif // ARCADIA_IN_DEBUG
 
     private:
-        _event_uptr_queue_type _queue_a{};
-        _event_uptr_queue_type _queue_b{};
-        _event_uptr_queue_type* _processing_queue_ptr{ &_queue_a };
-        _event_uptr_queue_type* _current_queue_ptr{ &_queue_b };
+        _event_queue_type _QueueA{};
+        _event_queue_type _QueueB{};
+        _event_queue_type* _ProcessingQueue{ &_QueueA };
+        _event_queue_type* _CurrentQueue{ &_QueueB };
     };
 
 }

@@ -63,7 +63,7 @@ auto Arcadia::Scene::ToJson() const -> nlohmann::json
     auto json_entities = nlohmann::json::array();
     for(const auto& [name, entity] : _NameEntityBimap)
     {
-        const auto& entity_info = _umapEntityInfo.at(entity);
+        const auto& entity_info = _EntityInfoStorage.at(entity);
 
         nlohmann::json json_entity{
             {"name", name},
@@ -104,16 +104,16 @@ auto Arcadia::Scene::GetEntityOfName(const std::string& name) const -> entt::ent
 
 auto Arcadia::Scene::GetEntityInfo(const entt::entity entity) const -> const Arcadia::EntityInfo&
 {
-    ARCADIA_ASSERT(_umapEntityInfo.contains(entity));
+    ARCADIA_ASSERT(_EntityInfoStorage.contains(entity));
 
-    return _umapEntityInfo.at(entity);
+    return _EntityInfoStorage.at(entity);
 }
 
 auto Arcadia::Scene::GetEntityInfo(const entt::entity entity) -> Arcadia::EntityInfo&
 {
-    ARCADIA_ASSERT(_umapEntityInfo.contains(entity));
+    ARCADIA_ASSERT(_EntityInfoStorage.contains(entity));
 
-    auto& entity_info = _umapEntityInfo.at(entity);
+    auto& entity_info = _EntityInfoStorage.at(entity);
     return entity_info;
 }
 
@@ -137,7 +137,7 @@ auto Arcadia::Scene::Create(const std::string& name) -> entt::entity
 {
     auto entity = _Registry.create();
     _NameEntityBimap.left.insert(std::make_pair(name, entity));
-    _umapEntityInfo.try_emplace(entity);
+    _EntityInfoStorage.try_emplace(entity);
     return entity;
 }
 
@@ -145,7 +145,7 @@ auto Arcadia::Scene::Create(const std::string& name, const nlohmann::json& json_
 {
     auto entity = _Registry.create();
     _NameEntityBimap.left.insert(std::make_pair(name, entity));
-    _umapEntityInfo.try_emplace(entity, json_entity_info);
+    _EntityInfoStorage.try_emplace(entity, json_entity_info);
     return entity;
 }
 
@@ -153,7 +153,7 @@ auto Arcadia::Scene::Destroy(entt::entity entity) -> entt::registry::version_typ
 {
     auto version = _Registry.destroy(entity);
     _NameEntityBimap.right.erase(entity);
-    _umapEntityInfo.erase(entity);
+    _EntityInfoStorage.erase(entity);
     return version;
 }
 

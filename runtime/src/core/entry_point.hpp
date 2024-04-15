@@ -29,9 +29,9 @@ auto main() -> int
         {
             auto& event = event_queue.Read();
 
-            for(auto& layer_sptr : Arcadia::LayerStack::Instance())
+            for(auto& layer : Arcadia::LayerStack::Instance())
             {
-                layer_sptr->OnEvent(event);
+                layer->OnEvent(event);
                 if(event.Handled)
                 {
                     break;
@@ -42,9 +42,9 @@ auto main() -> int
         }
 
         // Updates
-        for(auto& layer_sptr : std::ranges::reverse_view{ Arcadia::LayerStack::Instance() })
+        for(auto& layer : std::ranges::reverse_view{ Arcadia::LayerStack::Instance() })
         {
-            layer_sptr->OnUpdate();
+            layer->OnUpdate();
         }
     }
 

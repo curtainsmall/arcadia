@@ -55,7 +55,7 @@ Arcadia::GlPipeline::~GlPipeline()
 }
 
 Arcadia::GlPipeline::GlPipeline(self_type&& rhs) noexcept:
-    _umapGlUniformLocationCache(std::move(rhs._umapGlUniformLocationCache)),
+    _GlUniformLocationCache(std::move(rhs._GlUniformLocationCache)),
     _GlShaders(std::move(rhs._GlShaders))
 {
     _GlId = rhs._GlId;
@@ -64,7 +64,7 @@ Arcadia::GlPipeline::GlPipeline(self_type&& rhs) noexcept:
 
 auto Arcadia::GlPipeline::operator=(self_type&& rhs) noexcept -> self_type&
 {
-    _umapGlUniformLocationCache = std::move(rhs._umapGlUniformLocationCache);
+    _GlUniformLocationCache = std::move(rhs._GlUniformLocationCache);
     _GlShaders = std::move(rhs._GlShaders);
 
     _GlId = rhs._GlId;
@@ -206,7 +206,7 @@ auto Arcadia::GlPipeline::_GetUniformLocation(const std::string& name) -> GLuint
 {
     try
     {
-        return _umapGlUniformLocationCache.at(name);
+        return _GlUniformLocationCache.at(name);
     }
     catch(const std::out_of_range&)
     {
@@ -215,7 +215,7 @@ auto Arcadia::GlPipeline::_GetUniformLocation(const std::string& name) -> GLuint
         {
             Arcadia::Log::Error(std::format("Failed to get OpenGL uniform location of {}, because it does not exist", name));
         }
-        _umapGlUniformLocationCache.insert_or_assign(name, location);
+        _GlUniformLocationCache.insert_or_assign(name, location);
         return location;
     }
 }

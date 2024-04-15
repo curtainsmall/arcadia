@@ -73,13 +73,13 @@ auto Arcadia::ModelComponent::GetFilepath() const -> const std::filesystem::path
 
 auto Arcadia::ModelComponent::HasIdentifiableMeshes() const -> bool
 {
-    return _upIdentifiableMeshes.get();
+    return _IdentifiableMeshes.get();
 }
 
 auto Arcadia::ModelComponent::GetIdentifiableMeshes() const -> const identifiable_meshes&
 {
     ARCADIA_ASSERT(HasIdentifiableMeshes());
-    return *_upIdentifiableMeshes;
+    return *_IdentifiableMeshes;
 }
 
 
@@ -171,12 +171,12 @@ void Arcadia::ModelComponent::_Load()
         next_mesh_index
     );
 
-    _upIdentifiableMeshes = std::make_unique<identifiable_meshes>(std::move(meshes));
+    _IdentifiableMeshes = std::make_unique<identifiable_meshes>(std::move(meshes));
 }
 
 void Arcadia::ModelComponent::_Unload()
 {
-    _upIdentifiableMeshes.reset();
+    _IdentifiableMeshes.reset();
 }
 
 void Arcadia::ModelComponent::_ProcessAssimpNode(

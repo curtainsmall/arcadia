@@ -9,13 +9,13 @@ auto Arcadia::EventQueue::Instance() -> self_type&
 
 auto Arcadia::EventQueue::SwapQueue() -> bool
 {
-    std::swap(_current_queue_ptr, _processing_queue_ptr);
+    std::swap(_CurrentQueue, _ProcessingQueue);
     return Size();
 }
 
 auto Arcadia::EventQueue::Size() const -> std::size_t
 {
-    return _processing_queue_ptr->size();
+    return _ProcessingQueue->size();
 }
 
 auto Arcadia::EventQueue::Read() -> Arcadia::EventBase&
@@ -25,11 +25,11 @@ auto Arcadia::EventQueue::Read() -> Arcadia::EventBase&
         throw empty_queue{};
     }
 
-    return *_processing_queue_ptr->front();
+    return *_ProcessingQueue->front();
 }
 
 auto Arcadia::EventQueue::Pop() -> bool
 {
-    _processing_queue_ptr->pop();
+    _ProcessingQueue->pop();
     return Size();
 }

@@ -19,7 +19,7 @@ namespace Arcadia
     public:
         using self_type = ImguiWindowStateScene;
     public:
-        void operator()(const std::shared_ptr<Arcadia::Scene>& sp_scene);
+        void operator()(const std::shared_ptr<Arcadia::Scene>& scene);
     };
 
     struct ARCADIA_API ImguiWindowStateRenderer
@@ -27,7 +27,7 @@ namespace Arcadia
     public:
         using self_type = ImguiWindowStateRenderer;
     public:
-        void operator()(const std::shared_ptr<Arcadia::iRenderer>& sp_renderer);
+        void operator()(const std::shared_ptr<Arcadia::iRenderer>& renderer);
     };
 
     struct ARCADIA_API ImguiWindowStatePhysicsSimulator
@@ -35,7 +35,7 @@ namespace Arcadia
     public:
         using self_type = ImguiWindowStatePhysicsSimulator;
     public:
-        void operator()(const std::shared_ptr<Arcadia::PhysicsSimulator>& sp_physics_simulator);
+        void operator()(const std::shared_ptr<Arcadia::PhysicsSimulator>& physics_simulator);
     private:
         bool _EnableModifyingTempAllocatorSize{ false };
         bool _LinkUpsAndSpu{ true };
@@ -69,9 +69,9 @@ namespace Arcadia
         void _OnPhysicsSimulatorUnbuilt(Arcadia::Event::PhysicsSimulatorUnbuilt& e);
 
     private:
-        std::shared_ptr<Arcadia::Scene> _spScene{};
-        std::shared_ptr<Arcadia::iRenderer> _spRenderer{};
-        std::shared_ptr<Arcadia::PhysicsSimulator> _spPhysicsSimulator{};
+        std::shared_ptr<Arcadia::Scene> _Scene{};
+        std::shared_ptr<Arcadia::iRenderer> _Renderer{};
+        std::shared_ptr<Arcadia::PhysicsSimulator> _PhysicsSimulator{};
 
         Arcadia::ImguiWindowStateScene _ImguiWindowStateScene{};
         Arcadia::ImguiWindowStateRenderer _ImguiWindowStateRenderer{};

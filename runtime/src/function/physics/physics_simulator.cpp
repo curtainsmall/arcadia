@@ -14,8 +14,8 @@ Arcadia::PhysicsSimulator::PhysicsSimulator()
     const unsigned int max_body_pair = 65535;
     const unsigned int max_contact_constraints = 10240;
 
-    _upJphPhysicsSystem = std::make_unique<JPH::PhysicsSystem>();
-    _upJphPhysicsSystem->Init(max_bodies, num_body_mutexes, max_body_pair, max_contact_constraints, _JphBroadPhaseLayer, _JphObjectVsBroadLayerFilter, _JphObjectLayerPairFilter);
+    _JphPhysicsSystem = std::make_unique<JPH::PhysicsSystem>();
+    _JphPhysicsSystem->Init(max_bodies, num_body_mutexes, max_body_pair, max_contact_constraints, _JphBroadPhaseLayer, _JphObjectVsBroadLayerFilter, _JphObjectLayerPairFilter);
 }
 
 Arcadia::PhysicsSimulator::~PhysicsSimulator()
@@ -31,7 +31,7 @@ void Arcadia::PhysicsSimulator::Prepare()
     _InBuild = true;
 
     // Clear submitted body uuids
-    _setSubmittedBodyInfo.clear();
+    _SubmittedBodyInfos.clear();
 }
 
 void Arcadia::PhysicsSimulator::Finalize()
@@ -39,14 +39,14 @@ void Arcadia::PhysicsSimulator::Finalize()
     _AssertFrameInBuild();
     _InBuild = false;
 
-    auto& jph_body_interface = _upJphPhysicsSystem->GetBodyInterface();
-    for(auto iter = _umapJphBodyId.begin(); iter != _umapJphBodyId.end();)
+    auto& jph_body_interface = _JphPhysicsSystem->GetBodyInterface();
+    for(auto iter = _JphBodyIdStorage.begin(); iter != _JphBodyIdStorage.end();)
     {
-        if(!_setSubmittedBodyInfo.contains(iter->first))
+        if(!_SubmittedBodyInfos.contains(iter->first))
         {
             jph_body_interface.RemoveBody(iter->second);
             jph_body_interface.DestroyBody(iter->second);
-            iter = _umapJphBodyId.erase(iter);
+            iter = _JphBodyIdStorage.erase(iter);
         }
         else
         {
@@ -54,7 +54,7 @@ void Arcadia::PhysicsSimulator::Finalize()
         }
     }
 
-    _upJphPhysicsSystem->OptimizeBroadPhase();
+    _JphPhysicsSystem->OptimizeBroadPhase();
 }
 
 void Arcadia::PhysicsSimulator::Submit(const Arcadia::PhysicsComponent& physics_comp)
@@ -64,9 +64,9 @@ void Arcadia::PhysicsSimulator::Submit(const Arcadia::PhysicsComponent& physics_
     if(physics_comp.HasBodyInfo())
     {
         const auto& [Uuid, body_info] = physics_comp.GetIdentifiableJphBodyInfoInitial();
-        if(!_umapJphBodyId.contains(Uuid))
+        if(!_JphBodyIdStorage.contains(Uuid))
         {
-            auto& jph_body_interface = _upJphPhysicsSystem->GetBodyInterface();
+            auto& jph_body_interface = _JphPhysicsSystem->GetBodyInterface();
             JPH::ShapeRefC jph_shape_refc = Arcadia::Match<JPH::Shape*>(
                 body_info.JphShapeInfo,
                 [&](const Arcadia::JphBoxShapeInfo& info)
@@ -100,9 +100,9 @@ void Arcadia::PhysicsSimulator::Submit(const Arcadia::PhysicsComponent& physics_
             {
                 throw SubmitFail{ std::format("Failed to create body; Its uuid is {}",Uuid) };
             }
-            _umapJphBodyId.try_emplace(Uuid, body_id);
+            _JphBodyIdStorage.try_emplace(Uuid, body_id);
         }
-        _setSubmittedBodyInfo.emplace(Uuid);
+        _SubmittedBodyInfos.emplace(Uuid);
     }
 }
 
@@ -117,7 +117,7 @@ void Arcadia::PhysicsSimulator::Update()
     JPH::JobSystemThreadPool job_system_thread_pool{ JPH::cMaxPhysicsJobs,JPH::cMaxPhysicsBarriers,static_cast<int>(std::thread::hardware_concurrency() - 1) };
 
 
-    _upJphPhysicsSystem->Update(1.f / _JphPhysicsSystemUpdatesPerSecond, 60 / _JphPhysicsSystemUpdatesPerSecond, &temp_allocator, &job_system_thread_pool);
+    _JphPhysicsSystem->Update(1.f / _JphPhysicsSystemUpdatesPerSecond, 60 / _JphPhysicsSystemUpdatesPerSecond, &temp_allocator, &job_system_thread_pool);
 }
 
 void Arcadia::PhysicsSimulator::Quary(PhysicsComponent& physics_comp)
@@ -127,10 +127,10 @@ void Arcadia::PhysicsSimulator::Quary(PhysicsComponent& physics_comp)
     if(physics_comp.HasBodyInfo())
     {
         const auto& [Uuid, jph_body_info_initial] = physics_comp.GetIdentifiableJphBodyInfoInitial();
-        if(_umapJphBodyId.contains(Uuid))
+        if(_JphBodyIdStorage.contains(Uuid))
         {
-            const auto& jph_body_interface = _upJphPhysicsSystem->GetBodyInterface();
-            const auto& body_id = _umapJphBodyId.at(Uuid);
+            const auto& jph_body_interface = _JphPhysicsSystem->GetBodyInterface();
+            const auto& body_id = _JphBodyIdStorage.at(Uuid);
 
             auto& jph_body_info_ongoing = physics_comp.GetJphBodyInfoOngoing();
             jph_body_info_ongoing.Active = jph_body_interface.IsActive(body_id);
@@ -148,14 +148,14 @@ void Arcadia::PhysicsSimulator::Quary(PhysicsComponent& physics_comp)
 
 void Arcadia::PhysicsSimulator::Reset()
 {
-    auto& jph_body_interface = _upJphPhysicsSystem->GetBodyInterface();
-    for(const auto& [Uuid, body_id] : _umapJphBodyId)
+    auto& jph_body_interface = _JphPhysicsSystem->GetBodyInterface();
+    for(const auto& [Uuid, body_id] : _JphBodyIdStorage)
     {
         jph_body_interface.RemoveBody(body_id);
         jph_body_interface.DestroyBody(body_id);
     }
-    _umapJphBodyId.clear();
-    _setSubmittedBodyInfo.clear();
+    _JphBodyIdStorage.clear();
+    _SubmittedBodyInfos.clear();
 }
 
 auto Arcadia::PhysicsSimulator::ShouldUpdate() const -> bool
@@ -188,9 +188,9 @@ void Arcadia::PhysicsSimulator::SetJphPhysicsSystemUpdatesPerSecond(int jph_phys
     _JphPhysicsSystemUpdatesPerSecond = jph_physics_system_updates_per_second;
 }
 
-auto Arcadia::PhysicsSimulator::GetJphBodyIdUmap() const -> const jph_body_id_umap_type&
+auto Arcadia::PhysicsSimulator::GetJphBodyIdUmap() const -> const jph_body_id_storage_type&
 {
-    return _umapJphBodyId;
+    return _JphBodyIdStorage;
 }
 
 void Arcadia::PhysicsSimulator::_AssertFrameInBuild() const

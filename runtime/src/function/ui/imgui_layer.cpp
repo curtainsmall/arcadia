@@ -6,17 +6,17 @@
 #include"resource/fonts/icon_header.hpp"
 
 Arcadia::ImguiLayer::ImguiLayer(
-    const std::shared_ptr<const Arcadia::WindowLayer>& window_layer_sptr,
+    const std::shared_ptr<const Arcadia::WindowLayer>& window_layer,
     const std::function<void(Arcadia::ImguiLayer&)>& imgui_window_installer,
     const std::function<void()>& imgui_style_setter
 ):
     Arcadia::iLayer("imgui"),
-    _wpWindow(window_layer_sptr)
+    _Window(window_layer)
 {
-    _pImguiContext = ImGui::CreateContext();
-    ImGui::SetCurrentContext(_pImguiContext);
+    _ImguiContext = ImGui::CreateContext();
+    ImGui::SetCurrentContext(_ImguiContext);
 
-    auto& io = _pImguiContext->IO;
+    auto& io = _ImguiContext->IO;
     io.ConfigWindowsMoveFromTitleBarOnly = true;
     io.ConfigFlags =
         ImGuiConfigFlags_DockingEnable
@@ -27,7 +27,7 @@ Arcadia::ImguiLayer::ImguiLayer(
     imgui_font_config.MergeMode = true;
     static const ImWchar imgui_icon_ranges[] ={ ICON_MIN_FA, ICON_MAX_FA,0 };
     io.Fonts->AddFontFromFileTTF(Arcadia::FontFilepathStr.c_str(), Arcadia::FontSize, &imgui_font_config, imgui_icon_ranges);
-    Arcadia::imgui_backend::Initialize(*_wpWindow.lock());
+    Arcadia::imgui_backend::Initialize(*_Window.lock());
 
     imgui_style_setter();
 
@@ -36,29 +36,29 @@ Arcadia::ImguiLayer::ImguiLayer(
 
 Arcadia::ImguiLayer::~ImguiLayer()
 {
-    if(_pImguiContext)
+    if(_ImguiContext)
     {
-        Arcadia::imgui_backend::Shutdown(*_wpWindow.lock());
-        ImGui::DestroyContext(_pImguiContext);
+        Arcadia::imgui_backend::Shutdown(*_Window.lock());
+        ImGui::DestroyContext(_ImguiContext);
     }
 }
 
 void Arcadia::ImguiLayer::OnEvent(Arcadia::EventBase& event)
 {
     Arcadia::imgui_backend::ImguiOnEvent(event);
-    for(auto& imgui_window_uptr : _upImguiWindow)
+    for(auto& imgui_window : _ImguiWindow)
     {
-        imgui_window_uptr->OnEvent(event);
+        imgui_window->OnEvent(event);
     }
 }
 
 void Arcadia::ImguiLayer::OnUpdate()
 {
-    auto window_sptr = _wpWindow.lock();
+    auto window = _Window.lock();
 
-    ImGui::SetCurrentContext(_pImguiContext);
+    ImGui::SetCurrentContext(_ImguiContext);
 
-    Arcadia::imgui_backend::NewFrame(*window_sptr);
+    Arcadia::imgui_backend::NewFrame(*window);
     ImGui::NewFrame();
 
     ImGui::DockSpaceOverViewport();
@@ -76,14 +76,14 @@ void Arcadia::ImguiLayer::OnUpdate()
     else
     {
 
-        for(auto& imgui_window_uptr : _upImguiWindow)
+        for(auto& imgui_window : _ImguiWindow)
         {
-            imgui_window_uptr->OnUpdate();
+            imgui_window->OnUpdate();
         }
     }
 
     ImGui::Render();
-    Arcadia::imgui_backend::RenderDrawData(*window_sptr);
+    Arcadia::imgui_backend::RenderDrawData(*window);
 
     if(ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
     {

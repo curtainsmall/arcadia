@@ -42,7 +42,7 @@ namespace Arcadia
         void _OnSceneDeactivated(Arcadia::Event::SceneDeactivated& e);
 
     private:
-        std::shared_ptr<Arcadia::Scene> _spScene{};
+        std::shared_ptr<Arcadia::Scene> _Scene{};
 
         entt::entity _SelectedEntity{ entt::null };
 
@@ -55,7 +55,7 @@ namespace Arcadia
     inline void ImguiWindowOutliner::_MenuItemAddComponent(int& item_count)
     {
         std::string type_str = Component::GetTypeStrStatic();
-        bool existed = _spScene->AllOf<Component>(_SelectedEntity);
+        bool existed = _Scene->AllOf<Component>(_SelectedEntity);
 
         if(!existed)
         {
@@ -73,7 +73,7 @@ namespace Arcadia
     {
 
         std::string type_str = Component::GetTypeStrStatic();
-        bool existed = _spScene->AllOf<Component>(_SelectedEntity);
+        bool existed = _Scene->AllOf<Component>(_SelectedEntity);
 
         if(existed)
         {

@@ -71,7 +71,7 @@ void Arcadia::ImguiWindowPopupCreateProject::operator()()
     }
 }
 
-void Arcadia::ImguiWindowPopupCreateScene::operator()(const std::shared_ptr<const Arcadia::Project>& project_sptr)
+void Arcadia::ImguiWindowPopupCreateScene::operator()(const std::shared_ptr<const Arcadia::Project>& project)
 {
     if(!Open)
     {
@@ -95,7 +95,7 @@ void Arcadia::ImguiWindowPopupCreateScene::operator()(const std::shared_ptr<cons
         ImGui::Text("Scene name");
         if(ImGui::InputText("##scene_name", &_Name, input_text_flags))
         {
-            _name_available = !project_sptr->umapSceneSptr.contains(_Name);
+            _name_available = !project->SceneSptrStorage.contains(_Name);
             if(_Name.empty())
             {
                 ImGui::TextColored({ 204,80,69,255 }, "Scene name cannot empty");
@@ -167,15 +167,15 @@ void Arcadia::ImguiWindowMainMenubar::_FileMenu()
         {
             event_queue.Signal<Arcadia::Event::OpenProject>();
         }
-        if(ImGui::MenuItem("Save Project", nullptr, nullptr, !!_spProject))
+        if(ImGui::MenuItem("Save Project", nullptr, nullptr, !!_Project))
         {
             event_queue.Signal<Arcadia::Event::SaveProject>();
         }
-        if(ImGui::MenuItem("Save Project As...", nullptr, nullptr, !!_spProject))
+        if(ImGui::MenuItem("Save Project As...", nullptr, nullptr, !!_Project))
         {
             event_queue.Signal<Arcadia::Event::SaveProjectAs>();
         }
-        if(ImGui::MenuItem("Close Project", nullptr, nullptr, !!_spProject))
+        if(ImGui::MenuItem("Close Project", nullptr, nullptr, !!_Project))
         {
             event_queue.Signal<Arcadia::Event::CloseProject>();
         }
@@ -186,26 +186,26 @@ void Arcadia::ImguiWindowMainMenubar::_FileMenu()
 
 void Arcadia::ImguiWindowMainMenubar::_EditMenu()
 {
-    if(_spProject)
+    if(_Project)
     {
-        _ImguiWindowPopupCreateScene(_spProject);
+        _ImguiWindowPopupCreateScene(_Project);
     }
     auto& event_queue = Arcadia::EventQueue::Instance();
     if(ImGui::BeginMenu("Edit"))
     {
-        if(ImGui::MenuItem("New Scene ...", nullptr, nullptr, !!_spProject))
+        if(ImGui::MenuItem("New Scene ...", nullptr, nullptr, !!_Project))
         {
             _ImguiWindowPopupCreateScene.Open = true;
         }
 
-        bool has_scene = _spProject && _spProject->umapSceneSptr.size();
-        bool has_active_scene = has_scene && _spProject->HasActiveScene();
+        bool has_scene = _Project && _Project->SceneSptrStorage.size();
+        bool has_active_scene = has_scene && _Project->HasActiveScene();
 
         if(ImGui::BeginMenu("Select Scene", has_scene))
         {
-            ARCADIA_ASSERT(_spProject.get());
+            ARCADIA_ASSERT(_Project.get());
 
-            for(const auto& [key, scene] : _spProject->umapSceneSptr)
+            for(const auto& [key, scene] : _Project->SceneSptrStorage)
             {
                 if(ImGui::MenuItem(key.c_str()))
                 {
@@ -247,13 +247,13 @@ void Arcadia::ImguiWindowMainMenubar::_ViewMenu()
 
 void Arcadia::ImguiWindowMainMenubar::_OnProjectBuilt(Arcadia::Event::ProjectBuilt& e)
 {
-    const auto& [project_wptr] = e.data_tuple;
-    _spProject = project_wptr;
+    const auto& [project] = e.data_tuple;
+    _Project = project;
 }
 
 void Arcadia::ImguiWindowMainMenubar::_OnProjectUnbuilt(Arcadia::Event::ProjectUnbuilt& e)
 {
-    _spProject.reset();
+    _Project.reset();
 }
 
 

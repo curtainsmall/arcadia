@@ -47,11 +47,13 @@ namespace Arcadia
         void _OnPhysicsSimualtorBuilt(Arcadia::Event::PhysicsSimulatorBuilt& e);
         void _OnPhysicsSimulatorUnbuilt(Arcadia::Event::PhysicsSimulatorUnbuilt& e);
     private:
-        std::shared_ptr<Arcadia::Project> _spProject{};
-        std::shared_ptr<Arcadia::Scene> _spScene{};
-        std::shared_ptr<Arcadia::iRenderer> _spRenderer{};
-        std::shared_ptr<Arcadia::PhysicsSimulator> _spPhysicsSimulator{};
+        std::shared_ptr<Arcadia::Project> _Project{};
+        std::shared_ptr<Arcadia::Scene> _Scene{};
+        std::shared_ptr<Arcadia::iRenderer> _Renderer{};
+        std::shared_ptr<Arcadia::PhysicsSimulator> _PhysicsSimulator{};
 
         glm::vec2 _CursorMove{};
+
+        bool _InViewportFreeCam{ false };
     };
 }

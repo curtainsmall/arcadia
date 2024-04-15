@@ -42,10 +42,10 @@ namespace Arcadia
 
 
     public:
-        std::unordered_map<std::string, std::shared_ptr<Arcadia::Scene>> umapSceneSptr{};
+        std::unordered_map<std::string, std::shared_ptr<Arcadia::Scene>> SceneSptrStorage{};
         Arcadia::CameraComponent ViewportCamera{};
     private:
         std::string _Name;
-        std::shared_ptr<Arcadia::Scene> _spActiveScene{};
+        std::shared_ptr<Arcadia::Scene> _ActiveScene{};
     };
 }

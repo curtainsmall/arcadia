@@ -45,7 +45,7 @@ namespace Arcadia
         virtual void OnRestore(const std::shared_ptr<Arcadia::MementoDataBase>& memento_data) = 0;
 
     private:
-        std::shared_ptr<MementoDataBase> _spPreviousMementoData{};
+        std::shared_ptr<MementoDataBase> _PreviousMementoData{};
     };
 
     template<class MementoOriginator>
@@ -68,7 +68,7 @@ namespace Arcadia
         /// @param description Description
         /// @param in_place_type_originator Type deduction helper for @a MementoOriginator
         /// @param originator_retriever Originator retriever
-        /// @param sp_memento_data Memento data
+        /// @param memento_data Memento data
         template<
             Arcadia::cMementoOriginator MementoOriginator
         >
@@ -76,21 +76,21 @@ namespace Arcadia
             const std::string& description,
             std::in_place_type_t<MementoOriginator> in_place_type_originator,
             const std::function<MementoOriginator& ()>& originator_retriever,
-            const std::shared_ptr<Arcadia::MementoDataBase>& sp_memento_data
+            const std::shared_ptr<Arcadia::MementoDataBase>& memento_data
         ):
             _Description(description),
-            _upOriginatorRetriever(
+            _OriginatorRetriever(
                 new std::function<MementoOriginator& ()>{ originator_retriever },
                 [&](void* ptr)
         {
             delete static_cast<std::function<MementoOriginator& ()>*>(ptr);
         }
             ),
-            _spMementoData(sp_memento_data),
+            _spMementoData(memento_data),
             _OriginatorRestoreFn(
                 [&]()
         {
-            MementoOriginator& originator = (*static_cast<std::function<MementoOriginator & ()>*>(_upOriginatorRetriever.get()))();
+            MementoOriginator& originator = (*static_cast<std::function<MementoOriginator & ()>*>(_OriginatorRetriever.get()))();
             originator.Restore(_spMementoData);
         }
             )
@@ -104,7 +104,7 @@ namespace Arcadia
 
     private:
         std::string _Description{};
-        std::unique_ptr<void, std::function<void(void*)>> _upOriginatorRetriever{}; // Used to store originator retriever with type erasure
+        std::unique_ptr<void, std::function<void(void*)>> _OriginatorRetriever{}; // Used to store originator retriever with type erasure
         std::shared_ptr<Arcadia::MementoDataBase> _spMementoData; // Used to store memento data with type erasure
         std::function<void()> _OriginatorRestoreFn; // 1. call originator retriever to get originator; 2. get memento data; 3. call restore() in originator with memento data
     };

@@ -16,8 +16,18 @@ namespace Arcadia
         Maxmized = 1,
     };
 
+    enum struct WindowInputModeCursor: std::uint8_t
+    {
+        Normal,
+        Hidden,
+        Disabled,
+        Captured,
+    };
+
     namespace Event
     {
+        //==== Notifications ====//
+
         ARCADIA_EVENT(
             WindowShouldClose,
             Arcadia::WindowLayer* // Window to close
@@ -52,6 +62,13 @@ namespace Arcadia
             MonitorConnection,
             GLFWmonitor*, // TODO: Use custom monitor type
             bool // Whether the monitor is connected or not
+        );
+
+        //==== Adjustments ====//
+
+        ARCADIA_EVENT(
+            WindowSetInputModeCursor,
+            Arcadia::WindowInputModeCursor
         );
     }
 }

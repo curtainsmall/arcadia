@@ -69,7 +69,7 @@ namespace Arcadia
 
     private:
         GLuint _GlId{ 0 };
-        std::unordered_map<std::string, GLuint> _umapGlUniformLocationCache{};
+        std::unordered_map<std::string, GLuint> _GlUniformLocationCache{};
         std::vector<Arcadia::GlShader> _GlShaders{};
     };
 

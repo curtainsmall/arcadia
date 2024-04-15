@@ -28,7 +28,7 @@ namespace Arcadia
         [[nodiscard]]
         inline auto HasProject() const noexcept -> bool
         {
-            return !!_spProject;
+            return !!_Project;
         }
     private:
         [[nodiscard]]
@@ -59,10 +59,10 @@ namespace Arcadia
 
     private:
         std::filesystem::path _ProjectFilepath{};
-        std::shared_ptr<Arcadia::Project> _spProject{};
+        std::shared_ptr<Arcadia::Project> _Project{};
 
-        std::shared_ptr<Arcadia::iRenderer> _spRenderer{};
+        std::shared_ptr<Arcadia::iRenderer> _Renderer{};
 
-        std::shared_ptr<Arcadia::PhysicsSimulator> _spPhysicsSimulator{};
+        std::shared_ptr<Arcadia::PhysicsSimulator> _PhysicsSimulator{};
     };
 }

@@ -8,16 +8,16 @@
 #include"resource/component/model_component/model_component.hpp"
 #include"resource/component/physics_component/physics_component.hpp"
 
-void Arcadia::ImguiWindowStateScene::operator()(const std::shared_ptr<Arcadia::Scene>& sp_scene)
+void Arcadia::ImguiWindowStateScene::operator()(const std::shared_ptr<Arcadia::Scene>& scene)
 {
-    const auto& scene_name_entity_bimap = sp_scene->GetNameEntityBimap();
+    const auto& scene_name_entity_bimap = scene->GetNameEntityBimap();
     ImGui::Text(std::format("Entity Count: {}", scene_name_entity_bimap.size()).c_str());
 }
 
-void Arcadia::ImguiWindowStateRenderer::operator()(const std::shared_ptr<Arcadia::iRenderer>& renderer_sptr)
+void Arcadia::ImguiWindowStateRenderer::operator()(const std::shared_ptr<Arcadia::iRenderer>& renderer)
 {
     auto graphic_api_type_str = Arcadia::Match<std::string>(
-        renderer_sptr->GetGraphicApiType(),
+        renderer->GetGraphicApiType(),
         [&](const Arcadia::GraphicApi::Opengl& api)
     {
         return std::format("OpenGL ({})", api.version);
@@ -46,9 +46,9 @@ void Arcadia::ImguiWindowStateRenderer::operator()(const std::shared_ptr<Arcadia
     }
 }
 
-void Arcadia::ImguiWindowStatePhysicsSimulator::operator()(const std::shared_ptr<Arcadia::PhysicsSimulator>& physics_simulator_sptr)
+void Arcadia::ImguiWindowStatePhysicsSimulator::operator()(const std::shared_ptr<Arcadia::PhysicsSimulator>& physics_simulator)
 {
-    const auto& physics_simulator_jph_body_id_umap = physics_simulator_sptr->GetJphBodyIdUmap();
+    const auto& physics_simulator_jph_body_id_umap = physics_simulator->GetJphBodyIdUmap();
     ImGui::Text(std::format("Body Count: {}", physics_simulator_jph_body_id_umap.size()).c_str());
 
     ImGui::NewLine();
@@ -59,7 +59,7 @@ void Arcadia::ImguiWindowStatePhysicsSimulator::operator()(const std::shared_ptr
 
     ImGui::NewLine();
     ImGui::BeginDisabled();
-    int temp_allocator_size_in_kib = physics_simulator_sptr->GetJphTempAllocatorSize() / 1024;
+    int temp_allocator_size_in_kib = physics_simulator->GetJphTempAllocatorSize() / 1024;
     Arcadia::ImguiWrapper::DragInt(
         "Temporary Allocator Size (KiB)",
         temp_allocator_size_in_kib,
@@ -69,14 +69,14 @@ void Arcadia::ImguiWindowStatePhysicsSimulator::operator()(const std::shared_ptr
         "%d",
         slider_flags
     );
-    physics_simulator_sptr->SetJphTempAllocatorSize(temp_allocator_size_in_kib * 1024);
+    physics_simulator->SetJphTempAllocatorSize(temp_allocator_size_in_kib * 1024);
     ImGui::EndDisabled();
 
     ImGui::NewLine();
     Arcadia::ImguiWrapper::DragInt(
         "            Updates per Second",
-        ARCADIA_BIND_MEMBER_FN_ARBITRARY_PTR(physics_simulator_sptr, GetJphPhysicsSystemUpdatesPerSecond),
-        ARCADIA_BIND_MEMBER_FN_ARBITRARY_PTR(physics_simulator_sptr, SetJphPhysicsSystemUpdatesPerSecond),
+        ARCADIA_BIND_MEMBER_FN_ARBITRARY_PTR(physics_simulator, GetJphPhysicsSystemUpdatesPerSecond),
+        ARCADIA_BIND_MEMBER_FN_ARBITRARY_PTR(physics_simulator, SetJphPhysicsSystemUpdatesPerSecond),
         1.f,
         0,
         (std::numeric_limits<int>::max)(),
@@ -85,25 +85,25 @@ void Arcadia::ImguiWindowStatePhysicsSimulator::operator()(const std::shared_ptr
     );
 
     ImGui::NewLine();
-    if(physics_simulator_sptr->ShouldUpdate())
+    if(physics_simulator->ShouldUpdate())
     {
         if(ImGui::Button("Stop"))
         {
-            physics_simulator_sptr->ShouldUpdate(false);
+            physics_simulator->ShouldUpdate(false);
         }
     }
     else
     {
         if(ImGui::Button("Start"))
         {
-            physics_simulator_sptr->ShouldUpdate(true);
+            physics_simulator->ShouldUpdate(true);
         }
     }
     ImGui::SameLine();
     if(ImGui::Button("Reset"))
     {
-        physics_simulator_sptr->Reset();
-        physics_simulator_sptr->ShouldUpdate(false);
+        physics_simulator->Reset();
+        physics_simulator->ShouldUpdate(false);
     }
 
 }
@@ -145,9 +145,9 @@ void Arcadia::ImguiWindowState::OnUpdate()
             if(ImGui::BeginTabItem("Scene"))
             {
                 ImGui::SeparatorText("Scene State");
-                if(_spScene)
+                if(_Scene)
                 {
-                    _ImguiWindowStateScene(_spScene);
+                    _ImguiWindowStateScene(_Scene);
                 }
                 else
                 {
@@ -159,9 +159,9 @@ void Arcadia::ImguiWindowState::OnUpdate()
             if(ImGui::BeginTabItem("Renderer"))
             {
                 ImGui::SeparatorText("Renderer State");
-                if(_spRenderer)
+                if(_Renderer)
                 {
-                    _ImguiWindowStateRenderer(_spRenderer);
+                    _ImguiWindowStateRenderer(_Renderer);
                 }
                 else
                 {
@@ -173,9 +173,9 @@ void Arcadia::ImguiWindowState::OnUpdate()
             if(ImGui::BeginTabItem("Physics Simulator"))
             {
                 ImGui::SeparatorText("Physics Simulator State");
-                if(_spPhysicsSimulator)
+                if(_PhysicsSimulator)
                 {
-                    _ImguiWindowStatePhysicsSimulator(_spPhysicsSimulator);
+                    _ImguiWindowStatePhysicsSimulator(_PhysicsSimulator);
                 }
                 else
                 {
@@ -199,35 +199,35 @@ void Arcadia::ImguiWindowState::_OnOpenImguiWindow(Arcadia::Event::OpenImguiWind
 
 void Arcadia::ImguiWindowState::_OnSceneActivated(Arcadia::Event::SceneActivated& e)
 {
-    const auto& [scene_wptr] = e.data_tuple;
-    _spScene = scene_wptr;
+    const auto& [scene] = e.data_tuple;
+    _Scene = scene;
 }
 
 void Arcadia::ImguiWindowState::_OnSceneDeactivated(Arcadia::Event::SceneDeactivated& e)
 {
-    _spScene.reset();
+    _Scene.reset();
 }
 
 void Arcadia::ImguiWindowState::_OnRendererBuilt(Arcadia::Event::RendererBuilt& e)
 {
-    const auto& [renderer_wptr] = e.data_tuple;
-    _spRenderer = renderer_wptr;
+    const auto& [renderer] = e.data_tuple;
+    _Renderer = renderer;
 }
 
 void Arcadia::ImguiWindowState::_OnRendererUnbuilt(Arcadia::Event::RendererUnbuilt& e)
 {
-    _spRenderer.reset();
+    _Renderer.reset();
 }
 
 void Arcadia::ImguiWindowState::_OnPhysicsSimualtorBuilt(Arcadia::Event::PhysicsSimulatorBuilt& e)
 {
-    const auto& [physics_simulator_wptr] = e.data_tuple;
-    _spPhysicsSimulator = physics_simulator_wptr;
+    const auto& [physics_simulator] = e.data_tuple;
+    _PhysicsSimulator = physics_simulator;
 }
 
 void Arcadia::ImguiWindowState::_OnPhysicsSimulatorUnbuilt(Arcadia::Event::PhysicsSimulatorUnbuilt& e)
 {
-    _spPhysicsSimulator.reset();
+    _PhysicsSimulator.reset();
 }
 
 

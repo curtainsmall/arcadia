@@ -35,24 +35,24 @@ Arcadia::WindowLayer::WindowLayer(
     );
 
     glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
-    _pGlfwWindow = glfwCreateWindow(size.x, size.y, _Title.c_str(), nullptr, nullptr);
-    if(!_pGlfwWindow)
+    _GlfwWindow = glfwCreateWindow(size.x, size.y, _Title.c_str(), nullptr, nullptr);
+    if(!_GlfwWindow)
     {
         const char* desr{ nullptr };
         auto err_code = glfwGetError(&desr);
         throw Arcadia::GlfwError{ std::format("Failed to create GLFW window, because {}",desr) };
     }
-    glfwMakeContextCurrent(_pGlfwWindow);
+    glfwMakeContextCurrent(_GlfwWindow);
 
     double x = _LastCursorPos.x,
         y = _LastCursorPos.y;
-    glfwGetCursorPos(_pGlfwWindow, &x, &y);
+    glfwGetCursorPos(_GlfwWindow, &x, &y);
     _LastCursorPos.x = static_cast<float>(x);
     _LastCursorPos.y = static_cast<float>(y);
     auto& min = app_config.WindowMinSize;
     auto& max = app_config.WindowMaxSize;
     glfwSetWindowSizeLimits(
-        _pGlfwWindow,
+        _GlfwWindow,
         min.x < 0 ? GLFW_DONT_CARE : min.x,
         min.y < 0 ? GLFW_DONT_CARE : min.y,
         max.x < 0 ? GLFW_DONT_CARE : max.x,
@@ -60,29 +60,34 @@ Arcadia::WindowLayer::WindowLayer(
     );
     if(app_config.WindowMaxmized)
     {
-        SetSizeState(Arcadia::WindowSizeState::Maxmized);
+        glfwMaximizeWindow(_GlfwWindow);
     }
     else
     {
-        SetPos(app_config.WindowPos);
+        auto& size = app_config.WindowSize;
+        glfwSetWindowSize(_GlfwWindow, size.x, size.y);
     }
 
-    glfwSetWindowUserPointer(_pGlfwWindow, this);
+    glfwSetWindowUserPointer(_GlfwWindow, this);
     _SetupCallbacks();
 
-    SetVisible(true);
+    glfwShowWindow(_GlfwWindow);
 }
 
 Arcadia::WindowLayer::~WindowLayer()
 {
-    if(_pGlfwWindow)
+    if(_GlfwWindow)
     {
-        glfwDestroyWindow(_pGlfwWindow);
+        glfwDestroyWindow(_GlfwWindow);
     }
 }
 
 void Arcadia::WindowLayer::OnEvent(Arcadia::EventBase& event)
-{}
+{
+    Arcadia::EventDispatcher{ event }
+        .Dispatch<Arcadia::Event::WindowSetInputModeCursor>(ARCADIA_BIND_MEMBER_FN(_OnWindowSetInputModeCursor))
+        .Result();
+}
 
 void Arcadia::WindowLayer::OnUpdate()
 {
@@ -97,33 +102,13 @@ auto Arcadia::WindowLayer::GetTitle() const -> const std::string&
     return _Title;
 }
 
-auto Arcadia::WindowLayer::SetTitle(const std::string& title) -> self_type&
-{
-    _Title = title;
-    glfwSetWindowTitle(_pGlfwWindow, _Title.c_str());
-    return *this;
-}
-
-auto Arcadia::WindowLayer::GetSize() const -> glm::ivec2
-{
-    glm::ivec2 size{};
-    glfwGetWindowSize(_pGlfwWindow, &size.x, &size.y);
-    return size;
-}
-
-auto Arcadia::WindowLayer::SetSize(const glm::ivec2& size) -> self_type&
-{
-    glfwSetWindowSize(_pGlfwWindow, size.x, size.y);
-    return *this;
-}
-
 auto Arcadia::WindowLayer::GetSizeState() const -> Arcadia::WindowSizeState
 {
-    if(glfwGetWindowAttrib(_pGlfwWindow, GLFW_MAXIMIZED))
+    if(glfwGetWindowAttrib(_GlfwWindow, GLFW_MAXIMIZED))
     {
         return Arcadia::WindowSizeState::Maxmized;
     }
-    else if(glfwGetWindowAttrib(_pGlfwWindow, GLFW_ICONIFIED))
+    else if(glfwGetWindowAttrib(_GlfwWindow, GLFW_ICONIFIED))
     {
         return Arcadia::WindowSizeState::Minimized;
     }
@@ -133,131 +118,42 @@ auto Arcadia::WindowLayer::GetSizeState() const -> Arcadia::WindowSizeState
     }
 }
 
-auto Arcadia::WindowLayer::SetSizeState(Arcadia::WindowSizeState state) -> self_type&
+auto Arcadia::WindowLayer::GetSize() const -> glm::ivec2
 {
-    switch(state)
-    {
-        case Arcadia::WindowSizeState::Minimized:
-            glfwIconifyWindow(_pGlfwWindow);
-            break;
-        case Arcadia::WindowSizeState::Restored:
-            glfwRestoreWindow(_pGlfwWindow);
-            break;
-        case Arcadia::WindowSizeState::Maxmized:
-            glfwMaximizeWindow(_pGlfwWindow);
-            break;
-    }
-    return *this;
+    glm::ivec2 vec{};
+    glfwGetWindowSize(_GlfwWindow, &vec.x, &vec.y);
+    return vec;
 }
 
 auto Arcadia::WindowLayer::GetPos() const -> glm::ivec2
 {
-    glm::ivec2 pos{};
-    glfwGetWindowPos(_pGlfwWindow, &pos.x, &pos.y);
-    return pos;
+    glm::ivec2 vec{};
+    glfwGetWindowPos(_GlfwWindow, &vec.x, &vec.y);
+    return vec;
 }
 
-auto Arcadia::WindowLayer::SetPos(const glm::ivec2& pos) -> self_type&
+void Arcadia::WindowLayer::_OnWindowSetInputModeCursor(Arcadia::Event::WindowSetInputModeCursor& e)
 {
-    if(pos.x < 0 || pos.y < 0)
-    {
-        return *this;
-    }
-
-    glfwSetWindowPos(_pGlfwWindow, pos.x, pos.y);
-    return *this;
-}
-
-auto Arcadia::WindowLayer::GetSwapInterval() const -> int
-{
-    return _SwapInterval;
-}
-
-auto Arcadia::WindowLayer::SetSwapInterval(int interval) -> self_type&
-{
-    _SwapInterval = interval;
-    glfwSwapInterval(interval);
-    return *this;
-}
-
-auto Arcadia::WindowLayer::GetVisible() const -> bool
-{
-    return glfwGetWindowAttrib(_pGlfwWindow, GLFW_VISIBLE);
-}
-
-auto Arcadia::WindowLayer::SetVisible(bool visible) -> self_type&
-{
-    if(visible)
-    {
-        glfwShowWindow(_pGlfwWindow);
-    }
-    else
-    {
-        glfwHideWindow(_pGlfwWindow);
-    }
-    return *this;
-}
-
-auto Arcadia::WindowLayer::GetInputModeCursor() const -> CursorMode
-{
-    return CursorMode{ glfwGetInputMode(_pGlfwWindow, GLFW_CURSOR) };
-}
-
-auto Arcadia::WindowLayer::SetInputModeCursor(CursorMode Value) -> self_type&
-{
-    glfwSetInputMode(_pGlfwWindow, GLFW_CURSOR, Arcadia::ToUnderlying(Value));
-    return *this;
-}
-
-auto Arcadia::WindowLayer::GetInputModeStickyKeys() const -> bool
-{
-    return glfwGetInputMode(_pGlfwWindow, GLFW_STICKY_KEYS);
-}
-
-auto Arcadia::WindowLayer::SetInputModeStickyKeys(bool Value) -> self_type&
-{
-    glfwSetInputMode(_pGlfwWindow, GLFW_STICKY_KEYS, Value);
-    return *this;
-}
-
-auto Arcadia::WindowLayer::GetInputModeStickyMouseButtons() const -> bool
-{
-    return glfwGetInputMode(_pGlfwWindow, GLFW_STICKY_MOUSE_BUTTONS);
-}
-
-auto Arcadia::WindowLayer::SetInputModeStickMouseButtons(bool Value) -> self_type&
-{
-    glfwSetInputMode(_pGlfwWindow, GLFW_STICKY_MOUSE_BUTTONS, Value);
-    return *this;
-}
-
-auto Arcadia::WindowLayer::GetInputModeLockKeyMods() const -> bool
-{
-    return glfwGetInputMode(_pGlfwWindow, GLFW_LOCK_KEY_MODS);
-}
-
-auto Arcadia::WindowLayer::SetInputModeLockKeyMods(bool Value) -> self_type&
-{
-    glfwSetInputMode(_pGlfwWindow, GLFW_LOCK_KEY_MODS, Value);
-    return *this;
-}
-
-auto Arcadia::WindowLayer::GetInputModeRawMouseMotion() const -> bool
-{
-    return glfwGetInputMode(_pGlfwWindow, GLFW_RAW_MOUSE_MOTION);
-}
-
-auto Arcadia::WindowLayer::SetInputModeRawMouseMotion(bool Value) -> self_type&
-{
-    glfwSetInputMode(_pGlfwWindow, GLFW_RAW_MOUSE_MOTION, Value);
-    return *this;
+    auto& [value] = e.data_tuple;
+    int val = Arcadia::Match<int>(
+        value,
+        Arcadia::WindowInputModeCursor::Normal,
+        GLFW_CURSOR_NORMAL,
+        Arcadia::WindowInputModeCursor::Hidden,
+        GLFW_CURSOR_HIDDEN,
+        Arcadia::WindowInputModeCursor::Disabled,
+        GLFW_CURSOR_DISABLED,
+        Arcadia::WindowInputModeCursor::Captured,
+        GLFW_CURSOR_CAPTURED
+    );
+    glfwSetInputMode(_GlfwWindow, GLFW_CURSOR, val);
 }
 
 void Arcadia::WindowLayer::_SetupCallbacks()
 {
     // Set callbacks
     glfwSetKeyCallback(
-        _pGlfwWindow,
+        _GlfwWindow,
         [](GLFWwindow* glfw_wnd_ptr, int key, int scancode, int action, int mods) -> void
     {
         Arcadia::EventQueue::Instance()
@@ -271,7 +167,7 @@ void Arcadia::WindowLayer::_SetupCallbacks()
     }
     );
     glfwSetCursorPosCallback(
-        _pGlfwWindow,
+        _GlfwWindow,
         [](GLFWwindow* glfw_wnd_ptr, double xpos, double ypos) -> void
     {
         glm::vec2 cursor_pos{ xpos,ypos };
@@ -282,20 +178,22 @@ void Arcadia::WindowLayer::_SetupCallbacks()
             wnd_ptr,
             cursor_pos
         );
-        auto& last_pos = wnd_ptr->_LastCursorPos;
-        if(cursor_pos != last_pos)
-        {
 
+        auto& last_pos = wnd_ptr->_LastCursorPos;
+        auto offset = cursor_pos - last_pos;
+        if(Arcadia::IsInRange(offset.x, _LegalCursorMoveRange.x, _LegalCursorMoveRange.y)
+           && Arcadia::IsInRange(offset.y, _LegalCursorMoveRange.x, _LegalCursorMoveRange.y))
+        {
             event_queue.Signal<Arcadia::Event::InputCursorMove>(
                 wnd_ptr,
-                cursor_pos - last_pos
+                offset
             );
-            last_pos = cursor_pos;
         }
+        last_pos = cursor_pos;
     }
     );
     glfwSetScrollCallback(
-        _pGlfwWindow,
+        _GlfwWindow,
         [](GLFWwindow* glfw_wnd_ptr, double xoffset, double yoffset) -> void
     {
         Arcadia::EventQueue::Instance()
@@ -306,7 +204,7 @@ void Arcadia::WindowLayer::_SetupCallbacks()
     }
     );
     glfwSetMouseButtonCallback(
-        _pGlfwWindow,
+        _GlfwWindow,
         [](GLFWwindow* glfw_wnd_ptr, int button, int action, int mods) -> void
     {
         Arcadia::EventQueue::Instance()
@@ -319,7 +217,7 @@ void Arcadia::WindowLayer::_SetupCallbacks()
     }
     );
     glfwSetWindowSizeCallback(
-        _pGlfwWindow,
+        _GlfwWindow,
         [](GLFWwindow* glfw_wnd_ptr, int width, int height) -> void
     {
         Arcadia::EventQueue::Instance()
@@ -330,7 +228,7 @@ void Arcadia::WindowLayer::_SetupCallbacks()
     }
     );
     glfwSetWindowPosCallback(
-        _pGlfwWindow,
+        _GlfwWindow,
         [](GLFWwindow* glfw_wnd_ptr, int xpos, int ypos) -> void
     {
         Arcadia::EventQueue::Instance()
@@ -341,7 +239,7 @@ void Arcadia::WindowLayer::_SetupCallbacks()
     }
     );
     glfwSetWindowIconifyCallback(
-        _pGlfwWindow,
+        _GlfwWindow,
         [](GLFWwindow* glfw_wnd_ptr, int iconified) -> void
     {
         auto& event_queue = Arcadia::EventQueue::Instance();
@@ -362,7 +260,7 @@ void Arcadia::WindowLayer::_SetupCallbacks()
     }
     );
     glfwSetWindowMaximizeCallback(
-        _pGlfwWindow,
+        _GlfwWindow,
         [](GLFWwindow* glfw_wnd_ptr, int maxmized) -> void
     {
         auto& event_queue = Arcadia::EventQueue::Instance();
@@ -383,7 +281,7 @@ void Arcadia::WindowLayer::_SetupCallbacks()
     }
     );
     glfwSetWindowFocusCallback(
-        _pGlfwWindow,
+        _GlfwWindow,
         [](GLFWwindow* glfw_wnd_ptr, int focused) -> void
     {
         Arcadia::EventQueue::Instance()
@@ -394,7 +292,7 @@ void Arcadia::WindowLayer::_SetupCallbacks()
     }
     );
     glfwSetCursorEnterCallback(
-        _pGlfwWindow,
+        _GlfwWindow,
         [](GLFWwindow* glfw_wnd_ptr, int entered) -> void
     {
         Arcadia::EventQueue::Instance()
@@ -405,7 +303,7 @@ void Arcadia::WindowLayer::_SetupCallbacks()
     }
     );
     glfwSetCharCallback(
-        _pGlfwWindow,
+        _GlfwWindow,
         [](GLFWwindow* glfw_wnd_ptr, unsigned int code_point) -> void
     {
         Arcadia::EventQueue::Instance()
@@ -435,7 +333,7 @@ void Arcadia::WindowLayer::_SetupCallbacks()
     }
     );
     glfwSetWindowCloseCallback(
-        _pGlfwWindow,
+        _GlfwWindow,
         [](GLFWwindow* glfw_wnd_ptr) -> void
     {
         Arcadia::EventQueue::Instance()
@@ -454,7 +352,7 @@ void Arcadia::WindowLayer::_SwapBuffers()
         app_config.GraphicApi,
         [&](const Arcadia::GraphicApi::Opengl&) -> void
     {
-        glfwSwapBuffers(_pGlfwWindow);
+        glfwSwapBuffers(_GlfwWindow);
     },
         [](auto&&) -> void
     {
@@ -467,11 +365,36 @@ void Arcadia::WindowLayer::_OnWindowCloseCanceled(Arcadia::Event::WindowCloseCan
     const auto& [p_wnd] = e.data_tuple;
     if(p_wnd == this)
     {
-        glfwSetWindowShouldClose(_pGlfwWindow, GLFW_FALSE);
+        glfwSetWindowShouldClose(_GlfwWindow, GLFW_FALSE);
     }
 }
 
 auto Arcadia::WindowLayer::GetMultisampleCount() const -> int
 {
     return _MultisampleCount;
+}
+
+auto Arcadia::WindowLayer::GetInputModeCursor() const -> Arcadia::WindowInputModeCursor
+{
+    switch(glfwGetInputMode(_GlfwWindow, GLFW_CURSOR))
+    {
+        case GLFW_CURSOR_NORMAL:
+        {
+            return Arcadia::WindowInputModeCursor::Normal;
+        }
+        case GLFW_CURSOR_HIDDEN:
+        {
+            return Arcadia::WindowInputModeCursor::Hidden;
+        }
+        case GLFW_CURSOR_DISABLED:
+        {
+            return Arcadia::WindowInputModeCursor::Disabled;
+        }
+        case GLFW_CURSOR_CAPTURED:
+        {
+            return Arcadia::WindowInputModeCursor::Captured;
+        }
+        default:
+            ARCADIA_ASSERT(false);
+    }
 }

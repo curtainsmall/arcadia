@@ -51,7 +51,7 @@ namespace Arcadia
         ARCADIA_EXCEPTION(SubmitFail);
         ARCADIA_EXCEPTION(UnknownPhysicsComponent);
 
-        using jph_body_id_umap_type = std::unordered_map<Arcadia::Uuid, JPH::BodyID>;
+        using jph_body_id_storage_type = std::unordered_map<Arcadia::Uuid, JPH::BodyID>;
         using self_type = PhysicsSimulator;
     public:
         PhysicsSimulator();
@@ -102,7 +102,7 @@ namespace Arcadia
         void SetJphPhysicsSystemUpdatesPerSecond(int jph_physics_system_updates_per_second);
 
         [[nodiscard]]
-        auto GetJphBodyIdUmap() const -> const jph_body_id_umap_type&;
+        auto GetJphBodyIdUmap() const -> const jph_body_id_storage_type&;
 
     private:
         void _AssertFrameInBuild() const;
@@ -117,13 +117,13 @@ namespace Arcadia
 
         int _JphPhysicsSystemUpdatesPerSecond{ 60 };
 
-        jph_body_id_umap_type _umapJphBodyId{};
-        std::set<Arcadia::Uuid> _setSubmittedBodyInfo{};
+        jph_body_id_storage_type _JphBodyIdStorage{};
+        std::set<Arcadia::Uuid> _SubmittedBodyInfos{};
 
         Arcadia::JphBroadPhaseLayerImpl _JphBroadPhaseLayer{};
         Arcadia::JphObjectVsBroadPhaseLayerFilterImpl _JphObjectVsBroadLayerFilter{};
         Arcadia::JphObjectLayerPairFilerImpl _JphObjectLayerPairFilter{};
 
-        std::unique_ptr<JPH::PhysicsSystem> _upJphPhysicsSystem{};
+        std::unique_ptr<JPH::PhysicsSystem> _JphPhysicsSystem{};
     };
 }
