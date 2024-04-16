@@ -1,0 +1,42 @@
+{
+    "graphic_api": {
+        "type": "opengl",
+        "version": {
+            "major": 4,
+            "minor": 6,
+            "patch": 0
+        }
+    },
+    "imgui": {
+        "opened_window_id_strs": [
+            "###menubar",
+            "###outliner",
+            "###property",
+            "###state",
+            "###toolbar",
+            "###viewport"
+        ]
+    },
+    "window": {
+        "max_size": {
+            "x": -1,
+            "y": -1
+        },
+        "maxmized": false,
+        "min_size": {
+            "x": 800,
+            "y": 600
+        },
+        "multisample_count": 0,
+        "pos": {
+            "x": 268,
+            "y": 274
+        },
+        "size": {
+            "x": 1895,
+            "y": 1158
+        },
+        "title": "Arcadia"
+    },
+    "working_directory": "./"
+}

@@ -42,6 +42,8 @@ namespace Arcadia
 
 
     public:
+        static inline std::string ProjectExtensionStr{ ".arcadia" };
+
         std::unordered_map<std::string, std::shared_ptr<Arcadia::Scene>> SceneSptrStorage{};
         Arcadia::CameraComponent ViewportCamera{};
     private:

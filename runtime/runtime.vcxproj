@@ -72,14 +72,14 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>$(SolutionDir)bin\$(Configuration)\$(Platform)\arcadia\runtime</OutDir>
-    <IntDir>$(SolutionDir)bin-int\$(Configuration)\$(Platform)\arcadia\runtime</IntDir>
+    <OutDir>$(SolutionDir)bin\$(Configuration)-$(Platform)\runtime</OutDir>
+    <IntDir>$(SolutionDir)bin-int\$(Configuration)-$(Platform)\runtime</IntDir>
     <TargetName>ArcadiaRuntime</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>$(SolutionDir)bin\$(Configuration)\$(Platform)\arcadia\runtime</OutDir>
-    <IntDir>$(SolutionDir)bin-int\$(Configuration)\$(Platform)\arcadia\runtime</IntDir>
-    <TargetName>arcadia_runtime</TargetName>
+    <OutDir>$(SolutionDir)bin\$(Configuration)-$(Platform)\runtime</OutDir>
+    <IntDir>$(SolutionDir)bin-int\$(Configuration)-$(Platform)\runtime</IntDir>
+    <TargetName>ArcadiaRuntime</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -116,12 +116,13 @@
       <PreprocessorDefinitions>ARCADIA_EXPORT;GLEW_STATIC;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)3rdparty\assimp\include;$(SolutionDir)runtime\src;$(SolutionDir)3rdparty;$(SolutionDir)3rdparty\JoltPhysics-master;$(SolutionDir)3rdparty\imgui;$(SolutionDir)3rdparty\glfw\include;$(SolutionDir)3rdparty\spdlog\include;$(SolutionDir)3rdparty\flatbuffers-23.5.26\include;$(SolutionDir)3rdparty\portable-file-dialogs-main;$(SolutionDir)3rdparty\boost_1_83_0;$(SolutionDir)3rdparty\glew\include;$(SolutionDir)3rdparty\ImGuiFileDialog;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)3rdparty\assimp\include;$(SolutionDir)runtime\src;$(SolutionDir)3rdparty;$(SolutionDir)3rdparty\JoltPhysics;$(SolutionDir)3rdparty\glm;$(SolutionDir)3rdparty\imgui;$(SolutionDir)3rdparty\glfw\include;$(SolutionDir)3rdparty\spdlog\include;$(SolutionDir)3rdparty\flatbuffers-23.5.26\include;$(SolutionDir)3rdparty\portable-file-dialogs-main;$(SolutionDir)3rdparty\boost_1_83_0;$(SolutionDir)3rdparty\glew\include;$(SolutionDir)3rdparty\ImGuiFileDialog;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.hpp</PrecompiledHeaderFile>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <UseStandardPreprocessor>true</UseStandardPreprocessor>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <ObjectFileName>$(IntDir)$(RelativeDir)</ObjectFileName>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -137,12 +138,13 @@
       <PreprocessorDefinitions>ARCADIA_EXPORT;GLEW_STATIC;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)3rdparty\assimp\include;$(SolutionDir)runtime\src;$(SolutionDir)3rdparty;$(SolutionDir)3rdparty\JoltPhysics-master;$(SolutionDir)3rdparty\glm;$(SolutionDir)3rdparty\imgui;$(SolutionDir)3rdparty\glfw\include;$(SolutionDir)3rdparty\spdlog\include;$(SolutionDir)3rdparty\flatbuffers-23.5.26\include;$(SolutionDir)3rdparty\portable-file-dialogs-0.1.0;$(SolutionDir)3rdparty\boost_1_83_0;$(SolutionDir)3rdparty\glew\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)3rdparty\assimp\include;$(SolutionDir)runtime\src;$(SolutionDir)3rdparty;$(SolutionDir)3rdparty\JoltPhysics;$(SolutionDir)3rdparty\glm;$(SolutionDir)3rdparty\imgui;$(SolutionDir)3rdparty\glfw\include;$(SolutionDir)3rdparty\spdlog\include;$(SolutionDir)3rdparty\flatbuffers-23.5.26\include;$(SolutionDir)3rdparty\portable-file-dialogs-0.1.0;$(SolutionDir)3rdparty\boost_1_83_0;$(SolutionDir)3rdparty\glew\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.hpp</PrecompiledHeaderFile>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <UseStandardPreprocessor>true</UseStandardPreprocessor>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <ObjectFileName>$(IntDir)$(RelativeDir)</ObjectFileName>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

@@ -29,7 +29,7 @@ Arcadia::GlPipeline::GlPipeline(
         ARCADIA_GL_CALL(glGetProgramInfoLog(_GlId, length, nullptr, msg.data()));
         ARCADIA_GL_CALL(glDeleteProgram(_GlId));
         _GlId = 0;
-        throw link_fail{ msg };
+        throw LinkFail{ msg };
     }
 
     ARCADIA_GL_CALL(glValidateProgram(_GlId));
@@ -43,7 +43,7 @@ Arcadia::GlPipeline::GlPipeline(
         ARCADIA_GL_CALL(glGetProgramInfoLog(_GlId, length, nullptr, msg.data()));
         ARCADIA_GL_CALL(glDeleteProgram(_GlId));
         _GlId = 0;
-        throw link_fail{ msg };
+        throw LinkFail{ msg };
     }
 
 

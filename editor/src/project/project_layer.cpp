@@ -199,18 +199,18 @@ void Arcadia::ProjectLayer::_OnOpenProject(Arcadia::Event::OpenProject& e)
     auto filepathes = pfd::open_file{
         "Open",
         "",
-        std::vector<std::string>{"Arcadia Project","*.acdaprj"}
+        std::vector<std::string>{"Arcadia Project",std::format("*{}",Arcadia::Project::ProjectExtensionStr)}
     }.result();
     _ProjectFilepath = filepathes.size() ? filepathes.at(0) : std::string{};
     if(_ProjectFilepath.empty())
     {
         return;
     }
-    if(_ProjectFilepath.extension() != ".acdaprj")
+    if(_ProjectFilepath.extension() != Arcadia::Project::ProjectExtensionStr)
     {
         pfd::message msg{
             "Open Project",
-            std::format("Arcadia project must ends with extension \".arcaprj\" while {} does not",_ProjectFilepath.generic_string()),
+            std::format("Arcadia project must ends with extension \"{}\" while {} does not",Arcadia::Project::ProjectExtensionStr,_ProjectFilepath.generic_string()),
             pfd::choice::ok,
             pfd::icon::info
         };

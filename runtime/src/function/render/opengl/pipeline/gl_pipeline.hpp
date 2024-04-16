@@ -18,8 +18,8 @@ namespace Arcadia
     struct ARCADIA_API GlPipeline: Arcadia::Noncopyable
     {
     public:
-        ARCADIA_EXCEPTION(link_fail);
-        ARCADIA_EXCEPTION(validate_fail);
+        ARCADIA_EXCEPTION(LinkFail);
+        ARCADIA_EXCEPTION(ValidationFail);
 
         using gl_shaders_builder_type = std::function<void(const std::filesystem::path&, std::vector<Arcadia::GlShader>&)>;
 

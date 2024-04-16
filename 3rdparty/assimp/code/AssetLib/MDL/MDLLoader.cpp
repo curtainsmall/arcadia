@@ -3,7 +3,7 @@
 Open Asset Import Library (assimp)
 ---------------------------------------------------------------------------
 
-Copyright (c) 2006-2022, assimp team
+Copyright (c) 2006-2024, assimp team
 
 All rights reserved.
 
@@ -65,7 +65,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 using namespace Assimp;
 
-static const aiImporterDesc desc = {
+static constexpr aiImporterDesc desc = {
     "Quake Mesh / 3D GameStudio Mesh Importer",
     "",
     "",
@@ -95,10 +95,6 @@ MDLImporter::MDLImporter() :
         configFrameID(), mBuffer(), iGSFileVersion(), mIOHandler(nullptr), pScene(), iFileSize() {
     // empty
 }
-
-// ------------------------------------------------------------------------------------------------
-// Destructor, private as well
-MDLImporter::~MDLImporter() = default;
 
 // ------------------------------------------------------------------------------------------------
 // Returns whether the class can handle the format of the given file.
@@ -273,8 +269,14 @@ void MDLImporter::InternReadFile(const std::string &pFile,
 
 // ------------------------------------------------------------------------------------------------
 // Check whether we're still inside the valid file range
+bool MDLImporter::IsPosValid(const void *szPos) const {
+    return szPos && (const unsigned char *)szPos <= this->mBuffer + this->iFileSize && szPos >= this->mBuffer;
+}
+
+// ------------------------------------------------------------------------------------------------
+// Check whether we're still inside the valid file range
 void MDLImporter::SizeCheck(const void *szPos) {
-    if (!szPos || (const unsigned char *)szPos > this->mBuffer + this->iFileSize || szPos < this->mBuffer) {
+    if (!IsPosValid(szPos)) {
         throw DeadlyImportError("Invalid MDL file. The file is too small "
                                 "or contains invalid data.");
     }
@@ -284,7 +286,7 @@ void MDLImporter::SizeCheck(const void *szPos) {
 // Just for debugging purposes
 void MDLImporter::SizeCheck(const void *szPos, const char *szFile, unsigned int iLine) {
     ai_assert(nullptr != szFile);
-    if (!szPos || (const unsigned char *)szPos > mBuffer + iFileSize) {
+    if (!IsPosValid(szPos)) {
         // remove a directory if there is one
         const char *szFilePtr = ::strrchr(szFile, '\\');
         if (!szFilePtr) {
