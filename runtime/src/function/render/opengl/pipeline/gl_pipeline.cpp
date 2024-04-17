@@ -1,4 +1,5 @@
 #include "pch.hpp"
+
 #include "gl_pipeline.hpp"
 
 Arcadia::GlPipeline::GlPipeline(

@@ -1,4 +1,5 @@
 #include "pch.hpp"
+
 #include "light_component.hpp"
 
 Arcadia::LightComponent::LightComponent(const nlohmann::json& json)

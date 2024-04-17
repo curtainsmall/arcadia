@@ -1,4 +1,5 @@
 #include "pch.hpp"
+
 #include "event.hpp"
 
 auto Arcadia::EventQueue::Instance() -> self_type&

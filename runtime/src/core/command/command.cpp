@@ -1,4 +1,5 @@
 #include "pch.hpp"
+
 #include "command.hpp"
 
 Arcadia::Command::Command(

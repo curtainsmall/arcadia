@@ -1,4 +1,5 @@
 #include "pch.hpp"
+
 #include "gl_shader.hpp"
 
 Arcadia::GlShader::GlShader(const std::string& source_code, GLenum shader_type)

@@ -1,4 +1,5 @@
 #include "pch.hpp"
+
 #include "gl_framebuffer.hpp"
 
 Arcadia::GlFramebuffer::GlFramebuffer(

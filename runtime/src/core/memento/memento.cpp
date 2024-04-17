@@ -1,4 +1,5 @@
 #include "pch.hpp"
+
 #include "memento.hpp"
 
 void Arcadia::Memento::Restore() const

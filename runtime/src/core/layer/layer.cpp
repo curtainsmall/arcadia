@@ -1,4 +1,5 @@
 #include "pch.hpp"
+
 #include "layer.hpp"
 
 Arcadia::iLayer::iLayer(const std::string& name):

@@ -1,4 +1,5 @@
 #include "pch.hpp"
+
 #include "mesh.hpp"
 
 auto Arcadia::Mesh::Box(

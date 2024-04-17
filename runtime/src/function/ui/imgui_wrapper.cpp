@@ -1,4 +1,5 @@
 #include "pch.hpp"
+
 #include "imgui_wrapper.hpp"
 
 ARCADIA_API auto Arcadia::ImguiWrapper::Checkbox(const std::string& name, bool& b)  -> bool

@@ -1,4 +1,5 @@
 #include "pch.hpp"
+
 #include "version.hpp"
 
 Arcadia::Version::Version(const nlohmann::json& json):

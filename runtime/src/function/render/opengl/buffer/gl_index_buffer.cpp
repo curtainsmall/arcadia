@@ -1,4 +1,5 @@
 #include "pch.hpp"
+
 #include "gl_index_buffer.hpp"
 
 Arcadia::GlIndexBuffer::GlIndexBuffer(const std::vector<Arcadia::Mesh::index_type>& indices):

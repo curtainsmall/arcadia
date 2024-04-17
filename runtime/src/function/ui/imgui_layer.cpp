@@ -1,4 +1,5 @@
 #include"pch.hpp"
+
 #include "imgui_layer.hpp"
 
 #include"function/input/input_events.hpp"
@@ -60,6 +61,7 @@ void Arcadia::ImguiLayer::OnUpdate()
 
     Arcadia::imgui_backend::NewFrame(*window);
     ImGui::NewFrame();
+    ImGuizmo::BeginFrame();
 
     ImGui::DockSpaceOverViewport();
 

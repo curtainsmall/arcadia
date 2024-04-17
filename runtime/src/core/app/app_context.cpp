@@ -1,4 +1,5 @@
 #include "pch.hpp"
+
 #include "app_context.hpp"
 
 #ifdef ARCADIA_IN_DEBUG

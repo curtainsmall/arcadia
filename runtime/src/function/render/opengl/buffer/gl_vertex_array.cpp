@@ -1,4 +1,5 @@
 #include "pch.hpp"
+
 #include "gl_vertex_array.hpp"
 
 Arcadia::GlVertexArray::GlVertexArray(

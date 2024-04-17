@@ -1,4 +1,5 @@
 #include "pch.hpp"
+
 #include "gl_cubemap.hpp"
 
 Arcadia::GlCubemap::GlCubemap(const Arcadia::Cubemap& cubemap)
