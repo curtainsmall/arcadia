@@ -4,7 +4,7 @@
 #include"core/math.hpp"
 #include"core/memento/memento.hpp"
 #include"core/nlohmann_json_header.hpp"
-#include"resource/component/component.hpp"
+#include"resource/components/component_interface.hpp"
 
 namespace Arcadia
 {
@@ -72,7 +72,7 @@ namespace Arcadia
         auto GetUpDir() const->glm::vec3;
 
     protected:
-        [[noddiscard]]
+        [[nodiscard]]
         virtual auto OnSnapshot() const->std::shared_ptr<Arcadia::MementoDataBase> override;
         virtual void OnRestore(const std::shared_ptr<Arcadia::MementoDataBase>& sp_memento_data) override;
 

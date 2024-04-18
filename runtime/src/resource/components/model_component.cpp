@@ -21,11 +21,7 @@ Arcadia::ModelComponent::ModelComponent(const std::filesystem::path& filepath):
 }
 
 Arcadia::ModelComponent::ModelComponent(const nlohmann::json& json):
-    _Filepath(Arcadia::ToFilepath(json.at("filepath"))),
-    Location(Arcadia::Vec3::FromJson(json.at("location"))),
-    Rotation(Arcadia::Quat::FromJson(json.at("rotation"))),
-    Scale(Arcadia::Vec3::FromJson(json.at("scale"))),
-    Pivot(Arcadia::Vec3::FromJson(json.at("pivot")))
+    _Filepath(Arcadia::ToFilepath(json.at("filepath")))
 {
     if(!_Filepath.empty())
     {
@@ -36,36 +32,18 @@ Arcadia::ModelComponent::ModelComponent(const nlohmann::json& json):
 auto Arcadia::ModelComponent::ToJson() const -> nlohmann::json
 {
     nlohmann::json json{
-        {"filepath", _Filepath.generic_string() },
-        {"location",Arcadia::Vec3::ToJson(Location)},
-        {"rotation",Arcadia::Quat::ToJson(Rotation)},
-        {"scale"   ,Arcadia::Vec3::ToJson(Scale)},
-        {"pivot"   ,Arcadia::Vec3::ToJson(Pivot)}
+        {"filepath", _Filepath.generic_string() }
     };
     return json;
 }
 
 auto Arcadia::ModelComponent::OnSnapshot() const -> std::shared_ptr<Arcadia::MementoDataBase>
 {
-    auto sp_memento_data = std::make_shared<Arcadia::ModelComponentMementoData>();
-
-    sp_memento_data->Location = Location;
-    sp_memento_data->Rotation = Rotation;
-    sp_memento_data->Scale    = Scale;
-    sp_memento_data->Pivot    = Pivot;
-
-    return sp_memento_data;
+    return nullptr;
 }
 
 void Arcadia::ModelComponent::OnRestore(const std::shared_ptr<Arcadia::MementoDataBase>& sp_memento_data)
-{
-    auto& memento_data = sp_memento_data->As<Arcadia::ModelComponentMementoData>();
-
-    Location = memento_data.Location;
-    Rotation = memento_data.Rotation;
-    Scale = memento_data.Scale;
-    Pivot = memento_data.Pivot;
-}
+{}
 
 auto Arcadia::ModelComponent::GetFilepath() const -> const std::filesystem::path&
 {

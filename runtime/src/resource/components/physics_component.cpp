@@ -51,9 +51,7 @@ Arcadia::PhysicsComponent::PhysicsComponent(const nlohmann::json& json):
         }
         );
 
-        BuildIdentifiableJphBodyInfoInitial(
-            Arcadia::Vec3::FromJson(json_body_info_initial.at("position")),
-            Arcadia::Quat::FromJson(json_body_info_initial.at("rotation")),
+        BuildIdentifiableJphBodyInfo(
             JPH::EMotionType{ json_body_info_initial.at("jph_motion_type") },
             JPH::ObjectLayer{ json_body_info_initial.at("jph_object_layer") },
             shape_info
@@ -67,7 +65,7 @@ auto Arcadia::PhysicsComponent::ToJson() const -> nlohmann::json
     nlohmann::json json_body_info_initial{};
     if(HasBodyInfo())
     {
-        const auto& [Uuid, body_info] = GetIdentifiableJphBodyInfoInitial();
+        const auto& [uuid, body_info] = GetIdentifiableJphBodyInfo();
         auto json_shape_info = Arcadia::Match<nlohmann::json>(
             body_info.JphShapeInfo,
             [&](const Arcadia::JphBoxShapeInfo& info)
@@ -118,8 +116,6 @@ auto Arcadia::PhysicsComponent::ToJson() const -> nlohmann::json
         }
         );
         json_body_info_initial = nlohmann::json{
-            {"position",Arcadia::Vec3::ToJson(body_info.Position)},
-            {"rotation",Arcadia::Quat::ToJson(body_info.Rotation)},
             {"jph_motion_type", Arcadia::ToUnderlying(body_info.JphMotionType)},
             {"jph_object_layer",body_info.JphObjectLayer},
             {"jph_shape_info",json_shape_info}
@@ -154,63 +150,28 @@ void Arcadia::PhysicsComponent::OnRestore(const std::shared_ptr<MementoDataBase>
 
 auto Arcadia::PhysicsComponent::HasBodyInfo() const -> bool
 {
-    return _upIdentifiableJphBodyInfoInitial.get();
+    return !!_IdentifiableJphBodyInfo;
 }
 
-auto Arcadia::PhysicsComponent::GetIdentifiableJphBodyInfoInitial() const -> const identifiable_jph_body_info_initial_type&
+auto Arcadia::PhysicsComponent::GetIdentifiableJphBodyInfo() const -> const identifiable_jph_body_info_type&
 {
     ARCADIA_ASSERT(HasBodyInfo());
-    return *_upIdentifiableJphBodyInfoInitial;
+    return *_IdentifiableJphBodyInfo;
 }
 
-auto Arcadia::PhysicsComponent::GetJphBodyInfoOngoing() const -> const Arcadia::JphBodyInfoOngoing&
-{
-    ARCADIA_ASSERT(HasBodyInfo());
-    return *_upJphBodyInfoOngoing;
-}
-
-auto Arcadia::PhysicsComponent::GetJphBodyInfoOngoing() -> Arcadia::JphBodyInfoOngoing&
-{
-    ARCADIA_ASSERT(HasBodyInfo());
-    return *_upJphBodyInfoOngoing;
-}
-
-void Arcadia::PhysicsComponent::BuildIdentifiableJphBodyInfoInitial(
-    const glm::vec3& position,
-    const glm::quat& rotation,
+void Arcadia::PhysicsComponent::BuildIdentifiableJphBodyInfo(
     JPH::EMotionType jph_motion_type,
     JPH::ObjectLayer jph_object_layer,
     const Arcadia::JphShapeInfo& jph_shape_info
 )
 {
-    _upIdentifiableJphBodyInfoInitial = std::make_unique<identifiable_jph_body_info_initial_type>(
-        position,
-        rotation,
-        jph_motion_type,
-        jph_object_layer,
-        jph_shape_info
-    );
-
-    _upJphBodyInfoOngoing = std::make_unique<Arcadia::JphBodyInfoOngoing>(
-        false,
-        position,
-        rotation,
-        Arcadia::Vec3::Zero(),
-        Arcadia::Vec3::Zero()
-    );
+    BuildIdentifiableJphBodyInfo({ jph_motion_type,jph_object_layer,jph_shape_info });
 }
 
-void Arcadia::PhysicsComponent::BuildIdentifiableJphBodyInfoInitial(const Arcadia::JphBodyInfoInitial& jph_body_info_initial)
+void Arcadia::PhysicsComponent::BuildIdentifiableJphBodyInfo(const Arcadia::JphBodyInfo& jph_body_info_initial)
 {
-    _upIdentifiableJphBodyInfoInitial = std::make_unique<identifiable_jph_body_info_initial_type>(
+    _IdentifiableJphBodyInfo = std::make_unique<identifiable_jph_body_info_type>(
         jph_body_info_initial
     );
 
-    _upJphBodyInfoOngoing = std::make_unique<Arcadia::JphBodyInfoOngoing>(
-        false,
-        jph_body_info_initial.Position,
-        jph_body_info_initial.Rotation,
-        Arcadia::Vec3::Zero(),
-        Arcadia::Vec3::Zero()
-    );
 }

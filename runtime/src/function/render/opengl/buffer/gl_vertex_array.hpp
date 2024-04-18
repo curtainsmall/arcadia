@@ -6,7 +6,7 @@
 #include"function/render/opengl/buffer/gl_index_buffer.hpp"
 #include"function/render/opengl/buffer/gl_vertex_buffer.hpp"
 #include"platform/opengl/opengl_header.hpp"
-#include"resource/component/model_component/mesh/mesh.hpp"
+#include"resource/mesh/mesh.hpp"
 
 namespace Arcadia
 {

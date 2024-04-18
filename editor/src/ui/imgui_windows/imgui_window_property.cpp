@@ -811,12 +811,6 @@ auto Arcadia::ImguiWindowPropertyModelComponent::operator()(Arcadia::ModelCompon
 {
     std::string description{};
     ImGui::BeginGroup();
-    const float speed = 1.f;
-    const float min = .0f;
-    const float max = .0f;
-    const char* format = "%.3f";
-    const auto flags =
-        ImGuiSliderFlags_AlwaysClamp;
 
     ImGui::SeparatorText("Filepath");
     auto filepath_str = model_comp.GetFilepath().empty()
@@ -829,64 +823,6 @@ auto Arcadia::ImguiWindowPropertyModelComponent::operator()(Arcadia::ModelCompon
             "Import Model"
         }.result();
         model_comp.Import(res.size() ? res.at(0) : ""s);
-    }
-
-    ImGui::SeparatorText("Transform");
-    ImGui::NewLine();
-    if(Arcadia::ImguiWrapper::DragVec3(
-        "Location",
-        model_comp.Location,
-        speed,
-        min,
-        max,
-        format,
-        flags
-    ))
-    {
-        description = "Location";
-    }
-
-    ImGui::NewLine();
-    float rotation_drag_speed{ .05f };
-    if(Arcadia::ImguiWrapper::DragQuatNormalized(
-        "Rotation",
-        model_comp.Rotation,
-        rotation_drag_speed,
-        min,
-        max,
-        format,
-        flags
-    ))
-    {
-        description = "Rotation";
-    }
-
-    ImGui::NewLine();
-    if(Arcadia::ImguiWrapper::DragVec3(
-        "Scale",
-        model_comp.Scale,
-        speed,
-        min,
-        max,
-        format,
-        flags
-    ))
-    {
-        description = "Scale";
-    }
-
-    ImGui::NewLine();
-    if(Arcadia::ImguiWrapper::DragVec3(
-        "Pivot",
-        model_comp.Pivot,
-        speed,
-        min,
-        max,
-        format,
-        flags
-    ))
-    {
-        description = "Pivot";
     }
 
     ImGui::EndGroup();
@@ -918,25 +854,10 @@ void Arcadia::ImguiWindowPopupPhysicsComponentCreateBody::operator()(Arcadia::Ph
         auto slider_flags =
             ImGuiSliderFlags_AlwaysClamp;
 
-        // Position
-        auto pos = _TempJphBodyInfoInitial.Position;
-        Arcadia::ImguiWrapper::DragVec3("Position", pos, speed, min, max, format, slider_flags);
-        _TempJphBodyInfoInitial.Position = pos;
-
-        // Rotation
-        ImGui::NewLine();
-        auto rot = _TempJphBodyInfoInitial.Rotation;
-        float
-            rot_speed = .05f,
-            rot_min = -1.f,
-            rot_max = 1.f;
-        Arcadia::ImguiWrapper::DragQuatNormalized("Rotation", rot, rot_speed, rot_min, rot_max, format, slider_flags);
-        _TempJphBodyInfoInitial.Rotation = rot;
-
         // Motion type
         ImGui::NewLine();
         auto jph_motion_type_preview = Arcadia::Match<std::string>(
-            _TempJphBodyInfoInitial.JphMotionType,
+            _TempJphBodyInfo.JphMotionType,
             JPH::EMotionType::Static,
             "Static"s,
             JPH::EMotionType::Dynamic,
@@ -950,22 +871,22 @@ void Arcadia::ImguiWindowPopupPhysicsComponentCreateBody::operator()(Arcadia::Ph
         {
             if(ImGui::Selectable("Static"))
             {
-                _TempJphBodyInfoInitial.JphMotionType = JPH::EMotionType::Static;
+                _TempJphBodyInfo.JphMotionType = JPH::EMotionType::Static;
             }
             if(ImGui::Selectable("Dynamic"))
             {
-                _TempJphBodyInfoInitial.JphMotionType = JPH::EMotionType::Dynamic;
+                _TempJphBodyInfo.JphMotionType = JPH::EMotionType::Dynamic;
             }
             if(ImGui::Selectable("Kinematic"))
             {
-                _TempJphBodyInfoInitial.JphMotionType = JPH::EMotionType::Kinematic;
+                _TempJphBodyInfo.JphMotionType = JPH::EMotionType::Kinematic;
             }
             ImGui::EndCombo();
         }
 
         // Object layer
         auto jph_object_layer_preview = Arcadia::Match<std::string>(
-            _TempJphBodyInfoInitial.JphObjectLayer,
+            _TempJphBodyInfo.JphObjectLayer,
             Arcadia::JphObjectLayers::NonMoving,
             "Non Moving",
             Arcadia::JphObjectLayers::Moving,
@@ -977,18 +898,18 @@ void Arcadia::ImguiWindowPopupPhysicsComponentCreateBody::operator()(Arcadia::Ph
         {
             if(ImGui::Selectable("Non Moving"))
             {
-                _TempJphBodyInfoInitial.JphObjectLayer = Arcadia::JphObjectLayers::NonMoving;
+                _TempJphBodyInfo.JphObjectLayer = Arcadia::JphObjectLayers::NonMoving;
             }
             if(ImGui::Selectable("Moving"))
             {
-                _TempJphBodyInfoInitial.JphObjectLayer = Arcadia::JphObjectLayers::Moving;
+                _TempJphBodyInfo.JphObjectLayer = Arcadia::JphObjectLayers::Moving;
             }
             ImGui::EndCombo();
         }
 
         //Shape
-        _TempJphBodyInfoInitial.JphShapeInfo = Arcadia::Match<Arcadia::JphShapeInfo>(
-            _TempJphBodyInfoInitial.JphShapeInfo,
+        _TempJphBodyInfo.JphShapeInfo = Arcadia::Match<Arcadia::JphShapeInfo>(
+            _TempJphBodyInfo.JphShapeInfo,
             [&](Arcadia::JphBoxShapeInfo& info) -> Arcadia::JphShapeInfo
         {
             ImGui::Text("  Shape Type");
@@ -1034,7 +955,7 @@ void Arcadia::ImguiWindowPopupPhysicsComponentCreateBody::operator()(Arcadia::Ph
             auto convex_radius_max = std::min({ half_extent_x, half_extent_y, half_extent_z });
             ImGui::Text("Convex Radius"); ImGui::SameLine(); ImGui::DragFloat("##convex_radius", &info.ConvexRadius, speed, convex_radius_min, convex_radius_max, format, slider_flags);
 
-            return _TempJphBodyInfoInitial.JphShapeInfo;
+            return _TempJphBodyInfo.JphShapeInfo;
         },
             [&](Arcadia::JphCapsuleShapeInfo& info) -> Arcadia::JphShapeInfo
         {
@@ -1072,7 +993,7 @@ void Arcadia::ImguiWindowPopupPhysicsComponentCreateBody::operator()(Arcadia::Ph
             auto half_height_of_cylinder_max = (std::numeric_limits<float>::max)();
             ImGui::Text("Half Height of Cylinder"); ImGui::SameLine(); ImGui::DragFloat("##half_height_of_cylinder", &info.HalfHeightOfCylinder, speed, half_height_of_cylinder_min, half_height_of_cylinder_max, format, slider_flags);
 
-            return _TempJphBodyInfoInitial.JphShapeInfo;
+            return _TempJphBodyInfo.JphShapeInfo;
         },
             [&](Arcadia::JphCylinderShapeInfo& info) -> Arcadia::JphShapeInfo
         {
@@ -1115,7 +1036,7 @@ void Arcadia::ImguiWindowPopupPhysicsComponentCreateBody::operator()(Arcadia::Ph
             auto convex_radius_max = (std::numeric_limits<float>::max)();
             ImGui::Text("Convex Radius"); ImGui::SameLine(); ImGui::DragFloat("##convex_radius", &info.ConvexRadius, speed, convex_radius_min, convex_radius_max, format, slider_flags);
 
-            return _TempJphBodyInfoInitial.JphShapeInfo;
+            return _TempJphBodyInfo.JphShapeInfo;
         },
             [&](Arcadia::JphSphereShapeInfo& info) -> Arcadia::JphShapeInfo
         {
@@ -1148,7 +1069,7 @@ void Arcadia::ImguiWindowPopupPhysicsComponentCreateBody::operator()(Arcadia::Ph
             auto radius_max = (std::numeric_limits<float>::max)();
             ImGui::Text("   Radius"); ImGui::SameLine(); ImGui::DragFloat("##radius", &info.Radius, speed, radius_min, radius_max, format, slider_flags);
 
-            return _TempJphBodyInfoInitial.JphShapeInfo;
+            return _TempJphBodyInfo.JphShapeInfo;
         }
         );
 
@@ -1156,8 +1077,8 @@ void Arcadia::ImguiWindowPopupPhysicsComponentCreateBody::operator()(Arcadia::Ph
         auto confirmed = ImGui::Button("Confirm");
         if(confirmed)
         {
-            physics_comp.BuildIdentifiableJphBodyInfoInitial(
-                _TempJphBodyInfoInitial
+            physics_comp.BuildIdentifiableJphBodyInfo(
+                _TempJphBodyInfo
             );
 
         }
@@ -1166,7 +1087,7 @@ void Arcadia::ImguiWindowPopupPhysicsComponentCreateBody::operator()(Arcadia::Ph
         {
             ImGui::CloseCurrentPopup();
             Open = false;
-            _TempJphBodyInfoInitial = Arcadia::JphBodyInfoInitial{};
+            _TempJphBodyInfo = Arcadia::JphBodyInfo{};
         }
 
         ImGui::EndPopup();
@@ -1186,14 +1107,9 @@ auto Arcadia::ImguiWindowPropertyPhysicsComponent::operator()(Arcadia::PhysicsCo
         {
             if(physics_comp.HasBodyInfo())
             {
-                const auto& [uuid, jph_body_info_initial] = physics_comp.GetIdentifiableJphBodyInfoInitial();
+                const auto& [uuid, jph_body_info_initial] = physics_comp.GetIdentifiableJphBodyInfo();
 
                 ImGui::SeparatorText("Initial");
-
-                Arcadia::ImguiWrapper::TextVec3("Position", jph_body_info_initial.Position);
-
-                ImGui::NewLine();
-                Arcadia::ImguiWrapper::TextQuat("Rotation", jph_body_info_initial.Rotation);
 
                 ImGui::NewLine();
                 ImGui::Text(std::format(
@@ -1221,20 +1137,14 @@ auto Arcadia::ImguiWindowPropertyPhysicsComponent::operator()(Arcadia::PhysicsCo
 
                 ImGui::SeparatorText("Ongoing");
 
-                const auto& jph_body_info_ongoing = physics_comp.GetJphBodyInfoOngoing();
-                ImGui::Text(std::format("Active: {}", jph_body_info_ongoing.Active).c_str());
+                const auto& jph_body_state = physics_comp.JphBodyState;
+                ImGui::Text(std::format("Active: {}", jph_body_state.Active).c_str());
 
                 ImGui::NewLine();
-                Arcadia::ImguiWrapper::TextVec3("Position", jph_body_info_ongoing.Position);
+                Arcadia::ImguiWrapper::TextVec3("Linear Velocity", jph_body_state.LinearVelocity);
 
                 ImGui::NewLine();
-                Arcadia::ImguiWrapper::TextQuat("Rotation", jph_body_info_ongoing.Rotation);
-
-                ImGui::NewLine();
-                Arcadia::ImguiWrapper::TextVec3("Linear Velocity", jph_body_info_ongoing.LinearVelocity);
-
-                ImGui::NewLine();
-                Arcadia::ImguiWrapper::TextVec3("Angular Velocity", jph_body_info_ongoing.AngularVelocity);
+                Arcadia::ImguiWrapper::TextVec3("Angular Velocity", jph_body_state.AngularVelocity);
 
                 Arcadia::Match<void>(
                     jph_body_info_initial.JphShapeInfo,
@@ -1308,6 +1218,81 @@ auto Arcadia::ImguiWindowPropertyPhysicsComponent::operator()(Arcadia::PhysicsCo
     return description;
 }
 
+auto Arcadia::ImguiWindowPropertyTransformComponent::operator()(Arcadia::TransformComponent transform_comp) -> std::string
+{
+    std::string description{};
+    ImGui::BeginGroup();
+
+    const float speed = 1.f;
+    const float min = .0f;
+    const float max = .0f;
+    const char* format = "%.3f";
+    const auto flags =
+        ImGuiSliderFlags_AlwaysClamp;
+
+    ImGui::SeparatorText("Transform");
+    ImGui::NewLine();
+    if(Arcadia::ImguiWrapper::DragVec3(
+        "Position",
+        transform_comp.Position,
+        speed,
+        min,
+        max,
+        format,
+        flags
+    ))
+    {
+        description = "Position";
+    }
+
+    ImGui::NewLine();
+    float rotation_drag_speed{ .05f };
+    if(Arcadia::ImguiWrapper::DragQuatNormalized(
+        "Rotation",
+        transform_comp.Rotation,
+        rotation_drag_speed,
+        min,
+        max,
+        format,
+        flags
+    ))
+    {
+        description = "Rotation";
+    }
+
+    ImGui::NewLine();
+    if(Arcadia::ImguiWrapper::DragVec3(
+        "Scale",
+        transform_comp.Scale,
+        speed,
+        min,
+        max,
+        format,
+        flags
+    ))
+    {
+        description = "Scale";
+    }
+
+    ImGui::NewLine();
+    if(Arcadia::ImguiWrapper::DragVec3(
+        "Pivot",
+        transform_comp.Pivot,
+        speed,
+        min,
+        max,
+        format,
+        flags
+    ))
+    {
+        description = "Pivot";
+    }
+
+    ImGui::EndGroup();
+
+    return description;
+}
+
 void Arcadia::ImguiWindowProperty::OnEvent(Arcadia::EventBase& event)
 {
     Arcadia::EventDispatcher{ event }
@@ -1316,20 +1301,25 @@ void Arcadia::ImguiWindowProperty::OnEvent(Arcadia::EventBase& event)
         .Dispatch<Arcadia::Event::SceneDeactivated>(ARCADIA_BIND_MEMBER_FN(_OnSceneDeactivated))
         .Dispatch<Arcadia::Event::SelectEntity>(ARCADIA_BIND_MEMBER_FN(_OnSelectEntity))
         .Dispatch<Arcadia::Event::DeleteEntity>(ARCADIA_BIND_MEMBER_FN(_OnDeleteEntity))
-        .Dispatch<Arcadia::Event::PhysicsSimulatorBuilt>(ARCADIA_BIND_MEMBER_FN(_OnPhysicsSimualtorBuilt))
-        .Dispatch<Arcadia::Event::PhysicsSimulatorUnbuilt>(ARCADIA_BIND_MEMBER_FN(_OnPhysicsSimulatorUnbuilt))
         .Result();
 }
 
 void Arcadia::ImguiWindowProperty::OnUpdate()
 {
-    if(!_open)
+    if(!_Open)
     {
         return;
     }
 
-    auto imgui_title = _Scene && _SelectedEntity != entt::null
-        ? _Title + " - " + _Scene->GetNameOfEntity(_SelectedEntity) + GetIdStr()
+    auto scene = _Scene.lock();
+
+    if(scene)
+    {
+        int i = 0;
+    }
+
+    auto imgui_title = scene && !_SelectedEntityName.empty()
+        ? _Title + " - " + _SelectedEntityName + GetIdStr()
         : _Title + GetIdStr();
 
     ImGui::SetNextWindowSize(glm::vec2{ 1024,768 }, ImGuiCond_Once);
@@ -1337,7 +1327,7 @@ void Arcadia::ImguiWindowProperty::OnUpdate()
         ImGuiWindowFlags_NoCollapse;
     if(ImGui::Begin(imgui_title.c_str(), &_Open, window_flags))
     {
-        if(!_Scene)
+        if(!scene)
         {
             ImGui::Text("(No scene selected)");
         }
@@ -1349,70 +1339,70 @@ void Arcadia::ImguiWindowProperty::OnUpdate()
                 | ImGuiTabBarFlags_AutoSelectNewTabs
                 | ImGuiTabBarFlags_FittingPolicyScroll
                 | ImGuiTabBarFlags_Reorderable;
-            if(_SelectedEntity != entt::null && ImGui::BeginTabBar("##component_name", tab_bar_flags))
+            if(!_SelectedEntityName.empty() && ImGui::BeginTabBar("##component_name", tab_bar_flags))
             {
                 ImGui::PushItemWidth(200.f);
 
                 auto& memento_list = Arcadia::MementoList::Instance();
-                if(_contains_component<Arcadia::CameraComponent>(_SelectedEntity) && ImGui::BeginTabItem("Camera"))
+                if(_contains_component<Arcadia::CameraComponent>(_SelectedEntityName) && ImGui::BeginTabItem("Camera"))
                 {
-                    auto description = _imgui_window_property_camera_component(_get_component<Arcadia::CameraComponent>(_SelectedEntity));
+                    auto description = _ImguiWindowPropertyCameraComponent(_get_component<Arcadia::CameraComponent>(_SelectedEntityName));
                     if(!description.empty())
                     {
                         memento_list
                             .Snapshot<Arcadia::CameraComponent>(
                                 std::format("Camera - {}", description),
-                                [&, entity_name = _Scene->GetNameOfEntity(_SelectedEntity), scene = _Scene]() -> Arcadia::CameraComponent&
+                                [&, _entity_name = _SelectedEntityName]() -> Arcadia::CameraComponent&
                         {
-                            return _get_component<Arcadia::CameraComponent>(scene->GetEntityOfName(entity_name));
+                            return _get_component<Arcadia::CameraComponent>(_entity_name);
                         }
                         );
                     }
                     ImGui::EndTabItem();
                 }
-                if(_contains_component<Arcadia::LightComponent>(_SelectedEntity) && ImGui::BeginTabItem("Light"))
+                if(_contains_component<Arcadia::LightComponent>(_SelectedEntityName) && ImGui::BeginTabItem("Light"))
                 {
-                    auto description = _imgui_window_property_light_component(_get_component<Arcadia::LightComponent>(_SelectedEntity));
+                    auto description = _ImguiWindowPropertyLightComponent(_get_component<Arcadia::LightComponent>(_SelectedEntityName));
                     if(!description.empty())
                     {
                         memento_list
                             .Snapshot<Arcadia::LightComponent>(
                                 std::format("Light - {}", description),
-                                [&, entity_name = _Scene->GetNameOfEntity(_SelectedEntity), scene = _Scene]() -> Arcadia::LightComponent&
+                                [&, _entity_name = _SelectedEntityName]() -> Arcadia::LightComponent&
                         {
-                            return _get_component<Arcadia::LightComponent>(scene->GetEntityOfName(entity_name));
+                            return _get_component<Arcadia::LightComponent>(_entity_name);
                         }
                         );
                     }
                     ImGui::EndTabItem();
                 }
-                if(_contains_component<Arcadia::ModelComponent>(_SelectedEntity) && ImGui::BeginTabItem("Model"))
+                if(_contains_component<Arcadia::ModelComponent>(_SelectedEntityName) && ImGui::BeginTabItem("Model"))
                 {
-                    auto description = _imgui_window_property_model_component(_get_component<Arcadia::ModelComponent>(_SelectedEntity));
+                    auto description = _ImguiWindowPropertyModelComponent(_get_component<Arcadia::ModelComponent>(_SelectedEntityName));
                     if(!description.empty())
                     {
                         memento_list
                             .Snapshot<Arcadia::ModelComponent>(
                                 std::format("Model - {}", description),
-                                [&, entity_name = _Scene->GetNameOfEntity(_SelectedEntity), scene = _Scene]() -> Arcadia::ModelComponent&
+                                [&, _entity_name = _SelectedEntityName]() -> Arcadia::ModelComponent&
                         {
-                            return _get_component<Arcadia::ModelComponent>(scene->GetEntityOfName(entity_name));
+                            return _get_component<Arcadia::ModelComponent>(_entity_name);
                         }
                         );
                     }
                     ImGui::EndTabItem();
                 }
-                if(_contains_component<Arcadia::PhysicsComponent>(_SelectedEntity) && ImGui::BeginTabItem("Physics"))
+                if(_contains_component<Arcadia::PhysicsComponent>(_SelectedEntityName) && ImGui::BeginTabItem("Physics"))
                 {
-                    auto description = _imgui_window_property_physics_component(_get_component<Arcadia::PhysicsComponent>(_SelectedEntity));
+                    auto description = _ImguiWindowPropertyPhysicsComponent(_get_component<Arcadia::PhysicsComponent>(_SelectedEntityName));
                     if(!description.empty())
                     {
                         memento_list
                             .Snapshot<Arcadia::PhysicsComponent>(
                                 std::format("Physics - {}", description),
-                                [&, entity_name = _Scene->GetNameOfEntity(_SelectedEntity), scene = _Scene]() -> Arcadia::PhysicsComponent&
+                                [&, _entity_name = _SelectedEntityName]() -> Arcadia::PhysicsComponent&
                         {
-                            return _get_component<Arcadia::PhysicsComponent>(scene->GetEntityOfName(entity_name));
+                            return _get_component<Arcadia::PhysicsComponent>(_entity_name);
                         }
                         );
                     }
@@ -1448,33 +1438,22 @@ void Arcadia::ImguiWindowProperty::_OnSceneActivated(Arcadia::Event::SceneActiva
 void Arcadia::ImguiWindowProperty::_OnSceneDeactivated(Arcadia::Event::SceneDeactivated& e)
 {
     _Scene.reset();
-    _SelectedEntity = entt::null;
+    _SelectedEntityName.clear();
 }
 
 void Arcadia::ImguiWindowProperty::_OnSelectEntity(Arcadia::Event::SelectEntity& e)
 {
-    const auto& [entity] = e.data_tuple;
-    _SelectedEntity = entity;
+    const auto& [entity_name] = e.data_tuple;
+    _SelectedEntityName = entity_name;
 }
 
 void Arcadia::ImguiWindowProperty::_OnDeleteEntity(Arcadia::Event::DeleteEntity& e)
 {
     const auto& [entity] = e.data_tuple;
-    if(_SelectedEntity == entity)
+    if(_SelectedEntityName == entity)
     {
-        _SelectedEntity = entt::null;
+        _SelectedEntityName.clear();
     }
-}
-
-void Arcadia::ImguiWindowProperty::_OnPhysicsSimualtorBuilt(Arcadia::Event::PhysicsSimulatorBuilt& e)
-{
-    const auto& [physics_simulator] = e.data_tuple;
-    _PhysicsSimulator = physics_simulator;
-}
-
-void Arcadia::ImguiWindowProperty::_OnPhysicsSimulatorUnbuilt(Arcadia::Event::PhysicsSimulatorUnbuilt& e)
-{
-    _PhysicsSimulator.reset();
 }
 
 

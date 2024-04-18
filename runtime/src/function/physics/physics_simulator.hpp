@@ -6,7 +6,7 @@
 
 #include"core/base.hpp"
 #include"platform/jolt/jolt_header.hpp"
-#include"resource/component/physics_component/physics_component.hpp"
+#include"resource/scene.hpp"
 
 namespace Arcadia
 {
@@ -73,18 +73,22 @@ namespace Arcadia
         /// @note This function can only be called when the physics simulator is in build
         void Finalize();
 
-        /// @brief Submit a physics component to the physics simulator
+        /// @brief Submit a entity to the physics simulator
+        /// @param name Entity to submit
+        /// @note Entity that does not have physics component will be ignored
         /// @note This function can only be called when the physics simulator is in build
-        void Submit(const Arcadia::PhysicsComponent& physics_comp);
+        void Submit(const Arcadia::Scene& scene, const std::string& name);
 
         /// @brief Update physcis simulator for one step
         /// @note This function can only be called when the physics simulator is not in build
         void Update();
 
-        /// @brief Quary the updated data of the physics component from the physcis simulator
-        /// @throw unkonwn_physics_component if the physics component was not submitted before quary
+        /// @brief Query the updated data of the physics component from the physcis simulator
+        /// @param name Entity to quary
+        /// @throw UnknownPhysicsComponent if the physics component was not submitted before quary
+        /// @note Entity that does not have physics component will be ignored
         /// @note This function can only be called when the physics simulator is not in build
-        void Quary(PhysicsComponent& physics_comp);
+        void Query(Arcadia::Scene& scene, const std::string& name);
 
         /// @brief Reset the physics simulator, all caches will be cleared
         void Reset();
@@ -102,7 +106,7 @@ namespace Arcadia
         void SetJphPhysicsSystemUpdatesPerSecond(int jph_physics_system_updates_per_second);
 
         [[nodiscard]]
-        auto GetJphBodyIdUmap() const -> const jph_body_id_storage_type&;
+        auto GetJphBodyIdStorage() const -> const jph_body_id_storage_type&;
 
     private:
         void _AssertFrameInBuild() const;

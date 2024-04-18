@@ -1,8 +1,8 @@
 #pragma once
 
 #include"core/base.hpp"
-#include"resource/component/component.hpp"
-#include"resource/component/skybox_component/cubemap.hpp"
+#include"resource/components/component_interface.hpp"
+#include"resource/cubemap.hpp"
 
 namespace Arcadia
 {

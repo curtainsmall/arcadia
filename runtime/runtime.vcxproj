@@ -187,21 +187,22 @@
     <ClInclude Include="src\function\ui\imgui_window.hpp" />
     <ClInclude Include="src\function\window\window_events.hpp" />
     <ClInclude Include="src\platform\opengl\opengl_header.hpp" />
-    <ClInclude Include="src\resource\component\camera_component\camera_component.hpp" />
-    <ClInclude Include="src\resource\component\component.hpp" />
-    <ClInclude Include="src\resource\component\light_component\light_component.hpp" />
-    <ClInclude Include="src\resource\component\model_component\mesh\vertex.hpp" />
-    <ClInclude Include="src\resource\component\model_component\model_component.hpp" />
+    <ClInclude Include="src\resource\components\camera_component.hpp" />
+    <ClInclude Include="src\resource\components\component_interface.hpp" />
+    <ClInclude Include="src\resource\components\light_component.hpp" />
+    <ClInclude Include="src\resource\mesh\vertex.hpp" />
+    <ClInclude Include="src\resource\components\model_component.hpp" />
     <ClInclude Include="src\platform\jolt\jolt_header.hpp" />
-    <ClInclude Include="src\resource\component\physics_component\physics_component.hpp" />
-    <ClInclude Include="src\resource\component\skybox_component\cubemap.hpp" />
-    <ClInclude Include="src\resource\component\model_component\material\material.hpp" />
-    <ClInclude Include="src\resource\component\model_component\material\texture2d.hpp" />
-    <ClInclude Include="src\resource\component\model_component\mesh\mesh.hpp" />
-    <ClInclude Include="src\resource\component\skybox_component\skybox_component.hpp" />
+    <ClInclude Include="src\resource\components\physics_component.hpp" />
+    <ClInclude Include="src\resource\cubemap.hpp" />
+    <ClInclude Include="src\resource\material\material.hpp" />
+    <ClInclude Include="src\resource\material\texture2d.hpp" />
+    <ClInclude Include="src\resource\mesh\mesh.hpp" />
+    <ClInclude Include="src\resource\components\skybox_component.hpp" />
+    <ClInclude Include="src\resource\components\transform_component.hpp" />
     <ClInclude Include="src\resource\fonts\IconsFontAwesome5.h" />
     <ClInclude Include="src\resource\fonts\icon_header.hpp" />
-    <ClInclude Include="src\resource\scene\entt_header.hpp" />
+    <ClInclude Include="src\resource\entt_header.hpp" />
     <ClInclude Include="src\function\render\renderer.hpp" />
     <ClInclude Include="src\platform\graphic_api\graphic_api.hpp" />
     <ClInclude Include="src\core\layer\layer.hpp" />
@@ -225,7 +226,7 @@
     <ClInclude Include="src\core\entry_point.hpp" />
     <ClInclude Include="src\platform\base.hpp" />
     <ClInclude Include="src\platform\plateform_detection.hpp" />
-    <ClInclude Include="src\resource\scene\scene.hpp" />
+    <ClInclude Include="src\resource\scene.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\core\app\app_context.cpp" />
@@ -262,13 +263,14 @@
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch.hpp</PrecompiledHeaderFile>
     </ClCompile>
     <ClCompile Include="src\platform\opengl\opengl_header.cpp" />
-    <ClCompile Include="src\resource\component\camera_component\camera_component.cpp" />
-    <ClCompile Include="src\resource\component\light_component\light_component.cpp" />
-    <ClCompile Include="src\resource\component\model_component\material\texture2d.cpp" />
-    <ClCompile Include="src\resource\component\model_component\mesh\mesh.cpp" />
-    <ClCompile Include="src\resource\component\model_component\model_component.cpp" />
-    <ClCompile Include="src\resource\component\physics_component\physics_component.cpp" />
-    <ClCompile Include="src\resource\scene\scene.cpp" />
+    <ClCompile Include="src\resource\components\camera_component.cpp" />
+    <ClCompile Include="src\resource\components\light_component.cpp" />
+    <ClCompile Include="src\resource\material\texture2d.cpp" />
+    <ClCompile Include="src\resource\mesh\mesh.cpp" />
+    <ClCompile Include="src\resource\components\model_component.cpp" />
+    <ClCompile Include="src\resource\components\physics_component.cpp" />
+    <ClCompile Include="src\resource\components\transform_component.cpp" />
+    <ClCompile Include="src\resource\scene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\core\string.hpp" />

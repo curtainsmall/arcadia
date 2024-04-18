@@ -9,12 +9,13 @@
 #include"function/physics/physics_simulator.hpp"
 #include"function/ui/imgui_window.hpp"
 #include"platform/jolt/jolt_header.hpp"
-#include"resource/component/camera_component/camera_component.hpp"
-#include"resource/component/light_component/light_component.hpp"
-#include"resource/component/model_component/model_component.hpp"
-#include"resource/component/physics_component/physics_component.hpp"
-#include"resource/component/skybox_component/skybox_component.hpp"
-#include"resource/scene/scene.hpp"
+#include"resource/components/camera_component.hpp"
+#include"resource/components/light_component.hpp"
+#include"resource/components/model_component.hpp"
+#include"resource/components/physics_component.hpp"
+#include"resource/components/skybox_component.hpp"
+#include"resource/components/transform_component.hpp"
+#include"resource/scene.hpp"
 
 #include"project/project_events.hpp"
 #include"ui/ui_events.hpp"
@@ -54,7 +55,7 @@ namespace Arcadia
     public:
         bool Open{ false };
     private:
-        Arcadia::JphBodyInfoInitial _TempJphBodyInfoInitial{};
+        Arcadia::JphBodyInfo _TempJphBodyInfo{};
     };
 
     struct ARCADIA_API ImguiWindowPropertyPhysicsComponent
@@ -65,6 +66,14 @@ namespace Arcadia
         auto operator()(Arcadia::PhysicsComponent& physics_comp)->std::string;
     private:
         Arcadia::ImguiWindowPopupPhysicsComponentCreateBody _imgui_window_popup_physics_component_create_body{};
+    };
+
+    struct ARCADIA_API ImguiWindowPropertyTransformComponent
+    {
+    public:
+        using self_type = ImguiWindowPropertyTransformComponent;
+    public:
+        auto operator()(Arcadia::TransformComponent transform_comp)->std::string;
     };
 
     struct ARCADIA_API ImguiWindowProperty: Arcadia::iImguiWindow
@@ -86,19 +95,21 @@ namespace Arcadia
         virtual void OnUpdate() override;
     private:
         template<Arcadia::cComponent Component>
-        auto _contains_component(const entt::entity entity) -> bool
+        auto _contains_component(const std::string& name) -> bool
         {
-            ARCADIA_ASSERT(_Scene);
+            auto scene = _Scene.lock();
+            ARCADIA_ASSERT(scene);
 
-            return _Scene->AllOf<Component>(entity);
+            return scene->AllOf<Component>(name);
         }
         template<Arcadia::cComponent Component>
-        auto _get_component(const entt::entity entity) -> Component&
+        auto _get_component(const std::string& name) -> Component&
         {
-            ARCADIA_ASSERT(_Scene);
-            ARCADIA_ASSERT(_contains_component<Component>(entity));
+            auto scene = _Scene.lock();
+            ARCADIA_ASSERT(scene);
+            ARCADIA_ASSERT(_contains_component<Component>(name));
 
-            return _Scene->Get<Component>(entity);
+            return scene->Get<Component>(name);
         }
 
         void _OnOpenImguiWindow(Arcadia::Event::OpenImguiWindow& e);
@@ -106,20 +117,15 @@ namespace Arcadia
         void _OnSceneDeactivated(Arcadia::Event::SceneDeactivated& e);
         void _OnSelectEntity(Arcadia::Event::SelectEntity& e);
         void _OnDeleteEntity(Arcadia::Event::DeleteEntity& e);
-        void _OnPhysicsSimualtorBuilt(Arcadia::Event::PhysicsSimulatorBuilt& e);
-        void _OnPhysicsSimulatorUnbuilt(Arcadia::Event::PhysicsSimulatorUnbuilt& e);
-
-
     private:
 
-        std::shared_ptr<Arcadia::Scene> _Scene{};
-        entt::entity _SelectedEntity{ entt::null };
+        std::weak_ptr<Arcadia::Scene> _Scene{};
+        std::string _SelectedEntityName{};
 
-        std::shared_ptr<Arcadia::PhysicsSimulator> _PhysicsSimulator{};
-
-        Arcadia::ImguiWindowPropertyCameraComponent _imgui_window_property_camera_component{};
-        Arcadia::ImguiWindowPropertyLightComponent _imgui_window_property_light_component{};
-        Arcadia::ImguiWindowPropertyModelComponent _imgui_window_property_model_component{};
-        Arcadia::ImguiWindowPropertyPhysicsComponent _imgui_window_property_physics_component{};
+        Arcadia::ImguiWindowPropertyCameraComponent _ImguiWindowPropertyCameraComponent{};
+        Arcadia::ImguiWindowPropertyLightComponent _ImguiWindowPropertyLightComponent{};
+        Arcadia::ImguiWindowPropertyModelComponent _ImguiWindowPropertyModelComponent{};
+        Arcadia::ImguiWindowPropertyPhysicsComponent _ImguiWindowPropertyPhysicsComponent{};
+        Arcadia::ImguiWindowPropertyTransformComponent _ImguiWindowPropertyTransformComponent{};
     };
 }

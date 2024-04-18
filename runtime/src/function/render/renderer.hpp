@@ -1,14 +1,12 @@
 #pragma once
 
+#include<memory>
+
 #include"core/base.hpp"
 #include"core/exception.hpp"
 #include"core/math.hpp"
 #include"platform/graphic_api/graphic_api.hpp"
-#include"resource/component/camera_component/camera_component.hpp"
-#include"resource/component/light_component/light_component.hpp"
-#include"resource/component/model_component/model_component.hpp"
-#include"resource/component/physics_component/physics_component.hpp"
-#include"resource/component/skybox_component/skybox_component.hpp"
+#include"resource/scene.hpp"
 
 namespace Arcadia
 {
@@ -26,6 +24,7 @@ namespace Arcadia
 
         using self_type = iRenderer;
     public:
+        iRenderer() = default;
         virtual ~iRenderer() = default;
 
         /// @brief Check whether the physcis simulator is in build
@@ -41,26 +40,10 @@ namespace Arcadia
         /// @note This function can only be called when the renderer is in build
         virtual void Finalize() = 0;
 
-        /// @brief Submit a camera component to this renderer
-        /// @note This function can only be called when the renderer is in build
-        virtual void Submit(const Arcadia::CameraComponent&) = 0;
-
-        /// @brief Submit a light component to this renderer
-        /// @note This function can only be called when the renderer is in build
-        virtual void Submit(const Arcadia::LightComponent&) = 0;
-
-        /// @brief Submit a mesh component to this renderer
-        /// @note This function can only be called when the renderer is in build
-        virtual void Submit(const Arcadia::ModelComponent&) = 0;
-
-        /// @brief Submit a skybox component to this renderer
-        /// @note This function can only be called when the renderer is in build
-        virtual void Submit(const Arcadia::SkyboxComponent&) = 0;
-
-        /// @brief Submit a physics component to this renderer
-        /// @details This function is used to render shape of the body of the physics component; If there is no body, do nothing
-        /// @note This function can only be called when the renderer is in build
-        virtual void Submit(const Arcadia::PhysicsComponent&) = 0;
+        /// @brief Submit entity to draw
+        /// @param name Entity name
+        /// @note If the entity is not renderable, it is ignored
+        virtual void Submit(const Arcadia::Scene& scene, const std::string& name) = 0;
 
         /// @brief Draw curtain frame
         /// @throw draw_fail if the draw call failed for any reason
@@ -82,7 +65,6 @@ namespace Arcadia
 
         /// @brief Get the underlying graphic API type
         virtual auto GetGraphicApiType() const->Arcadia::GraphicApi::Type = 0;
-
     };
 
     template<class Renderer>

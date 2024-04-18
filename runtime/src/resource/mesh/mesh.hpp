@@ -3,9 +3,9 @@
 #include<vector>
 
 #include"core/base.hpp"
-#include"resource/component/component.hpp"
-#include"resource/component/model_component/material/material.hpp"
-#include"resource/component/model_component/mesh/vertex.hpp"
+#include"resource/components/component_interface.hpp"
+#include"resource/material/material.hpp"
+#include"resource/mesh/vertex.hpp"
 
 namespace Arcadia
 {

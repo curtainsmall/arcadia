@@ -1,7 +1,6 @@
 #pragma once
 
 #include<string>
-#include<variant>
 
 #include"core/base.hpp"
 #include"core/nlohmann_json_header.hpp"
@@ -37,6 +36,7 @@ namespace Arcadia
         {
             comp.ToJson()
         }->std::same_as<nlohmann::json>;
+
         {
             Component(json)
         };

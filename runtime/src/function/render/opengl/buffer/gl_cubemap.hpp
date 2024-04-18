@@ -3,7 +3,7 @@
 #include"core/base.hpp"
 #include"core/math.hpp"
 #include"platform/opengl/opengl_header.hpp"
-#include"resource/component/skybox_component/cubemap.hpp"
+#include"resource/cubemap.hpp"
 
 namespace Arcadia
 {

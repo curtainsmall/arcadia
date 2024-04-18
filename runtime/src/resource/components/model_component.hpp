@@ -11,22 +11,11 @@
 #include"core/memento/memento.hpp"
 #include"core/nlohmann_json_header.hpp"
 #include"core/uuid.hpp"
-#include"resource/component/component.hpp"
-#include"resource/component/model_component/mesh/mesh.hpp"
+#include"resource/components/component_interface.hpp"
+#include"resource/mesh/mesh.hpp"
 
 namespace Arcadia
 {
-    struct ARCADIA_API ModelComponentMementoData: Arcadia::MementoDataBase
-    {
-    public:
-        auto operator==(const ModelComponentMementoData&) const -> bool = default;
-    public:
-        glm::vec3 Location{ Arcadia::Vec3::Zero() };
-        glm::quat Rotation{ Arcadia::Quat::Identity() };
-        glm::vec3 Scale{ 1,1,1 };
-        glm::vec3 Pivot{ Arcadia::Vec3::Zero() };
-    };
-
     struct ARCADIA_API ModelComponent:
         Arcadia::iComponent,
         Arcadia::iMementoOriginator
@@ -60,7 +49,7 @@ namespace Arcadia
     protected:
         [[nodiscard]]
         virtual auto OnSnapshot() const->std::shared_ptr<Arcadia::MementoDataBase> override;
-        virtual void OnRestore(const std::shared_ptr<Arcadia::MementoDataBase>& sp_memento_data) override;
+        virtual void OnRestore(const std::shared_ptr<Arcadia::MementoDataBase>& memento_data) override;
 
     private:
         void _Load();
@@ -79,12 +68,6 @@ namespace Arcadia
             aiTextureType ai_texture_type,
             Texture2d& texture
         );
-
-    public:
-        glm::vec3 Location{ Arcadia::Vec3::Zero() };
-        glm::quat Rotation{ Arcadia::Quat::Identity() };
-        glm::vec3 Scale{ 1,1,1 };
-        glm::vec3 Pivot{ Arcadia::Vec3::Zero() };
 
     private:
         std::filesystem::path _Filepath{};

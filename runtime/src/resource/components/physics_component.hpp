@@ -9,7 +9,7 @@
 #include"core/nlohmann_json_header.hpp"
 #include"core/uuid.hpp"
 #include"platform/jolt/jolt_header.hpp"
-#include"resource/component/component.hpp"
+#include"resource/components/component_interface.hpp"
 
 namespace Arcadia
 {
@@ -44,26 +44,24 @@ namespace Arcadia
         JphSphereShapeInfo
     >;
 
-    struct ARCADIA_API JphBodyInfoInitial
+    struct ARCADIA_API JphBodyInfo
     {
     public:
-        using self_type = JphBodyInfoInitial;
+        using self_type = JphBodyInfo;
     public:
-        glm::vec3 Position{ Arcadia::Vec3::Zero() };
-        glm::quat Rotation{ Arcadia::Quat::Identity() };
+        // Transform information comes from transform component
+
         JPH::EMotionType JphMotionType{ JPH::EMotionType::Static };
         JPH::ObjectLayer JphObjectLayer{ Arcadia::JphObjectLayers::NonMoving };
         JphShapeInfo JphShapeInfo{ Arcadia::JphBoxShapeInfo{} };
     };
 
-    struct ARCADIA_API JphBodyInfoOngoing
+    struct ARCADIA_API JphBodyState
     {
     public:
-        using self_type = JphBodyInfoOngoing;
+        using self_type = JphBodyState;
     public:
         bool Active{ false };
-        glm::vec3 Position{ Arcadia::Vec3::Zero() };
-        glm::quat Rotation{ Arcadia::Quat::Identity() };
         glm::vec3 LinearVelocity{ Arcadia::Vec3::Zero() };
         glm::vec3 AngularVelocity{ Arcadia::Vec3::Zero() };
 
@@ -82,7 +80,7 @@ namespace Arcadia
         Arcadia::iMementoOriginator
     {
     public:
-        using identifiable_jph_body_info_initial_type = Arcadia::BasicIdentifiable<JphBodyInfoInitial>;
+        using identifiable_jph_body_info_type = Arcadia::BasicIdentifiable<JphBodyInfo>;
         using self_type = PhysicsComponent;
     public:
         ARCADIA_COMPONENT_TYPE_STR_GETTERS("physics");
@@ -97,34 +95,28 @@ namespace Arcadia
         auto HasBodyInfo() const -> bool;
 
         [[nodiscard]]
-        auto GetIdentifiableJphBodyInfoInitial() const -> const identifiable_jph_body_info_initial_type&;
+        auto GetIdentifiableJphBodyInfo() const -> const identifiable_jph_body_info_type&;
 
-        [[nodiscard]]
-        auto GetJphBodyInfoOngoing() const -> const Arcadia::JphBodyInfoOngoing&;
-        [[nodiscard]]
-        auto GetJphBodyInfoOngoing() -> Arcadia::JphBodyInfoOngoing&;
-
-        void BuildIdentifiableJphBodyInfoInitial(
-            const glm::vec3& position,
-            const glm::quat& rotation,
+        void BuildIdentifiableJphBodyInfo(
             JPH::EMotionType jph_motion_type,
             JPH::ObjectLayer jph_object_layer,
             const JphShapeInfo& jph_shape_info
         );
 
-        void BuildIdentifiableJphBodyInfoInitial(
-            const Arcadia::JphBodyInfoInitial& jph_body_info_initial
+        void BuildIdentifiableJphBodyInfo(
+            const Arcadia::JphBodyInfo& jph_body_info_initial
         );
 
     protected:
         [[nodiscard]]
         virtual auto OnSnapshot() const->std::shared_ptr<MementoDataBase> override;
-        virtual void OnRestore(const std::shared_ptr<MementoDataBase>& sp_memento_data) override;
+        virtual void OnRestore(const std::shared_ptr<MementoDataBase>& memento_data) override;
 
     public:
         glm::vec3 BodyShapeColor{ .2f,.2f,.2f };
+
+        Arcadia::JphBodyState JphBodyState{};
     private:
-        std::unique_ptr<identifiable_jph_body_info_initial_type> _upIdentifiableJphBodyInfoInitial{};
-        std::unique_ptr<Arcadia::JphBodyInfoOngoing> _upJphBodyInfoOngoing{};
+        std::unique_ptr<identifiable_jph_body_info_type> _IdentifiableJphBodyInfo{};
     };
 }

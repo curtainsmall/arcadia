@@ -8,10 +8,10 @@
 #include"core/memento/memento.hpp"
 #include"function/render/opengl/gl_renderer.hpp"
 #include"function/window/window_events.hpp"
-#include"resource/component/camera_component/camera_component.hpp"
-#include"resource/component/light_component/light_component.hpp"
-#include"resource/component/model_component/model_component.hpp"
-#include"resource/component/physics_component/physics_component.hpp"
+#include"resource/components/camera_component.hpp"
+#include"resource/components/light_component.hpp"
+#include"resource/components/model_component.hpp"
+#include"resource/components/physics_component.hpp"
 
 #include"editor/editor_context.hpp"
 
@@ -157,17 +157,34 @@ void Arcadia::ProjectLayer::_OnCreateProject(Arcadia::Event::CreateProject& e)
 {
     if(_Project)
     {
-        if(_ProjectFilepath.empty())
+        auto res = pfd::message{
+            "Unsaved Project",
+            "The current project is not saved, do you want to save it?",
+            pfd::choice::yes_no_cancel
+        }.result();
+
+        switch(res)
         {
-            _ProjectFilepath = pfd::save_file{
-                "Save as"
-            }.result();
-            if(_ProjectFilepath.empty())
-            {
+            case pfd::button::cancel:
                 return;
+            case pfd::button::yes:
+            {
+                if(_ProjectFilepath.empty())
+                {
+                    _ProjectFilepath = pfd::save_file{
+                                        "Save as"
+                    }.result();
+                    if(_ProjectFilepath.empty())
+                    {
+                        return;
+                    }
+                }
+                _SaveProject();
+                break;
             }
+            default:
+                break;
         }
-        _SaveProject();
         _Project.reset();
     }
 
@@ -183,17 +200,35 @@ void Arcadia::ProjectLayer::_OnOpenProject(Arcadia::Event::OpenProject& e)
 {
     if(_Project)
     {
-        if(_ProjectFilepath.empty())
+        auto res = pfd::message{
+            "Unsaved Project",
+            "The current project is not saved, do you want to save it?",
+            pfd::choice::yes_no_cancel
+        }.result();
+
+        switch(res)
         {
-            _ProjectFilepath = pfd::save_file{
-                "Save as"
-            }.result();
-            if(_ProjectFilepath.empty())
-            {
+            case pfd::button::cancel:
                 return;
+            case pfd::button::yes:
+            {
+                if(_ProjectFilepath.empty())
+                {
+                    _ProjectFilepath = pfd::save_file{
+                                        "Save as"
+                    }.result();
+                    if(_ProjectFilepath.empty())
+                    {
+                        return;
+                    }
+                }
+                _SaveProject();
+                break;
             }
+            default:
+                break;
         }
-        _SaveProject();
+        _Project.reset();
     }
 
     auto filepathes = pfd::open_file{
@@ -216,7 +251,6 @@ void Arcadia::ProjectLayer::_OnOpenProject(Arcadia::Event::OpenProject& e)
         };
         return;
     }
-    _Project.reset();
     _LoadProject();
     Arcadia::EventQueue::Instance()
         .Signal<Arcadia::Event::ProjectBuilt>(_Project);
@@ -340,7 +374,7 @@ void Arcadia::ProjectLayer::_OnDeleteScene(Arcadia::Event::DeleteScene& e)
     ARCADIA_ASSERT(_Project);
     ARCADIA_ASSERT(_Project->HasActiveScene());
 
-    const auto& scene_name = _Project->GetActiveScene().GetName();
+    const auto& scene_name = _Project->GetActiveScene().Name;
 
     auto res = pfd::message{
         "Delete Scene",
@@ -366,17 +400,19 @@ void Arcadia::ProjectLayer::_OnDeleteScene(Arcadia::Event::DeleteScene& e)
 
 void Arcadia::ProjectLayer::_OnNewEntity(Arcadia::Event::NewEntity& e)
 {
+    const auto& [type] = e.data_tuple;
+
     auto& scene = _AssertAndGetScene();
 
-    std::string name = "New Entity";
-    std::string final_name = name;
+    std::string temp_name = "New Entity";
+    std::string name = temp_name;
     int postfix{ 1 };
-    while(scene.Contains(final_name))
+    while(scene.Contains(name))
     {
-        final_name = std::format("{} {}", name, ++postfix);
+        name = std::format("{} {}", temp_name, ++postfix);
     }
 
-    ARCADIA_DISCARD(scene.Create(final_name));
+    scene.Create(name, type);
 }
 
 void Arcadia::ProjectLayer::_OnDeleteEntity(Arcadia::Event::DeleteEntity& e)

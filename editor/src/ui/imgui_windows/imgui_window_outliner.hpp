@@ -6,7 +6,7 @@
 #include"core/base.hpp"
 #include"function/ui/imgui_header.hpp"
 #include"function/ui/imgui_window.hpp"
-#include"resource/scene/scene.hpp"
+#include"resource/scene.hpp"
 
 #include"project/project_events.hpp"
 #include"ui/ui_events.hpp"
@@ -42,9 +42,9 @@ namespace Arcadia
         void _OnSceneDeactivated(Arcadia::Event::SceneDeactivated& e);
 
     private:
-        std::shared_ptr<Arcadia::Scene> _Scene{};
+        std::weak_ptr<Arcadia::Scene> _Scene{};
 
-        entt::entity _SelectedEntity{ entt::null };
+        std::string _SelectedEntityName{};
 
         std::string _EntityOldName{};
         std::string _EntityNewName{};
@@ -55,15 +55,15 @@ namespace Arcadia
     inline void ImguiWindowOutliner::_MenuItemAddComponent(int& item_count)
     {
         std::string type_str = Component::GetTypeStrStatic();
-        bool existed = _Scene->AllOf<Component>(_SelectedEntity);
+        bool exists = _Scene.lock()->AllOf<Component>(_SelectedEntityName);
 
-        if(!existed)
+        if(!exists)
         {
             ++item_count;
             if(ImGui::MenuItem(type_str.c_str()))
             {
                 Arcadia::EventQueue::Instance()
-                    .Signal<Arcadia::Event::AddComponent>(_SelectedEntity, type_str);
+                    .Signal<Arcadia::Event::AddComponent>(_SelectedEntityName, type_str);
             }
         }
     }
@@ -73,15 +73,15 @@ namespace Arcadia
     {
 
         std::string type_str = Component::GetTypeStrStatic();
-        bool existed = _Scene->AllOf<Component>(_SelectedEntity);
+        bool exists = _Scene.lock()->AllOf<Component>(_SelectedEntityName);
 
-        if(existed)
+        if(exists)
         {
             ++item_count;
-            if(existed && ImGui::MenuItem(type_str.c_str()))
+            if(exists && ImGui::MenuItem(type_str.c_str()))
             {
                 Arcadia::EventQueue::Instance()
-                    .Signal<Arcadia::Event::RemoveComponent>(_SelectedEntity, type_str);
+                    .Signal<Arcadia::Event::RemoveComponent>(_SelectedEntityName, type_str);
             }
         }
     }

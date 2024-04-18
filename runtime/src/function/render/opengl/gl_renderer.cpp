@@ -4,6 +4,13 @@
 
 #include<vector>
 
+#include"resource/components/camera_component.hpp"
+#include"resource/components/light_component.hpp"
+#include"resource/components/model_component.hpp"
+#include"resource/components/physics_component.hpp"
+#include"resource/components/skybox_component.hpp"
+#include"resource/components/transform_component.hpp"
+
 Arcadia::GlRenderer::GlRenderer(const std::filesystem::path& gl_shader_folder_path):
     _GlModelPipeline(gl_shader_folder_path, Arcadia::GetModelShadersBuilder()),
     _GlSkyboxPipeline(gl_shader_folder_path, Arcadia::GetSkyboxShadersBuilder()),
@@ -66,149 +73,146 @@ void Arcadia::GlRenderer::Finalize()
     }
 }
 
-void Arcadia::GlRenderer::Submit(const Arcadia::CameraComponent& camera_comp)
+void Arcadia::GlRenderer::Submit(const Arcadia::Scene& scene, const std::string& name)
 {
     _AssertFrameInBuild();
 
-    _GlRenderUnitCameras.emplace_back(
-        Arcadia::GlFramebuffer{
+    const auto& entity_info = scene.GetEntityInfo(name);
+
+    Arcadia::Match<void>(
+        entity_info.Type,
+        [&]()
+    {
+        ARCADIA_ASSERT(false && "Entity type not supported");
+    },
+        "camera"s,
+        [&]()
+    {
+        const auto& camera_comp = scene.Get<Arcadia::CameraComponent>(name);
+
+        _GlRenderUnitCameras.emplace_back(
+            Arcadia::GlFramebuffer{
+                camera_comp.ViewportSize,
+                camera_comp.NearPlane,
+                camera_comp.FarPlane
+            },
             camera_comp.ViewportSize,
+            camera_comp.GenerateViewMat4(),
+            camera_comp.GenerateProjMat4(),
+            camera_comp.Position,
+            camera_comp.ShouldDisplayGrid,
             camera_comp.NearPlane,
             camera_comp.FarPlane
-        },
-        camera_comp.ViewportSize,
-        camera_comp.GenerateViewMat4(),
-        camera_comp.GenerateProjMat4(),
-        camera_comp.Position,
-        camera_comp.ShouldDisplayGrid,
-        camera_comp.NearPlane,
-        camera_comp.FarPlane
-    );
-}
-
-void Arcadia::GlRenderer::Submit(const Arcadia::LightComponent& light_comp)
-{
-    _AssertFrameInBuild();
-
-    _GlRenderUnitLights.emplace_back(light_comp.Light);
-}
-
-void Arcadia::GlRenderer::Submit(const Arcadia::ModelComponent& model_comp)
-{
-    _AssertFrameInBuild();
-
-    if(model_comp.HasIdentifiableMeshes())
+        );
+    },
+        "light"s,
+        [&]()
     {
-        const auto& [Uuid, meshes] = model_comp.GetIdentifiableMeshes();
+        const auto& light_comp = scene.Get<Arcadia::LightComponent>(name);
+        _GlRenderUnitLights.emplace_back(light_comp.Light);
+    },
+        "actor"s,
+        [&]()
+    {
+        const auto [model_comp, transform_comp, physics_comp] = scene.Get<Arcadia::ModelComponent, Arcadia::TransformComponent, Arcadia::PhysicsComponent>(name);
 
-        auto transform_mat =
-            // Translate
-            glm::translate(
-                // Move pivot back from origin
-                glm::translate(
-                    // Rotate
-                    glm::mat4_cast(model_comp.Rotation)
-                    // Scale about origin (same as pivot)
-                    * glm::scale(
-                        // Move pivot to origin
-                        glm::translate(
-                            Arcadia::Mat4::Identity(),
-                            -model_comp.Pivot
-                        ),
-                        model_comp.Scale
-                    ),
-                    model_comp.Pivot
-                ),
-                model_comp.Location
-            );
-
-        if(!_GlRenderUnitMeshStorage.contains(Uuid))
+        if(model_comp.HasIdentifiableMeshes())
         {
+            const auto& [uuid, meshes] = model_comp.GetIdentifiableMeshes();
 
-            std::vector<Arcadia::GlRenderUnitMesh> gl_meshes{};
-            for(const auto& mesh : meshes)
+            const auto transform_mat =
+                // Translate
+                glm::translate(
+                    // Move pivot back from origin
+                    glm::translate(
+                        // Rotate
+                        glm::mat4_cast(transform_comp.Rotation)
+                        // Scale about origin (same as pivot)
+                        * glm::scale(
+                            // Move pivot to origin
+                            glm::translate(
+                                Arcadia::Mat4::Identity(),
+                                -transform_comp.Pivot
+                            ),
+                            transform_comp.Scale
+                        ),
+                        transform_comp.Pivot
+                    ),
+                    transform_comp.Position
+                );
+
+            if(!_GlRenderUnitMeshStorage.contains(uuid))
             {
-                // For any uuid, its corresponding meshes must be the same
-                gl_meshes.emplace_back(
-                    Arcadia::GlVertexArray{ mesh.Vertices, mesh.Indices },
-                    transform_mat,
-                    mesh.Material.AmbientTexture2d,
-                    mesh.Material.DiffuseTexture2d,
-                    mesh.Material.SpecularTexture2d
+
+                std::vector<Arcadia::GlRenderUnitMesh> gl_meshes{};
+                for(const auto& mesh : meshes)
+                {
+                    // For any uuid, its corresponding meshes must be the same
+                    gl_meshes.emplace_back(
+                        Arcadia::GlVertexArray{ mesh.Vertices, mesh.Indices },
+                        transform_mat,
+                        mesh.Material.AmbientTexture2d,
+                        mesh.Material.DiffuseTexture2d,
+                        mesh.Material.SpecularTexture2d
+                    );
+                }
+                _GlRenderUnitMeshStorage.try_emplace(uuid, std::move(gl_meshes));
+            }
+            else
+            {
+                for(auto& gl_render_unit_mesh : _GlRenderUnitMeshStorage.at(uuid))
+                {
+                    std::get<1>(gl_render_unit_mesh) = transform_mat;
+                }
+            }
+
+            _SubmittedMeshesUuids.emplace(uuid);
+        }
+
+        if(physics_comp.HasBodyInfo())
+        {
+            const auto& [uuid, jph_body] = physics_comp.GetIdentifiableJphBodyInfo();
+            if(!_GlRenderUnitPhysicsBodyShapeStorage.contains(uuid))
+            {
+                const auto& shape_info = jph_body.JphShapeInfo;
+                const auto& shape_mesh = Arcadia::Match<Arcadia::Mesh>(
+                    shape_info,
+                    [&](const Arcadia::JphBoxShapeInfo& info)
+                {
+                    return Arcadia::Mesh::Box(info.HalfExtent);
+                },
+                    [&](const Arcadia::JphCapsuleShapeInfo& info)
+                {
+                    return Arcadia::Mesh{};
+                },
+                    [&](const Arcadia::JphCylinderShapeInfo& info)
+                {
+                    return Arcadia::Mesh{};
+                },
+                    [&](const Arcadia::JphSphereShapeInfo& info)
+                {
+                    return Arcadia::Mesh::Sphere(info.Radius);
+                }
+                );
+
+                _GlRenderUnitPhysicsBodyShapeStorage.try_emplace(
+                    uuid, Arcadia::GlVertexArray{ shape_mesh.Vertices,shape_mesh.Indices },
+                    glm::mat4{},
+                    glm::vec3{}
                 );
             }
-            _GlRenderUnitMeshStorage.try_emplace(Uuid, std::move(gl_meshes));
-        }
-        else
-        {
-            for(auto& gl_render_unit_mesh : _GlRenderUnitMeshStorage.at(Uuid))
-            {
-                std::get<1>(gl_render_unit_mesh) = transform_mat;
-            }
-        }
 
-        _SubmittedMeshesUuids.emplace(Uuid);
+            auto& [GlVertexBuffer, transform_mat, color] = _GlRenderUnitPhysicsBodyShapeStorage.at(uuid);
+            transform_mat = glm::translate(
+                glm::mat4_cast(transform_comp.Rotation),
+                transform_comp.Position
+            );
+            color = physics_comp.BodyShapeColor;
+
+            _SubmittedPhysicsBodyShapeUuids.emplace(uuid);
+        }
     }
-}
-
-void Arcadia::GlRenderer::Submit(const Arcadia::SkyboxComponent& skybox_comp)
-{
-    _AssertFrameInBuild();
-
-    const auto skybox_box_shape = Arcadia::Mesh::Box(glm::vec3{ 1,1,1 });
-    _optGlRenderUnitSkybox.emplace(
-        Arcadia::GlVertexArray{ skybox_box_shape.Vertices, skybox_box_shape.Indices },
-        skybox_comp.Cubemap
     );
-}
-
-void Arcadia::GlRenderer::Submit(const Arcadia::PhysicsComponent& physcis_comp)
-{
-    _AssertFrameInBuild();
-
-    if(physcis_comp.HasBodyInfo())
-    {
-        const auto& [Uuid, jph_body] = physcis_comp.GetIdentifiableJphBodyInfoInitial();
-        if(!_GlRenderUnitPhysicsBodyShapeStorage.contains(Uuid))
-        {
-            const auto& shape_info = jph_body.JphShapeInfo;
-            const auto& shape_mesh = Arcadia::Match<Arcadia::Mesh>(
-                shape_info,
-                [&](const Arcadia::JphBoxShapeInfo& info)
-            {
-                return Arcadia::Mesh::Box(info.HalfExtent);
-            },
-                [&](const Arcadia::JphCapsuleShapeInfo& info)
-            {
-                return Arcadia::Mesh{};
-            },
-                [&](const Arcadia::JphCylinderShapeInfo& info)
-            {
-                return Arcadia::Mesh{};
-            },
-                [&](const Arcadia::JphSphereShapeInfo& info)
-            {
-                return Arcadia::Mesh::Sphere(info.Radius);
-            }
-            );
-
-            _GlRenderUnitPhysicsBodyShapeStorage.try_emplace(
-                Uuid, Arcadia::GlVertexArray{ shape_mesh.Vertices,shape_mesh.Indices },
-                glm::mat4{},
-                glm::vec3{}
-            );
-        }
-
-        const auto& body_info_ongoing = physcis_comp.GetJphBodyInfoOngoing();
-        auto& [GlVertexBuffer, transform_mat, color] = _GlRenderUnitPhysicsBodyShapeStorage.at(Uuid);
-        transform_mat = glm::translate(
-            glm::mat4_cast(body_info_ongoing.Rotation),
-            body_info_ongoing.Position
-        );
-        color = physcis_comp.BodyShapeColor;
-
-        _SubmittedPhysicsBodyShapeUuids.emplace(Uuid);
-    }
 }
 
 void Arcadia::GlRenderer::Draw()

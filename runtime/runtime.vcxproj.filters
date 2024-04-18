@@ -96,13 +96,13 @@
     <ClInclude Include="src\function\render\renderer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\resource\scene\entt_header.hpp">
+    <ClInclude Include="src\resource\entt_header.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\core\math\numeric.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\resource\scene\scene.hpp">
+    <ClInclude Include="src\resource\scene.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\function\render\opengl\gl_renderer.hpp">
@@ -138,28 +138,28 @@
     <ClInclude Include="src\function\render\opengl\buffer\gl_index_buffer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\resource\component\camera_component\camera_component.hpp">
+    <ClInclude Include="src\resource\components\camera_component.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\resource\component\component.hpp">
+    <ClInclude Include="src\resource\components\component_interface.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\resource\component\model_component\mesh\vertex.hpp">
+    <ClInclude Include="src\resource\mesh\vertex.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\resource\component\skybox_component\cubemap.hpp">
+    <ClInclude Include="src\resource\cubemap.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\resource\component\model_component\material\material.hpp">
+    <ClInclude Include="src\resource\material\material.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\resource\component\model_component\material\texture2d.hpp">
+    <ClInclude Include="src\resource\material\texture2d.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\resource\component\model_component\mesh\mesh.hpp">
+    <ClInclude Include="src\resource\mesh\mesh.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\resource\component\skybox_component\skybox_component.hpp">
+    <ClInclude Include="src\resource\components\skybox_component.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\core\nlohmann_json_header.hpp">
@@ -168,7 +168,7 @@
     <ClInclude Include="src\core\uuid.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\resource\component\model_component\model_component.hpp">
+    <ClInclude Include="src\resource\components\model_component.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\core\app\app_config.hpp">
@@ -198,13 +198,13 @@
     <ClInclude Include="src\function\render\opengl\buffer\gl_renderbuffer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\resource\component\light_component\light_component.hpp">
+    <ClInclude Include="src\resource\components\light_component.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\function\render\opengl\buffer\gl_uniform_buffer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\resource\component\physics_component\physics_component.hpp">
+    <ClInclude Include="src\resource\components\physics_component.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\platform\jolt\jolt_header.hpp">
@@ -229,6 +229,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\core\serialization.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\resource\components\transform_component.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -287,13 +290,13 @@
     <ClCompile Include="src\function\render\opengl\buffer\gl_vertex_array.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\resource\component\camera_component\camera_component.cpp">
+    <ClCompile Include="src\resource\components\camera_component.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\function\render\opengl\pipeline\gl_pipeline.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\resource\scene\scene.cpp">
+    <ClCompile Include="src\resource\scene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\core\app\app_config.cpp">
@@ -302,10 +305,10 @@
     <ClCompile Include="src\core\app\app_context.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\resource\component\model_component\model_component.cpp">
+    <ClCompile Include="src\resource\components\model_component.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\resource\component\model_component\material\texture2d.cpp">
+    <ClCompile Include="src\resource\material\texture2d.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\function\ui\imgui_backend.cpp">
@@ -317,19 +320,19 @@
     <ClCompile Include="src\function\render\opengl\buffer\gl_renderbuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\resource\component\light_component\light_component.cpp">
+    <ClCompile Include="src\resource\components\light_component.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\function\render\opengl\buffer\gl_uniform_buffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\resource\component\physics_component\physics_component.cpp">
+    <ClCompile Include="src\resource\components\physics_component.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\function\physics\physics_simulator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\resource\component\model_component\mesh\mesh.cpp">
+    <ClCompile Include="src\resource\mesh\mesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\core\command\command.cpp">
@@ -339,6 +342,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\function\ui\imgui_wrapper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\resource\components\transform_component.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

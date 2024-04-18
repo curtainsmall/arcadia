@@ -154,6 +154,8 @@ void Arcadia::ImguiWindowMainMenubar::OnUpdate()
 
 void Arcadia::ImguiWindowMainMenubar::_FileMenu()
 {
+    auto project = _Project.lock();
+
     auto& event_queue = Arcadia::EventQueue::Instance();
 
     _ImguiWindowPopupCreateProject();
@@ -167,15 +169,15 @@ void Arcadia::ImguiWindowMainMenubar::_FileMenu()
         {
             event_queue.Signal<Arcadia::Event::OpenProject>();
         }
-        if(ImGui::MenuItem("Save Project", nullptr, nullptr, !!_Project))
+        if(ImGui::MenuItem("Save Project", nullptr, nullptr, !!project))
         {
             event_queue.Signal<Arcadia::Event::SaveProject>();
         }
-        if(ImGui::MenuItem("Save Project As...", nullptr, nullptr, !!_Project))
+        if(ImGui::MenuItem("Save Project As...", nullptr, nullptr, !!project))
         {
             event_queue.Signal<Arcadia::Event::SaveProjectAs>();
         }
-        if(ImGui::MenuItem("Close Project", nullptr, nullptr, !!_Project))
+        if(ImGui::MenuItem("Close Project", nullptr, nullptr, !!project))
         {
             event_queue.Signal<Arcadia::Event::CloseProject>();
         }
@@ -186,26 +188,28 @@ void Arcadia::ImguiWindowMainMenubar::_FileMenu()
 
 void Arcadia::ImguiWindowMainMenubar::_EditMenu()
 {
-    if(_Project)
+    auto project = _Project.lock();
+
+    if(project)
     {
-        _ImguiWindowPopupCreateScene(_Project);
+        _ImguiWindowPopupCreateScene(project);
     }
     auto& event_queue = Arcadia::EventQueue::Instance();
     if(ImGui::BeginMenu("Edit"))
     {
-        if(ImGui::MenuItem("New Scene ...", nullptr, nullptr, !!_Project))
+        if(ImGui::MenuItem("New Scene ...", nullptr, nullptr, !!project))
         {
             _ImguiWindowPopupCreateScene.Open = true;
         }
 
-        bool has_scene = _Project && _Project->SceneSptrStorage.size();
-        bool has_active_scene = has_scene && _Project->HasActiveScene();
+        bool has_scene = project && project->SceneSptrStorage.size();
+        bool has_active_scene = has_scene && project->HasActiveScene();
 
         if(ImGui::BeginMenu("Select Scene", has_scene))
         {
-            ARCADIA_ASSERT(_Project.get());
+            ARCADIA_ASSERT(project);
 
-            for(const auto& [key, scene] : _Project->SceneSptrStorage)
+            for(const auto& [key, scene] : project->SceneSptrStorage)
             {
                 if(ImGui::MenuItem(key.c_str()))
                 {

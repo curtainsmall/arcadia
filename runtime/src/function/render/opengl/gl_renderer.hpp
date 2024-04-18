@@ -17,6 +17,7 @@
 #include"function/render/opengl/pipeline/gl_pipeline.hpp"
 #include"function/render/renderer.hpp"
 #include"platform/opengl/opengl_header.hpp"
+#include"resource/components/light_component.hpp"
 
 namespace Arcadia
 {
@@ -70,30 +71,18 @@ namespace Arcadia
             return _InBuild;
         }
 
-        /// @copydoc Arcadia::renderer::prepare
+        /// @copydoc Arcadia::Renderer::Prepare
         virtual void Prepare() override;
-        /// @copydoc Arcadia::renderer::finalize
+        /// @copydoc Arcadia::Renderer::Finalize
         virtual void Finalize() override;
 
-        /// @copydoc Arcadia::renderer::submit
-        virtual void Submit(const Arcadia::CameraComponent& camera_comp) override;
+        /// @copydoc Arcadia::Renderer::Submit
+        virtual void Submit(const Arcadia::Scene& scene, const std::string& name) override;
 
-        /// @copydoc Arcadia::renderer::submit
-        virtual void Submit(const Arcadia::LightComponent& light_comp) override;
-
-        /// @copydoc Arcadia::renderer::submit
-        virtual void Submit(const Arcadia::ModelComponent& model_comp) override;
-
-        /// @copydoc Arcadia::renderer::submit
-        virtual void Submit(const Arcadia::SkyboxComponent& skybox_comp) override;
-
-        /// @copydoc Arcadia::renderer::submit
-        virtual void Submit(const Arcadia::PhysicsComponent& physcis_comp) override;
-
-        /// @copydoc Arcadia::renderer::draw
+        /// @copydoc Arcadia::Renderer::Draw
         virtual void Draw() override;
 
-        /// @copydoc Arcadia::renderer::reset
+        /// @copydoc Arcadia::Renderer::Reset
         virtual void Reset() override;
 
         [[nodiscard]]

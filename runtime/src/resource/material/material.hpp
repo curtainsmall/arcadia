@@ -1,7 +1,7 @@
 #pragma once
 
 #include"core/base.hpp"
-#include"resource/component/model_component/material/texture2d.hpp"
+#include"resource/material/texture2d.hpp"
 
 namespace Arcadia
 {

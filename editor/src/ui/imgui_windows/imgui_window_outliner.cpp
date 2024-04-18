@@ -4,11 +4,11 @@
 #include"core/event/event.hpp"
 #include"core/file/pfd_header.hpp"
 #include"function/ui/imgui_header.hpp"
-#include"resource/component/camera_component/camera_component.hpp"
-#include"resource/component/light_component/light_component.hpp"
-#include"resource/component/model_component/model_component.hpp"
-#include"resource/component/physics_component/physics_component.hpp"
-#include"resource/component/skybox_component/skybox_component.hpp"
+#include"resource/components/camera_component.hpp"
+#include"resource/components/light_component.hpp"
+#include"resource/components/model_component.hpp"
+#include"resource/components/physics_component.hpp"
+#include"resource/components/skybox_component.hpp"
 
 void Arcadia::ImguiWindowOutliner::OnEvent(Arcadia::EventBase& event)
 {
@@ -21,15 +21,17 @@ void Arcadia::ImguiWindowOutliner::OnEvent(Arcadia::EventBase& event)
 
 void Arcadia::ImguiWindowOutliner::OnUpdate()
 {
-    if(!_open)
+    if(!_Open)
     {
         return;
     }
 
+    auto scene = _Scene.lock();
+
     auto& event_queue = Arcadia::EventQueue::Instance();
 
-    auto imgui_window_title = _Scene
-        ? _Title + " - " + _Scene->GetName() + GetIdStr()
+    auto imgui_window_title = scene
+        ? _Title + " - " + scene->Name + GetIdStr()
         : _Title + GetIdStr();
 
     ImGui::SetNextWindowSize(glm::vec2{ 1024,768 }, ImGuiCond_Once);
@@ -37,22 +39,22 @@ void Arcadia::ImguiWindowOutliner::OnUpdate()
         ImGuiWindowFlags_NoCollapse;
     if(ImGui::Begin(imgui_window_title.c_str(), &_Open, window_flags))
     {
-        if(_Scene && ImGui::BeginPopupContextWindow())
+        if(scene && ImGui::BeginPopupContextWindow())
         {
             if(ImGui::Selectable("New Entity"))
             {
-                event_queue.Signal<Arcadia::Event::NewEntity>();
+                event_queue.Signal<Arcadia::Event::NewEntity>("");
             }
             ImGui::EndPopup();
         }
 
-        if(!_Scene)
+        if(!scene)
         {
             ImGui::Text("No scene to outline here");
         }
         else
         {
-            for(const auto& [name, entity] : _Scene->GetNameEntityBimap())
+            for(auto& [name, entity_info] : *scene)
             {
                 // Display text input
                 if(_EntityOldName == name)
@@ -65,14 +67,21 @@ void Arcadia::ImguiWindowOutliner::OnUpdate()
                     ImGui::SetItemDefaultFocus();
                     if(!ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Left) || ImGui::IsKeyPressed(ImGuiKey_Enter))
                     {
-                        if(_EntityOldName != _EntityNewName && !_Scene->Rename(_EntityOldName, _EntityNewName))
+                        if(_EntityOldName != _EntityNewName)
                         {
-                            pfd::message msg{
-                                "Rename Entity",
-                                std::format("Failed to rename {} to {}, because the new name is already used",_EntityOldName,_EntityNewName),
-                                pfd::choice::ok,
-                                pfd::icon::info
-                            };
+                            if(scene->Contains(_EntityNewName))
+                            {
+                                pfd::message msg{
+                                    "Rename Entity",
+                                    std::format("Failed to rename {} to {}, because the new name is already used",_EntityOldName,_EntityNewName),
+                                    pfd::choice::ok,
+                                    pfd::icon::info
+                                };
+                            }
+                            else
+                            {
+                                scene->Rename(_EntityOldName, _EntityNewName);
+                            }
                         }
                         _EntityOldName.clear();
                         _EntityNewName.clear();
@@ -81,26 +90,30 @@ void Arcadia::ImguiWindowOutliner::OnUpdate()
                 // Display selectable
                 else
                 {
-                    auto& entity_info = _Scene->GetEntityInfo(entity);
-                    ImGui::Checkbox(std::format("##render_in_viewport_{}", entity).c_str(), &entity_info.ShouldRenderInViewport);
-                    ImGui::SameLine();
-                    if(ImGui::Selectable(name.c_str(), _SelectedEntity == entity))
+                    if(entity_info.Internal)
                     {
-                        _SelectedEntity = entity;
-                        event_queue.Signal<Arcadia::Event::SelectEntity>(entity);
+                        continue;
+                    }
+
+                    ImGui::Checkbox(std::format("##render_in_viewport_{}", name).c_str(), &entity_info.Display);
+                    ImGui::SameLine();
+                    if(ImGui::Selectable(name.c_str(), _SelectedEntityName == name))
+                    {
+                        _SelectedEntityName = name;
+                        event_queue.Signal<Arcadia::Event::SelectEntity>(name);
                     }
 
                     if(ImGui::BeginPopupContextItem())
                     {
                         if(ImGui::Selectable("Delete Entity"))
                         {
-                            event_queue.Signal<Arcadia::Event::DeleteEntity>(entity);
+                            event_queue.Signal<Arcadia::Event::DeleteEntity>(name);
                         }
                         if(ImGui::Selectable("Rename Entity"))
                         {
                             _EntityOldName = name;
                         }
-                        if(_SelectedEntity != entt::null)
+                        if(!_SelectedEntityName.empty())
                         {
                             ImGui::Separator();
                             if(ImGui::BeginMenu("Add Component"))
@@ -163,5 +176,5 @@ void Arcadia::ImguiWindowOutliner::_OnSceneActivated(Arcadia::Event::SceneActiva
 void Arcadia::ImguiWindowOutliner::_OnSceneDeactivated(Arcadia::Event::SceneDeactivated& e)
 {
     _Scene.reset();
-    _SelectedEntity = entt::null;
+    _SelectedEntityName.clear();
 }

@@ -34,7 +34,7 @@ auto Arcadia::CameraComponent::ToJson() const -> nlohmann::json
         { "fov_max"                 ,FovMax },
         { "speed"                   ,Speed},
         { "viewport_size"           ,Arcadia::IVec2::ToJson(ViewportSize) },
-        { "fixed_Up"                ,FixedUp },
+        { "fixed_up"                ,FixedUp },
         { "up_epsilon"              ,UpEpsilon },
         { "cursor_move_offset_range",Arcadia::Vec2::ToJson(CursorMoveOffsetRange) }
     };

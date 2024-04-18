@@ -1,205 +1,52 @@
 {
-    "active_scene_name": "Scene 1",
+    "active_scene_name": "1",
     "name": "1",
     "scenes": [
         {
             "entities": [
                 {
                     "components": {
-                        "physics": {
-                            "body_shape_color": {
-                                "x": 0.20184539258480072,
-                                "y": 0.5490195751190186,
-                                "z": 0.5285975337028503
+                        "camera": {
+                            "cursor_move_offset_range": {
+                                "x": -100.0,
+                                "y": 100.0
                             },
-                            "jph_body_info_initial": {
-                                "jph_motion_type": 2,
-                                "jph_object_layer": 1,
-                                "jph_shape_info": {
-                                    "info": {
-                                        "radius": 2.0
-                                    },
-                                    "type": "sphere"
-                                },
-                                "position": {
-                                    "x": 10.0,
-                                    "y": 100.0,
-                                    "z": 0.0
-                                },
-                                "rotation": {
-                                    "w": 1.0,
-                                    "x": 0.0,
-                                    "y": 0.0,
-                                    "z": 0.0
-                                }
-                            }
-                        }
-                    },
-                    "info": {
-                        "should_render_in_viewport": true
-                    },
-                    "name": "Ball"
-                },
-                {
-                    "components": {
-                        "physics": {
-                            "body_shape_color": {
-                                "x": 0.5098038911819458,
-                                "y": 0.3498654365539551,
-                                "z": 0.3498654365539551
-                            },
-                            "jph_body_info_initial": {
-                                "jph_motion_type": 0,
-                                "jph_object_layer": 0,
-                                "jph_shape_info": {
-                                    "info": {
-                                        "convex_radius": 0.05000000074505806,
-                                        "half_extent": {
-                                            "x": 100.0,
-                                            "y": 1.0,
-                                            "z": 100.0
-                                        }
-                                    },
-                                    "type": "box_shape"
-                                },
-                                "position": {
-                                    "x": 0.0,
-                                    "y": -10.0,
-                                    "z": 0.0
-                                },
-                                "rotation": {
-                                    "w": 1.0,
-                                    "x": 0.0,
-                                    "y": 0.0,
-                                    "z": 0.0
-                                }
-                            }
-                        }
-                    },
-                    "info": {
-                        "should_render_in_viewport": true
-                    },
-                    "name": "Floor"
-                },
-                {
-                    "components": {
-                        "light": {
-                            "light": {
-                                "ambient_strength": {
-                                    "x": 0.0,
-                                    "y": 0.0,
-                                    "z": 0.0
-                                },
-                                "attenuation_coefs": {
-                                    "x": 1.0,
-                                    "y": 0.04500000178813934,
-                                    "z": 0.007499999832361937
-                                },
-                                "color": {
-                                    "x": 0.4826197922229767,
-                                    "y": 0.7843137383460999,
-                                    "z": 0.338331401348114
-                                },
-                                "cutoff_angles": {
-                                    "x": 0.5235987901687622,
-                                    "y": 0.5585053563117981
-                                },
-                                "diffuse_strength": {
-                                    "x": 5.0,
-                                    "y": 5.0,
-                                    "z": 5.0
-                                },
-                                "direction": {
-                                    "x": 0.0,
-                                    "y": 1.0,
-                                    "z": 0.0
-                                },
-                                "position": {
-                                    "x": 0.0,
-                                    "y": -4.0,
-                                    "z": 0.0
-                                },
-                                "specular_strength": {
-                                    "x": 0.0,
-                                    "y": 0.0,
-                                    "z": 0.0
-                                }
-                            },
-                            "type": "spot"
-                        }
-                    },
-                    "info": {
-                        "should_render_in_viewport": true
-                    },
-                    "name": "Light"
-                },
-                {
-                    "components": {
-                        "model": {
-                            "filepath": "D:/CppProject/arcadia/editor/asset/model/planet/planet.obj",
-                            "location": {
-                                "x": 0.0,
-                                "y": 4.0,
-                                "z": -6.0
-                            },
-                            "pivot": {
+                            "far_plane": 100.0,
+                            "fixed_up": true,
+                            "fov": 90.0,
+                            "fov_max": 120.0,
+                            "fov_min": 1.0,
+                            "near_plane": 0.10000000149011612,
+                            "position": {
                                 "x": 0.0,
                                 "y": 0.0,
-                                "z": 0.0
-                            },
-                            "rotation": {
-                                "w": 1.0,
-                                "x": 0.0,
-                                "y": 0.0,
-                                "z": 0.0
-                            },
-                            "scale": {
-                                "x": 1.0,
-                                "y": 1.0,
                                 "z": 1.0
+                            },
+                            "speed": 0.25,
+                            "target": {
+                                "x": 0.0,
+                                "y": 0.0,
+                                "z": 0.0
+                            },
+                            "up": {
+                                "x": 0.0,
+                                "y": 1.0,
+                                "z": 0.0
+                            },
+                            "up_epsilon": 0.10000000149011612,
+                            "viewport_size": {
+                                "x": 1457,
+                                "y": 1085
                             }
                         }
                     },
-                    "info": {
-                        "should_render_in_viewport": true
-                    },
-                    "name": "Planet"
+                    "display": true,
+                    "internal": true,
+                    "name": "viewport_camera",
+                    "type": "camera"
                 }
             ],
-            "name": "Scene 1"
+            "name": "1"
         }
-    ],
-    "viewport_camera": {
-        "cursor_move_offset_range": {
-            "x": -100.0,
-            "y": 100.0
-        },
-        "far_plane": 100.0,
-        "fixed_up": true,
-        "fov": 90.0,
-        "fov_max": 120.0,
-        "fov_min": 1.0,
-        "near_plane": 0.10000000149011612,
-        "position": {
-            "x": -31.90448760986328,
-            "y": 8.71585464477539,
-            "z": 26.939687728881836
-        },
-        "speed": 0.25,
-        "target": {
-            "x": -31.057231903076172,
-            "y": 8.504049301147461,
-            "z": 26.452632904052734
-        },
-        "up": {
-            "x": 0.0,
-            "y": 1.0,
-            "z": 0.0
-        },
-        "up_epsilon": 0.10000000149011612,
-        "viewport_size": {
-            "x": 1457,
-            "y": 1104
-        }
-    }
+    ]
 }

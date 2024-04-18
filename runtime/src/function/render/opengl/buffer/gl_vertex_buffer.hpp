@@ -5,7 +5,7 @@
 #include"core/base.hpp"
 #include"core/math.hpp"
 #include"platform/opengl/opengl_header.hpp"
-#include"resource/component/model_component/mesh/vertex.hpp"
+#include"resource/mesh/vertex.hpp"
 
 namespace Arcadia
 {

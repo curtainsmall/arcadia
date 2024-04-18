@@ -6,8 +6,8 @@
 
 #include"core/nlohmann_json_header.hpp"
 #include"project/project_events.hpp"
-#include"resource/component/camera_component/camera_component.hpp"
-#include"resource/scene/scene.hpp"
+#include"resource/components/camera_component.hpp"
+#include"resource/scene.hpp"
 
 namespace Arcadia
 {
@@ -45,7 +45,6 @@ namespace Arcadia
         static inline std::string ProjectExtensionStr{ ".arcadia" };
 
         std::unordered_map<std::string, std::shared_ptr<Arcadia::Scene>> SceneSptrStorage{};
-        Arcadia::CameraComponent ViewportCamera{};
     private:
         std::string _Name;
         std::shared_ptr<Arcadia::Scene> _ActiveScene{};

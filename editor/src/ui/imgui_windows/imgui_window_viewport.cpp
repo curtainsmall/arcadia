@@ -3,8 +3,9 @@
 #include"core/app/app_context.hpp"
 #include"function/ui/imgui_header.hpp"
 #include"function/window/window_events.hpp"
-#include"resource/component/camera_component/camera_component.hpp"
-#include"resource/component/model_component/model_component.hpp"
+#include"resource/components/camera_component.hpp"
+#include"resource/components/model_component.hpp"
+#include"resource/components/physics_component.hpp"
 
 void Arcadia::ImguiWindowViewport::OnEvent(Arcadia::EventBase& event)
 {
@@ -24,10 +25,15 @@ void Arcadia::ImguiWindowViewport::OnEvent(Arcadia::EventBase& event)
 
 void Arcadia::ImguiWindowViewport::OnUpdate()
 {
-    if(!_open)
+    if(!_Open)
     {
         return;
     }
+
+    auto scene = _Scene.lock();
+    auto physics_simulator = _PhysicsSimulator.lock();
+    auto renderer = _Renderer.lock();
+    auto project = _Project.lock();
 
     const auto& app_context = Arcadia::AppContext::Instance();
 
@@ -38,82 +44,46 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
         ImGuiWindowFlags_NoCollapse;
     if(ImGui::Begin(imgui_title.c_str(), &_Open, window_flags))
     {
-        if(!_Scene)
+        if(!scene)
         {
             ImGui::Text("No scene to render here");
         }
-        else if(!_Renderer)
+        else if(!renderer)
         {
             ImGui::Text("No renderer to use here");
         }
         else
         {
-            //==== Physics Simulator ====// 
-            if(_PhysicsSimulator)
-            {
-                _PhysicsSimulator->Prepare();
+            ARCADIA_ASSERT(physics_simulator);
+            ARCADIA_ASSERT(renderer);
 
-                auto physics_comp_view = _Scene->View<Arcadia::PhysicsComponent>();
-                for(auto [entity, physics_comp] : physics_comp_view.each())
-                {
-                    _PhysicsSimulator->Submit(physics_comp);
-                }
+            physics_simulator->Prepare();
+            renderer->Prepare();
 
-                _PhysicsSimulator->Finalize();
-
-                _PhysicsSimulator->Update();
-                for(auto [entity, physics_comp] : physics_comp_view.each())
-                {
-                    _PhysicsSimulator->Quary(physics_comp);
-                }
-
-            }
-
-            //==== Renderer ====//
-            auto& viewport_camera = _Project->ViewportCamera;
-
+            auto& viewport_camera = scene->Get<Arcadia::CameraComponent>(ViewportCameraEntityName);
             viewport_camera.ViewportSize = ImGui::GetContentRegionAvail();
-            //viewport_camera.should_display_grid = true;
-            _Renderer->Prepare();
-
-            // Cameras
-            _Renderer->Submit(viewport_camera);
-
-            // Lights
-            for(auto [entity, light_comp] : _Scene->View<Arcadia::LightComponent>().each())
+            for(const auto& [name, entity_info] : *scene)
             {
-                if(_Scene->GetEntityInfo(entity).ShouldRenderInViewport)
+                physics_simulator->Submit(*scene, name);
+            }
+            physics_simulator->Finalize();
+            physics_simulator->Update();
+            for(const auto& [name, entity_info] : *scene)
+            {
+                physics_simulator->Query(*scene, name);
+
+                // We submit entity to renderer after query
+                if(entity_info.Display)
                 {
-                    _Renderer->Submit(light_comp);
+                    renderer->Submit(*scene, name);
                 }
             }
 
-            // Models
-            for(auto [entity, model_comp] : _Scene->View<Arcadia::ModelComponent>().each())
-            {
-                if(_Scene->GetEntityInfo(entity).ShouldRenderInViewport)
-                {
-                    _Renderer->Submit(model_comp);
-                }
-            }
+            renderer->Finalize();
+            renderer->Draw();
 
-            // Physcis simulator 
-            if(_PhysicsSimulator)
-            {
-                for(auto [entity, physics_comp] : _Scene->View<Arcadia::PhysicsComponent>().each())
-                {
-                    if(_Scene->GetEntityInfo(entity).ShouldRenderInViewport)
-                    {
-                        _Renderer->Submit(physics_comp);
-                    }
-                }
-            }
-
-            _Renderer->Finalize();
-            _Renderer->Draw();
-
-            auto image_cursor_pos = ImGui::GetCursorPos();
-            ImGui::Image(_Renderer->GetRenderResultId(0), viewport_camera.ViewportSize, { 0,1 }, { 1,0 });
+            const auto image_cursor_pos = ImGui::GetCursorPos();
+            ImGui::Image(renderer->GetRenderResultId(0), viewport_camera.ViewportSize, { 0,1 }, { 1,0 });
 
             if(!_InViewportFreeCam && ImGui::IsItemHovered() && ImGui::IsMouseDown(ImGuiMouseButton_Right))
             {
@@ -128,8 +98,6 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
 
             if(_InViewportFreeCam)
             {
-                auto& io = ImGui::GetIO();
-
                 // Scroll to zoom (move viewport_camera forwards or backwards along direction)
                 if(ImGui::IsKeyDown(ImGuiKey_W))
                 {
@@ -200,6 +168,11 @@ void Arcadia::ImguiWindowViewport::_OnProjectUnbuilt(Arcadia::Event::ProjectUnbu
 void Arcadia::ImguiWindowViewport::_OnSceneActivated(Arcadia::Event::SceneActivated& e)
 {
     const auto& [scene] = e.data_tuple;
+    if(!scene->Contains(ViewportCameraEntityName))
+    {
+        scene->Create(ViewportCameraEntityName, "camera");
+        scene->Emplace<Arcadia::CameraComponent>(ViewportCameraEntityName);
+    }
     _Scene = scene;
 }
 

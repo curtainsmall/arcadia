@@ -8,7 +8,7 @@
 #include"function/input/input_events.hpp"
 #include"function/physics/physics_simulator.hpp"
 #include"function/render/renderer.hpp"
-#include"resource/scene/scene.hpp"
+#include"resource/scene.hpp"
 
 #include"function/ui/imgui_window.hpp"
 #include"project/project.hpp"
@@ -46,11 +46,14 @@ namespace Arcadia
         void _OnRendererUnbuilt(Arcadia::Event::RendererUnbuilt& e);
         void _OnPhysicsSimualtorBuilt(Arcadia::Event::PhysicsSimulatorBuilt& e);
         void _OnPhysicsSimulatorUnbuilt(Arcadia::Event::PhysicsSimulatorUnbuilt& e);
+
+    public:
+        static inline std::string ViewportCameraEntityName{ "viewport_camera" };
     private:
-        std::shared_ptr<Arcadia::Project> _Project{};
-        std::shared_ptr<Arcadia::Scene> _Scene{};
-        std::shared_ptr<Arcadia::iRenderer> _Renderer{};
-        std::shared_ptr<Arcadia::PhysicsSimulator> _PhysicsSimulator{};
+        std::weak_ptr<Arcadia::Project> _Project{};
+        std::weak_ptr<Arcadia::Scene> _Scene{};
+        std::weak_ptr<Arcadia::iRenderer> _Renderer{};
+        std::weak_ptr<Arcadia::PhysicsSimulator> _PhysicsSimulator{};
 
         glm::vec2 _CursorMove{};
 

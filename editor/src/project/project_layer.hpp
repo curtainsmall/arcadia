@@ -62,7 +62,6 @@ namespace Arcadia
         std::shared_ptr<Arcadia::Project> _Project{};
 
         std::shared_ptr<Arcadia::iRenderer> _Renderer{};
-
         std::shared_ptr<Arcadia::PhysicsSimulator> _PhysicsSimulator{};
     };
 }

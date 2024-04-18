@@ -1,13 +1,12 @@
 #include "project.hpp"
 
-#include"resource/component/camera_component/camera_component.hpp"
-#include"resource/component/light_component/light_component.hpp"
-#include"resource/component/model_component/model_component.hpp"
-#include"resource/component/physics_component/physics_component.hpp"
+#include"resource/components/camera_component.hpp"
+#include"resource/components/light_component.hpp"
+#include"resource/components/model_component.hpp"
+#include"resource/components/physics_component.hpp"
 
 Arcadia::Project::Project(nlohmann::json& json):
-    _Name(json.at("name")),
-    ViewportCamera(json.at("viewport_camera"))
+    _Name(json.at("name"))
 {
     for(const auto& json_scene : json.at("scenes"))
     {
@@ -22,8 +21,7 @@ auto Arcadia::Project::ToJson() const -> nlohmann::json
     nlohmann::json json{
         {"name",GetName()},
         {"scenes",nlohmann::json::array()},
-        {"active_scene_name",HasActiveScene() ? GetActiveScene().GetName() : ""s},
-        {"viewport_camera",ViewportCamera.ToJson()}
+        {"active_scene_name",HasActiveScene() ? GetActiveScene().Name : ""s}
     };
 
     for(const auto& [name, scene] : SceneSptrStorage)
@@ -66,7 +64,7 @@ auto Arcadia::Project::GetActiveScene() const -> const Arcadia::Scene&
 
 void Arcadia::Project::SetActiveScene(const std::string& name)
 {
-    auto is_same_scene = _ActiveScene && name == _ActiveScene->GetName();
+    auto is_same_scene = _ActiveScene && name == _ActiveScene->Name;
 
     if(!is_same_scene)
     {

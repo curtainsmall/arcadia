@@ -71,7 +71,7 @@ namespace Arcadia
         Arcadia::ImguiWindowPopupCreateProject _ImguiWindowPopupCreateProject{};
         Arcadia::ImguiWindowPopupCreateScene _ImguiWindowPopupCreateScene{};
 
-        std::shared_ptr<const Arcadia::Project> _Project{};
+        std::weak_ptr<const Arcadia::Project> _Project{};
 
         std::vector<std::tuple<std::string, std::string>> _ImguiWindowTitleAndIdStrPairs{};
     };

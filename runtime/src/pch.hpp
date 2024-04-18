@@ -21,4 +21,4 @@
 #include"function/ui/imgui_header.hpp"
 #include"platform/glfw/glfw_header.hpp"
 #include"platform/jolt/jolt_header.hpp"
-#include"resource/scene/entt_header.hpp"
+#include"resource/entt_header.hpp"

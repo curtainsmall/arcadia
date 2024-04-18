@@ -4,7 +4,6 @@
 #include<string>
 
 #include"core/event/event.hpp"
-#include"resource/scene/entt_header.hpp"
 
 namespace Arcadia
 {
@@ -70,27 +69,28 @@ namespace Arcadia
         //==== Events for entity ====//
 
         ARCADIA_EVENT(
-            NewEntity
+            NewEntity,
+            std::string // type
         );
         ARCADIA_EVENT(
             SelectEntity,
-            entt::entity // entity
+            std::string // entity name
         );
         ARCADIA_EVENT(
             DeleteEntity,
-            entt::entity // entity
+            std::string // entity name
         );
 
         //==== Events for component ====//
 
         ARCADIA_EVENT(
             AddComponent,
-            entt::entity, // entity
+            std::string, // entity name
             std::string // type_str
         );
         ARCADIA_EVENT(
             RemoveComponent,
-            entt::entity, // entity
+            std::string, // entity name
             std::string // type_str
         );
 
