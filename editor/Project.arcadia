@@ -1,5 +1,5 @@
 {
-    "active_scene_name": "1",
+    "active_scene_name": "Scene 1",
     "name": "1",
     "scenes": [
         {
@@ -18,15 +18,15 @@
                             "fov_min": 1.0,
                             "near_plane": 0.10000000149011612,
                             "position": {
-                                "x": 0.0,
-                                "y": 0.0,
-                                "z": 1.0
+                                "x": 4.93072509765625,
+                                "y": -1.9473284482955933,
+                                "z": 20.367372512817383
                             },
                             "speed": 0.25,
                             "target": {
-                                "x": 0.0,
-                                "y": 0.0,
-                                "z": 0.0
+                                "x": 4.46625280380249,
+                                "y": -1.5716204643249512,
+                                "z": 19.565431594848633
                             },
                             "up": {
                                 "x": 0.0,
@@ -44,9 +44,103 @@
                     "internal": true,
                     "name": "viewport_camera",
                     "type": "camera"
+                },
+                {
+                    "components": {
+                        "model": {
+                            "filepath": "D:/CppProject/arcadia/editor/asset/model/planet/planet.obj"
+                        },
+                        "physics": {
+                            "body_shape_color": {
+                                "x": 0.20000000298023224,
+                                "y": 0.20000000298023224,
+                                "z": 0.20000000298023224
+                            },
+                            "jph_body_info_initial": null
+                        },
+                        "transform": {
+                            "pivot": {
+                                "x": 0.0,
+                                "y": 0.0,
+                                "z": 0.0
+                            },
+                            "position": {
+                                "x": 3.0,
+                                "y": 9.0,
+                                "z": 0.0
+                            },
+                            "rotation": {
+                                "w": 1.0,
+                                "x": 0.0,
+                                "y": 0.0,
+                                "z": 0.0
+                            },
+                            "scale": {
+                                "x": 1.0,
+                                "y": 2.0,
+                                "z": 1.0
+                            }
+                        }
+                    },
+                    "display": true,
+                    "internal": false,
+                    "name": "Planet",
+                    "type": "actor"
+                },
+                {
+                    "components": {
+                        "light": {
+                            "light": {
+                                "ambient_strength": {
+                                    "x": 0.0,
+                                    "y": 0.0,
+                                    "z": 0.0
+                                },
+                                "attenuation_coefs": {
+                                    "x": 1.0,
+                                    "y": 0.04500000178813934,
+                                    "z": 0.007499999832361937
+                                },
+                                "color": {
+                                    "x": 1.0,
+                                    "y": 1.0,
+                                    "z": 1.0
+                                },
+                                "cutoff_angles": {
+                                    "x": 0.5235987901687622,
+                                    "y": 0.5585053563117981
+                                },
+                                "diffuse_strength": {
+                                    "x": 5.0,
+                                    "y": 5.0,
+                                    "z": 5.0
+                                },
+                                "direction": {
+                                    "x": 0.0,
+                                    "y": 1.0,
+                                    "z": 0.0
+                                },
+                                "position": {
+                                    "x": 0.0,
+                                    "y": -7.0,
+                                    "z": 0.0
+                                },
+                                "specular_strength": {
+                                    "x": 0.0,
+                                    "y": 0.0,
+                                    "z": 0.0
+                                }
+                            },
+                            "type": "spot"
+                        }
+                    },
+                    "display": true,
+                    "internal": false,
+                    "name": "Light",
+                    "type": "light"
                 }
             ],
-            "name": "1"
+            "name": "Scene 1"
         }
     ]
 }

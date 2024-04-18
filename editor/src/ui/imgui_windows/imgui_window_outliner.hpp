@@ -40,6 +40,7 @@ namespace Arcadia
         void _OnOpenImguiWindow(Arcadia::Event::OpenImguiWindow& e);
         void _OnSceneActivated(Arcadia::Event::SceneActivated& e);
         void _OnSceneDeactivated(Arcadia::Event::SceneDeactivated& e);
+        void _OnRenameEntity(Arcadia::Event::RenameEntity& e);
 
     private:
         std::weak_ptr<Arcadia::Scene> _Scene{};

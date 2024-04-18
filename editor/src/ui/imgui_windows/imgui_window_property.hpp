@@ -7,6 +7,7 @@
 #include"core/base.hpp"
 #include"core/event/event.hpp"
 #include"function/physics/physics_simulator.hpp"
+#include"function/ui/imgui_header.hpp"
 #include"function/ui/imgui_window.hpp"
 #include"platform/jolt/jolt_header.hpp"
 #include"resource/components/camera_component.hpp"
@@ -73,7 +74,7 @@ namespace Arcadia
     public:
         using self_type = ImguiWindowPropertyTransformComponent;
     public:
-        auto operator()(Arcadia::TransformComponent transform_comp)->std::string;
+        auto operator()(Arcadia::TransformComponent& transform_comp)->std::string;
     };
 
     struct ARCADIA_API ImguiWindowProperty: Arcadia::iImguiWindow
@@ -95,7 +96,7 @@ namespace Arcadia
         virtual void OnUpdate() override;
     private:
         template<Arcadia::cComponent Component>
-        auto _contains_component(const std::string& name) -> bool
+        auto _ContainsComponent(const std::string& name) -> bool
         {
             auto scene = _Scene.lock();
             ARCADIA_ASSERT(scene);
@@ -103,11 +104,11 @@ namespace Arcadia
             return scene->AllOf<Component>(name);
         }
         template<Arcadia::cComponent Component>
-        auto _get_component(const std::string& name) -> Component&
+        auto _GetComponent(const std::string& name) -> Component&
         {
             auto scene = _Scene.lock();
             ARCADIA_ASSERT(scene);
-            ARCADIA_ASSERT(_contains_component<Component>(name));
+            ARCADIA_ASSERT(_ContainsComponent<Component>(name));
 
             return scene->Get<Component>(name);
         }
@@ -116,7 +117,11 @@ namespace Arcadia
         void _OnSceneActivated(Arcadia::Event::SceneActivated& e);
         void _OnSceneDeactivated(Arcadia::Event::SceneDeactivated& e);
         void _OnSelectEntity(Arcadia::Event::SelectEntity& e);
+        void _OnRenameEntity(Arcadia::Event::RenameEntity& e);
         void _OnDeleteEntity(Arcadia::Event::DeleteEntity& e);
+
+        template<Arcadia::cComponent Component>
+        auto _ComponentProperty(const std::string& tab_name, Arcadia::MementoList& memento_list);
     private:
 
         std::weak_ptr<Arcadia::Scene> _Scene{};
@@ -128,4 +133,25 @@ namespace Arcadia
         Arcadia::ImguiWindowPropertyPhysicsComponent _ImguiWindowPropertyPhysicsComponent{};
         Arcadia::ImguiWindowPropertyTransformComponent _ImguiWindowPropertyTransformComponent{};
     };
+
+    template<Arcadia::cComponent Component>
+    inline auto ImguiWindowProperty::_ComponentProperty(const std::string& tab_name, Arcadia::MementoList& memento_list)
+    {
+        if(_ContainsComponent<Component>(_SelectedEntityName) && ImGui::BeginTabItem(tab_name.c_str()))
+        {
+            auto description = _ImguiWindowPropertyModelComponent(_GetComponent<Component>(_SelectedEntityName));
+            if(!description.empty())
+            {
+                memento_list
+                    .Snapshot<Component>(
+                        std::format("{} - {}", tab_name, description),
+                        [&, _entity_name = _SelectedEntityName]() -> Component&
+                {
+                    return _GetComponent<Component>(_entity_name);
+                }
+                );
+            }
+            ImGui::EndTabItem();
+        }
+    }
 }

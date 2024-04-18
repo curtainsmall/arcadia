@@ -12,6 +12,7 @@
 #include"resource/components/light_component.hpp"
 #include"resource/components/model_component.hpp"
 #include"resource/components/physics_component.hpp"
+#include"resource/components/transform_component.hpp"
 
 #include"editor/editor_context.hpp"
 
@@ -60,6 +61,7 @@ void Arcadia::ProjectLayer::OnEvent(Arcadia::EventBase& event)
         .Dispatch<Arcadia::Event::CloseScene>(ARCADIA_BIND_MEMBER_FN(_OnCloseScene))
         .Dispatch<Arcadia::Event::DeleteScene>(ARCADIA_BIND_MEMBER_FN(_OnDeleteScene))
         .Dispatch<Arcadia::Event::NewEntity>(ARCADIA_BIND_MEMBER_FN(_OnNewEntity))
+        .Dispatch<Arcadia::Event::RenameEntity>(ARCADIA_BIND_MEMBER_FN(_OnRenameEntity))
         .Dispatch<Arcadia::Event::DeleteEntity>(ARCADIA_BIND_MEMBER_FN(_OnDeleteEntity))
         .Dispatch<Arcadia::Event::AddComponent>(ARCADIA_BIND_MEMBER_FN(_OnAddComponent))
         .Dispatch<Arcadia::Event::RemoveComponent>(ARCADIA_BIND_MEMBER_FN(_OnRemoveComponent))
@@ -413,6 +415,34 @@ void Arcadia::ProjectLayer::_OnNewEntity(Arcadia::Event::NewEntity& e)
     }
 
     scene.Create(name, type);
+
+    Arcadia::Match<void>(
+        type,
+        "actor"s,
+        [&]()
+    {
+        scene.Emplace<Arcadia::ModelComponent>(name);
+        scene.Emplace<Arcadia::TransformComponent>(name);
+        scene.Emplace<Arcadia::PhysicsComponent>(name);
+    },
+        "camera"s,
+        [&]()
+    {
+        scene.Emplace<Arcadia::CameraComponent>(name);
+    },
+        "light"s,
+        [&]()
+    {
+        scene.Emplace<Arcadia::LightComponent>(name);
+    }
+    );
+}
+
+void Arcadia::ProjectLayer::_OnRenameEntity(Arcadia::Event::RenameEntity& e)
+{
+    const auto& [old_name, new_name] = e.data_tuple;
+
+    _Project->GetActiveScene().Rename(old_name, new_name);
 }
 
 void Arcadia::ProjectLayer::_OnDeleteEntity(Arcadia::Event::DeleteEntity& e)

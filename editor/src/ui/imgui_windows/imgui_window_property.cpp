@@ -1218,7 +1218,7 @@ auto Arcadia::ImguiWindowPropertyPhysicsComponent::operator()(Arcadia::PhysicsCo
     return description;
 }
 
-auto Arcadia::ImguiWindowPropertyTransformComponent::operator()(Arcadia::TransformComponent transform_comp) -> std::string
+auto Arcadia::ImguiWindowPropertyTransformComponent::operator()(Arcadia::TransformComponent& transform_comp) -> std::string
 {
     std::string description{};
     ImGui::BeginGroup();
@@ -1300,8 +1300,27 @@ void Arcadia::ImguiWindowProperty::OnEvent(Arcadia::EventBase& event)
         .Dispatch<Arcadia::Event::SceneActivated>(ARCADIA_BIND_MEMBER_FN(_OnSceneActivated))
         .Dispatch<Arcadia::Event::SceneDeactivated>(ARCADIA_BIND_MEMBER_FN(_OnSceneDeactivated))
         .Dispatch<Arcadia::Event::SelectEntity>(ARCADIA_BIND_MEMBER_FN(_OnSelectEntity))
+        .Dispatch<Arcadia::Event::RenameEntity>(ARCADIA_BIND_MEMBER_FN(_OnRenameEntity))
         .Dispatch<Arcadia::Event::DeleteEntity>(ARCADIA_BIND_MEMBER_FN(_OnDeleteEntity))
         .Result();
+}
+
+#define ARCADIA_IMGUI_WINDOW_PROPERTY_HELPER(component_type, tab_name, property_display_fn) \
+if(_ContainsComponent<component_type>(_SelectedEntityName) && ImGui::BeginTabItem(tab_name.c_str()))\
+{\
+    auto description = property_display_fn(_GetComponent<component_type>(_SelectedEntityName));\
+    if(!description.empty())\
+    {\
+        memento_list\
+            .Snapshot<component_type>(\
+                std::format("{} - {}", tab_name, description),\
+                [&, _entity_name = _SelectedEntityName]() -> component_type&\
+        {\
+            return _GetComponent<component_type>(_entity_name);\
+        }\
+        );\
+    }\
+    ImGui::EndTabItem();\
 }
 
 void Arcadia::ImguiWindowProperty::OnUpdate()
@@ -1344,70 +1363,12 @@ void Arcadia::ImguiWindowProperty::OnUpdate()
                 ImGui::PushItemWidth(200.f);
 
                 auto& memento_list = Arcadia::MementoList::Instance();
-                if(_contains_component<Arcadia::CameraComponent>(_SelectedEntityName) && ImGui::BeginTabItem("Camera"))
-                {
-                    auto description = _ImguiWindowPropertyCameraComponent(_get_component<Arcadia::CameraComponent>(_SelectedEntityName));
-                    if(!description.empty())
-                    {
-                        memento_list
-                            .Snapshot<Arcadia::CameraComponent>(
-                                std::format("Camera - {}", description),
-                                [&, _entity_name = _SelectedEntityName]() -> Arcadia::CameraComponent&
-                        {
-                            return _get_component<Arcadia::CameraComponent>(_entity_name);
-                        }
-                        );
-                    }
-                    ImGui::EndTabItem();
-                }
-                if(_contains_component<Arcadia::LightComponent>(_SelectedEntityName) && ImGui::BeginTabItem("Light"))
-                {
-                    auto description = _ImguiWindowPropertyLightComponent(_get_component<Arcadia::LightComponent>(_SelectedEntityName));
-                    if(!description.empty())
-                    {
-                        memento_list
-                            .Snapshot<Arcadia::LightComponent>(
-                                std::format("Light - {}", description),
-                                [&, _entity_name = _SelectedEntityName]() -> Arcadia::LightComponent&
-                        {
-                            return _get_component<Arcadia::LightComponent>(_entity_name);
-                        }
-                        );
-                    }
-                    ImGui::EndTabItem();
-                }
-                if(_contains_component<Arcadia::ModelComponent>(_SelectedEntityName) && ImGui::BeginTabItem("Model"))
-                {
-                    auto description = _ImguiWindowPropertyModelComponent(_get_component<Arcadia::ModelComponent>(_SelectedEntityName));
-                    if(!description.empty())
-                    {
-                        memento_list
-                            .Snapshot<Arcadia::ModelComponent>(
-                                std::format("Model - {}", description),
-                                [&, _entity_name = _SelectedEntityName]() -> Arcadia::ModelComponent&
-                        {
-                            return _get_component<Arcadia::ModelComponent>(_entity_name);
-                        }
-                        );
-                    }
-                    ImGui::EndTabItem();
-                }
-                if(_contains_component<Arcadia::PhysicsComponent>(_SelectedEntityName) && ImGui::BeginTabItem("Physics"))
-                {
-                    auto description = _ImguiWindowPropertyPhysicsComponent(_get_component<Arcadia::PhysicsComponent>(_SelectedEntityName));
-                    if(!description.empty())
-                    {
-                        memento_list
-                            .Snapshot<Arcadia::PhysicsComponent>(
-                                std::format("Physics - {}", description),
-                                [&, _entity_name = _SelectedEntityName]() -> Arcadia::PhysicsComponent&
-                        {
-                            return _get_component<Arcadia::PhysicsComponent>(_entity_name);
-                        }
-                        );
-                    }
-                    ImGui::EndTabItem();
-                }
+
+                ARCADIA_IMGUI_WINDOW_PROPERTY_HELPER(Arcadia::CameraComponent, "Camera"s, _ImguiWindowPropertyCameraComponent);
+                ARCADIA_IMGUI_WINDOW_PROPERTY_HELPER(Arcadia::LightComponent, "Light"s, _ImguiWindowPropertyLightComponent);
+                ARCADIA_IMGUI_WINDOW_PROPERTY_HELPER(Arcadia::ModelComponent, "Model"s, _ImguiWindowPropertyModelComponent);
+                ARCADIA_IMGUI_WINDOW_PROPERTY_HELPER(Arcadia::PhysicsComponent, "Physics"s, _ImguiWindowPropertyPhysicsComponent);
+                ARCADIA_IMGUI_WINDOW_PROPERTY_HELPER(Arcadia::TransformComponent, "Transform"s, _ImguiWindowPropertyTransformComponent);
 
                 ImGui::EndTabBar();
 
@@ -1445,6 +1406,15 @@ void Arcadia::ImguiWindowProperty::_OnSelectEntity(Arcadia::Event::SelectEntity&
 {
     const auto& [entity_name] = e.data_tuple;
     _SelectedEntityName = entity_name;
+}
+
+void Arcadia::ImguiWindowProperty::_OnRenameEntity(Arcadia::Event::RenameEntity& e)
+{
+    const auto& [old_name, new_name] = e.data_tuple;
+    if(old_name == _SelectedEntityName)
+    {
+        _SelectedEntityName = new_name;
+    }
 }
 
 void Arcadia::ImguiWindowProperty::_OnDeleteEntity(Arcadia::Event::DeleteEntity& e)

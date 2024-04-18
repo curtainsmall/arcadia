@@ -170,7 +170,8 @@ void Arcadia::ImguiWindowViewport::_OnSceneActivated(Arcadia::Event::SceneActiva
     const auto& [scene] = e.data_tuple;
     if(!scene->Contains(ViewportCameraEntityName))
     {
-        scene->Create(ViewportCameraEntityName, "camera");
+        auto& entity_info = scene->Create(ViewportCameraEntityName, "camera");
+        entity_info.Internal = true;
         scene->Emplace<Arcadia::CameraComponent>(ViewportCameraEntityName);
     }
     _Scene = scene;

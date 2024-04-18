@@ -18,6 +18,12 @@ namespace Arcadia
 {
     struct ARCADIA_API Scene;
 
+    static inline std::array BuildInEntityTypes{
+         "actor"s,
+         "camera"s,
+         "light"s,
+    };
+
     struct ARCADIA_API EntityInfo
     {
         friend struct Arcadia::Scene;
@@ -40,7 +46,7 @@ namespace Arcadia
 
     public:
         std::string Type{}; // Type of the entity
-        bool Display{ false }; // Whether the entity will be displayed in the viewport (the renderer will skip the hidden ones)
+        bool Display{ true }; // Whether the entity will be displayed in the viewport (the renderer will skip the hidden ones)
         bool Internal{ false }; // Whether the entity is controled internally (it will not be listed in the outliner); Note that an internal entity will still be rendered unless `Display` is set to false
     protected:
         std::string Name{};
@@ -73,6 +79,7 @@ namespace Arcadia
         /// @brief Set name of entity
         /// @param entity Entity to set name
         /// @param name Name
+        /// @note Do not use this function when iterating entities
         void Rename(const std::string& name, const std::string& new_name);
 
         /// @brief Check whether there is an entity with given name

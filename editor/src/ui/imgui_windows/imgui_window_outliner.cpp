@@ -16,6 +16,7 @@ void Arcadia::ImguiWindowOutliner::OnEvent(Arcadia::EventBase& event)
         .Dispatch<Arcadia::Event::OpenImguiWindow>(ARCADIA_BIND_MEMBER_FN(_OnOpenImguiWindow))
         .Dispatch<Arcadia::Event::SceneActivated>(ARCADIA_BIND_MEMBER_FN(_OnSceneActivated))
         .Dispatch<Arcadia::Event::SceneDeactivated>(ARCADIA_BIND_MEMBER_FN(_OnSceneDeactivated))
+        .Dispatch<Arcadia::Event::RenameEntity>(ARCADIA_BIND_MEMBER_FN(_OnRenameEntity))
         .Result();
 }
 
@@ -41,10 +42,27 @@ void Arcadia::ImguiWindowOutliner::OnUpdate()
     {
         if(scene && ImGui::BeginPopupContextWindow())
         {
-            if(ImGui::Selectable("New Entity"))
+            ImGui::SeparatorText("New");
+
+            if(ImGui::Selectable("Actor"))
+            {
+                event_queue.Signal<Arcadia::Event::NewEntity>("actor");
+            }
+
+            if(ImGui::Selectable("Camera"))
+            {
+                event_queue.Signal<Arcadia::Event::NewEntity>("camera");
+            }
+
+            if(ImGui::Selectable("Light"))
+            {
+                event_queue.Signal<Arcadia::Event::NewEntity>("light");
+            }
+
+            /*if(ImGui::Selectable("Custom"))
             {
                 event_queue.Signal<Arcadia::Event::NewEntity>("");
-            }
+            }*/
             ImGui::EndPopup();
         }
 
@@ -80,7 +98,7 @@ void Arcadia::ImguiWindowOutliner::OnUpdate()
                             }
                             else
                             {
-                                scene->Rename(_EntityOldName, _EntityNewName);
+                                event_queue.Signal<Arcadia::Event::RenameEntity>(_EntityOldName, _EntityNewName);
                             }
                         }
                         _EntityOldName.clear();
@@ -102,17 +120,22 @@ void Arcadia::ImguiWindowOutliner::OnUpdate()
                         _SelectedEntityName = name;
                         event_queue.Signal<Arcadia::Event::SelectEntity>(name);
                     }
+                    if(ImGui::IsItemHovered())
+                    {
+                        ImGui::SetTooltip(entity_info.Type.c_str());
+                    }
 
                     if(ImGui::BeginPopupContextItem())
                     {
-                        if(ImGui::Selectable("Delete Entity"))
-                        {
-                            event_queue.Signal<Arcadia::Event::DeleteEntity>(name);
-                        }
                         if(ImGui::Selectable("Rename Entity"))
                         {
                             _EntityOldName = name;
                         }
+                        if(ImGui::Selectable("Delete Entity"))
+                        {
+                            event_queue.Signal<Arcadia::Event::DeleteEntity>(name);
+                        }
+                    #if 0 // We do not allow custom entity for now
                         if(!_SelectedEntityName.empty())
                         {
                             ImGui::Separator();
@@ -147,6 +170,7 @@ void Arcadia::ImguiWindowOutliner::OnUpdate()
                                 ImGui::EndMenu();
                             }
                         }
+                    #endif
 
                         ImGui::EndPopup();
                     }
@@ -177,4 +201,13 @@ void Arcadia::ImguiWindowOutliner::_OnSceneDeactivated(Arcadia::Event::SceneDeac
 {
     _Scene.reset();
     _SelectedEntityName.clear();
+}
+
+void Arcadia::ImguiWindowOutliner::_OnRenameEntity(Arcadia::Event::RenameEntity& e)
+{
+    const auto& [old_name, new_name] = e.data_tuple;
+    if(old_name == _SelectedEntityName)
+    {
+        _SelectedEntityName = new_name;
+    }
 }

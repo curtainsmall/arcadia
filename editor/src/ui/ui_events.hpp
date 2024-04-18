@@ -77,6 +77,11 @@ namespace Arcadia
             std::string // entity name
         );
         ARCADIA_EVENT(
+            RenameEntity,
+            std::string, // old name
+            std::string  // new name
+        );
+        ARCADIA_EVENT(
             DeleteEntity,
             std::string // entity name
         );

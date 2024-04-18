@@ -52,6 +52,7 @@ namespace Arcadia
         void _OnDeleteScene(Arcadia::Event::DeleteScene& e);
 
         void _OnNewEntity(Arcadia::Event::NewEntity& e);
+        void _OnRenameEntity(Arcadia::Event::RenameEntity& e);
         void _OnDeleteEntity(Arcadia::Event::DeleteEntity& e);
 
         void _OnAddComponent(Arcadia::Event::AddComponent& e);

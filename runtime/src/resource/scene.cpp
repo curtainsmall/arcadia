@@ -6,6 +6,7 @@
 #include"resource/components/light_component.hpp"
 #include"resource/components/model_component.hpp"
 #include"resource/components/physics_component.hpp"
+#include"resource/components/transform_component.hpp"
 
 Arcadia::Scene::Scene(const nlohmann::json& json):
     Name(json.at("name"))
@@ -23,27 +24,33 @@ Arcadia::Scene::Scene(const nlohmann::json& json):
         // For components
         for(const auto& [json_comp_type_str, json_comp] : json_comps.items())
         {
+            const auto& name = entity_info.Name;
             Arcadia::Match<void>(
                 json_comp_type_str,
                 Arcadia::ModelComponent::GetTypeStrStatic(),
                 [&]()
             {
-                Emplace<Arcadia::ModelComponent>(entity_info.Name, json_comp);
+                Emplace<Arcadia::ModelComponent>(name, json_comp);
             },
                 Arcadia::LightComponent::GetTypeStrStatic(),
                 [&]()
             {
-                Emplace<Arcadia::LightComponent>(entity_info.Name, json_comp);
+                Emplace<Arcadia::LightComponent>(name, json_comp);
             },
                 Arcadia::CameraComponent::GetTypeStrStatic(),
                 [&]()
             {
-                Emplace<Arcadia::CameraComponent>(entity_info.Name, json_comp);
+                Emplace<Arcadia::CameraComponent>(name, json_comp);
             },
                 Arcadia::PhysicsComponent::GetTypeStrStatic(),
                 [&]()
             {
-                Emplace<Arcadia::PhysicsComponent>(entity_info.Name, json_comp);
+                Emplace<Arcadia::PhysicsComponent>(name, json_comp);
+            },
+                Arcadia::TransformComponent::GetTypeStrStatic(),
+                [&]()
+            {
+                Emplace<Arcadia::TransformComponent>(name, json_comp);
             }
             );
         }
@@ -157,6 +164,10 @@ auto Arcadia::Scene::_CreateJsonComponents(const std::string& name) const -> nlo
     if(AllOf<Arcadia::PhysicsComponent>(name))
     {
         json_comps.push_back({ Arcadia::PhysicsComponent::GetTypeStrStatic(),Get<Arcadia::PhysicsComponent>(name).ToJson() });
+    }
+    if(AllOf<Arcadia::TransformComponent>(name))
+    {
+        json_comps.push_back({ Arcadia::TransformComponent::GetTypeStrStatic(), Get<Arcadia::TransformComponent>(name).ToJson() });
     }
 
     return json_comps;
