@@ -21,8 +21,6 @@ namespace Arcadia
     public:
         auto operator==(const SpotLight&) const -> bool = default;
     public:
-        glm::vec3 Position{ Arcadia::Vec3::Zero() };
-        glm::vec3 Direction{ Arcadia::Vec3::Zero() };
         glm::vec3 AttenuationCoefs{ 1.f,.045f,.0075f };
         glm::vec2 CutoffAngles{ glm::radians(30.f),glm::radians(32.f) };
         glm::vec3 Color{ 1.f,1.f,1.f };
@@ -36,7 +34,6 @@ namespace Arcadia
     public:
         auto operator==(const DirectLight&) const -> bool = default;
     public:
-        glm::vec3 Direction{ Arcadia::Vec3::Zero() };
         glm::vec3 Color{ 1.f,1.f,1.f };
         glm::vec3 AmbientStrength{ Arcadia::Vec3::Zero() };
         glm::vec3 DiffuseStrength{ 5.f,5.f,5.f };
@@ -48,8 +45,6 @@ namespace Arcadia
     public:
         auto operator==(const AreaLight&) const -> bool = default;
     public:
-        glm::vec3 Position{ Arcadia::Vec3::Zero() };
-        glm::vec3 Direction{ Arcadia::Vec3::Zero() };
         glm::vec2 Size{ Arcadia::Vec2::Zero() };
         glm::vec3 Color{ 1.f,1.f,1.f };
         glm::vec3 AmbientStrength{ Arcadia::Vec3::Zero() };
@@ -62,7 +57,6 @@ namespace Arcadia
     public:
         auto operator==(const PointLight&) const -> bool = default;
     public:
-        glm::vec3 Position{ Arcadia::Vec3::Zero() };
         glm::vec3 AttenuationCoefs{ 1.f,.045f,.0075f };
         glm::vec3 Color{ 1.f,1.f,1.f };
         glm::vec3 AmbientStrength{ Arcadia::Vec3::Zero() };

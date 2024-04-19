@@ -135,6 +135,7 @@ void Arcadia::ImguiWindowOutliner::OnUpdate()
                         {
                             event_queue.Signal<Arcadia::Event::DeleteEntity>(name);
                         }
+
                     #if 0 // We do not allow custom entity for now
                         if(!_SelectedEntityName.empty())
                         {

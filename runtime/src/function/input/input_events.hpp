@@ -12,7 +12,8 @@ namespace Arcadia
 {
     namespace KeyCode
     {
-        enum Type:int
+        using value_type = int;
+        enum: value_type
         {
             Unknown          = GLFW_KEY_UNKNOWN,
             Space            = GLFW_KEY_SPACE,
@@ -127,7 +128,8 @@ namespace Arcadia
     };
     namespace MouseCode
     {
-        enum Type: int
+        using value_type = int;
+        enum: value_type
         {
             ButtonLeft   = GLFW_MOUSE_BUTTON_LEFT,
             ButtonRight  = GLFW_MOUSE_BUTTON_RIGHT,
@@ -136,7 +138,8 @@ namespace Arcadia
     }
     namespace InputAction
     {
-        enum Type: int
+        using value_type = int;
+        enum: value_type
         {
             Release = GLFW_RELEASE,
             Press   = GLFW_PRESS,
@@ -145,7 +148,8 @@ namespace Arcadia
     }
     namespace InputModifier
     {
-        enum Type: int
+        using value_type = int;
+        enum: value_type
         {
             Shift     = GLFW_MOD_SHIFT,
             Ctrl      = GLFW_MOD_CONTROL,

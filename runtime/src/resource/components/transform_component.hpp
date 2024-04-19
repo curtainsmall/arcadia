@@ -15,9 +15,21 @@ namespace Arcadia
     public:
         glm::vec3 Position{ Arcadia::Vec3::Zero() };
         glm::quat Rotation{ Arcadia::Quat::Identity() };
+        glm::vec3 Direction{ Arcadia::Vec3::PosZ() };
         glm::vec3 Scale{ 1,1,1 };
         glm::vec3 Pivot{ Arcadia::Vec3::Zero() };
     };
+
+    namespace TransformComponentFlags
+    {
+        using value_type = std::uint8_t;
+        enum: value_type
+        {
+            None = 0,
+            UseRotation = 0x01,
+            UseDirection = 0x02,
+        };
+    }
 
     struct ARCADIA_API TransformComponent:
         Arcadia::iComponent,
@@ -43,8 +55,11 @@ namespace Arcadia
         virtual void OnRestore(const std::shared_ptr<Arcadia::MementoDataBase>& memento_data) override;
 
     public:
+        Arcadia::TransformComponentFlags::value_type Flags{ Arcadia::TransformComponentFlags::None };
+
         glm::vec3 Position{ Arcadia::Vec3::Zero() };
         glm::quat Rotation{ Arcadia::Quat::Identity() };
+        glm::vec3 Direction{ Arcadia::Vec3::PosZ() };
         glm::vec3 Scale{ 1,1,1 };
         glm::vec3 Pivot{ Arcadia::Vec3::Zero() };
     };

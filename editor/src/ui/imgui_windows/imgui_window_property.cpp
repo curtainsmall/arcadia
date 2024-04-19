@@ -301,28 +301,6 @@ auto Arcadia::ImguiWindowPropertyLightComponent::operator()(Arcadia::LightCompon
         }
 
         ImGui::NewLine();
-        edited |= Arcadia::ImguiWrapper::DragVec3(
-            "Position",
-            light.Position,
-            speed,
-            min,
-            max,
-            format,
-            flags
-        );
-
-        ImGui::NewLine();
-        edited |= Arcadia::ImguiWrapper::DragVec3(
-            "Direction",
-            light.Direction,
-            light_direction_drag_speed,
-            light_direction_min,
-            light_direction_max,
-            format,
-            flags
-        );
-
-        ImGui::NewLine();
         edited |= Arcadia::ImguiWrapper::DragFloat(
             "Attenuation Contant",
             light.AttenuationCoefs.x,
@@ -473,17 +451,6 @@ auto Arcadia::ImguiWindowPropertyLightComponent::operator()(Arcadia::LightCompon
         }
 
         ImGui::NewLine();
-        edited |= Arcadia::ImguiWrapper::DragVec3(
-            "Direction",
-            light.Direction,
-            light_direction_drag_speed,
-            light_direction_min,
-            light_direction_max,
-            format,
-            flags
-        );
-
-        ImGui::NewLine();
         edited |= Arcadia::ImguiWrapper::ColorEditVec3(
             "Color",
             light.Color
@@ -578,28 +545,6 @@ auto Arcadia::ImguiWindowPropertyLightComponent::operator()(Arcadia::LightCompon
             }
             ImGui::EndCombo();
         }
-
-        ImGui::NewLine();
-        edited |= Arcadia::ImguiWrapper::DragVec3(
-            "Position",
-            light.Position,
-            speed,
-            min,
-            max,
-            format,
-            flags
-        );
-
-        ImGui::NewLine();
-        edited |= Arcadia::ImguiWrapper::DragVec3(
-            "Direction",
-            light.Direction,
-            light_direction_drag_speed,
-            light_direction_min,
-            light_direction_max,
-            format,
-            flags
-        );
 
         ImGui::NewLine();
         edited |= Arcadia::ImguiWrapper::DragFloat(
@@ -716,17 +661,6 @@ auto Arcadia::ImguiWindowPropertyLightComponent::operator()(Arcadia::LightCompon
             }
             ImGui::EndCombo();
         }
-
-        ImGui::NewLine();
-        edited |= Arcadia::ImguiWrapper::DragVec3(
-            "Position",
-            light.Position,
-            speed,
-            min,
-            max,
-            format,
-            flags
-        );
 
         ImGui::NewLine();
         edited |= Arcadia::ImguiWrapper::DragFloat(
@@ -1245,19 +1179,36 @@ auto Arcadia::ImguiWindowPropertyTransformComponent::operator()(Arcadia::Transfo
         description = "Position";
     }
 
-    ImGui::NewLine();
-    float rotation_drag_speed{ .05f };
-    if(Arcadia::ImguiWrapper::DragQuatNormalized(
-        "Rotation",
-        transform_comp.Rotation,
-        rotation_drag_speed,
-        min,
-        max,
-        format,
-        flags
-    ))
+    if(transform_comp.Flags & Arcadia::TransformComponentFlags::UseRotation)
     {
-        description = "Rotation";
+        ImGui::NewLine();
+        float rotation_drag_speed{ .05f };
+        if(Arcadia::ImguiWrapper::DragQuatNormalized(
+            "Rotation",
+            transform_comp.Rotation,
+            rotation_drag_speed,
+            format,
+            flags
+        ))
+        {
+            description = "Rotation";
+        }
+    }
+
+    if(transform_comp.Flags & Arcadia::TransformComponentFlags::UseDirection)
+    {
+        ImGui::NewLine();
+        float direction_drag_speed{ .05f };
+        if(Arcadia::ImguiWrapper::DragVec3Normalized(
+            "Direction",
+            transform_comp.Direction,
+            direction_drag_speed,
+            format,
+            flags
+        ))
+        {
+            description = "Direction";
+        }
     }
 
     ImGui::NewLine();

@@ -108,8 +108,8 @@ void Arcadia::GlRenderer::Submit(const Arcadia::Scene& scene, const std::string&
         "light"s,
         [&]()
     {
-        const auto& light_comp = scene.Get<Arcadia::LightComponent>(name);
-        _GlRenderUnitLights.emplace_back(light_comp.Light);
+        const auto& [light_comp, transform_comp] = scene.Get<Arcadia::LightComponent, Arcadia::TransformComponent>(name);
+        _GlRenderUnitLights.emplace_back(transform_comp.Position, transform_comp.Direction, light_comp.Light);
     },
         "actor"s,
         [&]()
@@ -384,7 +384,7 @@ void Arcadia::GlRenderer::_DrawLights(
     gl_light_shape_vertex_array.Bind();
 
     GLsizeiptr light_count = 0;
-    for(const auto& [light] : _GlRenderUnitLights)
+    for(const auto& [position, direction, light] : _GlRenderUnitLights)
     {
         if(light_count > max_light_count)
         {
@@ -404,8 +404,8 @@ void Arcadia::GlRenderer::_DrawLights(
             gl_light_uniform_buffer
                 .SubData(base_offfset + 4, sizeof(float), &cosine_inner_cutoff_angle)
                 .SubData(base_offfset + 8, sizeof(float), &cosine_outer_cutoff_angle)
-                .SubData(base_offfset + 16, sizeof(glm::vec3), &light.Position)
-                .SubData(base_offfset + 32, sizeof(glm::vec3), &light.Direction)
+                .SubData(base_offfset + 16, sizeof(glm::vec3), &position)
+                .SubData(base_offfset + 32, sizeof(glm::vec3), &direction)
                 .SubData(base_offfset + 48, sizeof(glm::vec3), &light.AttenuationCoefs)
                 .SubData(base_offfset + 64, sizeof(glm::vec3), &light.Color)
                 .SubData(base_offfset + 80, sizeof(glm::vec3), &light.AmbientStrength)
@@ -414,7 +414,7 @@ void Arcadia::GlRenderer::_DrawLights(
             ++light_count;
 
             _GlShapePipeline
-                .SetUniform("u_transform_mat", glm::translate(Arcadia::Mat4::Identity(), light.Position))
+                .SetUniform("u_transform_mat", glm::translate(Arcadia::Mat4::Identity(), position))
                 .SetUniform("u_color", light.Color);
         },
             [&](const Arcadia::DirectLight& light)
@@ -422,7 +422,7 @@ void Arcadia::GlRenderer::_DrawLights(
             GLintptr base_offfset = light_count_size_aligned + light_count * light_t_size;
             gl_light_uniform_buffer
                 .SubData(base_offfset + 0, sizeof(int), &light_type_direct)
-                .SubData(base_offfset + 32, sizeof(glm::vec3), &light.Direction)
+                .SubData(base_offfset + 32, sizeof(glm::vec3), &direction)
                 .SubData(base_offfset + 64, sizeof(glm::vec3), &light.Color)
                 .SubData(base_offfset + 80, sizeof(glm::vec3), &light.AmbientStrength)
                 .SubData(base_offfset + 96, sizeof(glm::vec3), &light.DiffuseStrength)
@@ -436,7 +436,7 @@ void Arcadia::GlRenderer::_DrawLights(
             GLintptr base_offfset = light_count_size_aligned + light_count * light_t_size;
             gl_light_uniform_buffer
                 .SubData(base_offfset + 0, sizeof(int), &light_type_point)
-                .SubData(base_offfset + 16, sizeof(glm::vec3), &light.Position)
+                .SubData(base_offfset + 16, sizeof(glm::vec3), &position)
                 .SubData(base_offfset + 48, sizeof(glm::vec3), &light.AttenuationCoefs)
                 .SubData(base_offfset + 64, sizeof(glm::vec3), &light.Color)
                 .SubData(base_offfset + 80, sizeof(glm::vec3), &light.AmbientStrength)
@@ -445,7 +445,7 @@ void Arcadia::GlRenderer::_DrawLights(
             ++light_count;
 
             _GlShapePipeline
-                .SetUniform("u_transform_mat", glm::translate(Arcadia::Mat4::Identity(), light.Position))
+                .SetUniform("u_transform_mat", glm::translate(Arcadia::Mat4::Identity(), position))
                 .SetUniform("u_color", light.Color);
         }
         );

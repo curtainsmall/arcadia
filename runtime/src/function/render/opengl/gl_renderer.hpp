@@ -33,6 +33,8 @@ namespace Arcadia
     >;
 
     using GlRenderUnitLight = std::tuple<
+        glm::vec3, // position
+        glm::vec3, // direction
         Arcadia::LightType // light
     >;
 
