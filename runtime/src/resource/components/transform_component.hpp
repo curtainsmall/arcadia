@@ -8,18 +8,6 @@
 
 namespace Arcadia
 {
-    struct ARCADIA_API TransformComponentMementoData: Arcadia::MementoDataBase
-    {
-    public:
-        auto operator==(const TransformComponentMementoData&) const -> bool = default;
-    public:
-        glm::vec3 Position{ Arcadia::Vec3::Zero() };
-        glm::quat Rotation{ Arcadia::Quat::Identity() };
-        glm::vec3 Direction{ Arcadia::Vec3::PosZ() };
-        glm::vec3 Scale{ 1,1,1 };
-        glm::vec3 Pivot{ Arcadia::Vec3::Zero() };
-    };
-
     namespace TransformComponentFlags
     {
         using value_type = std::uint8_t;
@@ -30,6 +18,21 @@ namespace Arcadia
             UseDirection = 0x02,
         };
     }
+
+    struct ARCADIA_API TransformComponentMementoData: Arcadia::MementoDataBase
+    {
+    public:
+        auto operator==(const TransformComponentMementoData&) const -> bool = default;
+    public:
+        Arcadia::TransformComponentFlags::value_type Flags{ Arcadia::TransformComponentFlags::None };
+
+        glm::vec3 Position{ Arcadia::Vec3::Zero() };
+        glm::quat Rotation{ Arcadia::Quat::Identity() };
+        glm::vec3 Direction{ Arcadia::Vec3::PosZ() };
+        glm::vec3 Scale{ 1,1,1 };
+        glm::vec3 Pivot{ Arcadia::Vec3::Zero() };
+    };
+
 
     struct ARCADIA_API TransformComponent:
         Arcadia::iComponent,

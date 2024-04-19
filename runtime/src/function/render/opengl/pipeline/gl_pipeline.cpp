@@ -162,37 +162,37 @@ auto Arcadia::GlPipeline::SetUniform(const std::string& name, GLuint u) -> self_
 
 auto Arcadia::GlPipeline::SetUniform(const std::string& name, const glm::vec4& vec) -> self_type&
 {
-    SetUniform(name, vec.x, vec.y, vec.z, vec.w);
+    ARCADIA_GL_CALL(glUniform4fv(_GetUniformLocation(name), 1, glm::value_ptr(vec)));
     return *this;
 }
 
 auto Arcadia::GlPipeline::SetUniform(const std::string& name, const glm::vec3& vec) -> self_type&
 {
-    SetUniform(name, vec.x, vec.y, vec.z);
+    ARCADIA_GL_CALL(glUniform3fv(_GetUniformLocation(name), 1, glm::value_ptr(vec)));
     return *this;
 }
 
 auto Arcadia::GlPipeline::SetUniform(const std::string& name, const glm::vec2& vec) -> self_type&
 {
-    SetUniform(name, vec.x, vec.y);
+    ARCADIA_GL_CALL(glUniform2fv(_GetUniformLocation(name), 1, glm::value_ptr(vec)));
     return *this;
 }
 
 auto Arcadia::GlPipeline::SetUniform(const std::string& name, const glm::mat4& mat) -> self_type&
 {
-    ARCADIA_GL_CALL(glUniformMatrix4fv(_GetUniformLocation(name), 1, GL_FALSE, &mat[0][0]));
+    ARCADIA_GL_CALL(glUniformMatrix4fv(_GetUniformLocation(name), 1, GL_FALSE, glm::value_ptr(mat)));
     return *this;
 }
 
 auto Arcadia::GlPipeline::SetUniform(const std::string& name, const glm::mat3& mat) -> self_type&
 {
-    ARCADIA_GL_CALL(glUniformMatrix3fv(_GetUniformLocation(name), 1, GL_FALSE, &mat[0][0]));
+    ARCADIA_GL_CALL(glUniformMatrix3fv(_GetUniformLocation(name), 1, GL_FALSE, glm::value_ptr(mat)));
     return *this;
 }
 
 auto Arcadia::GlPipeline::SetUniform(const std::string& name, const glm::mat2& mat) -> self_type&
 {
-    ARCADIA_GL_CALL(glUniformMatrix2fv(_GetUniformLocation(name), 1, GL_FALSE, &mat[0][0]));
+    ARCADIA_GL_CALL(glUniformMatrix2fv(_GetUniformLocation(name), 1, GL_FALSE, glm::value_ptr(mat)));
     return *this;
 }
 

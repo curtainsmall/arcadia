@@ -2,6 +2,7 @@
 #include "transform_component.hpp"
 
 Arcadia::TransformComponent::TransformComponent(const nlohmann::json& json):
+    Flags(json.at("flags")),
     Position(Arcadia::Vec3::FromJson(json.at("position"))),
     Rotation(Arcadia::Quat::FromJson(json.at("rotation"))),
     Direction(Arcadia::Vec3::FromJson(json.at("direction"))),
@@ -12,6 +13,7 @@ Arcadia::TransformComponent::TransformComponent(const nlohmann::json& json):
 auto Arcadia::TransformComponent::ToJson() const -> nlohmann::json
 {
     nlohmann::json json{
+        {"flags", Flags},
         {"position",Arcadia::Vec3::ToJson(Position)},
         {"rotation",Arcadia::Quat::ToJson(Rotation)},
         {"direction",Arcadia::Vec3::ToJson(Direction)},
@@ -26,6 +28,7 @@ auto Arcadia::TransformComponent::OnSnapshot() const -> std::shared_ptr<Arcadia:
 {
     auto memento_data = std::make_shared<Arcadia::TransformComponentMementoData>();
 
+    memento_data->Flags = Flags;
     memento_data->Position  = Position;
     memento_data->Rotation  = Rotation;
     memento_data->Direction = Direction;
@@ -39,6 +42,7 @@ void Arcadia::TransformComponent::OnRestore(const std::shared_ptr<Arcadia::Memen
 {
     auto& memento_data_ = memento_data->As<Arcadia::TransformComponentMementoData>();
 
+    Flags = memento_data_.Flags;
     Position  = memento_data_.Position;
     Rotation  = memento_data_.Rotation;
     Direction = memento_data_.Direction;

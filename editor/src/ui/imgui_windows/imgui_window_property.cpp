@@ -49,9 +49,10 @@ auto Arcadia::ImguiWindowPropertyCameraComponent::operator()(Arcadia::CameraComp
     }
 
     ImGui::NewLine();
+    auto fov = glm::degrees(camera_comp.Fov);
     if(Arcadia::ImguiWrapper::DragFloat(
         "FOV",
-        camera_comp.Fov,
+        fov,
         speed,
         camera_comp.FovMin,
         camera_comp.FovMax,
@@ -61,11 +62,13 @@ auto Arcadia::ImguiWindowPropertyCameraComponent::operator()(Arcadia::CameraComp
     {
         description = "FOV";
     }
+    camera_comp.Fov = glm::radians(fov);
 
     ImGui::NewLine();
+    auto fov_min = glm::degrees(camera_comp.FovMin);
     if(Arcadia::ImguiWrapper::DragFloat(
         "FOV Min",
-        camera_comp.FovMin,
+        fov_min,
         speed,
         .0f,
         180.f,
@@ -75,11 +78,13 @@ auto Arcadia::ImguiWindowPropertyCameraComponent::operator()(Arcadia::CameraComp
     {
         description = "FOV Min";
     }
+    camera_comp.FovMin = glm::radians(fov_min);
 
     ImGui::NewLine();
+    auto fov_max = glm::degrees(camera_comp.FovMax);
     if(Arcadia::ImguiWrapper::DragFloat(
         "FOV Max",
-        camera_comp.FovMax,
+        fov_max,
         speed,
         .0f,
         180.f,
@@ -89,6 +94,7 @@ auto Arcadia::ImguiWindowPropertyCameraComponent::operator()(Arcadia::CameraComp
     {
         description = "FOV Max";
     }
+    camera_comp.FovMax = glm::radians(fov_max);
 
     ImGui::NewLine();
     if(Arcadia::ImguiWrapper::DragFloat(
@@ -1224,9 +1230,9 @@ if(_ContainsComponent<component_type>(_SelectedEntityName) && ImGui::BeginTabIte
         memento_list\
             .Snapshot<component_type>(\
                 std::format("{} - {}", tab_name, description),\
-                [&, _entity_name = _SelectedEntityName]() -> component_type&\
+                [_scene = scene, _entity_name = _SelectedEntityName]() -> component_type&\
         {\
-            return _GetComponent<component_type>(_entity_name);\
+            return _scene->Get<component_type>(_entity_name);\
         }\
         );\
     }\

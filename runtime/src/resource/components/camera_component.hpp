@@ -105,13 +105,13 @@ namespace Arcadia
         float FarPlane{ 100.f };
 
         /// @brief FOV angle in vertical direction
-        float Fov{ 90.f };
+        float Fov{ glm::radians(75.f) };
 
-        /// @brief Minimun value fo @ref Arcadia::camera::fov
-        float FovMin{ 1.f };
+        /// @brief Minimun value fo @ref Arcadia::Camera::Fov
+        float FovMin{ glm::radians(1.f) };
 
-        /// @brief Maximun value of @ref Arcadia::camera::fov
-        float FovMax{ 120.f };
+        /// @brief Maximun value of @ref Arcadia::Camera::Fov
+        float FovMax{ glm::radians(120.f) };
 
         /// @brief Move speed of free-camera
         float Speed{ .25f };

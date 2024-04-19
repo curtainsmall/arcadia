@@ -120,8 +120,6 @@ namespace Arcadia
         void _OnRenameEntity(Arcadia::Event::RenameEntity& e);
         void _OnDeleteEntity(Arcadia::Event::DeleteEntity& e);
 
-        template<Arcadia::cComponent Component>
-        auto _ComponentProperty(const std::string& tab_name, Arcadia::MementoList& memento_list);
     private:
 
         std::weak_ptr<Arcadia::Scene> _Scene{};
@@ -133,25 +131,4 @@ namespace Arcadia
         Arcadia::ImguiWindowPropertyPhysicsComponent _ImguiWindowPropertyPhysicsComponent{};
         Arcadia::ImguiWindowPropertyTransformComponent _ImguiWindowPropertyTransformComponent{};
     };
-
-    template<Arcadia::cComponent Component>
-    inline auto ImguiWindowProperty::_ComponentProperty(const std::string& tab_name, Arcadia::MementoList& memento_list)
-    {
-        if(_ContainsComponent<Component>(_SelectedEntityName) && ImGui::BeginTabItem(tab_name.c_str()))
-        {
-            auto description = _ImguiWindowPropertyModelComponent(_GetComponent<Component>(_SelectedEntityName));
-            if(!description.empty())
-            {
-                memento_list
-                    .Snapshot<Component>(
-                        std::format("{} - {}", tab_name, description),
-                        [&, _entity_name = _SelectedEntityName]() -> Component&
-                {
-                    return _GetComponent<Component>(_entity_name);
-                }
-                );
-            }
-            ImGui::EndTabItem();
-        }
-    }
 }

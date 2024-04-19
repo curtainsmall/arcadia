@@ -33,6 +33,8 @@ Arcadia::ImguiLayer::ImguiLayer(
     imgui_style_setter();
 
     imgui_window_installer(*this);
+
+
 }
 
 Arcadia::ImguiLayer::~ImguiLayer()

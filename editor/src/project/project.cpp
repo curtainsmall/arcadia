@@ -4,6 +4,7 @@
 #include"resource/components/light_component.hpp"
 #include"resource/components/model_component.hpp"
 #include"resource/components/physics_component.hpp"
+#include"resource/components/transform_component.hpp"
 
 Arcadia::Project::Project(nlohmann::json& json):
     _Name(json.at("name"))
@@ -68,6 +69,8 @@ void Arcadia::Project::SetActiveScene(const std::string& name)
 
     if(!is_same_scene)
     {
+        Arcadia::MementoList::Instance().Clear();
+
         if(_ActiveScene)
         {
             _ActiveScene.reset();
@@ -103,6 +106,10 @@ void Arcadia::Project::_SnapshotEntities()
         comp.Snapshot();
     }
     for(auto [entity, comp] : _ActiveScene->View<Arcadia::PhysicsComponent>().each())
+    {
+        comp.Snapshot();
+    }
+    for(auto [entity, comp] : _ActiveScene->View<Arcadia::TransformComponent>().each())
     {
         comp.Snapshot();
     }

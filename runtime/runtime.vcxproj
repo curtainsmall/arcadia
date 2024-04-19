@@ -162,6 +162,7 @@
     <ClInclude Include="src\core\file\file.hpp" />
     <ClInclude Include="src\core\file\pfd_header.hpp" />
     <ClInclude Include="src\core\math.hpp" />
+    <ClInclude Include="src\core\math\algorithm.hpp" />
     <ClInclude Include="src\core\math\numeric.hpp" />
     <ClInclude Include="src\core\memento\memento.hpp" />
     <ClInclude Include="src\core\nlohmann_json_header.hpp" />
@@ -235,6 +236,7 @@
     <ClCompile Include="src\core\command\command.cpp" />
     <ClCompile Include="src\core\event\event.cpp" />
     <ClCompile Include="src\core\file\file.cpp" />
+    <ClCompile Include="src\core\math\algorithm.cpp" />
     <ClCompile Include="src\core\memento\memento.cpp" />
     <ClCompile Include="src\function\physics\physics_simulator.cpp" />
     <ClCompile Include="src\function\render\opengl\buffer\gl_cubemap.cpp" />
