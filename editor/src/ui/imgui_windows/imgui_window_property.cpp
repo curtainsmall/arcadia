@@ -21,47 +21,6 @@ auto Arcadia::ImguiWindowPropertyCameraComponent::operator()(Arcadia::CameraComp
     ImGui::BeginGroup();
 
     ImGui::NewLine();
-    if(Arcadia::ImguiWrapper::DragVec3(
-        "Position",
-        camera_comp.Position,
-        speed,
-        min,
-        max,
-        format,
-        flags
-    ))
-    {
-        description = "Position";
-    }
-
-    ImGui::NewLine();
-    if(Arcadia::ImguiWrapper::DragVec3(
-        "Target",
-        camera_comp.Target,
-        speed,
-        min,
-        max, format,
-        flags
-    ))
-    {
-        description = "Target";
-    }
-
-    ImGui::NewLine();
-    if(Arcadia::ImguiWrapper::DragVec3(
-        "Up",
-        camera_comp.Up,
-        speed,
-        min,
-        max,
-        format,
-        flags
-    ))
-    {
-        description = "Up";
-    }
-
-    ImGui::NewLine();
     if(Arcadia::ImguiWrapper::DragFloat(
         "Near Plane",
         camera_comp.NearPlane,

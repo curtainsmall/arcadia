@@ -6,9 +6,6 @@
 
 Arcadia::CameraComponent::CameraComponent(const nlohmann::json& json)
 {
-    Position              = Arcadia::Vec3::FromJson(json.at("position"));
-    Target                = Arcadia::Vec3::FromJson(json.at("target"));
-    Up                    = Arcadia::Vec3::FromJson(json.at("up"));
     NearPlane             = json.at("near_plane");
     FarPlane              = json.at("far_plane");
     Fov                   = json.at("fov");
@@ -24,9 +21,6 @@ Arcadia::CameraComponent::CameraComponent(const nlohmann::json& json)
 auto Arcadia::CameraComponent::ToJson() const -> nlohmann::json
 {
     return nlohmann::json{
-        { "position"                ,Arcadia::Vec3::ToJson(Position) },
-        { "target"                  ,Arcadia::Vec3::ToJson(Target) },
-        { "up"                      ,Arcadia::Vec3::ToJson(Up) },
         { "near_plane"              ,NearPlane },
         { "far_plane"               ,FarPlane },
         { "fov"                     ,Fov },
@@ -44,9 +38,6 @@ auto Arcadia::CameraComponent::OnSnapshot() const -> std::shared_ptr<Arcadia::Me
 {
     auto sp_memento = std::make_shared<Arcadia::CameraComponentMementoData>();
 
-    sp_memento->Position              = Position;
-    sp_memento->Target                = Target;
-    sp_memento->Up                    = Up;
     sp_memento->NearPlane             = NearPlane;
     sp_memento->FarPlane              = FarPlane;
     sp_memento->Fov                   = Fov;
@@ -66,9 +57,6 @@ void Arcadia::CameraComponent::OnRestore(const std::shared_ptr<Arcadia::MementoD
 {
     auto& memento_data = sp_memento_data->As<Arcadia::CameraComponentMementoData>();
 
-    Position              = memento_data.Position;
-    Target                = memento_data.Target;
-    Up                    = memento_data.Up;
     NearPlane             = memento_data.NearPlane;
     FarPlane              = memento_data.FarPlane;
     Fov                   = memento_data.Fov;
@@ -83,7 +71,7 @@ void Arcadia::CameraComponent::OnRestore(const std::shared_ptr<Arcadia::MementoD
 }
 
 
-
+#if 0
 
 auto Arcadia::CameraComponent::MoveForward() -> self_type&
 {
@@ -263,3 +251,5 @@ auto Arcadia::CameraComponent::_TestCursorMove(float x_offset, float y_offset) -
         && Arcadia::IsInRange(y_offset, CursorMoveOffsetRange.x, CursorMoveOffsetRange.y);
 
 }
+
+#endif

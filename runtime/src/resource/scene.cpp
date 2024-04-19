@@ -30,27 +30,27 @@ Arcadia::Scene::Scene(const nlohmann::json& json):
                 Arcadia::ModelComponent::GetTypeStrStatic(),
                 [&]()
             {
-                Emplace<Arcadia::ModelComponent>(name, json_comp);
+                Emplace<Arcadia::ModelComponent>(name, json_comp).Snapshot();
             },
                 Arcadia::LightComponent::GetTypeStrStatic(),
                 [&]()
             {
-                Emplace<Arcadia::LightComponent>(name, json_comp);
+                Emplace<Arcadia::LightComponent>(name, json_comp).Snapshot();
             },
                 Arcadia::CameraComponent::GetTypeStrStatic(),
                 [&]()
             {
-                Emplace<Arcadia::CameraComponent>(name, json_comp);
+                Emplace<Arcadia::CameraComponent>(name, json_comp).Snapshot();
             },
                 Arcadia::PhysicsComponent::GetTypeStrStatic(),
                 [&]()
             {
-                Emplace<Arcadia::PhysicsComponent>(name, json_comp);
+                Emplace<Arcadia::PhysicsComponent>(name, json_comp).Snapshot();
             },
                 Arcadia::TransformComponent::GetTypeStrStatic(),
                 [&]()
             {
-                Emplace<Arcadia::TransformComponent>(name, json_comp);
+                Emplace<Arcadia::TransformComponent>(name, json_comp).Snapshot();
             }
             );
         }

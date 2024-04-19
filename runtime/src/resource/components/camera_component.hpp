@@ -13,9 +13,6 @@ namespace Arcadia
     public:
         auto operator==(const CameraComponentMementoData&) const -> bool = default;
     public:
-        glm::vec3  Position{ Arcadia::Vec3::PosZ() };
-        glm::vec3  Target{ Arcadia::Vec3::Zero() };
-        glm::vec3  Up{ Arcadia::Vec3::PosY() };
         float      NearPlane{ .1f };
         float      FarPlane{ 100.f };
         float      Fov{ 90.f };
@@ -44,7 +41,7 @@ namespace Arcadia
         [[nodiscard]]
         auto ToJson() const->nlohmann::json;
 
-
+    #if 0
         auto MoveForward() -> self_type&;
         auto MoveBackward() -> self_type&;
         auto MoveLeft() -> self_type&;
@@ -70,12 +67,14 @@ namespace Arcadia
         auto GetForwardDir() const->glm::vec3;
         auto GetLeftDir() const->glm::vec3;
         auto GetUpDir() const->glm::vec3;
+    #endif
 
     protected:
         [[nodiscard]]
         virtual auto OnSnapshot() const->std::shared_ptr<Arcadia::MementoDataBase> override;
         virtual void OnRestore(const std::shared_ptr<Arcadia::MementoDataBase>& sp_memento_data) override;
 
+    #if 0
     private:
         // Angle of pitch
         // Look from right:
@@ -94,17 +93,10 @@ namespace Arcadia
 
         // Test whether a cursor move should be filtered
         auto _TestCursorMove(float x_offset, float y_offset) -> bool;
+    #endif
 
     public:
-        /// @brief Position of camera
-        glm::vec3 Position{ Arcadia::Vec3::PosZ() };
-
-        /// @brief Target that the camera pointing to
-        glm::vec3 Target{ Arcadia::Vec3::Zero() };
-
-        /// @brief Direction of global up
-        /// @note This should always be unit vector
-        glm::vec3 Up{ Arcadia::Vec3::PosY() };
+        static inline glm::vec3 Up{ Arcadia::Vec3::PosY() };
 
         /// @brief Near plane of clip space
         float NearPlane{ .1f };

@@ -88,7 +88,10 @@ void Arcadia::GlRenderer::Submit(const Arcadia::Scene& scene, const std::string&
         "camera"s,
         [&]()
     {
-        const auto& camera_comp = scene.Get<Arcadia::CameraComponent>(name);
+        const auto& [camera_comp, transform_comp] = scene.Get<Arcadia::CameraComponent, Arcadia::TransformComponent>(name);
+
+        auto view_mat = glm::lookAt(transform_comp.Position, transform_comp.Position + transform_comp.Direction, Arcadia::CameraComponent::Up);
+        auto proj_mat = glm::perspective(camera_comp.Fov, camera_comp.ViewportSize.x * 1.f / camera_comp.ViewportSize.y, camera_comp.NearPlane, camera_comp.FarPlane);
 
         _GlRenderUnitCameras.emplace_back(
             Arcadia::GlFramebuffer{
@@ -97,9 +100,9 @@ void Arcadia::GlRenderer::Submit(const Arcadia::Scene& scene, const std::string&
                 camera_comp.FarPlane
             },
             camera_comp.ViewportSize,
-            camera_comp.GenerateViewMat4(),
-            camera_comp.GenerateProjMat4(),
-            camera_comp.Position,
+            view_mat,
+            proj_mat,
+            transform_comp.Position,
             camera_comp.ShouldDisplayGrid,
             camera_comp.NearPlane,
             camera_comp.FarPlane

@@ -6,6 +6,7 @@
 #include"resource/components/camera_component.hpp"
 #include"resource/components/model_component.hpp"
 #include"resource/components/physics_component.hpp"
+#include"resource/components/transform_component.hpp"
 
 void Arcadia::ImguiWindowViewport::OnEvent(Arcadia::EventBase& event)
 {
@@ -60,8 +61,8 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
             physics_simulator->Prepare();
             renderer->Prepare();
 
-            auto& viewport_camera = scene->Get<Arcadia::CameraComponent>(ViewportCameraEntityName);
-            viewport_camera.ViewportSize = ImGui::GetContentRegionAvail();
+            auto [camera_comp, transform_comp] = scene->Get<Arcadia::CameraComponent, Arcadia::TransformComponent>(ViewportCameraEntityName);
+            camera_comp.ViewportSize = ImGui::GetContentRegionAvail();
             for(const auto& [name, entity_info] : *scene)
             {
                 physics_simulator->Submit(*scene, name);
@@ -83,7 +84,7 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
             renderer->Draw();
 
             const auto image_cursor_pos = ImGui::GetCursorPos();
-            ImGui::Image(renderer->GetRenderResultId(0), viewport_camera.ViewportSize, { 0,1 }, { 1,0 });
+            ImGui::Image(renderer->GetRenderResultId(0), camera_comp.ViewportSize, { 0,1 }, { 1,0 });
 
             if(!_InViewportFreeCam && ImGui::IsItemHovered() && ImGui::IsMouseDown(ImGuiMouseButton_Right))
             {
@@ -98,40 +99,46 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
 
             if(_InViewportFreeCam)
             {
-                // Scroll to zoom (move viewport_camera forwards or backwards along direction)
+                // Scroll to zoom (move camera_comp forwards or backwards along direction)
                 if(ImGui::IsKeyDown(ImGuiKey_W))
                 {
-                    viewport_camera.MoveForward();
+                    transform_comp.Position += transform_comp.Direction * camera_comp.Speed;
                 }
                 else if(ImGui::IsKeyDown(ImGuiKey_S))
                 {
-                    viewport_camera.MoveBackward();
+                    transform_comp.Position -= transform_comp.Direction * camera_comp.Speed;
                 }
                 else if(ImGui::IsKeyDown(ImGuiKey_A))
                 {
-                    viewport_camera.MoveLeft();
+                    transform_comp.Position += glm::cross(Arcadia::CameraComponent::Up, transform_comp.Direction) * camera_comp.Speed;
                 }
                 else if(ImGui::IsKeyDown(ImGuiKey_D))
                 {
-                    viewport_camera.MoveRight();
+                    transform_comp.Position -= glm::cross(Arcadia::CameraComponent::Up, transform_comp.Direction) * camera_comp.Speed;
                 }
                 else if(ImGui::IsKeyDown(ImGuiKey_E))
                 {
-                    viewport_camera.MoveUp();
+                    transform_comp.Position += glm::cross(transform_comp.Direction, glm::cross(Arcadia::CameraComponent::Up, transform_comp.Direction)) * camera_comp.Speed;
                 }
                 else if(ImGui::IsKeyDown(ImGuiKey_Q))
                 {
-                    viewport_camera.MoveDown();
+                    transform_comp.Position -= glm::cross(transform_comp.Direction, glm::cross(Arcadia::CameraComponent::Up, transform_comp.Direction)) * camera_comp.Speed;
                 }
 
-                //Arcadia::Log::Debug(std::format("Cursor Move: {}", _CursorMove));
-                viewport_camera.RotateView(_CursorMove * .005f);
+                // Rotate view
+                auto offset = _CursorMove * .005f;
+                auto x_angle_offset = -offset.x;
+                transform_comp.Direction = glm::angleAxis(x_angle_offset, camera_comp.Up) * transform_comp.Direction;
+                auto pitch_angle = glm::half_pi<float>() - glm::angle(transform_comp.Direction, camera_comp.Up);
+                auto y_angle_offset = glm::clamp(-offset.y + pitch_angle, -glm::half_pi<float>() + camera_comp.UpEpsilon, glm::half_pi<float>() - camera_comp.UpEpsilon) - pitch_angle;
+                transform_comp.Direction = glm::angleAxis(y_angle_offset, glm::cross(transform_comp.Direction, camera_comp.Up)) * transform_comp.Direction;
+
                 _CursorMove = Arcadia::Vec2::Zero();
             }
 
-            // Display viewport viewport_camera info
+            // Display viewport camera_comp info
             ImGui::SetCursorPos(image_cursor_pos);
-            ImGui::Text(std::format("Camera - Pos: {} - Direction: {}", viewport_camera.Position, viewport_camera.GetForwardDir()).c_str());
+            ImGui::Text(std::format("Camera - Pos: {} - Direction: {}", transform_comp.Position, transform_comp.Direction).c_str());
             float fps = 1.f / std::chrono::duration_cast<std::chrono::duration<float>>(app_context.DeltaTime).count();
             ImGui::Text(std::format("FPS: {:.2f}", fps).c_str());
         }
@@ -173,6 +180,9 @@ void Arcadia::ImguiWindowViewport::_OnSceneActivated(Arcadia::Event::SceneActiva
         auto& entity_info = scene->Create(ViewportCameraEntityName, "camera");
         entity_info.Internal = true;
         scene->Emplace<Arcadia::CameraComponent>(ViewportCameraEntityName);
+        auto& transform_comp = scene->Emplace<Arcadia::TransformComponent>(ViewportCameraEntityName);
+        transform_comp.Position = glm::vec3{ 1.f,1.f,1.f };
+        transform_comp.Direction = -transform_comp.Position;
     }
     _Scene = scene;
 }

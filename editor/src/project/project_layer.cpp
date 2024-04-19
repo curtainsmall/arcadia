@@ -421,21 +421,30 @@ void Arcadia::ProjectLayer::_OnNewEntity(Arcadia::Event::NewEntity& e)
         "actor"s,
         [&]()
     {
-        scene.Emplace<Arcadia::ModelComponent>(name);
-        scene.Emplace<Arcadia::PhysicsComponent>(name);
+        scene.Emplace<Arcadia::ModelComponent>(name).Snapshot();
+
+        scene.Emplace<Arcadia::PhysicsComponent>(name).Snapshot();
+
         auto& transform_comp =  scene.Emplace<Arcadia::TransformComponent>(name);
+        transform_comp.Snapshot();
         transform_comp.Flags |= Arcadia::TransformComponentFlags::UseRotation;
     },
         "camera"s,
         [&]()
     {
-        scene.Emplace<Arcadia::CameraComponent>(name);
+        scene.Emplace<Arcadia::CameraComponent>(name).Snapshot();
+
+        auto& transform_comp = scene.Emplace<Arcadia::TransformComponent>(name);
+        transform_comp.Snapshot();
+        transform_comp.Flags |= Arcadia::TransformComponentFlags::UseDirection;
     },
         "light"s,
         [&]()
     {
-        scene.Emplace<Arcadia::LightComponent>(name);
+        scene.Emplace<Arcadia::LightComponent>(name).Snapshot();
+
         auto& transform_comp = scene.Emplace<Arcadia::TransformComponent>(name);
+        transform_comp.Snapshot();
         transform_comp.Flags |= Arcadia::TransformComponentFlags::UseDirection;
     }
     );

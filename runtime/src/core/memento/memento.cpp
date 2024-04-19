@@ -26,6 +26,7 @@ auto Arcadia::MementoList::Undo()  -> bool
     }
 
     (_CurrentIter++)->Restore();
+    return true;
 }
 
 auto Arcadia::MementoList::Redo()  -> bool
@@ -36,6 +37,7 @@ auto Arcadia::MementoList::Redo()  -> bool
     }
 
     (--_CurrentIter)->Restore();
+    return true;
 }
 
 auto Arcadia::MementoList::GetCapacity() const -> std::size_t

@@ -22,7 +22,7 @@ void Arcadia::ImguiWindowMainToolbar::OnUpdate()
         ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, glm::vec2{ 0,4 });
         if(ImGui::Button(ICON_FA_ARROW_CIRCLE_LEFT))
         {
-            ARCADIA_ASSERT(memento_list.Undo());
+            memento_list.Undo();
         }
         ImGui::SetItemTooltip(" Undo ");
         ImGui::SameLine();
