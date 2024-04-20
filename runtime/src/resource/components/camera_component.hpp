@@ -123,7 +123,7 @@ namespace Arcadia
         bool FixedUp{ true };
 
         /// @brief How small angle between @ref Arcadia::camera::up and @ref Arcadia::camera::target can be
-        float UpEpsilon{ .1f };
+        float UpEpsilon{ glm::degrees(0.1f) };
 
         /// @brief Cursor move offset that is out of this range will be silently ignored
         glm::vec2 CursorMoveOffsetRange{ -100.f,100.f };

@@ -1130,6 +1130,7 @@ auto Arcadia::ImguiWindowPropertyTransformComponent::operator()(Arcadia::Transfo
         ImGuiSliderFlags_AlwaysClamp;
 
     ImGui::SeparatorText("Transform");
+    auto position_delta = transform_comp.Position; // Previous position
     ImGui::NewLine();
     if(Arcadia::ImguiWrapper::DragVec3(
         "Position",
@@ -1143,6 +1144,7 @@ auto Arcadia::ImguiWindowPropertyTransformComponent::operator()(Arcadia::Transfo
     {
         description = "Position";
     }
+    position_delta = transform_comp.Position - position_delta; // current - previous
 
     if(transform_comp.Flags & Arcadia::TransformComponentFlags::UseRotation)
     {
@@ -1191,6 +1193,10 @@ auto Arcadia::ImguiWindowPropertyTransformComponent::operator()(Arcadia::Transfo
     }
 
     ImGui::NewLine();
+    if(position_delta != Arcadia::Vec3::Zero())
+    {
+        transform_comp.Pivot += position_delta; // Make pivot move with translation
+    }
     if(Arcadia::ImguiWrapper::DragVec3(
         "Pivot",
         transform_comp.Pivot,

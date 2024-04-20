@@ -298,6 +298,11 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
                         _GizmoEdited = true;
                     }
 
+                    if(transform_comp.Position != translation)
+                    {
+                        transform_comp.Pivot += translation - transform_comp.Position;
+                    }
+
                     transform_comp.Position = translation;
                     transform_comp.Rotation = rotation;
                     transform_comp.Scale = scale;
