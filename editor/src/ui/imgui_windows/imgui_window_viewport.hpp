@@ -21,7 +21,7 @@ namespace Arcadia
     struct ARCADIA_API ImguiWindowViewport: Arcadia::iImguiWindow
     {
     public:
-        enum struct GizmoType: int
+        enum struct GizmoOption: int
         {
             None = 0,
             Translation = ImGuizmo::OPERATION::TRANSLATE,
@@ -77,7 +77,7 @@ namespace Arcadia
 
         bool _InViewportFreeCam{ false };
 
-        GizmoType _GizmoType{ GizmoType::None };
+        GizmoOption _GizmoOption{ GizmoOption::None };
         GizmoMode _GizmoMode{ GizmoMode::Local };
         bool _GizmoEdited{ false };
     };

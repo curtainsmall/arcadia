@@ -99,130 +99,6 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
                 _InViewportFreeCam = false;
             }
 
-            // Gizmo
-            if(!_SelectedEntityName.empty() && scene->AllOf<Arcadia::TransformComponent>(_SelectedEntityName))
-            {
-                ImGuizmo::SetDrawlist();
-
-                ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, viewport_camera_comp.ViewportSize.x, viewport_camera_comp.ViewportSize.y);
-                auto view_mat = glm::lookAt(viewport_transform_comp.Position, viewport_transform_comp.Position + viewport_transform_comp.Direction, viewport_camera_comp.Up);
-                auto proj_mat = glm::perspective(viewport_camera_comp.Fov, viewport_camera_comp.ViewportSize.x * 1.f / viewport_camera_comp.ViewportSize.y, viewport_camera_comp.NearPlane, viewport_camera_comp.FarPlane);
-
-                auto& transform_comp = scene->Get<Arcadia::TransformComponent>(_SelectedEntityName);
-                auto transform_mat =
-                    // Translate
-                    glm::translate(
-                        // Move pivot back from origin
-                        glm::translate(
-                            // Rotate
-                            glm::mat4_cast(transform_comp.Rotation)
-                            // Scale about origin (same as pivot)
-                            * glm::scale(
-                                // Move pivot to origin
-                                glm::translate(
-                                    Arcadia::Mat4::Identity(),
-                                    -transform_comp.Pivot
-                                ),
-                                transform_comp.Scale
-                            ),
-                            transform_comp.Pivot
-                        ),
-                        transform_comp.Position
-                    );
-                ImGuizmo::Manipulate(
-                    glm::value_ptr(view_mat),
-                    glm::value_ptr(proj_mat),
-                    static_cast<ImGuizmo::OPERATION>(_GizmoType),
-                    static_cast<ImGuizmo::MODE>(_GizmoMode),
-                    glm::value_ptr(transform_mat)
-                );
-
-                if(ImGuizmo::IsUsing())
-                {
-                    _GizmoEdited = true;
-
-                    glm::vec3
-                        scale{},
-                        translation{},
-                        skew{};
-                    glm::vec4 perspective{};
-                    glm::quat rotation{};
-
-                    glm::decompose(transform_mat, scale, rotation, translation, skew, perspective);
-
-                    if(
-                        transform_comp.Position != translation
-                        || transform_comp.Rotation != rotation
-                        || transform_comp.Scale != scale
-                        )
-                    {
-                        _GizmoEdited = true;
-                    }
-
-                    transform_comp.Position = translation;
-                    transform_comp.Rotation = rotation;
-                    transform_comp.Scale = scale;
-                }
-
-                if(!ImGuizmo::IsUsingAny() && _GizmoEdited)
-                {
-                    _GizmoEdited = false;
-
-                    std::string description{};
-                    switch(_GizmoType)
-                    {
-                        case Arcadia::ImguiWindowViewport::GizmoType::Translation:
-                        {
-                            description = "Translation";
-                            break;
-                        }
-                        case Arcadia::ImguiWindowViewport::GizmoType::Rotation:
-                        {
-                            description = "Rotation";
-                            break;
-                        }
-                        case Arcadia::ImguiWindowViewport::GizmoType::Scale:
-                        {
-                            description = "Scale";
-                            break;
-                        }
-                        default:
-                            break;
-                    }
-                    if(!description.empty())
-                    {
-                        Arcadia::MementoList::Instance()
-                            .Snapshot<Arcadia::TransformComponent>(
-                                std::format("{} - {}", "Transform"s, description),
-                                [_scene = scene, _entity_name = _SelectedEntityName]() -> Arcadia::TransformComponent&
-                        {
-                            return _scene->Get<Arcadia::TransformComponent>(_entity_name);
-                        }
-                        );
-                    }
-                }
-
-                if(!_InViewportFreeCam)
-                {
-                    if(ImGui::IsKeyDown(ImGuiKey_Q))
-                    {
-                        _GizmoType = GizmoType::None;
-                    }
-                    else if(ImGui::IsKeyDown(ImGuiKey_W))
-                    {
-                        _GizmoType = GizmoType::Translation;
-                    }
-                    else if(ImGui::IsKeyDown(ImGuiKey_E))
-                    {
-                        _GizmoType = GizmoType::Rotation;
-                    }
-                    else if(ImGui::IsKeyDown(ImGuiKey_R))
-                    {
-                        _GizmoType = GizmoType::Scale;
-                    }
-                }
-            }
-
             // Viewport camera control
             if(_InViewportFreeCam)
             {
@@ -266,8 +142,206 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
             // Display viewport viewport_camera_comp info
             ImGui::SetCursorPos(image_cursor_pos);
             ImGui::Text(std::format("Camera - Pos: {} - Direction: {}", viewport_transform_comp.Position, viewport_transform_comp.Direction).c_str());
+            ImGui::SameLine(ImGui::GetWindowWidth() - 300.f);
+            const auto gizmo_options_cursor_pos = ImGui::GetCursorPos();
+            ImGui::Dummy({ 0,0 });
             float fps = 1.f / std::chrono::duration_cast<std::chrono::duration<float>>(app_context.DeltaTime).count();
             ImGui::Text(std::format("FPS: {:.2f}", fps).c_str());
+
+            if(!_InViewportFreeCam)
+            {
+                ImGui::SetCursorPos(gizmo_options_cursor_pos);
+
+                auto selected_color = IM_COL32(50, 50, 120, 255);
+                auto hovered_color = selected_color;
+                auto active_color = selected_color;
+
+                ImGui::PushStyleColor(ImGuiCol_ButtonHovered, hovered_color);
+                ImGui::PushStyleColor(ImGuiCol_ButtonActive, active_color);
+
+                if(_GizmoOption == GizmoOption::None)
+                {
+                    ImGui::PushStyleColor(ImGuiCol_Button, selected_color);
+                }
+                ImGui::Button("None");
+                if(_GizmoOption == GizmoOption::None)
+                {
+                    ImGui::PopStyleColor();
+                }
+                if(ImGui::IsItemClicked() || ImGui::IsKeyDown(ImGuiKey_Q))
+                {
+                    _GizmoOption = GizmoOption::None;
+                }
+                if(ImGui::IsItemHovered())
+                {
+                    ImGui::SetTooltip("Turn off gizmo (Q)");
+                }
+
+                ImGui::SameLine();
+                if(_GizmoOption == GizmoOption::Translation)
+                {
+                    ImGui::PushStyleColor(ImGuiCol_Button, selected_color);
+                }
+                ImGui::Button("Translation");
+                if(_GizmoOption == GizmoOption::Translation)
+                {
+                    ImGui::PopStyleColor();
+                }
+                if(ImGui::IsItemClicked() || ImGui::IsKeyDown(ImGuiKey_W))
+                {
+                    _GizmoOption = GizmoOption::Translation;
+                }
+                if(ImGui::IsItemHovered())
+                {
+                    ImGui::SetTooltip("Set gizmo to translation mode (W)");
+                }
+
+                ImGui::SameLine();
+                if(_GizmoOption == GizmoOption::Rotation)
+                {
+                    ImGui::PushStyleColor(ImGuiCol_Button, selected_color);
+                }
+                ImGui::Button("Rotation");
+                if(_GizmoOption == GizmoOption::Rotation)
+                {
+                    ImGui::PopStyleColor();
+                }
+                if(ImGui::IsItemClicked() || ImGui::IsKeyDown(ImGuiKey_E))
+                {
+                    _GizmoOption = GizmoOption::Rotation;
+                }
+                if(ImGui::IsItemHovered())
+                {
+                    ImGui::SetTooltip("Set gizmo to rotation mode (E)");
+                }
+
+                ImGui::SameLine();
+                if(_GizmoOption == GizmoOption::Scale)
+                {
+                    ImGui::PushStyleColor(ImGuiCol_Button, selected_color);
+                }
+                ImGui::Button("Scale");
+                if(_GizmoOption == GizmoOption::Scale)
+                {
+                    ImGui::PopStyleColor();
+                }
+                if(ImGui::IsItemClicked() || ImGui::IsKeyDown(ImGuiKey_R))
+                {
+                    _GizmoOption = GizmoOption::Scale;
+                }
+                if(ImGui::IsItemHovered())
+                {
+                    ImGui::SetTooltip("Set gizmo to scale mode (R)");
+                }
+
+                ImGui::PopStyleColor(2);
+            }
+
+            // Gizmo
+            if(!_SelectedEntityName.empty() && scene->AllOf<Arcadia::TransformComponent>(_SelectedEntityName))
+            {
+                ImGuizmo::SetDrawlist();
+
+                ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, viewport_camera_comp.ViewportSize.x, viewport_camera_comp.ViewportSize.y);
+                auto view_mat = glm::lookAt(viewport_transform_comp.Position, viewport_transform_comp.Position + viewport_transform_comp.Direction, viewport_camera_comp.Up);
+                auto proj_mat = glm::perspective(viewport_camera_comp.Fov, viewport_camera_comp.ViewportSize.x * 1.f / viewport_camera_comp.ViewportSize.y, viewport_camera_comp.NearPlane, viewport_camera_comp.FarPlane);
+
+                auto& transform_comp = scene->Get<Arcadia::TransformComponent>(_SelectedEntityName);
+                auto transform_mat =
+                    // Translate
+                    glm::translate(
+                        // Move pivot back from origin
+                        glm::translate(
+                            // Rotate
+                            glm::mat4_cast(transform_comp.Rotation)
+                            // Scale about origin (same as pivot)
+                            * glm::scale(
+                                // Move pivot to origin
+                                glm::translate(
+                                    Arcadia::Mat4::Identity(),
+                                    -transform_comp.Pivot
+                                ),
+                                transform_comp.Scale
+                            ),
+                            transform_comp.Pivot
+                        ),
+                        transform_comp.Position
+                    );
+                ImGuizmo::Manipulate(
+                    glm::value_ptr(view_mat),
+                    glm::value_ptr(proj_mat),
+                    static_cast<ImGuizmo::OPERATION>(_GizmoOption),
+                    static_cast<ImGuizmo::MODE>(_GizmoMode),
+                    glm::value_ptr(transform_mat)
+                );
+
+                // On use gizmo
+                if(ImGuizmo::IsUsing())
+                {
+                    _GizmoEdited = true;
+
+                    glm::vec3
+                        scale{},
+                        translation{},
+                        skew{};
+                    glm::vec4 perspective{};
+                    glm::quat rotation{};
+
+                    glm::decompose(transform_mat, scale, rotation, translation, skew, perspective);
+
+                    if(
+                        transform_comp.Position != translation
+                        || transform_comp.Rotation != rotation
+                        || transform_comp.Scale != scale
+                        )
+                    {
+                        _GizmoEdited = true;
+                    }
+
+                    transform_comp.Position = translation;
+                    transform_comp.Rotation = rotation;
+                    transform_comp.Scale = scale;
+                }
+
+                // On release gizmo
+                if(!ImGuizmo::IsUsingAny() && _GizmoEdited)
+                {
+                    _GizmoEdited = false;
+
+                    std::string description{};
+                    switch(_GizmoOption)
+                    {
+                        case Arcadia::ImguiWindowViewport::GizmoOption::Translation:
+                        {
+                            description = "Translation";
+                            break;
+                        }
+                        case Arcadia::ImguiWindowViewport::GizmoOption::Rotation:
+                        {
+                            description = "Rotation";
+                            break;
+                        }
+                        case Arcadia::ImguiWindowViewport::GizmoOption::Scale:
+                        {
+                            description = "Scale";
+                            break;
+                        }
+                        default:
+                            break;
+                    }
+                    if(!description.empty())
+                    {
+                        Arcadia::MementoList::Instance()
+                            .Snapshot<Arcadia::TransformComponent>(
+                                std::format("{} - {}", "Transform"s, description),
+                                [_scene = scene, _entity_name = _SelectedEntityName]() -> Arcadia::TransformComponent&
+                        {
+                            return _scene->Get<Arcadia::TransformComponent>(_entity_name);
+                        }
+                        );
+                    }
+                }
+            }
         }
     }
     ImGui::End();
