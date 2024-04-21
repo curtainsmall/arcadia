@@ -134,9 +134,10 @@ auto Arcadia::ImguiWindowPropertyCameraComponent::operator()(Arcadia::CameraComp
     }
 
     ImGui::NewLine();
+    auto up_epsilon = glm::degrees(camera_comp.UpEpsilon);
     if(Arcadia::ImguiWrapper::DragFloat(
         "Up Epsilon",
-        camera_comp.UpEpsilon,
+        up_epsilon,
         speed,
         min,
         max,
@@ -146,6 +147,7 @@ auto Arcadia::ImguiWindowPropertyCameraComponent::operator()(Arcadia::CameraComp
     {
         description = "Up Epsilon";
     }
+    camera_comp.UpEpsilon = glm::radians(up_epsilon);
 
     ImGui::EndGroup();
 

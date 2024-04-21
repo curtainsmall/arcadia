@@ -131,25 +131,25 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
                 // Rotate view
                 auto offset = _CursorMove * .005f;
                 auto x_angle_offset = -offset.x;
-                viewport_transform_comp.Direction = glm::angleAxis(x_angle_offset, viewport_camera_comp.Up) * viewport_transform_comp.Direction;
+                viewport_transform_comp.Direction = glm::normalize(glm::angleAxis(x_angle_offset, viewport_camera_comp.Up) * viewport_transform_comp.Direction);
                 auto pitch_angle = glm::half_pi<float>() - glm::angle(viewport_transform_comp.Direction, viewport_camera_comp.Up);
                 auto y_angle_offset = glm::clamp(-offset.y + pitch_angle, -glm::half_pi<float>() + viewport_camera_comp.UpEpsilon, glm::half_pi<float>() - viewport_camera_comp.UpEpsilon) - pitch_angle;
-                viewport_transform_comp.Direction = glm::angleAxis(y_angle_offset, glm::cross(viewport_transform_comp.Direction, viewport_camera_comp.Up)) * viewport_transform_comp.Direction;
+                viewport_transform_comp.Direction = glm::normalize(glm::angleAxis(y_angle_offset, glm::cross(viewport_transform_comp.Direction, viewport_camera_comp.Up)) * viewport_transform_comp.Direction);
 
                 _CursorMove = Arcadia::Vec2::Zero();
             }
 
-            // Display viewport viewport_camera_comp info
-            ImGui::SetCursorPos(image_cursor_pos);
-            ImGui::Text(std::format("Camera - Pos: {} - Direction: {}", viewport_transform_comp.Position, viewport_transform_comp.Direction).c_str());
-            ImGui::SameLine(ImGui::GetWindowWidth() - 300.f);
-            const auto gizmo_options_cursor_pos = ImGui::GetCursorPos();
-            ImGui::Dummy({ 0,0 });
-            float fps = 1.f / std::chrono::duration_cast<std::chrono::duration<float>>(app_context.DeltaTime).count();
-            ImGui::Text(std::format("FPS: {:.2f}", fps).c_str());
-
-            if(!_InViewportFreeCam)
+            // Gizmo option
             {
+                // Display viewport viewport_camera_comp info
+                ImGui::SetCursorPos(image_cursor_pos);
+                ImGui::Text(std::format("Camera - Pos: {} - Direction: {}", viewport_transform_comp.Position, viewport_transform_comp.Direction).c_str());
+                ImGui::SameLine(ImGui::GetWindowWidth() - 300.f);
+                const auto gizmo_options_cursor_pos = ImGui::GetCursorPos();
+                ImGui::Dummy({ 0,0 });
+                float fps = 1.f / std::chrono::duration_cast<std::chrono::duration<float>>(app_context.DeltaTime).count();
+                ImGui::Text(std::format("FPS: {:.2f}", fps).c_str());
+
                 ImGui::SetCursorPos(gizmo_options_cursor_pos);
 
                 auto selected_color = IM_COL32(50, 50, 120, 255);
@@ -168,7 +168,7 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
                 {
                     ImGui::PopStyleColor();
                 }
-                if(ImGui::IsItemClicked() || ImGui::IsKeyDown(ImGuiKey_Q))
+                if(!_InViewportFreeCam && (ImGui::IsItemClicked() || ImGui::IsKeyDown(ImGuiKey_Q)))
                 {
                     _GizmoOption = GizmoOption::None;
                 }
@@ -187,7 +187,7 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
                 {
                     ImGui::PopStyleColor();
                 }
-                if(ImGui::IsItemClicked() || ImGui::IsKeyDown(ImGuiKey_W))
+                if(!_InViewportFreeCam && (ImGui::IsItemClicked() || ImGui::IsKeyDown(ImGuiKey_W)))
                 {
                     _GizmoOption = GizmoOption::Translation;
                 }
@@ -206,7 +206,7 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
                 {
                     ImGui::PopStyleColor();
                 }
-                if(ImGui::IsItemClicked() || ImGui::IsKeyDown(ImGuiKey_E))
+                if(!_InViewportFreeCam && (ImGui::IsItemClicked() || ImGui::IsKeyDown(ImGuiKey_E)))
                 {
                     _GizmoOption = GizmoOption::Rotation;
                 }
@@ -225,7 +225,7 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
                 {
                     ImGui::PopStyleColor();
                 }
-                if(ImGui::IsItemClicked() || ImGui::IsKeyDown(ImGuiKey_R))
+                if(!_InViewportFreeCam && (ImGui::IsItemClicked() || ImGui::IsKeyDown(ImGuiKey_R)))
                 {
                     _GizmoOption = GizmoOption::Scale;
                 }
