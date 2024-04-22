@@ -119,7 +119,7 @@ void Arcadia::PhysicsSimulator::Submit(const Arcadia::Scene& scene, const std::s
 
 void Arcadia::PhysicsSimulator::Update()
 {
-    if(!_ShouldUpdate)
+    if(!_Active)
     {
         return;
     }
@@ -134,6 +134,11 @@ void Arcadia::PhysicsSimulator::Update()
 void Arcadia::PhysicsSimulator::Query(Arcadia::Scene& scene, const std::string& name)
 {
     _AssertFrameNotInBuild();
+
+    if(!_Active)
+    {
+        return;
+    }
 
     const auto& entity_info = scene.GetEntityInfo(name);
 
@@ -174,14 +179,14 @@ void Arcadia::PhysicsSimulator::Reset()
     _SubmittedBodyInfos.clear();
 }
 
-auto Arcadia::PhysicsSimulator::ShouldUpdate() const -> bool
+auto Arcadia::PhysicsSimulator::IsActive() const -> bool
 {
-    return _ShouldUpdate;
+    return _Active;
 }
 
-void Arcadia::PhysicsSimulator::ShouldUpdate(bool should_update)
+void Arcadia::PhysicsSimulator::SetActive(bool should_update)
 {
-    _ShouldUpdate = should_update;
+    _Active = should_update;
 }
 
 auto Arcadia::PhysicsSimulator::GetJphTempAllocatorSize() const -> JPH::uint

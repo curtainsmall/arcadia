@@ -186,11 +186,11 @@ void Arcadia::GlRenderer::Submit(const Arcadia::Scene& scene, const std::string&
                 },
                     [&](const Arcadia::JphCapsuleShapeInfo& info)
                 {
-                    return Arcadia::Mesh{};
+                    return Arcadia::Mesh::Capsule(0, 0);
                 },
                     [&](const Arcadia::JphCylinderShapeInfo& info)
                 {
-                    return Arcadia::Mesh{};
+                    return Arcadia::Mesh::Cylinder(info.HalfHeight, info.Radius);
                 },
                     [&](const Arcadia::JphSphereShapeInfo& info)
                 {

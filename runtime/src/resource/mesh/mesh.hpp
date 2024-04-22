@@ -26,7 +26,8 @@ namespace Arcadia
 
         static auto Cylinder(
             float half_height,
-            float radius
+            float radius,
+            std::size_t sector_count = 36
         ) -> Arcadia::Mesh;
 
         static auto Sphere(

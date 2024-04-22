@@ -287,15 +287,127 @@ auto Arcadia::Mesh::Capsule(
     float half_height_of_sylinder
 ) -> Arcadia::Mesh
 {
+    ARCADIA_API(false && "Not in use");
     return Arcadia::Mesh();
 }
 
 auto Arcadia::Mesh::Cylinder(
     float half_height,
-    float radius
+    float radius,
+    std::size_t sector_count
 ) -> Arcadia::Mesh
 {
-    return Arcadia::Mesh{};
+    const auto pi = glm::pi<float>();
+    float sector_step = 2 * pi / sector_count;
+
+    std::vector<float> unit_circle_vertices{};
+    for(int i = 0; i <= sector_count; ++i)
+    {
+        float sector_angle = i * sector_step;
+        unit_circle_vertices.emplace_back(std::sin(sector_angle));
+        unit_circle_vertices.emplace_back(0);
+        unit_circle_vertices.emplace_back(std::cos(sector_angle));
+    }
+
+    Arcadia::Mesh mesh{};
+    auto& vertices = mesh.Vertices;
+
+    for(int i = 0; i < 2; ++i)
+    {
+        float h = -half_height + i * half_height * 2;
+        float tex_coord_y = 1.f - i;
+
+        for(int j = 0, k = 0; j <= sector_count; ++j, k += 3)
+        {
+            float ux = unit_circle_vertices.at(k);
+            float uy = unit_circle_vertices.at(k + 1);
+            float uz = unit_circle_vertices.at(k + 2);
+
+            vertices.emplace_back(
+                Arcadia::Vertex{
+                    glm::vec3{ux * radius,h, uz * radius},
+                    glm::vec3{ux,uy,uz},
+                    glm::vec2{static_cast<float>(j) / sector_count, tex_coord_y}
+                }
+            );
+        }
+    }
+    int base_center_index = vertices.size();
+    int top_center_index = base_center_index + sector_count + 1;
+    for(int i = 0; i < 2; ++i)
+    {
+        float h = -half_height + i * half_height * 2;
+        float ny = -1 + i * 2;
+
+        // Center point
+        vertices.emplace_back(
+            Arcadia::Vertex{
+                glm::vec3{0,h,0},
+                glm::vec3{0,ny,0},
+                glm::vec2{0.5f,0.5f}
+            }
+        );
+
+        for(int j = 0, k = 0; j < sector_count; ++j, k += 3)
+        {
+            float ux = unit_circle_vertices.at(k);
+            float uz = unit_circle_vertices.at(k + 2);
+
+            vertices.emplace_back(
+                Arcadia::Vertex{
+                    glm::vec3{ux * radius, h, uz * radius},
+                    glm::vec3{0, ny ,0},
+                    glm::vec2{-ux * 0.5f + 0.5f, -uz * 0.5f + 0.5f}
+                }
+            );
+        }
+    }
+
+    auto& indices = mesh.Indices;
+    int k1 = 0;
+    int k2 = sector_count + 1;
+    for(int i = 0; i < sector_count; ++i, ++k1, ++k2)
+    {
+        indices.emplace_back(k1);
+        indices.emplace_back(k1 + 1);
+        indices.emplace_back(k2);
+
+        indices.emplace_back(k2);
+        indices.emplace_back(k1 + 1);
+        indices.emplace_back(k2 + 1);
+    }
+    for(int i = 0, k = base_center_index + 1; i < sector_count; ++i, ++k)
+    {
+        if(i < sector_count - 1)
+        {
+            indices.emplace_back(base_center_index);
+            indices.emplace_back(k + 1);
+            indices.emplace_back(k);
+        }
+        else
+        {
+            indices.emplace_back(base_center_index);
+            indices.emplace_back(base_center_index + 1);
+            indices.emplace_back(k);
+        }
+    }
+    for(int i = 0, k = top_center_index + 1; i < sector_count; ++i, ++k)
+    {
+        if(i < sector_count - 1)
+        {
+            indices.emplace_back(top_center_index);
+            indices.emplace_back(k);
+            indices.emplace_back(k + 1);
+        }
+        else
+        {
+            indices.emplace_back(top_center_index);
+            indices.emplace_back(k);
+            indices.emplace_back(top_center_index + 1);
+        }
+    }
+
+    return mesh;
 }
 
 auto Arcadia::Mesh::Sphere(
@@ -313,19 +425,18 @@ auto Arcadia::Mesh::Sphere(
     Arcadia::Mesh mesh{};
 
     auto& vertices = mesh.Vertices;
-    vertices.reserve(stack_count * sector_count);
     for(std::size_t i = 0; i <= stack_count; ++i)
     {
         float stack_angle = pi / 2 - i * stack_step;
-        float xy = radius * std::cos(stack_angle);
-        float z = radius * std::sin(stack_angle);
+        float xz = radius * std::cos(stack_angle);
+        float y = radius * std::sin(stack_angle);
 
         for(std::size_t j = 0; j <= sector_count; ++j)
         {
             float sector_angle = j * sector_step;
 
-            float x = xy * std::cos(sector_angle);
-            float y = xy * std::sin(sector_angle);
+            float x = xz * std::sin(sector_angle);
+            float z = xz * std::cos(sector_angle);
 
             float nx = x * radius_inv;
             float ny = y * radius_inv;
@@ -345,7 +456,6 @@ auto Arcadia::Mesh::Sphere(
     }
 
     auto& indices = mesh.Indices;
-    indices.reserve(stack_count * sector_count);
     for(std::size_t i = 0; i < stack_count; ++i)
     {
         float k1 = i * (sector_count + 1);

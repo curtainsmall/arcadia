@@ -84,25 +84,25 @@ void Arcadia::ImguiWindowStatePhysicsSimulator::operator()(Arcadia::PhysicsSimul
     );
 
     ImGui::NewLine();
-    if(physics_simulator.ShouldUpdate())
+    if(physics_simulator.IsActive())
     {
         if(ImGui::Button("Stop"))
         {
-            physics_simulator.ShouldUpdate(false);
+            physics_simulator.SetActive(false);
         }
     }
     else
     {
         if(ImGui::Button("Start"))
         {
-            physics_simulator.ShouldUpdate(true);
+            physics_simulator.SetActive(true);
         }
     }
     ImGui::SameLine();
     if(ImGui::Button("Reset"))
     {
         physics_simulator.Reset();
-        physics_simulator.ShouldUpdate(false);
+        physics_simulator.SetActive(false);
     }
 
 }

@@ -74,7 +74,6 @@ namespace Arcadia
 
         /// @brief Query the updated data of the physics component from the physcis simulator
         /// @param name Entity to quary
-        /// @throw UnknownPhysicsComponent if the physics component was not submitted before quary
         /// @note Entity that does not have physics component will be ignored
         /// @note This function can only be called when the physics simulator is not in build
         void Query(Arcadia::Scene& scene, const std::string& name);
@@ -83,8 +82,8 @@ namespace Arcadia
         void Reset();
 
         [[nodiscard]]
-        auto ShouldUpdate() const -> bool;
-        void ShouldUpdate(bool should_update);
+        auto IsActive() const -> bool;
+        void SetActive(bool should_update);
 
         [[nodiscard]]
         auto GetJphTempAllocatorSize() const->JPH::uint;
@@ -104,7 +103,7 @@ namespace Arcadia
     private:
         bool _InBuild{ false };
 
-        bool _ShouldUpdate{ false };
+        bool _Active{ false };
 
         JPH::uint _JphTempAllocatorSize{ 10 * 1024 * 1024 };
 
