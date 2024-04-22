@@ -110,10 +110,7 @@ void Arcadia::PhysicsSimulator::Submit(const Arcadia::Scene& scene, const std::s
                 },
                 JPH::EActivation::Activate
             );
-            if(body_id.IsInvalid())
-            {
-                throw SubmitFail{ std::format("Failed to create body; Its uuid is {}",uuid) };
-            }
+            ARCADIA_ASSERT(!body_id.IsInvalid() && "Failed to create body");
             _JphBodyIdStorage.try_emplace(uuid, body_id);
         }
         _SubmittedBodyInfos.emplace(uuid);
@@ -151,23 +148,17 @@ void Arcadia::PhysicsSimulator::Query(Arcadia::Scene& scene, const std::string& 
     if(physics_comp.HasBodyInfo())
     {
         const auto& [uuid, jph_body_info_initial] = physics_comp.GetIdentifiableJphBodyInfo();
-        if(_JphBodyIdStorage.contains(uuid))
-        {
-            const auto& jph_body_interface = _JphPhysicsSystem->GetBodyInterface();
-            const auto& body_id = _JphBodyIdStorage.at(uuid);
+        ARCADIA_ASSERT(_JphBodyIdStorage.contains(uuid));
+        const auto& jph_body_interface = _JphPhysicsSystem->GetBodyInterface();
+        const auto& body_id = _JphBodyIdStorage.at(uuid);
 
-            auto& jph_body_state = physics_comp.JphBodyState;
-            jph_body_state.Active = jph_body_interface.IsActive(body_id);
-            jph_body_state.LinearVelocity = Arcadia::FromJphVec3(jph_body_interface.GetLinearVelocity(body_id));
-            jph_body_state.AngularVelocity = Arcadia::FromJphVec3(jph_body_interface.GetAngularVelocity(body_id));
+        auto& jph_body_state = physics_comp.JphBodyState;
+        jph_body_state.Active = jph_body_interface.IsActive(body_id);
+        jph_body_state.LinearVelocity = Arcadia::FromJphVec3(jph_body_interface.GetLinearVelocity(body_id));
+        jph_body_state.AngularVelocity = Arcadia::FromJphVec3(jph_body_interface.GetAngularVelocity(body_id));
 
-            transform_comp.Position = Arcadia::FromJphVec3(jph_body_interface.GetPosition(body_id));
-            transform_comp.Rotation = Arcadia::FromJphQuat(jph_body_interface.GetRotation(body_id));
-        }
-        else
-        {
-            throw UnknownPhysicsComponent{ "Cannot quary component that has not been submitted" };
-        }
+        transform_comp.Position = Arcadia::FromJphVec3(jph_body_interface.GetPosition(body_id));
+        transform_comp.Rotation = Arcadia::FromJphQuat(jph_body_interface.GetRotation(body_id));
     }
 }
 

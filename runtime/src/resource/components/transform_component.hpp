@@ -33,7 +33,6 @@ namespace Arcadia
         glm::vec3 Pivot{ Arcadia::Vec3::Zero() };
     };
 
-
     struct ARCADIA_API TransformComponent:
         Arcadia::iComponent,
         Arcadia::iMementoOriginator

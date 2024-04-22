@@ -14,7 +14,6 @@ namespace Arcadia
     {
     public:
         virtual auto ShouldCollide(JPH::ObjectLayer obj_1, JPH::ObjectLayer obj_2) const -> bool override;
-
     };
 
     struct ARCADIA_API JphBroadPhaseLayerImpl final: JPH::BroadPhaseLayerInterface
@@ -29,7 +28,7 @@ namespace Arcadia
         virtual auto GetBroadPhaseLayer(JPH::ObjectLayer layer) const->JPH::BroadPhaseLayer override;
 
         [[nodiscard]]
-        virtual auto GetBroadPhaseLayerName(JPH::BroadPhaseLayer inLayer) const -> const char*
+        virtual auto GetBroadPhaseLayerName(JPH::BroadPhaseLayer layer) const -> const char*
         {
             return nullptr;
         }
@@ -48,21 +47,11 @@ namespace Arcadia
     struct ARCADIA_API PhysicsSimulator
     {
     public:
-        ARCADIA_EXCEPTION(SubmitFail);
-        ARCADIA_EXCEPTION(UnknownPhysicsComponent);
-
         using jph_body_id_storage_type = std::unordered_map<Arcadia::Uuid, JPH::BodyID>;
         using self_type = PhysicsSimulator;
     public:
         PhysicsSimulator();
         ~PhysicsSimulator();
-
-        /// @brief Check whether the physcis simulator is in build
-        [[nodiscard]]
-        auto IsInBuild() const -> bool
-        {
-            return _InBuild;
-        }
 
         /// @brief Start building the physics simulator
         /// @details This function signs that the physics simulator is in build

@@ -306,7 +306,7 @@ auto Arcadia::Mesh::Sphere(
 {
     const auto pi = glm::pi<float>();
     float sector_step = 2 * pi / sector_count;
-    float stack_step = pi / sector_count;
+    float stack_step = pi / stack_count;
 
     float radius_inv = 1.f / radius;
 
@@ -314,7 +314,7 @@ auto Arcadia::Mesh::Sphere(
 
     auto& vertices = mesh.Vertices;
     vertices.reserve(stack_count * sector_count);
-    for(std::size_t i = 0; i < stack_count; ++i)
+    for(std::size_t i = 0; i <= stack_count; ++i)
     {
         float stack_angle = pi / 2 - i * stack_step;
         float xy = radius * std::cos(stack_angle);
@@ -349,7 +349,7 @@ auto Arcadia::Mesh::Sphere(
     for(std::size_t i = 0; i < stack_count; ++i)
     {
         float k1 = i * (sector_count + 1);
-        float k2 = i + sector_count + 1;
+        float k2 = k1 + sector_count + 1;
 
         for(std::size_t j = 0; j < sector_count; ++j, ++k1, ++k2)
         {

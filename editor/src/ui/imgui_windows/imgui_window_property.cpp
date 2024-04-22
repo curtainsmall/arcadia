@@ -773,36 +773,16 @@ void Arcadia::ImguiWindowPopupPhysicsComponentCreateBody::operator()(Arcadia::Ph
             if(ImGui::Selectable("Static"))
             {
                 _TempJphBodyInfo.JphMotionType = JPH::EMotionType::Static;
+                _TempJphBodyInfo.JphObjectLayer = Arcadia::JphObjectLayers::NonMoving;
             }
             if(ImGui::Selectable("Dynamic"))
             {
                 _TempJphBodyInfo.JphMotionType = JPH::EMotionType::Dynamic;
+                _TempJphBodyInfo.JphObjectLayer = Arcadia::JphObjectLayers::Moving;
             }
             if(ImGui::Selectable("Kinematic"))
             {
                 _TempJphBodyInfo.JphMotionType = JPH::EMotionType::Kinematic;
-            }
-            ImGui::EndCombo();
-        }
-
-        // Object layer
-        auto jph_object_layer_preview = Arcadia::Match<std::string>(
-            _TempJphBodyInfo.JphObjectLayer,
-            Arcadia::JphObjectLayers::NonMoving,
-            "Non Moving",
-            Arcadia::JphObjectLayers::Moving,
-            "Moving"
-        );
-        ImGui::Text("Object Layer");
-        ImGui::SameLine();
-        if(ImGui::BeginCombo("##object_layer", jph_object_layer_preview.c_str()))
-        {
-            if(ImGui::Selectable("Non Moving"))
-            {
-                _TempJphBodyInfo.JphObjectLayer = Arcadia::JphObjectLayers::NonMoving;
-            }
-            if(ImGui::Selectable("Moving"))
-            {
                 _TempJphBodyInfo.JphObjectLayer = Arcadia::JphObjectLayers::Moving;
             }
             ImGui::EndCombo();
