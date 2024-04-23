@@ -26,9 +26,9 @@
                         },
                         "transform": {
                             "direction": {
-                                "x": 0.30191534757614136,
-                                "y": -0.6467441320419312,
-                                "z": 0.7004064321517944
+                                "x": 0.2960379719734192,
+                                "y": 0.09632174670696259,
+                                "z": 0.9503071308135986
                             },
                             "flags": 0,
                             "pivot": {
@@ -37,9 +37,9 @@
                                 "z": 0.0
                             },
                             "position": {
-                                "x": -3.9259018898010254,
-                                "y": 11.471177101135254,
-                                "z": -11.476617813110352
+                                "x": -3.214723587036133,
+                                "y": -0.6131929755210876,
+                                "z": -12.286574363708496
                             },
                             "rotation": {
                                 "w": 1.0,
@@ -62,7 +62,7 @@
                 {
                     "components": {
                         "model": {
-                            "filepath": "D:/CppProject/arcadia/editor/asset/model/planet/planet.obj"
+                            "filepath": ""
                         },
                         "physics": {
                             "body_shape_color": {
@@ -75,11 +75,10 @@
                                 "jph_object_layer": 0,
                                 "jph_shape_info": {
                                     "info": {
-                                        "convex_radius": 0.05000000074505806,
-                                        "half_height": 5.0,
-                                        "radius": 5.0
+                                        "half_height_of_cylinder": 3.0,
+                                        "radius": 3.0
                                     },
-                                    "type": "cylinder"
+                                    "type": "capsule_shape"
                                 }
                             }
                         },

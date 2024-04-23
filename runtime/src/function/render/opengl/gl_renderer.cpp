@@ -186,7 +186,7 @@ void Arcadia::GlRenderer::Submit(const Arcadia::Scene& scene, const std::string&
                 },
                     [&](const Arcadia::JphCapsuleShapeInfo& info)
                 {
-                    return Arcadia::Mesh::Capsule(0, 0);
+                    return Arcadia::Mesh::Capsule(info.Radius, info.HalfHeightOfCylinder);
                 },
                     [&](const Arcadia::JphCylinderShapeInfo& info)
                 {

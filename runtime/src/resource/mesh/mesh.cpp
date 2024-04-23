@@ -284,18 +284,135 @@ auto Arcadia::Mesh::Box(
 
 auto Arcadia::Mesh::Capsule(
     float radius,
-    float half_height_of_sylinder
+    float half_height_of_cylinder,
+    std::size_t half_sphere_stack_count,
+    std::size_t sector_count
 ) -> Arcadia::Mesh
 {
-    ARCADIA_API(false && "Not in use");
-    return Arcadia::Mesh();
+    const auto pi = glm::pi<float>();
+    float sector_step = 2 * pi / sector_count;
+    float half_sphere_stack_step = pi / 2 / half_sphere_stack_count;
+
+    float radius_inv = 1.f / radius;
+
+    Arcadia::Mesh mesh{};
+    auto& vertices = mesh.Vertices;
+    auto& indices = mesh.Indices;
+
+#if 1
+    // Sphere part
+    for(std::size_t j = 0; j <= half_sphere_stack_count; ++j)
+    {
+        float stack_angle = pi / 2 - j * half_sphere_stack_step;
+        float xz = radius * std::cos(stack_angle);
+        float y = radius * std::sin(stack_angle) + half_height_of_cylinder;
+
+        for(std::size_t j = 0; j <= sector_count; ++j)
+        {
+            float sector_angle = j * sector_step;
+
+            float x = xz * std::sin(sector_angle);
+            float z = xz * std::cos(sector_angle);
+
+            float nx = x * radius_inv;
+            float ny = y * radius_inv;
+            float nz = z * radius_inv;
+
+            float u = static_cast<float>(j / sector_count);
+            float v = static_cast<float>(j / half_sphere_stack_count);
+
+            vertices.emplace_back(
+                Arcadia::Vertex{
+                    glm::vec3{x,y,z},
+                    glm::vec3{nx,ny,nz},
+                    glm::vec2{u,v}
+                }
+            );
+        }
+    }
+
+    for(std::size_t i = 0; i < half_sphere_stack_count; ++i)
+    {
+        float k1 = i * (sector_count + 1);
+        float k2 = k1 + sector_count + 1;
+
+        for(std::size_t j = 0; j < sector_count; ++j, ++k1, ++k2)
+        {
+            if(i != 0)
+            {
+                indices.emplace_back(k1);
+                indices.emplace_back(k2);
+                indices.emplace_back(k1 + 1);
+            }
+
+            if(i != half_sphere_stack_count - 1)
+            {
+                indices.emplace_back(k1 + 1);
+                indices.emplace_back(k2);
+                indices.emplace_back(k2 + 1);
+            }
+        }
+    }
+#endif
+
+#if 1
+    // Cylinder part
+    std::vector<float> unit_circle_vertices{};
+    for(int i = 0; i <= sector_count; ++i)
+    {
+        float sector_angle = i * sector_step;
+        unit_circle_vertices.emplace_back(std::sin(sector_angle));
+        unit_circle_vertices.emplace_back(0);
+        unit_circle_vertices.emplace_back(std::cos(sector_angle));
+    }
+
+    int k1 = vertices.size();
+    int k2 = k1 + sector_count + 1;
+    for(int i = 0; i < 2; ++i)
+    {
+        float h = -half_height_of_cylinder + i * half_height_of_cylinder * 2;
+        float tex_coord_y = 1.f - i;
+
+        for(int j = 0, k = 0; j <= sector_count; ++j, k += 3)
+        {
+            float ux = unit_circle_vertices.at(k);
+            float uy = unit_circle_vertices.at(k + 1);
+            float uz = unit_circle_vertices.at(k + 2);
+
+            vertices.emplace_back(
+                Arcadia::Vertex{
+                    glm::vec3{ux * radius,h, uz * radius},
+                    glm::vec3{ux,uy,uz},
+                    glm::vec2{static_cast<float>(j) / sector_count, tex_coord_y}
+                }
+            );
+        }
+    }
+
+    for(int i = 0; i < sector_count; ++i, ++k1, ++k2)
+    {
+        indices.emplace_back(k1);
+        indices.emplace_back(k1 + 1);
+        indices.emplace_back(k2);
+
+        indices.emplace_back(k2);
+        indices.emplace_back(k1 + 1);
+        indices.emplace_back(k2 + 1);
+    }
+#endif
+
+
+
+
+
+    return mesh;
 }
 
 auto Arcadia::Mesh::Cylinder(
     float half_height,
     float radius,
     std::size_t sector_count
-) -> Arcadia::Mesh
+)->Arcadia::Mesh
 {
     const auto pi = glm::pi<float>();
     float sector_step = 2 * pi / sector_count;

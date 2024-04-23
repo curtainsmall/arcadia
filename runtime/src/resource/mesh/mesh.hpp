@@ -21,7 +21,9 @@ namespace Arcadia
 
         static auto Capsule(
             float radius,
-            float half_height_of_sylinder
+            float half_height_of_sylinder,
+            std::size_t half_sphere_stack_count = 18,
+            std::size_t sector_count = 36
         ) -> Arcadia::Mesh;
 
         static auto Cylinder(
