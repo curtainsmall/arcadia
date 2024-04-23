@@ -140,12 +140,10 @@ namespace Arcadia
 
         /// @brief Restore prev memento
         /// @return True, if succeed; False, if there is no prev memento to restore
-        [[nodiscard]]
         auto Undo() -> bool;
 
         /// @brief Restore next memento
         /// @return True, if succeed; False, if there is no next memento to restore
-        [[nodiscard]]
         auto Redo() -> bool;
 
         [[nodiscard]]

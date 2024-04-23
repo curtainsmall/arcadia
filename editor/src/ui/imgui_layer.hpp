@@ -5,10 +5,11 @@
 #include<vector>
 
 #include"core/exception.hpp"
-#include"function/ui/imgui_header.hpp"
-#include"function/ui/imgui_style.hpp"
-#include"function/ui/imgui_window.hpp"
 #include"function/window/window_layer.hpp"
+#include"ui/imgui_header.hpp"
+#include"ui/imgui_style.hpp"
+#include"ui/imgui_window.hpp"
+#include"ui/ui_events.hpp"
 
 namespace Arcadia
 {
@@ -47,6 +48,7 @@ namespace Arcadia
             _ImguiWindow.emplace_back(std::make_unique<ImGuiWindow>(std::forward<Args>(args)...));
             return *this;
         }
+
     public:
         bool ShowDemoWindow{ false };
         bool ShowDebugInfo{ false };

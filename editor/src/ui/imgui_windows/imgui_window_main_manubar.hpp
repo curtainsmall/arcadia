@@ -7,7 +7,7 @@
 #include"core/event/event.hpp"
 #include"function/physics/physics_simulator.hpp"
 #include"function/render/renderer.hpp"
-#include"function/ui/imgui_window.hpp"
+#include"ui/imgui_window.hpp"
 
 #include"project/project.hpp"
 #include"project/project_events.hpp"
@@ -38,8 +38,8 @@ namespace Arcadia
         bool Open{ false };
     private:
         std::string _Name{};
-        bool _as_current{ true };
-        bool _name_available{ true };
+        bool _AsCurrent{ true };
+        bool _NameAvailable{ true };
     };
 
     struct ARCADIA_API ImguiWindowMainMenubar: Arcadia::iImguiWindow

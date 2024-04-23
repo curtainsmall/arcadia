@@ -54,6 +54,24 @@
     <ClInclude Include="src\ui\imgui_windows\imgui_window_main_toolbar.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\ui\imgui_wrapper.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ui\imgui_backend.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ui\imgui_header.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ui\imgui_layer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ui\imgui_style.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ui\imgui_window.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\editor\editor_layer.cpp">
@@ -87,6 +105,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\ui\imgui_windows\imgui_window_main_toolbar.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui\imgui_backend.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui\imgui_layer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui\imgui_wrapper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

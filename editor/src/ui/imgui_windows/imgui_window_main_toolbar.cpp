@@ -1,14 +1,25 @@
 #include "imgui_window_main_toolbar.hpp"
 
+#include"core/event/event.hpp"
 #include"core/memento/memento.hpp"
-#include"function/ui/imgui_header.hpp"
 #include"resource/fonts/icon_header.hpp"
 
+#include"editor/editor_context.hpp"
+#include"ui/imgui_header.hpp"
+#include"ui/ui_events.hpp"
+
 void Arcadia::ImguiWindowMainToolbar::OnEvent(Arcadia::EventBase& event)
-{}
+{
+    Arcadia::EventDispatcher{ event }
+        .Dispatch<Arcadia::Event::SceneActivated>(ARCADIA_BIND_MEMBER_FN(_OnSceneActivated))
+        .Dispatch<Arcadia::Event::SceneDeactivated>(ARCADIA_BIND_MEMBER_FN(_OnSceneDeactivated))
+        .Result();
+}
 
 void Arcadia::ImguiWindowMainToolbar::OnUpdate()
 {
+    auto scene = _Scene.lock();
+
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, glm::vec2{ 0,0 });
     auto window_flags =
         ImGuiWindowFlags_NoDecoration
@@ -58,11 +69,41 @@ void Arcadia::ImguiWindowMainToolbar::OnUpdate()
         ImGui::SameLine();
         if(ImGui::Button(ICON_FA_ARROW_CIRCLE_RIGHT))
         {
-            ARCADIA_ASSERT(memento_list.Redo());
+            memento_list.Redo();
         }
         ImGui::SetItemTooltip(" Redo ");
+
+        if(scene)
+        {
+            ImGui::SameLine();
+            if(Arcadia::EditorContext::Instance().InPlayMode)
+            {
+                ImGui::PushStyleColor(ImGuiCol_Text, glm::vec4{ 1.f,0.f,0.f,1.f });
+                ImGui::Text("Press Shift + Esc to stop play mode");
+                ImGui::PopStyleColor();
+            }
+            else
+            {
+                if(ImGui::Button("PLAY"))
+                {
+                    Arcadia::EventQueue::Instance().Signal<Arcadia::Event::PlayMode>(true);
+                }
+            }
+        }
 
         ImGui::End();
     }
     ImGui::PopStyleVar();
+}
+
+void Arcadia::ImguiWindowMainToolbar::_OnSceneActivated(Arcadia::Event::SceneActivated& e)
+{
+    const auto& [scene] = e.data_tuple;
+    _Scene = scene;
+}
+
+
+void Arcadia::ImguiWindowMainToolbar::_OnSceneDeactivated(Arcadia::Event::SceneDeactivated& e)
+{
+    _Scene.reset();
 }

@@ -4,8 +4,8 @@
 #include<string>
 
 #include"core/base.hpp"
-#include"function/ui/imgui_header.hpp"
-#include"function/ui/imgui_window.hpp"
+#include"ui/imgui_header.hpp"
+#include"ui/imgui_window.hpp"
 #include"resource/scene.hpp"
 
 #include"project/project_events.hpp"

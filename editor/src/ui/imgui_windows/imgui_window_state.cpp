@@ -1,8 +1,8 @@
 #include "imgui_window_state.hpp"
 
 #include"core/file/pfd_header.hpp"
-#include"function/ui/imgui_header.hpp"
-#include"function/ui/imgui_wrapper.hpp"
+#include"ui/imgui_header.hpp"
+#include"ui/imgui_wrapper.hpp"
 #include"resource/components/camera_component.hpp"
 #include"resource/components/light_component.hpp"
 #include"resource/components/model_component.hpp"
@@ -10,7 +10,10 @@
 
 void Arcadia::ImguiWindowStateScene::operator()(const Arcadia::Scene& scene)
 {
-    ImGui::Text(std::format("Entity Count: {}", scene.Size()).c_str());
+    ImGui::Text(std::format("Entity Count: {}", scene.Count([&](const std::string&, const Arcadia::EntityInfo& info)->bool
+    {
+        return !info.Internal;
+    })).c_str());
 }
 
 void Arcadia::ImguiWindowStateRenderer::operator()(const Arcadia::iRenderer& renderer)

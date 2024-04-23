@@ -104,5 +104,12 @@ namespace Arcadia
         ARCADIA_EVENT(
             PhysicsComponentNewBody
         );
+
+        //==== Events for modes ====//
+
+        ARCADIA_EVENT(
+            PlayMode,
+            bool
+        );
     }
 }

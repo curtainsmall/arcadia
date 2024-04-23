@@ -10,7 +10,7 @@
 
 namespace Arcadia
 {
-    namespace KeyCode
+    namespace InputKey
     {
         using value_type = int;
         enum: value_type
@@ -126,7 +126,7 @@ namespace Arcadia
         };
 
     };
-    namespace MouseCode
+    namespace InputMouse
     {
         using value_type = int;
         enum: value_type

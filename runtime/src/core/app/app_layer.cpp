@@ -14,7 +14,7 @@ Arcadia::iAppLayer::iAppLayer():
     // Prepare AppConfig (either read from disk or use default value)
     try
     {
-        auto ifs = Arcadia::File::CreateIFstream(Arcadia::AppConfig::Filepath);
+        auto ifs = Arcadia::File::CreateIfstream(Arcadia::AppConfig::Filepath);
         auto json = nlohmann::json::parse(ifs);
 
         auto& app_config = Arcadia::AppConfig::Instance();
@@ -154,7 +154,7 @@ Arcadia::iAppLayer::~iAppLayer()
             .push_back(id_str);
     }
 
-    auto ofs = Arcadia::File::CreateOFstream(Arcadia::AppConfig::Filepath);
+    auto ofs = Arcadia::File::CreateOfstream(Arcadia::AppConfig::Filepath);
     ofs << std::setw(4) << json;
 }
 

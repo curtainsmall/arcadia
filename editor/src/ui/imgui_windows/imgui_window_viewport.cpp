@@ -172,10 +172,7 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
                 {
                     _GizmoOption = GizmoOption::None;
                 }
-                if(ImGui::IsItemHovered())
-                {
-                    ImGui::SetTooltip("Turn off gizmo (Q)");
-                }
+                ImGui::SetItemTooltip("Turn off gizmo (Q)");
 
                 ImGui::SameLine();
                 if(_GizmoOption == GizmoOption::Translation)
@@ -191,10 +188,7 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
                 {
                     _GizmoOption = GizmoOption::Translation;
                 }
-                if(ImGui::IsItemHovered())
-                {
-                    ImGui::SetTooltip("Set gizmo to translation mode (W)");
-                }
+                ImGui::SetItemTooltip("Set gizmo to translation mode (W)");
 
                 ImGui::SameLine();
                 if(_GizmoOption == GizmoOption::Rotation)
@@ -210,10 +204,7 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
                 {
                     _GizmoOption = GizmoOption::Rotation;
                 }
-                if(ImGui::IsItemHovered())
-                {
-                    ImGui::SetTooltip("Set gizmo to rotation mode (E)");
-                }
+                ImGui::SetItemTooltip("Set gizmo to rotation mode (E)");
 
                 ImGui::SameLine();
                 if(_GizmoOption == GizmoOption::Scale)
@@ -229,10 +220,7 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
                 {
                     _GizmoOption = GizmoOption::Scale;
                 }
-                if(ImGui::IsItemHovered())
-                {
-                    ImGui::SetTooltip("Set gizmo to scale mode (R)");
-                }
+                ImGui::SetItemTooltip("Set gizmo to scale mode (R)");
 
                 ImGui::PopStyleColor(2);
             }

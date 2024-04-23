@@ -104,6 +104,19 @@ auto Arcadia::Scene::Size() const -> std::size_t
     return _EntityInfoStorage.size();
 }
 
+auto Arcadia::Scene::Count(const std::function<bool(const std::string&, const Arcadia::EntityInfo&)>& pred) const -> std::size_t
+{
+    std::size_t count = 0;
+    for(const auto& [name, entity_info] : _EntityInfoStorage)
+    {
+        if(pred(name, entity_info))
+        {
+            ++count;
+        }
+    }
+    return count;
+}
+
 auto Arcadia::Scene::GetEntityInfo(const std::string& name) const -> const Arcadia::EntityInfo&
 {
     ARCADIA_ASSERT(Contains(name));

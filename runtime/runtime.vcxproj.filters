@@ -183,18 +183,6 @@
     <ClInclude Include="src\core\hash.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\function\ui\imgui_backend.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\function\ui\imgui_header.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\function\ui\imgui_layer.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\function\ui\imgui_style.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\function\render\opengl\buffer\gl_renderbuffer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -211,9 +199,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\function\physics\physics_simulator.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\function\ui\imgui_window.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\core\command\command.hpp">
@@ -235,6 +220,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\core\math\algorithm.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\resource\components\player_component.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -314,12 +302,6 @@
     <ClCompile Include="src\resource\material\texture2d.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\function\ui\imgui_backend.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\function\ui\imgui_layer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\function\render\opengl\buffer\gl_renderbuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -344,19 +326,18 @@
     <ClCompile Include="src\core\memento\memento.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\function\ui\imgui_wrapper.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\resource\components\transform_component.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\core\math\algorithm.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\resource\components\player_component.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="src\core\string.hpp" />
-    <None Include="src\function\ui\imgui_wrapper.hpp" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="src\resource\fonts\fa-brands-400.ttf" />

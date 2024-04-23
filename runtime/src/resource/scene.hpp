@@ -92,6 +92,9 @@ namespace Arcadia
         auto Size() const->std::size_t;
 
         [[nodiscard]]
+        auto Count(const std::function<bool(const std::string&, const Arcadia::EntityInfo&)>& pred) const->std::size_t;
+
+        [[nodiscard]]
         auto GetEntityInfo(const std::string& name) const -> const Arcadia::EntityInfo&;
 
         [[nodiscard]]
@@ -259,6 +262,6 @@ namespace Arcadia
 
         entt::registry _Registry{};
 
-        entity_info_storage_type _EntityInfoStorage{}; // Names that has been used
+        entity_info_storage_type _EntityInfoStorage{};
     };
 }

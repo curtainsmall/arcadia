@@ -8,10 +8,10 @@
 #include"function/input/input_events.hpp"
 #include"function/physics/physics_simulator.hpp"
 #include"function/render/renderer.hpp"
-#include"function/ui/imgui_header.hpp"
+#include"ui/imgui_header.hpp"
 #include"resource/scene.hpp"
 
-#include"function/ui/imgui_window.hpp"
+#include"ui/imgui_window.hpp"
 #include"project/project.hpp"
 #include"project/project_events.hpp"
 #include"ui/ui_events.hpp"

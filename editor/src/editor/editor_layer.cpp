@@ -25,7 +25,7 @@ Arcadia::EditorAppLayer::EditorAppLayer()
 
     // Window layer
     {
-        editor_context._MainWindowLayer = layer_stack
+        editor_context.MainWindowLayer = layer_stack
             .PushLayer<Arcadia::WindowLayer>(
                 app_config.WindowSize,
                 app_config.WindowTitle,
@@ -36,16 +36,16 @@ Arcadia::EditorAppLayer::EditorAppLayer()
 
     // Project layer
     {
-        editor_context._MainProjectLayer = layer_stack
+        editor_context.MainProjectLayer = layer_stack
             .PushLayer<Arcadia::ProjectLayer>()
             .Top<Arcadia::ProjectLayer>();
     }
 
     // Editor ImGui layer
     {
-        editor_context._MainImguiLayer = layer_stack
+        editor_context.MainImguiLayer = layer_stack
             .PushLayer<Arcadia::ImguiLayer>(
-                editor_context._MainWindowLayer.lock(),
+                editor_context.MainWindowLayer.lock(),
                 ARCADIA_BIND_MEMBER_FN(_ImguiWindowInstaller),
                 Arcadia::ImguiStyle::Dark
             )
@@ -64,6 +64,8 @@ void Arcadia::EditorAppLayer::OnEvent(Arcadia::EventBase& event)
     Arcadia::EventDispatcher{ event }
         .Dispatch<Arcadia::Event::WindowShouldClose>(ARCADIA_BIND_MEMBER_FN(_OnWindowShouldClose))
         .Dispatch<Arcadia::Event::ProjectUnbuilt>(ARCADIA_BIND_MEMBER_FN(_OnProjectUnbuilt))
+        .Dispatch<Arcadia::Event::PlayMode>(ARCADIA_BIND_MEMBER_FN(_OnPlayMode))
+        .Dispatch<Arcadia::Event::InputKey>(ARCADIA_BIND_MEMBER_FN(_OnInputKey))
         .Result();
 }
 
@@ -90,8 +92,8 @@ void Arcadia::EditorAppLayer::_ImguiWindowInstaller(Arcadia::ImguiLayer& imgui_l
 void Arcadia::EditorAppLayer::_Stop()
 {
     auto& editor_context = Arcadia::EditorContext::Instance();
-    auto main_window_layer = editor_context._MainWindowLayer.lock();
-    auto main_imgui_layer = editor_context._MainImguiLayer.lock();
+    auto main_window_layer = editor_context.MainWindowLayer.lock();
+    auto main_imgui_layer = editor_context.MainImguiLayer.lock();
 
     auto& app_config = Arcadia::AppConfig::Instance();
     app_config.WindowSize = main_window_layer->GetSize();
@@ -113,8 +115,8 @@ void Arcadia::EditorAppLayer::_Stop()
 void Arcadia::EditorAppLayer::_OnWindowShouldClose(Arcadia::Event::WindowShouldClose& e)
 {
     auto& editor_context = Arcadia::EditorContext::Instance();
-    auto main_window_layer = editor_context._MainWindowLayer.lock();
-    auto main_project_layer = editor_context._MainProjectLayer.lock();
+    auto main_window_layer = editor_context.MainWindowLayer.lock();
+    auto main_project_layer = editor_context.MainProjectLayer.lock();
 
     const auto& [p_wnd] = e.data_tuple;
     if(p_wnd == main_window_layer.get() && main_project_layer->HasProject())
@@ -140,7 +142,24 @@ void Arcadia::EditorAppLayer::_OnWindowCloseCanceled(Arcadia::Event::WindowClose
     _WaitingForProjectUnbuiltBeforeClosing = false;
 }
 
-auto Arcadia::CreateApplicationUptr() -> std::unique_ptr<Arcadia::iAppLayer>
+void Arcadia::EditorAppLayer::_OnPlayMode(Arcadia::Event::PlayMode& e)
+{
+    const auto& [state] = e.data_tuple;
+    Arcadia::EditorContext::Instance().InPlayMode = state;
+}
+
+void Arcadia::EditorAppLayer::_OnInputKey(Arcadia::Event::InputKey& e)
+{
+    const auto& [wnd, key, scancode, action, mods] = e.data_tuple;
+
+    if(key == Arcadia::InputKey::Escape && mods & Arcadia::InputModifier::Shift)
+    {
+        Arcadia::EditorContext::Instance().InPlayMode = false;
+    }
+
+}
+
+auto Arcadia::CreateApplication() -> std::unique_ptr<Arcadia::iAppLayer>
 {
     return std::make_unique<Arcadia::EditorAppLayer>();
 }

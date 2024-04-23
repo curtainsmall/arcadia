@@ -1,7 +1,7 @@
 #include "imgui_window_main_manubar.hpp"
 
 #include"core/file/pfd_header.hpp"
-#include"function/ui/imgui_header.hpp"
+#include"ui/imgui_header.hpp"
 #include"platform/graphic_api/graphic_api.hpp"
 #include"resource/fonts/icon_header.hpp"
 
@@ -95,27 +95,27 @@ void Arcadia::ImguiWindowPopupCreateScene::operator()(const std::shared_ptr<cons
         ImGui::Text("Scene name");
         if(ImGui::InputText("##scene_name", &_Name, input_text_flags))
         {
-            _name_available = !project->SceneSptrStorage.contains(_Name);
+            _NameAvailable = !project->SceneSptrStorage.contains(_Name);
             if(_Name.empty())
             {
                 ImGui::TextColored({ 204,80,69,255 }, "Scene name cannot empty");
             }
         }
-        if(!_name_available)
+        if(!_NameAvailable)
         {
             ImGui::PushStyleColor(ImGuiCol_Text, { 204, 80, 69, 255 });
             ImGui::Text("Scene named \"%s\" already exsits", _Name.c_str());
             ImGui::PopStyleColor();
         }
-        ImGui::Checkbox("As current", &_as_current);
+        ImGui::Checkbox("As current", &_AsCurrent);
 
-        auto confirmed = ImGui::Button("Confirm") && !_Name.empty() && _name_available;
+        auto confirmed = ImGui::Button("Confirm") && !_Name.empty() && _NameAvailable;
         if(confirmed)
         {
             Arcadia::EventQueue::Instance()
                 .Signal<Arcadia::Event::CreateScene>(
                     _Name,
-                    _as_current
+                    _AsCurrent
                 );
         }
         ImGui::SameLine();
@@ -124,8 +124,8 @@ void Arcadia::ImguiWindowPopupCreateScene::operator()(const std::shared_ptr<cons
             ImGui::CloseCurrentPopup();
             Open = false;
             _Name.clear();
-            _as_current = true;
-            _name_available = true;
+            _AsCurrent = true;
+            _NameAvailable = true;
         }
 
         ImGui::EndPopup();

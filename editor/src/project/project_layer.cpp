@@ -85,7 +85,7 @@ void Arcadia::ProjectLayer::_SaveProject()
 
     auto json = _Project->ToJson();
 
-    auto ofs = Arcadia::File::CreateOFstream(_ProjectFilepath);
+    auto ofs = Arcadia::File::CreateOfstream(_ProjectFilepath);
     ofs << std::setw(4) << json;
 
     Arcadia::EventQueue::Instance().Signal<Arcadia::Event::ProjectSaved>();
@@ -95,7 +95,7 @@ void Arcadia::ProjectLayer::_LoadProject()
 {
     ARCADIA_ASSERT(!_Project);
 
-    auto ifs = Arcadia::File::CreateIFstream(_ProjectFilepath);
+    auto ifs = Arcadia::File::CreateIfstream(_ProjectFilepath);
     auto json = nlohmann::json::parse(ifs);
 
     _Project = std::make_shared<Arcadia::Project>(json);
@@ -106,7 +106,7 @@ void Arcadia::ProjectLayer::_OnWindowShouldClose(Arcadia::Event::WindowShouldClo
 {
     auto& event_queue = Arcadia::EventQueue::Instance();
 
-    auto main_window_layer = Arcadia::EditorContext::Instance()._MainWindowLayer.lock();
+    auto main_window_layer = Arcadia::EditorContext::Instance().MainWindowLayer.lock();
 
     const auto& [p_wnd] = e.data_tuple;
     if(p_wnd == main_window_layer.get() && _Project)

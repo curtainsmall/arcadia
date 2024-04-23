@@ -3,13 +3,13 @@
 
 #include"core/base.hpp"
 #include"function/input/input_events.hpp"
-#include"function/ui/imgui_header.hpp"
+#include"ui/imgui_header.hpp"
 #include"function/window/window_events.hpp"
 #include"function/window/window_layer.hpp"
 
 namespace Arcadia
 {
-    namespace imgui_backend
+    namespace ImguiBackend
     {
         ARCADIA_API void Initialize(const Arcadia::WindowLayer& window);
         ARCADIA_API void NewFrame(const Arcadia::WindowLayer& window);

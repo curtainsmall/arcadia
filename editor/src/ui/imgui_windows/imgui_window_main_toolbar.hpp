@@ -1,7 +1,12 @@
 #pragma once
 
+#include<memory>
+
 #include"core/base.hpp"
-#include"function/ui/imgui_window.hpp"
+#include"resource/scene.hpp"    
+
+#include"project/project_events.hpp"
+#include"ui/imgui_window.hpp"
 
 namespace Arcadia
 {
@@ -19,5 +24,11 @@ namespace Arcadia
 
         virtual void OnEvent(Arcadia::EventBase& event) override;
         virtual void OnUpdate() override;
+
+    private:
+        void _OnSceneActivated(Arcadia::Event::SceneActivated& e);
+        void _OnSceneDeactivated(Arcadia::Event::SceneDeactivated& e);
+    private:
+        std::weak_ptr<Arcadia::Scene> _Scene{};
     };
 }

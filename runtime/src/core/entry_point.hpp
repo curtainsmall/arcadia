@@ -8,13 +8,13 @@
 #include"core/base.hpp"
 #include"core/layer/layer.hpp"
 
-extern auto CreateApplicationUptr() -> std::unique_ptr<Arcadia::iAppLayer>;
+extern auto CreateApplication() -> std::unique_ptr<Arcadia::iAppLayer>;
 
 auto main() -> int
 {
     // Add app_layer
     auto& layer_stack = Arcadia::LayerStack::Instance();
-    layer_stack.PushLayer<Arcadia::iAppLayer>(layer_stack.end(), std::shared_ptr<Arcadia::iAppLayer>(Arcadia::CreateApplicationUptr()));
+    layer_stack.PushLayer<Arcadia::iAppLayer>(layer_stack.end(), std::shared_ptr<Arcadia::iAppLayer>(Arcadia::CreateApplication()));
 
     // Main loop
     auto& app_context = Arcadia::AppContext::Instance();

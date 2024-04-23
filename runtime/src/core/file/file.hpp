@@ -32,10 +32,10 @@ namespace Arcadia
         using self_type = Arcadia::File;
     public:
 
-        static auto CreateIFstream() -> std::ifstream;
-        static auto CreateIFstream(const std::filesystem::path& filepath) -> std::ifstream;
-        static auto CreateOFstream() -> std::ofstream;
-        static auto CreateOFstream(const std::filesystem::path& filepath) -> std::ofstream;
+        static auto CreateIfstream() -> std::ifstream;
+        static auto CreateIfstream(const std::filesystem::path& filepath) -> std::ifstream;
+        static auto CreateOfstream() -> std::ofstream;
+        static auto CreateOfstream(const std::filesystem::path& filepath) -> std::ofstream;
 
         File(const std::filesystem::path& filepath);
         File(const self_type&) = default;

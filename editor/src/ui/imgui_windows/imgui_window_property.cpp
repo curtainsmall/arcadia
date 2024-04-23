@@ -5,8 +5,8 @@
 
 #include"core/file/pfd_header.hpp"
 #include"core/memento/memento.hpp"
-#include"function/ui/imgui_header.hpp"
-#include"function/ui/imgui_wrapper.hpp"
+#include"ui/imgui_header.hpp"
+#include"ui/imgui_wrapper.hpp"
 
 auto Arcadia::ImguiWindowPropertyCameraComponent::operator()(Arcadia::CameraComponent& camera_comp) -> std::string
 {
