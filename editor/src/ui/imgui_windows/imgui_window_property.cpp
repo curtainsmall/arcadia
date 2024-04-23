@@ -1210,7 +1210,7 @@ void Arcadia::ImguiWindowProperty::OnEvent(Arcadia::EventBase& event)
 }
 
 #define ARCADIA_IMGUI_WINDOW_PROPERTY_HELPER(component_type, tab_name, property_display_fn) \
-if(_ContainsComponent<component_type>(_SelectedEntityName) && ImGui::BeginTabItem(tab_name.c_str()))\
+if(_ContainsComponent<component_type>(_SelectedEntityName) && ImGui::TreeNodeEx(tab_name.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_FramePadding))\
 {\
     auto description = property_display_fn(_GetComponent<component_type>(_SelectedEntityName));\
     if(!description.empty())\
@@ -1224,7 +1224,7 @@ if(_ContainsComponent<component_type>(_SelectedEntityName) && ImGui::BeginTabIte
         }\
         );\
     }\
-    ImGui::EndTabItem();\
+    ImGui::TreePop();\
 }
 
 void Arcadia::ImguiWindowProperty::OnUpdate()
@@ -1262,7 +1262,7 @@ void Arcadia::ImguiWindowProperty::OnUpdate()
                 | ImGuiTabBarFlags_AutoSelectNewTabs
                 | ImGuiTabBarFlags_FittingPolicyScroll
                 | ImGuiTabBarFlags_Reorderable;
-            if(!_SelectedEntityName.empty() && ImGui::BeginTabBar("##component_name", tab_bar_flags))
+            if(!_SelectedEntityName.empty())
             {
                 ImGui::PushItemWidth(200.f);
 
@@ -1274,7 +1274,6 @@ void Arcadia::ImguiWindowProperty::OnUpdate()
                 ARCADIA_IMGUI_WINDOW_PROPERTY_HELPER(Arcadia::PhysicsComponent, "Physics"s, _ImguiWindowPropertyPhysicsComponent);
                 ARCADIA_IMGUI_WINDOW_PROPERTY_HELPER(Arcadia::TransformComponent, "Transform"s, _ImguiWindowPropertyTransformComponent);
 
-                ImGui::EndTabBar();
 
                 ImGui::PopItemWidth();
 
