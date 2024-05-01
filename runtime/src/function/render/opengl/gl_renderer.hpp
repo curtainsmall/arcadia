@@ -57,7 +57,7 @@ namespace Arcadia
         glm::vec3 // color
     >;
 
-    struct ARCADIA_API GlRenderer: Arcadia::iRenderer
+    struct GlRenderer: Arcadia::iRenderer
     {
     public:
         ARCADIA_EXCEPTION(too_many_lights);

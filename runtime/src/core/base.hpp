@@ -30,7 +30,7 @@ using namespace std::complex_literals;
 
 namespace Arcadia
 {
-    struct ARCADIA_API Noncopyable
+    struct Noncopyable
     {
     protected:
         Noncopyable() = default;
@@ -39,7 +39,7 @@ namespace Arcadia
     };
 
     template<class ...Fns>
-    struct ARCADIA_API Overloaded: Fns...
+    struct Overloaded: Fns...
     {
         using Fns::operator()...;
     };
@@ -53,7 +53,7 @@ namespace Arcadia
     concept instantiated_from = Arcadia::is_specialization_of<Type, Template>;
 
     template<class ...Args>
-    struct ARCADIA_API ParameterPack
+    struct ParameterPack
     {
     public:
         using tuple_type = std::tuple<Args...>;

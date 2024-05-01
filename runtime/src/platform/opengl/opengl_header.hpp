@@ -52,7 +52,7 @@ namespace Arcadia
 
     ARCADIA_API auto GetGlMaxTextureImageUnitsCount() -> GLint;
 
-    struct ARCADIA_API OpenglContext: Arcadia::Noncopyable
+    struct OpenglContext: Arcadia::Noncopyable
     {
     public:
         OpenglContext();

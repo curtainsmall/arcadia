@@ -18,7 +18,7 @@
 
 namespace Arcadia
 {
-    struct ARCADIA_API ImguiWindowViewport: Arcadia::iImguiWindow
+    struct ImguiWindowViewport: Arcadia::iImguiWindow
     {
     public:
         enum struct GizmoOption: int

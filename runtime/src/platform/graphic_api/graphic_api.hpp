@@ -9,7 +9,7 @@ namespace Arcadia
 {
     namespace GraphicApi
     {
-        struct ARCADIA_API Directx
+        struct Directx
         {
         public:
             using self_type = Directx;
@@ -18,7 +18,7 @@ namespace Arcadia
 
         };
 
-        struct ARCADIA_API Opengl
+        struct Opengl
         {
         public:
             using self_type = Opengl;
@@ -27,7 +27,7 @@ namespace Arcadia
 
         };
 
-        struct ARCADIA_API Vulkan
+        struct Vulkan
         {
         public:
             using self_type = Vulkan;

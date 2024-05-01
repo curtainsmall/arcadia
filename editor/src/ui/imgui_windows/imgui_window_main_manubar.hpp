@@ -14,7 +14,7 @@
 
 namespace Arcadia
 {
-    struct ARCADIA_API ImguiWindowPopupCreateProject
+    struct ImguiWindowPopupCreateProject
     {
     public:
         using self_type = ImguiWindowPopupCreateProject;
@@ -28,7 +28,7 @@ namespace Arcadia
         bool _DisplayEmptyNameWarning{ true };
     };
 
-    struct ARCADIA_API ImguiWindowPopupCreateScene
+    struct ImguiWindowPopupCreateScene
     {
     public:
         using self_type = ImguiWindowPopupCreateScene;
@@ -42,7 +42,7 @@ namespace Arcadia
         bool _NameAvailable{ true };
     };
 
-    struct ARCADIA_API ImguiWindowMainMenubar: Arcadia::iImguiWindow
+    struct ImguiWindowMainMenubar: Arcadia::iImguiWindow
     {
     public:
         using self_type = ImguiWindowMainMenubar;

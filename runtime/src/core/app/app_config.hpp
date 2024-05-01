@@ -11,7 +11,7 @@
 
 namespace Arcadia
 {
-    struct ARCADIA_API AppConfig
+    struct AppConfig
     {
     public:
         using self_type = AppConfig;

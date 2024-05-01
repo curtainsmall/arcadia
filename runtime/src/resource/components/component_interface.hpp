@@ -19,7 +19,7 @@ virtual auto GetTypeStr() const -> std::string override\
 
 namespace Arcadia
 {
-    struct ARCADIA_API iComponent: Arcadia::Noncopyable
+    struct iComponent: Arcadia::Noncopyable
     {
     public:
         virtual auto GetTypeStr() const->std::string = 0;

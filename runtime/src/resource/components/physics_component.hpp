@@ -13,26 +13,26 @@
 
 namespace Arcadia
 {
-    struct ARCADIA_API JphBoxShapeInfo
+    struct JphBoxShapeInfo
     {
     public:
         glm::vec3 HalfExtent{ 1.f,1.f,1.f };
         float ConvexRadius{ JPH::cDefaultConvexRadius };
     };
-    struct ARCADIA_API JphCapsuleShapeInfo
+    struct JphCapsuleShapeInfo
     {
     public:
         float Radius{ 1.f };
         float HalfHeightOfCylinder{ 1.f };
     };
-    struct ARCADIA_API JphCylinderShapeInfo
+    struct JphCylinderShapeInfo
     {
     public:
         float HalfHeight{ 1.f };
         float Radius{ 1.f };
         float ConvexRadius{ JPH::cDefaultConvexRadius };
     };
-    struct ARCADIA_API JphSphereShapeInfo
+    struct JphSphereShapeInfo
     {
     public:
         float Radius{ 1.f };
@@ -44,7 +44,7 @@ namespace Arcadia
         JphSphereShapeInfo
     >;
 
-    struct ARCADIA_API JphBodyInfo
+    struct JphBodyInfo
     {
     public:
         using self_type = JphBodyInfo;
@@ -56,7 +56,7 @@ namespace Arcadia
         JphShapeInfo JphShapeInfo{ Arcadia::JphBoxShapeInfo{} };
     };
 
-    struct ARCADIA_API JphBodyState
+    struct JphBodyState
     {
     public:
         using self_type = JphBodyState;
@@ -67,7 +67,7 @@ namespace Arcadia
 
     };
 
-    struct ARCADIA_API PhysicsComponentMementoData: Arcadia::MementoDataBase
+    struct PhysicsComponentMementoData: Arcadia::MementoDataBase
     {
     public:
         auto operator==(const PhysicsComponentMementoData&) const -> bool = default;
@@ -75,7 +75,7 @@ namespace Arcadia
         glm::vec3 BodyShapeColor{};
     };
 
-    struct ARCADIA_API PhysicsComponent:
+    struct PhysicsComponent:
         Arcadia::iComponent,
         Arcadia::iMementoOriginator
     {

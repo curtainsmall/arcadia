@@ -6,7 +6,7 @@
 
 namespace Arcadia
 {
-    struct ARCADIA_API GlRenderbuffer: Arcadia::Noncopyable
+    struct GlRenderbuffer: Arcadia::Noncopyable
     {
     public:
         using self_type = GlRenderbuffer;

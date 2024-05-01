@@ -7,7 +7,7 @@
 
 namespace Arcadia
 {
-    struct ARCADIA_API Version
+    struct Version
     {
     public:
         using num_type = int;

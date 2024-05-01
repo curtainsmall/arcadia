@@ -13,7 +13,7 @@
 
 namespace Arcadia
 {
-    struct ARCADIA_API ImguiWindowOutliner: Arcadia::iImguiWindow
+    struct ImguiWindowOutliner: Arcadia::iImguiWindow
     {
     public:
         using self_type = ImguiWindowOutliner;

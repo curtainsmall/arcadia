@@ -10,7 +10,7 @@
 namespace Arcadia
 {
 
-    struct ARCADIA_API Command: Arcadia::Noncopyable
+    struct Command: Arcadia::Noncopyable
     {
     public:
         using function_type = std::function<void()>;
@@ -37,7 +37,7 @@ namespace Arcadia
         function_type _UnexecuteFn;
     };
 
-    struct ARCADIA_API CommandList: Arcadia::Noncopyable
+    struct CommandList: Arcadia::Noncopyable
     {
     public:
         using function_type = Arcadia::Command::function_type;

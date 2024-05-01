@@ -8,7 +8,7 @@
 
 namespace Arcadia
 {
-    struct ARCADIA_API AppContext
+    struct AppContext
     {
     public:
         using self_type = AppContext;

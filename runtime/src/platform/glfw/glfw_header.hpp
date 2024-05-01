@@ -9,7 +9,7 @@ namespace Arcadia
 {
     ARCADIA_EXCEPTION(GlfwError);
 
-    struct ARCADIA_API GlfwContext: Arcadia::Noncopyable
+    struct GlfwContext: Arcadia::Noncopyable
     {
     public:
         using self_type = GlfwContext;

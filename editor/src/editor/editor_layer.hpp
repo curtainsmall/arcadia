@@ -13,7 +13,7 @@
 
 namespace Arcadia
 {
-    struct ARCADIA_API EditorAppLayer: Arcadia::iAppLayer
+    struct EditorAppLayer: Arcadia::iAppLayer
     {
     public:
         EditorAppLayer();

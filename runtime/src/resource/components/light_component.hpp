@@ -10,13 +10,13 @@
 
 namespace Arcadia
 {
-    struct ARCADIA_API NullLight
+    struct NullLight
     {
     public:
         auto operator==(const NullLight&) const -> bool = default;
     };
 
-    struct ARCADIA_API SpotLight
+    struct SpotLight
     {
     public:
         auto operator==(const SpotLight&) const -> bool = default;
@@ -29,7 +29,7 @@ namespace Arcadia
         glm::vec3 SpecularStrength{ Arcadia::Vec3::Zero() };
     };
 
-    struct ARCADIA_API DirectLight
+    struct DirectLight
     {
     public:
         auto operator==(const DirectLight&) const -> bool = default;
@@ -40,7 +40,7 @@ namespace Arcadia
         glm::vec3 SpecularStrength{ Arcadia::Vec3::Zero() };
     };
 
-    struct ARCADIA_API AreaLight
+    struct AreaLight
     {
     public:
         auto operator==(const AreaLight&) const -> bool = default;
@@ -52,7 +52,7 @@ namespace Arcadia
         glm::vec3 SpecularStrength{ Arcadia::Vec3::Zero() };
     };
 
-    struct ARCADIA_API PointLight
+    struct PointLight
     {
     public:
         auto operator==(const PointLight&) const -> bool = default;
@@ -72,7 +72,7 @@ namespace Arcadia
         Arcadia::PointLight
     >;
 
-    struct ARCADIA_API LightComponentMementoData: Arcadia::MementoDataBase
+    struct LightComponentMementoData: Arcadia::MementoDataBase
     {
     public:
         auto operator==(const LightComponentMementoData&) const -> bool = default;
@@ -80,7 +80,7 @@ namespace Arcadia
         Arcadia::LightType Light{};
     };
 
-    struct ARCADIA_API LightComponent:
+    struct LightComponent:
         Arcadia::iComponent,
         Arcadia::iMementoOriginator
     {

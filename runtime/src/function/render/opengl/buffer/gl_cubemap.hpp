@@ -7,7 +7,7 @@
 
 namespace Arcadia
 {
-    struct ARCADIA_API GlCubemap: Arcadia::Noncopyable
+    struct GlCubemap: Arcadia::Noncopyable
     {
     public:
         using self_type = GlCubemap;

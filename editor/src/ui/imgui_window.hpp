@@ -20,7 +20,7 @@ virtual auto GetIdStr() const -> std::string override\
 
 namespace Arcadia
 {
-    struct ARCADIA_API iImguiWindow
+    struct iImguiWindow
     {
     public:
         using self_type = iImguiWindow;

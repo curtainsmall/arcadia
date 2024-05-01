@@ -17,7 +17,7 @@
 #endif // ARCADIA_IN_DEBUG
 
 #define ARCADIA_EVENT(event_name,...) \
-struct ARCADIA_API event_name: Arcadia::BasicEvent<__VA_ARGS__>\
+struct event_name: Arcadia::BasicEvent<__VA_ARGS__>\
 {\
 public:\
     using self_type = event_name;\
@@ -27,7 +27,7 @@ public:\
 
 namespace Arcadia
 {
-    struct ARCADIA_API EventBase: Arcadia::Noncopyable
+    struct EventBase: Arcadia::Noncopyable
     {
     public:
         EventBase() = default;
@@ -44,7 +44,7 @@ namespace Arcadia
     };
 
     template<class ...Args>
-    struct ARCADIA_API BasicEvent: Arcadia::EventBase
+    struct BasicEvent: Arcadia::EventBase
     {
     public:
         using data_tuple_type = std::tuple<Args...>;
@@ -69,7 +69,7 @@ namespace Arcadia
     template<Arcadia::cEvent Event>
     using EventHandler = std::function<void(Event&)>;
 
-    struct ARCADIA_API EventDispatcher: Arcadia::Noncopyable
+    struct EventDispatcher: Arcadia::Noncopyable
     {
     public:
         using self_type = EventDispatcher;
@@ -105,7 +105,7 @@ namespace Arcadia
         bool _Result{ false };
     };
 
-    struct ARCADIA_API EventQueue
+    struct EventQueue
     {
     public:
         ARCADIA_EXCEPTION(empty_queue);

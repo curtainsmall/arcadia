@@ -15,7 +15,7 @@
 
 namespace Arcadia
 {
-    struct ARCADIA_API GlPipeline: Arcadia::Noncopyable
+    struct GlPipeline: Arcadia::Noncopyable
     {
     public:
         ARCADIA_EXCEPTION(LinkFail);

@@ -10,7 +10,7 @@
 
 namespace Arcadia
 {
-    struct ARCADIA_API ImguiWindowMainToolbar: Arcadia::iImguiWindow
+    struct ImguiWindowMainToolbar: Arcadia::iImguiWindow
     {
     public:
         using self_type = ImguiWindowMainToolbar;

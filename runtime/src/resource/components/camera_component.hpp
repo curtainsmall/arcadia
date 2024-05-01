@@ -8,7 +8,7 @@
 
 namespace Arcadia
 {
-    struct ARCADIA_API CameraComponentMementoData: Arcadia::MementoDataBase
+    struct CameraComponentMementoData: Arcadia::MementoDataBase
     {
     public:
         auto operator==(const CameraComponentMementoData&) const -> bool = default;
@@ -26,7 +26,7 @@ namespace Arcadia
         bool       ShouldDisplayGrid{ false };
     };
 
-    struct ARCADIA_API CameraComponent:
+    struct CameraComponent:
         Arcadia::iComponent,
         Arcadia::iMementoOriginator
     {

@@ -8,7 +8,7 @@
 
 namespace Arcadia
 {
-    struct ARCADIA_API GlIndexBuffer: Arcadia::Noncopyable
+    struct GlIndexBuffer: Arcadia::Noncopyable
     {
     public:
         using self_type = GlIndexBuffer;

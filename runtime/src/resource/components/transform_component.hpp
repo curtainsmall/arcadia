@@ -19,7 +19,7 @@ namespace Arcadia
         };
     }
 
-    struct ARCADIA_API TransformComponentMementoData: Arcadia::MementoDataBase
+    struct TransformComponentMementoData: Arcadia::MementoDataBase
     {
     public:
         auto operator==(const TransformComponentMementoData&) const -> bool = default;
@@ -33,7 +33,7 @@ namespace Arcadia
         glm::vec3 Pivot{ Arcadia::Vec3::Zero() };
     };
 
-    struct ARCADIA_API TransformComponent:
+    struct TransformComponent:
         Arcadia::iComponent,
         Arcadia::iMementoOriginator
     {

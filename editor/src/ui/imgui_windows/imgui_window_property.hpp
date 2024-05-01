@@ -23,7 +23,7 @@
 
 namespace Arcadia
 {
-    struct ARCADIA_API ImguiWindowPropertyCameraComponent
+    struct ImguiWindowPropertyCameraComponent
     {
     public:
         using self_type = ImguiWindowPropertyCameraComponent;
@@ -31,7 +31,7 @@ namespace Arcadia
         auto operator()(Arcadia::CameraComponent& camera_comp)->std::string;
     };
 
-    struct ARCADIA_API ImguiWindowPropertyLightComponent
+    struct ImguiWindowPropertyLightComponent
     {
     public:
         using self_type = ImguiWindowPropertyLightComponent;
@@ -39,7 +39,7 @@ namespace Arcadia
         auto operator()(Arcadia::LightComponent& light_comp)->std::string;
     };
 
-    struct ARCADIA_API ImguiWindowPropertyModelComponent
+    struct ImguiWindowPropertyModelComponent
     {
     public:
         using self_type = ImguiWindowPropertyModelComponent;
@@ -47,7 +47,7 @@ namespace Arcadia
         auto operator()(Arcadia::ModelComponent& model_comp)->std::string;
     };
 
-    struct ARCADIA_API ImguiWindowPopupPhysicsComponentCreateBody
+    struct ImguiWindowPopupPhysicsComponentCreateBody
     {
     public:
         using self_type = ImguiWindowPopupPhysicsComponentCreateBody;
@@ -59,7 +59,7 @@ namespace Arcadia
         Arcadia::JphBodyInfo _TempJphBodyInfo{};
     };
 
-    struct ARCADIA_API ImguiWindowPropertyPhysicsComponent
+    struct ImguiWindowPropertyPhysicsComponent
     {
     public:
         using self_type = ImguiWindowPropertyPhysicsComponent;
@@ -69,7 +69,7 @@ namespace Arcadia
         Arcadia::ImguiWindowPopupPhysicsComponentCreateBody _imgui_window_popup_physics_component_create_body{};
     };
 
-    struct ARCADIA_API ImguiWindowPropertyTransformComponent
+    struct ImguiWindowPropertyTransformComponent
     {
     public:
         using self_type = ImguiWindowPropertyTransformComponent;
@@ -77,7 +77,7 @@ namespace Arcadia
         auto operator()(Arcadia::TransformComponent& transform_comp)->std::string;
     };
 
-    struct ARCADIA_API ImguiWindowProperty: Arcadia::iImguiWindow
+    struct ImguiWindowProperty: Arcadia::iImguiWindow
     {
     public:
         using self_type = ImguiWindowProperty;

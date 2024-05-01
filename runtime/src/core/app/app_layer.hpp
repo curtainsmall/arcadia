@@ -10,7 +10,7 @@ auto main() -> int;
 
 namespace Arcadia
 {
-    struct ARCADIA_API iAppLayer: Arcadia::iLayer
+    struct iAppLayer: Arcadia::iLayer
     {
         friend auto ::main() -> int;
     public:

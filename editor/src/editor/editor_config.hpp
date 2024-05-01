@@ -4,7 +4,7 @@
 
 namespace Arcadia
 {
-    struct ARCADIA_API EditorConfig
+    struct EditorConfig
     {
     public:
         using self_type = EditorConfig;

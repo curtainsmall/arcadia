@@ -10,13 +10,13 @@
 
 namespace Arcadia
 {
-    struct ARCADIA_API JphObjectLayerPairFilerImpl: JPH::ObjectLayerPairFilter
+    struct JphObjectLayerPairFilerImpl: JPH::ObjectLayerPairFilter
     {
     public:
         virtual auto ShouldCollide(JPH::ObjectLayer obj_1, JPH::ObjectLayer obj_2) const -> bool override;
     };
 
-    struct ARCADIA_API JphBroadPhaseLayerImpl final: JPH::BroadPhaseLayerInterface
+    struct JphBroadPhaseLayerImpl final: JPH::BroadPhaseLayerInterface
     {
     public:
         JphBroadPhaseLayerImpl();
@@ -37,14 +37,14 @@ namespace Arcadia
         JPH::BroadPhaseLayer _ObjectToBroadPhase[Arcadia::JphObjectLayers::NumLayers];
     };
 
-    struct ARCADIA_API JphObjectVsBroadPhaseLayerFilterImpl: JPH::ObjectVsBroadPhaseLayerFilter
+    struct JphObjectVsBroadPhaseLayerFilterImpl: JPH::ObjectVsBroadPhaseLayerFilter
     {
     public:
         virtual auto ShouldCollide(JPH::ObjectLayer obj, JPH::BroadPhaseLayer bp) const -> bool override;
 
     };
 
-    struct ARCADIA_API PhysicsSimulator
+    struct PhysicsSimulator
     {
     public:
         using jph_body_id_storage_type = std::unordered_map<Arcadia::Uuid, JPH::BodyID>;

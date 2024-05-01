@@ -11,7 +11,7 @@
 namespace Arcadia
 {
 
-    struct ARCADIA_API GlVertexArray: Arcadia::Noncopyable
+    struct GlVertexArray: Arcadia::Noncopyable
     {
     public:
         using self_type = GlVertexArray;

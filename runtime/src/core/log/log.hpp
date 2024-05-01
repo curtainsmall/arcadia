@@ -9,7 +9,7 @@
 
 namespace Arcadia
 {
-    struct ARCADIA_API Logger
+    struct Logger
     {
     public:
         using self_type = Arcadia::Logger;

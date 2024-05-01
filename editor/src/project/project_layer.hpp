@@ -16,7 +16,7 @@
 
 namespace Arcadia
 {
-    struct ARCADIA_API ProjectLayer: Arcadia::iLayer
+    struct ProjectLayer: Arcadia::iLayer
     {
     public:
         ProjectLayer();

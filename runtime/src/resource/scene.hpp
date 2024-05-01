@@ -16,7 +16,7 @@
 
 namespace Arcadia
 {
-    struct ARCADIA_API Scene;
+    struct Scene;
 
     static inline std::array BuildInEntityTypes{
          "actor"s,
@@ -24,7 +24,7 @@ namespace Arcadia
          "light"s,
     };
 
-    struct ARCADIA_API EntityInfo
+    struct EntityInfo
     {
         friend struct Arcadia::Scene;
     public:
@@ -53,7 +53,7 @@ namespace Arcadia
         entt::entity Entity{};
     };
 
-    struct ARCADIA_API Scene: Arcadia::Noncopyable
+    struct Scene: Arcadia::Noncopyable
     {
     public:
         using entity_info_storage_type = std::unordered_map<std::string, Arcadia::EntityInfo>;

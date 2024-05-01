@@ -7,7 +7,7 @@
 
 namespace Arcadia
 {
-    struct ARCADIA_API GlShader: Arcadia::Noncopyable
+    struct GlShader: Arcadia::Noncopyable
     {
     public:
         ARCADIA_EXCEPTION(CompileFail);

@@ -15,7 +15,7 @@ namespace Arcadia
 {
     ARCADIA_EXCEPTION(ImguiError);
 
-    struct ARCADIA_API ImguiLayer: Arcadia::iLayer
+    struct ImguiLayer: Arcadia::iLayer
     {
     public:
         using self_type = ImguiLayer;

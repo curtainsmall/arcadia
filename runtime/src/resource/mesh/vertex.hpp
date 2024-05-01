@@ -5,7 +5,7 @@
 
 namespace Arcadia
 {
-    struct ARCADIA_API Vertex
+    struct Vertex
     {
     public:
         using self_type = Vertex;

@@ -11,7 +11,7 @@
 
 namespace Arcadia
 {
-    struct ARCADIA_API Project: Arcadia::Noncopyable
+    struct Project: Arcadia::Noncopyable
     {
     public:
         using self_type = Project;

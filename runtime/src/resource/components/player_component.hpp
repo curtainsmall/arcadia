@@ -7,7 +7,7 @@
 
 namespace Arcadia
 {
-    struct ARCADIA_API PlayerComponent:
+    struct PlayerComponent:
         Arcadia::iComponent,
         Arcadia::iMementoOriginator
     {

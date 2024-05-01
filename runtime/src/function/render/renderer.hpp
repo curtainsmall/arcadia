@@ -10,14 +10,14 @@
 
 namespace Arcadia
 {
-    struct ARCADIA_API RenderResultInfo
+    struct RenderResultInfo
     {
     public:
         void* id;
         glm::ivec2 size;
     };
 
-    struct ARCADIA_API iRenderer: Arcadia::Noncopyable
+    struct iRenderer: Arcadia::Noncopyable
     {
     public:
         ARCADIA_EXCEPTION(DrawFail);

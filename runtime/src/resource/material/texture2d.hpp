@@ -9,7 +9,7 @@
 
 namespace Arcadia
 {
-    struct ARCADIA_API Texture2d
+    struct Texture2d
     {
     public:
         ARCADIA_EXCEPTION(IncompatibleTextureSize);

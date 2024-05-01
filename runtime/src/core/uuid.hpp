@@ -6,7 +6,7 @@
 
 namespace Arcadia
 {
-    struct ARCADIA_API Uuid
+    struct Uuid
     {
     public:
         using value_type = std::uint64_t;
@@ -40,7 +40,7 @@ namespace Arcadia
     };
 
     template<class Value>
-    struct ARCADIA_API BasicIdentifiable: Arcadia::Noncopyable
+    struct BasicIdentifiable: Arcadia::Noncopyable
     {
     public:
         using value_type = Value;

@@ -14,7 +14,7 @@
 
 namespace Arcadia
 {
-    struct ARCADIA_API ImguiWindowStateScene
+    struct ImguiWindowStateScene
     {
     public:
         using self_type = ImguiWindowStateScene;
@@ -22,7 +22,7 @@ namespace Arcadia
         void operator()(const Arcadia::Scene& scene);
     };
 
-    struct ARCADIA_API ImguiWindowStateRenderer
+    struct ImguiWindowStateRenderer
     {
     public:
         using self_type = ImguiWindowStateRenderer;
@@ -30,7 +30,7 @@ namespace Arcadia
         void operator()(const Arcadia::iRenderer& renderer);
     };
 
-    struct ARCADIA_API ImguiWindowStatePhysicsSimulator
+    struct ImguiWindowStatePhysicsSimulator
     {
     public:
         using self_type = ImguiWindowStatePhysicsSimulator;
@@ -41,7 +41,7 @@ namespace Arcadia
         bool _LinkUpsAndSpu{ true };
     };
 
-    struct ARCADIA_API ImguiWindowState: Arcadia::iImguiWindow
+    struct ImguiWindowState: Arcadia::iImguiWindow
     {
     public:
         using self_type = ImguiWindowState;

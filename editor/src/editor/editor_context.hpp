@@ -10,7 +10,7 @@
 
 namespace Arcadia
 {
-    struct ARCADIA_API EditorContext
+    struct EditorContext
     {
     public:
         using self_type = EditorContext;

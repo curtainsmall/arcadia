@@ -16,7 +16,7 @@
 
 namespace Arcadia
 {
-    struct ARCADIA_API ModelComponent:
+    struct ModelComponent:
         Arcadia::iComponent,
         Arcadia::iMementoOriginator
     {

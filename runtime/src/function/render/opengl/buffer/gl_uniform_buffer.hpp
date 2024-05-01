@@ -5,7 +5,7 @@
 
 namespace Arcadia
 {
-    struct ARCADIA_API GlUniformBuffer: Arcadia::Noncopyable
+    struct GlUniformBuffer: Arcadia::Noncopyable
     {
     public:
         using self_type = GlUniformBuffer;

@@ -13,7 +13,7 @@
 
 namespace Arcadia
 {
-    struct ARCADIA_API iLayer: Arcadia::Noncopyable
+    struct iLayer: Arcadia::Noncopyable
     {
     public:
         using self_type = iLayer;
@@ -43,7 +43,7 @@ namespace Arcadia
         std::derived_from<Layer, Arcadia::iLayer>;
     };
 
-    struct ARCADIA_API LayerStack
+    struct LayerStack
     {
     public:
         ARCADIA_EXCEPTION(OutOfRange);

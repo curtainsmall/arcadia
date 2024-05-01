@@ -19,7 +19,7 @@ namespace Arcadia
     [[nodiscard]]
     ARCADIA_API auto LoadText(const std::filesystem::path& filepath) -> std::string;
 
-    struct ARCADIA_API File
+    struct File
     {
     public:
         ARCADIA_EXCEPTION(load_failed);

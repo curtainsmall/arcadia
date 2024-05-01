@@ -9,10 +9,10 @@
 
 namespace Arcadia
 {
-    struct ARCADIA_API GlBufferLayout
+    struct GlBufferLayout
     {
     public:
-        struct ARCADIA_API Attribute
+        struct Attribute
         {
             GLuint count;
             GLenum Type;
@@ -120,7 +120,7 @@ namespace Arcadia
 
     };
 
-    struct ARCADIA_API GlVertexBuffer: Arcadia::Noncopyable
+    struct GlVertexBuffer: Arcadia::Noncopyable
     {
     public:
         using self_type = GlVertexBuffer;

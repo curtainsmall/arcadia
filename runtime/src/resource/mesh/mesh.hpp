@@ -9,7 +9,7 @@
 
 namespace Arcadia
 {
-    struct ARCADIA_API Mesh
+    struct Mesh
     {
     public:
         using index_type = unsigned int;

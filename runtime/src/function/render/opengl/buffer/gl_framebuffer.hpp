@@ -8,7 +8,7 @@
 
 namespace Arcadia
 {
-    struct ARCADIA_API GlFramebuffer:Arcadia::Noncopyable
+    struct GlFramebuffer:Arcadia::Noncopyable
     {
     public:
         ARCADIA_EXCEPTION(Imcomplete);

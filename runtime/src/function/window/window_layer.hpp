@@ -10,7 +10,7 @@
 
 namespace Arcadia
 {
-    struct ARCADIA_API WindowLayer: Arcadia::iLayer
+    struct WindowLayer: Arcadia::iLayer
     {
     public:
         using self_type = Arcadia::WindowLayer;

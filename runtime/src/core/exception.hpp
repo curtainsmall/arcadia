@@ -6,7 +6,7 @@
 #include"core/base.hpp"
 
 #define ARCADIA_EXCEPTION(exception_name) \
-struct ARCADIA_API exception_name: Arcadia::Exception{\
+struct exception_name: Arcadia::Exception{\
 inline exception_name(const std::string& msg = #exception_name ):\
 Arcadia::Exception(msg){\
 }\
@@ -14,7 +14,7 @@ Arcadia::Exception(msg){\
 
 namespace Arcadia
 {
-    struct ARCADIA_API Exception: std::exception
+    struct Exception: std::exception
     {
     public:
         Exception():
