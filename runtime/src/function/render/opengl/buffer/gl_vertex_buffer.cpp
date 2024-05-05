@@ -70,10 +70,10 @@ void Arcadia::GlVertexBuffer::SetupVertexAttribArray() const
     for(const auto& attribute : _BufferLayout.LayoutAttributes)
     {
         ARCADIA_GL_CALL(glEnableVertexAttribArray(attrib_slot));
-        ARCADIA_GL_CALL(glVertexAttribPointer(attrib_slot, attribute.count, attribute.Type, attribute.normalized, _BufferLayout.Stride, reinterpret_cast<void*>(Offset)));
-        ARCADIA_GL_CALL(glVertexAttribDivisor(attrib_slot, attribute.divisor));
+        ARCADIA_GL_CALL(glVertexAttribPointer(attrib_slot, attribute.Count, attribute.Type, attribute.Normalized, _BufferLayout.Stride, reinterpret_cast<void*>(Offset)));
+        ARCADIA_GL_CALL(glVertexAttribDivisor(attrib_slot, attribute.Divisor));
         ++attrib_slot;
-        Offset += attribute.count * Arcadia::GetGlTypeSize(attribute.Type);
+        Offset += attribute.Count * Arcadia::GetGlTypeSize(attribute.Type);
     }
     Unbind();
 }

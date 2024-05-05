@@ -14,10 +14,10 @@ namespace Arcadia
     public:
         struct Attribute
         {
-            GLuint count;
+            GLuint Count;
             GLenum Type;
-            GLboolean normalized;
-            GLuint divisor;
+            GLboolean Normalized;
+            GLuint Divisor;
         };
         using self_type = GlBufferLayout;
     public:

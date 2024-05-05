@@ -10,7 +10,7 @@ Arcadia::GlTexture2d::GlTexture2d(
     ARCADIA_GL_CALL(glGenTextures(1, &_GlId));
     Bind();
 
-    // TODO: Multisample count ?
+    // TODO: Multisample Count ?
     ARCADIA_GL_CALL(glTexImage2D(GL_TEXTURE_2D, 0/* TODO: Mipmap level ?*/, GL_RGBA, size.x, size.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, ptr));
     // TODO: Generate mipmap ?
     SetTexParameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -23,7 +23,7 @@ Arcadia::GlTexture2d::GlTexture2d(const Arcadia::Texture2d& texture2d)
     ARCADIA_GL_CALL(glGenTextures(1, &_GlId));
     Bind();
 
-    // TODO: Multisample count ?
+    // TODO: Multisample Count ?
     ARCADIA_GL_CALL(glTexImage2D(GL_TEXTURE_2D, 0/* TODO: Mipmap level ?*/, GL_RGBA, texture2d.Size.x, texture2d.Size.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, texture2d.Pixels.data()));
     // TODO: Generate mipmap ?
     SetTexParameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR);

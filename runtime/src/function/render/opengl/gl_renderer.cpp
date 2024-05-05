@@ -477,7 +477,7 @@ void Arcadia::GlRenderer::_DrawModels(
     for(auto& [Uuid, gl_meshes] : _GlRenderUnitMeshStorage)
     {
         for(auto& [
-            GlVertexBuffer,
+            gl_vertex_array,
                 transform_mat4,
                 gl_texture2d_ambient,
                 gl_texture2d_diffuse,
@@ -499,9 +499,9 @@ void Arcadia::GlRenderer::_DrawModels(
 
             _GlModelPipeline.SetUniform("u_material.shininess", 32.f);
 
-            GlVertexBuffer.Bind();
-            GlVertexBuffer.Draw(GL_TRIANGLES);
-            GlVertexBuffer.Unbind();
+            gl_vertex_array.Bind();
+            gl_vertex_array.Draw(GL_TRIANGLES);
+            gl_vertex_array.Unbind();
 
             gl_texture2d_ambient.Unbind();
             gl_texture2d_diffuse.Unbind();
@@ -518,7 +518,7 @@ void Arcadia::GlRenderer::_DrawSkybox(
 )
 {
     _GlSkyboxPipeline.Use();
-    auto& [GlVertexBuffer, gl_cubemap] = *_optGlRenderUnitSkybox;
+    auto& [gl_vartex_array, gl_cubemap] = *_optGlRenderUnitSkybox;
 
     _GlSkyboxPipeline.SetUniform("u_skybox", 0);
     gl_cubemap.Bind(0);
@@ -527,11 +527,11 @@ void Arcadia::GlRenderer::_DrawSkybox(
         .SetUniform("u_view_mat", glm::mat4{ glm::mat3{camera_view} })
         .SetUniform("u_proj_mat", camera_proj);
 
-    GlVertexBuffer.Bind();
+    gl_vartex_array.Bind();
     ARCADIA_GL_CALL(glDepthFunc(GL_LEQUAL));
-    GlVertexBuffer.Draw(GL_TRIANGLES);
+    gl_vartex_array.Draw(GL_TRIANGLES);
     ARCADIA_GL_CALL(glDepthFunc(GL_LESS));
-    GlVertexBuffer.Unbind();
+    gl_vartex_array.Unbind();
 
     _GlSkyboxPipeline.Unuse();
 }
@@ -542,7 +542,7 @@ void Arcadia::GlRenderer::_DrawPhysicsBodyShape(
 )
 {
     _GlShapePipeline.Use();
-    for(const auto& [GlVertexBuffer, transform_mat, color] : _GlRenderUnitPhysicsBodyShapeStorage | std::views::values)
+    for(const auto& [gl_vertex_arrray, transform_mat, color] : _GlRenderUnitPhysicsBodyShapeStorage | std::views::values)
     {
         _GlShapePipeline
             .SetUniform("u_transform_mat", transform_mat)
@@ -550,9 +550,9 @@ void Arcadia::GlRenderer::_DrawPhysicsBodyShape(
             .SetUniform("u_proj_mat", camera_proj)
             .SetUniform("u_color", color);
 
-        GlVertexBuffer.Bind();
-        GlVertexBuffer.Draw(GL_TRIANGLES);
-        GlVertexBuffer.Unbind();
+        gl_vertex_arrray.Bind();
+        gl_vertex_arrray.Draw(GL_TRIANGLES);
+        gl_vertex_arrray.Unbind();
     }
     _GlShapePipeline.Unuse();
 }

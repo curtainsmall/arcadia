@@ -77,7 +77,7 @@ auto Arcadia::File::Load() -> self_type&
     }
     ifs.exceptions(std::ios_base::badbit);
 
-    // Section count
+    // Section Count
     std::size_t section_count{ 0 };
     ifs.read(reinterpret_cast<char*>(&section_count), sizeof(section_count));
 
@@ -112,7 +112,7 @@ auto Arcadia::File::Save() -> self_type&
     }
     ofs.exceptions(std::ios_base::badbit);
 
-    // Section count
+    // Section Count
     auto section_count = _SectionStorage.size();
     ofs.write(reinterpret_cast<const char*>(&section_count), sizeof(section_count));
 
