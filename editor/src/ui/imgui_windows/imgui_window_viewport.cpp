@@ -85,7 +85,7 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
             renderer->Finalize();
             renderer->Draw();
 
-            const auto image_cursor_pos = ImGui::GetCursorPos();
+            glm::vec2 image_cursor_pos = ImGui::GetCursorPos();
             ImGui::Image(renderer->GetRenderResultId(0), viewport_camera_comp.ViewportSize, { 0,1 }, { 1,0 });
 
             if(!_InViewportFreeCam && ImGui::IsItemHovered() && ImGui::IsMouseDown(ImGuiMouseButton_Right))
@@ -231,30 +231,11 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
                 ImGuizmo::SetDrawlist();
 
                 ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, viewport_camera_comp.ViewportSize.x, viewport_camera_comp.ViewportSize.y);
-                auto view_mat = glm::lookAt(viewport_transform_comp.Position, viewport_transform_comp.Position + viewport_transform_comp.Direction, viewport_camera_comp.Up);
-                auto proj_mat = glm::perspective(viewport_camera_comp.Fov, viewport_camera_comp.ViewportSize.x * 1.f / viewport_camera_comp.ViewportSize.y, viewport_camera_comp.NearPlane, viewport_camera_comp.FarPlane);
+                glm::mat4 view_mat = viewport_camera_comp.GenerateViewMat4(viewport_transform_comp.Position, viewport_transform_comp.Direction);
+                glm::mat4 proj_mat = viewport_camera_comp.GenerateProjMat4();
 
                 auto& transform_comp = scene->Get<Arcadia::TransformComponent>(_SelectedEntityName);
-                auto transform_mat =
-                    // Translate
-                    glm::translate(
-                        // Move pivot back from origin
-                        glm::translate(
-                            // Rotate
-                            glm::mat4_cast(transform_comp.Rotation)
-                            // Scale about origin (same as pivot)
-                            * glm::scale(
-                                // Move pivot to origin
-                                glm::translate(
-                                    Arcadia::Mat4::Identity(),
-                                    -transform_comp.Pivot
-                                ),
-                                transform_comp.Scale
-                            ),
-                            transform_comp.Pivot
-                        ),
-                        transform_comp.Position
-                    );
+                glm::mat4 transform_mat = transform_comp.GenerateTransformMatrix();
                 ImGuizmo::Manipulate(
                     glm::value_ptr(view_mat),
                     glm::value_ptr(proj_mat),
@@ -266,7 +247,7 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
                 // On use gizmo
                 if(ImGuizmo::IsUsing())
                 {
-                    _GizmoEdited = true;
+                    //_GizmoEdited = true;
 
                     glm::vec3
                         scale{},
@@ -277,18 +258,16 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
 
                     glm::decompose(transform_mat, scale, rotation, translation, skew, perspective);
 
-                    if(
-                        transform_comp.Position != translation
-                        || transform_comp.Rotation != rotation
-                        || transform_comp.Scale != scale
-                        )
+                    if(transform_comp.Position != translation
+                       || transform_comp.Rotation != rotation
+                       || transform_comp.Scale != scale)
                     {
                         _GizmoEdited = true;
                     }
 
                     if(transform_comp.Position != translation)
                     {
-                        transform_comp.Pivot += translation - transform_comp.Position;
+                        //transform_comp.Pivot += translation - transform_comp.Position;
                     }
 
                     transform_comp.Position = translation;

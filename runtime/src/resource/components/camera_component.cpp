@@ -8,9 +8,9 @@ Arcadia::CameraComponent::CameraComponent(const nlohmann::json& json)
 {
     NearPlane             = json.at("near_plane");
     FarPlane              = json.at("far_plane");
-    Fov                   = json.at("fov");
-    FovMin                = json.at("fov_min");
-    FovMax                = json.at("fov_max");
+    Fovy                  = json.at("fovy");
+    FovyMin               = json.at("fovy_min");
+    FovyMax               = json.at("fovy_max");
     Speed                 = json.at("speed");
     ViewportSize          = Arcadia::IVec2::FromJson(json.at("viewport_size"));
     FixedUp               = json.at("fixed_up");
@@ -23,9 +23,9 @@ auto Arcadia::CameraComponent::ToJson() const -> nlohmann::json
     return nlohmann::json{
         { "near_plane"              ,NearPlane },
         { "far_plane"               ,FarPlane },
-        { "fov"                     ,Fov },
-        { "fov_min"                 ,FovMin },
-        { "fov_max"                 ,FovMax },
+        { "fovy"                    ,Fovy },
+        { "fovy_min"                ,FovyMin },
+        { "fovy_max"                ,FovyMax },
         { "speed"                   ,Speed},
         { "viewport_size"           ,Arcadia::IVec2::ToJson(ViewportSize) },
         { "fixed_up"                ,FixedUp },
@@ -34,15 +34,30 @@ auto Arcadia::CameraComponent::ToJson() const -> nlohmann::json
     };
 }
 
+auto Arcadia::CameraComponent::GenerateViewMat4(const glm::vec3& pos, const glm::vec3& dir) -> glm::mat4
+{
+    return glm::lookAt(pos, pos + dir, Up);
+}
+
+auto Arcadia::CameraComponent::GenerateProjMat4() const -> glm::mat4
+{
+    return glm::perspective(
+        Fovy,
+        ViewportSize.x * 1.f / ViewportSize.y,
+        NearPlane,
+        FarPlane
+    );
+}
+
 auto Arcadia::CameraComponent::OnSnapshot() const -> std::shared_ptr<Arcadia::MementoDataBase>
 {
     auto sp_memento = std::make_shared<Arcadia::CameraComponentMementoData>();
 
     sp_memento->NearPlane             = NearPlane;
     sp_memento->FarPlane              = FarPlane;
-    sp_memento->Fov                   = Fov;
-    sp_memento->FovMin                = FovMin;
-    sp_memento->FovMax                = FovMax;
+    sp_memento->Fovy                   = Fovy;
+    sp_memento->FovyMin                = FovyMin;
+    sp_memento->FovyMax                = FovyMax;
     sp_memento->Speed                 = Speed;
     sp_memento->ViewportSize          = ViewportSize;
     sp_memento->FixedUp               = FixedUp;
@@ -59,9 +74,9 @@ void Arcadia::CameraComponent::OnRestore(const std::shared_ptr<Arcadia::MementoD
 
     NearPlane             = memento_data.NearPlane;
     FarPlane              = memento_data.FarPlane;
-    Fov                   = memento_data.Fov;
-    FovMin                = memento_data.FovMin;
-    FovMax                = memento_data.FovMax;
+    Fovy                   = memento_data.Fovy;
+    FovyMin                = memento_data.FovyMin;
+    FovyMax                = memento_data.FovyMax;
     Speed                 = memento_data.Speed;
     ViewportSize          = memento_data.ViewportSize;
     FixedUp               = memento_data.FixedUp;

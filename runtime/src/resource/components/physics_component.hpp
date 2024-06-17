@@ -107,6 +107,8 @@ namespace Arcadia
             const Arcadia::JphBodyInfo& jph_body_info_initial
         );
 
+        void DestroyJphBodyInfo();
+
     protected:
         [[nodiscard]]
         virtual auto OnSnapshot() const->std::shared_ptr<MementoDataBase> override;

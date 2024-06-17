@@ -90,9 +90,6 @@ void Arcadia::GlRenderer::Submit(const Arcadia::Scene& scene, const std::string&
     {
         const auto& [camera_comp, transform_comp] = scene.Get<Arcadia::CameraComponent, Arcadia::TransformComponent>(name);
 
-        auto view_mat = glm::lookAt(transform_comp.Position, transform_comp.Position + transform_comp.Direction, camera_comp.Up);
-        auto proj_mat = glm::perspective(camera_comp.Fov, camera_comp.ViewportSize.x * 1.f / camera_comp.ViewportSize.y, camera_comp.NearPlane, camera_comp.FarPlane);
-
         _GlRenderUnitCameras.emplace_back(
             Arcadia::GlFramebuffer{
                 camera_comp.ViewportSize,
@@ -100,8 +97,8 @@ void Arcadia::GlRenderer::Submit(const Arcadia::Scene& scene, const std::string&
                 camera_comp.FarPlane
             },
             camera_comp.ViewportSize,
-            view_mat,
-            proj_mat,
+            camera_comp.GenerateViewMat4(transform_comp.Position, transform_comp.Direction),
+            camera_comp.GenerateProjMat4(),
             transform_comp.Position,
             camera_comp.ShouldDisplayGrid,
             camera_comp.NearPlane,
@@ -123,26 +120,7 @@ void Arcadia::GlRenderer::Submit(const Arcadia::Scene& scene, const std::string&
         {
             const auto& [uuid, meshes] = model_comp.GetIdentifiableMeshes();
 
-            const auto transform_mat =
-                // Translate
-                glm::translate(
-                    // Move pivot back from origin
-                    glm::translate(
-                        // Rotate
-                        glm::mat4_cast(transform_comp.Rotation)
-                        // Scale about origin (same as pivot)
-                        * glm::scale(
-                            // Move pivot to origin
-                            glm::translate(
-                                Arcadia::Mat4::Identity(),
-                                -transform_comp.Pivot
-                            ),
-                            transform_comp.Scale
-                        ),
-                        transform_comp.Pivot
-                    ),
-                    transform_comp.Position
-                );
+            const auto transform_mat = transform_comp.GenerateTransformMatrix();
 
             if(!_GlRenderUnitMeshStorage.contains(uuid))
             {

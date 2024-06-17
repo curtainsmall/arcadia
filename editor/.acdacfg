@@ -22,19 +22,19 @@
             "x": -1,
             "y": -1
         },
-        "maxmized": false,
+        "maxmized": true,
         "min_size": {
             "x": 800,
             "y": 600
         },
         "multisample_count": 0,
         "pos": {
-            "x": 242,
-            "y": 111
+            "x": 0,
+            "y": 23
         },
         "size": {
-            "x": 2233,
-            "y": 1321
+            "x": 2482,
+            "y": 1417
         },
         "title": "Arcadia"
     },

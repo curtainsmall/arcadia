@@ -51,6 +51,8 @@ namespace Arcadia
         TransformComponent(self_type&&) noexcept = default;
         auto operator=(self_type&&) noexcept -> self_type & = default;
 
+        auto GenerateTransformMatrix() const->glm::mat4;
+
     protected:
         [[nodiscard]]
         virtual auto OnSnapshot() const->std::shared_ptr<Arcadia::MementoDataBase> override;

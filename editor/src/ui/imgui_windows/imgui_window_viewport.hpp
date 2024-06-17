@@ -21,14 +21,14 @@ namespace Arcadia
     struct ImguiWindowViewport: Arcadia::iImguiWindow
     {
     public:
-        enum struct GizmoOption: int
+        enum struct GizmoOption
         {
             None = 0,
             Translation = ImGuizmo::OPERATION::TRANSLATE,
             Rotation = ImGuizmo::OPERATION::ROTATE,
             Scale = ImGuizmo::OPERATION::SCALE,
         };
-        enum struct GizmoMode: int
+        enum struct GizmoMode
         {
             Local = ImGuizmo::MODE::LOCAL,
             World = ImGuizmo::MODE::WORLD,

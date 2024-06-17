@@ -13,22 +13,22 @@
                             },
                             "far_plane": 100.0,
                             "fixed_up": true,
-                            "fov": 1.3089969158172607,
-                            "fov_max": 2.094395160675049,
-                            "fov_min": 0.01745329238474369,
+                            "fovy": 1.3089969158172607,
+                            "fovy_max": 2.094395160675049,
+                            "fovy_min": 0.01745329238474369,
                             "near_plane": 0.10000000149011612,
                             "speed": 0.25,
                             "up_epsilon": 0.001745329238474369,
                             "viewport_size": {
-                                "x": 1795,
-                                "y": 1248
+                                "x": 2044,
+                                "y": 1344
                             }
                         },
                         "transform": {
                             "direction": {
-                                "x": -0.20832617580890656,
-                                "y": -0.16998343169689178,
-                                "z": 0.9631748795509338
+                                "x": -0.2303389459848404,
+                                "y": -0.21338212490081787,
+                                "z": 0.9494271874427795
                             },
                             "flags": 0,
                             "pivot": {
@@ -62,7 +62,7 @@
                 {
                     "components": {
                         "model": {
-                            "filepath": ""
+                            "filepath": "D:/CppProject/arcadia/editor/asset/model/planet/planet.obj"
                         },
                         "physics": {
                             "body_shape_color": {
@@ -70,16 +70,7 @@
                                 "y": 0.5490195751190186,
                                 "z": 0.5373045802116394
                             },
-                            "jph_body_info_initial": {
-                                "jph_motion_type": 0,
-                                "jph_object_layer": 0,
-                                "jph_shape_info": {
-                                    "info": {
-                                        "radius": 3.0
-                                    },
-                                    "type": "sphere"
-                                }
-                            }
+                            "jph_body_info_initial": null
                         },
                         "transform": {
                             "direction": {

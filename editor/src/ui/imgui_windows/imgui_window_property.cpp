@@ -49,26 +49,26 @@ auto Arcadia::ImguiWindowPropertyCameraComponent::operator()(Arcadia::CameraComp
     }
 
     ImGui::NewLine();
-    auto fov = glm::degrees(camera_comp.Fov);
+    auto fovy = glm::degrees(camera_comp.Fovy);
     if(Arcadia::ImguiWrapper::DragFloat(
         "FOV",
-        fov,
+        fovy,
         speed,
-        camera_comp.FovMin,
-        camera_comp.FovMax,
+        camera_comp.FovyMin,
+        camera_comp.FovyMax,
         format,
         flags
     ))
     {
         description = "FOV";
     }
-    camera_comp.Fov = glm::radians(fov);
+    camera_comp.Fovy = glm::radians(fovy);
 
     ImGui::NewLine();
-    auto fov_min = glm::degrees(camera_comp.FovMin);
+    auto fovy_min = glm::degrees(camera_comp.FovyMin);
     if(Arcadia::ImguiWrapper::DragFloat(
         "FOV Min",
-        fov_min,
+        fovy_min,
         speed,
         .0f,
         180.f,
@@ -78,13 +78,13 @@ auto Arcadia::ImguiWindowPropertyCameraComponent::operator()(Arcadia::CameraComp
     {
         description = "FOV Min";
     }
-    camera_comp.FovMin = glm::radians(fov_min);
+    camera_comp.FovyMin = glm::radians(fovy_min);
 
     ImGui::NewLine();
-    auto fov_max = glm::degrees(camera_comp.FovMax);
+    auto fovy_max = glm::degrees(camera_comp.FovyMax);
     if(Arcadia::ImguiWrapper::DragFloat(
         "FOV Max",
-        fov_max,
+        fovy_max,
         speed,
         .0f,
         180.f,
@@ -94,7 +94,7 @@ auto Arcadia::ImguiWindowPropertyCameraComponent::operator()(Arcadia::CameraComp
     {
         description = "FOV Max";
     }
-    camera_comp.FovMax = glm::radians(fov_max);
+    camera_comp.FovyMax = glm::radians(fovy_max);
 
     ImGui::NewLine();
     if(Arcadia::ImguiWrapper::DragFloat(
@@ -982,116 +982,106 @@ auto Arcadia::ImguiWindowPropertyPhysicsComponent::operator()(Arcadia::PhysicsCo
     std::string description{};
     ImGui::BeginGroup();
 
-    if(ImGui::BeginTabBar("##physics_comp"))
+    if(physics_comp.HasBodyInfo())
     {
-        if(ImGui::BeginTabItem("State"))
+        const auto& [uuid, jph_body_info_initial] = physics_comp.GetIdentifiableJphBodyInfo();
+
+        ImGui::SeparatorText("Initial");
+
+        ImGui::NewLine();
+        ImGui::Text(std::format(
+            "Motion Type: {}",
+            Arcadia::Match<std::string>(
+                jph_body_info_initial.JphMotionType,
+                JPH::EMotionType::Static,
+                [&]()
         {
-            if(physics_comp.HasBodyInfo())
-            {
-                const auto& [uuid, jph_body_info_initial] = physics_comp.GetIdentifiableJphBodyInfo();
+            return "Static";
+        },
+                JPH::EMotionType::Dynamic,
+                [&]()
+        {
+            return "Dynamic";
+        },
+                JPH::EMotionType::Kinematic,
+                [&]()
+        {
+            return "Kinematic";
+        }
+            )
+        ).c_str());
+        ImGui::Text(std::format("Object Layer: {}", jph_body_info_initial.JphObjectLayer).c_str());
 
-                ImGui::SeparatorText("Initial");
+        ImGui::SeparatorText("Ongoing");
 
-                ImGui::NewLine();
-                ImGui::Text(std::format(
-                    "Motion Type: {}",
-                    Arcadia::Match<std::string>(
-                        jph_body_info_initial.JphMotionType,
-                        JPH::EMotionType::Static,
-                        [&]()
-                {
-                    return "Static";
-                },
-                        JPH::EMotionType::Dynamic,
-                        [&]()
-                {
-                    return "Dynamic";
-                },
-                        JPH::EMotionType::Kinematic,
-                        [&]()
-                {
-                    return "Kinematic";
-                }
-                    )
-                ).c_str());
-                ImGui::Text(std::format("Object Layer: {}", jph_body_info_initial.JphObjectLayer).c_str());
+        const auto& jph_body_state = physics_comp.JphBodyState;
+        ImGui::Text(std::format("Active: {}", jph_body_state.Active).c_str());
 
-                ImGui::SeparatorText("Ongoing");
+        ImGui::NewLine();
+        Arcadia::ImguiWrapper::TextVec3("Linear Velocity", jph_body_state.LinearVelocity);
 
-                const auto& jph_body_state = physics_comp.JphBodyState;
-                ImGui::Text(std::format("Active: {}", jph_body_state.Active).c_str());
+        ImGui::NewLine();
+        Arcadia::ImguiWrapper::TextVec3("Angular Velocity", jph_body_state.AngularVelocity);
 
-                ImGui::NewLine();
-                Arcadia::ImguiWrapper::TextVec3("Linear Velocity", jph_body_state.LinearVelocity);
+        Arcadia::Match<void>(
+            jph_body_info_initial.JphShapeInfo,
+            [&](const Arcadia::JphBoxShapeInfo& info)
+        {
+            ImGui::SeparatorText("Body Shape - Box");
+            ImGui::Text(std::format("Half Extent: {}", info.HalfExtent).c_str());
+            ImGui::Text(std::format("Convex Radius: {:.2f}", info.ConvexRadius).c_str());
+        },
+            [&](const Arcadia::JphCapsuleShapeInfo& info)
+        {
+            ImGui::SeparatorText("Body Shape - Capsule");
+            ImGui::Text(std::format("Radius: {:.2f}", info.Radius).c_str());
+            ImGui::Text(std::format("Half Height of Cylinder: {:.2f}", info.HalfHeightOfCylinder).c_str());
+        },
+            [&](const Arcadia::JphCylinderShapeInfo& info)
+        {
+            ImGui::SeparatorText("Body Shape - Cylinder");
+            ImGui::Text(std::format("Half Height: {:.2f}", info.HalfHeight).c_str());
+            ImGui::Text(std::format("Radius: {:.2f}", info.Radius).c_str());
+            ImGui::Text(std::format("Convex Radius: {:.2f}", info.ConvexRadius).c_str());
+        },
+            [&](const Arcadia::JphSphereShapeInfo& info)
+        {
+            ImGui::SeparatorText("Body Shape - Sphere");
+            ImGui::Text(std::format("Radius: {:.2f}", info.Radius).c_str());
+        }
+        );
+    }
+    else
+    {
+        ImGui::Text("(No body state)");
+    }
 
-                ImGui::NewLine();
-                Arcadia::ImguiWrapper::TextVec3("Angular Velocity", jph_body_state.AngularVelocity);
-
-                Arcadia::Match<void>(
-                    jph_body_info_initial.JphShapeInfo,
-                    [&](const Arcadia::JphBoxShapeInfo& info)
-                {
-                    ImGui::SeparatorText("Body Shape - Box");
-                    ImGui::Text(std::format("Half Extent: {}", info.HalfExtent).c_str());
-                    ImGui::Text(std::format("Convex Radius: {:.2f}", info.ConvexRadius).c_str());
-                },
-                    [&](const Arcadia::JphCapsuleShapeInfo& info)
-                {
-                    ImGui::SeparatorText("Body Shape - Capsule");
-                    ImGui::Text(std::format("Radius: {:.2f}", info.Radius).c_str());
-                    ImGui::Text(std::format("Half Height of Cylinder: {:.2f}", info.HalfHeightOfCylinder).c_str());
-                },
-                    [&](const Arcadia::JphCylinderShapeInfo& info)
-                {
-                    ImGui::SeparatorText("Body Shape - Cylinder");
-                    ImGui::Text(std::format("Half Height: {:.2f}", info.HalfHeight).c_str());
-                    ImGui::Text(std::format("Radius: {:.2f}", info.Radius).c_str());
-                    ImGui::Text(std::format("Convex Radius: {:.2f}", info.ConvexRadius).c_str());
-                },
-                    [&](const Arcadia::JphSphereShapeInfo& info)
-                {
-                    ImGui::SeparatorText("Body Shape - Sphere");
-                    ImGui::Text(std::format("Radius: {:.2f}", info.Radius).c_str());
-                }
-                );
-            }
-            else
-            {
-                ImGui::Text("(No body state)");
-            }
-            ImGui::EndTabItem();
+    if(physics_comp.HasBodyInfo())
+    {
+        if(Arcadia::ImguiWrapper::ColorEditVec3(
+            "Body Shape Color",
+            physics_comp.BodyShapeColor
+        ))
+        {
+            description = "Body Shape Color";
         }
 
-        if(ImGui::BeginTabItem("Edit"))
+        if(ImGui::Button("Recreate Body"))
         {
-            if(physics_comp.HasBodyInfo())
-            {
-                if(Arcadia::ImguiWrapper::ColorEditVec3(
-                    "Body Shape Color",
-                    physics_comp.BodyShapeColor
-                ))
-                {
-                    description = "Body Shape Color";
-                }
-
-                ImGui::NewLine();
-                if(ImGui::Button("Recreate Body"))
-                {
-                    _imgui_window_popup_physics_component_create_body.Open = true;
-                }
-            }
-            else
-            {
-                if(ImGui::Button("Create Body"))
-                {
-                    _imgui_window_popup_physics_component_create_body.Open = true;
-                }
-            }
-
-            ImGui::EndTabItem();
+            _imgui_window_popup_physics_component_create_body.Open = true;
         }
-
-        ImGui::EndTabBar();
+        ImGui::SameLine();
+        if(ImGui::Button("Destroy Body"))
+        {
+            physics_comp.DestroyJphBodyInfo();
+        }
+    }
+    else
+    {
+        if(ImGui::Button("Create Body"))
+        {
+            _imgui_window_popup_physics_component_create_body.Open = true;
+        }
     }
 
     ImGui::EndGroup();
@@ -1219,9 +1209,9 @@ if(_ContainsComponent<component_type>(_SelectedEntityName) && ImGui::TreeNodeEx(
             .Snapshot<component_type>(\
                 std::format("{} - {}", tab_name, description),\
                 [_scene = scene, _entity_name = _SelectedEntityName]() -> component_type&\
-        {\
-            return _scene->Get<component_type>(_entity_name);\
-        }\
+            {\
+                return _scene->Get<component_type>(_entity_name);\
+            }\
         );\
     }\
     ImGui::TreePop();\

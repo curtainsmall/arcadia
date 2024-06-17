@@ -1,6 +1,8 @@
 #include "pch.hpp"
 #include "transform_component.hpp"
 
+#include"core/math.hpp"
+
 Arcadia::TransformComponent::TransformComponent(const nlohmann::json& json):
     Flags(json.at("flags")),
     Position(Arcadia::Vec3::FromJson(json.at("position"))),
@@ -22,6 +24,28 @@ auto Arcadia::TransformComponent::ToJson() const -> nlohmann::json
     };
 
     return json;
+}
+
+auto Arcadia::TransformComponent::GenerateTransformMatrix() const -> glm::mat4
+{
+    glm::mat4 mat = Mat4::Identity();
+
+    // Move pivot to origin
+    //mat = glm::translate(mat, -Pivot);
+
+    // Scale about origin (which is pivot now)
+    mat = glm::scale(mat, Scale);
+
+    // Rotate
+    mat = glm::mat4_cast(Rotation) * mat;
+
+    // Move pivot back from origin
+    //mat = glm::translate(mat, Pivot);
+
+    // Translate
+    mat = glm::translate(mat, Position);
+
+    return mat;
 }
 
 auto Arcadia::TransformComponent::OnSnapshot() const -> std::shared_ptr<Arcadia::MementoDataBase>

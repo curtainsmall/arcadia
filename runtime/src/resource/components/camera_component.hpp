@@ -15,9 +15,9 @@ namespace Arcadia
     public:
         float      NearPlane{ .1f };
         float      FarPlane{ 100.f };
-        float      Fov{ 90.f };
-        float      FovMin{ 1.f };
-        float      FovMax{ 120.f };
+        float      Fovy{ 90.f };
+        float      FovyMin{ 1.f };
+        float      FovyMax{ 120.f };
         float      Speed{ .25f };
         glm::ivec2 ViewportSize{ 800,600 };
         bool       FixedUp{ true };
@@ -34,6 +34,8 @@ namespace Arcadia
         using self_type = CameraComponent;
     public:
         ARCADIA_COMPONENT_TYPE_STR_GETTERS("camera");
+
+
 
         CameraComponent() = default;
         CameraComponent(const nlohmann::json& json);
@@ -68,6 +70,10 @@ namespace Arcadia
         auto GetLeftDir() const->glm::vec3;
         auto GetUpDir() const->glm::vec3;
     #endif
+
+        static auto GenerateViewMat4(const glm::vec3& pos, const glm::vec3& dir) -> glm::mat4;
+
+        auto GenerateProjMat4() const->glm::mat4;
 
     protected:
         [[nodiscard]]
@@ -105,13 +111,13 @@ namespace Arcadia
         float FarPlane{ 100.f };
 
         /// @brief FOV angle in vertical direction
-        float Fov{ glm::radians(75.f) };
+        float Fovy{ glm::radians(75.f) };
 
-        /// @brief Minimun value fo @ref Arcadia::Camera::Fov
-        float FovMin{ glm::radians(1.f) };
+        /// @brief Minimun value fo @ref Arcadia::Camera::Fovy
+        float FovyMin{ glm::radians(1.f) };
 
-        /// @brief Maximun value of @ref Arcadia::Camera::Fov
-        float FovMax{ glm::radians(120.f) };
+        /// @brief Maximun value of @ref Arcadia::Camera::Fovy
+        float FovyMax{ glm::radians(120.f) };
 
         /// @brief Move speed of free-camera
         float Speed{ .25f };

@@ -90,9 +90,6 @@
     <ClInclude Include="src\function\input\input_events.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\time\timer.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\function\render\renderer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -223,6 +220,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\resource\components\player_component.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\time\timer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

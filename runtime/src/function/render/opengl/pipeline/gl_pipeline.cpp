@@ -18,8 +18,8 @@ Arcadia::GlPipeline::GlPipeline(
         ARCADIA_GL_CALL(glAttachShader(_GlId, shader.GetGlId()));
     }
 
-    GLint status{ GL_FALSE };
     ARCADIA_GL_CALL(glLinkProgram(_GlId));
+    GLint status{ GL_FALSE };
     ARCADIA_GL_CALL(glGetProgramiv(_GlId, GL_LINK_STATUS, &status));
     if(status == GL_FALSE)
     {

@@ -175,3 +175,8 @@ void Arcadia::PhysicsComponent::BuildIdentifiableJphBodyInfo(const Arcadia::JphB
     );
 
 }
+
+void Arcadia::PhysicsComponent::DestroyJphBodyInfo()
+{
+    _IdentifiableJphBodyInfo.reset();
+}
