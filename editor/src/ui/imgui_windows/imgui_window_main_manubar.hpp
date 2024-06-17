@@ -63,6 +63,7 @@ namespace Arcadia
         void _FileMenu();
         void _EditMenu();
         void _ViewMenu();
+        void _OptionMenu();
 
         void _OnProjectBuilt(Arcadia::Event::ProjectBuilt& e);
         void _OnProjectUnbuilt(Arcadia::Event::ProjectUnbuilt& e);
@@ -74,5 +75,7 @@ namespace Arcadia
         std::weak_ptr<const Arcadia::Project> _Project{};
 
         std::vector<std::tuple<std::string, std::string>> _ImguiWindowTitleAndIdStrPairs{};
+
+        bool _ShowGizmo{ false };
     };
 }

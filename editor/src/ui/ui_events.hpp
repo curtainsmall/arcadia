@@ -111,5 +111,12 @@ namespace Arcadia
             PlayMode,
             bool
         );
+
+        //==== Events for viewport ====//
+
+        ARCADIA_EVENT(
+            ShowGizmo,
+            bool
+        );
     }
 }

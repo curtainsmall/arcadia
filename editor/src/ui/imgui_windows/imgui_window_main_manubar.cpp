@@ -147,6 +147,7 @@ void Arcadia::ImguiWindowMainMenubar::OnUpdate()
         _FileMenu();
         _EditMenu();
         _ViewMenu();
+        _OptionMenu();
 
         ImGui::EndMainMenuBar();
     }
@@ -244,6 +245,20 @@ void Arcadia::ImguiWindowMainMenubar::_ViewMenu()
                 ImGui::SetWindowFocus(id_str.c_str());
             }
         }
+        ImGui::EndMenu();
+    }
+}
+
+void Arcadia::ImguiWindowMainMenubar::_OptionMenu()
+{
+    auto& event_queue = Arcadia::EventQueue::Instance();
+    if(ImGui::BeginMenu("Option"))
+    {
+        if(ImGui::Checkbox("Show Gizmo", &_ShowGizmo))
+        {
+            event_queue.Signal<Event::ShowGizmo>(_ShowGizmo);
+        }
+
         ImGui::EndMenu();
     }
 }
