@@ -222,7 +222,7 @@
     <ClInclude Include="src\resource\components\player_component.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\time\timer.hpp">
+    <ClInclude Include="src\core\time\time.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -333,6 +333,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\resource\components\player_component.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\time\time.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

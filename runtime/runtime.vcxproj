@@ -168,7 +168,7 @@
     <ClInclude Include="src\core\nlohmann_json_header.hpp" />
     <ClInclude Include="src\core\hash.hpp" />
     <ClInclude Include="src\core\serialization.hpp" />
-    <ClInclude Include="src\core\time\timer.hpp" />
+    <ClInclude Include="src\core\time\time.hpp" />
     <ClInclude Include="src\core\uuid.hpp" />
     <ClInclude Include="src\function\physics\physics_simulator.hpp" />
     <ClInclude Include="src\function\render\opengl\buffer\gl_cubemap.hpp" />
@@ -234,6 +234,7 @@
     <ClCompile Include="src\core\file\file.cpp" />
     <ClCompile Include="src\core\math\algorithm.cpp" />
     <ClCompile Include="src\core\memento\memento.cpp" />
+    <ClCompile Include="src\core\time\time.cpp" />
     <ClCompile Include="src\function\physics\physics_simulator.cpp" />
     <ClCompile Include="src\function\render\opengl\buffer\gl_cubemap.cpp" />
     <ClCompile Include="src\function\render\opengl\buffer\gl_framebuffer.cpp" />
