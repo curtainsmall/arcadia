@@ -6,8 +6,8 @@
 
 #include"core/math.hpp"
 
-Arcadia::PhysicsComponent::PhysicsComponent(const nlohmann::json& json):
-    BodyShapeColor(Arcadia::Vec3::FromJson(json.at("body_shape_color")))
+PhysicsComponent::PhysicsComponent(const nlohmann::json& json):
+    BodyShapeColor(Vec3::FromJson(json.at("body_shape_color")))
 {
     const auto& json_body_info_initial = json.at("jph_body_info_initial");
     if(!json_body_info_initial.is_null())
@@ -15,37 +15,37 @@ Arcadia::PhysicsComponent::PhysicsComponent(const nlohmann::json& json):
         const auto& json_shape_info = json_body_info_initial.at("jph_shape_info");
         const std::string& json_shape_info_type_str = json_shape_info.at("type");
         const auto& json_shape_info_info = json_shape_info.at("info");
-        auto shape_info = Arcadia::Match<Arcadia::JphShapeInfo>(
+        auto shape_info = Match<JphShapeInfo>(
             json_shape_info_type_str,
             "box_shape"s,
-            [&]() -> Arcadia::JphShapeInfo
+            [&]() -> JphShapeInfo
         {
-            return Arcadia::JphBoxShapeInfo{
-                Arcadia::Vec3::FromJson(json_shape_info_info.at("half_extent")),
+            return JphBoxShapeInfo{
+                Vec3::FromJson(json_shape_info_info.at("half_extent")),
                 json_shape_info_info.at("convex_radius")
             };
         },
             "capsule_shape"s,
-            [&]() -> Arcadia::JphShapeInfo
+            [&]() -> JphShapeInfo
         {
-            return Arcadia::JphCapsuleShapeInfo{
+            return JphCapsuleShapeInfo{
                 json_shape_info_info.at("radius"),
                 json_shape_info_info.at("half_height_of_cylinder")
             };
         },
             "cylinder"s,
-            [&]() -> Arcadia::JphShapeInfo
+            [&]() -> JphShapeInfo
         {
-            return Arcadia::JphCylinderShapeInfo{
+            return JphCylinderShapeInfo{
                 json_shape_info_info.at("half_height"),
                 json_shape_info_info.at("radius"),
                 json_shape_info_info.at("convex_radius")
             };
         },
             "sphere"s,
-            [&]() -> Arcadia::JphShapeInfo
+            [&]() -> JphShapeInfo
         {
-            return Arcadia::JphSphereShapeInfo{
+            return JphSphereShapeInfo{
                 json_shape_info_info.at("radius")
             };
         }
@@ -60,26 +60,26 @@ Arcadia::PhysicsComponent::PhysicsComponent(const nlohmann::json& json):
     }
 }
 
-auto Arcadia::PhysicsComponent::ToJson() const -> nlohmann::json
+auto PhysicsComponent::ToJson() const -> nlohmann::json
 {
     nlohmann::json json_body_info_initial{};
     if(HasBodyInfo())
     {
         const auto& [uuid, body_info] = GetIdentifiableJphBodyInfo();
-        auto json_shape_info = Arcadia::Match<nlohmann::json>(
+        auto json_shape_info = Match<nlohmann::json>(
             body_info.JphShapeInfo,
-            [&](const Arcadia::JphBoxShapeInfo& info)
+            [&](const JphBoxShapeInfo& info)
         {
             return nlohmann::json{
                 {"type","box_shape"},
                 {"info", {
-                        {"half_extent",Arcadia::Vec3::ToJson(info.HalfExtent)},
+                        {"half_extent",Vec3::ToJson(info.HalfExtent)},
                         {"convex_radius",info.ConvexRadius}
                     }
                 }
             };
         },
-            [&](const Arcadia::JphCapsuleShapeInfo& info)
+            [&](const JphCapsuleShapeInfo& info)
         {
             return nlohmann::json{
                 {"type","capsule_shape"},
@@ -90,7 +90,7 @@ auto Arcadia::PhysicsComponent::ToJson() const -> nlohmann::json
                 }
             };
         },
-            [&](const Arcadia::JphCylinderShapeInfo& info)
+            [&](const JphCylinderShapeInfo& info)
         {
             return nlohmann::json{
                 {"type","cylinder"},
@@ -103,7 +103,7 @@ auto Arcadia::PhysicsComponent::ToJson() const -> nlohmann::json
 
             };
         },
-            [&](const Arcadia::JphSphereShapeInfo& info)
+            [&](const JphSphereShapeInfo& info)
         {
             return nlohmann::json{
                 {"type","sphere"},
@@ -116,7 +116,7 @@ auto Arcadia::PhysicsComponent::ToJson() const -> nlohmann::json
         }
         );
         json_body_info_initial = nlohmann::json{
-            {"jph_motion_type", Arcadia::ToUnderlying(body_info.JphMotionType)},
+            {"jph_motion_type", ToUnderlying(body_info.JphMotionType)},
             {"jph_object_layer",body_info.JphObjectLayer},
             {"jph_shape_info",json_shape_info}
         };
@@ -128,47 +128,47 @@ auto Arcadia::PhysicsComponent::ToJson() const -> nlohmann::json
 
     return nlohmann::json{
         {"jph_body_info_initial",json_body_info_initial},
-        {"body_shape_color",Arcadia::Vec3::ToJson(BodyShapeColor)}
+        {"body_shape_color",Vec3::ToJson(BodyShapeColor)}
     };
 }
 
-auto Arcadia::PhysicsComponent::OnSnapshot() const -> std::shared_ptr<MementoDataBase>
+auto PhysicsComponent::OnSnapshot() const -> std::shared_ptr<MementoDataBase>
 {
-    auto sp_memento = std::make_shared<Arcadia::PhysicsComponentMementoData>();
+    auto sp_memento = std::make_shared<PhysicsComponentMementoData>();
 
     sp_memento->BodyShapeColor = BodyShapeColor;
 
     return sp_memento;
 }
 
-void Arcadia::PhysicsComponent::OnRestore(const std::shared_ptr<MementoDataBase>& sp_memento_data)
+void PhysicsComponent::OnRestore(const std::shared_ptr<MementoDataBase>& sp_memento_data)
 {
-    auto& memento_data = sp_memento_data->As<Arcadia::PhysicsComponentMementoData>();
+    auto& memento_data = sp_memento_data->As<PhysicsComponentMementoData>();
 
     BodyShapeColor = memento_data.BodyShapeColor;
 }
 
-auto Arcadia::PhysicsComponent::HasBodyInfo() const -> bool
+auto PhysicsComponent::HasBodyInfo() const -> bool
 {
     return !!_IdentifiableJphBodyInfo;
 }
 
-auto Arcadia::PhysicsComponent::GetIdentifiableJphBodyInfo() const -> const identifiable_jph_body_info_type&
+auto PhysicsComponent::GetIdentifiableJphBodyInfo() const -> const identifiable_jph_body_info_type&
 {
     ARCADIA_ASSERT(HasBodyInfo());
     return *_IdentifiableJphBodyInfo;
 }
 
-void Arcadia::PhysicsComponent::BuildIdentifiableJphBodyInfo(
+void PhysicsComponent::BuildIdentifiableJphBodyInfo(
     JPH::EMotionType jph_motion_type,
     JPH::ObjectLayer jph_object_layer,
-    const Arcadia::JphShapeInfo& jph_shape_info
+    const JphShapeInfo& jph_shape_info
 )
 {
     BuildIdentifiableJphBodyInfo({ jph_motion_type,jph_object_layer,jph_shape_info });
 }
 
-void Arcadia::PhysicsComponent::BuildIdentifiableJphBodyInfo(const Arcadia::JphBodyInfo& jph_body_info_initial)
+void PhysicsComponent::BuildIdentifiableJphBodyInfo(const JphBodyInfo& jph_body_info_initial)
 {
     _IdentifiableJphBodyInfo = std::make_unique<identifiable_jph_body_info_type>(
         jph_body_info_initial
@@ -176,7 +176,7 @@ void Arcadia::PhysicsComponent::BuildIdentifiableJphBodyInfo(const Arcadia::JphB
 
 }
 
-void Arcadia::PhysicsComponent::DestroyJphBodyInfo()
+void PhysicsComponent::DestroyJphBodyInfo()
 {
     _IdentifiableJphBodyInfo.reset();
 }

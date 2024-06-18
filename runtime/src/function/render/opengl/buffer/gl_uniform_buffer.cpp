@@ -4,7 +4,7 @@
 
 #include"core/log/log.hpp"
 
-Arcadia::GlUniformBuffer::GlUniformBuffer(
+GlUniformBuffer::GlUniformBuffer(
     GLsizeiptr size
 )
 {
@@ -15,60 +15,60 @@ Arcadia::GlUniformBuffer::GlUniformBuffer(
     Unbind();
 }
 
-Arcadia::GlUniformBuffer::GlUniformBuffer(GLsizeiptr size, const GLvoid* data):
+GlUniformBuffer::GlUniformBuffer(GLsizeiptr size, const GLvoid* data):
     GlUniformBuffer(size)
 {
     SubData(0, size, data);
 }
 
-Arcadia::GlUniformBuffer::~GlUniformBuffer()
+GlUniformBuffer::~GlUniformBuffer()
 {
     ARCADIA_GL_CALL(glDeleteBuffers(1, &_GlId));
 }
 
-Arcadia::GlUniformBuffer::GlUniformBuffer(self_type&& rhs) noexcept:
+GlUniformBuffer::GlUniformBuffer(self_type&& rhs) noexcept:
     _GlId(rhs._GlId)
 {
     rhs._GlId = 0;
 }
 
-auto Arcadia::GlUniformBuffer::operator=(self_type&& rhs) noexcept -> self_type&
+auto GlUniformBuffer::operator=(self_type&& rhs) noexcept -> self_type&
 {
     _GlId = rhs._GlId;
     rhs._GlId = 0;
     return *this;
 }
 
-void Arcadia::GlUniformBuffer::Bind() const
+void GlUniformBuffer::Bind() const
 {
     if(_GlId == 0)
     {
-        throw Arcadia::GlInvalid{ "Cannot bind null OpenGL uniform buffer" };
+        throw GlInvalid{ "Cannot bind null OpenGL uniform buffer" };
     }
 
     ARCADIA_GL_CALL(glBindBuffer(GL_UNIFORM_BUFFER, _GlId));
 }
 
-void Arcadia::GlUniformBuffer::Unbind() const
+void GlUniformBuffer::Unbind() const
 {
     ARCADIA_GL_CALL(glBindBuffer(GL_UNIFORM_BUFFER, 0));
 }
 
-void Arcadia::GlUniformBuffer::BindBufferBase(GLuint index) const
+void GlUniformBuffer::BindBufferBase(GLuint index) const
 {
     Bind();
     ARCADIA_GL_CALL(glBindBufferBase(GL_UNIFORM_BUFFER, index, _GlId));
     Unbind();
 }
 
-void Arcadia::GlUniformBuffer::BindBufferRange(GLuint index, GLintptr Offset, GLsizeiptr size) const
+void GlUniformBuffer::BindBufferRange(GLuint index, GLintptr Offset, GLsizeiptr size) const
 {
     Bind();
     ARCADIA_GL_CALL(glBindBufferRange(GL_UNIFORM_BUFFER, index, _GlId, Offset, size));
     Unbind();
 }
 
-auto Arcadia::GlUniformBuffer::SubData(GLintptr Offset, GLsizeiptr size, const GLvoid* data) const -> const self_type&
+auto GlUniformBuffer::SubData(GLintptr Offset, GLsizeiptr size, const GLvoid* data) const -> const self_type&
 {
     Bind();
     ARCADIA_GL_CALL(glBufferSubData(GL_UNIFORM_BUFFER, Offset, size, data));

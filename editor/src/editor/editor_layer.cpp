@@ -16,89 +16,89 @@
 #include"ui/imgui_windows/imgui_window_state.hpp"
 #include"ui/imgui_windows/imgui_window_viewport.hpp"
 
-Arcadia::EditorAppLayer::EditorAppLayer()
+EditorAppLayer::EditorAppLayer()
 {
-    auto& layer_stack = Arcadia::LayerStack::Instance();
-    const auto& app_config = Arcadia::AppConfig::Instance();
-    auto& app_context = Arcadia::AppContext::Instance();
-    auto& editor_context = Arcadia::EditorContext::Instance();
+    auto& layer_stack = LayerStack::Instance();
+    const auto& app_config = AppConfig::Instance();
+    auto& app_context = AppContext::Instance();
+    auto& editor_context = EditorContext::Instance();
 
     // Window layer
     {
         editor_context.MainWindowLayer = layer_stack
-            .PushLayer<Arcadia::WindowLayer>(
+            .PushLayer<WindowLayer>(
                 app_config.WindowSize,
                 app_config.WindowTitle,
                 app_config.WindowMultisampleCount
             )
-            .Top<Arcadia::WindowLayer>();
+            .Top<WindowLayer>();
     }
 
     // Project layer
     {
         editor_context.MainProjectLayer = layer_stack
-            .PushLayer<Arcadia::ProjectLayer>()
-            .Top<Arcadia::ProjectLayer>();
+            .PushLayer<ProjectLayer>()
+            .Top<ProjectLayer>();
     }
 
     // Editor ImGui layer
     {
         editor_context.MainImguiLayer = layer_stack
-            .PushLayer<Arcadia::ImguiLayer>(
+            .PushLayer<ImguiLayer>(
                 editor_context.MainWindowLayer.lock(),
                 ARCADIA_BIND_MEMBER_FN(_ImguiWindowInstaller),
-                Arcadia::ImguiStyle::Dark
+                ImguiStyle::Dark
             )
-            .Top<Arcadia::ImguiLayer>();
+            .Top<ImguiLayer>();
 
         //editor_context._wpMainImguiLayer.lock()->ShowDemoWindow = true;
     }
     app_context.Running = true;
 }
 
-void Arcadia::EditorAppLayer::OnUpdate()
+void EditorAppLayer::OnUpdate()
 {}
 
-void Arcadia::EditorAppLayer::OnEvent(Arcadia::EventBase& event)
+void EditorAppLayer::OnEvent(EventBase& event)
 {
-    Arcadia::EventDispatcher{ event }
-        .Dispatch<Arcadia::Event::WindowShouldClose>(ARCADIA_BIND_MEMBER_FN(_OnWindowShouldClose))
-        .Dispatch<Arcadia::Event::ProjectUnbuilt>(ARCADIA_BIND_MEMBER_FN(_OnProjectUnbuilt))
-        .Dispatch<Arcadia::Event::PlayMode>(ARCADIA_BIND_MEMBER_FN(_OnPlayMode))
-        .Dispatch<Arcadia::Event::InputKey>(ARCADIA_BIND_MEMBER_FN(_OnInputKey))
+    EventDispatcher{ event }
+        .Dispatch<Event::WindowShouldClose>(ARCADIA_BIND_MEMBER_FN(_OnWindowShouldClose))
+        .Dispatch<Event::ProjectUnbuilt>(ARCADIA_BIND_MEMBER_FN(_OnProjectUnbuilt))
+        .Dispatch<Event::PlayMode>(ARCADIA_BIND_MEMBER_FN(_OnPlayMode))
+        .Dispatch<Event::InputKey>(ARCADIA_BIND_MEMBER_FN(_OnInputKey))
         .Result();
 }
 
-void Arcadia::EditorAppLayer::_ImguiWindowInstaller(Arcadia::ImguiLayer& imgui_layer)
+void EditorAppLayer::_ImguiWindowInstaller(ImguiLayer& imgui_layer)
 {
-    const auto& app_config = Arcadia::AppConfig::Instance();
+    const auto& app_config = AppConfig::Instance();
     const auto& id_strs = app_config.ImguiOpenedWindowIdStrs;
 
     std::initializer_list<std::tuple<std::string, std::string>> imgui_window_ids{
-        std::make_tuple("Outliner"s,Arcadia::ImguiWindowOutliner::GetIdStrStatic()),
-        std::make_tuple("Viewport"s,Arcadia::ImguiWindowViewport::GetIdStrStatic()),
-        std::make_tuple("Property"s,Arcadia::ImguiWindowProperty::GetIdStrStatic()),
-        std::make_tuple("State"s,Arcadia::ImguiWindowState::GetIdStrStatic())
+        std::make_tuple("Outliner"s,ImguiWindowOutliner::GetIdStrStatic()),
+        std::make_tuple("Viewport"s,ImguiWindowViewport::GetIdStrStatic()),
+        std::make_tuple("Property"s,ImguiWindowProperty::GetIdStrStatic()),
+        std::make_tuple("State"s,ImguiWindowState::GetIdStrStatic())
     };
     imgui_layer
-        .EmplaceImguiWindow<Arcadia::ImguiWindowMainMenubar>(imgui_window_ids)
-        .EmplaceImguiWindow<Arcadia::ImguiWindowMainToolbar>()
-        .EmplaceImguiWindow<Arcadia::ImguiWindowOutliner>(id_strs.contains(Arcadia::ImguiWindowOutliner::GetIdStrStatic()), "Outliner")
-        .EmplaceImguiWindow<Arcadia::ImguiWindowViewport>(id_strs.contains(Arcadia::ImguiWindowViewport::GetIdStrStatic()), "Viewport")
-        .EmplaceImguiWindow<Arcadia::ImguiWindowProperty>(id_strs.contains(Arcadia::ImguiWindowProperty::GetIdStrStatic()), "Property")
-        .EmplaceImguiWindow<Arcadia::ImguiWindowState>(id_strs.contains(Arcadia::ImguiWindowState::GetIdStrStatic()), "State");
+        .EmplaceImguiWindow<ImguiWindowMainMenubar>(imgui_window_ids)
+        .EmplaceImguiWindow<ImguiWindowMainToolbar>()
+        .EmplaceImguiWindow<ImguiWindowOutliner>(id_strs.contains(ImguiWindowOutliner::GetIdStrStatic()), "Outliner")
+        .EmplaceImguiWindow<ImguiWindowViewport>(id_strs.contains(ImguiWindowViewport::GetIdStrStatic()), "Viewport")
+        .EmplaceImguiWindow<ImguiWindowProperty>(id_strs.contains(ImguiWindowProperty::GetIdStrStatic()), "Property")
+        .EmplaceImguiWindow<ImguiWindowState>(id_strs.contains(ImguiWindowState::GetIdStrStatic()), "State");
 }
 
-void Arcadia::EditorAppLayer::_Stop()
+void EditorAppLayer::_Stop()
 {
-    auto& editor_context = Arcadia::EditorContext::Instance();
+    auto& editor_context = EditorContext::Instance();
     auto main_window_layer = editor_context.MainWindowLayer.lock();
     auto main_imgui_layer = editor_context.MainImguiLayer.lock();
 
-    auto& app_config = Arcadia::AppConfig::Instance();
+    auto& app_config = AppConfig::Instance();
     app_config.WindowSize = main_window_layer->GetSize();
     app_config.WindowPos = main_window_layer->GetPos();
-    app_config.WindowMaxmized = main_window_layer->GetSizeState() == Arcadia::WindowSizeState::Maxmized;
+    app_config.WindowMaxmized = main_window_layer->GetSizeState() == WindowSizeState::Maxmized;
 
     for(const auto& imgui_window : main_imgui_layer->GetImguiWindow())
     {
@@ -108,13 +108,13 @@ void Arcadia::EditorAppLayer::_Stop()
         }
     }
 
-    auto& app_context = Arcadia::AppContext::Instance();
+    auto& app_context = AppContext::Instance();
     app_context.Running = false;
 }
 
-void Arcadia::EditorAppLayer::_OnWindowShouldClose(Arcadia::Event::WindowShouldClose& e)
+void EditorAppLayer::_OnWindowShouldClose(Event::WindowShouldClose& e)
 {
-    auto& editor_context = Arcadia::EditorContext::Instance();
+    auto& editor_context = EditorContext::Instance();
     auto main_window_layer = editor_context.MainWindowLayer.lock();
     auto main_project_layer = editor_context.MainProjectLayer.lock();
 
@@ -129,7 +129,7 @@ void Arcadia::EditorAppLayer::_OnWindowShouldClose(Arcadia::Event::WindowShouldC
     }
 }
 
-void Arcadia::EditorAppLayer::_OnProjectUnbuilt(Arcadia::Event::ProjectUnbuilt& e)
+void EditorAppLayer::_OnProjectUnbuilt(Event::ProjectUnbuilt& e)
 {
     if(_WaitingForProjectUnbuiltBeforeClosing)
     {
@@ -137,29 +137,29 @@ void Arcadia::EditorAppLayer::_OnProjectUnbuilt(Arcadia::Event::ProjectUnbuilt& 
     }
 }
 
-void Arcadia::EditorAppLayer::_OnWindowCloseCanceled(Arcadia::Event::WindowCloseCanceled& e)
+void EditorAppLayer::_OnWindowCloseCanceled(Event::WindowCloseCanceled& e)
 {
     _WaitingForProjectUnbuiltBeforeClosing = false;
 }
 
-void Arcadia::EditorAppLayer::_OnPlayMode(Arcadia::Event::PlayMode& e)
+void EditorAppLayer::_OnPlayMode(Event::PlayMode& e)
 {
     const auto& [state] = e.data_tuple;
-    Arcadia::EditorContext::Instance().InPlayMode = state;
+    EditorContext::Instance().InPlayMode = state;
 }
 
-void Arcadia::EditorAppLayer::_OnInputKey(Arcadia::Event::InputKey& e)
+void EditorAppLayer::_OnInputKey(Event::InputKey& e)
 {
     const auto& [wnd, key, scancode, action, mods] = e.data_tuple;
 
-    if(key == Arcadia::InputKey::Escape && mods & Arcadia::InputModifier::Shift)
+    if(key == InputKey::Escape && mods & InputModifier::Shift)
     {
-        Arcadia::EditorContext::Instance().InPlayMode = false;
+        EditorContext::Instance().InPlayMode = false;
     }
 
 }
 
-auto Arcadia::CreateApplication() -> std::unique_ptr<Arcadia::iAppLayer>
+auto CreateApplication() -> std::unique_ptr<iAppLayer>
 {
-    return std::make_unique<Arcadia::EditorAppLayer>();
+    return std::make_unique<EditorAppLayer>();
 }

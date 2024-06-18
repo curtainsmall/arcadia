@@ -2,12 +2,12 @@
 
 #include "gl_vertex_buffer.hpp"
 
-Arcadia::GlVertexBuffer::GlVertexBuffer(const std::vector<Arcadia::Vertex>& vertices):
+GlVertexBuffer::GlVertexBuffer(const std::vector<Vertex>& vertices):
     _VertexCount(vertices.size())
 {
     ARCADIA_GL_CALL(glGenBuffers(1, &_GlId));
     Bind();
-    ARCADIA_GL_CALL(glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Arcadia::Vertex), vertices.data(), GL_STATIC_DRAW));
+    ARCADIA_GL_CALL(glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), vertices.data(), GL_STATIC_DRAW));
     Unbind();
 
     // Setup layout 
@@ -17,12 +17,12 @@ Arcadia::GlVertexBuffer::GlVertexBuffer(const std::vector<Arcadia::Vertex>& vert
         .Push<glm::vec2>(); // For tex_coord
 }
 
-Arcadia::GlVertexBuffer::~GlVertexBuffer()
+GlVertexBuffer::~GlVertexBuffer()
 {
     ARCADIA_GL_CALL(glDeleteBuffers(1, &_GlId));
 }
 
-Arcadia::GlVertexBuffer::GlVertexBuffer(self_type&& rhs) noexcept
+GlVertexBuffer::GlVertexBuffer(self_type&& rhs) noexcept
 {
     _GlId = rhs._GlId;
     rhs._GlId = 0;
@@ -33,7 +33,7 @@ Arcadia::GlVertexBuffer::GlVertexBuffer(self_type&& rhs) noexcept
     rhs._VertexCount = 0;
 }
 
-auto Arcadia::GlVertexBuffer::operator=(self_type&& rhs) noexcept -> self_type&
+auto GlVertexBuffer::operator=(self_type&& rhs) noexcept -> self_type&
 {
     _GlId = rhs._GlId;
     rhs._GlId = 0;
@@ -46,22 +46,22 @@ auto Arcadia::GlVertexBuffer::operator=(self_type&& rhs) noexcept -> self_type&
     return *this;
 }
 
-void Arcadia::GlVertexBuffer::Bind() const
+void GlVertexBuffer::Bind() const
 {
     if(_GlId == 0)
     {
-        throw Arcadia::GlInvalid{ "Cannot bind null OpenGL vertex buffer" };
+        throw GlInvalid{ "Cannot bind null OpenGL vertex buffer" };
     }
 
     ARCADIA_GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, _GlId));
 }
 
-void Arcadia::GlVertexBuffer::Unbind() const
+void GlVertexBuffer::Unbind() const
 {
     ARCADIA_GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, 0));
 }
 
-void Arcadia::GlVertexBuffer::SetupVertexAttribArray() const
+void GlVertexBuffer::SetupVertexAttribArray() const
 {
     GLuint attrib_slot{ 0 };
     std::size_t Offset{ 0 };
@@ -73,7 +73,7 @@ void Arcadia::GlVertexBuffer::SetupVertexAttribArray() const
         ARCADIA_GL_CALL(glVertexAttribPointer(attrib_slot, attribute.Count, attribute.Type, attribute.Normalized, _BufferLayout.Stride, reinterpret_cast<void*>(Offset)));
         ARCADIA_GL_CALL(glVertexAttribDivisor(attrib_slot, attribute.Divisor));
         ++attrib_slot;
-        Offset += attribute.Count * Arcadia::GetGlTypeSize(attribute.Type);
+        Offset += attribute.Count * GetGlTypeSize(attribute.Type);
     }
     Unbind();
 }

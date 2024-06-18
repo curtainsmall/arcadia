@@ -6,7 +6,7 @@
 #include"spdlog/sinks/basic_file_sink.h"
 #include"spdlog/sinks/stdout_color_sinks.h"
 
-Arcadia::Logger::Logger()
+Logger::Logger()
 {
     auto console_sink = std::make_shared<spdlog::sinks::stderr_color_sink_mt>();
     console_sink->set_level(spdlog::level::trace);
@@ -29,14 +29,14 @@ Arcadia::Logger::Logger()
     spdlog::register_logger(_Logger);
 }
 
-Arcadia::Logger::~Logger()
+Logger::~Logger()
 {
     _Logger->flush();
     spdlog::drop_all();
     spdlog::shutdown();
 }
 
-auto Arcadia::Logger::Instance() -> self_type&
+auto Logger::Instance() -> self_type&
 {
     static self_type logger{};
     return logger;

@@ -8,15 +8,15 @@
 #include"ui/imgui_header.hpp"
 #include"ui/ui_events.hpp"
 
-void Arcadia::ImguiWindowMainToolbar::OnEvent(Arcadia::EventBase& event)
+void ImguiWindowMainToolbar::OnEvent(EventBase& event)
 {
-    Arcadia::EventDispatcher{ event }
-        .Dispatch<Arcadia::Event::SceneActivated>(ARCADIA_BIND_MEMBER_FN(_OnSceneActivated))
-        .Dispatch<Arcadia::Event::SceneDeactivated>(ARCADIA_BIND_MEMBER_FN(_OnSceneDeactivated))
+    EventDispatcher{ event }
+        .Dispatch<Event::SceneActivated>(ARCADIA_BIND_MEMBER_FN(_OnSceneActivated))
+        .Dispatch<Event::SceneDeactivated>(ARCADIA_BIND_MEMBER_FN(_OnSceneDeactivated))
         .Result();
 }
 
-void Arcadia::ImguiWindowMainToolbar::OnUpdate()
+void ImguiWindowMainToolbar::OnUpdate()
 {
     auto scene = _Scene.lock();
 
@@ -28,7 +28,7 @@ void Arcadia::ImguiWindowMainToolbar::OnUpdate()
         | ImGuiWindowFlags_NoFocusOnAppearing;
     if(ImGui::BeginViewportSideBar("##toolbar", ImGui::GetMainViewport(), ImGuiDir_Up, ImGui::GetFrameHeight(), window_flags))
     {
-        auto& memento_list = Arcadia::MementoList::Instance();
+        auto& memento_list = MementoList::Instance();
 
         ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, glm::vec2{ 0,4 });
         if(ImGui::Button(ICON_FA_ARROW_CIRCLE_LEFT))
@@ -76,7 +76,7 @@ void Arcadia::ImguiWindowMainToolbar::OnUpdate()
         if(scene)
         {
             ImGui::SameLine();
-            if(Arcadia::EditorContext::Instance().InPlayMode)
+            if(EditorContext::Instance().InPlayMode)
             {
                 ImGui::PushStyleColor(ImGuiCol_Text, glm::vec4{ 1.f,0.f,0.f,1.f });
                 ImGui::Text("Press Shift + Esc to stop play mode");
@@ -86,7 +86,7 @@ void Arcadia::ImguiWindowMainToolbar::OnUpdate()
             {
                 if(ImGui::Button("PLAY"))
                 {
-                    Arcadia::EventQueue::Instance().Signal<Arcadia::Event::PlayMode>(true);
+                    EventQueue::Instance().Signal<Event::PlayMode>(true);
                 }
             }
         }
@@ -96,14 +96,14 @@ void Arcadia::ImguiWindowMainToolbar::OnUpdate()
     ImGui::PopStyleVar();
 }
 
-void Arcadia::ImguiWindowMainToolbar::_OnSceneActivated(Arcadia::Event::SceneActivated& e)
+void ImguiWindowMainToolbar::_OnSceneActivated(Event::SceneActivated& e)
 {
     const auto& [scene] = e.data_tuple;
     _Scene = scene;
 }
 
 
-void Arcadia::ImguiWindowMainToolbar::_OnSceneDeactivated(Arcadia::Event::SceneDeactivated& e)
+void ImguiWindowMainToolbar::_OnSceneDeactivated(Event::SceneDeactivated& e)
 {
     _Scene.reset();
 }

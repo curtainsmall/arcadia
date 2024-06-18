@@ -2,7 +2,7 @@
 
 #include "gl_shader.hpp"
 
-Arcadia::GlShader::GlShader(const std::string& source_code, GLenum shader_type)
+GlShader::GlShader(const std::string& source_code, GLenum shader_type)
 {
     const char* src = source_code.c_str();
     ARCADIA_GL_CALL(_GlId = glCreateShader(shader_type));
@@ -28,18 +28,18 @@ Arcadia::GlShader::GlShader(const std::string& source_code, GLenum shader_type)
 
 }
 
-Arcadia::GlShader::~GlShader()
+GlShader::~GlShader()
 {
     ARCADIA_GL_CALL(glDeleteShader(_GlId));
 }
 
-Arcadia::GlShader::GlShader(self_type&& rhs) noexcept
+GlShader::GlShader(self_type&& rhs) noexcept
 {
     _GlId = rhs._GlId;
     rhs._GlId = 0;
 }
 
-auto Arcadia::GlShader::operator=(self_type&& rhs) noexcept -> self_type&
+auto GlShader::operator=(self_type&& rhs) noexcept -> self_type&
 {
     _GlId = rhs._GlId;
     rhs._GlId = 0;

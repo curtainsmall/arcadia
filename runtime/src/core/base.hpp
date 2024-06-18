@@ -28,152 +28,149 @@ using namespace std::string_view_literals;
 using namespace std::chrono_literals;
 using namespace std::complex_literals;
 
-namespace Arcadia
+struct Noncopyable
 {
-    struct Noncopyable
+protected:
+    Noncopyable() = default;
+    Noncopyable(const Noncopyable&) = delete;
+    auto operator=(const Noncopyable&) = delete;
+};
+
+template<class ...Fns>
+struct Overloaded: Fns...
+{
+    using Fns::operator()...;
+};
+
+template<class, template<class ...> class>
+constexpr bool is_specialization_of = false;
+template<template<class...> class T, class ...Args>
+constexpr bool is_specialization_of<T<Args...>, T> = true;
+
+template<class Type, template<class ...> class Template>
+concept instantiated_from = is_specialization_of<Type, Template>;
+
+template<class ...Args>
+struct ParameterPack
+{
+public:
+    using tuple_type = std::tuple<Args...>;
+
+    template<std::size_t Index>
+    using at_t = std::tuple_element_t<Index, tuple_type>;
+public:
+    static constexpr std::size_t size = std::tuple_size_v<tuple_type>;
+};
+
+template<class Enum>
+    requires std::is_enum_v<Enum>
+ARCADIA_API auto ToUnderlying(Enum e) -> std::underlying_type_t<Enum>
+{
+    return static_cast<std::underlying_type_t<Enum>>(e);
+}
+
+template<
+    class Ret,
+    instantiated_from<std::variant> Variant,
+    class ...BranchFns
+>
+ARCADIA_API auto Match(Variant& variant, BranchFns&& ...fns) -> Ret
+{
+    return std::visit<Ret>(
+        Overloaded{
+            std::forward<BranchFns>(fns)...
+        },
+        variant
+    );
+}
+
+template<
+    class Ret,
+    instantiated_from<std::variant> Variant,
+    class ...BranchFns
+>
+ARCADIA_API auto Match(const Variant& variant, BranchFns&& ...fns) -> Ret
+{
+    return std::visit<Ret>(
+        Overloaded{
+            std::forward<BranchFns>(fns)...
+        },
+        variant
+    );
+}
+
+template<
+    class Ret,
+    class Case,
+    std::convertible_to<Case> Cond,
+    class ...Cases
+>
+    requires (sizeof...(Cases) % 2 == 0)
+ARCADIA_API auto Match(const Cond& cond, const Case& case_expr, const std::function<Ret()>& case_fn, Cases&& ...cases) -> Ret
+{
+    if constexpr(sizeof...(Cases) == 0)
     {
-    protected:
-        Noncopyable() = default;
-        Noncopyable(const Noncopyable&) = delete;
-        auto operator=(const Noncopyable&) = delete;
-    };
-
-    template<class ...Fns>
-    struct Overloaded: Fns...
-    {
-        using Fns::operator()...;
-    };
-
-    template<class, template<class ...> class>
-    constexpr bool is_specialization_of = false;
-    template<template<class...> class T, class ...Args>
-    constexpr bool is_specialization_of<T<Args...>, T> = true;
-
-    template<class Type, template<class ...> class Template>
-    concept instantiated_from = Arcadia::is_specialization_of<Type, Template>;
-
-    template<class ...Args>
-    struct ParameterPack
-    {
-    public:
-        using tuple_type = std::tuple<Args...>;
-
-        template<std::size_t Index>
-        using at_t = std::tuple_element_t<Index, tuple_type>;
-    public:
-        static constexpr std::size_t size = std::tuple_size_v<tuple_type>;
-    };
-
-    template<class Enum>
-        requires std::is_enum_v<Enum>
-    ARCADIA_API auto ToUnderlying(Enum e) -> std::underlying_type_t<Enum>
-    {
-        return static_cast<std::underlying_type_t<Enum>>(e);
+        return cond == case_expr ? case_fn() : Ret();
     }
-
-    template<
-        class Ret,
-        Arcadia::instantiated_from<std::variant> Variant,
-        class ...BranchFns
-    >
-    ARCADIA_API auto Match(Variant& variant, BranchFns&& ...fns) -> Ret
+    else
     {
-        return std::visit<Ret>(
-            Arcadia::Overloaded{
-                std::forward<BranchFns>(fns)...
-            },
-            variant
-        );
+        return cond == case_expr ? case_fn() : Match<Ret, Cond, Case>(cond, std::forward<Cases>(cases)...);
     }
+}
 
-    template<
-        class Ret,
-        Arcadia::instantiated_from<std::variant> Variant,
-        class ...BranchFns
-    >
-    ARCADIA_API auto Match(const Variant& variant, BranchFns&& ...fns) -> Ret
+template<
+    class Ret,
+    class Case,
+    std::convertible_to<Case> Cond,
+    class ...Cases
+>
+    requires (sizeof...(Cases) % 2 == 0)
+ARCADIA_API auto Match(const Cond& cond, const std::function<Ret()>& default_fn, const Case& case_expr, const std::function<Ret()>& case_fn, Cases&& ...cases) -> Ret
+{
+    if constexpr(sizeof...(Cases) == 0)
     {
-        return std::visit<Ret>(
-            Arcadia::Overloaded{
-                std::forward<BranchFns>(fns)...
-            },
-            variant
-        );
+        return cond == case_expr ? case_fn() : default_fn();
     }
-
-    template<
-        class Ret,
-        class Case,
-        std::convertible_to<Case> Cond,
-        class ...Cases
-    >
-        requires (sizeof...(Cases) % 2 == 0)
-    ARCADIA_API auto Match(const Cond& cond, const Case& case_expr, const std::function<Ret()>& case_fn, Cases&& ...cases) -> Ret
+    else
     {
-        if constexpr(sizeof...(Cases) == 0)
-        {
-            return cond == case_expr ? case_fn() : Ret();
-        }
-        else
-        {
-            return cond == case_expr ? case_fn() : Arcadia::Match<Ret, Cond, Case>(cond, std::forward<Cases>(cases)...);
-        }
+        return cond == case_expr ? case_fn() : Match<Ret, Cond, Case>(cond, std::forward<Cases>(cases)...);
     }
+}
 
-    template<
-        class Ret,
-        class Case,
-        std::convertible_to<Case> Cond,
-        class ...Cases
-    >
-        requires (sizeof...(Cases) % 2 == 0)
-    ARCADIA_API auto Match(const Cond& cond, const std::function<Ret()>& default_fn, const Case& case_expr, const std::function<Ret()>& case_fn, Cases&& ...cases) -> Ret
+template<
+    class Res,
+    class Case,
+    std::convertible_to<Case> Cond,
+    class ...Cases
+>
+    requires (sizeof...(Cases) % 2 == 0)
+ARCADIA_API auto Match(const Cond& cond, const Case& case_expr, const Res& case_res, Cases&& ...cases) -> Res
+{
+    if constexpr(sizeof...(Cases) == 0)
     {
-        if constexpr(sizeof...(Cases) == 0)
-        {
-            return cond == case_expr ? case_fn() : default_fn();
-        }
-        else
-        {
-            return cond == case_expr ? case_fn() : Arcadia::Match<Ret, Cond, Case>(cond, std::forward<Cases>(cases)...);
-        }
+        return cond == case_expr ? case_res : Res();
     }
-
-    template<
-        class Res,
-        class Case,
-        std::convertible_to<Case> Cond,
-        class ...Cases
-    >
-        requires (sizeof...(Cases) % 2 == 0)
-    ARCADIA_API auto Match(const Cond& cond, const Case& case_expr, const Res& case_res, Cases&& ...cases) -> Res
+    else
     {
-        if constexpr(sizeof...(Cases) == 0)
-        {
-            return cond == case_expr ? case_res : Res();
-        }
-        else
-        {
-            return cond == case_expr ? case_res : Arcadia::Match<Res, Cond, Case>(cond, std::forward<Cases>(cases)...);
-        }
+        return cond == case_expr ? case_res : Match<Res, Cond, Case>(cond, std::forward<Cases>(cases)...);
     }
+}
 
-    template<
-        class Res,
-        class Case,
-        std::convertible_to<Case> Cond,
-        class ...Cases
-    >
-        requires (sizeof...(Cases) % 2 == 0)
-    ARCADIA_API auto Match(const Cond& cond, const Res& default_res, const Case& case_expr, const Res& case_res, Cases&& ...cases) -> Res
+template<
+    class Res,
+    class Case,
+    std::convertible_to<Case> Cond,
+    class ...Cases
+>
+    requires (sizeof...(Cases) % 2 == 0)
+ARCADIA_API auto Match(const Cond& cond, const Res& default_res, const Case& case_expr, const Res& case_res, Cases&& ...cases) -> Res
+{
+    if constexpr(sizeof...(Cases) == 0)
     {
-        if constexpr(sizeof...(Cases) == 0)
-        {
-            return cond == case_expr ? case_res : default_res;
-        }
-        else
-        {
-            return cond == case_expr ? case_res : Arcadia::Match<Res, Cond, Case>(cond, std::forward<Cases>(cases)...);
-        }
+        return cond == case_expr ? case_res : default_res;
+    }
+    else
+    {
+        return cond == case_expr ? case_res : Match<Res, Cond, Case>(cond, std::forward<Cases>(cases)...);
     }
 }

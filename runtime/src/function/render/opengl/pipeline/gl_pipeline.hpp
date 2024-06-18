@@ -13,159 +13,156 @@
 #include"function/render/opengl/pipeline/gl_shader.hpp"
 #include"platform/opengl/opengl_header.hpp"
 
-namespace Arcadia
+struct GlPipeline: Noncopyable
 {
-    struct GlPipeline: Arcadia::Noncopyable
+public:
+    ARCADIA_EXCEPTION(LinkFail);
+    ARCADIA_EXCEPTION(ValidationFail);
+
+    using gl_shaders_builder_type = std::function<void(const std::filesystem::path&, std::vector<GlShader>&)>;
+
+    using self_type = GlPipeline;
+public:
+    GlPipeline(
+        const std::filesystem::path& gl_shader_folder_path,
+        const gl_shaders_builder_type& gl_shaders_builder
+    );
+    ~GlPipeline();
+
+    GlPipeline(self_type&& rhs) noexcept;
+    auto operator=(self_type&& rhs) noexcept -> self_type&;
+
+    [[nodiscard]]
+    auto GetGlId() const -> GLuint
     {
-    public:
-        ARCADIA_EXCEPTION(LinkFail);
-        ARCADIA_EXCEPTION(ValidationFail);
+        return _GlId;
+    }
 
-        using gl_shaders_builder_type = std::function<void(const std::filesystem::path&, std::vector<Arcadia::GlShader>&)>;
+    void Use() const;
+    void Unuse() const;
 
-        using self_type = GlPipeline;
-    public:
-        GlPipeline(
-            const std::filesystem::path& gl_shader_folder_path,
-            const gl_shaders_builder_type& gl_shaders_builder
+    auto SetUniform(const std::string& name, GLfloat f0, GLfloat f1, GLfloat f2, GLfloat f3) -> self_type&;
+    auto SetUniform(const std::string& name, GLfloat f0, GLfloat f1, GLfloat f2) -> self_type&;
+    auto SetUniform(const std::string& name, GLfloat f0, GLfloat f1) -> self_type&;
+    auto SetUniform(const std::string& name, GLfloat f) -> self_type&;
+    auto SetUniform(const std::string& name, GLint i0, GLint i1, GLint i2, GLint i3) -> self_type&;
+    auto SetUniform(const std::string& name, GLint i0, GLint i1, GLint i2) -> self_type&;
+    auto SetUniform(const std::string& name, GLint i0, GLint i1) -> self_type&;
+    auto SetUniform(const std::string& name, GLint i) -> self_type&;
+    auto SetUniform(const std::string& name, GLuint u0, GLuint u1, GLuint u2, GLuint u3) -> self_type&;
+    auto SetUniform(const std::string& name, GLuint u0, GLuint u1, GLuint u2) -> self_type&;
+    auto SetUniform(const std::string& name, GLuint u0, GLuint u1) -> self_type&;
+    auto SetUniform(const std::string& name, GLuint u) -> self_type&;
+    auto SetUniform(const std::string& name, const glm::vec4& vec) -> self_type&;
+    auto SetUniform(const std::string& name, const glm::vec3& vec) -> self_type&;
+    auto SetUniform(const std::string& name, const glm::vec2& vec) -> self_type&;
+    auto SetUniform(const std::string& name, const glm::mat4& mat) -> self_type&;
+    auto SetUniform(const std::string& name, const glm::mat3& mat) -> self_type&;
+    auto SetUniform(const std::string& name, const glm::mat2& mat) -> self_type&;
+
+    auto SetUniformBlockBinding(const std::string& name, GLuint index) -> self_type&;
+
+private:
+    auto _GetUniformLocation(const std::string& name) -> GLuint;
+
+private:
+    GLuint _GlId{ 0 };
+    std::unordered_map<std::string, GLuint> _GlUniformLocationCache{};
+    std::vector<GlShader> _GlShaders{};
+};
+
+static inline auto GetModelShadersBuilder() -> GlPipeline::gl_shaders_builder_type
+{
+    return [](const std::filesystem::path& gl_shader_folder_path, std::vector<GlShader>& gl_shaders) -> void
+    {
+        auto
+            gl_vertex_shader_path = gl_shader_folder_path / "model.vert",
+            gl_fragment_shader_path = gl_shader_folder_path / "model.frag";
+
+        auto
+            gl_vertex_shader_source = LoadText(gl_vertex_shader_path),
+            gl_fragment_shader_source = LoadText(gl_fragment_shader_path);
+
+        gl_shaders.emplace_back(
+            gl_vertex_shader_source,
+            GL_VERTEX_SHADER
         );
-        ~GlPipeline();
 
-        GlPipeline(self_type&& rhs) noexcept;
-        auto operator=(self_type&& rhs) noexcept -> self_type&;
-
-        [[nodiscard]]
-        auto GetGlId() const -> GLuint
-        {
-            return _GlId;
-        }
-
-        void Use() const;
-        void Unuse() const;
-
-        auto SetUniform(const std::string& name, GLfloat f0, GLfloat f1, GLfloat f2, GLfloat f3) -> self_type&;
-        auto SetUniform(const std::string& name, GLfloat f0, GLfloat f1, GLfloat f2) -> self_type&;
-        auto SetUniform(const std::string& name, GLfloat f0, GLfloat f1) -> self_type&;
-        auto SetUniform(const std::string& name, GLfloat f) -> self_type&;
-        auto SetUniform(const std::string& name, GLint i0, GLint i1, GLint i2, GLint i3) -> self_type&;
-        auto SetUniform(const std::string& name, GLint i0, GLint i1, GLint i2) -> self_type&;
-        auto SetUniform(const std::string& name, GLint i0, GLint i1) -> self_type&;
-        auto SetUniform(const std::string& name, GLint i) -> self_type&;
-        auto SetUniform(const std::string& name, GLuint u0, GLuint u1, GLuint u2, GLuint u3) -> self_type&;
-        auto SetUniform(const std::string& name, GLuint u0, GLuint u1, GLuint u2) -> self_type&;
-        auto SetUniform(const std::string& name, GLuint u0, GLuint u1) -> self_type&;
-        auto SetUniform(const std::string& name, GLuint u) -> self_type&;
-        auto SetUniform(const std::string& name, const glm::vec4& vec) -> self_type&;
-        auto SetUniform(const std::string& name, const glm::vec3& vec) -> self_type&;
-        auto SetUniform(const std::string& name, const glm::vec2& vec) -> self_type&;
-        auto SetUniform(const std::string& name, const glm::mat4& mat) -> self_type&;
-        auto SetUniform(const std::string& name, const glm::mat3& mat) -> self_type&;
-        auto SetUniform(const std::string& name, const glm::mat2& mat) -> self_type&;
-
-        auto SetUniformBlockBinding(const std::string& name, GLuint index) -> self_type&;
-
-    private:
-        auto _GetUniformLocation(const std::string& name) -> GLuint;
-
-    private:
-        GLuint _GlId{ 0 };
-        std::unordered_map<std::string, GLuint> _GlUniformLocationCache{};
-        std::vector<Arcadia::GlShader> _GlShaders{};
+        gl_shaders.emplace_back(
+            gl_fragment_shader_source,
+            GL_FRAGMENT_SHADER
+        );
     };
+}
 
-    static inline auto GetModelShadersBuilder() -> Arcadia::GlPipeline::gl_shaders_builder_type
+static inline auto GetSkyboxShadersBuilder() -> GlPipeline::gl_shaders_builder_type
+{
+    return [](const std::filesystem::path& gl_shader_folder_path, std::vector<GlShader>& gl_shaders) -> void
     {
-        return [](const std::filesystem::path& gl_shader_folder_path, std::vector<Arcadia::GlShader>& gl_shaders) -> void
-        {
-            auto
-                gl_vertex_shader_path = gl_shader_folder_path / "model.vert",
-                gl_fragment_shader_path = gl_shader_folder_path / "model.frag";
+        auto
+            gl_vertex_shader_path = gl_shader_folder_path / "skybox.vert",
+            gl_fragment_shader_path = gl_shader_folder_path / "skybox.frag";
 
-            auto
-                gl_vertex_shader_source = Arcadia::LoadText(gl_vertex_shader_path),
-                gl_fragment_shader_source = Arcadia::LoadText(gl_fragment_shader_path);
+        auto
+            gl_vertex_shader_source = LoadText(gl_vertex_shader_path),
+            gl_fragment_shader_source = LoadText(gl_fragment_shader_path);
 
-            gl_shaders.emplace_back(
-                gl_vertex_shader_source,
-                GL_VERTEX_SHADER
-            );
+        gl_shaders.emplace_back(
+            gl_vertex_shader_source,
+            GL_VERTEX_SHADER
+        );
 
-            gl_shaders.emplace_back(
-                gl_fragment_shader_source,
-                GL_FRAGMENT_SHADER
-            );
-        };
-    }
+        gl_shaders.emplace_back(
+            gl_fragment_shader_source,
+            GL_FRAGMENT_SHADER
+        );
+    };
+}
 
-    static inline auto GetSkyboxShadersBuilder() -> Arcadia::GlPipeline::gl_shaders_builder_type
+static inline auto GetGridShadersBuilder() -> GlPipeline::gl_shaders_builder_type
+{
+    return [](const std::filesystem::path& gl_shader_folder_path, std::vector<GlShader>& gl_shaders) -> void
     {
-        return [](const std::filesystem::path& gl_shader_folder_path, std::vector<Arcadia::GlShader>& gl_shaders) -> void
-        {
-            auto
-                gl_vertex_shader_path = gl_shader_folder_path / "skybox.vert",
-                gl_fragment_shader_path = gl_shader_folder_path / "skybox.frag";
+        auto
+            gl_vertex_shader_path = gl_shader_folder_path / "grid.vert",
+            gl_fragment_shader_path = gl_shader_folder_path / "grid.frag";
 
-            auto
-                gl_vertex_shader_source = Arcadia::LoadText(gl_vertex_shader_path),
-                gl_fragment_shader_source = Arcadia::LoadText(gl_fragment_shader_path);
+        auto
+            gl_vertex_shader_source = LoadText(gl_vertex_shader_path),
+            gl_fragment_shader_source = LoadText(gl_fragment_shader_path);
 
-            gl_shaders.emplace_back(
-                gl_vertex_shader_source,
-                GL_VERTEX_SHADER
-            );
+        gl_shaders.emplace_back(
+            gl_vertex_shader_source,
+            GL_VERTEX_SHADER
+        );
 
-            gl_shaders.emplace_back(
-                gl_fragment_shader_source,
-                GL_FRAGMENT_SHADER
-            );
-        };
-    }
+        gl_shaders.emplace_back(
+            gl_fragment_shader_source,
+            GL_FRAGMENT_SHADER
+        );
+    };
+}
 
-    static inline auto GetGridShadersBuilder() -> Arcadia::GlPipeline::gl_shaders_builder_type
+static inline auto GetShapeShadersBuilder() -> GlPipeline::gl_shaders_builder_type
+{
+    return [](const std::filesystem::path& gl_shader_folder_path, std::vector<GlShader>& gl_shaders) -> void
     {
-        return [](const std::filesystem::path& gl_shader_folder_path, std::vector<Arcadia::GlShader>& gl_shaders) -> void
-        {
-            auto
-                gl_vertex_shader_path = gl_shader_folder_path / "grid.vert",
-                gl_fragment_shader_path = gl_shader_folder_path / "grid.frag";
+        auto
+            gl_vertex_shader_path = gl_shader_folder_path / "shape.vert",
+            gl_fragment_shader_path = gl_shader_folder_path / "shape.frag";
 
-            auto
-                gl_vertex_shader_source = Arcadia::LoadText(gl_vertex_shader_path),
-                gl_fragment_shader_source = Arcadia::LoadText(gl_fragment_shader_path);
+        auto
+            gl_vertex_shader_source = LoadText(gl_vertex_shader_path),
+            gl_fragment_shader_source = LoadText(gl_fragment_shader_path);
 
-            gl_shaders.emplace_back(
-                gl_vertex_shader_source,
-                GL_VERTEX_SHADER
-            );
+        gl_shaders.emplace_back(
+            gl_vertex_shader_source,
+            GL_VERTEX_SHADER
+        );
 
-            gl_shaders.emplace_back(
-                gl_fragment_shader_source,
-                GL_FRAGMENT_SHADER
-            );
-        };
-    }
-
-    static inline auto GetShapeShadersBuilder() -> Arcadia::GlPipeline::gl_shaders_builder_type
-    {
-        return [](const std::filesystem::path& gl_shader_folder_path, std::vector<Arcadia::GlShader>& gl_shaders) -> void
-        {
-            auto
-                gl_vertex_shader_path = gl_shader_folder_path / "shape.vert",
-                gl_fragment_shader_path = gl_shader_folder_path / "shape.frag";
-
-            auto
-                gl_vertex_shader_source = Arcadia::LoadText(gl_vertex_shader_path),
-                gl_fragment_shader_source = Arcadia::LoadText(gl_fragment_shader_path);
-
-            gl_shaders.emplace_back(
-                gl_vertex_shader_source,
-                GL_VERTEX_SHADER
-            );
-
-            gl_shaders.emplace_back(
-                gl_fragment_shader_source,
-                GL_FRAGMENT_SHADER
-            );
-        };
-    }
+        gl_shaders.emplace_back(
+            gl_fragment_shader_source,
+            GL_FRAGMENT_SHADER
+        );
+    };
 }

@@ -8,7 +8,7 @@
 #include"resource/components/physics_component.hpp"
 #include"resource/components/transform_component.hpp"
 
-Arcadia::Scene::Scene(const nlohmann::json& json):
+Scene::Scene(const nlohmann::json& json):
     Name(json.at("name"))
 {
     const auto& json_entities = json.at("entities");
@@ -25,32 +25,32 @@ Arcadia::Scene::Scene(const nlohmann::json& json):
         for(const auto& [json_comp_type_str, json_comp] : json_comps.items())
         {
             const auto& name = entity_info.Name;
-            Arcadia::Match<void>(
+            Match<void>(
                 json_comp_type_str,
-                Arcadia::ModelComponent::GetTypeStrStatic(),
+                ModelComponent::GetTypeStrStatic(),
                 [&]()
             {
-                Emplace<Arcadia::ModelComponent>(name, json_comp).Snapshot();
+                Emplace<ModelComponent>(name, json_comp).Snapshot();
             },
-                Arcadia::LightComponent::GetTypeStrStatic(),
+                LightComponent::GetTypeStrStatic(),
                 [&]()
             {
-                Emplace<Arcadia::LightComponent>(name, json_comp).Snapshot();
+                Emplace<LightComponent>(name, json_comp).Snapshot();
             },
-                Arcadia::CameraComponent::GetTypeStrStatic(),
+                CameraComponent::GetTypeStrStatic(),
                 [&]()
             {
-                Emplace<Arcadia::CameraComponent>(name, json_comp).Snapshot();
+                Emplace<CameraComponent>(name, json_comp).Snapshot();
             },
-                Arcadia::PhysicsComponent::GetTypeStrStatic(),
+                PhysicsComponent::GetTypeStrStatic(),
                 [&]()
             {
-                Emplace<Arcadia::PhysicsComponent>(name, json_comp).Snapshot();
+                Emplace<PhysicsComponent>(name, json_comp).Snapshot();
             },
-                Arcadia::TransformComponent::GetTypeStrStatic(),
+                TransformComponent::GetTypeStrStatic(),
                 [&]()
             {
-                Emplace<Arcadia::TransformComponent>(name, json_comp).Snapshot();
+                Emplace<TransformComponent>(name, json_comp).Snapshot();
             }
             );
         }
@@ -58,7 +58,7 @@ Arcadia::Scene::Scene(const nlohmann::json& json):
     }
 }
 
-auto Arcadia::Scene::ToJson() const -> nlohmann::json
+auto Scene::ToJson() const -> nlohmann::json
 {
     auto json_entities = nlohmann::json::array();
 
@@ -83,7 +83,7 @@ auto Arcadia::Scene::ToJson() const -> nlohmann::json
     return json;
 }
 
-void Arcadia::Scene::Rename(const std::string& name, const std::string& new_name)
+void Scene::Rename(const std::string& name, const std::string& new_name)
 {
     ARCADIA_ASSERT(Contains(name));
     ARCADIA_ASSERT(!Contains(new_name));
@@ -94,17 +94,17 @@ void Arcadia::Scene::Rename(const std::string& name, const std::string& new_name
 
 }
 
-auto Arcadia::Scene::Contains(const std::string& name) const -> bool
+auto Scene::Contains(const std::string& name) const -> bool
 {
     return _EntityInfoStorage.find(name) != _EntityInfoStorage.end();
 }
 
-auto Arcadia::Scene::Size() const -> std::size_t
+auto Scene::Size() const -> std::size_t
 {
     return _EntityInfoStorage.size();
 }
 
-auto Arcadia::Scene::Count(const std::function<bool(const std::string&, const Arcadia::EntityInfo&)>& pred) const -> std::size_t
+auto Scene::Count(const std::function<bool(const std::string&, const EntityInfo&)>& pred) const -> std::size_t
 {
     std::size_t count = 0;
     for(const auto& [name, entity_info] : _EntityInfoStorage)
@@ -117,23 +117,23 @@ auto Arcadia::Scene::Count(const std::function<bool(const std::string&, const Ar
     return count;
 }
 
-auto Arcadia::Scene::GetEntityInfo(const std::string& name) const -> const Arcadia::EntityInfo&
+auto Scene::GetEntityInfo(const std::string& name) const -> const EntityInfo&
 {
     ARCADIA_ASSERT(Contains(name));
     return _EntityInfoStorage.at(name);
 }
 
-auto Arcadia::Scene::GetEntityInfo(const std::string& name) -> Arcadia::EntityInfo&
+auto Scene::GetEntityInfo(const std::string& name) -> EntityInfo&
 {
     ARCADIA_ASSERT(Contains(name));
     return _EntityInfoStorage.at(name);
 }
 
-auto Arcadia::Scene::Create(const std::string& name, const std::string& type) -> Arcadia::EntityInfo&
+auto Scene::Create(const std::string& name, const std::string& type) -> EntityInfo&
 {
     auto entity = _Registry.create();
 
-    Arcadia::EntityInfo entity_info{ name, entity };
+    EntityInfo entity_info{ name, entity };
     entity_info.Type = type;
 
     _EntityInfoStorage.try_emplace(
@@ -144,7 +144,7 @@ auto Arcadia::Scene::Create(const std::string& name, const std::string& type) ->
     return _EntityInfoStorage.at(name);
 }
 
-void Arcadia::Scene::Destroy(const std::string& name)
+void Scene::Destroy(const std::string& name)
 {
     ARCADIA_ASSERT(Contains(name));
 
@@ -152,46 +152,46 @@ void Arcadia::Scene::Destroy(const std::string& name)
     _EntityInfoStorage.erase(name);
 }
 
-auto Arcadia::Scene::_EntityOf(const std::string& name) const -> entt::entity
+auto Scene::_EntityOf(const std::string& name) const -> entt::entity
 {
     ARCADIA_ASSERT(Contains(name));
     return _EntityInfoStorage.at(name).Entity;
 }
 
-auto Arcadia::Scene::_CreateJsonComponents(const std::string& name) const -> nlohmann::json
+auto Scene::_CreateJsonComponents(const std::string& name) const -> nlohmann::json
 {
     auto json_comps = nlohmann::json::object();
 
-    if(AllOf<Arcadia::CameraComponent>(name))
+    if(AllOf<CameraComponent>(name))
     {
-        json_comps.push_back({ Arcadia::CameraComponent::GetTypeStrStatic(),Get<Arcadia::CameraComponent>(name).ToJson() });
+        json_comps.push_back({ CameraComponent::GetTypeStrStatic(),Get<CameraComponent>(name).ToJson() });
     }
-    if(AllOf<Arcadia::LightComponent>(name))
+    if(AllOf<LightComponent>(name))
     {
-        json_comps.push_back({ Arcadia::LightComponent::GetTypeStrStatic(),Get<Arcadia::LightComponent>(name).ToJson() });
+        json_comps.push_back({ LightComponent::GetTypeStrStatic(),Get<LightComponent>(name).ToJson() });
     }
-    if(AllOf<Arcadia::ModelComponent>(name))
+    if(AllOf<ModelComponent>(name))
     {
-        json_comps.push_back({ Arcadia::ModelComponent::GetTypeStrStatic(),Get<Arcadia::ModelComponent>(name).ToJson() });
+        json_comps.push_back({ ModelComponent::GetTypeStrStatic(),Get<ModelComponent>(name).ToJson() });
     }
-    if(AllOf<Arcadia::PhysicsComponent>(name))
+    if(AllOf<PhysicsComponent>(name))
     {
-        json_comps.push_back({ Arcadia::PhysicsComponent::GetTypeStrStatic(),Get<Arcadia::PhysicsComponent>(name).ToJson() });
+        json_comps.push_back({ PhysicsComponent::GetTypeStrStatic(),Get<PhysicsComponent>(name).ToJson() });
     }
-    if(AllOf<Arcadia::TransformComponent>(name))
+    if(AllOf<TransformComponent>(name))
     {
-        json_comps.push_back({ Arcadia::TransformComponent::GetTypeStrStatic(), Get<Arcadia::TransformComponent>(name).ToJson() });
+        json_comps.push_back({ TransformComponent::GetTypeStrStatic(), Get<TransformComponent>(name).ToJson() });
     }
 
     return json_comps;
 }
 
-auto Arcadia::EntityInfo::GetName() const -> const std::string&
+auto EntityInfo::GetName() const -> const std::string&
 {
     return Name;
 }
 
-auto Arcadia::EntityInfo::GetEntity() const -> entt::entity
+auto EntityInfo::GetEntity() const -> entt::entity
 {
     return Entity;
 }

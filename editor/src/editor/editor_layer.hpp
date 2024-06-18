@@ -11,29 +11,26 @@
 #include"project/project_layer.hpp"
 #include"ui/imgui_layer.hpp"
 
-namespace Arcadia
+struct EditorAppLayer: iAppLayer
 {
-    struct EditorAppLayer: Arcadia::iAppLayer
-    {
-    public:
-        EditorAppLayer();
-        virtual ~EditorAppLayer() = default;
+public:
+    EditorAppLayer();
+    virtual ~EditorAppLayer() = default;
 
-        virtual void OnEvent(Arcadia::EventBase& event) override;
-        virtual void OnUpdate() override;
-    private:
-        void _ImguiWindowInstaller(Arcadia::ImguiLayer& imgui_layer);
-        void _Stop();
+    virtual void OnEvent(EventBase& event) override;
+    virtual void OnUpdate() override;
+private:
+    void _ImguiWindowInstaller(ImguiLayer& imgui_layer);
+    void _Stop();
 
-        void _OnWindowShouldClose(Arcadia::Event::WindowShouldClose& e);
-        void _OnProjectUnbuilt(Arcadia::Event::ProjectUnbuilt& e);
-        void _OnWindowCloseCanceled(Arcadia::Event::WindowCloseCanceled& e);
-        void _OnPlayMode(Arcadia::Event::PlayMode& e);
-        void _OnInputKey(Arcadia::Event::InputKey& e);
+    void _OnWindowShouldClose(Event::WindowShouldClose& e);
+    void _OnProjectUnbuilt(Event::ProjectUnbuilt& e);
+    void _OnWindowCloseCanceled(Event::WindowCloseCanceled& e);
+    void _OnPlayMode(Event::PlayMode& e);
+    void _OnInputKey(Event::InputKey& e);
 
-    private:
-        bool _WaitingForProjectUnbuiltBeforeClosing{ false };
-    };
+private:
+    bool _WaitingForProjectUnbuiltBeforeClosing{ false };
+};
 
-    ARCADIA_API auto CreateApplication() -> std::unique_ptr<Arcadia::iAppLayer>;
-}
+ARCADIA_API auto CreateApplication() -> std::unique_ptr<iAppLayer>;

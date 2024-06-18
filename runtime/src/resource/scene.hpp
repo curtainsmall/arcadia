@@ -14,254 +14,249 @@
 #include"resource/components/component_interface.hpp"
 #include"resource/entt_header.hpp"
 
-namespace Arcadia
+static inline std::array BuildInEntityTypes{
+     "actor"s,
+     "camera"s,
+     "light"s,
+};
+
+struct EntityInfo
 {
-    struct Scene;
+    friend struct Scene;
+public:
+    using self_type = EntityInfo;
+public:
+    EntityInfo(
+        const std::string& name,
+        const entt::entity entity
+    ):
+        Name(name),
+        Entity(entity)
+    {}
 
-    static inline std::array BuildInEntityTypes{
-         "actor"s,
-         "camera"s,
-         "light"s,
-    };
+    [[nodiscard]]
+    auto GetName() const -> const std::string&;
 
-    struct EntityInfo
+    [[nodiscard]]
+    auto GetEntity() const->entt::entity;
+
+public:
+    std::string Type{}; // Type of the entity
+    bool Display{ true }; // Whether the entity will be displayed in the viewport (the renderer will skip the hidden ones)
+    bool Internal{ false }; // Whether the entity is controled internally (it will not be listed in the outliner); Note that an internal entity will still be rendered unless `Display` is set to false
+protected:
+    std::string Name{};
+    entt::entity Entity{};
+};
+
+struct Scene: Noncopyable
+{
+public:
+    using entity_info_storage_type = std::unordered_map<std::string, EntityInfo>;
+    using registry_type = entt::registry;
+    using self_type = Scene;
+public:
+    Scene(const std::string& name):
+        Name(name)
+    {}
+    Scene(const nlohmann::json& json);
+    ~Scene() = default;
+    auto ToJson() const->nlohmann::json;
+
+    Scene(self_type&&) noexcept = default;
+    auto operator=(self_type&&) noexcept -> self_type & = default;
+
+    [[nodiscard]]
+    auto GetRegistry() const -> const registry_type&
     {
-        friend struct Arcadia::Scene;
-    public:
-        using self_type = EntityInfo;
-    public:
-        EntityInfo(
-            const std::string& name,
-            const entt::entity entity
-        ):
-            Name(name),
-            Entity(entity)
-        {}
+        return _Registry;
+    }
 
-        [[nodiscard]]
-        auto GetName() const -> const std::string&;
+    /// @brief Set name of entity
+    /// @param entity Entity to set name
+    /// @param name Name
+    /// @note Do not use this function when iterating entities
+    void Rename(const std::string& name, const std::string& new_name);
 
-        [[nodiscard]]
-        auto GetEntity() const->entt::entity;
+    /// @brief Check whether there is an entity with given name
+    /// @param name Name of entity
+    /// @return Result
+    [[nodiscard]]
+    auto Contains(const std::string& name) const -> bool;
 
-    public:
-        std::string Type{}; // Type of the entity
-        bool Display{ true }; // Whether the entity will be displayed in the viewport (the renderer will skip the hidden ones)
-        bool Internal{ false }; // Whether the entity is controled internally (it will not be listed in the outliner); Note that an internal entity will still be rendered unless `Display` is set to false
-    protected:
-        std::string Name{};
-        entt::entity Entity{};
-    };
+    [[nodiscard]]
+    auto Size() const->std::size_t;
 
-    struct Scene: Arcadia::Noncopyable
+    [[nodiscard]]
+    auto Count(const std::function<bool(const std::string&, const EntityInfo&)>& pred) const->std::size_t;
+
+    [[nodiscard]]
+    auto GetEntityInfo(const std::string& name) const -> const EntityInfo&;
+
+    [[nodiscard]]
+    auto GetEntityInfo(const std::string& name) -> EntityInfo&;
+
+    /// @brief Create an new entity
+    /// @param name Name of the created entity, must be unique
+    /// @param type Type of the created entity
+    /// @return Entity info to the created entity
+    auto Create(const std::string& name, const std::string& type) -> EntityInfo&;
+
+    /// @brief Destroy entity
+    /// @param name Name of the entity
+    /// @return The version of recycled entity
+    void Destroy(const std::string& name);
+
+    /// @brief Emplace a component to an entity
+    /// @tparam ...Args Types of arguments
+    /// @tparam Component Type of component
+    /// @param name Name of the entity
+    /// @param ...args Arguments for constructing component
+    /// @return Emplaced component
+    template<cComponent Component, class ...Args>
+    auto Emplace(const std::string& name, Args&& ...args) -> Component&
     {
-    public:
-        using entity_info_storage_type = std::unordered_map<std::string, Arcadia::EntityInfo>;
-        using registry_type = entt::registry;
-        using self_type = Scene;
-    public:
-        Scene(const std::string& name):
-            Name(name)
-        {}
-        Scene(const nlohmann::json& json);
-        ~Scene() = default;
-        auto ToJson() const->nlohmann::json;
+        return _Registry.emplace<Component>(_EntityOf(name), std::forward<Args>(args)...);
+    }
 
-        Scene(self_type&&) noexcept = default;
-        auto operator=(self_type&&) noexcept -> self_type & = default;
+    /// @brief Replace component in the entity
+    /// @tparam ...Args Types of arguments
+    /// @tparam Component Type of component
+    /// @param name Name of the entity
+    /// @param ...args Arguments for constructing component
+    /// @return Replaced component
+    template<cComponent Component, class ...Args>
+    auto Replace(const std::string& name, Args&& ...args) -> Component&
+    {
+        ARCADIA_ASSERT(AllOf<Component>(name));
 
-        [[nodiscard]]
-        auto GetRegistry() const -> const registry_type&
-        {
-            return _Registry;
-        }
+        return _Registry.replace<Component>(_EntityOf(name), std::forward<Args>(args)...);
+    }
 
-        /// @brief Set name of entity
-        /// @param entity Entity to set name
-        /// @param name Name
-        /// @note Do not use this function when iterating entities
-        void Rename(const std::string& name, const std::string& new_name);
+    /// @brief Emplace or replace component in the entity
+    /// @tparam ...Args Types of arguments
+    /// @tparam Component Type of component
+    /// @param name Name of the entity
+    /// @param ...args Arguments for constructing component
+    /// @return Emplaced/replaced component
+    template<cComponent Component, class ...Args>
+    auto EmplaceOrReplace(const std::string& name, Args&& ...args) -> Component&
+    {
+        return _Registry.emplace_or_replace<Component>(_EntityOf(name), std::forward<Args>(args)...);
+    }
 
-        /// @brief Check whether there is an entity with given name
-        /// @param name Name of entity
-        /// @return Result
-        [[nodiscard]]
-        auto Contains(const std::string& name) const -> bool;
+    /// @brief Get component in the entity
+    /// @tparam ...Components Types of component
+    /// @param name Name of the entity
+    /// @return Got component(s)
+    template<cComponent ...Components>
+    [[nodiscard]]
+    auto Get(const std::string& name) const -> decltype(auto)
+    {
+        ARCADIA_ASSERT(AllOf<Components...>(name));
 
-        [[nodiscard]]
-        auto Size() const->std::size_t;
+        return _Registry.get<Components...>(_EntityOf(name));
+    }
 
-        [[nodiscard]]
-        auto Count(const std::function<bool(const std::string&, const Arcadia::EntityInfo&)>& pred) const->std::size_t;
+    /// @copydoc Scene::Get
+    template<cComponent ...Components>
+    [[nodiscard]]
+    auto Get(const std::string& name) -> decltype(auto)
+    {
+        ARCADIA_ASSERT(AllOf<Components...>(name));
 
-        [[nodiscard]]
-        auto GetEntityInfo(const std::string& name) const -> const Arcadia::EntityInfo&;
+        return _Registry.get<Components...>(_EntityOf(name));
+    }
 
-        [[nodiscard]]
-        auto GetEntityInfo(const std::string& name) -> Arcadia::EntityInfo&;
+    template<cComponent ...Components>
+    [[nodiscard]]
+    auto AllOf(const std::string& name) const -> bool
+    {
+        return _Registry.all_of<Components...>(_EntityOf(name));
+    }
 
-        /// @brief Create an new entity
-        /// @param name Name of the created entity, must be unique
-        /// @param type Type of the created entity
-        /// @return Entity info to the created entity
-        auto Create(const std::string& name, const std::string& type) -> Arcadia::EntityInfo&;
+    template<cComponent ...Components>
+    [[nodiscard]]
+    auto AnyOf(const std::string& name) const -> bool
+    {
+        return _Registry.any_of<Components...>(_EntityOf(name));
+    }
 
-        /// @brief Destroy entity
-        /// @param name Name of the entity
-        /// @return The version of recycled entity
-        void Destroy(const std::string& name);
+    /// @brief Remove component from entity
+    /// @tparam ...Component Type of component
+    /// @param name Name of the entity
+    template<cComponent ...Component>
+    auto Remove(const std::string& name) -> registry_type::size_type
+    {
+        auto count = _Registry.remove<Component...>(_EntityOf(name));
+        return count;
+    }
 
-        /// @brief Emplace a component to an entity
-        /// @tparam ...Args Types of arguments
-        /// @tparam Component Type of component
-        /// @param name Name of the entity
-        /// @param ...args Arguments for constructing component
-        /// @return Emplaced component
-        template<Arcadia::cComponent Component, class ...Args>
-        auto Emplace(const std::string& name, Args&& ...args) -> Component&
-        {
-            return _Registry.emplace<Component>(_EntityOf(name), std::forward<Args>(args)...);
-        }
+    /// @brief Get a view for the components
+    /// @tparam ...Components Types of component used to construct the view
+    /// @tparam ...ExcludeComponents Types of component used to filter the view
+    /// @param exclude Helper class to specify @ref ...ExcludeComponents
+    /// @return Created view
+    template<cComponent ...Components, cComponent ...ExcludeComponents>
+    [[nodiscard]]
+    auto View(entt::exclude_t<ExcludeComponents...> exclude = entt::exclude_t{}) -> decltype(auto)
+    {
+        auto view = _Registry.view<Components...>(exclude);
+        return view;
+    }
 
-        /// @brief Replace component in the entity
-        /// @tparam ...Args Types of arguments
-        /// @tparam Component Type of component
-        /// @param name Name of the entity
-        /// @param ...args Arguments for constructing component
-        /// @return Replaced component
-        template<Arcadia::cComponent Component, class ...Args>
-        auto Replace(const std::string& name, Args&& ...args) -> Component&
-        {
-            ARCADIA_ASSERT(AllOf<Component>(name));
+    /// @copydoc scene::view
+    template<cComponent ...Components, cComponent ...ExcludeComponents>
+    [[nodiscard]]
+    auto View(entt::exclude_t<ExcludeComponents...> exclude= entt::exclude_t{}) const -> decltype(auto)
+    {
+        return _Registry.view<Components...>(exclude);
+    }
 
-            return _Registry.replace<Component>(_EntityOf(name), std::forward<Args>(args)...);
-        }
+    /// @brief Get a group for the components
+    /// @tparam ...OwnedComponents Types of component owned by the group
+    /// @tparam ...GetComponents Types of component observed by the group, if any
+    /// @tparam ...ExcludeComponents Types of component used to filter the group, if any
+    /// @param get Helper class to specify @ref ...GetComponents
+    /// @param exclude Helper class to specify @ref ...ExcludeComponents
+    /// @return 
+    template<cComponent ...OwnedComponents, cComponent ...GetComponents, cComponent ...ExcludeComponents>
+    [[nodiscard]]
+    auto Group(entt::get_t<GetComponents...> get = entt::get_t{}, entt::exclude_t<ExcludeComponents...> exclude= entt::exclude_t{}) -> decltype(auto)
+    {
+        auto group = _Registry.group<OwnedComponents...>(get, exclude);
+        return group;
+    }
 
-        /// @brief Emplace or replace component in the entity
-        /// @tparam ...Args Types of arguments
-        /// @tparam Component Type of component
-        /// @param name Name of the entity
-        /// @param ...args Arguments for constructing component
-        /// @return Emplaced/replaced component
-        template<Arcadia::cComponent Component, class ...Args>
-        auto EmplaceOrReplace(const std::string& name, Args&& ...args) -> Component&
-        {
-            return _Registry.emplace_or_replace<Component>(_EntityOf(name), std::forward<Args>(args)...);
-        }
+    [[nodiscard]]
+    auto begin() const noexcept -> entity_info_storage_type::const_iterator
+    {
+        return _EntityInfoStorage.begin();
+    }
+    [[nodiscard]]
+    auto end() const noexcept -> entity_info_storage_type::const_iterator
+    {
+        return _EntityInfoStorage.end();
+    }
+    [[nodiscard]]
+    auto begin() noexcept -> entity_info_storage_type::iterator
+    {
+        return _EntityInfoStorage.begin();
+    }
+    [[nodiscard]]
+    auto end() noexcept -> entity_info_storage_type::iterator
+    {
+        return _EntityInfoStorage.end();
+    }
 
-        /// @brief Get component in the entity
-        /// @tparam ...Components Types of component
-        /// @param name Name of the entity
-        /// @return Got component(s)
-        template<Arcadia::cComponent ...Components>
-        [[nodiscard]]
-        auto Get(const std::string& name) const -> decltype(auto)
-        {
-            ARCADIA_ASSERT(AllOf<Components...>(name));
+private:
+    auto _EntityOf(const std::string& name) const->entt::entity;
+    auto _CreateJsonComponents(const std::string& name) const->nlohmann::json;
+public:
+    std::string Name;
+private:
 
-            return _Registry.get<Components...>(_EntityOf(name));
-        }
+    entt::registry _Registry{};
 
-        /// @copydoc Arcadia::Scene::Get
-        template<Arcadia::cComponent ...Components>
-        [[nodiscard]]
-        auto Get(const std::string& name) -> decltype(auto)
-        {
-            ARCADIA_ASSERT(AllOf<Components...>(name));
-
-            return _Registry.get<Components...>(_EntityOf(name));
-        }
-
-        template<Arcadia::cComponent ...Components>
-        [[nodiscard]]
-        auto AllOf(const std::string& name) const -> bool
-        {
-            return _Registry.all_of<Components...>(_EntityOf(name));
-        }
-
-        template<Arcadia::cComponent ...Components>
-        [[nodiscard]]
-        auto AnyOf(const std::string& name) const -> bool
-        {
-            return _Registry.any_of<Components...>(_EntityOf(name));
-        }
-
-        /// @brief Remove component from entity
-        /// @tparam ...Component Type of component
-        /// @param name Name of the entity
-        template<Arcadia::cComponent ...Component>
-        auto Remove(const std::string& name) -> registry_type::size_type
-        {
-            auto count = _Registry.remove<Component...>(_EntityOf(name));
-            return count;
-        }
-
-        /// @brief Get a view for the components
-        /// @tparam ...Components Types of component used to construct the view
-        /// @tparam ...ExcludeComponents Types of component used to filter the view
-        /// @param exclude Helper class to specify @ref ...ExcludeComponents
-        /// @return Created view
-        template<Arcadia::cComponent ...Components, Arcadia::cComponent ...ExcludeComponents>
-        [[nodiscard]]
-        auto View(entt::exclude_t<ExcludeComponents...> exclude = entt::exclude_t{}) -> decltype(auto)
-        {
-            auto view = _Registry.view<Components...>(exclude);
-            return view;
-        }
-
-        /// @copydoc Arcadia::scene::view
-        template<Arcadia::cComponent ...Components, Arcadia::cComponent ...ExcludeComponents>
-        [[nodiscard]]
-        auto View(entt::exclude_t<ExcludeComponents...> exclude= entt::exclude_t{}) const -> decltype(auto)
-        {
-            return _Registry.view<Components...>(exclude);
-        }
-
-        /// @brief Get a group for the components
-        /// @tparam ...OwnedComponents Types of component owned by the group
-        /// @tparam ...GetComponents Types of component observed by the group, if any
-        /// @tparam ...ExcludeComponents Types of component used to filter the group, if any
-        /// @param get Helper class to specify @ref ...GetComponents
-        /// @param exclude Helper class to specify @ref ...ExcludeComponents
-        /// @return 
-        template<Arcadia::cComponent ...OwnedComponents, Arcadia::cComponent ...GetComponents, Arcadia::cComponent ...ExcludeComponents>
-        [[nodiscard]]
-        auto Group(entt::get_t<GetComponents...> get = entt::get_t{}, entt::exclude_t<ExcludeComponents...> exclude= entt::exclude_t{}) -> decltype(auto)
-        {
-            auto group = _Registry.group<OwnedComponents...>(get, exclude);
-            return group;
-        }
-
-        [[nodiscard]]
-        auto begin() const noexcept -> entity_info_storage_type::const_iterator
-        {
-            return _EntityInfoStorage.begin();
-        }
-        [[nodiscard]]
-        auto end() const noexcept -> entity_info_storage_type::const_iterator
-        {
-            return _EntityInfoStorage.end();
-        }
-        [[nodiscard]]
-        auto begin() noexcept -> entity_info_storage_type::iterator
-        {
-            return _EntityInfoStorage.begin();
-        }
-        [[nodiscard]]
-        auto end() noexcept -> entity_info_storage_type::iterator
-        {
-            return _EntityInfoStorage.end();
-        }
-
-    private:
-        auto _EntityOf(const std::string& name) const->entt::entity;
-        auto _CreateJsonComponents(const std::string& name) const->nlohmann::json;
-    public:
-        std::string Name;
-    private:
-
-        entt::registry _Registry{};
-
-        entity_info_storage_type _EntityInfoStorage{};
-    };
-}
+    entity_info_storage_type _EntityInfoStorage{};
+};

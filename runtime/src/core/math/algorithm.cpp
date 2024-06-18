@@ -2,7 +2,7 @@
 
 #include "algorithm.hpp"
 
-auto Arcadia::Decompose(const glm::mat4& transform) -> std::optional<std::tuple<glm::vec3, glm::vec3, glm::vec3>>
+auto Decompose(const glm::mat4& transform) -> std::optional<std::tuple<glm::vec3, glm::vec3, glm::vec3>>
 {
     // From glm::decompose in matrix_decompose.inl
 

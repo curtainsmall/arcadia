@@ -14,55 +14,52 @@
 #include"project/project_events.hpp"
 #include"ui/ui_events.hpp"
 
-namespace Arcadia
+struct ProjectLayer: iLayer
 {
-    struct ProjectLayer: Arcadia::iLayer
+public:
+    ProjectLayer();
+    virtual ~ProjectLayer();
+
+    virtual void OnEvent(EventBase& event) override;
+    virtual void OnUpdate() override;
+
+    [[nodiscard]]
+    inline auto HasProject() const noexcept -> bool
     {
-    public:
-        ProjectLayer();
-        virtual ~ProjectLayer();
+        return !!_Project;
+    }
+private:
+    [[nodiscard]]
+    auto _AssertAndGetScene() -> Scene&;
 
-        virtual void OnEvent(Arcadia::EventBase& event) override;
-        virtual void OnUpdate() override;
+    void _SaveProject();
+    void _LoadProject();
 
-        [[nodiscard]]
-        inline auto HasProject() const noexcept -> bool
-        {
-            return !!_Project;
-        }
-    private:
-        [[nodiscard]]
-        auto _AssertAndGetScene() -> Arcadia::Scene&;
+    void _OnWindowShouldClose(Event::WindowShouldClose& e);
 
-        void _SaveProject();
-        void _LoadProject();
+    void _OnCreateProject(Event::CreateProject& e);
+    void _OnOpenProject(Event::OpenProject& e);
+    void _OnSaveProject(Event::SaveProject& e);
+    void _OnSaveProjectAs(Event::SaveProjectAs& e);
+    void _OnCloseProject(Event::CloseProject& e);
+    void _OnProjectSaved(Event::ProjectSaved& e);
 
-        void _OnWindowShouldClose(Arcadia::Event::WindowShouldClose& e);
+    void _OnCreateScene(Event::CreateScene& e);
+    void _OnSelectScene(Event::SelectScene& e);
+    void _OnCloseScene(Event::CloseScene& e);
+    void _OnDeleteScene(Event::DeleteScene& e);
 
-        void _OnCreateProject(Arcadia::Event::CreateProject& e);
-        void _OnOpenProject(Arcadia::Event::OpenProject& e);
-        void _OnSaveProject(Arcadia::Event::SaveProject& e);
-        void _OnSaveProjectAs(Arcadia::Event::SaveProjectAs& e);
-        void _OnCloseProject(Arcadia::Event::CloseProject& e);
-        void _OnProjectSaved(Arcadia::Event::ProjectSaved& e);
+    void _OnNewEntity(Event::NewEntity& e);
+    void _OnRenameEntity(Event::RenameEntity& e);
+    void _OnDeleteEntity(Event::DeleteEntity& e);
 
-        void _OnCreateScene(Arcadia::Event::CreateScene& e);
-        void _OnSelectScene(Arcadia::Event::SelectScene& e);
-        void _OnCloseScene(Arcadia::Event::CloseScene& e);
-        void _OnDeleteScene(Arcadia::Event::DeleteScene& e);
+    void _OnAddComponent(Event::AddComponent& e);
+    void _OnRemoveComponent(Event::RemoveComponent& e);
 
-        void _OnNewEntity(Arcadia::Event::NewEntity& e);
-        void _OnRenameEntity(Arcadia::Event::RenameEntity& e);
-        void _OnDeleteEntity(Arcadia::Event::DeleteEntity& e);
+private:
+    std::filesystem::path _ProjectFilepath{};
+    std::shared_ptr<Project> _Project{};
 
-        void _OnAddComponent(Arcadia::Event::AddComponent& e);
-        void _OnRemoveComponent(Arcadia::Event::RemoveComponent& e);
-
-    private:
-        std::filesystem::path _ProjectFilepath{};
-        std::shared_ptr<Arcadia::Project> _Project{};
-
-        std::shared_ptr<Arcadia::iRenderer> _Renderer{};
-        std::shared_ptr<Arcadia::PhysicsSimulator> _PhysicsSimulator{};
-    };
-}
+    std::shared_ptr<iRenderer> _Renderer{};
+    std::shared_ptr<PhysicsSimulator> _PhysicsSimulator{};
+};

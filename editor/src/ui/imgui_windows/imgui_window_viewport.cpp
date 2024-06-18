@@ -7,27 +7,27 @@
 #include"resource/components/physics_component.hpp"
 #include"resource/components/transform_component.hpp"
 
-void Arcadia::ImguiWindowViewport::OnEvent(Arcadia::EventBase& event)
+void ImguiWindowViewport::OnEvent(EventBase& event)
 {
-    Arcadia::EventDispatcher{ event }
-        .Dispatch<Arcadia::Event::InputCursorMove>(ARCADIA_BIND_MEMBER_FN(_OnInputCursorMove))
-        .Dispatch<Arcadia::Event::OpenImguiWindow>(ARCADIA_BIND_MEMBER_FN(_OnOpenImguiWindow))
-        .Dispatch<Arcadia::Event::ProjectBuilt>(ARCADIA_BIND_MEMBER_FN(_OnProjectBuilt))
-        .Dispatch<Arcadia::Event::ProjectUnbuilt>(ARCADIA_BIND_MEMBER_FN(_OnProjectUnbuilt))
-        .Dispatch<Arcadia::Event::SceneActivated>(ARCADIA_BIND_MEMBER_FN(_OnSceneActivated))
-        .Dispatch<Arcadia::Event::SceneDeactivated>(ARCADIA_BIND_MEMBER_FN(_OnSceneDeactivated))
-        .Dispatch<Arcadia::Event::SelectEntity>(ARCADIA_BIND_MEMBER_FN(_OnSelectEntity))
-        .Dispatch<Arcadia::Event::RenameEntity>(ARCADIA_BIND_MEMBER_FN(_OnRenameEntity))
-        .Dispatch<Arcadia::Event::DeleteEntity>(ARCADIA_BIND_MEMBER_FN(_OnDeleteEntity))
-        .Dispatch<Arcadia::Event::RendererBuilt>(ARCADIA_BIND_MEMBER_FN(_OnRendererBuilt))
-        .Dispatch<Arcadia::Event::RendererUnbuilt>(ARCADIA_BIND_MEMBER_FN(_OnRendererUnbuilt))
-        .Dispatch<Arcadia::Event::PhysicsSimulatorBuilt>(ARCADIA_BIND_MEMBER_FN(_OnPhysicsSimualtorBuilt))
-        .Dispatch<Arcadia::Event::PhysicsSimulatorUnbuilt>(ARCADIA_BIND_MEMBER_FN(_OnPhysicsSimulatorUnbuilt))
+    EventDispatcher{ event }
+        .Dispatch<Event::InputCursorMove>(ARCADIA_BIND_MEMBER_FN(_OnInputCursorMove))
+        .Dispatch<Event::OpenImguiWindow>(ARCADIA_BIND_MEMBER_FN(_OnOpenImguiWindow))
+        .Dispatch<Event::ProjectBuilt>(ARCADIA_BIND_MEMBER_FN(_OnProjectBuilt))
+        .Dispatch<Event::ProjectUnbuilt>(ARCADIA_BIND_MEMBER_FN(_OnProjectUnbuilt))
+        .Dispatch<Event::SceneActivated>(ARCADIA_BIND_MEMBER_FN(_OnSceneActivated))
+        .Dispatch<Event::SceneDeactivated>(ARCADIA_BIND_MEMBER_FN(_OnSceneDeactivated))
+        .Dispatch<Event::SelectEntity>(ARCADIA_BIND_MEMBER_FN(_OnSelectEntity))
+        .Dispatch<Event::RenameEntity>(ARCADIA_BIND_MEMBER_FN(_OnRenameEntity))
+        .Dispatch<Event::DeleteEntity>(ARCADIA_BIND_MEMBER_FN(_OnDeleteEntity))
+        .Dispatch<Event::RendererBuilt>(ARCADIA_BIND_MEMBER_FN(_OnRendererBuilt))
+        .Dispatch<Event::RendererUnbuilt>(ARCADIA_BIND_MEMBER_FN(_OnRendererUnbuilt))
+        .Dispatch<Event::PhysicsSimulatorBuilt>(ARCADIA_BIND_MEMBER_FN(_OnPhysicsSimualtorBuilt))
+        .Dispatch<Event::PhysicsSimulatorUnbuilt>(ARCADIA_BIND_MEMBER_FN(_OnPhysicsSimulatorUnbuilt))
         .Dispatch<Event::ShowGizmo>(ARCADIA_BIND_MEMBER_FN(_OnShowGizmo))
         .Result();
 }
 
-void Arcadia::ImguiWindowViewport::OnUpdate()
+void ImguiWindowViewport::OnUpdate()
 {
     if(!_Open)
     {
@@ -39,7 +39,7 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
     auto renderer = _Renderer.lock();
     auto project = _Project.lock();
 
-    const auto& app_context = Arcadia::AppContext::Instance();
+    const auto& app_context = AppContext::Instance();
 
     auto imgui_title = _Title + GetIdStr();
 
@@ -64,7 +64,7 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
             physics_simulator->Prepare();
             renderer->Prepare();
 
-            auto [viewport_camera_comp, viewport_transform_comp] = scene->Get<Arcadia::CameraComponent, Arcadia::TransformComponent>(ViewportCameraEntityName);
+            auto [viewport_camera_comp, viewport_transform_comp] = scene->Get<CameraComponent, TransformComponent>(ViewportCameraEntityName);
             viewport_camera_comp.ViewportSize = ImGui::GetContentRegionAvail();
             for(const auto& [name, entity_info] : *scene)
             {
@@ -91,12 +91,12 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
 
             if(!_InViewportFreeCam && ImGui::IsItemHovered() && ImGui::IsMouseDown(ImGuiMouseButton_Right))
             {
-                Arcadia::EventQueue::Instance().Signal<Arcadia::Event::WindowSetInputModeCursor>(Arcadia::WindowInputModeCursor::Disabled);
+                EventQueue::Instance().Signal<Event::WindowSetInputModeCursor>(WindowInputModeCursor::Disabled);
                 _InViewportFreeCam = true;
             }
             if(_InViewportFreeCam && !ImGui::IsMouseDown(ImGuiMouseButton_Right))
             {
-                Arcadia::EventQueue::Instance().Signal<Arcadia::Event::WindowSetInputModeCursor>(Arcadia::WindowInputModeCursor::Normal);
+                EventQueue::Instance().Signal<Event::WindowSetInputModeCursor>(WindowInputModeCursor::Normal);
                 _InViewportFreeCam = false;
             }
 
@@ -114,19 +114,19 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
                 }
                 else if(ImGui::IsKeyDown(ImGuiKey_A))
                 {
-                    viewport_transform_comp.Position += glm::cross(Arcadia::CameraComponent::Up, viewport_transform_comp.Direction) * viewport_camera_comp.Speed;
+                    viewport_transform_comp.Position += glm::cross(CameraComponent::Up, viewport_transform_comp.Direction) * viewport_camera_comp.Speed;
                 }
                 else if(ImGui::IsKeyDown(ImGuiKey_D))
                 {
-                    viewport_transform_comp.Position -= glm::cross(Arcadia::CameraComponent::Up, viewport_transform_comp.Direction) * viewport_camera_comp.Speed;
+                    viewport_transform_comp.Position -= glm::cross(CameraComponent::Up, viewport_transform_comp.Direction) * viewport_camera_comp.Speed;
                 }
                 else if(ImGui::IsKeyDown(ImGuiKey_E))
                 {
-                    viewport_transform_comp.Position += glm::cross(viewport_transform_comp.Direction, glm::cross(Arcadia::CameraComponent::Up, viewport_transform_comp.Direction)) * viewport_camera_comp.Speed;
+                    viewport_transform_comp.Position += glm::cross(viewport_transform_comp.Direction, glm::cross(CameraComponent::Up, viewport_transform_comp.Direction)) * viewport_camera_comp.Speed;
                 }
                 else if(ImGui::IsKeyDown(ImGuiKey_Q))
                 {
-                    viewport_transform_comp.Position -= glm::cross(viewport_transform_comp.Direction, glm::cross(Arcadia::CameraComponent::Up, viewport_transform_comp.Direction)) * viewport_camera_comp.Speed;
+                    viewport_transform_comp.Position -= glm::cross(viewport_transform_comp.Direction, glm::cross(CameraComponent::Up, viewport_transform_comp.Direction)) * viewport_camera_comp.Speed;
                 }
 
                 // Rotate view
@@ -137,7 +137,7 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
                 auto y_angle_offset = glm::clamp(-offset.y + pitch_angle, -glm::half_pi<float>() + viewport_camera_comp.UpEpsilon, glm::half_pi<float>() - viewport_camera_comp.UpEpsilon) - pitch_angle;
                 viewport_transform_comp.Direction = glm::normalize(glm::angleAxis(y_angle_offset, glm::cross(viewport_transform_comp.Direction, viewport_camera_comp.Up)) * viewport_transform_comp.Direction);
 
-                _CursorMove = Arcadia::Vec2::Zero();
+                _CursorMove = Vec2::Zero();
             }
 
             // Display viewport viewport_camera_comp info
@@ -228,7 +228,7 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
                 ImGui::PopStyleColor(2);
 
                 // Gizmo
-                if(!_SelectedEntityName.empty() && scene->AllOf<Arcadia::TransformComponent>(_SelectedEntityName))
+                if(!_SelectedEntityName.empty() && scene->AllOf<TransformComponent>(_SelectedEntityName))
                 {
                     ImGuizmo::SetDrawlist();
 
@@ -236,7 +236,7 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
                     glm::mat4 view_mat = viewport_camera_comp.GenerateViewMat4(viewport_transform_comp.Position, viewport_transform_comp.Direction);
                     glm::mat4 proj_mat = viewport_camera_comp.GenerateProjMat4();
 
-                    auto& transform_comp = scene->Get<Arcadia::TransformComponent>(_SelectedEntityName);
+                    auto& transform_comp = scene->Get<TransformComponent>(_SelectedEntityName);
                     glm::mat4 transform_mat = transform_comp.GenerateTransformMatrix();
                     ImGuizmo::Manipulate(
                         glm::value_ptr(view_mat),
@@ -285,17 +285,17 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
                         std::string description{};
                         switch(_GizmoOption)
                         {
-                            case Arcadia::ImguiWindowViewport::GizmoOption::Translation:
+                            case ImguiWindowViewport::GizmoOption::Translation:
                             {
                                 description = "Translation";
                                 break;
                             }
-                            case Arcadia::ImguiWindowViewport::GizmoOption::Rotation:
+                            case ImguiWindowViewport::GizmoOption::Rotation:
                             {
                                 description = "Rotation";
                                 break;
                             }
-                            case Arcadia::ImguiWindowViewport::GizmoOption::Scale:
+                            case ImguiWindowViewport::GizmoOption::Scale:
                             {
                                 description = "Scale";
                                 break;
@@ -305,12 +305,12 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
                         }
                         if(!description.empty())
                         {
-                            Arcadia::MementoList::Instance()
-                                .Snapshot<Arcadia::TransformComponent>(
+                            MementoList::Instance()
+                                .Snapshot<TransformComponent>(
                                     std::format("{} - {}", "Transform"s, description),
-                                    [_scene = scene, _entity_name = _SelectedEntityName]() -> Arcadia::TransformComponent&
+                                    [_scene = scene, _entity_name = _SelectedEntityName]() -> TransformComponent&
                             {
-                                return _scene->Get<Arcadia::TransformComponent>(_entity_name);
+                                return _scene->Get<TransformComponent>(_entity_name);
                             }
                             );
                         }
@@ -322,13 +322,13 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
     ImGui::End();
 }
 
-void Arcadia::ImguiWindowViewport::_OnInputCursorMove(Arcadia::Event::InputCursorMove& e)
+void ImguiWindowViewport::_OnInputCursorMove(Event::InputCursorMove& e)
 {
     const auto& [wnd_ptr, cursor_move] = e.data_tuple;
     _CursorMove = cursor_move;
 }
 
-void Arcadia::ImguiWindowViewport::_OnOpenImguiWindow(Arcadia::Event::OpenImguiWindow& e)
+void ImguiWindowViewport::_OnOpenImguiWindow(Event::OpenImguiWindow& e)
 {
     const auto& [id_str] = e.data_tuple;
     if(id_str == GetIdStr())
@@ -337,44 +337,44 @@ void Arcadia::ImguiWindowViewport::_OnOpenImguiWindow(Arcadia::Event::OpenImguiW
     }
 }
 
-void Arcadia::ImguiWindowViewport::_OnProjectBuilt(Arcadia::Event::ProjectBuilt& e)
+void ImguiWindowViewport::_OnProjectBuilt(Event::ProjectBuilt& e)
 {
     const auto& [project] = e.data_tuple;
     _Project = project;
 }
 
-void Arcadia::ImguiWindowViewport::_OnProjectUnbuilt(Arcadia::Event::ProjectUnbuilt& e)
+void ImguiWindowViewport::_OnProjectUnbuilt(Event::ProjectUnbuilt& e)
 {
     _Project.reset();
 }
 
-void Arcadia::ImguiWindowViewport::_OnSceneActivated(Arcadia::Event::SceneActivated& e)
+void ImguiWindowViewport::_OnSceneActivated(Event::SceneActivated& e)
 {
     const auto& [scene] = e.data_tuple;
     if(!scene->Contains(ViewportCameraEntityName))
     {
         auto& entity_info = scene->Create(ViewportCameraEntityName, "camera");
         entity_info.Internal = true;
-        scene->Emplace<Arcadia::CameraComponent>(ViewportCameraEntityName);
-        auto& transform_comp = scene->Emplace<Arcadia::TransformComponent>(ViewportCameraEntityName);
+        scene->Emplace<CameraComponent>(ViewportCameraEntityName);
+        auto& transform_comp = scene->Emplace<TransformComponent>(ViewportCameraEntityName);
         transform_comp.Position = glm::vec3{ 1.f,1.f,1.f };
         transform_comp.Direction = -transform_comp.Position;
     }
     _Scene = scene;
 }
 
-void Arcadia::ImguiWindowViewport::_OnSceneDeactivated(Arcadia::Event::SceneDeactivated& e)
+void ImguiWindowViewport::_OnSceneDeactivated(Event::SceneDeactivated& e)
 {
     _Scene.reset();
 }
 
-void Arcadia::ImguiWindowViewport::_OnSelectEntity(Arcadia::Event::SelectEntity& e)
+void ImguiWindowViewport::_OnSelectEntity(Event::SelectEntity& e)
 {
     const auto& [entity_name] = e.data_tuple;
     _SelectedEntityName = entity_name;
 }
 
-void Arcadia::ImguiWindowViewport::_OnRenameEntity(Arcadia::Event::RenameEntity& e)
+void ImguiWindowViewport::_OnRenameEntity(Event::RenameEntity& e)
 {
     const auto& [old_name, new_name] = e.data_tuple;
     if(old_name == _SelectedEntityName)
@@ -383,7 +383,7 @@ void Arcadia::ImguiWindowViewport::_OnRenameEntity(Arcadia::Event::RenameEntity&
     }
 }
 
-void Arcadia::ImguiWindowViewport::_OnDeleteEntity(Arcadia::Event::DeleteEntity& e)
+void ImguiWindowViewport::_OnDeleteEntity(Event::DeleteEntity& e)
 {
     const auto& [entity] = e.data_tuple;
     if(_SelectedEntityName == entity)
@@ -392,29 +392,29 @@ void Arcadia::ImguiWindowViewport::_OnDeleteEntity(Arcadia::Event::DeleteEntity&
     }
 }
 
-void Arcadia::ImguiWindowViewport::_OnRendererBuilt(Arcadia::Event::RendererBuilt& e)
+void ImguiWindowViewport::_OnRendererBuilt(Event::RendererBuilt& e)
 {
     const auto& [renderer] = e.data_tuple;
     _Renderer = renderer;
 }
 
-void Arcadia::ImguiWindowViewport::_OnRendererUnbuilt(Arcadia::Event::RendererUnbuilt& e)
+void ImguiWindowViewport::_OnRendererUnbuilt(Event::RendererUnbuilt& e)
 {
     _Renderer.reset();
 }
 
-void Arcadia::ImguiWindowViewport::_OnPhysicsSimualtorBuilt(Arcadia::Event::PhysicsSimulatorBuilt& e)
+void ImguiWindowViewport::_OnPhysicsSimualtorBuilt(Event::PhysicsSimulatorBuilt& e)
 {
     const auto& [physics_simulator] = e.data_tuple;
     _PhysicsSimulator = physics_simulator;
 }
 
-void Arcadia::ImguiWindowViewport::_OnPhysicsSimulatorUnbuilt(Arcadia::Event::PhysicsSimulatorUnbuilt& e)
+void ImguiWindowViewport::_OnPhysicsSimulatorUnbuilt(Event::PhysicsSimulatorUnbuilt& e)
 {
     _PhysicsSimulator.reset();
 }
 
-void Arcadia::ImguiWindowViewport::_OnShowGizmo(Event::ShowGizmo& e)
+void ImguiWindowViewport::_OnShowGizmo(Event::ShowGizmo& e)
 {
     const auto& [show_gizmo] = e.data_tuple;
     _ShowGizmo = show_gizmo;

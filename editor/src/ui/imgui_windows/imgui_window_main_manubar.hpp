@@ -12,70 +12,67 @@
 #include"project/project.hpp"
 #include"project/project_events.hpp"
 
-namespace Arcadia
+struct ImguiWindowPopupCreateProject
 {
-    struct ImguiWindowPopupCreateProject
-    {
-    public:
-        using self_type = ImguiWindowPopupCreateProject;
-    public:
-        void operator()();
-    public:
-        bool Open{ false };
-    private:
-        std::string _Name{};
-        std::string _FilepathStr{};
-        bool _DisplayEmptyNameWarning{ true };
-    };
+public:
+    using self_type = ImguiWindowPopupCreateProject;
+public:
+    void operator()();
+public:
+    bool Open{ false };
+private:
+    std::string _Name{};
+    std::string _FilepathStr{};
+    bool _DisplayEmptyNameWarning{ true };
+};
 
-    struct ImguiWindowPopupCreateScene
-    {
-    public:
-        using self_type = ImguiWindowPopupCreateScene;
-    public:
-        void operator()(const std::shared_ptr<const Arcadia::Project>& project);
-    public:
-        bool Open{ false };
-    private:
-        std::string _Name{};
-        bool _AsCurrent{ true };
-        bool _NameAvailable{ true };
-    };
+struct ImguiWindowPopupCreateScene
+{
+public:
+    using self_type = ImguiWindowPopupCreateScene;
+public:
+    void operator()(const std::shared_ptr<const Project>& project);
+public:
+    bool Open{ false };
+private:
+    std::string _Name{};
+    bool _AsCurrent{ true };
+    bool _NameAvailable{ true };
+};
 
-    struct ImguiWindowMainMenubar: Arcadia::iImguiWindow
-    {
-    public:
-        using self_type = ImguiWindowMainMenubar;
-    public:
-        ARCADIA_IMGUI_WINDOW_ID_STR_GETTERS("###menubar");
+struct ImguiWindowMainMenubar: iImguiWindow
+{
+public:
+    using self_type = ImguiWindowMainMenubar;
+public:
+    ARCADIA_IMGUI_WINDOW_ID_STR_GETTERS("###menubar");
 
-        inline ImguiWindowMainMenubar(const std::initializer_list<std::tuple<std::string, std::string>>& imgui_window_title_id_pairs):
-            Arcadia::iImguiWindow(true, "Main Menubar"),
-            _ImguiWindowTitleAndIdStrPairs(imgui_window_title_id_pairs)
-        {}
-        virtual ~ImguiWindowMainMenubar() = default;
+    inline ImguiWindowMainMenubar(const std::initializer_list<std::tuple<std::string, std::string>>& imgui_window_title_id_pairs):
+        iImguiWindow(true, "Main Menubar"),
+        _ImguiWindowTitleAndIdStrPairs(imgui_window_title_id_pairs)
+    {}
+    virtual ~ImguiWindowMainMenubar() = default;
 
-        virtual void OnEvent(Arcadia::EventBase& event) override;
-        virtual void OnUpdate() override;
+    virtual void OnEvent(EventBase& event) override;
+    virtual void OnUpdate() override;
 
 
-    private:
-        void _FileMenu();
-        void _EditMenu();
-        void _ViewMenu();
-        void _OptionMenu();
+private:
+    void _FileMenu();
+    void _EditMenu();
+    void _ViewMenu();
+    void _OptionMenu();
 
-        void _OnProjectBuilt(Arcadia::Event::ProjectBuilt& e);
-        void _OnProjectUnbuilt(Arcadia::Event::ProjectUnbuilt& e);
+    void _OnProjectBuilt(Event::ProjectBuilt& e);
+    void _OnProjectUnbuilt(Event::ProjectUnbuilt& e);
 
-    private:
-        Arcadia::ImguiWindowPopupCreateProject _ImguiWindowPopupCreateProject{};
-        Arcadia::ImguiWindowPopupCreateScene _ImguiWindowPopupCreateScene{};
+private:
+    ImguiWindowPopupCreateProject _ImguiWindowPopupCreateProject{};
+    ImguiWindowPopupCreateScene _ImguiWindowPopupCreateScene{};
 
-        std::weak_ptr<const Arcadia::Project> _Project{};
+    std::weak_ptr<const Project> _Project{};
 
-        std::vector<std::tuple<std::string, std::string>> _ImguiWindowTitleAndIdStrPairs{};
+    std::vector<std::tuple<std::string, std::string>> _ImguiWindowTitleAndIdStrPairs{};
 
-        bool _ShowGizmo{ false };
-    };
-}
+    bool _ShowGizmo{ false };
+};

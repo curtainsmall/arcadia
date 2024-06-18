@@ -4,7 +4,7 @@
 
 #include"boost/range/combine.hpp"
 
-auto Arcadia::Texture2d::Cascade(
+auto Texture2d::Cascade(
     const Texture2d& texture2d_1,
     const Texture2d& texture2d_2,
     const std::function<glm::vec4(const glm::vec4&, const glm::vec4&)>& method
@@ -15,7 +15,7 @@ auto Arcadia::Texture2d::Cascade(
         throw IncompatibleTextureSize{ std::format("Size of texture2d 1 is {}x{}, while size of texture2d 2 is {}x{}",texture2d_1.Size.x,texture2d_1.Size.y,texture2d_2.Size.x,texture2d_2.Size.y) };
     }
 
-    Arcadia::Texture2d res{};
+    Texture2d res{};
     res.Size = texture2d_1.Size;
     for(const auto& [pixel_1, pixel_2] : boost::combine(texture2d_1.Pixels, texture2d_2.Pixels))
     {

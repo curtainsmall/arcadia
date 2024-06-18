@@ -6,12 +6,9 @@
 
 #include"core/base.hpp"
 
-namespace Arcadia
+static inline auto ToString(const entt::entity entity) -> std::string
 {
-    static inline auto ToString(const entt::entity entity) -> std::string
-    {
-        return std::to_string(static_cast<entt::id_type>(entity));
-    }
+    return std::to_string(static_cast<entt::id_type>(entity));
 }
 
 namespace std
@@ -22,7 +19,7 @@ namespace std
         auto format(const entt::entity& entity, std::format_context& ctx) const
         {
             return std::formatter<std::string>::format(
-                std::format("{}", Arcadia::ToUnderlying(entity)),
+                std::format("{}", ToUnderlying(entity)),
                 ctx
             );
         }

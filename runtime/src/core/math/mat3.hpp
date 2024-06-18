@@ -3,19 +3,16 @@
 #include"core/base.hpp"
 #include"core/math/glm_header.hpp"
 
-namespace Arcadia
+namespace Mat3
 {
-    namespace Mat3
+    [[nodiscard]]
+    ARCADIA_API constexpr auto Zero() -> glm::mat3
     {
-        [[nodiscard]]
-        ARCADIA_API constexpr auto Zero() -> glm::mat3
-        {
-            return glm::mat3{ .0f };
-        }
-        [[nodiscard]]
-        ARCADIA_API constexpr auto Identity() -> glm::mat3
-        {
-            return glm::mat3{};
-        }
+        return glm::mat3{ .0f };
+    }
+    [[nodiscard]]
+    ARCADIA_API constexpr auto Identity() -> glm::mat3
+    {
+        return glm::mat3{};
     }
 }

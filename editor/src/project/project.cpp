@@ -6,18 +6,18 @@
 #include"resource/components/physics_component.hpp"
 #include"resource/components/transform_component.hpp"
 
-Arcadia::Project::Project(nlohmann::json& json):
+Project::Project(nlohmann::json& json):
     _Name(json.at("name"))
 {
     for(const auto& json_scene : json.at("scenes"))
     {
-        SceneSptrStorage.try_emplace(json_scene.at("name"), std::make_shared<Arcadia::Scene>(json_scene));
+        SceneSptrStorage.try_emplace(json_scene.at("name"), std::make_shared<Scene>(json_scene));
     }
 
     SetActiveScene(json.at("active_scene_name"));
 }
 
-auto Arcadia::Project::ToJson() const -> nlohmann::json
+auto Project::ToJson() const -> nlohmann::json
 {
     nlohmann::json json{
         {"name",GetName()},
@@ -34,48 +34,47 @@ auto Arcadia::Project::ToJson() const -> nlohmann::json
     return json;
 }
 
-auto Arcadia::Project::GetName() const -> const std::string&
+auto Project::GetName() const -> const std::string&
 {
     return _Name;
 }
 
-void Arcadia::Project::SetName(const std::string& name)
+void Project::SetName(const std::string& name)
 {
     _Name = name;
 }
 
-
-auto Arcadia::Project::HasActiveScene() const -> bool
+auto Project::HasActiveScene() const -> bool
 {
     return !!_ActiveScene;
 }
 
-auto Arcadia::Project::GetActiveScene() -> Arcadia::Scene&
+auto Project::GetActiveScene() -> Scene&
 {
     ARCADIA_ASSERT(HasActiveScene());
     // If scene is modified, it will record it internally so we does not need to change _modified here
     return *_ActiveScene;
 }
 
-auto Arcadia::Project::GetActiveScene() const -> const Arcadia::Scene&
+auto Project::GetActiveScene() const -> const Scene&
 {
     ARCADIA_ASSERT(HasActiveScene());
     return *_ActiveScene;
 }
 
-void Arcadia::Project::SetActiveScene(const std::string& name)
+void Project::SetActiveScene(const std::string& name)
 {
     auto is_same_scene = _ActiveScene && name == _ActiveScene->Name;
 
     if(!is_same_scene)
     {
-        Arcadia::MementoList::Instance().Clear();
+        MementoList::Instance().Clear();
 
         if(_ActiveScene)
         {
             _ActiveScene.reset();
-            Arcadia::EventQueue::Instance()
-                .Signal<Arcadia::Event::SceneDeactivated>();
+            EventQueue::Instance()
+                .Signal<Event::SceneDeactivated>();
         }
 
         if(!name.empty() && SceneSptrStorage.find(name) != SceneSptrStorage.end())
@@ -85,31 +84,31 @@ void Arcadia::Project::SetActiveScene(const std::string& name)
             // Snapshot the scene but not put it into memento list
             _SnapshotEntities();
 
-            Arcadia::EventQueue::Instance()
-                .Signal<Arcadia::Event::SceneActivated>(_ActiveScene);
+            EventQueue::Instance()
+                .Signal<Event::SceneActivated>(_ActiveScene);
         }
     }
 }
 
-void Arcadia::Project::_SnapshotEntities()
+void Project::_SnapshotEntities()
 {
-    for(auto [entity, comp] : _ActiveScene->View<Arcadia::CameraComponent>().each())
+    for(auto [entity, comp] : _ActiveScene->View<CameraComponent>().each())
     {
         comp.Snapshot();
     }
-    for(auto [entity, comp] : _ActiveScene->View<Arcadia::LightComponent>().each())
+    for(auto [entity, comp] : _ActiveScene->View<LightComponent>().each())
     {
         comp.Snapshot();
     }
-    for(auto [entity, comp] : _ActiveScene->View<Arcadia::ModelComponent>().each())
+    for(auto [entity, comp] : _ActiveScene->View<ModelComponent>().each())
     {
         comp.Snapshot();
     }
-    for(auto [entity, comp] : _ActiveScene->View<Arcadia::PhysicsComponent>().each())
+    for(auto [entity, comp] : _ActiveScene->View<PhysicsComponent>().each())
     {
         comp.Snapshot();
     }
-    for(auto [entity, comp] : _ActiveScene->View<Arcadia::TransformComponent>().each())
+    for(auto [entity, comp] : _ActiveScene->View<TransformComponent>().each())
     {
         comp.Snapshot();
     }

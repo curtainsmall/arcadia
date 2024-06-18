@@ -2,7 +2,7 @@
 
 #include "gl_framebuffer.hpp"
 
-Arcadia::GlFramebuffer::GlFramebuffer(
+GlFramebuffer::GlFramebuffer(
     const glm::ivec2& viewport_size,
     float near_plane,
     float far_plane
@@ -19,23 +19,23 @@ Arcadia::GlFramebuffer::GlFramebuffer(
 
     if(auto res = IsComplete(); res != GL_FRAMEBUFFER_COMPLETE)
     {
-        throw Arcadia::GlInvalid{ std::format("OpenGL framebuffer incomplete: {}",res) };
+        throw GlInvalid{ std::format("OpenGL framebuffer incomplete: {}",res) };
     }
 }
 
-Arcadia::GlFramebuffer::~GlFramebuffer()
+GlFramebuffer::~GlFramebuffer()
 {
     ARCADIA_GL_CALL(glDeleteFramebuffers(1, &_GlId));
 }
 
-Arcadia::GlFramebuffer::GlFramebuffer(self_type&& rhs) noexcept:
+GlFramebuffer::GlFramebuffer(self_type&& rhs) noexcept:
     _GlTexture2d(std::move(rhs._GlTexture2d))
 {
     _GlId = rhs._GlId;
     rhs._GlId = 0;
 }
 
-auto Arcadia::GlFramebuffer::operator=(self_type&& rhs) noexcept -> self_type&
+auto GlFramebuffer::operator=(self_type&& rhs) noexcept -> self_type&
 {
     _GlTexture2d = std::move(rhs._GlTexture2d);
 
@@ -45,26 +45,26 @@ auto Arcadia::GlFramebuffer::operator=(self_type&& rhs) noexcept -> self_type&
     return *this;
 }
 
-void Arcadia::GlFramebuffer::Bind() const
+void GlFramebuffer::Bind() const
 {
     if(_GlId == 0)
     {
-        throw Arcadia::GlInvalid{ "Cannot bind null OpenGL framebuffer" };
+        throw GlInvalid{ "Cannot bind null OpenGL framebuffer" };
     }
 
     ARCADIA_GL_CALL(glBindFramebuffer(GL_FRAMEBUFFER, _GlId));
 }
 
-void Arcadia::GlFramebuffer::Unbind() const
+void GlFramebuffer::Unbind() const
 {
     ARCADIA_GL_CALL(glBindFramebuffer(GL_FRAMEBUFFER, 0));
 }
 
-auto Arcadia::GlFramebuffer::IsComplete() const -> GLenum
+auto GlFramebuffer::IsComplete() const -> GLenum
 {
     if(_GlId == 0)
     {
-        throw Arcadia::GlInvalid{ "Cannot check completeness of null OpenGL framebuffer" };
+        throw GlInvalid{ "Cannot check completeness of null OpenGL framebuffer" };
     }
 
     Bind();

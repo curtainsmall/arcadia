@@ -8,28 +8,28 @@
 #include"core/base.hpp"
 #include"core/layer/layer.hpp"
 
-extern auto CreateApplication() -> std::unique_ptr<Arcadia::iAppLayer>;
+extern auto CreateApplication() -> std::unique_ptr<iAppLayer>;
 
 auto main() -> int
 {
     // Add app_layer
-    auto& layer_stack = Arcadia::LayerStack::Instance();
-    layer_stack.PushLayer<Arcadia::iAppLayer>(layer_stack.end(), std::shared_ptr<Arcadia::iAppLayer>(Arcadia::CreateApplication()));
+    auto& layer_stack = LayerStack::Instance();
+    layer_stack.PushLayer<iAppLayer>(layer_stack.end(), std::shared_ptr<iAppLayer>(CreateApplication()));
 
     // Main loop
-    auto& app_context = Arcadia::AppContext::Instance();
+    auto& app_context = AppContext::Instance();
     while(app_context.Running)
     {
         app_context.DeltaTime = app_context.Timer.SinceLast();
 
         // Process event 
-        auto& event_queue = Arcadia::EventQueue::Instance();
+        auto& event_queue = EventQueue::Instance();
         event_queue.SwapQueue();
         while(event_queue.Size())
         {
             auto& event = event_queue.Read();
 
-            for(auto& layer : Arcadia::LayerStack::Instance())
+            for(auto& layer : LayerStack::Instance())
             {
                 layer->OnEvent(event);
                 if(event.Handled)
@@ -42,7 +42,7 @@ auto main() -> int
         }
 
         // Updates
-        for(auto& layer : std::ranges::reverse_view{ Arcadia::LayerStack::Instance() })
+        for(auto& layer : std::ranges::reverse_view{ LayerStack::Instance() })
         {
             layer->OnUpdate();
         }

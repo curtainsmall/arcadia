@@ -5,70 +5,67 @@
 
 struct GLFWmonitor;
 
-namespace Arcadia
+struct WindowLayer;
+
+enum struct WindowSizeState
 {
-    struct WindowLayer;
+    Minimized = -1,
+    Restored = 0,
+    Maxmized = 1,
+};
 
-    enum struct WindowSizeState: std::int8_t
-    {
-        Minimized = -1,
-        Restored = 0,
-        Maxmized = 1,
-    };
+enum struct WindowInputModeCursor
+{
+    Normal,
+    Hidden,
+    Disabled,
+    Captured,
+};
 
-    enum struct WindowInputModeCursor: std::uint8_t
-    {
-        Normal,
-        Hidden,
-        Disabled,
-        Captured,
-    };
+namespace Event
+{
+    //==== Notifications ====//
 
-    namespace Event
-    {
-        //==== Notifications ====//
+    ARCADIA_EVENT(
+        WindowShouldClose,
+        WindowLayer* // Window to close
+    );
+    ARCADIA_EVENT(
+        WindowCloseCanceled,
+        WindowLayer* // Window to cancel close
+    );
 
-        ARCADIA_EVENT(
-            WindowShouldClose,
-            Arcadia::WindowLayer* // Window to close
-        );
-        ARCADIA_EVENT(
-            WindowCloseCanceled,
-            Arcadia::WindowLayer* // Window to cancel close
-        );
+    ARCADIA_EVENT(
+        WindowSize,
+        WindowLayer*,
+        glm::ivec2 // New size
+    );
+    ARCADIA_EVENT(
+        WindowPos,
+        WindowLayer*,
+        glm::ivec2 // New position
+    );
+    ARCADIA_EVENT(
+        WindowSizeState,
+        WindowLayer*,
+        ::WindowSizeState // New state
+    );
+    ARCADIA_EVENT(
+        WindowFocus,
+        WindowLayer*,
+        bool
+    );
 
-        ARCADIA_EVENT(
-            WindowSize,
-            Arcadia::WindowLayer*,
-            glm::ivec2 // New size
-        );
-        ARCADIA_EVENT(
-            WindowPos,
-            Arcadia::WindowLayer*,
-            glm::ivec2 // New position
-        );
-        ARCADIA_EVENT(
-            WindowSizeState,
-            Arcadia::WindowLayer*,
-            Arcadia::WindowSizeState // New state
-        );
-        ARCADIA_EVENT(
-            WindowFocus,
-            Arcadia::WindowLayer*,
-            bool
-        );
+    ARCADIA_EVENT(
+        MonitorConnection,
+        GLFWmonitor*, // TODO: Use custom monitor type
+        bool // Whether the monitor is connected or not
+    );
 
-        ARCADIA_EVENT(
-            MonitorConnection,
-            GLFWmonitor*, // TODO: Use custom monitor type
-            bool // Whether the monitor is connected or not
-        );
+    //==== Adjustments ====//
 
-        //==== Adjustments ====//
-
-        ARCADIA_EVENT(
-            WindowSetInputModeCursor,
-            Arcadia::WindowInputModeCursor
-        );
-    }
+    ARCADIA_EVENT(
+        WindowSetInputModeCursor,
+        WindowInputModeCursor
+    );
 }

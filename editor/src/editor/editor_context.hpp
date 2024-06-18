@@ -8,20 +8,17 @@
 
 #include"project/project_layer.hpp"
 
-namespace Arcadia
+struct EditorContext
 {
-    struct EditorContext
-    {
-    public:
-        using self_type = EditorContext;
-    public:
-        static auto Instance() -> self_type&;
+public:
+    using self_type = EditorContext;
+public:
+    static auto Instance() -> self_type&;
 
-    public:
-        std::weak_ptr<Arcadia::WindowLayer> MainWindowLayer{};
-        std::weak_ptr<Arcadia::ImguiLayer> MainImguiLayer{};
-        std::weak_ptr<Arcadia::ProjectLayer> MainProjectLayer{};
+public:
+    std::weak_ptr<WindowLayer> MainWindowLayer{};
+    std::weak_ptr<ImguiLayer> MainImguiLayer{};
+    std::weak_ptr<ProjectLayer> MainProjectLayer{};
 
-        bool InPlayMode{ false };
-    };
-}
+    bool InPlayMode{ false };
+};

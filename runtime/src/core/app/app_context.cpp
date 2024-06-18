@@ -6,20 +6,20 @@
 #   include"core/event/event.hpp"
 #endif
 
-auto Arcadia::AppContext::Instance() -> self_type&
+auto AppContext::Instance() -> self_type&
 {
     static self_type app_context{};
     return app_context;
 }
 
-Arcadia::AppContext::AppContext()
+AppContext::AppContext()
 {
 #ifdef ARCADIA_IN_DEBUG
-    auto& set = Arcadia::EventQueue::Instance()
+    auto& set = EventQueue::Instance()
         .DebugExcludedEventTypes;
-    set.emplace(typeid(Arcadia::Event::InputCursorPos));
-    set.emplace(typeid(Arcadia::Event::InputCursorMove));
-    set.emplace(typeid(Arcadia::Event::WindowPos));
+    set.emplace(typeid(Event::InputCursorPos));
+    set.emplace(typeid(Event::InputCursorMove));
+    set.emplace(typeid(Event::WindowPos));
 
 #endif // ARCADIA_IN_DEBUG
 

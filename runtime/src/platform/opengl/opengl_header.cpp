@@ -4,7 +4,7 @@
 
 #include"core/log/log.hpp"
 
-ARCADIA_API void Arcadia::GlCheckError(const char* fn_name, const char* file_name, int line)
+ARCADIA_API void GlCheckError(const char* fn_name, const char* file_name, int line)
 {
     while(GLenum error = glGetError())
     {
@@ -52,13 +52,13 @@ ARCADIA_API void Arcadia::GlCheckError(const char* fn_name, const char* file_nam
                 break;
             }
         }
-        Arcadia::Log::Error(std::format("OpenGL ERROR CODE: {0} in {1} at {2}: {3}", err_des, std::string(fn_name), std::string(file_name), std::to_string(line)));
-        Arcadia::Log::Flush();
+        Log::Error(std::format("OpenGL ERROR CODE: {0} in {1} at {2}: {3}", err_des, std::string(fn_name), std::string(file_name), std::to_string(line)));
+        Log::Flush();
         //ASSERT_STATIC(false);
     }
 }
 
-ARCADIA_API auto Arcadia::GetGlTypeSize(GLenum Type) -> std::size_t
+ARCADIA_API auto GetGlTypeSize(GLenum Type) -> std::size_t
 {
     switch(Type)
     {
@@ -73,7 +73,7 @@ ARCADIA_API auto Arcadia::GetGlTypeSize(GLenum Type) -> std::size_t
     }
 }
 
-ARCADIA_API auto Arcadia::SetGlVersion() -> Arcadia::Version
+ARCADIA_API auto SetGlVersion() -> Version
 {
     int
         major{ 0 },
@@ -81,7 +81,7 @@ ARCADIA_API auto Arcadia::SetGlVersion() -> Arcadia::Version
     ARCADIA_GL_CALL(glGetIntegerv(GL_MAJOR_VERSION, &major));
     ARCADIA_GL_CALL(glGetIntegerv(GL_MINOR_VERSION, &minor));
 
-    Arcadia::Version version{};
+    Version version{};
 
     version.Major = major;
     version.Minor = minor;
@@ -89,7 +89,7 @@ ARCADIA_API auto Arcadia::SetGlVersion() -> Arcadia::Version
     return version;
 }
 
-void GLAPIENTRY Arcadia::GlDebugCallback(
+void GLAPIENTRY GlDebugCallback(
     GLenum source,
     GLenum Type,
     GLuint id,
@@ -173,33 +173,33 @@ void GLAPIENTRY Arcadia::GlDebugCallback(
             break;
     }
 
-    Arcadia::Log::Error(std::format("GL callback\nSource: {0}\nType: {1}\nSeverity: {2}\nMessage: {3}", source_str, type_str, severity_str, message));
-    Arcadia::Log::Flush();
+    Log::Error(std::format("GL callback\nSource: {0}\nType: {1}\nSeverity: {2}\nMessage: {3}", source_str, type_str, severity_str, message));
+    Log::Flush();
 }
 
-ARCADIA_API auto Arcadia::GetGlMaxCombinedTextureImageUnitsCount() -> GLint
+ARCADIA_API auto GetGlMaxCombinedTextureImageUnitsCount() -> GLint
 {
     GLint res{ 0 };
     ARCADIA_GL_CALL(glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &res));
     return res;
 }
 
-ARCADIA_API auto Arcadia::GetGlMaxTextureImageUnitsCount() -> GLint
+ARCADIA_API auto GetGlMaxTextureImageUnitsCount() -> GLint
 {
     GLint res{ 0 };
     ARCADIA_GL_CALL(glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &res));
     return res;
 }
 
-Arcadia::OpenglContext::OpenglContext()
+OpenglContext::OpenglContext()
 {
     auto error = glewInit();
     if(error != GLEW_OK)
     {
-        throw Arcadia::GlError{ reinterpret_cast<const char*>(glewGetErrorString(error)) };
+        throw GlError{ reinterpret_cast<const char*>(glewGetErrorString(error)) };
     }
     ARCADIA_GL_CALL(auto gl_version_str = glGetString(GL_VERSION));
-    Arcadia::Log::Info(std::format("OpenGL Version: {}", reinterpret_cast<const char*>(gl_version_str)));
+    Log::Info(std::format("OpenGL Version: {}", reinterpret_cast<const char*>(gl_version_str)));
 
 #if ARCADIA_GL_USE_DEBUG_CALLBACK
     if(arcadia::get_gl_version() >= arcadia::version{ 4,6,0 })
@@ -209,5 +209,5 @@ Arcadia::OpenglContext::OpenglContext()
     }
 #endif
 
-    Arcadia::Log::Flush();
+    Log::Flush();
 }

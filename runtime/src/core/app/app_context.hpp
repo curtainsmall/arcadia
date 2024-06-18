@@ -6,20 +6,17 @@
 #   include"function/input/input_events.hpp"
 #endif
 
-namespace Arcadia
+struct AppContext
 {
-    struct AppContext
-    {
-    public:
-        using self_type = AppContext;
-    public:
-        static auto Instance() -> self_type&;
+public:
+    using self_type = AppContext;
+public:
+    static auto Instance() -> self_type&;
 
-        AppContext();
+    AppContext();
 
-    public:
-        bool Running{ false };
-        Arcadia::Timer Timer{};
-        Arcadia::Timer::duration_type DeltaTime{};
-    };
-}
+public:
+    bool Running{ false };
+    Timer Timer{};
+    Timer::duration_type DeltaTime{};
+};

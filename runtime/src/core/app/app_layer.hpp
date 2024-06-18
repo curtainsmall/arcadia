@@ -8,20 +8,17 @@
 
 auto main() -> int;
 
-namespace Arcadia
+struct iAppLayer: iLayer
 {
-    struct iAppLayer: Arcadia::iLayer
-    {
-        friend auto ::main() -> int;
-    public:
-        using self_type = Arcadia::iAppLayer;
-    public:
-        iAppLayer();
-        virtual ~iAppLayer();
+    friend auto ::main() -> int;
+public:
+    using self_type = iAppLayer;
+public:
+    iAppLayer();
+    virtual ~iAppLayer();
 
-        virtual void OnEvent(Arcadia::EventBase&) override = 0;
-        virtual void OnUpdate() override = 0;
-    };
+    virtual void OnEvent(EventBase&) override = 0;
+    virtual void OnUpdate() override = 0;
+};
 
-    ARCADIA_API auto CreateApplication() -> std::unique_ptr<Arcadia::iAppLayer>;
-}
+ARCADIA_API auto CreateApplication() -> std::unique_ptr<iAppLayer>;

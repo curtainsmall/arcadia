@@ -8,27 +8,24 @@
 #include"project/project_events.hpp"
 #include"ui/imgui_window.hpp"
 
-namespace Arcadia
+struct ImguiWindowMainToolbar: iImguiWindow
 {
-    struct ImguiWindowMainToolbar: Arcadia::iImguiWindow
-    {
-    public:
-        using self_type = ImguiWindowMainToolbar;
-    public:
-        ARCADIA_IMGUI_WINDOW_ID_STR_GETTERS("###toolbar");
-    public:
-        inline ImguiWindowMainToolbar():
-            Arcadia::iImguiWindow(true, "Toolbar")
-        {}
-        virtual ~ImguiWindowMainToolbar() = default;
+public:
+    using self_type = ImguiWindowMainToolbar;
+public:
+    ARCADIA_IMGUI_WINDOW_ID_STR_GETTERS("###toolbar");
+public:
+    inline ImguiWindowMainToolbar():
+        iImguiWindow(true, "Toolbar")
+    {}
+    virtual ~ImguiWindowMainToolbar() = default;
 
-        virtual void OnEvent(Arcadia::EventBase& event) override;
-        virtual void OnUpdate() override;
+    virtual void OnEvent(EventBase& event) override;
+    virtual void OnUpdate() override;
 
-    private:
-        void _OnSceneActivated(Arcadia::Event::SceneActivated& e);
-        void _OnSceneDeactivated(Arcadia::Event::SceneDeactivated& e);
-    private:
-        std::weak_ptr<Arcadia::Scene> _Scene{};
-    };
-}
+private:
+    void _OnSceneActivated(Event::SceneActivated& e);
+    void _OnSceneDeactivated(Event::SceneDeactivated& e);
+private:
+    std::weak_ptr<Scene> _Scene{};
+};

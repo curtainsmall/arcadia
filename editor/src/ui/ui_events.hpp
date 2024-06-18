@@ -5,118 +5,115 @@
 
 #include"core/event/event.hpp"
 
-namespace Arcadia
+namespace Event
 {
-    namespace Event
-    {
-        //==== Events for imgui window ====//
-        ARCADIA_EVENT(
-            OpenImguiWindow,
-            std::string // Title of the imgui window to open
-        );
+    //==== Events for imgui window ====//
+    ARCADIA_EVENT(
+        OpenImguiWindow,
+        std::string // Title of the imgui window to open
+    );
 
-        //==== Events for project ====//
+    //==== Events for project ====//
 
-        ARCADIA_EVENT(
-            NewProject
-        );
-        ARCADIA_EVENT(
-            CreateProject,
-            std::string, // name
-            std::string  // filepath
-        );
-        ARCADIA_EVENT(
-            OpenProject
-        );
-        ARCADIA_EVENT(
-            SaveProject
-        );
-        ARCADIA_EVENT(
-            SaveProjectAs
-        );
-        ARCADIA_EVENT(
-            CloseProject
-        );
+    ARCADIA_EVENT(
+        NewProject
+    );
+    ARCADIA_EVENT(
+        CreateProject,
+        std::string, // name
+        std::string  // filepath
+    );
+    ARCADIA_EVENT(
+        OpenProject
+    );
+    ARCADIA_EVENT(
+        SaveProject
+    );
+    ARCADIA_EVENT(
+        SaveProjectAs
+    );
+    ARCADIA_EVENT(
+        CloseProject
+    );
 
-        //==== Events for physics simulator ====//
+    //==== Events for physics simulator ====//
 
-        ARCADIA_EVENT(
-            PhysicsSimulatorShouldUpdate,
-            bool
-        );
+    ARCADIA_EVENT(
+        PhysicsSimulatorShouldUpdate,
+        bool
+    );
 
-        //==== Events for scene ====//
+    //==== Events for scene ====//
 
-        ARCADIA_EVENT(
-            NewScene
-        );
-        ARCADIA_EVENT(
-            CreateScene,
-            std::string, // name
-            bool        // as_current
-        );
-        ARCADIA_EVENT(
-            SelectScene,
-            std::string // name
-        );
-        ARCADIA_EVENT(
-            CloseScene
-        );
-        ARCADIA_EVENT(
-            DeleteScene
-        );
+    ARCADIA_EVENT(
+        NewScene
+    );
+    ARCADIA_EVENT(
+        CreateScene,
+        std::string, // name
+        bool        // as_current
+    );
+    ARCADIA_EVENT(
+        SelectScene,
+        std::string // name
+    );
+    ARCADIA_EVENT(
+        CloseScene
+    );
+    ARCADIA_EVENT(
+        DeleteScene
+    );
 
-        //==== Events for entity ====//
+    //==== Events for entity ====//
 
-        ARCADIA_EVENT(
-            NewEntity,
-            std::string // type
-        );
-        ARCADIA_EVENT(
-            SelectEntity,
-            std::string // entity name
-        );
-        ARCADIA_EVENT(
-            RenameEntity,
-            std::string, // old name
-            std::string  // new name
-        );
-        ARCADIA_EVENT(
-            DeleteEntity,
-            std::string // entity name
-        );
+    ARCADIA_EVENT(
+        NewEntity,
+        std::string // type
+    );
+    ARCADIA_EVENT(
+        SelectEntity,
+        std::string // entity name
+    );
+    ARCADIA_EVENT(
+        RenameEntity,
+        std::string, // old name
+        std::string  // new name
+    );
+    ARCADIA_EVENT(
+        DeleteEntity,
+        std::string // entity name
+    );
 
-        //==== Events for component ====//
+    //==== Events for component ====//
 
-        ARCADIA_EVENT(
-            AddComponent,
-            std::string, // entity name
-            std::string // type_str
-        );
-        ARCADIA_EVENT(
-            RemoveComponent,
-            std::string, // entity name
-            std::string // type_str
-        );
+    ARCADIA_EVENT(
+        AddComponent,
+        std::string, // entity name
+        std::string // type_str
+    );
+    ARCADIA_EVENT(
+        RemoveComponent,
+        std::string, // entity name
+        std::string // type_str
+    );
 
-        //==== Events for physics component ====//
+    //==== Events for physics component ====//
 
-        ARCADIA_EVENT(
-            PhysicsComponentNewBody
-        );
+    ARCADIA_EVENT(
+        PhysicsComponentNewBody
+    );
 
-        //==== Events for modes ====//
+    //==== Events for modes ====//
 
-        ARCADIA_EVENT(
-            PlayMode,
-            bool
-        );
+    ARCADIA_EVENT(
+        PlayMode,
+        bool
+    );
 
-        //==== Events for viewport ====//
+    //==== Events for viewport ====//
 
-        ARCADIA_EVENT(
-            ShowGizmo,
-            bool
-        );
-    }
+    ARCADIA_EVENT(
+        ShowGizmo,
+        bool
+    );
 }

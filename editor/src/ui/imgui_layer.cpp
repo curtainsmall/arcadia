@@ -8,12 +8,12 @@
 #include"editor/editor_context.hpp"
 #include"ui/imgui_backend.hpp"
 
-Arcadia::ImguiLayer::ImguiLayer(
-    const std::shared_ptr<const Arcadia::WindowLayer>& window_layer,
-    const std::function<void(Arcadia::ImguiLayer&)>& imgui_window_installer,
+ImguiLayer::ImguiLayer(
+    const std::shared_ptr<const WindowLayer>& window_layer,
+    const std::function<void(ImguiLayer&)>& imgui_window_installer,
     const std::function<void()>& imgui_style_setter
 ):
-    Arcadia::iLayer("imgui"),
+    iLayer("imgui"),
     _Window(window_layer)
 {
     _ImguiContext = ImGui::CreateContext();
@@ -29,44 +29,44 @@ Arcadia::ImguiLayer::ImguiLayer(
     ImFontConfig imgui_font_config{};
     imgui_font_config.MergeMode = true;
     static const std::array<ImWchar, 3> imgui_icon_ranges{ ICON_MIN_FA, ICON_MAX_FA,0 };
-    io.Fonts->AddFontFromFileTTF(Arcadia::FontFilepathStr.c_str(), Arcadia::FontSize, &imgui_font_config, imgui_icon_ranges.data());
-    Arcadia::ImguiBackend::Initialize(*_Window.lock());
+    io.Fonts->AddFontFromFileTTF(FontFilepathStr.c_str(), FontSize, &imgui_font_config, imgui_icon_ranges.data());
+    ImguiBackend::Initialize(*_Window.lock());
 
     imgui_style_setter();
     imgui_window_installer(*this);
 }
 
-Arcadia::ImguiLayer::~ImguiLayer()
+ImguiLayer::~ImguiLayer()
 {
     if(_ImguiContext)
     {
-        Arcadia::ImguiBackend::Shutdown(*_Window.lock());
+        ImguiBackend::Shutdown(*_Window.lock());
         ImGui::DestroyContext(_ImguiContext);
     }
 }
 
-void Arcadia::ImguiLayer::OnEvent(Arcadia::EventBase& event)
+void ImguiLayer::OnEvent(EventBase& event)
 {
     // We do not dispatch events to ImGui when the editor is in play mode
-    if(Arcadia::EditorContext::Instance().InPlayMode)
+    if(EditorContext::Instance().InPlayMode)
     {
         return;
     }
 
-    Arcadia::ImguiBackend::ImguiOnEvent(event);
+    ImguiBackend::ImguiOnEvent(event);
     for(auto& imgui_window : _ImguiWindow)
     {
         imgui_window->OnEvent(event);
     }
 }
 
-void Arcadia::ImguiLayer::OnUpdate()
+void ImguiLayer::OnUpdate()
 {
     auto window = _Window.lock();
 
     ImGui::SetCurrentContext(_ImguiContext);
 
-    Arcadia::ImguiBackend::NewFrame(*window);
+    ImguiBackend::NewFrame(*window);
     ImGui::NewFrame();
     ImGuizmo::BeginFrame();
 
@@ -92,7 +92,7 @@ void Arcadia::ImguiLayer::OnUpdate()
     }
 
     ImGui::Render();
-    Arcadia::ImguiBackend::RenderDrawData(*window);
+    ImguiBackend::RenderDrawData(*window);
 
     if(ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
     {

@@ -11,17 +11,17 @@
 #include"resource/components/skybox_component.hpp"
 #include"resource/components/transform_component.hpp"
 
-Arcadia::GlRenderer::GlRenderer(const std::filesystem::path& gl_shader_folder_path):
-    _GlModelPipeline(gl_shader_folder_path, Arcadia::GetModelShadersBuilder()),
-    _GlSkyboxPipeline(gl_shader_folder_path, Arcadia::GetSkyboxShadersBuilder()),
-    _GlGridPipeline(gl_shader_folder_path, Arcadia::GetGridShadersBuilder()),
-    _GlShapePipeline(gl_shader_folder_path, Arcadia::GetShapeShadersBuilder())
+GlRenderer::GlRenderer(const std::filesystem::path& gl_shader_folder_path):
+    _GlModelPipeline(gl_shader_folder_path, GetModelShadersBuilder()),
+    _GlSkyboxPipeline(gl_shader_folder_path, GetSkyboxShadersBuilder()),
+    _GlGridPipeline(gl_shader_folder_path, GetGridShadersBuilder()),
+    _GlShapePipeline(gl_shader_folder_path, GetShapeShadersBuilder())
 {
     ARCADIA_GL_CALL(glEnable(GL_DEPTH_TEST));
     ARCADIA_GL_CALL(glEnable(GL_CULL_FACE));
 }
 
-void Arcadia::GlRenderer::Prepare()
+void GlRenderer::Prepare()
 {
     _AssertFrameNotInBuild();
     _InBuild = true;
@@ -43,7 +43,7 @@ void Arcadia::GlRenderer::Prepare()
 
 }
 
-void Arcadia::GlRenderer::Finalize()
+void GlRenderer::Finalize()
 {
     _AssertFrameInBuild();
     _InBuild = false;
@@ -73,13 +73,13 @@ void Arcadia::GlRenderer::Finalize()
     }
 }
 
-void Arcadia::GlRenderer::Submit(const Arcadia::Scene& scene, const std::string& name)
+void GlRenderer::Submit(const Scene& scene, const std::string& name)
 {
     _AssertFrameInBuild();
 
     const auto& entity_info = scene.GetEntityInfo(name);
 
-    Arcadia::Match<void>(
+    Match<void>(
         entity_info.Type,
         [&]()
     {
@@ -88,10 +88,10 @@ void Arcadia::GlRenderer::Submit(const Arcadia::Scene& scene, const std::string&
         "camera"s,
         [&]()
     {
-        const auto& [camera_comp, transform_comp] = scene.Get<Arcadia::CameraComponent, Arcadia::TransformComponent>(name);
+        const auto& [camera_comp, transform_comp] = scene.Get<CameraComponent, TransformComponent>(name);
 
         _GlRenderUnitCameras.emplace_back(
-            Arcadia::GlFramebuffer{
+            GlFramebuffer{
                 camera_comp.ViewportSize,
                 camera_comp.NearPlane,
                 camera_comp.FarPlane
@@ -108,13 +108,13 @@ void Arcadia::GlRenderer::Submit(const Arcadia::Scene& scene, const std::string&
         "light"s,
         [&]()
     {
-        const auto& [light_comp, transform_comp] = scene.Get<Arcadia::LightComponent, Arcadia::TransformComponent>(name);
+        const auto& [light_comp, transform_comp] = scene.Get<LightComponent, TransformComponent>(name);
         _GlRenderUnitLights.emplace_back(transform_comp.Position, transform_comp.Direction, light_comp.Light);
     },
         "actor"s,
         [&]()
     {
-        const auto [model_comp, transform_comp, physics_comp] = scene.Get<Arcadia::ModelComponent, Arcadia::TransformComponent, Arcadia::PhysicsComponent>(name);
+        const auto [model_comp, transform_comp, physics_comp] = scene.Get<ModelComponent, TransformComponent, PhysicsComponent>(name);
 
         if(model_comp.HasIdentifiableMeshes())
         {
@@ -125,12 +125,12 @@ void Arcadia::GlRenderer::Submit(const Arcadia::Scene& scene, const std::string&
             if(!_GlRenderUnitMeshStorage.contains(uuid))
             {
 
-                std::vector<Arcadia::GlRenderUnitMesh> gl_meshes{};
+                std::vector<GlRenderUnitMesh> gl_meshes{};
                 for(const auto& mesh : meshes)
                 {
                     // For any uuid, its corresponding meshes must be the same
                     gl_meshes.emplace_back(
-                        Arcadia::GlVertexArray{ mesh.Vertices, mesh.Indices },
+                        GlVertexArray{ mesh.Vertices, mesh.Indices },
                         transform_mat,
                         mesh.Material.AmbientTexture2d,
                         mesh.Material.DiffuseTexture2d,
@@ -156,28 +156,28 @@ void Arcadia::GlRenderer::Submit(const Arcadia::Scene& scene, const std::string&
             if(!_GlRenderUnitPhysicsBodyShapeStorage.contains(uuid))
             {
                 const auto& shape_info = jph_body.JphShapeInfo;
-                const auto& shape_mesh = Arcadia::Match<Arcadia::Mesh>(
+                const auto& shape_mesh = Match<Mesh>(
                     shape_info,
-                    [&](const Arcadia::JphBoxShapeInfo& info)
+                    [&](const JphBoxShapeInfo& info)
                 {
-                    return Arcadia::Mesh::Box(info.HalfExtent);
+                    return Mesh::Box(info.HalfExtent);
                 },
-                    [&](const Arcadia::JphCapsuleShapeInfo& info)
+                    [&](const JphCapsuleShapeInfo& info)
                 {
-                    return Arcadia::Mesh::Capsule(info.Radius, info.HalfHeightOfCylinder);
+                    return Mesh::Capsule(info.Radius, info.HalfHeightOfCylinder);
                 },
-                    [&](const Arcadia::JphCylinderShapeInfo& info)
+                    [&](const JphCylinderShapeInfo& info)
                 {
-                    return Arcadia::Mesh::Cylinder(info.HalfHeight, info.Radius);
+                    return Mesh::Cylinder(info.HalfHeight, info.Radius);
                 },
-                    [&](const Arcadia::JphSphereShapeInfo& info)
+                    [&](const JphSphereShapeInfo& info)
                 {
-                    return Arcadia::Mesh::Sphere(info.Radius);
+                    return Mesh::Sphere(info.Radius);
                 }
                 );
 
                 _GlRenderUnitPhysicsBodyShapeStorage.try_emplace(
-                    uuid, Arcadia::GlVertexArray{ shape_mesh.Vertices,shape_mesh.Indices },
+                    uuid, GlVertexArray{ shape_mesh.Vertices,shape_mesh.Indices },
                     glm::mat4{},
                     glm::vec3{}
                 );
@@ -196,7 +196,7 @@ void Arcadia::GlRenderer::Submit(const Arcadia::Scene& scene, const std::string&
     );
 }
 
-void Arcadia::GlRenderer::Draw()
+void GlRenderer::Draw()
 {
     _AssertFrameNotInBuild();
 
@@ -230,17 +230,17 @@ void Arcadia::GlRenderer::Draw()
         // Draw grid
         if(should_display_grid)
         {
-            std::vector<Arcadia::Vertex> grid_vertices{
-                   Arcadia::Vertex{ glm::vec3{-1,1,0} },
-                    Arcadia::Vertex{ glm::vec3{-1,-1,0} },
-                    Arcadia::Vertex{ glm::vec3{1,-1,0} },
-                    Arcadia::Vertex{ glm::vec3{1,1,0} }
+            std::vector<Vertex> grid_vertices{
+                   Vertex{ glm::vec3{-1,1,0} },
+                    Vertex{ glm::vec3{-1,-1,0} },
+                    Vertex{ glm::vec3{1,-1,0} },
+                    Vertex{ glm::vec3{1,1,0} }
             };
-            std::vector<Arcadia::Mesh::index_type> grid_indices{
+            std::vector<Mesh::index_type> grid_indices{
                 0,1,2,
                 2,3,0
             };
-            Arcadia::GlVertexArray gl_grid_vertex_array{ grid_vertices, grid_indices };
+            GlVertexArray gl_grid_vertex_array{ grid_vertices, grid_indices };
 
             _DrawGrid(
                 gl_grid_vertex_array,
@@ -255,10 +255,10 @@ void Arcadia::GlRenderer::Draw()
         const GLsizeiptr light_t_size{ 128 };
         const int max_light_count = 32;
         const int light_count_size_aligned = 16; // Sizeof `u_light_count` in fragment shader with alignment considered
-        Arcadia::GlUniformBuffer GlUniformBuffer{ light_count_size_aligned + light_t_size * max_light_count };
+        GlUniformBuffer GlUniformBuffer{ light_count_size_aligned + light_t_size * max_light_count };
 
-        auto light_box_shape = Arcadia::Mesh::Box(glm::vec3{ 1,1,1 });
-        Arcadia::GlVertexArray gl_light_box_shape_vertex_array{ light_box_shape.Vertices ,light_box_shape.Indices };
+        auto light_box_shape = Mesh::Box(glm::vec3{ 1,1,1 });
+        GlVertexArray gl_light_box_shape_vertex_array{ light_box_shape.Vertices ,light_box_shape.Indices };
 
         _DrawLights(
             light_t_size,
@@ -296,7 +296,7 @@ void Arcadia::GlRenderer::Draw()
 
 }
 
-void Arcadia::GlRenderer::Reset()
+void GlRenderer::Reset()
 {
     _GlRenderUnitCameras.clear();
     _GlRenderUnitLights.clear();
@@ -305,23 +305,23 @@ void Arcadia::GlRenderer::Reset()
     _optGlRenderUnitSkybox.reset();
 }
 
-auto Arcadia::GlRenderer::GetRenderResultId(std::size_t index) const -> void*
+auto GlRenderer::GetRenderResultId(std::size_t index) const -> void*
 {
     return reinterpret_cast<void*>(std::get<0>(_GlRenderUnitCameras.at(index)).GetGlTexture2d().GetGlId());
 }
 
-void Arcadia::GlRenderer::_AssertFrameInBuild() const
+void GlRenderer::_AssertFrameInBuild() const
 {
     ARCADIA_ASSERT(_InBuild && "Frame is not in build, did you call `prepare()`?");
 }
 
-void Arcadia::GlRenderer::_AssertFrameNotInBuild() const
+void GlRenderer::_AssertFrameNotInBuild() const
 {
     ARCADIA_ASSERT(!_InBuild && "Frame is in build, did you call `finalize()`?");
 }
 
-void Arcadia::GlRenderer::_DrawGrid(
-    const Arcadia::GlVertexArray& gl_grid_vertex_array,
+void GlRenderer::_DrawGrid(
+    const GlVertexArray& gl_grid_vertex_array,
     const glm::mat4& camera_view,
     const glm::mat4& camera_proj,
     float near_plane,
@@ -342,12 +342,12 @@ void Arcadia::GlRenderer::_DrawGrid(
     _GlGridPipeline.Unuse();
 }
 
-void Arcadia::GlRenderer::_DrawLights(
+void GlRenderer::_DrawLights(
     const GLsizeiptr light_t_size,
     const int max_light_count,
     const int light_count_size_aligned,
-    Arcadia::GlUniformBuffer& gl_light_uniform_buffer,
-    const Arcadia::GlVertexArray& gl_light_shape_vertex_array,
+    GlUniformBuffer& gl_light_uniform_buffer,
+    const GlVertexArray& gl_light_shape_vertex_array,
     const glm::mat4& camera_view,
     const glm::mat4& camera_proj
 )
@@ -372,11 +372,11 @@ void Arcadia::GlRenderer::_DrawLights(
             throw too_many_lights{ std::format("The max light count is {}",max_light_count) };
         }
 
-        Arcadia::Match<void>(
+        Match<void>(
             light,
-            [&](const Arcadia::NullLight& light)
+            [&](const NullLight& light)
         {},
-            [&](const Arcadia::SpotLight& light)
+            [&](const SpotLight& light)
         {
             GLintptr base_offfset = light_count_size_aligned + light_count * light_t_size;
             gl_light_uniform_buffer.SubData(base_offfset + 0, sizeof(int), &light_type_spot);
@@ -395,10 +395,10 @@ void Arcadia::GlRenderer::_DrawLights(
             ++light_count;
 
             _GlShapePipeline
-                .SetUniform("u_transform_mat", glm::translate(Arcadia::Mat4::Identity(), position))
+                .SetUniform("u_transform_mat", glm::translate(Mat4::Identity(), position))
                 .SetUniform("u_color", light.Color);
         },
-            [&](const Arcadia::DirectLight& light)
+            [&](const DirectLight& light)
         {
             GLintptr base_offfset = light_count_size_aligned + light_count * light_t_size;
             gl_light_uniform_buffer
@@ -410,9 +410,9 @@ void Arcadia::GlRenderer::_DrawLights(
                 .SubData(base_offfset + 112, sizeof(glm::vec3), &light.SpecularStrength);
             ++light_count;
         },
-            [&](const Arcadia::AreaLight& light)
+            [&](const AreaLight& light)
         {},
-            [&](const Arcadia::PointLight& light)
+            [&](const PointLight& light)
         {
             GLintptr base_offfset = light_count_size_aligned + light_count * light_t_size;
             gl_light_uniform_buffer
@@ -426,7 +426,7 @@ void Arcadia::GlRenderer::_DrawLights(
             ++light_count;
 
             _GlShapePipeline
-                .SetUniform("u_transform_mat", glm::translate(Arcadia::Mat4::Identity(), position))
+                .SetUniform("u_transform_mat", glm::translate(Mat4::Identity(), position))
                 .SetUniform("u_color", light.Color);
         }
         );
@@ -440,7 +440,7 @@ void Arcadia::GlRenderer::_DrawLights(
     gl_light_uniform_buffer.BindBufferBase(0);
 }
 
-void Arcadia::GlRenderer::_DrawModels(
+void GlRenderer::_DrawModels(
     const glm::mat4& camera_view,
     const glm::mat4& camera_proj,
     const glm::vec3& camera_pos
@@ -490,7 +490,7 @@ void Arcadia::GlRenderer::_DrawModels(
     _GlModelPipeline.Unuse();
 }
 
-void Arcadia::GlRenderer::_DrawSkybox(
+void GlRenderer::_DrawSkybox(
     const glm::mat4& camera_view,
     const glm::mat4& camera_proj
 )
@@ -514,7 +514,7 @@ void Arcadia::GlRenderer::_DrawSkybox(
     _GlSkyboxPipeline.Unuse();
 }
 
-void Arcadia::GlRenderer::_DrawPhysicsBodyShape(
+void GlRenderer::_DrawPhysicsBodyShape(
     const glm::mat4& camera_view,
     const glm::mat4& camera_proj
 )

@@ -7,7 +7,7 @@
 
 #include"ui/ui_events.hpp"
 
-void Arcadia::ImguiWindowPopupCreateProject::operator()()
+void ImguiWindowPopupCreateProject::operator()()
 {
     if(!Open)
     {
@@ -52,8 +52,8 @@ void Arcadia::ImguiWindowPopupCreateProject::operator()()
         auto confirmed = ImGui::Button("Confirm") && !_Name.empty();
         if(confirmed)
         {
-            Arcadia::EventQueue::Instance()
-                .Signal<Arcadia::Event::CreateProject>(
+            EventQueue::Instance()
+                .Signal<Event::CreateProject>(
                     _Name,
                     _FilepathStr
                 );
@@ -71,7 +71,7 @@ void Arcadia::ImguiWindowPopupCreateProject::operator()()
     }
 }
 
-void Arcadia::ImguiWindowPopupCreateScene::operator()(const std::shared_ptr<const Arcadia::Project>& project)
+void ImguiWindowPopupCreateScene::operator()(const std::shared_ptr<const Project>& project)
 {
     if(!Open)
     {
@@ -112,8 +112,8 @@ void Arcadia::ImguiWindowPopupCreateScene::operator()(const std::shared_ptr<cons
         auto confirmed = ImGui::Button("Confirm") && !_Name.empty() && _NameAvailable;
         if(confirmed)
         {
-            Arcadia::EventQueue::Instance()
-                .Signal<Arcadia::Event::CreateScene>(
+            EventQueue::Instance()
+                .Signal<Event::CreateScene>(
                     _Name,
                     _AsCurrent
                 );
@@ -132,15 +132,15 @@ void Arcadia::ImguiWindowPopupCreateScene::operator()(const std::shared_ptr<cons
     }
 }
 
-void Arcadia::ImguiWindowMainMenubar::OnEvent(Arcadia::EventBase& event)
+void ImguiWindowMainMenubar::OnEvent(EventBase& event)
 {
-    Arcadia::EventDispatcher{ event }
-        .Dispatch<Arcadia::Event::ProjectBuilt>(ARCADIA_BIND_MEMBER_FN(_OnProjectBuilt))
-        .Dispatch<Arcadia::Event::ProjectUnbuilt>(ARCADIA_BIND_MEMBER_FN(_OnProjectUnbuilt))
+    EventDispatcher{ event }
+        .Dispatch<Event::ProjectBuilt>(ARCADIA_BIND_MEMBER_FN(_OnProjectBuilt))
+        .Dispatch<Event::ProjectUnbuilt>(ARCADIA_BIND_MEMBER_FN(_OnProjectUnbuilt))
         .Result();
 }
 
-void Arcadia::ImguiWindowMainMenubar::OnUpdate()
+void ImguiWindowMainMenubar::OnUpdate()
 {
     if(ImGui::BeginMainMenuBar())
     {
@@ -153,11 +153,11 @@ void Arcadia::ImguiWindowMainMenubar::OnUpdate()
     }
 }
 
-void Arcadia::ImguiWindowMainMenubar::_FileMenu()
+void ImguiWindowMainMenubar::_FileMenu()
 {
     auto project = _Project.lock();
 
-    auto& event_queue = Arcadia::EventQueue::Instance();
+    auto& event_queue = EventQueue::Instance();
 
     _ImguiWindowPopupCreateProject();
     if(ImGui::BeginMenu("File"))
@@ -168,26 +168,26 @@ void Arcadia::ImguiWindowMainMenubar::_FileMenu()
         }
         if(ImGui::MenuItem("Open Project..."))
         {
-            event_queue.Signal<Arcadia::Event::OpenProject>();
+            event_queue.Signal<Event::OpenProject>();
         }
         if(ImGui::MenuItem("Save Project", nullptr, nullptr, !!project))
         {
-            event_queue.Signal<Arcadia::Event::SaveProject>();
+            event_queue.Signal<Event::SaveProject>();
         }
         if(ImGui::MenuItem("Save Project As...", nullptr, nullptr, !!project))
         {
-            event_queue.Signal<Arcadia::Event::SaveProjectAs>();
+            event_queue.Signal<Event::SaveProjectAs>();
         }
         if(ImGui::MenuItem("Close Project", nullptr, nullptr, !!project))
         {
-            event_queue.Signal<Arcadia::Event::CloseProject>();
+            event_queue.Signal<Event::CloseProject>();
         }
 
         ImGui::EndMenu();
     }
 }
 
-void Arcadia::ImguiWindowMainMenubar::_EditMenu()
+void ImguiWindowMainMenubar::_EditMenu()
 {
     auto project = _Project.lock();
 
@@ -195,7 +195,7 @@ void Arcadia::ImguiWindowMainMenubar::_EditMenu()
     {
         _ImguiWindowPopupCreateScene(project);
     }
-    auto& event_queue = Arcadia::EventQueue::Instance();
+    auto& event_queue = EventQueue::Instance();
     if(ImGui::BeginMenu("Edit"))
     {
         if(ImGui::MenuItem("New Scene ...", nullptr, nullptr, !!project))
@@ -214,34 +214,34 @@ void Arcadia::ImguiWindowMainMenubar::_EditMenu()
             {
                 if(ImGui::MenuItem(key.c_str()))
                 {
-                    event_queue.Signal<Arcadia::Event::SelectScene>(key);
+                    event_queue.Signal<Event::SelectScene>(key);
                 }
             }
             ImGui::EndMenu();
         }
         if(ImGui::MenuItem("Close Scene", nullptr, nullptr, has_active_scene))
         {
-            event_queue.Signal<Arcadia::Event::CloseScene>();
+            event_queue.Signal<Event::CloseScene>();
         }
         if(ImGui::MenuItem("Delete Scene", nullptr, nullptr, has_active_scene))
         {
-            event_queue.Signal<Arcadia::Event::DeleteScene>();
+            event_queue.Signal<Event::DeleteScene>();
         }
 
         ImGui::EndMenu();
     }
 }
 
-void Arcadia::ImguiWindowMainMenubar::_ViewMenu()
+void ImguiWindowMainMenubar::_ViewMenu()
 {
-    auto& event_queue = Arcadia::EventQueue::Instance();
+    auto& event_queue = EventQueue::Instance();
     if(ImGui::BeginMenu("View"))
     {
         for(const auto& [title, id_str] : _ImguiWindowTitleAndIdStrPairs)
         {
             if(ImGui::MenuItem(title.c_str()))
             {
-                event_queue.Signal<Arcadia::Event::OpenImguiWindow>(id_str);
+                event_queue.Signal<Event::OpenImguiWindow>(id_str);
                 ImGui::SetWindowFocus(id_str.c_str());
             }
         }
@@ -249,9 +249,9 @@ void Arcadia::ImguiWindowMainMenubar::_ViewMenu()
     }
 }
 
-void Arcadia::ImguiWindowMainMenubar::_OptionMenu()
+void ImguiWindowMainMenubar::_OptionMenu()
 {
-    auto& event_queue = Arcadia::EventQueue::Instance();
+    auto& event_queue = EventQueue::Instance();
     if(ImGui::BeginMenu("Option"))
     {
         if(ImGui::Checkbox("Show Gizmo", &_ShowGizmo))
@@ -264,13 +264,13 @@ void Arcadia::ImguiWindowMainMenubar::_OptionMenu()
 }
 
 
-void Arcadia::ImguiWindowMainMenubar::_OnProjectBuilt(Arcadia::Event::ProjectBuilt& e)
+void ImguiWindowMainMenubar::_OnProjectBuilt(Event::ProjectBuilt& e)
 {
     const auto& [project] = e.data_tuple;
     _Project = project;
 }
 
-void Arcadia::ImguiWindowMainMenubar::_OnProjectUnbuilt(Arcadia::Event::ProjectUnbuilt& e)
+void ImguiWindowMainMenubar::_OnProjectUnbuilt(Event::ProjectUnbuilt& e)
 {
     _Project.reset();
 }

@@ -11,7 +11,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include"stb/stb_image.h"
 
-Arcadia::ModelComponent::ModelComponent(const std::filesystem::path& filepath):
+ModelComponent::ModelComponent(const std::filesystem::path& filepath):
     _Filepath(filepath)
 {
     if(!_Filepath.empty())
@@ -20,8 +20,8 @@ Arcadia::ModelComponent::ModelComponent(const std::filesystem::path& filepath):
     }
 }
 
-Arcadia::ModelComponent::ModelComponent(const nlohmann::json& json):
-    _Filepath(Arcadia::ToFilepath(json.at("filepath")))
+ModelComponent::ModelComponent(const nlohmann::json& json):
+    _Filepath(ToFilepath(json.at("filepath")))
 {
     if(!_Filepath.empty())
     {
@@ -29,7 +29,7 @@ Arcadia::ModelComponent::ModelComponent(const nlohmann::json& json):
     }
 }
 
-auto Arcadia::ModelComponent::ToJson() const -> nlohmann::json
+auto ModelComponent::ToJson() const -> nlohmann::json
 {
     nlohmann::json json{
         {"filepath", _Filepath.generic_string() }
@@ -37,32 +37,32 @@ auto Arcadia::ModelComponent::ToJson() const -> nlohmann::json
     return json;
 }
 
-auto Arcadia::ModelComponent::OnSnapshot() const -> std::shared_ptr<Arcadia::MementoDataBase>
+auto ModelComponent::OnSnapshot() const -> std::shared_ptr<MementoDataBase>
 {
     return nullptr;
 }
 
-void Arcadia::ModelComponent::OnRestore(const std::shared_ptr<Arcadia::MementoDataBase>& sp_memento_data)
+void ModelComponent::OnRestore(const std::shared_ptr<MementoDataBase>& sp_memento_data)
 {}
 
-auto Arcadia::ModelComponent::GetFilepath() const -> const std::filesystem::path&
+auto ModelComponent::GetFilepath() const -> const std::filesystem::path&
 {
     return _Filepath;
 }
 
-auto Arcadia::ModelComponent::HasIdentifiableMeshes() const -> bool
+auto ModelComponent::HasIdentifiableMeshes() const -> bool
 {
     return _IdentifiableMeshes.get();
 }
 
-auto Arcadia::ModelComponent::GetIdentifiableMeshes() const -> const identifiable_meshes&
+auto ModelComponent::GetIdentifiableMeshes() const -> const identifiable_meshes&
 {
     ARCADIA_ASSERT(HasIdentifiableMeshes());
     return *_IdentifiableMeshes;
 }
 
 
-void Arcadia::ModelComponent::Import(const std::filesystem::path& filepath)
+void ModelComponent::Import(const std::filesystem::path& filepath)
 {
     if(!_Filepath.empty() && !filepath.empty())
     {
@@ -119,7 +119,7 @@ void Arcadia::ModelComponent::Import(const std::filesystem::path& filepath)
     }
 }
 
-void Arcadia::ModelComponent::_Load()
+void ModelComponent::_Load()
 {
     Assimp::Importer importer{};
     auto ai_scene = importer.ReadFile(
@@ -136,11 +136,11 @@ void Arcadia::ModelComponent::_Load()
         || !ai_scene->mRootNode
         )
     {
-        Arcadia::Log::Error(importer.GetErrorString());
+        Log::Error(importer.GetErrorString());
         return;
     }
 
-    std::vector<Arcadia::Mesh> meshes{};
+    std::vector<Mesh> meshes{};
 
     std::size_t next_mesh_index{ 0 };
     _ProcessAssimpNode(
@@ -153,13 +153,13 @@ void Arcadia::ModelComponent::_Load()
     _IdentifiableMeshes = std::make_unique<identifiable_meshes>(std::move(meshes));
 }
 
-void Arcadia::ModelComponent::_Unload()
+void ModelComponent::_Unload()
 {
     _IdentifiableMeshes.reset();
 }
 
-void Arcadia::ModelComponent::_ProcessAssimpNode(
-    std::vector<Arcadia::Mesh>& meshes,
+void ModelComponent::_ProcessAssimpNode(
+    std::vector<Mesh>& meshes,
     const aiScene* const ai_scene,
     const aiNode* const ai_node,
     std::size_t& next_mesh_index
@@ -259,7 +259,7 @@ void Arcadia::ModelComponent::_ProcessAssimpNode(
     }
 }
 
-void Arcadia::ModelComponent::_LoadTexture(
+void ModelComponent::_LoadTexture(
     const std::filesystem::path& directory,
     const aiMaterial* const ai_material,
     aiTextureType ai_texture_type,
@@ -284,6 +284,6 @@ void Arcadia::ModelComponent::_LoadTexture(
                 ptr[i + 3]
             );
         }
-        break; // TODO: Only read the first texture because material only accept one texture per type. Maybe use Arcadia::texture2d::cascade to cimbine multiple textures in to one later?
+        break; // TODO: Only read the first texture because material only accept one texture per type. Maybe use texture2d::cascade to cimbine multiple textures in to one later?
     }
 }

@@ -2,24 +2,24 @@
 
 #include "event.hpp"
 
-auto Arcadia::EventQueue::Instance() -> self_type&
+auto EventQueue::Instance() -> self_type&
 {
     static self_type event_queue{};
     return event_queue;
 }
 
-auto Arcadia::EventQueue::SwapQueue() -> bool
+auto EventQueue::SwapQueue() -> bool
 {
     std::swap(_CurrentQueue, _ProcessingQueue);
     return Size();
 }
 
-auto Arcadia::EventQueue::Size() const -> std::size_t
+auto EventQueue::Size() const -> std::size_t
 {
     return _ProcessingQueue->size();
 }
 
-auto Arcadia::EventQueue::Read() -> Arcadia::EventBase&
+auto EventQueue::Read() -> EventBase&
 {
     if(!Size())
     {
@@ -29,7 +29,7 @@ auto Arcadia::EventQueue::Read() -> Arcadia::EventBase&
     return *_ProcessingQueue->front();
 }
 
-auto Arcadia::EventQueue::Pop() -> bool
+auto EventQueue::Pop() -> bool
 {
     _ProcessingQueue->pop();
     return Size();
