@@ -9,7 +9,7 @@ struct SkyboxComponent: iComponent
 public:
     using self_type = SkyboxComponent;
 public:
-    ARCADIA_COMPONENT_TYPE_STR_GETTERS("Skybox");
+    ACDA_COMPONENT_TYPE_STR_GETTERS("Skybox");
 
     SkyboxComponent() = default;
     ~SkyboxComponent() = default;

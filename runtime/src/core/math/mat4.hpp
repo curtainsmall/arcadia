@@ -6,12 +6,12 @@
 namespace Mat4
 {
     [[nodiscard]]
-    ARCADIA_API constexpr auto Zero() -> glm::mat4
+    ACDA_API constexpr auto Zero() -> glm::mat4
     {
         return glm::mat4{ .0f };
     }
     [[nodiscard]]
-    ARCADIA_API constexpr auto ZeroAffine() -> glm::mat4
+    ACDA_API constexpr auto ZeroAffine() -> glm::mat4
     {
         return glm::mat4{
             glm::vec4{},
@@ -21,7 +21,7 @@ namespace Mat4
         };
     }
     [[nodiscard]]
-    ARCADIA_API constexpr auto Identity() -> glm::mat4
+    ACDA_API constexpr auto Identity() -> glm::mat4
     {
         return glm::mat4{};
     }

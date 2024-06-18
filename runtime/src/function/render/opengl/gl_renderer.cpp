@@ -17,8 +17,8 @@ GlRenderer::GlRenderer(const std::filesystem::path& gl_shader_folder_path):
     _GlGridPipeline(gl_shader_folder_path, GetGridShadersBuilder()),
     _GlShapePipeline(gl_shader_folder_path, GetShapeShadersBuilder())
 {
-    ARCADIA_GL_CALL(glEnable(GL_DEPTH_TEST));
-    ARCADIA_GL_CALL(glEnable(GL_CULL_FACE));
+    ACDA_GL_CALL(glEnable(GL_DEPTH_TEST));
+    ACDA_GL_CALL(glEnable(GL_CULL_FACE));
 }
 
 void GlRenderer::Prepare()
@@ -83,7 +83,7 @@ void GlRenderer::Submit(const Scene& scene, const std::string& name)
         entity_info.Type,
         [&]()
     {
-        ARCADIA_ASSERT(false && "Entity type not supported");
+        ACDA_ASSERT(false && "Entity type not supported");
     },
         "camera"s,
         [&]()
@@ -207,7 +207,7 @@ void GlRenderer::Draw()
     }
 
 
-    ARCADIA_GL_CALL(glClearColor(41 / 255.0, 43 / 255.0, 44 / 255.0, 1.f));
+    ACDA_GL_CALL(glClearColor(41 / 255.0, 43 / 255.0, 44 / 255.0, 1.f));
 
     // For each framebuffer
     for(const auto& [
@@ -224,8 +224,8 @@ void GlRenderer::Draw()
         gl_framebuffer.Bind();
 
         // Clear framebufers
-        ARCADIA_GL_CALL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
-        ARCADIA_GL_CALL(glViewport(0, 0, viewport_size.x, viewport_size.y));
+        ACDA_GL_CALL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
+        ACDA_GL_CALL(glViewport(0, 0, viewport_size.x, viewport_size.y));
 
         // Draw grid
         if(should_display_grid)
@@ -312,12 +312,12 @@ auto GlRenderer::GetRenderResultId(std::size_t index) const -> void*
 
 void GlRenderer::_AssertFrameInBuild() const
 {
-    ARCADIA_ASSERT(_InBuild && "Frame is not in build, did you call `prepare()`?");
+    ACDA_ASSERT(_InBuild && "Frame is not in build, did you call `prepare()`?");
 }
 
 void GlRenderer::_AssertFrameNotInBuild() const
 {
-    ARCADIA_ASSERT(!_InBuild && "Frame is in build, did you call `finalize()`?");
+    ACDA_ASSERT(!_InBuild && "Frame is in build, did you call `finalize()`?");
 }
 
 void GlRenderer::_DrawGrid(
@@ -506,9 +506,9 @@ void GlRenderer::_DrawSkybox(
         .SetUniform("u_proj_mat", camera_proj);
 
     gl_vartex_array.Bind();
-    ARCADIA_GL_CALL(glDepthFunc(GL_LEQUAL));
+    ACDA_GL_CALL(glDepthFunc(GL_LEQUAL));
     gl_vartex_array.Draw(GL_TRIANGLES);
-    ARCADIA_GL_CALL(glDepthFunc(GL_LESS));
+    ACDA_GL_CALL(glDepthFunc(GL_LESS));
     gl_vartex_array.Unbind();
 
     _GlSkyboxPipeline.Unuse();

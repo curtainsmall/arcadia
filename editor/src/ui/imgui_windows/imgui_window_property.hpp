@@ -80,7 +80,7 @@ struct ImguiWindowProperty: iImguiWindow
 public:
     using self_type = ImguiWindowProperty;
 public:
-    ARCADIA_IMGUI_WINDOW_ID_STR_GETTERS("###property");
+    ACDA_IMGUI_WINDOW_ID_STR_GETTERS("###property");
 
     inline ImguiWindowProperty(
         bool open,
@@ -97,7 +97,7 @@ private:
     auto _ContainsComponent(const std::string& name) -> bool
     {
         auto scene = _Scene.lock();
-        ARCADIA_ASSERT(scene);
+        ACDA_ASSERT(scene);
 
         return scene->AllOf<Component>(name);
     }
@@ -105,8 +105,8 @@ private:
     auto _GetComponent(const std::string& name) -> Component&
     {
         auto scene = _Scene.lock();
-        ARCADIA_ASSERT(scene);
-        ARCADIA_ASSERT(_ContainsComponent<Component>(name));
+        ACDA_ASSERT(scene);
+        ACDA_ASSERT(_ContainsComponent<Component>(name));
 
         return scene->Get<Component>(name);
     }

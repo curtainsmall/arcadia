@@ -10,11 +10,11 @@ GlFramebuffer::GlFramebuffer(
     _GlTexture2d(viewport_size),
     _GlDepthStencilRenderbuffer(GL_DEPTH24_STENCIL8, viewport_size)
 {
-    ARCADIA_GL_CALL(glGenFramebuffers(1, &_GlId));
+    ACDA_GL_CALL(glGenFramebuffers(1, &_GlId));
 
     Bind();
-    ARCADIA_GL_CALL(glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, _GlTexture2d.GetGlId(), 0));
-    ARCADIA_GL_CALL(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, _GlDepthStencilRenderbuffer.GetGlId()));
+    ACDA_GL_CALL(glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, _GlTexture2d.GetGlId(), 0));
+    ACDA_GL_CALL(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, _GlDepthStencilRenderbuffer.GetGlId()));
     Unbind();
 
     if(auto res = IsComplete(); res != GL_FRAMEBUFFER_COMPLETE)
@@ -25,7 +25,7 @@ GlFramebuffer::GlFramebuffer(
 
 GlFramebuffer::~GlFramebuffer()
 {
-    ARCADIA_GL_CALL(glDeleteFramebuffers(1, &_GlId));
+    ACDA_GL_CALL(glDeleteFramebuffers(1, &_GlId));
 }
 
 GlFramebuffer::GlFramebuffer(self_type&& rhs) noexcept:
@@ -52,12 +52,12 @@ void GlFramebuffer::Bind() const
         throw GlInvalid{ "Cannot bind null OpenGL framebuffer" };
     }
 
-    ARCADIA_GL_CALL(glBindFramebuffer(GL_FRAMEBUFFER, _GlId));
+    ACDA_GL_CALL(glBindFramebuffer(GL_FRAMEBUFFER, _GlId));
 }
 
 void GlFramebuffer::Unbind() const
 {
-    ARCADIA_GL_CALL(glBindFramebuffer(GL_FRAMEBUFFER, 0));
+    ACDA_GL_CALL(glBindFramebuffer(GL_FRAMEBUFFER, 0));
 }
 
 auto GlFramebuffer::IsComplete() const -> GLenum
@@ -68,7 +68,7 @@ auto GlFramebuffer::IsComplete() const -> GLenum
     }
 
     Bind();
-    ARCADIA_GL_CALL(auto res = glCheckFramebufferStatus(GL_FRAMEBUFFER));
+    ACDA_GL_CALL(auto res = glCheckFramebufferStatus(GL_FRAMEBUFFER));
     Unbind();
 
     return res;

@@ -11,8 +11,8 @@
 void ImguiWindowMainToolbar::OnEvent(EventBase& event)
 {
     EventDispatcher{ event }
-        .Dispatch<Event::SceneActivated>(ARCADIA_BIND_MEMBER_FN(_OnSceneActivated))
-        .Dispatch<Event::SceneDeactivated>(ARCADIA_BIND_MEMBER_FN(_OnSceneDeactivated))
+        .Dispatch<Event::SceneActivated>(ACDA_BIND_MEMBER_FN(_OnSceneActivated))
+        .Dispatch<Event::SceneDeactivated>(ACDA_BIND_MEMBER_FN(_OnSceneDeactivated))
         .Result();
 }
 

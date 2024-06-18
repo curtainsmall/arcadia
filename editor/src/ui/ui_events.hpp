@@ -8,90 +8,90 @@
 namespace Event
 {
     //==== Events for imgui window ====//
-    ARCADIA_EVENT(
+    ACDA_EVENT(
         OpenImguiWindow,
         std::string // Title of the imgui window to open
     );
 
     //==== Events for project ====//
 
-    ARCADIA_EVENT(
+    ACDA_EVENT(
         NewProject
     );
-    ARCADIA_EVENT(
+    ACDA_EVENT(
         CreateProject,
         std::string, // name
         std::string  // filepath
     );
-    ARCADIA_EVENT(
+    ACDA_EVENT(
         OpenProject
     );
-    ARCADIA_EVENT(
+    ACDA_EVENT(
         SaveProject
     );
-    ARCADIA_EVENT(
+    ACDA_EVENT(
         SaveProjectAs
     );
-    ARCADIA_EVENT(
+    ACDA_EVENT(
         CloseProject
     );
 
     //==== Events for physics simulator ====//
 
-    ARCADIA_EVENT(
+    ACDA_EVENT(
         PhysicsSimulatorShouldUpdate,
         bool
     );
 
     //==== Events for scene ====//
 
-    ARCADIA_EVENT(
+    ACDA_EVENT(
         NewScene
     );
-    ARCADIA_EVENT(
+    ACDA_EVENT(
         CreateScene,
         std::string, // name
         bool        // as_current
     );
-    ARCADIA_EVENT(
+    ACDA_EVENT(
         SelectScene,
         std::string // name
     );
-    ARCADIA_EVENT(
+    ACDA_EVENT(
         CloseScene
     );
-    ARCADIA_EVENT(
+    ACDA_EVENT(
         DeleteScene
     );
 
     //==== Events for entity ====//
 
-    ARCADIA_EVENT(
+    ACDA_EVENT(
         NewEntity,
         std::string // type
     );
-    ARCADIA_EVENT(
+    ACDA_EVENT(
         SelectEntity,
         std::string // entity name
     );
-    ARCADIA_EVENT(
+    ACDA_EVENT(
         RenameEntity,
         std::string, // old name
         std::string  // new name
     );
-    ARCADIA_EVENT(
+    ACDA_EVENT(
         DeleteEntity,
         std::string // entity name
     );
 
     //==== Events for component ====//
 
-    ARCADIA_EVENT(
+    ACDA_EVENT(
         AddComponent,
         std::string, // entity name
         std::string // type_str
     );
-    ARCADIA_EVENT(
+    ACDA_EVENT(
         RemoveComponent,
         std::string, // entity name
         std::string // type_str
@@ -99,20 +99,20 @@ namespace Event
 
     //==== Events for physics component ====//
 
-    ARCADIA_EVENT(
+    ACDA_EVENT(
         PhysicsComponentNewBody
     );
 
     //==== Events for modes ====//
 
-    ARCADIA_EVENT(
+    ACDA_EVENT(
         PlayMode,
         bool
     );
 
     //==== Events for viewport ====//
 
-    ARCADIA_EVENT(
+    ACDA_EVENT(
         ShowGizmo,
         bool
     );

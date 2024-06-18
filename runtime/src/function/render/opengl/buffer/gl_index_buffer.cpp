@@ -5,15 +5,15 @@
 GlIndexBuffer::GlIndexBuffer(const std::vector<Mesh::index_type>& indices):
     _IndexCount(indices.size())
 {
-    ARCADIA_GL_CALL(glGenBuffers(1, &_GlId));
+    ACDA_GL_CALL(glGenBuffers(1, &_GlId));
     Bind();
-    ARCADIA_GL_CALL(glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(Mesh::index_type), indices.data(), GL_STATIC_DRAW));
+    ACDA_GL_CALL(glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(Mesh::index_type), indices.data(), GL_STATIC_DRAW));
     Unbind();
 }
 
 GlIndexBuffer::~GlIndexBuffer()
 {
-    ARCADIA_GL_CALL(glDeleteBuffers(1, &_GlId));
+    ACDA_GL_CALL(glDeleteBuffers(1, &_GlId));
 }
 
 GlIndexBuffer::GlIndexBuffer(self_type&& rhs) noexcept
@@ -43,10 +43,10 @@ void GlIndexBuffer::Bind() const
         throw GlInvalid{ "Cannot bind null OpenGL index buffer" };
     }
 
-    ARCADIA_GL_CALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _GlId));
+    ACDA_GL_CALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _GlId));
 }
 
 void GlIndexBuffer::Unbind() const
 {
-    ARCADIA_GL_CALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
+    ACDA_GL_CALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
 }

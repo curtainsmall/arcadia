@@ -21,4 +21,4 @@ public:
     virtual void OnUpdate() override = 0;
 };
 
-ARCADIA_API auto CreateApplication() -> std::unique_ptr<iAppLayer>;
+ACDA_API auto CreateApplication() -> std::unique_ptr<iAppLayer>;

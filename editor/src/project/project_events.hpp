@@ -14,55 +14,55 @@ namespace Event
 
     //==== Event for project ====//
 
-    ARCADIA_EVENT(
+    ACDA_EVENT(
         ProjectBuilt,
         std::shared_ptr<Project>
     );
-    ARCADIA_EVENT(
+    ACDA_EVENT(
         ProjectUnbuilt
     );
-    ARCADIA_EVENT(
+    ACDA_EVENT(
         ProjectLoaded
     );
-    ARCADIA_EVENT(
+    ACDA_EVENT(
         ProjectSaved
     );
 
     //==== Event for renderer ====//
 
-    ARCADIA_EVENT(
+    ACDA_EVENT(
         RendererBuilt,
         std::shared_ptr<iRenderer>
     );
-    ARCADIA_EVENT(
+    ACDA_EVENT(
         RendererUnbuilt
     );
 
     //==== Event for physics simulator ====//
 
-    ARCADIA_EVENT(
+    ACDA_EVENT(
         PhysicsSimulatorBuilt,
         std::shared_ptr<PhysicsSimulator>
     );
 
-    ARCADIA_EVENT(
+    ACDA_EVENT(
         PhysicsSimulatorUnbuilt
     );
 
     //==== Event for scene ====//
 
-    ARCADIA_EVENT(
+    ACDA_EVENT(
         SceneBuilt,
         std::shared_ptr<Scene>
     );
-    ARCADIA_EVENT(
+    ACDA_EVENT(
         SceneActivated,
         std::shared_ptr<Scene>
     );
-    ARCADIA_EVENT(
+    ACDA_EVENT(
         SceneDeactivated
     );
-    ARCADIA_EVENT(
+    ACDA_EVENT(
         SceneUnbuilt
     );
 }

@@ -155,7 +155,7 @@ auto PhysicsComponent::HasBodyInfo() const -> bool
 
 auto PhysicsComponent::GetIdentifiableJphBodyInfo() const -> const identifiable_jph_body_info_type&
 {
-    ARCADIA_ASSERT(HasBodyInfo());
+    ACDA_ASSERT(HasBodyInfo());
     return *_IdentifiableJphBodyInfo;
 }
 

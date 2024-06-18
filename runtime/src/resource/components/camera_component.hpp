@@ -31,7 +31,7 @@ struct CameraComponent:
 public:
     using self_type = CameraComponent;
 public:
-    ARCADIA_COMPONENT_TYPE_STR_GETTERS("camera");
+    ACDA_COMPONENT_TYPE_STR_GETTERS("camera");
 
 
 

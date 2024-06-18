@@ -12,7 +12,7 @@ struct PlayerComponent:
 public:
     using self_type = PlayerComponent;
 public:
-    ARCADIA_COMPONENT_TYPE_STR_GETTERS("player");
+    ACDA_COMPONENT_TYPE_STR_GETTERS("player");
 
     PlayerComponent() = default;
     PlayerComponent(const nlohmann::json& json);

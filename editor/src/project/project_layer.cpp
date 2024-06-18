@@ -49,22 +49,22 @@ ProjectLayer::~ProjectLayer()
 void ProjectLayer::OnEvent(EventBase& event)
 {
     EventDispatcher{ event }
-        .Dispatch<Event::WindowShouldClose>(ARCADIA_BIND_MEMBER_FN(_OnWindowShouldClose))
-        .Dispatch<Event::CreateProject>(ARCADIA_BIND_MEMBER_FN(_OnCreateProject))
-        .Dispatch<Event::OpenProject>(ARCADIA_BIND_MEMBER_FN(_OnOpenProject))
-        .Dispatch<Event::SaveProject>(ARCADIA_BIND_MEMBER_FN(_OnSaveProject))
-        .Dispatch<Event::SaveProjectAs>(ARCADIA_BIND_MEMBER_FN(_OnSaveProjectAs))
-        .Dispatch<Event::CloseProject>(ARCADIA_BIND_MEMBER_FN(_OnCloseProject))
-        .Dispatch<Event::ProjectSaved>(ARCADIA_BIND_MEMBER_FN(_OnProjectSaved))
-        .Dispatch<Event::CreateScene>(ARCADIA_BIND_MEMBER_FN(_OnCreateScene))
-        .Dispatch<Event::SelectScene>(ARCADIA_BIND_MEMBER_FN(_OnSelectScene))
-        .Dispatch<Event::CloseScene>(ARCADIA_BIND_MEMBER_FN(_OnCloseScene))
-        .Dispatch<Event::DeleteScene>(ARCADIA_BIND_MEMBER_FN(_OnDeleteScene))
-        .Dispatch<Event::NewEntity>(ARCADIA_BIND_MEMBER_FN(_OnNewEntity))
-        .Dispatch<Event::RenameEntity>(ARCADIA_BIND_MEMBER_FN(_OnRenameEntity))
-        .Dispatch<Event::DeleteEntity>(ARCADIA_BIND_MEMBER_FN(_OnDeleteEntity))
-        .Dispatch<Event::AddComponent>(ARCADIA_BIND_MEMBER_FN(_OnAddComponent))
-        .Dispatch<Event::RemoveComponent>(ARCADIA_BIND_MEMBER_FN(_OnRemoveComponent))
+        .Dispatch<Event::WindowShouldClose>(ACDA_BIND_MEMBER_FN(_OnWindowShouldClose))
+        .Dispatch<Event::CreateProject>(ACDA_BIND_MEMBER_FN(_OnCreateProject))
+        .Dispatch<Event::OpenProject>(ACDA_BIND_MEMBER_FN(_OnOpenProject))
+        .Dispatch<Event::SaveProject>(ACDA_BIND_MEMBER_FN(_OnSaveProject))
+        .Dispatch<Event::SaveProjectAs>(ACDA_BIND_MEMBER_FN(_OnSaveProjectAs))
+        .Dispatch<Event::CloseProject>(ACDA_BIND_MEMBER_FN(_OnCloseProject))
+        .Dispatch<Event::ProjectSaved>(ACDA_BIND_MEMBER_FN(_OnProjectSaved))
+        .Dispatch<Event::CreateScene>(ACDA_BIND_MEMBER_FN(_OnCreateScene))
+        .Dispatch<Event::SelectScene>(ACDA_BIND_MEMBER_FN(_OnSelectScene))
+        .Dispatch<Event::CloseScene>(ACDA_BIND_MEMBER_FN(_OnCloseScene))
+        .Dispatch<Event::DeleteScene>(ACDA_BIND_MEMBER_FN(_OnDeleteScene))
+        .Dispatch<Event::NewEntity>(ACDA_BIND_MEMBER_FN(_OnNewEntity))
+        .Dispatch<Event::RenameEntity>(ACDA_BIND_MEMBER_FN(_OnRenameEntity))
+        .Dispatch<Event::DeleteEntity>(ACDA_BIND_MEMBER_FN(_OnDeleteEntity))
+        .Dispatch<Event::AddComponent>(ACDA_BIND_MEMBER_FN(_OnAddComponent))
+        .Dispatch<Event::RemoveComponent>(ACDA_BIND_MEMBER_FN(_OnRemoveComponent))
         .Result();
 }
 
@@ -73,15 +73,15 @@ void ProjectLayer::OnUpdate()
 
 auto ProjectLayer::_AssertAndGetScene() -> Scene&
 {
-    ARCADIA_ASSERT(_Project);
-    ARCADIA_ASSERT(_Project->HasActiveScene());
+    ACDA_ASSERT(_Project);
+    ACDA_ASSERT(_Project->HasActiveScene());
 
     return _Project->GetActiveScene();
 }
 
 void ProjectLayer::_SaveProject()
 {
-    ARCADIA_ASSERT(_Project);
+    ACDA_ASSERT(_Project);
 
     auto json = _Project->ToJson();
 
@@ -93,7 +93,7 @@ void ProjectLayer::_SaveProject()
 
 void ProjectLayer::_LoadProject()
 {
-    ARCADIA_ASSERT(!_Project);
+    ACDA_ASSERT(!_Project);
 
     auto ifs = File::CreateIfstream(_ProjectFilepath);
     auto json = nlohmann::json::parse(ifs);
@@ -260,7 +260,7 @@ void ProjectLayer::_OnOpenProject(Event::OpenProject& e)
 
 void ProjectLayer::_OnSaveProject(Event::SaveProject& e)
 {
-    ARCADIA_ASSERT(_Project);
+    ACDA_ASSERT(_Project);
 
     if(_ProjectFilepath.empty())
     {
@@ -277,7 +277,7 @@ void ProjectLayer::_OnSaveProject(Event::SaveProject& e)
 
 void ProjectLayer::_OnSaveProjectAs(Event::SaveProjectAs& e)
 {
-    ARCADIA_ASSERT(_Project);
+    ACDA_ASSERT(_Project);
 
     _ProjectFilepath = pfd::save_file{
         "Save as"
@@ -291,7 +291,7 @@ void ProjectLayer::_OnSaveProjectAs(Event::SaveProjectAs& e)
 
 void ProjectLayer::_OnCloseProject(Event::CloseProject& e)
 {
-    ARCADIA_ASSERT(_Project);
+    ACDA_ASSERT(_Project);
 
     auto& event_queue = EventQueue::Instance();
 
@@ -342,7 +342,7 @@ void ProjectLayer::_OnProjectSaved(Event::ProjectSaved& e)
 
 void ProjectLayer::_OnCreateScene(Event::CreateScene& e)
 {
-    ARCADIA_ASSERT(_Project);
+    ACDA_ASSERT(_Project);
 
     const auto& [name, as_current] = e.data_tuple;
     auto& scene = _Project->SceneSptrStorage.try_emplace(
@@ -358,7 +358,7 @@ void ProjectLayer::_OnCreateScene(Event::CreateScene& e)
 
 void ProjectLayer::_OnSelectScene(Event::SelectScene& e)
 {
-    ARCADIA_ASSERT(_Project);
+    ACDA_ASSERT(_Project);
 
     const auto& [name] = e.data_tuple;
     _Project->SetActiveScene(name);
@@ -366,15 +366,15 @@ void ProjectLayer::_OnSelectScene(Event::SelectScene& e)
 
 void ProjectLayer::_OnCloseScene(Event::CloseScene& e)
 {
-    ARCADIA_ASSERT(_Project);
+    ACDA_ASSERT(_Project);
 
     _Project->SetActiveScene();
 }
 
 void ProjectLayer::_OnDeleteScene(Event::DeleteScene& e)
 {
-    ARCADIA_ASSERT(_Project);
-    ARCADIA_ASSERT(_Project->HasActiveScene());
+    ACDA_ASSERT(_Project);
+    ACDA_ASSERT(_Project->HasActiveScene());
 
     const auto& scene_name = _Project->GetActiveScene().Name;
 

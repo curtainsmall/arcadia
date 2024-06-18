@@ -1,26 +1,23 @@
 #pragma once
 
 #ifdef _WIN32
-
-#ifdef ARCADIA_DYNAMIC_LIB
-
-#ifdef ARCADIA_EXPORTS
-#define ARCADIA_API __declspec(dllexport)
-#else
-#define ARCADIA_API __declspec(dllimport)
-#endif // ARCADIA_EXPORTS
-
-#else
-#define ARCADIA_API
-#endif // ARCADIA_DYNAMIC_LIB
-
+#   include<Windows.h>
+#   ifdef ACDA_DYNAMIC_LIB
+#       ifdef ACDA_EXPORTS
+#           define ACDA_API __declspec(dllexport)
+#       else
+#           define ACDA_API __declspec(dllimport)
+#       endif // ACDA_EXPORTS
+#   else
+#       define ACDA_API
+#   endif // ACDA_DYNAMIC_LIB
 #else 
-#error Arcadia Engine does not support your operating system
+#   error Arcadia Engine does not support your operating system
 #endif // _WIN32
 
-#define ARCADIA_DEBUG 1
-#if !defined(NDEBUG) && ARCADIA_DEBUG
-#   define ARCADIA_IN_DEBUG
+#define ACDA_DEBUG 1
+#if !defined(NDEBUG) && ACDA_DEBUG
+#   define ACDA_IN_DEBUG
 #endif
 
 

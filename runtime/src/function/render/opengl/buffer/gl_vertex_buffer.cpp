@@ -5,9 +5,9 @@
 GlVertexBuffer::GlVertexBuffer(const std::vector<Vertex>& vertices):
     _VertexCount(vertices.size())
 {
-    ARCADIA_GL_CALL(glGenBuffers(1, &_GlId));
+    ACDA_GL_CALL(glGenBuffers(1, &_GlId));
     Bind();
-    ARCADIA_GL_CALL(glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), vertices.data(), GL_STATIC_DRAW));
+    ACDA_GL_CALL(glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), vertices.data(), GL_STATIC_DRAW));
     Unbind();
 
     // Setup layout 
@@ -19,7 +19,7 @@ GlVertexBuffer::GlVertexBuffer(const std::vector<Vertex>& vertices):
 
 GlVertexBuffer::~GlVertexBuffer()
 {
-    ARCADIA_GL_CALL(glDeleteBuffers(1, &_GlId));
+    ACDA_GL_CALL(glDeleteBuffers(1, &_GlId));
 }
 
 GlVertexBuffer::GlVertexBuffer(self_type&& rhs) noexcept
@@ -53,12 +53,12 @@ void GlVertexBuffer::Bind() const
         throw GlInvalid{ "Cannot bind null OpenGL vertex buffer" };
     }
 
-    ARCADIA_GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, _GlId));
+    ACDA_GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, _GlId));
 }
 
 void GlVertexBuffer::Unbind() const
 {
-    ARCADIA_GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, 0));
+    ACDA_GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, 0));
 }
 
 void GlVertexBuffer::SetupVertexAttribArray() const
@@ -69,9 +69,9 @@ void GlVertexBuffer::SetupVertexAttribArray() const
     Bind();
     for(const auto& attribute : _BufferLayout.LayoutAttributes)
     {
-        ARCADIA_GL_CALL(glEnableVertexAttribArray(attrib_slot));
-        ARCADIA_GL_CALL(glVertexAttribPointer(attrib_slot, attribute.Count, attribute.Type, attribute.Normalized, _BufferLayout.Stride, reinterpret_cast<void*>(Offset)));
-        ARCADIA_GL_CALL(glVertexAttribDivisor(attrib_slot, attribute.Divisor));
+        ACDA_GL_CALL(glEnableVertexAttribArray(attrib_slot));
+        ACDA_GL_CALL(glVertexAttribPointer(attrib_slot, attribute.Count, attribute.Type, attribute.Normalized, _BufferLayout.Stride, reinterpret_cast<void*>(Offset)));
+        ACDA_GL_CALL(glVertexAttribDivisor(attrib_slot, attribute.Divisor));
         ++attrib_slot;
         Offset += attribute.Count * GetGlTypeSize(attribute.Type);
     }

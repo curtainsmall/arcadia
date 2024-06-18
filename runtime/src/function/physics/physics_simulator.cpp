@@ -110,7 +110,7 @@ void PhysicsSimulator::Submit(const Scene& scene, const std::string& name)
                 },
                 JPH::EActivation::Activate
             );
-            ARCADIA_ASSERT(!body_id.IsInvalid() && "Failed to create body");
+            ACDA_ASSERT(!body_id.IsInvalid() && "Failed to create body");
             _JphBodyIdStorage.try_emplace(uuid, body_id);
         }
         _SubmittedBodyInfos.emplace(uuid);
@@ -153,7 +153,7 @@ void PhysicsSimulator::Query(Scene& scene, const std::string& name)
     if(physics_comp.HasBodyInfo())
     {
         const auto& [uuid, jph_body_info_initial] = physics_comp.GetIdentifiableJphBodyInfo();
-        ARCADIA_ASSERT(_JphBodyIdStorage.contains(uuid));
+        ACDA_ASSERT(_JphBodyIdStorage.contains(uuid));
         const auto& jph_body_interface = _JphPhysicsSystem->GetBodyInterface();
         const auto& body_id = _JphBodyIdStorage.at(uuid);
 
@@ -216,12 +216,12 @@ auto PhysicsSimulator::GetJphBodyIdStorage() const -> const jph_body_id_storage_
 
 void PhysicsSimulator::_AssertFrameInBuild() const
 {
-    ARCADIA_ASSERT(_InBuild && "Frame is not in build, did you call `prepare()`?");
+    ACDA_ASSERT(_InBuild && "Frame is not in build, did you call `prepare()`?");
 }
 
 void PhysicsSimulator::_AssertFrameNotInBuild() const
 {
-    ARCADIA_ASSERT(!_InBuild && "Frame is in build, did you call `finalize()`?");
+    ACDA_ASSERT(!_InBuild && "Frame is in build, did you call `finalize()`?");
 }
 
 auto JphObjectLayerPairFilerImpl::ShouldCollide(JPH::ObjectLayer obj_1, JPH::ObjectLayer obj_2) const -> bool
@@ -256,7 +256,7 @@ auto JphBroadPhaseLayerImpl::GetNumBroadPhaseLayers() const -> JPH::uint
 
 auto JphBroadPhaseLayerImpl::GetBroadPhaseLayer(JPH::ObjectLayer layer) const -> JPH::BroadPhaseLayer
 {
-    ARCADIA_ASSERT(layer < GetNumBroadPhaseLayers());
+    ACDA_ASSERT(layer < GetNumBroadPhaseLayers());
     return _ObjectToBroadPhase[layer];
 }
 

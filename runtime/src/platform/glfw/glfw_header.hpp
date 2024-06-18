@@ -5,7 +5,7 @@
 #include"core/base.hpp"
 #include"core/exception.hpp"
 
-ARCADIA_EXCEPTION(GlfwError);
+ACDA_EXCEPTION(GlfwError);
 
 struct GlfwContext: Noncopyable
 {

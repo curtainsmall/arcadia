@@ -8,7 +8,7 @@
 struct GlShader: Noncopyable
 {
 public:
-    ARCADIA_EXCEPTION(CompileFail);
+    ACDA_EXCEPTION(CompileFail);
 
     using self_type = GlShader;
 public:

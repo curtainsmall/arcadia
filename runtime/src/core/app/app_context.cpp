@@ -2,7 +2,7 @@
 
 #include "app_context.hpp"
 
-#ifdef ARCADIA_IN_DEBUG
+#ifdef ACDA_IN_DEBUG
 #   include"core/event/event.hpp"
 #endif
 
@@ -14,13 +14,13 @@ auto AppContext::Instance() -> self_type&
 
 AppContext::AppContext()
 {
-#ifdef ARCADIA_IN_DEBUG
+#ifdef ACDA_IN_DEBUG
     auto& set = EventQueue::Instance()
         .DebugExcludedEventTypes;
     set.emplace(typeid(Event::InputCursorPos));
     set.emplace(typeid(Event::InputCursorMove));
     set.emplace(typeid(Event::WindowPos));
 
-#endif // ARCADIA_IN_DEBUG
+#endif // ACDA_IN_DEBUG
 
 }

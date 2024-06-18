@@ -33,4 +33,4 @@ private:
     bool _WaitingForProjectUnbuiltBeforeClosing{ false };
 };
 
-ARCADIA_API auto CreateApplication() -> std::unique_ptr<iAppLayer>;
+ACDA_API auto CreateApplication() -> std::unique_ptr<iAppLayer>;

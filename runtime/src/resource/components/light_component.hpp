@@ -85,7 +85,7 @@ struct LightComponent:
 public:
     using self_type = LightComponent;
 public:
-    ARCADIA_COMPONENT_TYPE_STR_GETTERS("light");
+    ACDA_COMPONENT_TYPE_STR_GETTERS("light");
 
     LightComponent() = default;
     LightComponent(const nlohmann::json& json);

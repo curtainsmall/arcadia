@@ -33,7 +33,7 @@ public:
     };
     using self_type = ImguiWindowViewport;
 public:
-    ARCADIA_IMGUI_WINDOW_ID_STR_GETTERS("###viewport");
+    ACDA_IMGUI_WINDOW_ID_STR_GETTERS("###viewport");
 
     inline ImguiWindowViewport(
         bool Open,

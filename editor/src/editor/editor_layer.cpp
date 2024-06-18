@@ -46,7 +46,7 @@ EditorAppLayer::EditorAppLayer()
         editor_context.MainImguiLayer = layer_stack
             .PushLayer<ImguiLayer>(
                 editor_context.MainWindowLayer.lock(),
-                ARCADIA_BIND_MEMBER_FN(_ImguiWindowInstaller),
+                ACDA_BIND_MEMBER_FN(_ImguiWindowInstaller),
                 ImguiStyle::Dark
             )
             .Top<ImguiLayer>();
@@ -62,10 +62,10 @@ void EditorAppLayer::OnUpdate()
 void EditorAppLayer::OnEvent(EventBase& event)
 {
     EventDispatcher{ event }
-        .Dispatch<Event::WindowShouldClose>(ARCADIA_BIND_MEMBER_FN(_OnWindowShouldClose))
-        .Dispatch<Event::ProjectUnbuilt>(ARCADIA_BIND_MEMBER_FN(_OnProjectUnbuilt))
-        .Dispatch<Event::PlayMode>(ARCADIA_BIND_MEMBER_FN(_OnPlayMode))
-        .Dispatch<Event::InputKey>(ARCADIA_BIND_MEMBER_FN(_OnInputKey))
+        .Dispatch<Event::WindowShouldClose>(ACDA_BIND_MEMBER_FN(_OnWindowShouldClose))
+        .Dispatch<Event::ProjectUnbuilt>(ACDA_BIND_MEMBER_FN(_OnProjectUnbuilt))
+        .Dispatch<Event::PlayMode>(ACDA_BIND_MEMBER_FN(_OnPlayMode))
+        .Dispatch<Event::InputKey>(ACDA_BIND_MEMBER_FN(_OnInputKey))
         .Result();
 }
 

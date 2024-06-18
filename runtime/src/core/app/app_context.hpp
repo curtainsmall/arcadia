@@ -2,7 +2,7 @@
 
 #include"core/base.hpp"
 #include"core/time/time.hpp"
-#ifdef ARCADIA_IN_DEBUG
+#ifdef ACDA_IN_DEBUG
 #   include"function/input/input_events.hpp"
 #endif
 

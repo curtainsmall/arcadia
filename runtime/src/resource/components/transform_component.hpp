@@ -38,7 +38,7 @@ struct TransformComponent:
 public:
     using self_type = TransformComponent;
 public:
-    ARCADIA_COMPONENT_TYPE_STR_GETTERS("transform");
+    ACDA_COMPONENT_TYPE_STR_GETTERS("transform");
 
     TransformComponent() = default;
     TransformComponent(const nlohmann::json& json);

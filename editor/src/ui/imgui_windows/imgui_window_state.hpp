@@ -44,7 +44,7 @@ struct ImguiWindowState: iImguiWindow
 public:
     using self_type = ImguiWindowState;
 public:
-    ARCADIA_IMGUI_WINDOW_ID_STR_GETTERS("###state");
+    ACDA_IMGUI_WINDOW_ID_STR_GETTERS("###state");
 
     inline ImguiWindowState(
         bool open,

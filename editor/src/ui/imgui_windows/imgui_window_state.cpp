@@ -77,8 +77,8 @@ void ImguiWindowStatePhysicsSimulator::operator()(PhysicsSimulator& physics_simu
     ImGui::NewLine();
     ImguiWrapper::DragInt(
         "            Updates per Second",
-        ARCADIA_BIND_MEMBER_FN_ARBITRARY(physics_simulator, GetJphPhysicsSystemUpdatesPerSecond),
-        ARCADIA_BIND_MEMBER_FN_ARBITRARY(physics_simulator, SetJphPhysicsSystemUpdatesPerSecond),
+        ACDA_BIND_MEMBER_FN_ARBITRARY(physics_simulator, GetJphPhysicsSystemUpdatesPerSecond),
+        ACDA_BIND_MEMBER_FN_ARBITRARY(physics_simulator, SetJphPhysicsSystemUpdatesPerSecond),
         1.f,
         0,
         (std::numeric_limits<int>::max)(),
@@ -113,13 +113,13 @@ void ImguiWindowStatePhysicsSimulator::operator()(PhysicsSimulator& physics_simu
 void ImguiWindowState::OnEvent(EventBase& event)
 {
     EventDispatcher{ event }
-        .Dispatch<Event::OpenImguiWindow>(ARCADIA_BIND_MEMBER_FN(_OnOpenImguiWindow))
-        .Dispatch<Event::SceneActivated>(ARCADIA_BIND_MEMBER_FN(_OnSceneActivated))
-        .Dispatch<Event::SceneDeactivated>(ARCADIA_BIND_MEMBER_FN(_OnSceneDeactivated))
-        .Dispatch<Event::RendererBuilt>(ARCADIA_BIND_MEMBER_FN(_OnRendererBuilt))
-        .Dispatch<Event::RendererUnbuilt>(ARCADIA_BIND_MEMBER_FN(_OnRendererUnbuilt))
-        .Dispatch<Event::PhysicsSimulatorBuilt>(ARCADIA_BIND_MEMBER_FN(_OnPhysicsSimualtorBuilt))
-        .Dispatch<Event::PhysicsSimulatorUnbuilt>(ARCADIA_BIND_MEMBER_FN(_OnPhysicsSimulatorUnbuilt))
+        .Dispatch<Event::OpenImguiWindow>(ACDA_BIND_MEMBER_FN(_OnOpenImguiWindow))
+        .Dispatch<Event::SceneActivated>(ACDA_BIND_MEMBER_FN(_OnSceneActivated))
+        .Dispatch<Event::SceneDeactivated>(ACDA_BIND_MEMBER_FN(_OnSceneDeactivated))
+        .Dispatch<Event::RendererBuilt>(ACDA_BIND_MEMBER_FN(_OnRendererBuilt))
+        .Dispatch<Event::RendererUnbuilt>(ACDA_BIND_MEMBER_FN(_OnRendererUnbuilt))
+        .Dispatch<Event::PhysicsSimulatorBuilt>(ACDA_BIND_MEMBER_FN(_OnPhysicsSimualtorBuilt))
+        .Dispatch<Event::PhysicsSimulatorUnbuilt>(ACDA_BIND_MEMBER_FN(_OnPhysicsSimulatorUnbuilt))
         .Result();
 }
 

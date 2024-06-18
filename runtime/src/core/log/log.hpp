@@ -70,49 +70,49 @@ private:
 
 namespace Log
 {
-    ARCADIA_API static inline void Debug(
+    ACDA_API static inline void Debug(
         const std::string& msg
     )
     {
         Logger::Instance().Debug(msg);
     }
 
-    ARCADIA_API static inline void Info(
+    ACDA_API static inline void Info(
         const std::string& msg
     )
     {
         Logger::Instance().Info(msg);
     }
 
-    ARCADIA_API static inline void Warning(
+    ACDA_API static inline void Warning(
         const std::string& msg
     )
     {
         Logger::Instance().Warning(msg);
     }
 
-    ARCADIA_API static inline void Error(
+    ACDA_API static inline void Error(
         const std::string& msg
     )
     {
         Logger::Instance().Error(msg);
     }
 
-    ARCADIA_API static inline void Fatal(
+    ACDA_API static inline void Fatal(
         const std::string& msg
     )
     {
         Logger::Instance().Fatal(msg);
     }
 
-    ARCADIA_API static inline void Demarcate(
+    ACDA_API static inline void Demarcate(
         const std::string& msg
     )
     {
         Debug(std::format("//==== {} ====//", msg));
     }
 
-    ARCADIA_API static inline void Flush()
+    ACDA_API static inline void Flush()
     {
         Logger::Instance().Flush();
     }

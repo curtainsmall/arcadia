@@ -5,7 +5,7 @@
 #include"core/base.hpp"
 
 template<class Type>
-ARCADIA_API auto HashCombine(const std::size_t& seed, const Type& val) -> std::size_t
+ACDA_API auto HashCombine(const std::size_t& seed, const Type& val) -> std::size_t
 {
     std::size_t res{ seed };
     boost::hash_combine(res, val);
@@ -13,7 +13,7 @@ ARCADIA_API auto HashCombine(const std::size_t& seed, const Type& val) -> std::s
 }
 
 template<class Type, class ...Types>
-ARCADIA_API auto Hash(const Type& val, const Types& ...vals) -> std::size_t
+ACDA_API auto Hash(const Type& val, const Types& ...vals) -> std::size_t
 {
     if constexpr(sizeof...(Types) == 0)
     {

@@ -5,7 +5,7 @@
 
 #include"core/base.hpp"
 
-#define ARCADIA_EXCEPTION(exception_name) \
+#define ACDA_EXCEPTION(exception_name) \
 struct exception_name: Exception{\
 inline exception_name(const std::string& msg = #exception_name ):\
 Exception(msg){\

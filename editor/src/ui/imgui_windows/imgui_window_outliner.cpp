@@ -13,10 +13,10 @@
 void ImguiWindowOutliner::OnEvent(EventBase& event)
 {
     EventDispatcher{ event }
-        .Dispatch<Event::OpenImguiWindow>(ARCADIA_BIND_MEMBER_FN(_OnOpenImguiWindow))
-        .Dispatch<Event::SceneActivated>(ARCADIA_BIND_MEMBER_FN(_OnSceneActivated))
-        .Dispatch<Event::SceneDeactivated>(ARCADIA_BIND_MEMBER_FN(_OnSceneDeactivated))
-        .Dispatch<Event::RenameEntity>(ARCADIA_BIND_MEMBER_FN(_OnRenameEntity))
+        .Dispatch<Event::OpenImguiWindow>(ACDA_BIND_MEMBER_FN(_OnOpenImguiWindow))
+        .Dispatch<Event::SceneActivated>(ACDA_BIND_MEMBER_FN(_OnSceneActivated))
+        .Dispatch<Event::SceneDeactivated>(ACDA_BIND_MEMBER_FN(_OnSceneDeactivated))
+        .Dispatch<Event::RenameEntity>(ACDA_BIND_MEMBER_FN(_OnRenameEntity))
         .Result();
 }
 

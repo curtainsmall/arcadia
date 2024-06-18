@@ -23,7 +23,7 @@ public:
 
     using self_type = ModelComponent;
 public:
-    ARCADIA_COMPONENT_TYPE_STR_GETTERS("model");
+    ACDA_COMPONENT_TYPE_STR_GETTERS("model");
 
     ModelComponent() = default;
     ModelComponent(const std::filesystem::path& filepath);

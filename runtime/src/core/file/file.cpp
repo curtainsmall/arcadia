@@ -6,19 +6,19 @@
 #include<fstream>
 #include<sstream>
 
-ARCADIA_API auto ToFilepath(const std::string& string) -> std::filesystem::path
+ACDA_API auto ToFilepath(const std::string& string) -> std::filesystem::path
 {
     std::filesystem::path path{ string };
     return path.make_preferred();
 }
 
-ARCADIA_API auto ToFilepath(const char* str) -> std::filesystem::path
+ACDA_API auto ToFilepath(const char* str) -> std::filesystem::path
 {
     std::filesystem::path path{ str };
     return path.make_preferred();
 }
 
-ARCADIA_API auto LoadText(const std::filesystem::path& filepath) -> std::string
+ACDA_API auto LoadText(const std::filesystem::path& filepath) -> std::string
 {
     std::ifstream ifs{ filepath };
     std::stringstream sstream{};

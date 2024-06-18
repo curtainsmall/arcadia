@@ -9,7 +9,7 @@
 struct GlFramebuffer:Noncopyable
 {
 public:
-    ARCADIA_EXCEPTION(Imcomplete);
+    ACDA_EXCEPTION(Imcomplete);
 
     using self_type = GlFramebuffer;
 public:

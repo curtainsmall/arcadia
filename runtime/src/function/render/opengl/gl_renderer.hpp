@@ -58,7 +58,7 @@ using GlRenderUnitPhysicsBodyShape = std::tuple<
 struct GlRenderer: iRenderer
 {
 public:
-    ARCADIA_EXCEPTION(too_many_lights);
+    ACDA_EXCEPTION(too_many_lights);
     using self_type = GlRenderer;
 public:
     GlRenderer(const std::filesystem::path& gl_shader_folder_path);

@@ -1190,16 +1190,16 @@ auto ImguiWindowPropertyTransformComponent::operator()(TransformComponent& trans
 void ImguiWindowProperty::OnEvent(EventBase& event)
 {
     EventDispatcher{ event }
-        .Dispatch<Event::OpenImguiWindow>(ARCADIA_BIND_MEMBER_FN(_OnOpenImguiWindow))
-        .Dispatch<Event::SceneActivated>(ARCADIA_BIND_MEMBER_FN(_OnSceneActivated))
-        .Dispatch<Event::SceneDeactivated>(ARCADIA_BIND_MEMBER_FN(_OnSceneDeactivated))
-        .Dispatch<Event::SelectEntity>(ARCADIA_BIND_MEMBER_FN(_OnSelectEntity))
-        .Dispatch<Event::RenameEntity>(ARCADIA_BIND_MEMBER_FN(_OnRenameEntity))
-        .Dispatch<Event::DeleteEntity>(ARCADIA_BIND_MEMBER_FN(_OnDeleteEntity))
+        .Dispatch<Event::OpenImguiWindow>(ACDA_BIND_MEMBER_FN(_OnOpenImguiWindow))
+        .Dispatch<Event::SceneActivated>(ACDA_BIND_MEMBER_FN(_OnSceneActivated))
+        .Dispatch<Event::SceneDeactivated>(ACDA_BIND_MEMBER_FN(_OnSceneDeactivated))
+        .Dispatch<Event::SelectEntity>(ACDA_BIND_MEMBER_FN(_OnSelectEntity))
+        .Dispatch<Event::RenameEntity>(ACDA_BIND_MEMBER_FN(_OnRenameEntity))
+        .Dispatch<Event::DeleteEntity>(ACDA_BIND_MEMBER_FN(_OnDeleteEntity))
         .Result();
 }
 
-#define ARCADIA_IMGUI_WINDOW_PROPERTY_HELPER(component_type, tab_name, property_display_fn) \
+#define ACDA_IMGUI_WINDOW_PROPERTY_HELPER(component_type, tab_name, property_display_fn) \
 if(_ContainsComponent<component_type>(_SelectedEntityName) && ImGui::TreeNodeEx(tab_name.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_FramePadding))\
 {\
     auto description = property_display_fn(_GetComponent<component_type>(_SelectedEntityName));\
@@ -1258,11 +1258,11 @@ void ImguiWindowProperty::OnUpdate()
 
                 auto& memento_list = MementoList::Instance();
 
-                ARCADIA_IMGUI_WINDOW_PROPERTY_HELPER(CameraComponent, "Camera"s, _ImguiWindowPropertyCameraComponent);
-                ARCADIA_IMGUI_WINDOW_PROPERTY_HELPER(LightComponent, "Light"s, _ImguiWindowPropertyLightComponent);
-                ARCADIA_IMGUI_WINDOW_PROPERTY_HELPER(ModelComponent, "Model"s, _ImguiWindowPropertyModelComponent);
-                ARCADIA_IMGUI_WINDOW_PROPERTY_HELPER(PhysicsComponent, "Physics"s, _ImguiWindowPropertyPhysicsComponent);
-                ARCADIA_IMGUI_WINDOW_PROPERTY_HELPER(TransformComponent, "Transform"s, _ImguiWindowPropertyTransformComponent);
+                ACDA_IMGUI_WINDOW_PROPERTY_HELPER(CameraComponent, "Camera"s, _ImguiWindowPropertyCameraComponent);
+                ACDA_IMGUI_WINDOW_PROPERTY_HELPER(LightComponent, "Light"s, _ImguiWindowPropertyLightComponent);
+                ACDA_IMGUI_WINDOW_PROPERTY_HELPER(ModelComponent, "Model"s, _ImguiWindowPropertyModelComponent);
+                ACDA_IMGUI_WINDOW_PROPERTY_HELPER(PhysicsComponent, "Physics"s, _ImguiWindowPropertyPhysicsComponent);
+                ACDA_IMGUI_WINDOW_PROPERTY_HELPER(TransformComponent, "Transform"s, _ImguiWindowPropertyTransformComponent);
 
 
                 ImGui::PopItemWidth();

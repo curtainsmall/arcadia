@@ -15,13 +15,13 @@
 
 #include"platform/base.hpp"
 
-#define ARCADIA_ASSERT(x) assert(x)
+#define ACDA_ASSERT(x) assert(x)
 
-#define ARCADIA_BIND_MEMBER_FN(fn) [this]<class ...Args>(Args&& ...args) -> decltype(auto) { return this->fn(std::forward<Args>(args)...); }
-#define ARCADIA_BIND_MEMBER_FN_ARBITRARY(obj, fn) [&obj]<class ...Args>(Args&& ...args) -> decltype(auto) { return obj.fn(std::forward<Args>(args)...); }
-#define ARCADIA_BIND_MEMBER_FN_ARBITRARY_PTR(obj_ptr, fn) [&obj_ptr]<class ...Args>(Args&& ...args) -> decltype(auto) { return obj_ptr->fn(std::forward<Args>(args)...); }
+#define ACDA_BIND_MEMBER_FN(fn) [this]<class ...Args>(Args&& ...args) -> decltype(auto) { return this->fn(std::forward<Args>(args)...); }
+#define ACDA_BIND_MEMBER_FN_ARBITRARY(obj, fn) [&obj]<class ...Args>(Args&& ...args) -> decltype(auto) { return obj.fn(std::forward<Args>(args)...); }
+#define ACDA_BIND_MEMBER_FN_ARBITRARY_PTR(obj_ptr, fn) [&obj_ptr]<class ...Args>(Args&& ...args) -> decltype(auto) { return obj_ptr->fn(std::forward<Args>(args)...); }
 
-#define ARCADIA_DISCARD(x) (void) x
+#define ACDA_DISCARD(x) (void) x
 
 using namespace std::string_literals;
 using namespace std::string_view_literals;
@@ -64,7 +64,7 @@ public:
 
 template<class Enum>
     requires std::is_enum_v<Enum>
-ARCADIA_API auto ToUnderlying(Enum e) -> std::underlying_type_t<Enum>
+ACDA_API auto ToUnderlying(Enum e) -> std::underlying_type_t<Enum>
 {
     return static_cast<std::underlying_type_t<Enum>>(e);
 }
@@ -74,7 +74,7 @@ template<
     instantiated_from<std::variant> Variant,
     class ...BranchFns
 >
-ARCADIA_API auto Match(Variant& variant, BranchFns&& ...fns) -> Ret
+ACDA_API auto Match(Variant& variant, BranchFns&& ...fns) -> Ret
 {
     return std::visit<Ret>(
         Overloaded{
@@ -89,7 +89,7 @@ template<
     instantiated_from<std::variant> Variant,
     class ...BranchFns
 >
-ARCADIA_API auto Match(const Variant& variant, BranchFns&& ...fns) -> Ret
+ACDA_API auto Match(const Variant& variant, BranchFns&& ...fns) -> Ret
 {
     return std::visit<Ret>(
         Overloaded{
@@ -106,7 +106,7 @@ template<
     class ...Cases
 >
     requires (sizeof...(Cases) % 2 == 0)
-ARCADIA_API auto Match(const Cond& cond, const Case& case_expr, const std::function<Ret()>& case_fn, Cases&& ...cases) -> Ret
+ACDA_API auto Match(const Cond& cond, const Case& case_expr, const std::function<Ret()>& case_fn, Cases&& ...cases) -> Ret
 {
     if constexpr(sizeof...(Cases) == 0)
     {
@@ -125,7 +125,7 @@ template<
     class ...Cases
 >
     requires (sizeof...(Cases) % 2 == 0)
-ARCADIA_API auto Match(const Cond& cond, const std::function<Ret()>& default_fn, const Case& case_expr, const std::function<Ret()>& case_fn, Cases&& ...cases) -> Ret
+ACDA_API auto Match(const Cond& cond, const std::function<Ret()>& default_fn, const Case& case_expr, const std::function<Ret()>& case_fn, Cases&& ...cases) -> Ret
 {
     if constexpr(sizeof...(Cases) == 0)
     {
@@ -144,7 +144,7 @@ template<
     class ...Cases
 >
     requires (sizeof...(Cases) % 2 == 0)
-ARCADIA_API auto Match(const Cond& cond, const Case& case_expr, const Res& case_res, Cases&& ...cases) -> Res
+ACDA_API auto Match(const Cond& cond, const Case& case_expr, const Res& case_res, Cases&& ...cases) -> Res
 {
     if constexpr(sizeof...(Cases) == 0)
     {
@@ -163,7 +163,7 @@ template<
     class ...Cases
 >
     requires (sizeof...(Cases) % 2 == 0)
-ARCADIA_API auto Match(const Cond& cond, const Res& default_res, const Case& case_expr, const Res& case_res, Cases&& ...cases) -> Res
+ACDA_API auto Match(const Cond& cond, const Res& default_res, const Case& case_expr, const Res& case_res, Cases&& ...cases) -> Res
 {
     if constexpr(sizeof...(Cases) == 0)
     {

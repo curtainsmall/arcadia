@@ -51,14 +51,14 @@ auto Project::HasActiveScene() const -> bool
 
 auto Project::GetActiveScene() -> Scene&
 {
-    ARCADIA_ASSERT(HasActiveScene());
+    ACDA_ASSERT(HasActiveScene());
     // If scene is modified, it will record it internally so we does not need to change _modified here
     return *_ActiveScene;
 }
 
 auto Project::GetActiveScene() const -> const Scene&
 {
-    ARCADIA_ASSERT(HasActiveScene());
+    ACDA_ASSERT(HasActiveScene());
     return *_ActiveScene;
 }
 

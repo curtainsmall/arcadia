@@ -44,8 +44,8 @@ concept cLayer = requires{
 struct LayerStack
 {
 public:
-    ARCADIA_EXCEPTION(OutOfRange);
-    ARCADIA_EXCEPTION(EmptyStack);
+    ACDA_EXCEPTION(OutOfRange);
+    ACDA_EXCEPTION(EmptyStack);
 
     using layer_vector_type = std::vector<std::shared_ptr<iLayer>>;
 

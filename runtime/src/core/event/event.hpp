@@ -11,12 +11,12 @@
 #include"core/exception.hpp"
 #include"core/log/log.hpp"
 
-#ifdef ARCADIA_IN_DEBUG
+#ifdef ACDA_IN_DEBUG
 #   include<unordered_set>
 #   include<typeindex>
-#endif // ARCADIA_IN_DEBUG
+#endif // ACDA_IN_DEBUG
 
-#define ARCADIA_EVENT(event_name,...) \
+#define ACDA_EVENT(event_name,...) \
 struct event_name: BasicEvent<__VA_ARGS__>\
 {\
 public:\
@@ -106,7 +106,7 @@ private:
 struct EventQueue
 {
 public:
-    ARCADIA_EXCEPTION(empty_queue);
+    ACDA_EXCEPTION(empty_queue);
 
     using self_type = EventQueue;
 private:
@@ -122,7 +122,7 @@ public:
     {
         _CurrentQueue->emplace(std::make_unique<Event>(std::forward<Args>(args)...));
 
-    #ifdef ARCADIA_IN_DEBUG
+    #ifdef ACDA_IN_DEBUG
         if(!DebugExcludedEventTypes.contains(typeid(Event)))
         {
             Log::Debug(std::format("Event signaled: {}", typeid(Event).name()));
@@ -147,9 +147,9 @@ public:
     auto Pop() -> bool;
 
 public:
-#ifdef ARCADIA_IN_DEBUG
+#ifdef ACDA_IN_DEBUG
     std::unordered_set<std::type_index> DebugExcludedEventTypes{};
-#endif // ARCADIA_IN_DEBUG
+#endif // ACDA_IN_DEBUG
 
 private:
     _event_queue_type _QueueA{};

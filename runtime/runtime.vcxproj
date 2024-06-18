@@ -116,7 +116,7 @@
       <PreprocessorDefinitions>ARCADIA_EXPORT;GLEW_STATIC;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)3rdparty\assimp\include;$(SolutionDir)runtime\src;$(SolutionDir)3rdparty;$(SolutionDir)3rdparty\JoltPhysics;$(SolutionDir)3rdparty\glm;$(SolutionDir)3rdparty\imguizmo;$(SolutionDir)3rdparty\imgui;$(SolutionDir)3rdparty\glfw\include;$(SolutionDir)3rdparty\spdlog\include;$(SolutionDir)3rdparty\flatbuffers-23.5.26\include;$(SolutionDir)3rdparty\portable-file-dialogs-main;$(SolutionDir)3rdparty\boost_1_83_0;$(SolutionDir)3rdparty\glew\include;$(SolutionDir)3rdparty\ImGuiFileDialog;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)3rdparty\assimp\include;$(SolutionDir)runtime\src;$(SolutionDir)3rdparty;$(SolutionDir)3rdparty\JoltPhysics;$(SolutionDir)3rdparty\glm;$(SolutionDir)3rdparty\imguizmo;$(SolutionDir)3rdparty\imgui;$(SolutionDir)3rdparty\glfw\include;$(SolutionDir)3rdparty\spdlog\include;$(SolutionDir)3rdparty\flatbuffers-23.5.26\include;$(SolutionDir)3rdparty\portable-file-dialogs;$(SolutionDir)3rdparty\boost_1_83_0;$(SolutionDir)3rdparty\glew\include;$(SolutionDir)3rdparty\ImGuiFileDialog;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.hpp</PrecompiledHeaderFile>
       <LanguageStandard_C>Default</LanguageStandard_C>
@@ -138,7 +138,7 @@
       <PreprocessorDefinitions>ARCADIA_EXPORT;GLEW_STATIC;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)3rdparty\assimp\include;$(SolutionDir)runtime\src;$(SolutionDir)3rdparty;$(SolutionDir)3rdparty\JoltPhysics;$(SolutionDir)3rdparty\glm;$(SolutionDir)3rdparty\imguizmo;$(SolutionDir)3rdparty\imgui;$(SolutionDir)3rdparty\glfw\include;$(SolutionDir)3rdparty\spdlog\include;$(SolutionDir)3rdparty\flatbuffers-23.5.26\include;$(SolutionDir)3rdparty\portable-file-dialogs-0.1.0;$(SolutionDir)3rdparty\boost_1_83_0;$(SolutionDir)3rdparty\glew\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)3rdparty\assimp\include;$(SolutionDir)runtime\src;$(SolutionDir)3rdparty;$(SolutionDir)3rdparty\JoltPhysics;$(SolutionDir)3rdparty\glm;$(SolutionDir)3rdparty\imguizmo;$(SolutionDir)3rdparty\imgui;$(SolutionDir)3rdparty\glfw\include;$(SolutionDir)3rdparty\spdlog\include;$(SolutionDir)3rdparty\flatbuffers-23.5.26\include;$(SolutionDir)3rdparty\portable-file-dialogs;$(SolutionDir)3rdparty\boost_1_83_0;$(SolutionDir)3rdparty\glew\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.hpp</PrecompiledHeaderFile>
       <LanguageStandard_C>Default</LanguageStandard_C>

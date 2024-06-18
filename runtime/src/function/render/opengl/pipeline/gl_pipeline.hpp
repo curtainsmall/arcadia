@@ -16,8 +16,8 @@
 struct GlPipeline: Noncopyable
 {
 public:
-    ARCADIA_EXCEPTION(LinkFail);
-    ARCADIA_EXCEPTION(ValidationFail);
+    ACDA_EXCEPTION(LinkFail);
+    ACDA_EXCEPTION(ValidationFail);
 
     using gl_shaders_builder_type = std::function<void(const std::filesystem::path&, std::vector<GlShader>&)>;
 

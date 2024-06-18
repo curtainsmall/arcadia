@@ -25,7 +25,7 @@ public:
     template<class Type>
     auto Push(GLuint count = 1, GLuint dividor = 0) -> self_type&
     {
-        ARCADIA_ASSERT(false && "This generic template should never be occured");
+        ACDA_ASSERT(false && "This generic template should never be occured");
         return *this;
     }
 

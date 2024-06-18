@@ -45,7 +45,7 @@ struct ImguiWindowMainMenubar: iImguiWindow
 public:
     using self_type = ImguiWindowMainMenubar;
 public:
-    ARCADIA_IMGUI_WINDOW_ID_STR_GETTERS("###menubar");
+    ACDA_IMGUI_WINDOW_ID_STR_GETTERS("###menubar");
 
     inline ImguiWindowMainMenubar(const std::initializer_list<std::tuple<std::string, std::string>>& imgui_window_title_id_pairs):
         iImguiWindow(true, "Main Menubar"),

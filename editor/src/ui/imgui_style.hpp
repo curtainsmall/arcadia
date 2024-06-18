@@ -5,22 +5,22 @@
 
 namespace ImguiStyle
 {
-    static inline ARCADIA_API void DefaultDark()
+    static inline ACDA_API void DefaultDark()
     {
         ImGui::StyleColorsDark();
     }
 
-    static inline ARCADIA_API void DefaultClassic()
+    static inline ACDA_API void DefaultClassic()
     {
         ImGui::StyleColorsClassic();
     }
-    static inline ARCADIA_API void DefaultLight()
+    static inline ACDA_API void DefaultLight()
     {
         ImGui::StyleColorsLight();
     }
 
     /// @brief From https://github.com/ocornut/imgui/issues/707#issuecomment-917151020
-    static inline ARCADIA_API void EmbraceDarkness()
+    static inline ACDA_API void EmbraceDarkness()
     {
         ImGuiStyle& style = ImGui::GetStyle();
         style.WindowPadding                     = ImVec2(8.00f, 8.00f);
@@ -105,7 +105,7 @@ namespace ImguiStyle
     }
 
     /// @brief From https://github.com/TheCherno/Hazel/blob/master/Hazel/src/Hazel/ImGui/ImGuiLayer.cpp#L116
-    static inline ARCADIA_API void Dark()
+    static inline ACDA_API void Dark()
     {
         auto& colors = ImGui::GetStyle().Colors;
         colors[ImGuiCol_WindowBg] = ImVec4{ 0.1f, 0.105f, 0.11f, 1.0f };

@@ -6,7 +6,7 @@
 #include"core/base.hpp"
 #include"core/event/event.hpp"
 
-#define ARCADIA_IMGUI_WINDOW_ID_STR_GETTERS(id_str) \
+#define ACDA_IMGUI_WINDOW_ID_STR_GETTERS(id_str) \
 [[nodiscard]]\
 static constexpr auto GetIdStrStatic() -> std::string\
 {\

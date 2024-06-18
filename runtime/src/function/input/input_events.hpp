@@ -159,7 +159,7 @@ namespace InputModifier
 
 namespace Event
 {
-    ARCADIA_EVENT(
+    ACDA_EVENT(
         InputKey,
         WindowLayer*, // Input window
         int, // Key code
@@ -167,34 +167,34 @@ namespace Event
         int, // Input action
         int  // Input modifiers
     );
-    ARCADIA_EVENT(
+    ACDA_EVENT(
         InputCursorPos,
         WindowLayer*, // Input window
         glm::vec2 // Cursor position
     );
-    ARCADIA_EVENT(
+    ACDA_EVENT(
         InputCursorMove,
         WindowLayer*, // Input window
         glm::vec2 // Cursor movement
     );
-    ARCADIA_EVENT(
+    ACDA_EVENT(
         InputScroll,
         WindowLayer*, // Input window
         glm::vec2 // Scroll offset (a vertical mouse wheel provides offset along the y-axis
     );
-    ARCADIA_EVENT(
+    ACDA_EVENT(
         InputMouseButton,
         WindowLayer*, // Input window
         int, // Mouse code
         int, // Input action
         int  // Input modifiers
     );
-    ARCADIA_EVENT(
+    ACDA_EVENT(
         InputCursorEnter,
         WindowLayer*,
         bool // Whether the cursor entered or not
     );
-    ARCADIA_EVENT(
+    ACDA_EVENT(
         InputChar,
         WindowLayer*,
         unsigned int // Unicode code points

@@ -11,7 +11,7 @@
 #include"ui/imgui_window.hpp"
 #include"ui/ui_events.hpp"
 
-ARCADIA_EXCEPTION(ImguiError);
+ACDA_EXCEPTION(ImguiError);
 
 struct ImguiLayer: iLayer
 {

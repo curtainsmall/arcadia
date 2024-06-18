@@ -7,7 +7,7 @@
 
 #include"core/app/app_config.hpp"
 
-ARCADIA_API void ImguiBackend::Initialize(const WindowLayer& window)
+ACDA_API void ImguiBackend::Initialize(const WindowLayer& window)
 {
     const auto& app_config = AppConfig::Instance();
 
@@ -40,7 +40,7 @@ ARCADIA_API void ImguiBackend::Initialize(const WindowLayer& window)
     );
 }
 
-ARCADIA_API void ImguiBackend::NewFrame(const WindowLayer& window)
+ACDA_API void ImguiBackend::NewFrame(const WindowLayer& window)
 {
     const auto& app_config = AppConfig::Instance();
 
@@ -57,7 +57,7 @@ ARCADIA_API void ImguiBackend::NewFrame(const WindowLayer& window)
     );
 }
 
-ARCADIA_API void ImguiBackend::RenderDrawData(const WindowLayer& window)
+ACDA_API void ImguiBackend::RenderDrawData(const WindowLayer& window)
 {
     const auto& app_config = AppConfig::Instance();
 
@@ -73,7 +73,7 @@ ARCADIA_API void ImguiBackend::RenderDrawData(const WindowLayer& window)
     );
 }
 
-ARCADIA_API void ImguiBackend::Shutdown(const WindowLayer& window)
+ACDA_API void ImguiBackend::Shutdown(const WindowLayer& window)
 {
     const auto& app_config = AppConfig::Instance();
 
@@ -90,7 +90,7 @@ ARCADIA_API void ImguiBackend::Shutdown(const WindowLayer& window)
     );
 }
 
-ARCADIA_API void ImguiBackend::ImguiOnEvent(EventBase& event)
+ACDA_API void ImguiBackend::ImguiOnEvent(EventBase& event)
 {
     if(EventDispatcher{ event }
        .Dispatch<Event::WindowFocus>(ImguiBackend::ImguiOnWindowFocus)
@@ -115,49 +115,49 @@ ARCADIA_API void ImguiBackend::ImguiOnEvent(EventBase& event)
     }
 }
 
-ARCADIA_API void ImguiBackend::ImguiOnWindowFocus(Event::WindowFocus& WindowFocus)
+ACDA_API void ImguiBackend::ImguiOnWindowFocus(Event::WindowFocus& WindowFocus)
 {
     const auto& [wnd_ptr, focused] = WindowFocus.data_tuple;
     ImGui_ImplGlfw_WindowFocusCallback(wnd_ptr->GetGlfwWindowPtr(), focused);
 }
 
-ARCADIA_API void ImguiBackend::ImguiOnCursorEnter(Event::InputCursorEnter& input_cursor_enter)
+ACDA_API void ImguiBackend::ImguiOnCursorEnter(Event::InputCursorEnter& input_cursor_enter)
 {
     const auto& [wnd_ptr, entered] = input_cursor_enter.data_tuple;
     ImGui_ImplGlfw_CursorEnterCallback(wnd_ptr->GetGlfwWindowPtr(), entered);
 }
 
-ARCADIA_API void ImguiBackend::ImguiOnCursorPos(Event::InputCursorPos& input_cursor_pos)
+ACDA_API void ImguiBackend::ImguiOnCursorPos(Event::InputCursorPos& input_cursor_pos)
 {
     const auto& [wnd_ptr, pos] = input_cursor_pos.data_tuple;
     ImGui_ImplGlfw_CursorPosCallback(wnd_ptr->GetGlfwWindowPtr(), pos.x, pos.y);
 }
 
-ARCADIA_API void ImguiBackend::ImguiOnMouseButton(Event::InputMouseButton& input_mouse_button)
+ACDA_API void ImguiBackend::ImguiOnMouseButton(Event::InputMouseButton& input_mouse_button)
 {
     const auto& [wnd_ptr, button, action, mods] = input_mouse_button.data_tuple;
     ImGui_ImplGlfw_MouseButtonCallback(wnd_ptr->GetGlfwWindowPtr(), button, action, mods);
 }
 
-ARCADIA_API void ImguiBackend::ImguiOnScroll(Event::InputScroll& input_scroll)
+ACDA_API void ImguiBackend::ImguiOnScroll(Event::InputScroll& input_scroll)
 {
     const auto& [wnd_ptr, Offset] = input_scroll.data_tuple;
     ImGui_ImplGlfw_ScrollCallback(wnd_ptr->GetGlfwWindowPtr(), Offset.x, Offset.y);
 }
 
-ARCADIA_API void ImguiBackend::ImguiOnKey(Event::InputKey& input_key)
+ACDA_API void ImguiBackend::ImguiOnKey(Event::InputKey& input_key)
 {
     const auto& [wnd_ptr, key, scancode, action, mods] = input_key.data_tuple;
     ImGui_ImplGlfw_KeyCallback(wnd_ptr->GetGlfwWindowPtr(), key, scancode, action, mods);
 }
 
-ARCADIA_API void ImguiBackend::ImguiOnChar(Event::InputChar& input_char)
+ACDA_API void ImguiBackend::ImguiOnChar(Event::InputChar& input_char)
 {
     const auto& [wnd_ptr, code] = input_char.data_tuple;
     ImGui_ImplGlfw_CharCallback(wnd_ptr->GetGlfwWindowPtr(), code);
 }
 
-ARCADIA_API void ImguiBackend::ImguiOnMonitor(Event::MonitorConnection& monitor_connection)
+ACDA_API void ImguiBackend::ImguiOnMonitor(Event::MonitorConnection& monitor_connection)
 {
     const auto& [glfw_monitor_ptr, connection] = monitor_connection.data_tuple;
     ImGui_ImplGlfw_MonitorCallback(glfw_monitor_ptr, connection);

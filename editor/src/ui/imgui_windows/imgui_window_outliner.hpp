@@ -16,7 +16,7 @@ struct ImguiWindowOutliner: iImguiWindow
 public:
     using self_type = ImguiWindowOutliner;
 public:
-    ARCADIA_IMGUI_WINDOW_ID_STR_GETTERS("###outliner");
+    ACDA_IMGUI_WINDOW_ID_STR_GETTERS("###outliner");
 
     inline ImguiWindowOutliner(
         bool open,

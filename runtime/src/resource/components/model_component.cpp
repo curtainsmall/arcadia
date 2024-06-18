@@ -57,7 +57,7 @@ auto ModelComponent::HasIdentifiableMeshes() const -> bool
 
 auto ModelComponent::GetIdentifiableMeshes() const -> const identifiable_meshes&
 {
-    ARCADIA_ASSERT(HasIdentifiableMeshes());
+    ACDA_ASSERT(HasIdentifiableMeshes());
     return *_IdentifiableMeshes;
 }
 

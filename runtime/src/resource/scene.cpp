@@ -85,8 +85,8 @@ auto Scene::ToJson() const -> nlohmann::json
 
 void Scene::Rename(const std::string& name, const std::string& new_name)
 {
-    ARCADIA_ASSERT(Contains(name));
-    ARCADIA_ASSERT(!Contains(new_name));
+    ACDA_ASSERT(Contains(name));
+    ACDA_ASSERT(!Contains(new_name));
 
     auto node = _EntityInfoStorage.extract(name);
     node.key() = new_name;
@@ -119,13 +119,13 @@ auto Scene::Count(const std::function<bool(const std::string&, const EntityInfo&
 
 auto Scene::GetEntityInfo(const std::string& name) const -> const EntityInfo&
 {
-    ARCADIA_ASSERT(Contains(name));
+    ACDA_ASSERT(Contains(name));
     return _EntityInfoStorage.at(name);
 }
 
 auto Scene::GetEntityInfo(const std::string& name) -> EntityInfo&
 {
-    ARCADIA_ASSERT(Contains(name));
+    ACDA_ASSERT(Contains(name));
     return _EntityInfoStorage.at(name);
 }
 
@@ -146,7 +146,7 @@ auto Scene::Create(const std::string& name, const std::string& type) -> EntityIn
 
 void Scene::Destroy(const std::string& name)
 {
-    ARCADIA_ASSERT(Contains(name));
+    ACDA_ASSERT(Contains(name));
 
     _Registry.destroy(_EntityOf(name));
     _EntityInfoStorage.erase(name);
@@ -154,7 +154,7 @@ void Scene::Destroy(const std::string& name)
 
 auto Scene::_EntityOf(const std::string& name) const -> entt::entity
 {
-    ARCADIA_ASSERT(Contains(name));
+    ACDA_ASSERT(Contains(name));
     return _EntityInfoStorage.at(name).Entity;
 }
 

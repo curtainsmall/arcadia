@@ -128,7 +128,7 @@ public:
     template<cComponent Component, class ...Args>
     auto Replace(const std::string& name, Args&& ...args) -> Component&
     {
-        ARCADIA_ASSERT(AllOf<Component>(name));
+        ACDA_ASSERT(AllOf<Component>(name));
 
         return _Registry.replace<Component>(_EntityOf(name), std::forward<Args>(args)...);
     }
@@ -153,7 +153,7 @@ public:
     [[nodiscard]]
     auto Get(const std::string& name) const -> decltype(auto)
     {
-        ARCADIA_ASSERT(AllOf<Components...>(name));
+        ACDA_ASSERT(AllOf<Components...>(name));
 
         return _Registry.get<Components...>(_EntityOf(name));
     }
@@ -163,7 +163,7 @@ public:
     [[nodiscard]]
     auto Get(const std::string& name) -> decltype(auto)
     {
-        ARCADIA_ASSERT(AllOf<Components...>(name));
+        ACDA_ASSERT(AllOf<Components...>(name));
 
         return _Registry.get<Components...>(_EntityOf(name));
     }

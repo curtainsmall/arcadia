@@ -10,7 +10,7 @@
 struct Texture2d
 {
 public:
-    ARCADIA_EXCEPTION(IncompatibleTextureSize);
+    ACDA_EXCEPTION(IncompatibleTextureSize);
 
     using self_type = Texture2d;
 public:

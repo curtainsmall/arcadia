@@ -86,7 +86,7 @@ WindowLayer::~WindowLayer()
 void WindowLayer::OnEvent(EventBase& event)
 {
     EventDispatcher{ event }
-        .Dispatch<Event::WindowSetInputModeCursor>(ARCADIA_BIND_MEMBER_FN(_OnWindowSetInputModeCursor))
+        .Dispatch<Event::WindowSetInputModeCursor>(ACDA_BIND_MEMBER_FN(_OnWindowSetInputModeCursor))
         .Result();
 }
 
@@ -396,6 +396,6 @@ auto WindowLayer::GetInputModeCursor() const -> WindowInputModeCursor
             return WindowInputModeCursor::Captured;
         }
         default:
-            ARCADIA_ASSERT(false);
+            ACDA_ASSERT(false);
     }
 }

@@ -10,20 +10,20 @@
 void ImguiWindowViewport::OnEvent(EventBase& event)
 {
     EventDispatcher{ event }
-        .Dispatch<Event::InputCursorMove>(ARCADIA_BIND_MEMBER_FN(_OnInputCursorMove))
-        .Dispatch<Event::OpenImguiWindow>(ARCADIA_BIND_MEMBER_FN(_OnOpenImguiWindow))
-        .Dispatch<Event::ProjectBuilt>(ARCADIA_BIND_MEMBER_FN(_OnProjectBuilt))
-        .Dispatch<Event::ProjectUnbuilt>(ARCADIA_BIND_MEMBER_FN(_OnProjectUnbuilt))
-        .Dispatch<Event::SceneActivated>(ARCADIA_BIND_MEMBER_FN(_OnSceneActivated))
-        .Dispatch<Event::SceneDeactivated>(ARCADIA_BIND_MEMBER_FN(_OnSceneDeactivated))
-        .Dispatch<Event::SelectEntity>(ARCADIA_BIND_MEMBER_FN(_OnSelectEntity))
-        .Dispatch<Event::RenameEntity>(ARCADIA_BIND_MEMBER_FN(_OnRenameEntity))
-        .Dispatch<Event::DeleteEntity>(ARCADIA_BIND_MEMBER_FN(_OnDeleteEntity))
-        .Dispatch<Event::RendererBuilt>(ARCADIA_BIND_MEMBER_FN(_OnRendererBuilt))
-        .Dispatch<Event::RendererUnbuilt>(ARCADIA_BIND_MEMBER_FN(_OnRendererUnbuilt))
-        .Dispatch<Event::PhysicsSimulatorBuilt>(ARCADIA_BIND_MEMBER_FN(_OnPhysicsSimualtorBuilt))
-        .Dispatch<Event::PhysicsSimulatorUnbuilt>(ARCADIA_BIND_MEMBER_FN(_OnPhysicsSimulatorUnbuilt))
-        .Dispatch<Event::ShowGizmo>(ARCADIA_BIND_MEMBER_FN(_OnShowGizmo))
+        .Dispatch<Event::InputCursorMove>(ACDA_BIND_MEMBER_FN(_OnInputCursorMove))
+        .Dispatch<Event::OpenImguiWindow>(ACDA_BIND_MEMBER_FN(_OnOpenImguiWindow))
+        .Dispatch<Event::ProjectBuilt>(ACDA_BIND_MEMBER_FN(_OnProjectBuilt))
+        .Dispatch<Event::ProjectUnbuilt>(ACDA_BIND_MEMBER_FN(_OnProjectUnbuilt))
+        .Dispatch<Event::SceneActivated>(ACDA_BIND_MEMBER_FN(_OnSceneActivated))
+        .Dispatch<Event::SceneDeactivated>(ACDA_BIND_MEMBER_FN(_OnSceneDeactivated))
+        .Dispatch<Event::SelectEntity>(ACDA_BIND_MEMBER_FN(_OnSelectEntity))
+        .Dispatch<Event::RenameEntity>(ACDA_BIND_MEMBER_FN(_OnRenameEntity))
+        .Dispatch<Event::DeleteEntity>(ACDA_BIND_MEMBER_FN(_OnDeleteEntity))
+        .Dispatch<Event::RendererBuilt>(ACDA_BIND_MEMBER_FN(_OnRendererBuilt))
+        .Dispatch<Event::RendererUnbuilt>(ACDA_BIND_MEMBER_FN(_OnRendererUnbuilt))
+        .Dispatch<Event::PhysicsSimulatorBuilt>(ACDA_BIND_MEMBER_FN(_OnPhysicsSimualtorBuilt))
+        .Dispatch<Event::PhysicsSimulatorUnbuilt>(ACDA_BIND_MEMBER_FN(_OnPhysicsSimulatorUnbuilt))
+        .Dispatch<Event::ShowGizmo>(ACDA_BIND_MEMBER_FN(_OnShowGizmo))
         .Result();
 }
 
@@ -58,8 +58,8 @@ void ImguiWindowViewport::OnUpdate()
         }
         else
         {
-            ARCADIA_ASSERT(physics_simulator);
-            ARCADIA_ASSERT(renderer);
+            ACDA_ASSERT(physics_simulator);
+            ACDA_ASSERT(renderer);
 
             physics_simulator->Prepare();
             renderer->Prepare();

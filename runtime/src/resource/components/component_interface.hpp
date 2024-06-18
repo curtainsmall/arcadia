@@ -5,7 +5,7 @@
 #include"core/base.hpp"
 #include"core/nlohmann_json_header.hpp"
 
-#define ARCADIA_COMPONENT_TYPE_STR_GETTERS(type_str) \
+#define ACDA_COMPONENT_TYPE_STR_GETTERS(type_str) \
 [[nodiscard]]\
 static constexpr auto GetTypeStrStatic() -> std::string\
 {\

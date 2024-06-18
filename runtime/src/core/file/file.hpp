@@ -9,20 +9,20 @@
 #include"core/serialization.hpp"
 
 [[nodiscard]]
-ARCADIA_API auto ToFilepath(const std::string& string) -> std::filesystem::path;
+ACDA_API auto ToFilepath(const std::string& string) -> std::filesystem::path;
 
 [[nodiscard]]
-ARCADIA_API auto ToFilepath(const char* str) -> std::filesystem::path;
+ACDA_API auto ToFilepath(const char* str) -> std::filesystem::path;
 
 [[nodiscard]]
-ARCADIA_API auto LoadText(const std::filesystem::path& filepath) -> std::string;
+ACDA_API auto LoadText(const std::filesystem::path& filepath) -> std::string;
 
 struct File
 {
 public:
-    ARCADIA_EXCEPTION(load_failed);
-    ARCADIA_EXCEPTION(save_failed);
-    ARCADIA_EXCEPTION(section_not_found);
+    ACDA_EXCEPTION(load_failed);
+    ACDA_EXCEPTION(save_failed);
+    ACDA_EXCEPTION(section_not_found);
 
     using section_type = Serialization::buffer_type;
     using section_storage_type = std::unordered_map<std::string, section_type>;

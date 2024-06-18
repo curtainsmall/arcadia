@@ -4,16 +4,16 @@
 
 GlCubemap::GlCubemap(const Cubemap& cubemap)
 {
-    ARCADIA_GL_CALL(glGenTextures(1, &_GlId));
+    ACDA_GL_CALL(glGenTextures(1, &_GlId));
     Bind();
 
     // TODO: Multisample ?
-    ARCADIA_GL_CALL(glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, GL_RGBA, cubemap.Size.x, cubemap.Size.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, cubemap.PosXPixels.data()));
-    ARCADIA_GL_CALL(glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, GL_RGBA, cubemap.Size.x, cubemap.Size.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, cubemap.NegXPixels.data()));
-    ARCADIA_GL_CALL(glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, GL_RGBA, cubemap.Size.x, cubemap.Size.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, cubemap.PosYPixels.data()));
-    ARCADIA_GL_CALL(glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, GL_RGBA, cubemap.Size.x, cubemap.Size.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, cubemap.NegYPixels.data()));
-    ARCADIA_GL_CALL(glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, GL_RGBA, cubemap.Size.x, cubemap.Size.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, cubemap.PosZPixels.data()));
-    ARCADIA_GL_CALL(glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, GL_RGBA, cubemap.Size.x, cubemap.Size.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, cubemap.NegZPixels.data()));
+    ACDA_GL_CALL(glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, GL_RGBA, cubemap.Size.x, cubemap.Size.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, cubemap.PosXPixels.data()));
+    ACDA_GL_CALL(glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, GL_RGBA, cubemap.Size.x, cubemap.Size.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, cubemap.NegXPixels.data()));
+    ACDA_GL_CALL(glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, GL_RGBA, cubemap.Size.x, cubemap.Size.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, cubemap.PosYPixels.data()));
+    ACDA_GL_CALL(glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, GL_RGBA, cubemap.Size.x, cubemap.Size.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, cubemap.NegYPixels.data()));
+    ACDA_GL_CALL(glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, GL_RGBA, cubemap.Size.x, cubemap.Size.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, cubemap.PosZPixels.data()));
+    ACDA_GL_CALL(glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, GL_RGBA, cubemap.Size.x, cubemap.Size.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, cubemap.NegZPixels.data()));
 
     SetTexParameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
@@ -26,7 +26,7 @@ GlCubemap::GlCubemap(const Cubemap& cubemap)
 
 GlCubemap::~GlCubemap()
 {
-    ARCADIA_GL_CALL(glDeleteTextures(1, &_GlId));
+    ACDA_GL_CALL(glDeleteTextures(1, &_GlId));
 }
 
 GlCubemap::GlCubemap(self_type&& rhs) noexcept
@@ -56,8 +56,8 @@ void GlCubemap::Bind(GLenum slot)
         throw GlInvalid{ "Cannot bind null OpenGL cubemap" };
     }
     _Slot = slot;
-    ARCADIA_GL_CALL(glActiveTexture(GL_TEXTURE0 + slot));
-    ARCADIA_GL_CALL(glBindTexture(GL_TEXTURE_CUBE_MAP, _GlId));
+    ACDA_GL_CALL(glActiveTexture(GL_TEXTURE0 + slot));
+    ACDA_GL_CALL(glBindTexture(GL_TEXTURE_CUBE_MAP, _GlId));
 }
 
 void GlCubemap::Unbind()
@@ -67,8 +67,8 @@ void GlCubemap::Unbind()
         return;
     }
 
-    ARCADIA_GL_CALL(glActiveTexture(GL_TEXTURE0 + _Slot));
-    ARCADIA_GL_CALL(glBindTexture(GL_TEXTURE_CUBE_MAP, 0));
+    ACDA_GL_CALL(glActiveTexture(GL_TEXTURE0 + _Slot));
+    ACDA_GL_CALL(glBindTexture(GL_TEXTURE_CUBE_MAP, 0));
     _Slot = -1;
 }
 
@@ -79,7 +79,7 @@ void GlCubemap::SetTexParameter(GLenum pname, GLint param)
         throw GlInvalid{ "Cannot set texture parameter to an unbound OpenGL Texture" };
     }
 
-    ARCADIA_GL_CALL(glTexParameteri(GL_TEXTURE_CUBE_MAP, pname, param));
+    ACDA_GL_CALL(glTexParameteri(GL_TEXTURE_CUBE_MAP, pname, param));
 }
 
 void GlCubemap::SetTexParameter(GLenum pname, GLfloat param)
@@ -89,5 +89,5 @@ void GlCubemap::SetTexParameter(GLenum pname, GLfloat param)
         throw GlInvalid{ "Cannot set texture parameter to an unbound OpenGL Texture" };
     }
 
-    ARCADIA_GL_CALL(glTexParameterf(GL_TEXTURE_CUBE_MAP, pname, param));
+    ACDA_GL_CALL(glTexParameterf(GL_TEXTURE_CUBE_MAP, pname, param));
 }

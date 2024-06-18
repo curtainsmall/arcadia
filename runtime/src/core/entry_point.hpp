@@ -8,12 +8,18 @@
 #include"core/base.hpp"
 #include"core/layer/layer.hpp"
 
+#if defined(_WIN32) && !defined(ACDA_IN_DEBUG)
+#define ACDA_MAIN_FN_DECLARATION int WinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
+#else
+#define ACDA_MAIN_FN_DECL int main()
+#endif // _WIN32
+
 extern auto CreateApplication() -> std::unique_ptr<iAppLayer>;
 
-auto main() -> int
+ACDA_MAIN_FN_DECL
 {
     // Add app_layer
-    auto& layer_stack = LayerStack::Instance();
+    auto & layer_stack = LayerStack::Instance();
     layer_stack.PushLayer<iAppLayer>(layer_stack.end(), std::shared_ptr<iAppLayer>(CreateApplication()));
 
     // Main loop

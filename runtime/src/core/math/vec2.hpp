@@ -9,7 +9,7 @@
 namespace Vec2
 {
     [[nodiscard]]
-    ARCADIA_API static inline auto ToJson(const glm::vec2& vec) -> nlohmann::json
+    ACDA_API static inline auto ToJson(const glm::vec2& vec) -> nlohmann::json
     {
         return nlohmann::json{
              { "x",vec.x },
@@ -17,7 +17,7 @@ namespace Vec2
         };
     }
     [[nodiscard]]
-    ARCADIA_API static inline auto FromJson(const nlohmann::json& json) -> glm::vec2
+    ACDA_API static inline auto FromJson(const nlohmann::json& json) -> glm::vec2
     {
         return glm::vec2{
             json.at("x"),
@@ -26,27 +26,27 @@ namespace Vec2
     }
 
     [[nodiscard]]
-    ARCADIA_API constexpr auto Zero() -> glm::vec2
+    ACDA_API constexpr auto Zero() -> glm::vec2
     {
         return glm::vec2{};
     }
     [[nodiscard]]
-    ARCADIA_API constexpr auto PosX() -> glm::vec2
+    ACDA_API constexpr auto PosX() -> glm::vec2
     {
         return glm::vec2{ 1.f,.0f };
     }
     [[nodiscard]]
-    ARCADIA_API constexpr auto PosY() -> glm::vec2
+    ACDA_API constexpr auto PosY() -> glm::vec2
     {
         return glm::vec2{ .0f,1.f };
     }
     [[nodiscard]]
-    ARCADIA_API constexpr auto NegX() -> glm::vec2
+    ACDA_API constexpr auto NegX() -> glm::vec2
     {
         return -PosX();
     }
     [[nodiscard]]
-    ARCADIA_API constexpr auto NegY() -> glm::vec2
+    ACDA_API constexpr auto NegY() -> glm::vec2
     {
         return -PosY();
     }
@@ -57,7 +57,7 @@ namespace Vec2
     /// @return Normalized vector
     template<std::size_t Index>
     [[nodiscard]]
-    ARCADIA_API static inline auto FixedNormalize(const glm::vec2& vec) -> glm::vec2
+    ACDA_API static inline auto FixedNormalize(const glm::vec2& vec) -> glm::vec2
     {
         static_assert(Index >= 0 && Index < 2);
 
@@ -81,7 +81,7 @@ namespace IVec2
 {
 
     [[nodiscard]]
-    ARCADIA_API static inline auto ToJson(const glm::ivec2& vec) -> nlohmann::json
+    ACDA_API static inline auto ToJson(const glm::ivec2& vec) -> nlohmann::json
     {
         return nlohmann::json{
             {"x",vec.x},
@@ -89,7 +89,7 @@ namespace IVec2
         };
     }
     [[nodiscard]]
-    ARCADIA_API static inline auto FromJson(const nlohmann::json& json) -> glm::ivec2
+    ACDA_API static inline auto FromJson(const nlohmann::json& json) -> glm::ivec2
     {
         return glm::ivec2{
                 json.at("x"),

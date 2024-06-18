@@ -81,7 +81,7 @@ public:
     using identifiable_jph_body_info_type = BasicIdentifiable<JphBodyInfo>;
     using self_type = PhysicsComponent;
 public:
-    ARCADIA_COMPONENT_TYPE_STR_GETTERS("physics");
+    ACDA_COMPONENT_TYPE_STR_GETTERS("physics");
 
     PhysicsComponent() = default;
     PhysicsComponent(const nlohmann::json& json);

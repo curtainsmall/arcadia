@@ -4,7 +4,7 @@
 
 #include"core/log/log.hpp"
 
-ARCADIA_API void GlCheckError(const char* fn_name, const char* file_name, int line)
+ACDA_API void GlCheckError(const char* fn_name, const char* file_name, int line)
 {
     while(GLenum error = glGetError())
     {
@@ -58,7 +58,7 @@ ARCADIA_API void GlCheckError(const char* fn_name, const char* file_name, int li
     }
 }
 
-ARCADIA_API auto GetGlTypeSize(GLenum Type) -> std::size_t
+ACDA_API auto GetGlTypeSize(GLenum Type) -> std::size_t
 {
     switch(Type)
     {
@@ -73,13 +73,13 @@ ARCADIA_API auto GetGlTypeSize(GLenum Type) -> std::size_t
     }
 }
 
-ARCADIA_API auto SetGlVersion() -> Version
+ACDA_API auto SetGlVersion() -> Version
 {
     int
         major{ 0 },
         minor{ 0 };
-    ARCADIA_GL_CALL(glGetIntegerv(GL_MAJOR_VERSION, &major));
-    ARCADIA_GL_CALL(glGetIntegerv(GL_MINOR_VERSION, &minor));
+    ACDA_GL_CALL(glGetIntegerv(GL_MAJOR_VERSION, &major));
+    ACDA_GL_CALL(glGetIntegerv(GL_MINOR_VERSION, &minor));
 
     Version version{};
 
@@ -177,17 +177,17 @@ void GLAPIENTRY GlDebugCallback(
     Log::Flush();
 }
 
-ARCADIA_API auto GetGlMaxCombinedTextureImageUnitsCount() -> GLint
+ACDA_API auto GetGlMaxCombinedTextureImageUnitsCount() -> GLint
 {
     GLint res{ 0 };
-    ARCADIA_GL_CALL(glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &res));
+    ACDA_GL_CALL(glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &res));
     return res;
 }
 
-ARCADIA_API auto GetGlMaxTextureImageUnitsCount() -> GLint
+ACDA_API auto GetGlMaxTextureImageUnitsCount() -> GLint
 {
     GLint res{ 0 };
-    ARCADIA_GL_CALL(glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &res));
+    ACDA_GL_CALL(glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &res));
     return res;
 }
 
@@ -198,14 +198,14 @@ OpenglContext::OpenglContext()
     {
         throw GlError{ reinterpret_cast<const char*>(glewGetErrorString(error)) };
     }
-    ARCADIA_GL_CALL(auto gl_version_str = glGetString(GL_VERSION));
+    ACDA_GL_CALL(auto gl_version_str = glGetString(GL_VERSION));
     Log::Info(std::format("OpenGL Version: {}", reinterpret_cast<const char*>(gl_version_str)));
 
-#if ARCADIA_GL_USE_DEBUG_CALLBACK
+#if ACDA_GL_USE_DEBUG_CALLBACK
     if(arcadia::get_gl_version() >= arcadia::version{ 4,6,0 })
     {
-        ARCADIA_GL_CALL(glEnable(GL_DEBUG_OUTPUT));
-        ARCADIA_GL_CALL(glDebugMessageCallback(arcadia::gl_debug_callback, nullptr));
+        ACDA_GL_CALL(glEnable(GL_DEBUG_OUTPUT));
+        ACDA_GL_CALL(glDebugMessageCallback(arcadia::gl_debug_callback, nullptr));
     }
 #endif
 

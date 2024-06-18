@@ -13,7 +13,7 @@ struct ImguiWindowMainToolbar: iImguiWindow
 public:
     using self_type = ImguiWindowMainToolbar;
 public:
-    ARCADIA_IMGUI_WINDOW_ID_STR_GETTERS("###toolbar");
+    ACDA_IMGUI_WINDOW_ID_STR_GETTERS("###toolbar");
 public:
     inline ImguiWindowMainToolbar():
         iImguiWindow(true, "Toolbar")

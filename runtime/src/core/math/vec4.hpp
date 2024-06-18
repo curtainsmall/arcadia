@@ -7,7 +7,7 @@
 namespace Vec4
 {
     [[nodiscard]]
-    ARCADIA_API static inline auto ToJson(const glm::vec4& vec) -> nlohmann::json
+    ACDA_API static inline auto ToJson(const glm::vec4& vec) -> nlohmann::json
     {
         return nlohmann::json{
             {"x",vec.x},
@@ -17,7 +17,7 @@ namespace Vec4
         };
     }
     [[nodiscard]]
-    ARCADIA_API static inline auto FromJson(const nlohmann::json& json) -> glm::vec4
+    ACDA_API static inline auto FromJson(const nlohmann::json& json) -> glm::vec4
     {
         return glm::vec4{
             json.at("x"),
@@ -28,7 +28,7 @@ namespace Vec4
     }
 
     [[nodiscard]]
-    ARCADIA_API constexpr auto Zero() -> glm::vec4
+    ACDA_API constexpr auto Zero() -> glm::vec4
     {
         return glm::vec4{};
     }
@@ -39,7 +39,7 @@ namespace Vec4
     /// @return Normalized vector
     template<std::size_t Index>
     [[nodiscard]]
-    ARCADIA_API auto FixedNormalize(const glm::vec4& vec) -> glm::vec4
+    ACDA_API auto FixedNormalize(const glm::vec4& vec) -> glm::vec4
     {
         static_assert(Index >= 0 && Index < vec.length());
 

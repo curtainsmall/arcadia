@@ -135,8 +135,8 @@ void ImguiWindowPopupCreateScene::operator()(const std::shared_ptr<const Project
 void ImguiWindowMainMenubar::OnEvent(EventBase& event)
 {
     EventDispatcher{ event }
-        .Dispatch<Event::ProjectBuilt>(ARCADIA_BIND_MEMBER_FN(_OnProjectBuilt))
-        .Dispatch<Event::ProjectUnbuilt>(ARCADIA_BIND_MEMBER_FN(_OnProjectUnbuilt))
+        .Dispatch<Event::ProjectBuilt>(ACDA_BIND_MEMBER_FN(_OnProjectBuilt))
+        .Dispatch<Event::ProjectUnbuilt>(ACDA_BIND_MEMBER_FN(_OnProjectUnbuilt))
         .Result();
 }
 
@@ -208,7 +208,7 @@ void ImguiWindowMainMenubar::_EditMenu()
 
         if(ImGui::BeginMenu("Select Scene", has_scene))
         {
-            ARCADIA_ASSERT(project);
+            ACDA_ASSERT(project);
 
             for(const auto& [key, scene] : project->SceneSptrStorage)
             {

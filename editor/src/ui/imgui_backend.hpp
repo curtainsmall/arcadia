@@ -9,19 +9,19 @@
 
 namespace ImguiBackend
 {
-    ARCADIA_API void Initialize(const WindowLayer& window);
-    ARCADIA_API void NewFrame(const WindowLayer& window);
-    ARCADIA_API void RenderDrawData(const WindowLayer& window);
-    ARCADIA_API void Shutdown(const WindowLayer& window);
+    ACDA_API void Initialize(const WindowLayer& window);
+    ACDA_API void NewFrame(const WindowLayer& window);
+    ACDA_API void RenderDrawData(const WindowLayer& window);
+    ACDA_API void Shutdown(const WindowLayer& window);
 
     // Event handlers
-    ARCADIA_API void ImguiOnEvent(EventBase& event);
-    ARCADIA_API void ImguiOnWindowFocus(Event::WindowFocus& WindowFocus);
-    ARCADIA_API void ImguiOnCursorEnter(Event::InputCursorEnter& input_cursor_enter);
-    ARCADIA_API void ImguiOnCursorPos(Event::InputCursorPos& input_cursor_pos);
-    ARCADIA_API void ImguiOnMouseButton(Event::InputMouseButton& input_mouse_button);
-    ARCADIA_API void ImguiOnScroll(Event::InputScroll& input_scroll);
-    ARCADIA_API void ImguiOnKey(Event::InputKey& input_key);
-    ARCADIA_API void ImguiOnChar(Event::InputChar& input_char);
-    ARCADIA_API void ImguiOnMonitor(Event::MonitorConnection& monitor_connection);
+    ACDA_API void ImguiOnEvent(EventBase& event);
+    ACDA_API void ImguiOnWindowFocus(Event::WindowFocus& WindowFocus);
+    ACDA_API void ImguiOnCursorEnter(Event::InputCursorEnter& input_cursor_enter);
+    ACDA_API void ImguiOnCursorPos(Event::InputCursorPos& input_cursor_pos);
+    ACDA_API void ImguiOnMouseButton(Event::InputMouseButton& input_mouse_button);
+    ACDA_API void ImguiOnScroll(Event::InputScroll& input_scroll);
+    ACDA_API void ImguiOnKey(Event::InputKey& input_key);
+    ACDA_API void ImguiOnChar(Event::InputChar& input_char);
+    ACDA_API void ImguiOnMonitor(Event::MonitorConnection& monitor_connection);
 }

@@ -18,7 +18,7 @@ public:
 struct iRenderer: Noncopyable
 {
 public:
-    ARCADIA_EXCEPTION(DrawFail);
+    ACDA_EXCEPTION(DrawFail);
 
     using self_type = iRenderer;
 public:
