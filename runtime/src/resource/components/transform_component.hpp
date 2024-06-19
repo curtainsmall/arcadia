@@ -6,7 +6,7 @@
 #include"core/nlohmann_json_header.hpp"
 #include"resource/components/component_interface.hpp"
 
-namespace TransformComponentFlags
+namespace transform_component_flags
 {
     using value_type = std::uint8_t;
     enum: value_type
@@ -22,13 +22,13 @@ struct TransformComponentMementoData: MementoDataBase
 public:
     auto operator==(const TransformComponentMementoData&) const -> bool = default;
 public:
-    TransformComponentFlags::value_type Flags{ TransformComponentFlags::None };
+    transform_component_flags::value_type Flags{ transform_component_flags::None };
 
-    glm::vec3 Position{ Vec3::Zero() };
-    glm::quat Rotation{ Quat::Identity() };
-    glm::vec3 Direction{ Vec3::PosZ() };
-    glm::vec3 Scale{ 1,1,1 };
-    glm::vec3 Pivot{ Vec3::Zero() };
+    glm::vec3 position{ vec3::zero() };
+    glm::quat rotation{ quat::identity() };
+    glm::vec3 direction{ vec3::pos_z() };
+    glm::vec3 scale{ 1,1,1 };
+    glm::vec3 pivot{ vec3::zero() };
 };
 
 struct TransformComponent:
@@ -44,25 +44,25 @@ public:
     TransformComponent(const nlohmann::json& json);
     ~TransformComponent() = default;
     [[nodiscard]]
-    auto ToJson() const->nlohmann::json;
+    auto to_json() const->nlohmann::json;
 
     TransformComponent(self_type&&) noexcept = default;
     auto operator=(self_type&&) noexcept -> self_type & = default;
 
-    auto GenerateTransformMatrix() const->glm::mat4;
+    auto generate_transform_matrix() const->glm::mat4;
 
 protected:
     [[nodiscard]]
-    virtual auto OnSnapshot() const->std::shared_ptr<MementoDataBase> override;
-    virtual void OnRestore(const std::shared_ptr<MementoDataBase>& memento_data) override;
+    virtual auto on_snapshot() const->std::shared_ptr<MementoDataBase> override;
+    virtual void on_restore(const std::shared_ptr<MementoDataBase>& memento_data) override;
 
 public:
-    TransformComponentFlags::value_type Flags{ TransformComponentFlags::None };
+    transform_component_flags::value_type Flags{ transform_component_flags::None };
 
-    glm::vec3 Position{ Vec3::Zero() };
-    glm::quat Rotation{ Quat::Identity() };
-    glm::vec3 Direction{ Vec3::PosZ() };
-    glm::vec3 Scale{ 1,1,1 };
-    glm::vec3 Pivot{ Vec3::Zero() };
+    glm::vec3 position{ vec3::zero() };
+    glm::quat rotation{ quat::identity() };
+    glm::vec3 direction{ vec3::pos_z() };
+    glm::vec3 scale{ 1,1,1 };
+    glm::vec3 pivot{ vec3::zero() };
 };
 

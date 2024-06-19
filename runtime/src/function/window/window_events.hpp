@@ -16,13 +16,13 @@ enum struct WindowSizeState
 
 enum struct WindowInputModeCursor
 {
-    Normal,
+    normal,
     Hidden,
     Disabled,
     Captured,
 };
 
-namespace Event
+namespace event
 {
     //==== Notifications ====//
 
@@ -36,12 +36,12 @@ namespace Event
     );
 
     ACDA_EVENT(
-        WindowSize,
+        window_size,
         WindowLayer*,
         glm::ivec2 // New size
     );
     ACDA_EVENT(
-        WindowPos,
+        window_pos,
         WindowLayer*,
         glm::ivec2 // New position
     );

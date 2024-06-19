@@ -13,31 +13,31 @@ public:
     using index_type = unsigned int;
     using self_type = Mesh;
 public:
-    static auto Box(
+    static auto box(
         const glm::vec3& half_extent
     ) -> Mesh;
 
-    static auto Capsule(
+    static auto capsule(
         float radius,
         float half_height_of_sylinder,
         std::size_t half_sphere_stack_count = 18,
         std::size_t sector_count = 36
     ) -> Mesh;
 
-    static auto Cylinder(
+    static auto cylinder(
         float half_height,
         float radius,
         std::size_t sector_count = 36
     ) -> Mesh;
 
-    static auto Sphere(
+    static auto sphere(
         float radius,
         std::size_t stack_count  = 36, // Along latitude
         std::size_t sector_count = 36  // Alone longitude
     ) -> Mesh;
 
-    std::vector<Vertex> Vertices{};
-    std::vector<index_type> Indices{};
+    std::vector<Vertex> vertices{};
+    std::vector<index_type> indices{};
 
-    Material Material{};
+    Material material{};
 };

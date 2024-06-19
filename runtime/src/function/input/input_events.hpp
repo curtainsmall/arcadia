@@ -7,7 +7,7 @@
 #include"core/math.hpp"
 #include"function/window/window_layer.hpp"
 
-namespace InputKey
+namespace input_key
 {
     using value_type = int;
     enum: value_type
@@ -123,7 +123,7 @@ namespace InputKey
     };
 
 };
-namespace InputMouse
+namespace input_mouse
 {
     using value_type = int;
     enum: value_type
@@ -133,7 +133,7 @@ namespace InputMouse
         ButtonMiddle = GLFW_MOUSE_BUTTON_MIDDLE,
     };
 }
-namespace InputAction
+namespace input_action
 {
     using value_type = int;
     enum: value_type
@@ -143,7 +143,7 @@ namespace InputAction
         Repeat  = GLFW_REPEAT,
     };
 }
-namespace InputModifier
+namespace input_modifier
 {
     using value_type = int;
     enum: value_type
@@ -157,7 +157,7 @@ namespace InputModifier
     };
 }
 
-namespace Event
+namespace event
 {
     ACDA_EVENT(
         InputKey,

@@ -59,12 +59,12 @@ public:
     template<std::size_t Index>
     using at_t = std::tuple_element_t<Index, tuple_type>;
 public:
-    static constexpr std::size_t size = std::tuple_size_v<tuple_type>;
+    static constexpr std::size_t size_v = std::tuple_size_v<tuple_type>;
 };
 
 template<class Enum>
     requires std::is_enum_v<Enum>
-ACDA_API auto ToUnderlying(Enum e) -> std::underlying_type_t<Enum>
+ACDA_API auto to_underlying(Enum e) -> std::underlying_type_t<Enum>
 {
     return static_cast<std::underlying_type_t<Enum>>(e);
 }
@@ -74,7 +74,7 @@ template<
     instantiated_from<std::variant> Variant,
     class ...BranchFns
 >
-ACDA_API auto Match(Variant& variant, BranchFns&& ...fns) -> Ret
+ACDA_API auto match(Variant& variant, BranchFns&& ...fns) -> Ret
 {
     return std::visit<Ret>(
         Overloaded{
@@ -89,7 +89,7 @@ template<
     instantiated_from<std::variant> Variant,
     class ...BranchFns
 >
-ACDA_API auto Match(const Variant& variant, BranchFns&& ...fns) -> Ret
+ACDA_API auto match(const Variant& variant, BranchFns&& ...fns) -> Ret
 {
     return std::visit<Ret>(
         Overloaded{
@@ -106,7 +106,7 @@ template<
     class ...Cases
 >
     requires (sizeof...(Cases) % 2 == 0)
-ACDA_API auto Match(const Cond& cond, const Case& case_expr, const std::function<Ret()>& case_fn, Cases&& ...cases) -> Ret
+ACDA_API auto match(const Cond& cond, const Case& case_expr, const std::function<Ret()>& case_fn, Cases&& ...cases) -> Ret
 {
     if constexpr(sizeof...(Cases) == 0)
     {
@@ -114,7 +114,7 @@ ACDA_API auto Match(const Cond& cond, const Case& case_expr, const std::function
     }
     else
     {
-        return cond == case_expr ? case_fn() : Match<Ret, Cond, Case>(cond, std::forward<Cases>(cases)...);
+        return cond == case_expr ? case_fn() : match<Ret, Cond, Case>(cond, std::forward<Cases>(cases)...);
     }
 }
 
@@ -125,7 +125,7 @@ template<
     class ...Cases
 >
     requires (sizeof...(Cases) % 2 == 0)
-ACDA_API auto Match(const Cond& cond, const std::function<Ret()>& default_fn, const Case& case_expr, const std::function<Ret()>& case_fn, Cases&& ...cases) -> Ret
+ACDA_API auto match(const Cond& cond, const std::function<Ret()>& default_fn, const Case& case_expr, const std::function<Ret()>& case_fn, Cases&& ...cases) -> Ret
 {
     if constexpr(sizeof...(Cases) == 0)
     {
@@ -133,7 +133,7 @@ ACDA_API auto Match(const Cond& cond, const std::function<Ret()>& default_fn, co
     }
     else
     {
-        return cond == case_expr ? case_fn() : Match<Ret, Cond, Case>(cond, std::forward<Cases>(cases)...);
+        return cond == case_expr ? case_fn() : match<Ret, Cond, Case>(cond, std::forward<Cases>(cases)...);
     }
 }
 
@@ -144,7 +144,7 @@ template<
     class ...Cases
 >
     requires (sizeof...(Cases) % 2 == 0)
-ACDA_API auto Match(const Cond& cond, const Case& case_expr, const Res& case_res, Cases&& ...cases) -> Res
+ACDA_API auto match(const Cond& cond, const Case& case_expr, const Res& case_res, Cases&& ...cases) -> Res
 {
     if constexpr(sizeof...(Cases) == 0)
     {
@@ -152,7 +152,7 @@ ACDA_API auto Match(const Cond& cond, const Case& case_expr, const Res& case_res
     }
     else
     {
-        return cond == case_expr ? case_res : Match<Res, Cond, Case>(cond, std::forward<Cases>(cases)...);
+        return cond == case_expr ? case_res : match<Res, Cond, Case>(cond, std::forward<Cases>(cases)...);
     }
 }
 
@@ -163,7 +163,7 @@ template<
     class ...Cases
 >
     requires (sizeof...(Cases) % 2 == 0)
-ACDA_API auto Match(const Cond& cond, const Res& default_res, const Case& case_expr, const Res& case_res, Cases&& ...cases) -> Res
+ACDA_API auto match(const Cond& cond, const Res& default_res, const Case& case_expr, const Res& case_res, Cases&& ...cases) -> Res
 {
     if constexpr(sizeof...(Cases) == 0)
     {
@@ -171,6 +171,6 @@ ACDA_API auto Match(const Cond& cond, const Res& default_res, const Case& case_e
     }
     else
     {
-        return cond == case_expr ? case_res : Match<Res, Cond, Case>(cond, std::forward<Cases>(cases)...);
+        return cond == case_expr ? case_res : match<Res, Cond, Case>(cond, std::forward<Cases>(cases)...);
     }
 }

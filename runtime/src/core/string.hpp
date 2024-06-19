@@ -10,13 +10,13 @@ struct StringLiteral
 public:
     constexpr StringLiteral(const char(&str)[N])
     {
-        std::copy_n(str, N, Value);
+        std::copy_n(str, N, value);
     }
 
     operator std::string() const
     {
-        return std::string{ Value[0], Value[N - 1] };
+        return std::string{ value[0], value[N - 1] };
     }
 public:
-    char Value[N];
+    char value[N];
 };

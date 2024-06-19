@@ -8,7 +8,7 @@ struct Vertex
 public:
     using self_type = Vertex;
 public:
-    glm::vec3 Coord{ Vec3::Zero() };
-    glm::vec3 Normal{ Vec3::Zero() };
-    glm::vec2 TexCoord{ Vec2::Zero() };
+    glm::vec3 coord{ vec3::zero() };
+    glm::vec3 normal{ vec3::zero() };
+    glm::vec2 tex_coord{ vec2::zero() };
 };

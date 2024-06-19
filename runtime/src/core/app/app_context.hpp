@@ -11,12 +11,12 @@ struct AppContext
 public:
     using self_type = AppContext;
 public:
-    static auto Instance() -> self_type&;
+    static auto instance() -> self_type&;
 
     AppContext();
 
 public:
-    bool Running{ false };
-    Timer Timer{};
-    std::chrono::nanoseconds DeltaTime{};
+    bool running{ false };
+    Timer timer{};
+    std::chrono::nanoseconds delta_time{};
 };

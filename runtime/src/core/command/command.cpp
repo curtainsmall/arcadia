@@ -7,29 +7,29 @@ Command::Command(
     const function_type& execute_fn,
     const function_type& unexecute_fn
 ):
-    _Description(description),
-    _ExecuteFn(execute_fn),
-    _UnexecuteFn(unexecute_fn)
+    _description(description),
+    execute_fn(execute_fn),
+    _unexecute_fn(unexecute_fn)
 {
-    Execute();
+    execute();
 }
 
-void Command::Execute() const
+void Command::execute() const
 {
-    _ExecuteFn();
+    execute_fn();
 }
 
-void Command::Unexecute() const
+void Command::unexecute() const
 {
-    _UnexecuteFn();
+    _unexecute_fn();
 }
 
-auto Command::GetDescription() const -> const std::string&
+auto Command::description() const -> const std::string&
 {
-    return _Description;
+    return _description;
 }
 
-auto CommandList::Instance() -> self_type&
+auto CommandList::instance() -> self_type&
 {
     self_type command_list{};
     return command_list;
@@ -42,85 +42,85 @@ void CommandList::emplace(
 )
 {
     // Erase restored command since a new command should be on a new branch from current position
-    _List.erase(_List.begin(), _CurrentIter);
+    _list.erase(_list.begin(), _current_iter);
 
     // Emplace new command
-    _List.emplace_front(description, execute_fn, unexecute_fn);
+    _list.emplace_front(description, execute_fn, unexecute_fn);
 
     // Relocate current position
-    _CurrentIter = _List.begin();
+    _current_iter = _list.begin();
 }
 
-auto CommandList::Undo() -> bool
+auto CommandList::undo() -> bool
 {
-    if(_CurrentIter == _List.begin())
+    if(_current_iter == _list.begin())
     {
         return false;
     }
 
-    (_CurrentIter--)->Unexecute();
+    (_current_iter--)->unexecute();
     return true;
 }
 
-auto CommandList::Redo() -> bool
+auto CommandList::redo() -> bool
 {
-    if((++_CurrentIter)-- == _List.end())
+    if((++_current_iter)-- == _list.end())
     {
         return false;
     }
 
-    (_CurrentIter++)->Execute();
+    (_current_iter++)->execute();
     return true;
 }
 
-auto CommandList::GetCapacity() const -> std::size_t
+auto CommandList::capacity() const -> std::size_t
 {
-    return _Capacity;
+    return _capacity;
 }
 
-void CommandList::SetCapacity(std::size_t capacity)
+void CommandList::capacity(std::size_t capacity)
 {
-    _Capacity = capacity;
+    _capacity = capacity;
 }
 
-auto CommandList::Size() const -> std::size_t
+auto CommandList::size() const -> std::size_t
 {
-    return _List.size();
+    return _list.size();
 }
 
-void CommandList::Clear()
+void CommandList::clear()
 {
-    _List.clear();
+    _list.clear();
 }
 
 auto CommandList::begin() noexcept -> container_type::iterator
 {
-    return _List.begin();
+    return _list.begin();
 }
 
 auto CommandList::end() noexcept -> container_type::iterator
 {
-    return _List.end();
+    return _list.end();
 }
 
 auto CommandList::begin() const noexcept -> container_type::const_iterator
 {
-    return _List.begin();
+    return _list.begin();
 }
 
 auto CommandList::end() const noexcept -> container_type::const_iterator
 {
-    return _List.end();
+    return _list.end();
 }
 
 auto CommandList::cbegin() const noexcept -> container_type::const_iterator
 {
-    return _List.cbegin();
+    return _list.cbegin();
 }
 
 auto CommandList::cend() const noexcept -> container_type::const_iterator
 {
-    return _List.cend();
+    return _list.cend();
 }
 
 

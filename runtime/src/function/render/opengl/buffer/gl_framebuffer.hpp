@@ -24,23 +24,23 @@ public:
     auto operator=(self_type&& rhs) noexcept -> self_type&;
 
     [[nodiscard]]
-    auto GetGlID() const -> GLuint
+    auto gl_id() const -> GLuint
     {
-        return _GlId;
+        return _gl_id;
     }
 
     [[nodiscard]]
-    auto GetGlTexture2d() const -> const GlTexture2d&
+    auto gl_texure2d() const -> const GlTexture2d&
     {
-        return _GlTexture2d;
+        return _gl_texture2d;
     }
 
-    void Bind() const;
-    void Unbind() const;
+    void bind() const;
+    void unbind() const;
 
-    auto IsComplete() const->GLenum;
+    auto is_complete() const->GLenum;
 private:
-    GLuint _GlId{ 0 };
-    GlTexture2d _GlTexture2d;
-    GlRenderbuffer _GlDepthStencilRenderbuffer{};
+    GLuint _gl_id{ 0 };
+    GlTexture2d _gl_texture2d;
+    GlRenderbuffer _gl_depth_stencil_renderbuffer{};
 };

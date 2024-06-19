@@ -5,7 +5,7 @@
 #include"core/base.hpp"
 
 template<class Type>
-ACDA_API auto HashCombine(const std::size_t& seed, const Type& val) -> std::size_t
+ACDA_API auto hash_combine(const std::size_t& seed, const Type& val) -> std::size_t
 {
     std::size_t res{ seed };
     boost::hash_combine(res, val);
@@ -13,7 +13,7 @@ ACDA_API auto HashCombine(const std::size_t& seed, const Type& val) -> std::size
 }
 
 template<class Type, class ...Types>
-ACDA_API auto Hash(const Type& val, const Types& ...vals) -> std::size_t
+ACDA_API auto hash(const Type& val, const Types& ...vals) -> std::size_t
 {
     if constexpr(sizeof...(Types) == 0)
     {
@@ -21,8 +21,8 @@ ACDA_API auto Hash(const Type& val, const Types& ...vals) -> std::size_t
     }
     else
     {
-        return HashCombine(
-            Hash(vals...),
+        return hash_combine(
+            hash(vals...),
             val
         );
     }

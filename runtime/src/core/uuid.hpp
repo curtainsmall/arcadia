@@ -10,31 +10,31 @@ public:
     using value_type = std::uint64_t;
     using self_type = Uuid;
 public:
-    static auto Zero() -> Uuid
+    static auto zero() -> Uuid
     {
         return Uuid{ 0 };
     }
 
     Uuid():
-        _Val(_NextVal++)
+        _val(_next_val++)
     {}
     Uuid(value_type val):
-        _Val(val)
+        _val(val)
     {}
 
     [[nodiscard]]
-    auto Get() const -> value_type
+    auto value() const -> value_type
     {
-        return _Val;
+        return _val;
     }
 
     operator value_type() const
     {
-        return Get();
+        return value();
     }
 private:
-    static inline value_type _NextVal{ 1 };
-    value_type _Val;
+    static inline value_type _next_val{ 1 };
+    value_type _val;
 };
 
 template<class Value>
@@ -46,14 +46,14 @@ public:
 public:
     BasicIdentifiable() = default;
     BasicIdentifiable(const value_type& val):
-        _Value(val)
+        _value(val)
     {}
     BasicIdentifiable(value_type&& val):
-        _Value(val)
+        _value(val)
     {}
     template<class ...Args>
     BasicIdentifiable(Args&& ...args) :
-        _Value(std::forward<Args>(args)...)
+        _value(std::forward<Args>(args)...)
     {}
 
     BasicIdentifiable(self_type&&) noexcept = default;
@@ -67,29 +67,29 @@ public:
 
         if constexpr(Index == 0)
         {
-            return GetUuid();
+            return uuid();
         }
         else
         {
-            return GetValue();
+            return value();
         }
     }
 
     [[nodiscard]]
-    auto GetUuid() const -> const Uuid&
+    auto uuid() const -> const Uuid&
     {
-        return _Uuid;
+        return _uuid;
     }
 
     [[nodiscard]]
-    auto GetValue() const -> const value_type&
+    auto value() const -> const value_type&
     {
-        return _Value;
+        return _value;
     }
 
 private:
-    Uuid _Uuid{};
-    value_type _Value{};
+    Uuid _uuid{};
+    value_type _value{};
 };
 
 namespace std
@@ -109,7 +109,7 @@ namespace std
         auto format(const Uuid& Uuid, std::format_context& ctx) const
         {
             return std::formatter<std::string>::format(
-                std::format("{}", Uuid.Get()),
+                std::format("{}", Uuid.value()),
                 ctx
             );
         }

@@ -2,7 +2,7 @@
 
 #include "mesh.hpp"
 
-auto Mesh::Box(
+auto Mesh::box(
     const glm::vec3& half_extent
 ) -> Mesh
 {
@@ -11,49 +11,49 @@ auto Mesh::Box(
     auto z = half_extent.z;
 
     Mesh mesh{};
-    auto& vertices = mesh.Vertices;
+    auto& vertices = mesh.vertices;
     vertices.reserve(36);
 
     // pos-x
     vertices.emplace_back(
         Vertex{
             glm::vec3{x, y, z},
-            Vec3::PosX(),
+            vec3::pos_x(),
             glm::vec2{.5f,.67f}
         }
     );
     vertices.emplace_back(
         Vertex{
             glm::vec3{x, -y,z},
-            Vec3::PosX(),
+            vec3::pos_x(),
             glm::vec2{.5f,.33f}
         }
     );
     vertices.emplace_back(
         Vertex{
             glm::vec3{x,y,-z},
-            Vec3::PosX(),
+            vec3::pos_x(),
             glm::vec2{.75f,.67f}
         }
     );
     vertices.emplace_back(
         Vertex{
             glm::vec3{x,y,-z},
-            Vec3::PosX(),
+            vec3::pos_x(),
             glm::vec2{.75f,.67f}
         }
     );
     vertices.emplace_back(
         Vertex{
             glm::vec3{x,-y,z},
-            Vec3::PosX(),
+            vec3::pos_x(),
             glm::vec2{.5f,.33f}
         }
     );
     vertices.emplace_back(
         Vertex{
             glm::vec3{x,-y,-z},
-            Vec3::PosX(),
+            vec3::pos_x(),
             glm::vec2{.75f,.33f}
         }
     );
@@ -62,42 +62,42 @@ auto Mesh::Box(
     vertices.emplace_back(
         Vertex{
             glm::vec3{-x, y, -z},
-            Vec3::NegX(),
+            vec3::neg_x(),
             glm::vec2{.0f,.67f}
         }
     );
     vertices.emplace_back(
         Vertex{
             glm::vec3{-x, -y,-z},
-            Vec3::NegX(),
+            vec3::neg_x(),
             glm::vec2{.0f,.33f}
         }
     );
     vertices.emplace_back(
         Vertex{
             glm::vec3{-x,y,z},
-            Vec3::NegX(),
+            vec3::neg_x(),
             glm::vec2{.25f,.67f}
         }
     );
     vertices.emplace_back(
         Vertex{
             glm::vec3{-x,y,z},
-            Vec3::NegX(),
+            vec3::neg_x(),
             glm::vec2{.25f,.67f}
         }
     );
     vertices.emplace_back(
         Vertex{
             glm::vec3{-x,-y,-z},
-            Vec3::NegX(),
+            vec3::neg_x(),
             glm::vec2{.0f,.33f}
         }
     );
     vertices.emplace_back(
         Vertex{
             glm::vec3{-x,-y,z},
-            Vec3::PosY(),
+            vec3::pos_y(),
             glm::vec2{.25f,.33f}
         }
     );
@@ -106,42 +106,42 @@ auto Mesh::Box(
     vertices.emplace_back(
         Vertex{
             glm::vec3{-x, y, -z},
-            Vec3::PosY(),
+            vec3::pos_y(),
             glm::vec2{.25f,1.f}
         }
     );
     vertices.emplace_back(
         Vertex{
             glm::vec3{-x, y,z},
-            Vec3::PosY(),
+            vec3::pos_y(),
             glm::vec2{.25f,.67f}
         }
     );
     vertices.emplace_back(
         Vertex{
             glm::vec3{x,y,-z},
-            Vec3::PosY(),
+            vec3::pos_y(),
             glm::vec2{.5f,1.f}
         }
     );
     vertices.emplace_back(
         Vertex{
             glm::vec3{x,y,-z},
-            Vec3::PosY(),
+            vec3::pos_y(),
             glm::vec2{.5f,1.f}
         }
     );
     vertices.emplace_back(
         Vertex{
             glm::vec3{-x,y,z},
-            Vec3::PosY(),
+            vec3::pos_y(),
             glm::vec2{.25f,.67f}
         }
     );
     vertices.emplace_back(
         Vertex{
             glm::vec3{x,y,z},
-            Vec3::PosY(),
+            vec3::pos_y(),
             glm::vec2{.5f,.67f}
         }
     );
@@ -150,42 +150,42 @@ auto Mesh::Box(
     vertices.emplace_back(
         Vertex{
             glm::vec3{-x, -y, z},
-            Vec3::NegY(),
+            vec3::neg_y(),
             glm::vec2{.25f,.33f}
         }
     );
     vertices.emplace_back(
         Vertex{
             glm::vec3{-x, -y,-z},
-            Vec3::NegY(),
+            vec3::neg_y(),
             glm::vec2{.25f,.0f}
         }
     );
     vertices.emplace_back(
         Vertex{
             glm::vec3{x,-y,z},
-            Vec3::NegY(),
+            vec3::neg_y(),
             glm::vec2{.25f,.5f}
         }
     );
     vertices.emplace_back(
         Vertex{
             glm::vec3{x,-y,z},
-            Vec3::NegY(),
+            vec3::neg_y(),
             glm::vec2{.25f,.5f}
         }
     );
     vertices.emplace_back(
         Vertex{
             glm::vec3{-x,-y,-z},
-            Vec3::NegY(),
+            vec3::neg_y(),
             glm::vec2{.25f,.0f}
         }
     );
     vertices.emplace_back(
         Vertex{
             glm::vec3{x,-y,-z},
-            Vec3::NegY(),
+            vec3::neg_y(),
             glm::vec2{.5f,.0f}
         }
     );
@@ -194,42 +194,42 @@ auto Mesh::Box(
     vertices.emplace_back(
         Vertex{
             glm::vec3{-x, y, z},
-            Vec3::PosZ(),
+            vec3::pos_z(),
             glm::vec2{.25f,.67f}
         }
     );
     vertices.emplace_back(
         Vertex{
             glm::vec3{-x, -y,z},
-            Vec3::PosZ(),
+            vec3::pos_z(),
             glm::vec2{.25f,.33f}
         }
     );
     vertices.emplace_back(
         Vertex{
             glm::vec3{x,y,z},
-            Vec3::PosZ(),
+            vec3::pos_z(),
             glm::vec2{.5f,.67f}
         }
     );
     vertices.emplace_back(
         Vertex{
             glm::vec3{x,y,z},
-            Vec3::PosZ(),
+            vec3::pos_z(),
             glm::vec2{.5f,.67f}
         }
     );
     vertices.emplace_back(
         Vertex{
             glm::vec3{-x, -y,z},
-            Vec3::PosZ(),
+            vec3::pos_z(),
             glm::vec2{.25f,.33f}
         }
     );
     vertices.emplace_back(
         Vertex{
             glm::vec3{x,-y,z},
-            Vec3::PosZ(),
+            vec3::pos_z(),
             glm::vec2{.5f,.33f}
         }
     );
@@ -238,42 +238,42 @@ auto Mesh::Box(
     vertices.emplace_back(
         Vertex{
             glm::vec3{x, y, -z},
-            Vec3::NegZ(),
+            vec3::neg_z(),
             glm::vec2{.75f,.67f}
         }
     );
     vertices.emplace_back(
         Vertex{
             glm::vec3{x, -y,-z},
-            Vec3::NegZ(),
+            vec3::neg_z(),
             glm::vec2{.75f,.33f}
         }
     );
     vertices.emplace_back(
         Vertex{
             glm::vec3{-x,y,-z},
-            Vec3::NegZ(),
+            vec3::neg_z(),
             glm::vec2{1.f,.67f}
         }
     );
     vertices.emplace_back(
         Vertex{
             glm::vec3{-x,y,-z},
-            Vec3::NegZ(),
+            vec3::neg_z(),
             glm::vec2{1.f,.67f}
         }
     );
     vertices.emplace_back(
         Vertex{
             glm::vec3{x, -y,-z},
-            Vec3::NegZ(),
+            vec3::neg_z(),
             glm::vec2{.75f,.33f}
         }
     );
     vertices.emplace_back(
         Vertex{
             glm::vec3{-x,-y,-z},
-            Vec3::NegZ(),
+            vec3::neg_z(),
             glm::vec2{1.f,.33f}
         }
     );
@@ -282,7 +282,7 @@ auto Mesh::Box(
 
 }
 
-auto Mesh::Capsule(
+auto Mesh::capsule(
     float radius,
     float half_height_of_cylinder,
     std::size_t half_sphere_stack_count,
@@ -296,8 +296,8 @@ auto Mesh::Capsule(
     float radius_inv = 1.f / radius;
 
     Mesh mesh{};
-    auto& vertices = mesh.Vertices;
-    auto& indices = mesh.Indices;
+    auto& vertices = mesh.vertices;
+    auto& indices = mesh.indices;
 
 #if 1
     // Sphere part
@@ -408,7 +408,7 @@ auto Mesh::Capsule(
     return mesh;
 }
 
-auto Mesh::Cylinder(
+auto Mesh::cylinder(
     float half_height,
     float radius,
     std::size_t sector_count
@@ -427,7 +427,7 @@ auto Mesh::Cylinder(
     }
 
     Mesh mesh{};
-    auto& vertices = mesh.Vertices;
+    auto& vertices = mesh.vertices;
 
     for(int i = 0; i < 2; ++i)
     {
@@ -480,7 +480,7 @@ auto Mesh::Cylinder(
         }
     }
 
-    auto& indices = mesh.Indices;
+    auto& indices = mesh.indices;
     int k1 = 0;
     int k2 = sector_count + 1;
     for(int i = 0; i < sector_count; ++i, ++k1, ++k2)
@@ -527,7 +527,7 @@ auto Mesh::Cylinder(
     return mesh;
 }
 
-auto Mesh::Sphere(
+auto Mesh::sphere(
     float radius,
     std::size_t stack_count,
     std::size_t sector_count
@@ -541,7 +541,7 @@ auto Mesh::Sphere(
 
     Mesh mesh{};
 
-    auto& vertices = mesh.Vertices;
+    auto& vertices = mesh.vertices;
     for(std::size_t i = 0; i <= stack_count; ++i)
     {
         float stack_angle = pi / 2 - i * stack_step;
@@ -572,7 +572,7 @@ auto Mesh::Sphere(
         }
     }
 
-    auto& indices = mesh.Indices;
+    auto& indices = mesh.indices;
     for(std::size_t i = 0; i < stack_count; ++i)
     {
         float k1 = i * (sector_count + 1);

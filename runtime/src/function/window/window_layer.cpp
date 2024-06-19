@@ -11,19 +11,19 @@ WindowLayer::WindowLayer(
     int multisample_count
 ):
     iLayer(std::format("window_{}", title)),
-    _Title(title),
-    _MultisampleCount(multisample_count)
+    _title(title),
+    _multisample_count(multisample_count)
 {
-    const auto& app_config = AppConfig::Instance();
+    const auto& app_config = AppConfig::instance();
 
-    Match<void>(
-        app_config.GraphicApi,
-        [&](const GraphicApi::Opengl& gl) -> void
+    match<void>(
+        app_config.graphic_api,
+        [&](const graphic_api::Opengl& gl) -> void
     {
         glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, gl.version.Major);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, gl.version.Minor);
-        glfwWindowHint(GLFW_SAMPLES, _MultisampleCount);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, gl.version.major);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, gl.version.minor);
+        glfwWindowHint(GLFW_SAMPLES, _multisample_count);
     #ifndef NDEBUG
         glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
     #endif // NDEBUG
@@ -36,80 +36,80 @@ WindowLayer::WindowLayer(
     );
 
     glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
-    _GlfwWindow = glfwCreateWindow(size.x, size.y, _Title.c_str(), nullptr, nullptr);
-    if(!_GlfwWindow)
+    _glfw_window = glfwCreateWindow(size.x, size.y, _title.c_str(), nullptr, nullptr);
+    if(!_glfw_window)
     {
         const char* desr{ nullptr };
         auto err_code = glfwGetError(&desr);
         throw GlfwError{ std::format("Failed to create GLFW window, because {}",desr) };
     }
-    glfwMakeContextCurrent(_GlfwWindow);
+    glfwMakeContextCurrent(_glfw_window);
 
-    double x = _LastCursorPos.x,
-        y = _LastCursorPos.y;
-    glfwGetCursorPos(_GlfwWindow, &x, &y);
-    _LastCursorPos.x = static_cast<float>(x);
-    _LastCursorPos.y = static_cast<float>(y);
-    auto& min = app_config.WindowMinSize;
-    auto& max = app_config.WindowMaxSize;
+    double x = _last_cursor_pos.x,
+        y = _last_cursor_pos.y;
+    glfwGetCursorPos(_glfw_window, &x, &y);
+    _last_cursor_pos.x = static_cast<float>(x);
+    _last_cursor_pos.y = static_cast<float>(y);
+    auto& min = app_config.window_size_min;
+    auto& max = app_config.window_size_max;
     glfwSetWindowSizeLimits(
-        _GlfwWindow,
+        _glfw_window,
         min.x < 0 ? GLFW_DONT_CARE : min.x,
         min.y < 0 ? GLFW_DONT_CARE : min.y,
         max.x < 0 ? GLFW_DONT_CARE : max.x,
         max.y < 0 ? GLFW_DONT_CARE : max.y
     );
-    if(app_config.WindowMaxmized)
+    if(app_config.window_maxmized)
     {
-        glfwMaximizeWindow(_GlfwWindow);
+        glfwMaximizeWindow(_glfw_window);
     }
     else
     {
-        auto& size = app_config.WindowSize;
-        glfwSetWindowSize(_GlfwWindow, size.x, size.y);
+        auto& size = app_config.window_size;
+        glfwSetWindowSize(_glfw_window, size.x, size.y);
     }
 
-    glfwSetWindowUserPointer(_GlfwWindow, this);
-    _SetupCallbacks();
+    glfwSetWindowUserPointer(_glfw_window, this);
+    _setup_callbacks();
 
-    glfwShowWindow(_GlfwWindow);
+    glfwShowWindow(_glfw_window);
 }
 
 WindowLayer::~WindowLayer()
 {
-    if(_GlfwWindow)
+    if(_glfw_window)
     {
-        glfwDestroyWindow(_GlfwWindow);
+        glfwDestroyWindow(_glfw_window);
     }
 }
 
-void WindowLayer::OnEvent(EventBase& event)
+void WindowLayer::on_event(EventBase& event)
 {
     EventDispatcher{ event }
-        .Dispatch<Event::WindowSetInputModeCursor>(ACDA_BIND_MEMBER_FN(_OnWindowSetInputModeCursor))
-        .Result();
+        .dispatch<event::WindowSetInputModeCursor>(ACDA_BIND_MEMBER_FN(_on_window_set_input_mode_cursor))
+        .result();
 }
 
-void WindowLayer::OnUpdate()
+void WindowLayer::on_update()
 {
-    _SwapBuffers();
+    _swap_buffers();
 
     glfwPollEvents();
 }
 
 
-auto WindowLayer::GetTitle() const -> const std::string&
+auto WindowLayer::title() const -> const std::string&
 {
-    return _Title;
+    return _title;
 }
 
-auto WindowLayer::GetSizeState() const -> WindowSizeState
+auto WindowLayer::size_state() const -> WindowSizeState
 {
-    if(glfwGetWindowAttrib(_GlfwWindow, GLFW_MAXIMIZED))
+    if(glfwGetWindowAttrib(_glfw_window, GLFW_MAXIMIZED))
     {
         return WindowSizeState::Maxmized;
     }
-    else if(glfwGetWindowAttrib(_GlfwWindow, GLFW_ICONIFIED))
+    else if(glfwGetWindowAttrib(_glfw_window, GLFW_ICONIFIED))
     {
         return WindowSizeState::Minimized;
     }
@@ -119,26 +119,26 @@ auto WindowLayer::GetSizeState() const -> WindowSizeState
     }
 }
 
-auto WindowLayer::GetSize() const -> glm::ivec2
+auto WindowLayer::size() const -> glm::ivec2
 {
     glm::ivec2 vec{};
-    glfwGetWindowSize(_GlfwWindow, &vec.x, &vec.y);
+    glfwGetWindowSize(_glfw_window, &vec.x, &vec.y);
     return vec;
 }
 
-auto WindowLayer::GetPos() const -> glm::ivec2
+auto WindowLayer::pos() const -> glm::ivec2
 {
     glm::ivec2 vec{};
-    glfwGetWindowPos(_GlfwWindow, &vec.x, &vec.y);
+    glfwGetWindowPos(_glfw_window, &vec.x, &vec.y);
     return vec;
 }
 
-void WindowLayer::_OnWindowSetInputModeCursor(Event::WindowSetInputModeCursor& e)
+void WindowLayer::_on_window_set_input_mode_cursor(event::WindowSetInputModeCursor& e)
 {
     auto& [value] = e.data_tuple;
-    int val = Match<int>(
+    int val = match<int>(
         value,
-        WindowInputModeCursor::Normal,
+        WindowInputModeCursor::normal,
         GLFW_CURSOR_NORMAL,
         WindowInputModeCursor::Hidden,
         GLFW_CURSOR_HIDDEN,
@@ -147,19 +147,19 @@ void WindowLayer::_OnWindowSetInputModeCursor(Event::WindowSetInputModeCursor& e
         WindowInputModeCursor::Captured,
         GLFW_CURSOR_CAPTURED
     );
-    glfwSetInputMode(_GlfwWindow, GLFW_CURSOR, val);
+    glfwSetInputMode(_glfw_window, GLFW_CURSOR, val);
 }
 
-void WindowLayer::_SetupCallbacks()
+void WindowLayer::_setup_callbacks()
 {
     // Set callbacks
     glfwSetKeyCallback(
-        _GlfwWindow,
+        _glfw_window,
         [](GLFWwindow* glfw_wnd_ptr, int key, int scancode, int action, int mods) -> void
     {
-        EventQueue::Instance()
-            .Signal<Event::InputKey>(
-                _GetWindowPtrFromGlfwUserPtr(glfw_wnd_ptr),
+        EventQueue::instance()
+            .signal<event::InputKey>(
+                _get_window_ptr_from_glfw_user_ptr(glfw_wnd_ptr),
                 key,
                 scancode,
                 action,
@@ -168,24 +168,24 @@ void WindowLayer::_SetupCallbacks()
     }
     );
     glfwSetCursorPosCallback(
-        _GlfwWindow,
+        _glfw_window,
         [](GLFWwindow* glfw_wnd_ptr, double xpos, double ypos) -> void
     {
         glm::vec2 cursor_pos{ xpos,ypos };
-        auto wnd_ptr = _GetWindowPtrFromGlfwUserPtr(glfw_wnd_ptr);
-        auto& event_queue = EventQueue::Instance();
+        auto wnd_ptr = _get_window_ptr_from_glfw_user_ptr(glfw_wnd_ptr);
+        auto& event_queue = EventQueue::instance();
 
-        event_queue.Signal<Event::InputCursorPos>(
+        event_queue.signal<event::InputCursorPos>(
             wnd_ptr,
             cursor_pos
         );
 
-        auto& last_pos = wnd_ptr->_LastCursorPos;
+        auto& last_pos = wnd_ptr->_last_cursor_pos;
         auto offset = cursor_pos - last_pos;
-        if(IsInRange(offset.x, _LegalCursorMoveRange.x, _LegalCursorMoveRange.y)
-           && IsInRange(offset.y, _LegalCursorMoveRange.x, _LegalCursorMoveRange.y))
+        if(is_in_range(offset.x, _legal_cursor_move_range.x, _legal_cursor_move_range.y)
+           && is_in_range(offset.y, _legal_cursor_move_range.x, _legal_cursor_move_range.y))
         {
-            event_queue.Signal<Event::InputCursorMove>(
+            event_queue.signal<event::InputCursorMove>(
                 wnd_ptr,
                 offset
             );
@@ -194,23 +194,23 @@ void WindowLayer::_SetupCallbacks()
     }
     );
     glfwSetScrollCallback(
-        _GlfwWindow,
+        _glfw_window,
         [](GLFWwindow* glfw_wnd_ptr, double xoffset, double yoffset) -> void
     {
-        EventQueue::Instance()
-            .Signal<Event::InputScroll>(
-                _GetWindowPtrFromGlfwUserPtr(glfw_wnd_ptr),
+        EventQueue::instance()
+            .signal<event::InputScroll>(
+                _get_window_ptr_from_glfw_user_ptr(glfw_wnd_ptr),
                 glm::vec2{ xoffset,yoffset }
         );
     }
     );
     glfwSetMouseButtonCallback(
-        _GlfwWindow,
+        _glfw_window,
         [](GLFWwindow* glfw_wnd_ptr, int button, int action, int mods) -> void
     {
-        EventQueue::Instance()
-            .Signal<Event::InputMouseButton>(
-                _GetWindowPtrFromGlfwUserPtr(glfw_wnd_ptr),
+        EventQueue::instance()
+            .signal<event::InputMouseButton>(
+                _get_window_ptr_from_glfw_user_ptr(glfw_wnd_ptr),
                 button,
                 action,
                 mods
@@ -218,98 +218,98 @@ void WindowLayer::_SetupCallbacks()
     }
     );
     glfwSetWindowSizeCallback(
-        _GlfwWindow,
+        _glfw_window,
         [](GLFWwindow* glfw_wnd_ptr, int width, int height) -> void
     {
-        EventQueue::Instance()
-            .Signal<Event::WindowSize>(
-                _GetWindowPtrFromGlfwUserPtr(glfw_wnd_ptr),
+        EventQueue::instance()
+            .signal<event::window_size>(
+                _get_window_ptr_from_glfw_user_ptr(glfw_wnd_ptr),
                 glm::ivec2{ width,height }
         );
     }
     );
     glfwSetWindowPosCallback(
-        _GlfwWindow,
+        _glfw_window,
         [](GLFWwindow* glfw_wnd_ptr, int xpos, int ypos) -> void
     {
-        EventQueue::Instance()
-            .Signal<Event::WindowPos>(
-                _GetWindowPtrFromGlfwUserPtr(glfw_wnd_ptr),
+        EventQueue::instance()
+            .signal<event::window_pos>(
+                _get_window_ptr_from_glfw_user_ptr(glfw_wnd_ptr),
                 glm::ivec2{ xpos,ypos }
         );
     }
     );
     glfwSetWindowIconifyCallback(
-        _GlfwWindow,
+        _glfw_window,
         [](GLFWwindow* glfw_wnd_ptr, int iconified) -> void
     {
-        auto& event_queue = EventQueue::Instance();
+        auto& event_queue = EventQueue::instance();
         if(iconified)
         {
-            event_queue.Signal<Event::WindowSizeState>(
-                _GetWindowPtrFromGlfwUserPtr(glfw_wnd_ptr),
+            event_queue.signal<event::WindowSizeState>(
+                _get_window_ptr_from_glfw_user_ptr(glfw_wnd_ptr),
                 WindowSizeState::Minimized
             );
         }
         else
         {
-            event_queue.Signal<Event::WindowSizeState>(
-                _GetWindowPtrFromGlfwUserPtr(glfw_wnd_ptr),
+            event_queue.signal<event::WindowSizeState>(
+                _get_window_ptr_from_glfw_user_ptr(glfw_wnd_ptr),
                 WindowSizeState::Restored
             );
         }
     }
     );
     glfwSetWindowMaximizeCallback(
-        _GlfwWindow,
+        _glfw_window,
         [](GLFWwindow* glfw_wnd_ptr, int maxmized) -> void
     {
-        auto& event_queue = EventQueue::Instance();
+        auto& event_queue = EventQueue::instance();
         if(maxmized)
         {
-            event_queue.Signal<Event::WindowSizeState>(
-                _GetWindowPtrFromGlfwUserPtr(glfw_wnd_ptr),
+            event_queue.signal<event::WindowSizeState>(
+                _get_window_ptr_from_glfw_user_ptr(glfw_wnd_ptr),
                 WindowSizeState::Maxmized
             );
         }
         else
         {
-            event_queue.Signal<Event::WindowSizeState>(
-                _GetWindowPtrFromGlfwUserPtr(glfw_wnd_ptr),
+            event_queue.signal<event::WindowSizeState>(
+                _get_window_ptr_from_glfw_user_ptr(glfw_wnd_ptr),
                 WindowSizeState::Restored
             );
         }
     }
     );
     glfwSetWindowFocusCallback(
-        _GlfwWindow,
+        _glfw_window,
         [](GLFWwindow* glfw_wnd_ptr, int focused) -> void
     {
-        EventQueue::Instance()
-            .Signal<Event::WindowFocus>(
-                _GetWindowPtrFromGlfwUserPtr(glfw_wnd_ptr),
+        EventQueue::instance()
+            .signal<event::WindowFocus>(
+                _get_window_ptr_from_glfw_user_ptr(glfw_wnd_ptr),
                 focused
             );
     }
     );
     glfwSetCursorEnterCallback(
-        _GlfwWindow,
+        _glfw_window,
         [](GLFWwindow* glfw_wnd_ptr, int entered) -> void
     {
-        EventQueue::Instance()
-            .Signal<Event::InputCursorEnter>(
-                _GetWindowPtrFromGlfwUserPtr(glfw_wnd_ptr),
+        EventQueue::instance()
+            .signal<event::InputCursorEnter>(
+                _get_window_ptr_from_glfw_user_ptr(glfw_wnd_ptr),
                 entered
             );
     }
     );
     glfwSetCharCallback(
-        _GlfwWindow,
+        _glfw_window,
         [](GLFWwindow* glfw_wnd_ptr, unsigned int code_point) -> void
     {
-        EventQueue::Instance()
-            .Signal<Event::InputChar>(
-                _GetWindowPtrFromGlfwUserPtr(glfw_wnd_ptr),
+        EventQueue::instance()
+            .signal<event::InputChar>(
+                _get_window_ptr_from_glfw_user_ptr(glfw_wnd_ptr),
                 code_point
             );
     }
@@ -326,34 +326,34 @@ void WindowLayer::_SetupCallbacks()
         {
             connection = false;
         }
-        EventQueue::Instance()
-            .Signal<Event::MonitorConnection>(
+        EventQueue::instance()
+            .signal<event::MonitorConnection>(
                 glfw_monitor_ptr,
                 connection
             );
     }
     );
     glfwSetWindowCloseCallback(
-        _GlfwWindow,
+        _glfw_window,
         [](GLFWwindow* glfw_wnd_ptr) -> void
     {
-        EventQueue::Instance()
-            .Signal<Event::WindowShouldClose>(
-                _GetWindowPtrFromGlfwUserPtr(glfw_wnd_ptr)
+        EventQueue::instance()
+            .signal<event::WindowShouldClose>(
+                _get_window_ptr_from_glfw_user_ptr(glfw_wnd_ptr)
             );
     }
     );
 }
 
-void WindowLayer::_SwapBuffers()
+void WindowLayer::_swap_buffers()
 {
-    const auto& app_config = AppConfig::Instance();
+    const auto& app_config = AppConfig::instance();
 
-    Match<void>(
-        app_config.GraphicApi,
-        [&](const GraphicApi::Opengl&) -> void
+    match<void>(
+        app_config.graphic_api,
+        [&](const graphic_api::Opengl&) -> void
     {
-        glfwSwapBuffers(_GlfwWindow);
+        glfwSwapBuffers(_glfw_window);
     },
         [](auto&&) -> void
     {
@@ -361,27 +361,27 @@ void WindowLayer::_SwapBuffers()
     );
 }
 
-void WindowLayer::_OnWindowCloseCanceled(Event::WindowCloseCanceled& e)
+void WindowLayer::_on_window_close_canceled(event::WindowCloseCanceled& e)
 {
     const auto& [p_wnd] = e.data_tuple;
     if(p_wnd == this)
     {
-        glfwSetWindowShouldClose(_GlfwWindow, GLFW_FALSE);
+        glfwSetWindowShouldClose(_glfw_window, GLFW_FALSE);
     }
 }
 
-auto WindowLayer::GetMultisampleCount() const -> int
+auto WindowLayer::multisample_count() const -> int
 {
-    return _MultisampleCount;
+    return _multisample_count;
 }
 
-auto WindowLayer::GetInputModeCursor() const -> WindowInputModeCursor
+auto WindowLayer::input_mode_cursor() const -> WindowInputModeCursor
 {
-    switch(glfwGetInputMode(_GlfwWindow, GLFW_CURSOR))
+    switch(glfwGetInputMode(_glfw_window, GLFW_CURSOR))
     {
         case GLFW_CURSOR_NORMAL:
         {
-            return WindowInputModeCursor::Normal;
+            return WindowInputModeCursor::normal;
         }
         case GLFW_CURSOR_HIDDEN:
         {

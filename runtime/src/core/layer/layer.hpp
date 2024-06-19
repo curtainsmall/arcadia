@@ -20,20 +20,17 @@ public:
     virtual ~iLayer() = default;
 
     [[nodiscard]]
-    auto GetName() const -> const std::string&
-    {
-        return _Name;
-    }
+    auto name() const -> const std::string&;
 
     /// @brief Process event
     /// @param event Event to be processed
-    virtual void OnEvent(EventBase& event) = 0;
+    virtual void on_event(EventBase& event) = 0;
 
     /// @brief Update layer
-    virtual void OnUpdate() = 0;
+    virtual void on_update() = 0;
 
 private:
-    std::string _Name{};
+    std::string _name{};
 };
 
 template<class Layer>
@@ -51,20 +48,20 @@ public:
 
     using self_type = LayerStack;
 public:
-    static auto Instance() -> self_type&;
+    static auto instance() -> self_type&;
 
     template<
         cLayer Layer,
         class ...Args
     >
-    auto PushLayer(Args&& ...args) -> self_type&
+    auto push_layer(Args&& ...args) -> self_type&
     {
-        return PushLayer(std::make_shared<Layer>(std::forward<Args>(args)...));
+        return push_layer(std::make_shared<Layer>(std::forward<Args>(args)...));
     }
     template<
         cLayer Layer
     >
-    auto PushLayer(std::shared_ptr<Layer>&& sptr) -> self_type&
+    auto push_layer(std::shared_ptr<Layer>&& sptr) -> self_type&
     {
         _layers.emplace(_layers.begin(), std::move(sptr));
         return *this;
@@ -73,14 +70,14 @@ public:
         cLayer Layer,
         class ...Args
     >
-    auto PushLayer(layer_vector_type::const_iterator iter, Args&& ...args) -> self_type&
+    auto push_layer(layer_vector_type::const_iterator iter, Args&& ...args) -> self_type&
     {
-        return PushLayer(iter, std::make_shared<Layer>(std::forward<Args>(args)...));
+        return push_layer(iter, std::make_shared<Layer>(std::forward<Args>(args)...));
     }
     template<
         cLayer Layer
     >
-    auto PushLayer(layer_vector_type::const_iterator iter, std::shared_ptr<Layer>&& sptr) -> self_type&
+    auto push_layer(layer_vector_type::const_iterator iter, std::shared_ptr<Layer>&& sptr) -> self_type&
     {
         _layers.emplace(
             iter,
@@ -88,25 +85,25 @@ public:
         );
         return *this;
     }
-    auto PopLayer() -> self_type&;
-    auto PopLayer(layer_vector_type::const_iterator iter) -> self_type&;
-    auto PopAll() -> self_type&;
+    auto pop_layer() -> self_type&;
+    auto pop_layer(layer_vector_type::const_iterator iter) -> self_type&;
+    auto pop_all() -> self_type&;
 
     template<cLayer Layer = iLayer>
-    auto At(std::size_t idx) -> Layer&
+    auto at(std::size_t idx) -> Layer&
     {
-        if(idx >= Size())
+        if(idx >= size())
         {
             throw OutOfRange{ std::format("Index out of range: {}",idx) };
         }
 
-        return static_cast<Layer&>(*_layers.at(Size() - idx - 1));
+        return static_cast<Layer&>(*_layers.at(size() - idx - 1));
     }
 
     template<cLayer Layer = iLayer>
-    auto Top() -> std::shared_ptr<Layer>
+    auto top() -> std::shared_ptr<Layer>
     {
-        if(!Size())
+        if(!size())
         {
             throw EmptyStack{};
         }
@@ -114,9 +111,9 @@ public:
     }
 
     template<cLayer Layer = iLayer>
-    auto Buttom() -> std::shared_ptr<Layer>
+    auto buttom() -> std::shared_ptr<Layer>
     {
-        if(!Size())
+        if(!size())
         {
             throw EmptyStack{};
         }
@@ -124,7 +121,7 @@ public:
     }
 
 
-    auto Size() -> std::size_t;
+    auto size() -> std::size_t;
 
     auto begin() -> layer_vector_type::const_iterator;
     auto end() -> layer_vector_type::const_iterator;

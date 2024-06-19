@@ -23,18 +23,18 @@ public:
     auto operator=(self_type&& rhs) noexcept -> self_type&;
 
     [[nodiscard]]
-    auto GetGlId() const -> GLuint
+    auto gl_id() const -> GLuint
     {
-        return _GlId;
+        return _gl_id;
     }
 
-    void Bind(GLenum slot = 0);
-    void Unbind();
+    void bind(GLenum slot = 0);
+    void unbind();
 
-    void SetTexParameter(GLenum pname, GLint param) const;
-    void SetTexParameter(GLenum pname, GLfloat param) const;
+    void set_tex_param(GLenum pname, GLint param) const;
+    void set_tex_param(GLenum pname, GLfloat param) const;
 private:
-    GLuint _GlId{ 0 };
-    GLenum _Slot{ -1u };
+    GLuint _gl_id{ 0 };
+    GLenum _slot{ -1u };
 
 };

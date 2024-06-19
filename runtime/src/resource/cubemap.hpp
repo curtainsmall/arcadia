@@ -10,11 +10,11 @@ struct Cubemap
 public:
     using self_type = Cubemap;
 public:
-    std::vector<glm::vec4> PosXPixels{};
-    std::vector<glm::vec4> NegXPixels{};
-    std::vector<glm::vec4> PosYPixels{};
-    std::vector<glm::vec4> NegYPixels{};
-    std::vector<glm::vec4> PosZPixels{};
-    std::vector<glm::vec4> NegZPixels{};
-    glm::ivec2 Size{};
+    std::vector<glm::vec4> pos_x_pixels{};
+    std::vector<glm::vec4> neg_x_pixels{};
+    std::vector<glm::vec4> pos_y_pixels{};
+    std::vector<glm::vec4> neg_y_pixels{};
+    std::vector<glm::vec4> pos_z_pixels{};
+    std::vector<glm::vec4> neg_z_pixels{};
+    glm::ivec2 size{};
 };

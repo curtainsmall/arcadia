@@ -66,46 +66,39 @@ public:
 
     /// @copydoc renderer::is_in_build
     [[nodiscard]]
-    virtual auto IsInBuild() const -> bool override
+    virtual auto is_in_build() const -> bool override
     {
-        return _InBuild;
+        return _in_build;
     }
 
-    /// @copydoc Renderer::Prepare
-    virtual void Prepare() override;
-    /// @copydoc Renderer::Finalize
-    virtual void Finalize() override;
+    virtual void prepare() override;
+    virtual void finalize() override;
+    virtual void submit(const Scene& scene, const std::string& name) override;
+    virtual void draw() override;
 
-    /// @copydoc Renderer::Submit
-    virtual void Submit(const Scene& scene, const std::string& name) override;
-
-    /// @copydoc Renderer::Draw
-    virtual void Draw() override;
-
-    /// @copydoc Renderer::Reset
-    virtual void Reset() override;
+    virtual void reset() override;
 
     [[nodiscard]]
-    virtual auto GetRenderResultId(std::size_t index) const->void* override;
+    virtual auto render_result_id(std::size_t index) const->void* override;
 
     [[nodiscard]]
-    virtual auto GetGraphicApiType() const->GraphicApi::Type override
+    virtual auto graphic_api_type() const->graphic_api::Type override
     {
-        return GraphicApi::Opengl{ Version{4, 6, 0} };
+        return graphic_api::Opengl{ Version{4, 6, 0} };
     }
 
 public:
-    void _AssertFrameInBuild() const;
-    void _AssertFrameNotInBuild() const;
+    void _assert_frame_in_build() const;
+    void _assert_frame_not_in_build() const;
 
-    void _DrawGrid(
+    void _draw_grid(
         const GlVertexArray& gl_grid_vertex_array,
         const glm::mat4& camera_view,
         const glm::mat4& camera_proj,
         float near_plane,
         float far_plane
     );
-    void _DrawLights(
+    void _draw_lights(
         const GLsizeiptr light_t_size,
         const int max_light_count,
         const int light_count_size_aligned,
@@ -114,35 +107,35 @@ public:
         const glm::mat4& camera_view,
         const glm::mat4& camera_proj
     );
-    void _DrawModels(
+    void _draw_models(
         const glm::mat4& camera_view,
         const glm::mat4& camera_proj,
         const glm::vec3& camera_pos
     );
-    void _DrawSkybox(
+    void _draw_skybox(
         const glm::mat4& camera_view,
         const glm::mat4& camera_proj
     );
-    void _DrawPhysicsBodyShape(
+    void _draw_physics_body_shape(
         const glm::mat4& camera_view,
         const glm::mat4& camera_proj
     );
 
 private:
-    bool _InBuild{ false };
+    bool _in_build{ false };
 
-    std::unordered_map<Uuid, std::vector<GlRenderUnitMesh>> _GlRenderUnitMeshStorage{};
-    std::set<Uuid> _SubmittedMeshesUuids{};
+    std::unordered_map<Uuid, std::vector<GlRenderUnitMesh>> _gl_render_unit_mesh_storage{};
+    std::set<Uuid> _submitted_mesh_uuids{};
 
-    std::unordered_map<Uuid, GlRenderUnitPhysicsBodyShape> _GlRenderUnitPhysicsBodyShapeStorage{};
-    std::set<Uuid> _SubmittedPhysicsBodyShapeUuids{};
+    std::unordered_map<Uuid, GlRenderUnitPhysicsBodyShape> _gl_render_unit_physics_body_shape_storage{};
+    std::set<Uuid> _submitted_physics_body_shape_uuids{};
 
-    std::vector<GlRenderUnitCamera> _GlRenderUnitCameras{};
-    std::vector<GlRenderUnitLight> _GlRenderUnitLights{};
-    std::optional<GlRenderUnitSkybox> _optGlRenderUnitSkybox{};
+    std::vector<GlRenderUnitCamera> _gl_render_unit_cameras{};
+    std::vector<GlRenderUnitLight> _gl_render_unit_lights{};
+    std::optional<GlRenderUnitSkybox> _gl_render_unit_skybox{};
 
-    GlPipeline _GlModelPipeline;
-    GlPipeline _GlSkyboxPipeline;
-    GlPipeline _GlGridPipeline;
-    GlPipeline _GlShapePipeline;
+    GlPipeline _gl_model_pipeline;
+    GlPipeline _gl_skybox_pipeline;
+    GlPipeline _gl_grid_pipeline;
+    GlPipeline _gl_shape_pipeline;
 };

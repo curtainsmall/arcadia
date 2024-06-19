@@ -3,21 +3,21 @@
 #include "version.hpp"
 
 Version::Version(const nlohmann::json& json):
-    Major(json.at("major")),
-    Minor(json.at("minor")),
-    Patch(json.at("patch"))
+    major(json.at("major")),
+    minor(json.at("minor")),
+    patch(json.at("patch"))
 {}
 
-auto Version::ToJson() const -> nlohmann::json
+auto Version::to_json() const -> nlohmann::json
 {
     return nlohmann::json{
-        {"major",Major},
-        {"minor",Minor},
-        {"patch",Patch}
+        {"major",major},
+        {"minor",minor},
+        {"patch",patch}
     };
 }
 
 Version::operator std::string() const
 {
-    return std::format("{0}.{1}.{2}", Major, Minor, Patch);
+    return std::format("{0}.{1}.{2}", major, minor, patch);
 }

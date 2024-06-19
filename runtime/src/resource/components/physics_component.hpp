@@ -14,26 +14,26 @@
 struct JphBoxShapeInfo
 {
 public:
-    glm::vec3 HalfExtent{ 1.f,1.f,1.f };
-    float ConvexRadius{ JPH::cDefaultConvexRadius };
+    glm::vec3 half_extent{ 1.f,1.f,1.f };
+    float convex_radius{ JPH::cDefaultConvexRadius };
 };
 struct JphCapsuleShapeInfo
 {
 public:
-    float Radius{ 1.f };
-    float HalfHeightOfCylinder{ 1.f };
+    float radius{ 1.f };
+    float half_height_of_cylinder{ 1.f };
 };
 struct JphCylinderShapeInfo
 {
 public:
-    float HalfHeight{ 1.f };
-    float Radius{ 1.f };
-    float ConvexRadius{ JPH::cDefaultConvexRadius };
+    float half_height{ 1.f };
+    float radius{ 1.f };
+    float convex_radius{ JPH::cDefaultConvexRadius };
 };
 struct JphSphereShapeInfo
 {
 public:
-    float Radius{ 1.f };
+    float radius{ 1.f };
 };
 using JphShapeInfo = std::variant<
     JphBoxShapeInfo,
@@ -49,9 +49,9 @@ public:
 public:
     // Transform information comes from transform component
 
-    JPH::EMotionType JphMotionType{ JPH::EMotionType::Static };
-    JPH::ObjectLayer JphObjectLayer{ JphObjectLayers::NonMoving };
-    JphShapeInfo JphShapeInfo{ JphBoxShapeInfo{} };
+    JPH::EMotionType jph_motion_type{ JPH::EMotionType::Static };
+    JPH::ObjectLayer jph_object_layer{ jph_object_layers::non_moving };
+    JphShapeInfo jph_shape_info{ JphBoxShapeInfo{} };
 };
 
 struct JphBodyState
@@ -59,9 +59,9 @@ struct JphBodyState
 public:
     using self_type = JphBodyState;
 public:
-    bool Active{ false };
-    glm::vec3 LinearVelocity{ Vec3::Zero() };
-    glm::vec3 AngularVelocity{ Vec3::Zero() };
+    bool active{ false };
+    glm::vec3 linear_velocity{ vec3::zero() };
+    glm::vec3 angular_velocity{ vec3::zero() };
 
 };
 
@@ -70,7 +70,7 @@ struct PhysicsComponentMementoData: MementoDataBase
 public:
     auto operator==(const PhysicsComponentMementoData&) const -> bool = default;
 public:
-    glm::vec3 BodyShapeColor{};
+    glm::vec3 body_shape_color{};
 };
 
 struct PhysicsComponent:
@@ -87,35 +87,35 @@ public:
     PhysicsComponent(const nlohmann::json& json);
     ~PhysicsComponent() = default;
     [[nodiscard]]
-    auto ToJson() const->nlohmann::json;
+    auto to_json() const->nlohmann::json;
 
     [[nodiscard]]
-    auto HasBodyInfo() const -> bool;
+    auto has_body_info() const -> bool;
 
     [[nodiscard]]
-    auto GetIdentifiableJphBodyInfo() const -> const identifiable_jph_body_info_type&;
+    auto get_identifiable_jph_body_info() const -> const identifiable_jph_body_info_type&;
 
-    void BuildIdentifiableJphBodyInfo(
+    void build_identifiable_jph_body_info(
         JPH::EMotionType jph_motion_type,
         JPH::ObjectLayer jph_object_layer,
         const JphShapeInfo& jph_shape_info
     );
 
-    void BuildIdentifiableJphBodyInfo(
+    void build_identifiable_jph_body_info(
         const JphBodyInfo& jph_body_info_initial
     );
 
-    void DestroyJphBodyInfo();
+    void destroy_jph_body_info();
 
 protected:
     [[nodiscard]]
-    virtual auto OnSnapshot() const->std::shared_ptr<MementoDataBase> override;
-    virtual void OnRestore(const std::shared_ptr<MementoDataBase>& memento_data) override;
+    virtual auto on_snapshot() const->std::shared_ptr<MementoDataBase> override;
+    virtual void on_restore(const std::shared_ptr<MementoDataBase>& memento_data) override;
 
 public:
-    glm::vec3 BodyShapeColor{ .2f,.2f,.2f };
+    glm::vec3 body_shape_color{ .2f,.2f,.2f };
 
-    JphBodyState JphBodyState{};
+    JphBodyState jph_body_state{};
 private:
-    std::unique_ptr<identifiable_jph_body_info_type> _IdentifiableJphBodyInfo{};
+    std::unique_ptr<identifiable_jph_body_info_type> _identifiable_jph_body_info{};
 };

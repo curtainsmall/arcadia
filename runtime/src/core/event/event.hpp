@@ -33,12 +33,12 @@ public:
     virtual ~EventBase()
     {};
 public:
-    bool Handled{ false };
+    bool handled{ false };
 };
 
-template<class Event>
+template<class event>
 concept cEvent = requires{
-    std::derived_from<Event, EventBase>;
+    std::derived_from<event, EventBase>;
 };
 
 template<class ...Args>
@@ -64,8 +64,8 @@ public:
     const data_tuple_type data_tuple;
 };
 
-template<cEvent Event>
-using EventHandler = std::function<void(Event&)>;
+template<cEvent event>
+using EventHandler = std::function<void(event&)>;
 
 struct EventDispatcher: Noncopyable
 {
@@ -73,7 +73,7 @@ public:
     using self_type = EventDispatcher;
 public:
     EventDispatcher(EventBase& event):
-        _pEvent(&event)
+        _event(&event)
     {}
     ~EventDispatcher() = default;
 
@@ -81,51 +81,51 @@ public:
     /// @tparam Event Event type to match
     /// @param handler Event handler
     /// @return Self
-    template<cEvent Event>
-    auto Dispatch(const EventHandler<Event>& handler) -> self_type&
+    template<cEvent event>
+    auto dispatch(const EventHandler<event>& handler) -> self_type&
     {
-        if(typeid(*_pEvent) == typeid(Event))
+        if(typeid(*_event) == typeid(event))
         {
-            handler(static_cast<Event&>(*_pEvent));
-            _Result = true;
+            handler(static_cast<event&>(*_event));
+            _result = true;
         }
         return *this;
     }
 
     /// @brief Whether any dispatch succedded
-    auto Result() const -> bool
+    auto result() const -> bool
     {
-        return _Result;
+        return _result;
     }
 
 private:
-    EventBase* _pEvent;
-    bool _Result{ false };
+    EventBase* _event;
+    bool _result{ false };
 };
 
 struct EventQueue
 {
 public:
-    ACDA_EXCEPTION(empty_queue);
+    ACDA_EXCEPTION(EmptyQueue);
 
     using self_type = EventQueue;
 private:
     using _event_queue_type = std::queue<std::unique_ptr<EventBase>>;
 
 public:
-    static auto Instance() -> self_type&;
+    static auto instance() -> self_type&;
 
     /// @brief Signal @a Event
     /// @param ...args Argument to construct @a Event
-    template<cEvent Event, class ...Args>
-    auto Signal(Args&& ...args) -> self_type&
+    template<cEvent event, class ...Args>
+    auto signal(Args&& ...args) -> self_type&
     {
-        _CurrentQueue->emplace(std::make_unique<Event>(std::forward<Args>(args)...));
+        _current_queue->emplace(std::make_unique<event>(std::forward<Args>(args)...));
 
     #ifdef ACDA_IN_DEBUG
-        if(!DebugExcludedEventTypes.contains(typeid(Event)))
+        if(!debug_excluded_event_types.contains(typeid(event)))
         {
-            Log::Debug(std::format("Event signaled: {}", typeid(Event).name()));
+            log_debug(std::format("Event signaled: {}", typeid(event).name()));
         }
     #endif
         return *this;
@@ -133,27 +133,27 @@ public:
 
     /// @brief Swap current queue and processing queue
     /// @return whether the processing queue contains event after swap
-    auto SwapQueue() -> bool;
+    auto swap_queue() -> bool;
 
     /// @brief Check whther the proceessing queue contains event
-    auto Size() const->std::size_t;
+    auto size() const->std::size_t;
 
     /// @brief Read the front event in event queue
     /// @return Event at front
-    auto Read() -> EventBase&;
+    auto read() -> EventBase&;
 
     /// @brief Pop front event
     /// @return whether the processing queue contains event after pop;
-    auto Pop() -> bool;
+    auto pop() -> bool;
 
 public:
 #ifdef ACDA_IN_DEBUG
-    std::unordered_set<std::type_index> DebugExcludedEventTypes{};
+    std::unordered_set<std::type_index> debug_excluded_event_types{};
 #endif // ACDA_IN_DEBUG
 
 private:
-    _event_queue_type _QueueA{};
-    _event_queue_type _QueueB{};
-    _event_queue_type* _ProcessingQueue{ &_QueueA };
-    _event_queue_type* _CurrentQueue{ &_QueueB };
+    _event_queue_type _queue_a{};
+    _event_queue_type _queue_b{};
+    _event_queue_type* _processing_queue{ &_queue_a };
+    _event_queue_type* _current_queue{ &_queue_b };
 };

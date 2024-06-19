@@ -8,7 +8,7 @@ struct Material
 public:
     using self_type = Material;
 public:
-    Texture2d AmbientTexture2d{};
-    Texture2d DiffuseTexture2d{};
-    Texture2d SpecularTexture2d{};
+    Texture2d ambient_texture2d{};
+    Texture2d diffuse_texture2d{};
+    Texture2d specular_texture2d{};
 };

@@ -5,7 +5,7 @@
 #include"core/base.hpp"
 #include"core/version/version.hpp"
 
-namespace GraphicApi
+namespace graphic_api
 {
     struct Directx
     {
@@ -35,8 +35,8 @@ namespace GraphicApi
     };
 
     using Type = std::variant<
-        GraphicApi::Opengl,
-        GraphicApi::Directx,
-        GraphicApi::Vulkan
+        graphic_api::Opengl,
+        graphic_api::Directx,
+        graphic_api::Vulkan
     >;
 }

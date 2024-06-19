@@ -23,7 +23,7 @@
 #include"core/math.hpp"
 
 [[nodiscard]]
-static inline auto ToJphVec3(const glm::vec3& vec) -> JPH::Vec3
+static inline auto to_jph_vec3(const glm::vec3& vec) -> JPH::Vec3
 {
     return {
         vec.x,
@@ -32,7 +32,7 @@ static inline auto ToJphVec3(const glm::vec3& vec) -> JPH::Vec3
     };
 }
 [[nodiscard]]
-static inline auto FromJphVec3(const JPH::Vec3& jolt_vec) -> glm::vec3
+static inline auto from_jph_vec3(const JPH::Vec3& jolt_vec) -> glm::vec3
 {
     return {
         jolt_vec.GetX(),
@@ -42,7 +42,7 @@ static inline auto FromJphVec3(const JPH::Vec3& jolt_vec) -> glm::vec3
 }
 
 [[nodiscard]]
-static inline auto ToJphVec4(const glm::vec4& vec) -> JPH::Vec4
+static inline auto to_jph_vec4(const glm::vec4& vec) -> JPH::Vec4
 {
     return {
         vec.x,
@@ -52,7 +52,7 @@ static inline auto ToJphVec4(const glm::vec4& vec) -> JPH::Vec4
     };
 }
 [[nodiscard]]
-static inline auto FromJphVec4(const JPH::Vec4& jolt_vec) -> glm::vec4
+static inline auto from_jph_vec4(const JPH::Vec4& jolt_vec) -> glm::vec4
 {
     return {
         jolt_vec.GetX(),
@@ -63,7 +63,7 @@ static inline auto FromJphVec4(const JPH::Vec4& jolt_vec) -> glm::vec4
 }
 
 [[nodiscard]]
-static inline auto ToJphQuat(const glm::quat& quat) -> JPH::Quat
+static inline auto to_jph_quat(const glm::quat& quat) -> JPH::Quat
 {
     return JPH::Quat{
         quat.x,
@@ -73,7 +73,7 @@ static inline auto ToJphQuat(const glm::quat& quat) -> JPH::Quat
     };
 }
 [[nodiscard]]
-static inline auto FromJphQuat(const JPH::Quat& jolt_quat) -> glm::quat
+static inline auto from_jph_quat(const JPH::Quat& jolt_quat) -> glm::quat
 {
     return {
         jolt_quat.GetW(),
@@ -83,16 +83,16 @@ static inline auto FromJphQuat(const JPH::Quat& jolt_quat) -> glm::quat
     };
 }
 
-namespace JphObjectLayers
+namespace jph_object_layers
 {
-    static constexpr JPH::ObjectLayer NonMoving{ 0 };
-    static constexpr JPH::ObjectLayer Moving{ 1 };
-    static constexpr std::size_t NumLayers{ 2 };
+    static constexpr JPH::ObjectLayer non_moving{ 0 };
+    static constexpr JPH::ObjectLayer moving{ 1 };
+    static constexpr std::size_t num_layers{ 2 };
 }
 
-namespace JphBroadPhaseLayers
+namespace jph_broad_phase_layers
 {
-    static constexpr JPH::BroadPhaseLayer NonMoving{ 0 };
-    static constexpr JPH::BroadPhaseLayer Moving{ 0 };
-    static constexpr std::size_t NumLayers{ 2 };
+    static constexpr JPH::BroadPhaseLayer non_moving{ 0 };
+    static constexpr JPH::BroadPhaseLayer moving{ 0 };
+    static constexpr std::size_t num_layers{ 2 };
 }

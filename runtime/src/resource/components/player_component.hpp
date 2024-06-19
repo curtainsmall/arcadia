@@ -18,11 +18,11 @@ public:
     PlayerComponent(const nlohmann::json& json);
     ~PlayerComponent() = default;
     [[nodiscard]]
-    auto ToJson() const->nlohmann::json;
+    auto to_json() const->nlohmann::json;
 
 protected:
     [[nodiscard]]
-    virtual auto OnSnapshot() const->std::shared_ptr<MementoDataBase> override;
-    virtual void OnRestore(const std::shared_ptr<MementoDataBase>& memento_data) override;
+    virtual auto on_snapshot() const->std::shared_ptr<MementoDataBase> override;
+    virtual void on_restore(const std::shared_ptr<MementoDataBase>& memento_data) override;
 };
 

@@ -17,19 +17,19 @@ public:
     auto operator=(self_type&&) noexcept -> self_type & = default;
 
     [[nodiscard]]
-    auto GetGlId() const ->GLuint
+    auto gl_id() const ->GLuint
     {
-        return _GlId;
+        return _gl_id;
     }
 
-    void Bind() const;
-    void Unbind() const;
+    void bind() const;
+    void unbind() const;
 
-    void SetStorage(
+    void set_storage(
         GLenum format,
         const glm::ivec2& size
     );
 
 private:
-    GLuint _GlId{ 0 };
+    GLuint _gl_id{ 0 };
 };

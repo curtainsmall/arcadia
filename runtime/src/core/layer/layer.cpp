@@ -3,25 +3,30 @@
 #include "layer.hpp"
 
 iLayer::iLayer(const std::string& name):
-    _Name(name)
+    _name(name)
 {}
 
-auto LayerStack::Instance() -> self_type&
+auto iLayer::name() const -> const std::string&
+{
+    return _name;
+}
+
+auto LayerStack::instance() -> self_type&
 {
     static self_type layer_stack{};
     return layer_stack;
 }
 
-auto LayerStack::PopLayer() -> self_type&
+auto LayerStack::pop_layer() -> self_type&
 {
-    if(Size())
+    if(size())
     {
         _layers.erase(_layers.begin());
     }
     return *this;
 }
 
-auto LayerStack::PopLayer(layer_vector_type::const_iterator iter) -> self_type&
+auto LayerStack::pop_layer(layer_vector_type::const_iterator iter) -> self_type&
 {
     _layers.erase(
         iter
@@ -30,16 +35,16 @@ auto LayerStack::PopLayer(layer_vector_type::const_iterator iter) -> self_type&
     return *this;
 }
 
-auto LayerStack::PopAll() -> self_type&
+auto LayerStack::pop_all() -> self_type&
 {
-    while(Size())
+    while(size())
     {
-        PopLayer();
+        pop_layer();
     }
     return *this;
 }
 
-auto LayerStack::Size() -> std::size_t
+auto LayerStack::size() -> std::size_t
 {
     return _layers.size();
 }

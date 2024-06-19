@@ -12,47 +12,47 @@
 #include"resource/components/transform_component.hpp"
 
 GlRenderer::GlRenderer(const std::filesystem::path& gl_shader_folder_path):
-    _GlModelPipeline(gl_shader_folder_path, GetModelShadersBuilder()),
-    _GlSkyboxPipeline(gl_shader_folder_path, GetSkyboxShadersBuilder()),
-    _GlGridPipeline(gl_shader_folder_path, GetGridShadersBuilder()),
-    _GlShapePipeline(gl_shader_folder_path, GetShapeShadersBuilder())
+    _gl_model_pipeline(gl_shader_folder_path, generate_model_shaders_builder()),
+    _gl_skybox_pipeline(gl_shader_folder_path, generate_skybox_shaders_builder()),
+    _gl_grid_pipeline(gl_shader_folder_path, generate_grid_shaders_builder()),
+    _gl_shape_pipeline(gl_shader_folder_path, generate_shape_shaders_builder())
 {
     ACDA_GL_CALL(glEnable(GL_DEPTH_TEST));
     ACDA_GL_CALL(glEnable(GL_CULL_FACE));
 }
 
-void GlRenderer::Prepare()
+void GlRenderer::prepare()
 {
-    _AssertFrameNotInBuild();
-    _InBuild = true;
+    _assert_frame_not_in_build();
+    _in_build = true;
 
     // Clear submitted meshes uuids
-    _SubmittedMeshesUuids.clear();
+    _submitted_mesh_uuids.clear();
 
     // Clear cameras
-    _GlRenderUnitCameras.clear();
+    _gl_render_unit_cameras.clear();
 
     // Clear lights
-    _GlRenderUnitLights.clear();
+    _gl_render_unit_lights.clear();
 
     // Clear skybox
-    _optGlRenderUnitSkybox.reset();
+    _gl_render_unit_skybox.reset();
 
     // Clear submitted physics body shape uuids
-    _SubmittedPhysicsBodyShapeUuids.clear();
+    _submitted_physics_body_shape_uuids.clear();
 
 }
 
-void GlRenderer::Finalize()
+void GlRenderer::finalize()
 {
-    _AssertFrameInBuild();
-    _InBuild = false;
+    _assert_frame_in_build();
+    _in_build = false;
 
-    for(auto iter = _GlRenderUnitMeshStorage.begin(); iter != _GlRenderUnitMeshStorage.end();)
+    for(auto iter = _gl_render_unit_mesh_storage.begin(); iter != _gl_render_unit_mesh_storage.end();)
     {
-        if(!_SubmittedMeshesUuids.contains(iter->first))
+        if(!_submitted_mesh_uuids.contains(iter->first))
         {
-            iter = _GlRenderUnitMeshStorage.erase(iter);
+            iter = _gl_render_unit_mesh_storage.erase(iter);
         }
         else
         {
@@ -60,11 +60,11 @@ void GlRenderer::Finalize()
         }
     }
 
-    for(auto iter = _GlRenderUnitPhysicsBodyShapeStorage.begin(); iter != _GlRenderUnitPhysicsBodyShapeStorage.end();)
+    for(auto iter = _gl_render_unit_physics_body_shape_storage.begin(); iter != _gl_render_unit_physics_body_shape_storage.end();)
     {
-        if(!_SubmittedPhysicsBodyShapeUuids.contains(iter->first))
+        if(!_submitted_physics_body_shape_uuids.contains(iter->first))
         {
-            iter = _GlRenderUnitPhysicsBodyShapeStorage.erase(iter);
+            iter = _gl_render_unit_physics_body_shape_storage.erase(iter);
         }
         else
         {
@@ -73,14 +73,14 @@ void GlRenderer::Finalize()
     }
 }
 
-void GlRenderer::Submit(const Scene& scene, const std::string& name)
+void GlRenderer::submit(const Scene& scene, const std::string& name)
 {
-    _AssertFrameInBuild();
+    _assert_frame_in_build();
 
-    const auto& entity_info = scene.GetEntityInfo(name);
+    const auto& entity_info = scene.entity_info(name);
 
-    Match<void>(
-        entity_info.Type,
+    match<void>(
+        entity_info.type,
         [&]()
     {
         ACDA_ASSERT(false && "Entity type not supported");
@@ -88,41 +88,41 @@ void GlRenderer::Submit(const Scene& scene, const std::string& name)
         "camera"s,
         [&]()
     {
-        const auto& [camera_comp, transform_comp] = scene.Get<CameraComponent, TransformComponent>(name);
+        const auto& [camera_comp, transform_comp] = scene.get<CameraComponent, TransformComponent>(name);
 
-        _GlRenderUnitCameras.emplace_back(
+        _gl_render_unit_cameras.emplace_back(
             GlFramebuffer{
-                camera_comp.ViewportSize,
-                camera_comp.NearPlane,
-                camera_comp.FarPlane
+                camera_comp.viewport_size,
+                camera_comp.near_plane,
+                camera_comp.far_plane
             },
-            camera_comp.ViewportSize,
-            camera_comp.GenerateViewMat4(transform_comp.Position, transform_comp.Direction),
-            camera_comp.GenerateProjMat4(),
-            transform_comp.Position,
-            camera_comp.ShouldDisplayGrid,
-            camera_comp.NearPlane,
-            camera_comp.FarPlane
+            camera_comp.viewport_size,
+            camera_comp.generate_view_mat4(transform_comp.position, transform_comp.direction),
+            camera_comp.generate_proj_mat4(),
+            transform_comp.position,
+            camera_comp.should_display_grid,
+            camera_comp.near_plane,
+            camera_comp.far_plane
         );
     },
         "light"s,
         [&]()
     {
-        const auto& [light_comp, transform_comp] = scene.Get<LightComponent, TransformComponent>(name);
-        _GlRenderUnitLights.emplace_back(transform_comp.Position, transform_comp.Direction, light_comp.Light);
+        const auto& [light_comp, transform_comp] = scene.get<LightComponent, TransformComponent>(name);
+        _gl_render_unit_lights.emplace_back(transform_comp.position, transform_comp.direction, light_comp.light);
     },
         "actor"s,
         [&]()
     {
-        const auto [model_comp, transform_comp, physics_comp] = scene.Get<ModelComponent, TransformComponent, PhysicsComponent>(name);
+        const auto [model_comp, transform_comp, physics_comp] = scene.get<ModelComponent, TransformComponent, PhysicsComponent>(name);
 
-        if(model_comp.HasIdentifiableMeshes())
+        if(model_comp.has_identifiable_meshes())
         {
-            const auto& [uuid, meshes] = model_comp.GetIdentifiableMeshes();
+            const auto& [uuid, meshes] = model_comp.identifiable_meshes();
 
-            const auto transform_mat = transform_comp.GenerateTransformMatrix();
+            const auto transform_mat = transform_comp.generate_transform_matrix();
 
-            if(!_GlRenderUnitMeshStorage.contains(uuid))
+            if(!_gl_render_unit_mesh_storage.contains(uuid))
             {
 
                 std::vector<GlRenderUnitMesh> gl_meshes{};
@@ -130,78 +130,78 @@ void GlRenderer::Submit(const Scene& scene, const std::string& name)
                 {
                     // For any uuid, its corresponding meshes must be the same
                     gl_meshes.emplace_back(
-                        GlVertexArray{ mesh.Vertices, mesh.Indices },
+                        GlVertexArray{ mesh.vertices, mesh.indices },
                         transform_mat,
-                        mesh.Material.AmbientTexture2d,
-                        mesh.Material.DiffuseTexture2d,
-                        mesh.Material.SpecularTexture2d
+                        mesh.material.ambient_texture2d,
+                        mesh.material.diffuse_texture2d,
+                        mesh.material.specular_texture2d
                     );
                 }
-                _GlRenderUnitMeshStorage.try_emplace(uuid, std::move(gl_meshes));
+                _gl_render_unit_mesh_storage.try_emplace(uuid, std::move(gl_meshes));
             }
             else
             {
-                for(auto& gl_render_unit_mesh : _GlRenderUnitMeshStorage.at(uuid))
+                for(auto& gl_render_unit_mesh : _gl_render_unit_mesh_storage.at(uuid))
                 {
                     std::get<1>(gl_render_unit_mesh) = transform_mat;
                 }
             }
 
-            _SubmittedMeshesUuids.emplace(uuid);
+            _submitted_mesh_uuids.emplace(uuid);
         }
 
-        if(physics_comp.HasBodyInfo())
+        if(physics_comp.has_body_info())
         {
-            const auto& [uuid, jph_body] = physics_comp.GetIdentifiableJphBodyInfo();
-            if(!_GlRenderUnitPhysicsBodyShapeStorage.contains(uuid))
+            const auto& [uuid, jph_body] = physics_comp.get_identifiable_jph_body_info();
+            if(!_gl_render_unit_physics_body_shape_storage.contains(uuid))
             {
-                const auto& shape_info = jph_body.JphShapeInfo;
-                const auto& shape_mesh = Match<Mesh>(
+                const auto& shape_info = jph_body.jph_shape_info;
+                const auto& shape_mesh = match<Mesh>(
                     shape_info,
                     [&](const JphBoxShapeInfo& info)
                 {
-                    return Mesh::Box(info.HalfExtent);
+                    return Mesh::box(info.half_extent);
                 },
                     [&](const JphCapsuleShapeInfo& info)
                 {
-                    return Mesh::Capsule(info.Radius, info.HalfHeightOfCylinder);
+                    return Mesh::capsule(info.radius, info.half_height_of_cylinder);
                 },
                     [&](const JphCylinderShapeInfo& info)
                 {
-                    return Mesh::Cylinder(info.HalfHeight, info.Radius);
+                    return Mesh::cylinder(info.half_height, info.radius);
                 },
                     [&](const JphSphereShapeInfo& info)
                 {
-                    return Mesh::Sphere(info.Radius);
+                    return Mesh::sphere(info.radius);
                 }
                 );
 
-                _GlRenderUnitPhysicsBodyShapeStorage.try_emplace(
-                    uuid, GlVertexArray{ shape_mesh.Vertices,shape_mesh.Indices },
+                _gl_render_unit_physics_body_shape_storage.try_emplace(
+                    uuid, GlVertexArray{ shape_mesh.vertices,shape_mesh.indices },
                     glm::mat4{},
                     glm::vec3{}
                 );
             }
 
-            auto& [GlVertexBuffer, transform_mat, color] = _GlRenderUnitPhysicsBodyShapeStorage.at(uuid);
+            auto& [GlVertexBuffer, transform_mat, color] = _gl_render_unit_physics_body_shape_storage.at(uuid);
             transform_mat = glm::translate(
-                glm::mat4_cast(transform_comp.Rotation),
-                transform_comp.Position
+                glm::mat4_cast(transform_comp.rotation),
+                transform_comp.position
             );
-            color = physics_comp.BodyShapeColor;
+            color = physics_comp.body_shape_color;
 
-            _SubmittedPhysicsBodyShapeUuids.emplace(uuid);
+            _submitted_physics_body_shape_uuids.emplace(uuid);
         }
     }
     );
 }
 
-void GlRenderer::Draw()
+void GlRenderer::draw()
 {
-    _AssertFrameNotInBuild();
+    _assert_frame_not_in_build();
 
 
-    if(_GlRenderUnitCameras.empty())
+    if(_gl_render_unit_cameras.empty())
     {
         throw DrawFail{ "No framebuffer to draw to" };
     }
@@ -219,9 +219,9 @@ void GlRenderer::Draw()
             should_display_grid,
             near_plane,
             far_plane
-    ] : _GlRenderUnitCameras)
+    ] : _gl_render_unit_cameras)
     {
-        gl_framebuffer.Bind();
+        gl_framebuffer.bind();
 
         // Clear framebufers
         ACDA_GL_CALL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
@@ -242,7 +242,7 @@ void GlRenderer::Draw()
             };
             GlVertexArray gl_grid_vertex_array{ grid_vertices, grid_indices };
 
-            _DrawGrid(
+            _draw_grid(
                 gl_grid_vertex_array,
                 camera_view,
                 camera_proj,
@@ -257,10 +257,10 @@ void GlRenderer::Draw()
         const int light_count_size_aligned = 16; // Sizeof `u_light_count` in fragment shader with alignment considered
         GlUniformBuffer GlUniformBuffer{ light_count_size_aligned + light_t_size * max_light_count };
 
-        auto light_box_shape = Mesh::Box(glm::vec3{ 1,1,1 });
-        GlVertexArray gl_light_box_shape_vertex_array{ light_box_shape.Vertices ,light_box_shape.Indices };
+        auto light_box_shape = Mesh::box(glm::vec3{ 1,1,1 });
+        GlVertexArray gl_light_box_shape_vertex_array{ light_box_shape.vertices ,light_box_shape.indices };
 
-        _DrawLights(
+        _draw_lights(
             light_t_size,
             max_light_count,
             light_count_size_aligned,
@@ -271,56 +271,56 @@ void GlRenderer::Draw()
         );
 
         // Draw with mesh pipeline
-        _DrawModels(
+        _draw_models(
             camera_view,
             camera_proj,
             camera_position
         );
 
-        _DrawPhysicsBodyShape(
+        _draw_physics_body_shape(
             camera_view,
             camera_proj
         );
 
         // Draw with skybox pipeline
-        if(_optGlRenderUnitSkybox)
+        if(_gl_render_unit_skybox)
         {
-            _DrawSkybox(
+            _draw_skybox(
                 camera_view,
                 camera_proj
             );
         }
 
-        gl_framebuffer.Unbind();
+        gl_framebuffer.unbind();
     }
 
 }
 
-void GlRenderer::Reset()
+void GlRenderer::reset()
 {
-    _GlRenderUnitCameras.clear();
-    _GlRenderUnitLights.clear();
-    _GlRenderUnitMeshStorage.clear();
-    _SubmittedMeshesUuids.clear();
-    _optGlRenderUnitSkybox.reset();
+    _gl_render_unit_cameras.clear();
+    _gl_render_unit_lights.clear();
+    _gl_render_unit_mesh_storage.clear();
+    _submitted_mesh_uuids.clear();
+    _gl_render_unit_skybox.reset();
 }
 
-auto GlRenderer::GetRenderResultId(std::size_t index) const -> void*
+auto GlRenderer::render_result_id(std::size_t index) const -> void*
 {
-    return reinterpret_cast<void*>(std::get<0>(_GlRenderUnitCameras.at(index)).GetGlTexture2d().GetGlId());
+    return reinterpret_cast<void*>(std::get<0>(_gl_render_unit_cameras.at(index)).gl_texure2d().gl_id());
 }
 
-void GlRenderer::_AssertFrameInBuild() const
+void GlRenderer::_assert_frame_in_build() const
 {
-    ACDA_ASSERT(_InBuild && "Frame is not in build, did you call `prepare()`?");
+    ACDA_ASSERT(_in_build && "Frame is not in build, did you call `prepare()`?");
 }
 
-void GlRenderer::_AssertFrameNotInBuild() const
+void GlRenderer::_assert_frame_not_in_build() const
 {
-    ACDA_ASSERT(!_InBuild && "Frame is in build, did you call `finalize()`?");
+    ACDA_ASSERT(!_in_build && "Frame is in build, did you call `finalize()`?");
 }
 
-void GlRenderer::_DrawGrid(
+void GlRenderer::_draw_grid(
     const GlVertexArray& gl_grid_vertex_array,
     const glm::mat4& camera_view,
     const glm::mat4& camera_proj,
@@ -328,21 +328,21 @@ void GlRenderer::_DrawGrid(
     float far_plane
 )
 {
-    _GlGridPipeline.Use();
-    _GlGridPipeline
-        .SetUniform("u_view_mat4", camera_view)
-        .SetUniform("u_proj_mat4", camera_proj)
-        .SetUniform("u_near_plane", near_plane)
-        .SetUniform("u_far_plane", far_plane);
+    _gl_grid_pipeline.use();
+    _gl_grid_pipeline
+        .set_uniform("u_view_mat4", camera_view)
+        .set_uniform("u_proj_mat4", camera_proj)
+        .set_uniform("u_near_plane", near_plane)
+        .set_uniform("u_far_plane", far_plane);
 
-    gl_grid_vertex_array.Bind();
-    gl_grid_vertex_array.Draw(GL_TRIANGLES);
-    gl_grid_vertex_array.Unbind();
+    gl_grid_vertex_array.bind();
+    gl_grid_vertex_array.draw(GL_TRIANGLES);
+    gl_grid_vertex_array.unbind();
 
-    _GlGridPipeline.Unuse();
+    _gl_grid_pipeline.unuse();
 }
 
-void GlRenderer::_DrawLights(
+void GlRenderer::_draw_lights(
     const GLsizeiptr light_t_size,
     const int max_light_count,
     const int light_count_size_aligned,
@@ -358,56 +358,56 @@ void GlRenderer::_DrawLights(
     const int light_type_area = 3;
     const int light_type_point = 4;
 
-    _GlShapePipeline.Use();
-    _GlShapePipeline
-        .SetUniform("u_view_mat", camera_view)
-        .SetUniform("u_proj_mat", camera_proj);
-    gl_light_shape_vertex_array.Bind();
+    _gl_shape_pipeline.use();
+    _gl_shape_pipeline
+        .set_uniform("u_view_mat", camera_view)
+        .set_uniform("u_proj_mat", camera_proj);
+    gl_light_shape_vertex_array.bind();
 
     GLsizeiptr light_count = 0;
-    for(const auto& [position, direction, light] : _GlRenderUnitLights)
+    for(const auto& [position, direction, light] : _gl_render_unit_lights)
     {
         if(light_count > max_light_count)
         {
             throw too_many_lights{ std::format("The max light count is {}",max_light_count) };
         }
 
-        Match<void>(
+        match<void>(
             light,
             [&](const NullLight& light)
         {},
             [&](const SpotLight& light)
         {
             GLintptr base_offfset = light_count_size_aligned + light_count * light_t_size;
-            gl_light_uniform_buffer.SubData(base_offfset + 0, sizeof(int), &light_type_spot);
-            float cosine_inner_cutoff_angle = glm::cos(light.CutoffAngles.x);
-            float cosine_outer_cutoff_angle = glm::cos(light.CutoffAngles.y);
+            gl_light_uniform_buffer.sub_data(base_offfset + 0, sizeof(int), &light_type_spot);
+            float cosine_inner_cutoff_angle = glm::cos(light.cutoff_angles.x);
+            float cosine_outer_cutoff_angle = glm::cos(light.cutoff_angles.y);
             gl_light_uniform_buffer
-                .SubData(base_offfset + 4, sizeof(float), &cosine_inner_cutoff_angle)
-                .SubData(base_offfset + 8, sizeof(float), &cosine_outer_cutoff_angle)
-                .SubData(base_offfset + 16, sizeof(glm::vec3), &position)
-                .SubData(base_offfset + 32, sizeof(glm::vec3), &direction)
-                .SubData(base_offfset + 48, sizeof(glm::vec3), &light.AttenuationCoefs)
-                .SubData(base_offfset + 64, sizeof(glm::vec3), &light.Color)
-                .SubData(base_offfset + 80, sizeof(glm::vec3), &light.AmbientStrength)
-                .SubData(base_offfset + 96, sizeof(glm::vec3), &light.DiffuseStrength)
-                .SubData(base_offfset + 112, sizeof(glm::vec3), &light.SpecularStrength);
+                .sub_data(base_offfset + 4, sizeof(float), &cosine_inner_cutoff_angle)
+                .sub_data(base_offfset + 8, sizeof(float), &cosine_outer_cutoff_angle)
+                .sub_data(base_offfset + 16, sizeof(glm::vec3), &position)
+                .sub_data(base_offfset + 32, sizeof(glm::vec3), &direction)
+                .sub_data(base_offfset + 48, sizeof(glm::vec3), &light.attenuation_coefs)
+                .sub_data(base_offfset + 64, sizeof(glm::vec3), &light.color)
+                .sub_data(base_offfset + 80, sizeof(glm::vec3), &light.ambient_strength)
+                .sub_data(base_offfset + 96, sizeof(glm::vec3), &light.diffuse_strength)
+                .sub_data(base_offfset + 112, sizeof(glm::vec3), &light.specular_strength);
             ++light_count;
 
-            _GlShapePipeline
-                .SetUniform("u_transform_mat", glm::translate(Mat4::Identity(), position))
-                .SetUniform("u_color", light.Color);
+            _gl_shape_pipeline
+                .set_uniform("u_transform_mat", glm::translate(mat4::identity(), position))
+                .set_uniform("u_color", light.color);
         },
             [&](const DirectLight& light)
         {
             GLintptr base_offfset = light_count_size_aligned + light_count * light_t_size;
             gl_light_uniform_buffer
-                .SubData(base_offfset + 0, sizeof(int), &light_type_direct)
-                .SubData(base_offfset + 32, sizeof(glm::vec3), &direction)
-                .SubData(base_offfset + 64, sizeof(glm::vec3), &light.Color)
-                .SubData(base_offfset + 80, sizeof(glm::vec3), &light.AmbientStrength)
-                .SubData(base_offfset + 96, sizeof(glm::vec3), &light.DiffuseStrength)
-                .SubData(base_offfset + 112, sizeof(glm::vec3), &light.SpecularStrength);
+                .sub_data(base_offfset + 0, sizeof(int), &light_type_direct)
+                .sub_data(base_offfset + 32, sizeof(glm::vec3), &direction)
+                .sub_data(base_offfset + 64, sizeof(glm::vec3), &light.color)
+                .sub_data(base_offfset + 80, sizeof(glm::vec3), &light.ambient_strength)
+                .sub_data(base_offfset + 96, sizeof(glm::vec3), &light.diffuse_strength)
+                .sub_data(base_offfset + 112, sizeof(glm::vec3), &light.specular_strength);
             ++light_count;
         },
             [&](const AreaLight& light)
@@ -416,43 +416,43 @@ void GlRenderer::_DrawLights(
         {
             GLintptr base_offfset = light_count_size_aligned + light_count * light_t_size;
             gl_light_uniform_buffer
-                .SubData(base_offfset + 0, sizeof(int), &light_type_point)
-                .SubData(base_offfset + 16, sizeof(glm::vec3), &position)
-                .SubData(base_offfset + 48, sizeof(glm::vec3), &light.AttenuationCoefs)
-                .SubData(base_offfset + 64, sizeof(glm::vec3), &light.Color)
-                .SubData(base_offfset + 80, sizeof(glm::vec3), &light.AmbientStrength)
-                .SubData(base_offfset + 96, sizeof(glm::vec3), &light.DiffuseStrength)
-                .SubData(base_offfset + 112, sizeof(glm::vec3), &light.SpecularStrength);
+                .sub_data(base_offfset + 0, sizeof(int), &light_type_point)
+                .sub_data(base_offfset + 16, sizeof(glm::vec3), &position)
+                .sub_data(base_offfset + 48, sizeof(glm::vec3), &light.attenuation_coefs)
+                .sub_data(base_offfset + 64, sizeof(glm::vec3), &light.color)
+                .sub_data(base_offfset + 80, sizeof(glm::vec3), &light.ambient_strength)
+                .sub_data(base_offfset + 96, sizeof(glm::vec3), &light.diffuse_strength)
+                .sub_data(base_offfset + 112, sizeof(glm::vec3), &light.specular_strength);
             ++light_count;
 
-            _GlShapePipeline
-                .SetUniform("u_transform_mat", glm::translate(Mat4::Identity(), position))
-                .SetUniform("u_color", light.Color);
+            _gl_shape_pipeline
+                .set_uniform("u_transform_mat", glm::translate(mat4::identity(), position))
+                .set_uniform("u_color", light.color);
         }
         );
 
-        gl_light_shape_vertex_array.Draw(GL_TRIANGLES);
+        gl_light_shape_vertex_array.draw(GL_TRIANGLES);
 
     }
-    gl_light_shape_vertex_array.Unbind();
-    _GlShapePipeline.Unuse();
-    gl_light_uniform_buffer.SubData(0, sizeof(int), &light_count);
-    gl_light_uniform_buffer.BindBufferBase(0);
+    gl_light_shape_vertex_array.unbind();
+    _gl_shape_pipeline.unuse();
+    gl_light_uniform_buffer.sub_data(0, sizeof(int), &light_count);
+    gl_light_uniform_buffer.bind_buffer_base(0);
 }
 
-void GlRenderer::_DrawModels(
+void GlRenderer::_draw_models(
     const glm::mat4& camera_view,
     const glm::mat4& camera_proj,
     const glm::vec3& camera_pos
 )
 {
-    _GlModelPipeline.Use();
+    _gl_model_pipeline.use();
     auto tex_uniform_index = 0;
-    _GlModelPipeline
-        .SetUniform("u_view_mat", camera_view)
-        .SetUniform("u_proj_mat", camera_proj)
-        .SetUniform("u_view_pos", camera_pos);
-    for(auto& [Uuid, gl_meshes] : _GlRenderUnitMeshStorage)
+    _gl_model_pipeline
+        .set_uniform("u_view_mat", camera_view)
+        .set_uniform("u_proj_mat", camera_proj)
+        .set_uniform("u_view_pos", camera_pos);
+    for(auto& [Uuid, gl_meshes] : _gl_render_unit_mesh_storage)
     {
         for(auto& [
             gl_vertex_array,
@@ -462,77 +462,77 @@ void GlRenderer::_DrawModels(
                 gl_texture2d_specular
         ] : gl_meshes)
         {
-            _GlModelPipeline
-                .SetUniform("u_transform_mat", transform_mat4)
-                .SetUniform("u_normal_mat", glm::mat3{ glm::transpose(glm::inverse(transform_mat4)) });
+            _gl_model_pipeline
+                .set_uniform("u_transform_mat", transform_mat4)
+                .set_uniform("u_normal_mat", glm::mat3{ glm::transpose(glm::inverse(transform_mat4)) });
 
-            _GlModelPipeline.SetUniform("u_material.ambient", tex_uniform_index);
-            gl_texture2d_ambient.Bind(tex_uniform_index++);
+            _gl_model_pipeline.set_uniform("u_material.ambient", tex_uniform_index);
+            gl_texture2d_ambient.bind(tex_uniform_index++);
 
-            _GlModelPipeline.SetUniform("u_material.diffuse", tex_uniform_index);
-            gl_texture2d_diffuse.Bind(tex_uniform_index++);
+            _gl_model_pipeline.set_uniform("u_material.diffuse", tex_uniform_index);
+            gl_texture2d_diffuse.bind(tex_uniform_index++);
 
-            _GlModelPipeline.SetUniform("u_material.specular", tex_uniform_index);
-            gl_texture2d_specular.Bind(tex_uniform_index++);
+            _gl_model_pipeline.set_uniform("u_material.specular", tex_uniform_index);
+            gl_texture2d_specular.bind(tex_uniform_index++);
 
-            _GlModelPipeline.SetUniform("u_material.shininess", 32.f);
+            _gl_model_pipeline.set_uniform("u_material.shininess", 32.f);
 
-            gl_vertex_array.Bind();
-            gl_vertex_array.Draw(GL_TRIANGLES);
-            gl_vertex_array.Unbind();
+            gl_vertex_array.bind();
+            gl_vertex_array.draw(GL_TRIANGLES);
+            gl_vertex_array.unbind();
 
-            gl_texture2d_ambient.Unbind();
-            gl_texture2d_diffuse.Unbind();
-            gl_texture2d_specular.Unbind();
+            gl_texture2d_ambient.unbind();
+            gl_texture2d_diffuse.unbind();
+            gl_texture2d_specular.unbind();
 
         }
     }
-    _GlModelPipeline.Unuse();
+    _gl_model_pipeline.unuse();
 }
 
-void GlRenderer::_DrawSkybox(
+void GlRenderer::_draw_skybox(
     const glm::mat4& camera_view,
     const glm::mat4& camera_proj
 )
 {
-    _GlSkyboxPipeline.Use();
-    auto& [gl_vartex_array, gl_cubemap] = *_optGlRenderUnitSkybox;
+    _gl_skybox_pipeline.use();
+    auto& [gl_vartex_array, gl_cubemap] = *_gl_render_unit_skybox;
 
-    _GlSkyboxPipeline.SetUniform("u_skybox", 0);
-    gl_cubemap.Bind(0);
+    _gl_skybox_pipeline.set_uniform("u_skybox", 0);
+    gl_cubemap.bind(0);
 
-    _GlSkyboxPipeline
-        .SetUniform("u_view_mat", glm::mat4{ glm::mat3{camera_view} })
-        .SetUniform("u_proj_mat", camera_proj);
+    _gl_skybox_pipeline
+        .set_uniform("u_view_mat", glm::mat4{ glm::mat3{camera_view} })
+        .set_uniform("u_proj_mat", camera_proj);
 
-    gl_vartex_array.Bind();
+    gl_vartex_array.bind();
     ACDA_GL_CALL(glDepthFunc(GL_LEQUAL));
-    gl_vartex_array.Draw(GL_TRIANGLES);
+    gl_vartex_array.draw(GL_TRIANGLES);
     ACDA_GL_CALL(glDepthFunc(GL_LESS));
-    gl_vartex_array.Unbind();
+    gl_vartex_array.unbind();
 
-    _GlSkyboxPipeline.Unuse();
+    _gl_skybox_pipeline.unuse();
 }
 
-void GlRenderer::_DrawPhysicsBodyShape(
+void GlRenderer::_draw_physics_body_shape(
     const glm::mat4& camera_view,
     const glm::mat4& camera_proj
 )
 {
-    _GlShapePipeline.Use();
-    for(const auto& [gl_vertex_arrray, transform_mat, color] : _GlRenderUnitPhysicsBodyShapeStorage | std::views::values)
+    _gl_shape_pipeline.use();
+    for(const auto& [gl_vertex_arrray, transform_mat, color] : _gl_render_unit_physics_body_shape_storage | std::views::values)
     {
-        _GlShapePipeline
-            .SetUniform("u_transform_mat", transform_mat)
-            .SetUniform("u_view_mat", camera_view)
-            .SetUniform("u_proj_mat", camera_proj)
-            .SetUniform("u_color", color);
+        _gl_shape_pipeline
+            .set_uniform("u_transform_mat", transform_mat)
+            .set_uniform("u_view_mat", camera_view)
+            .set_uniform("u_proj_mat", camera_proj)
+            .set_uniform("u_color", color);
 
-        gl_vertex_arrray.Bind();
-        gl_vertex_arrray.Draw(GL_TRIANGLES);
-        gl_vertex_arrray.Unbind();
+        gl_vertex_arrray.bind();
+        gl_vertex_arrray.draw(GL_TRIANGLES);
+        gl_vertex_arrray.unbind();
     }
-    _GlShapePipeline.Unuse();
+    _gl_shape_pipeline.unuse();
 }
 
 

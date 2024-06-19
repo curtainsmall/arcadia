@@ -15,51 +15,51 @@ public:
     Logger();
     ~Logger();
 
-    static auto Instance() -> self_type&;
+    static auto instance() -> self_type&;
 
-    void Debug(
+    void debug(
         const std::string& msg
     )
     {
         _Logger->debug(msg);
     }
 
-    void Info(
+    void info(
         const std::string& msg
     )
     {
         _Logger->info(msg);
     }
 
-    void Warning(
+    void warning(
         const std::string& msg
     )
     {
         _Logger->warn(msg);
     }
 
-    void Error(
+    void error(
         const std::string& msg
     )
     {
         _Logger->error(msg);
     }
 
-    void Fatal(
+    void fatal(
         const std::string& msg
     )
     {
         _Logger->critical(msg);
     }
 
-    void Demarcate(
+    void demarcate(
         const std::string& msg
     )
     {
-        Debug(std::format("//==== {} ====//", msg));
+        debug(std::format("//==== {} ====//", msg));
     }
 
-    void Flush()
+    void flush()
     {
         _Logger->flush();
     }
@@ -68,52 +68,49 @@ private:
     std::shared_ptr<spdlog::logger> _Logger{};
 };
 
-namespace Log
+ACDA_API static inline void log_debug(
+    const std::string& msg
+)
 {
-    ACDA_API static inline void Debug(
-        const std::string& msg
-    )
-    {
-        Logger::Instance().Debug(msg);
-    }
+    Logger::instance().debug(msg);
+}
 
-    ACDA_API static inline void Info(
-        const std::string& msg
-    )
-    {
-        Logger::Instance().Info(msg);
-    }
+ACDA_API static inline void log_info(
+    const std::string& msg
+)
+{
+    Logger::instance().info(msg);
+}
 
-    ACDA_API static inline void Warning(
-        const std::string& msg
-    )
-    {
-        Logger::Instance().Warning(msg);
-    }
+ACDA_API static inline void log_warning(
+    const std::string& msg
+)
+{
+    Logger::instance().warning(msg);
+}
 
-    ACDA_API static inline void Error(
-        const std::string& msg
-    )
-    {
-        Logger::Instance().Error(msg);
-    }
+ACDA_API static inline void log_error(
+    const std::string& msg
+)
+{
+    Logger::instance().error(msg);
+}
 
-    ACDA_API static inline void Fatal(
-        const std::string& msg
-    )
-    {
-        Logger::Instance().Fatal(msg);
-    }
+ACDA_API static inline void log_fatal(
+    const std::string& msg
+)
+{
+    Logger::instance().fatal(msg);
+}
 
-    ACDA_API static inline void Demarcate(
-        const std::string& msg
-    )
-    {
-        Debug(std::format("//==== {} ====//", msg));
-    }
+ACDA_API static inline void log_demarcate(
+    const std::string& msg
+)
+{
+    log_debug(std::format("//==== {} ====//", msg));
+}
 
-    ACDA_API static inline void Flush()
-    {
-        Logger::Instance().Flush();
-    }
+ACDA_API static inline void log_flush()
+{
+    Logger::instance().flush();
 }

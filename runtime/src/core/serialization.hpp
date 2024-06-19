@@ -9,7 +9,8 @@ namespace Serialization
 {
     using buffer_type = std::vector<std::byte>;
 
-    /*template<class Data, class ...Args>
+#if 0
+    template<class Data, class ...Args>
         requires requires (flatbuffers::FlatBufferBuilder builder, Data data, Args&& ...args)
     {
         {
@@ -27,7 +28,7 @@ namespace Serialization
         builder.Finish(flat_data);
 
         buffer_type::value_type* pointer = builder.GetBufferPointer();
-        buffer_type::size_type   len = builder.GetSize();
+        buffer_type::size_type   len = builder.size();
         return buffer_type{
             pointer,
             pointer + len
@@ -62,5 +63,6 @@ namespace Serialization
             *flatbuffers::GetRoot<typename Data::serialization_type>(buf.data()),
             std::forward<Args>(args)...
         );
-    }*/
+    }
+#endif
 }

@@ -6,7 +6,7 @@
 #   include"core/event/event.hpp"
 #endif
 
-auto AppContext::Instance() -> self_type&
+auto AppContext::instance() -> self_type&
 {
     static self_type app_context{};
     return app_context;
@@ -15,11 +15,11 @@ auto AppContext::Instance() -> self_type&
 AppContext::AppContext()
 {
 #ifdef ACDA_IN_DEBUG
-    auto& set = EventQueue::Instance()
-        .DebugExcludedEventTypes;
-    set.emplace(typeid(Event::InputCursorPos));
-    set.emplace(typeid(Event::InputCursorMove));
-    set.emplace(typeid(Event::WindowPos));
+    auto& set = EventQueue::instance()
+        .debug_excluded_event_types;
+    set.emplace(typeid(event::InputCursorPos));
+    set.emplace(typeid(event::InputCursorMove));
+    set.emplace(typeid(event::window_pos));
 
 #endif // ACDA_IN_DEBUG
 

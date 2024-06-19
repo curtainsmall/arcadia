@@ -7,80 +7,80 @@ GlTexture2d::GlTexture2d(
     void* ptr
 )
 {
-    ACDA_GL_CALL(glGenTextures(1, &_GlId));
-    Bind();
+    ACDA_GL_CALL(glGenTextures(1, &_gl_id));
+    bind();
 
     // TODO: Multisample Count ?
     ACDA_GL_CALL(glTexImage2D(GL_TEXTURE_2D, 0/* TODO: Mipmap level ?*/, GL_RGBA, size.x, size.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, ptr));
     // TODO: Generate mipmap ?
-    SetTexParameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    set_tex_param(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
-    Unbind();
+    unbind();
 }
 
 GlTexture2d::GlTexture2d(const Texture2d& texture2d)
 {
-    ACDA_GL_CALL(glGenTextures(1, &_GlId));
-    Bind();
+    ACDA_GL_CALL(glGenTextures(1, &_gl_id));
+    bind();
 
     // TODO: Multisample Count ?
-    ACDA_GL_CALL(glTexImage2D(GL_TEXTURE_2D, 0/* TODO: Mipmap level ?*/, GL_RGBA, texture2d.Size.x, texture2d.Size.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, texture2d.Pixels.data()));
+    ACDA_GL_CALL(glTexImage2D(GL_TEXTURE_2D, 0/* TODO: Mipmap level ?*/, GL_RGBA, texture2d.size.x, texture2d.size.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, texture2d.pixels.data()));
     // TODO: Generate mipmap ?
-    SetTexParameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    set_tex_param(GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
-    Unbind();
+    unbind();
 }
 
 GlTexture2d::~GlTexture2d()
 {
-    ACDA_GL_CALL(glDeleteTextures(1, &_GlId));
+    ACDA_GL_CALL(glDeleteTextures(1, &_gl_id));
 }
 
 GlTexture2d::GlTexture2d(self_type&& rhs) noexcept:
-    _GlId(rhs._GlId),
-    _Slot(rhs._Slot)
+    _gl_id(rhs._gl_id),
+    _slot(rhs._slot)
 {
-    rhs._GlId = 0;
-    rhs._Slot = -1u;
+    rhs._gl_id = 0;
+    rhs._slot = -1u;
 }
 
 auto GlTexture2d::operator=(self_type&& rhs) noexcept -> self_type&
 {
-    _GlId = rhs._GlId;
-    rhs._GlId = 0;
+    _gl_id = rhs._gl_id;
+    rhs._gl_id = 0;
 
-    _Slot = rhs._Slot;
-    rhs._Slot = -1u;
+    _slot = rhs._slot;
+    rhs._slot = -1u;
 
     return *this;
 }
 
-void GlTexture2d::Bind(GLenum slot)
+void GlTexture2d::bind(GLenum slot)
 {
-    if(_GlId == 0)
+    if(_gl_id == 0)
     {
         throw GlInvalid{ "Cannot bind null OpenGL texture2d" };
     }
-    _Slot = slot;
+    _slot = slot;
     ACDA_GL_CALL(glActiveTexture(GL_TEXTURE0 + slot));
-    ACDA_GL_CALL(glBindTexture(GL_TEXTURE_2D, _GlId));
+    ACDA_GL_CALL(glBindTexture(GL_TEXTURE_2D, _gl_id));
 }
 
-void GlTexture2d::Unbind()
+void GlTexture2d::unbind()
 {
-    if(_Slot == -1)
+    if(_slot == -1)
     {
         return;
     }
 
-    ACDA_GL_CALL(glActiveTexture(GL_TEXTURE0 + _Slot));
+    ACDA_GL_CALL(glActiveTexture(GL_TEXTURE0 + _slot));
     ACDA_GL_CALL(glBindTexture(GL_TEXTURE_2D, 0));
-    _Slot = -1;
+    _slot = -1;
 }
 
-void GlTexture2d::SetTexParameter(GLenum pname, GLint param) const
+void GlTexture2d::set_tex_param(GLenum pname, GLint param) const
 {
-    if(_GlId == 0 || _Slot == -1)
+    if(_gl_id == 0 || _slot == -1)
     {
         throw GlInvalid{ "Cannot set texture parameter to an unbound OpenGL Texture" };
     }
@@ -88,9 +88,9 @@ void GlTexture2d::SetTexParameter(GLenum pname, GLint param) const
     ACDA_GL_CALL(glTexParameteri(GL_TEXTURE_2D, pname, param));
 }
 
-void GlTexture2d::SetTexParameter(GLenum pname, GLfloat param) const
+void GlTexture2d::set_tex_param(GLenum pname, GLfloat param) const
 {
-    if(_GlId == 0 || _Slot == -1)
+    if(_gl_id == 0 || _slot == -1)
     {
         throw GlInvalid{ "Cannot set texture parameter to an unbound OpenGL Texture" };
     }

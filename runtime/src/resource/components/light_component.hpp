@@ -19,12 +19,12 @@ struct SpotLight
 public:
     auto operator==(const SpotLight&) const -> bool = default;
 public:
-    glm::vec3 AttenuationCoefs{ 1.f,.045f,.0075f };
-    glm::vec2 CutoffAngles{ glm::radians(30.f),glm::radians(32.f) };
-    glm::vec3 Color{ 1.f,1.f,1.f };
-    glm::vec3 AmbientStrength{ Vec3::Zero() };
-    glm::vec3 DiffuseStrength{ 5.f,5.f,5.f };
-    glm::vec3 SpecularStrength{ Vec3::Zero() };
+    glm::vec3 attenuation_coefs{ 1.f,.045f,.0075f };
+    glm::vec2 cutoff_angles{ glm::radians(30.f),glm::radians(32.f) };
+    glm::vec3 color{ 1.f,1.f,1.f };
+    glm::vec3 ambient_strength{ vec3::zero() };
+    glm::vec3 diffuse_strength{ 5.f,5.f,5.f };
+    glm::vec3 specular_strength{ vec3::zero() };
 };
 
 struct DirectLight
@@ -32,10 +32,10 @@ struct DirectLight
 public:
     auto operator==(const DirectLight&) const -> bool = default;
 public:
-    glm::vec3 Color{ 1.f,1.f,1.f };
-    glm::vec3 AmbientStrength{ Vec3::Zero() };
-    glm::vec3 DiffuseStrength{ 5.f,5.f,5.f };
-    glm::vec3 SpecularStrength{ Vec3::Zero() };
+    glm::vec3 color{ 1.f,1.f,1.f };
+    glm::vec3 ambient_strength{ vec3::zero() };
+    glm::vec3 diffuse_strength{ 5.f,5.f,5.f };
+    glm::vec3 specular_strength{ vec3::zero() };
 };
 
 struct AreaLight
@@ -43,11 +43,11 @@ struct AreaLight
 public:
     auto operator==(const AreaLight&) const -> bool = default;
 public:
-    glm::vec2 Size{ Vec2::Zero() };
-    glm::vec3 Color{ 1.f,1.f,1.f };
-    glm::vec3 AmbientStrength{ Vec3::Zero() };
-    glm::vec3 DiffuseStrength{ 5.f,5.f,5.f };
-    glm::vec3 SpecularStrength{ Vec3::Zero() };
+    glm::vec2 size{ vec2::zero() };
+    glm::vec3 color{ 1.f,1.f,1.f };
+    glm::vec3 ambient_strength{ vec3::zero() };
+    glm::vec3 diffuse_strength{ 5.f,5.f,5.f };
+    glm::vec3 specular_strength{ vec3::zero() };
 };
 
 struct PointLight
@@ -55,11 +55,11 @@ struct PointLight
 public:
     auto operator==(const PointLight&) const -> bool = default;
 public:
-    glm::vec3 AttenuationCoefs{ 1.f,.045f,.0075f };
-    glm::vec3 Color{ 1.f,1.f,1.f };
-    glm::vec3 AmbientStrength{ Vec3::Zero() };
-    glm::vec3 DiffuseStrength{ 5.f,5.f,5.f };
-    glm::vec3 SpecularStrength{ Vec3::Zero() };
+    glm::vec3 attenuation_coefs{ 1.f,.045f,.0075f };
+    glm::vec3 color{ 1.f,1.f,1.f };
+    glm::vec3 ambient_strength{ vec3::zero() };
+    glm::vec3 diffuse_strength{ 5.f,5.f,5.f };
+    glm::vec3 specular_strength{ vec3::zero() };
 };
 
 using LightType = std::variant<
@@ -75,7 +75,7 @@ struct LightComponentMementoData: MementoDataBase
 public:
     auto operator==(const LightComponentMementoData&) const -> bool = default;
 public:
-    LightType Light{};
+    LightType light{};
 };
 
 struct LightComponent:
@@ -91,13 +91,13 @@ public:
     LightComponent(const nlohmann::json& json);
     ~LightComponent() = default;
     [[nodiscard]]
-    auto ToJson() const->nlohmann::json;
+    auto to_json() const->nlohmann::json;
 
 protected:
     [[nodiscard]]
-    virtual auto OnSnapshot() const->std::shared_ptr<MementoDataBase> override;
-    virtual void OnRestore(const std::shared_ptr<MementoDataBase>& sp_memento_data) override;
+    virtual auto on_snapshot() const->std::shared_ptr<MementoDataBase> override;
+    virtual void on_restore(const std::shared_ptr<MementoDataBase>& sp_memento_data) override;
 
 public:
-    LightType Light{ NullLight{} };
+    LightType light{ NullLight{} };
 };

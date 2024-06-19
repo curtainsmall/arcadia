@@ -35,8 +35,8 @@ public:
 public:
     void operator()(PhysicsSimulator& physics_simulator);
 private:
-    bool _EnableModifyingTempAllocatorSize{ false };
-    bool _LinkUpsAndSpu{ true };
+    bool _enable_modifying_temp_allocator_size{ false };
+    bool _link_ups_and_spu{ true };
 };
 
 struct ImguiWindowState: iImguiWindow
@@ -54,24 +54,24 @@ public:
     {}
     virtual ~ImguiWindowState() = default;
 
-    virtual void OnEvent(EventBase& event) override;
-    virtual void OnUpdate() override;
+    virtual void on_event(EventBase& e) override;
+    virtual void on_update() override;
 
 private:
-    void _OnOpenImguiWindow(Event::OpenImguiWindow& e);
-    void _OnSceneActivated(Event::SceneActivated& e);
-    void _OnSceneDeactivated(Event::SceneDeactivated& e);
-    void _OnRendererBuilt(Event::RendererBuilt& e);
-    void _OnRendererUnbuilt(Event::RendererUnbuilt& e);
-    void _OnPhysicsSimualtorBuilt(Event::PhysicsSimulatorBuilt& e);
-    void _OnPhysicsSimulatorUnbuilt(Event::PhysicsSimulatorUnbuilt& e);
+    void _on_open_imgui_window(event::OpenImguiWindow& e);
+    void _on_scene_activated(event::SceneActivated& e);
+    void _on_scene_deactivated(event::SceneDeactivated& e);
+    void _on_renderer_built(event::RendererBuilt& e);
+    void _on_renderer_unbuilt(event::RendererUnbuilt& e);
+    void _on_physics_simulator_built(event::PhysicsSimulatorBuilt& e);
+    void _on_physics_simulator_unbuilt(event::PhysicsSimulatorUnbuilt& e);
 
 private:
-    std::weak_ptr<Scene> _Scene{};
-    std::weak_ptr<iRenderer> _Renderer{};
-    std::weak_ptr<PhysicsSimulator> _PhysicsSimulator{};
+    std::weak_ptr<Scene> _scene{};
+    std::weak_ptr<iRenderer> _renderer{};
+    std::weak_ptr<PhysicsSimulator> _physics_simulator{};
 
-    ImguiWindowStateScene _ImguiWindowStateScene{};
-    ImguiWindowStateRenderer _ImguiWindowStateRenderer{};
-    ImguiWindowStatePhysicsSimulator _ImguiWindowStatePhysicsSimulator{};
+    ImguiWindowStateScene _imgui_window_state_scene{};
+    ImguiWindowStateRenderer _imgui_window_state_renderer{};
+    ImguiWindowStatePhysicsSimulator _imgui_window_state_physics_simulator{};
 };

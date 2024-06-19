@@ -9,7 +9,7 @@
 
 void ImguiWindowPopupCreateProject::operator()()
 {
-    if(!Open)
+    if(!open)
     {
         return;
     }
@@ -24,47 +24,47 @@ void ImguiWindowPopupCreateProject::operator()()
 
     auto window_flags =
         ImGuiWindowFlags_NoCollapse;
-    if(ImGui::BeginPopupModal(imgui_window_title.c_str(), &Open, window_flags))
+    if(ImGui::BeginPopupModal(imgui_window_title.c_str(), &open, window_flags))
     {
         auto input_text_flags =
             ImGuiInputTextFlags_AutoSelectAll;
         ImGui::Text("Project name");
-        if(ImGui::InputText("##project_name", &_Name, input_text_flags))
+        if(ImGui::InputText("##project_name", &_name, input_text_flags))
         {
-            if(_Name.empty())
+            if(_name.empty())
             {
                 ImGui::TextColored({ 204, 80, 69, 255 }, "Project name cannot be empty");
             }
         }
         if(ImGui::Button("Project location"))
         {
-            _FilepathStr = pfd::save_file{
+            _filepath_str = pfd::save_file{
                 "Select location for Project",
-                std::format("{}.acdaprj",_Name),
+                std::format("{}.acdaprj",_name),
                 {"Arcadia Project",".acdaprj"}
             }.result();
         }
-        if(!_FilepathStr.empty())
+        if(!_filepath_str.empty())
         {
-            ImGui::TextColored({ 228, 228, 228, 255 }, "Location Selected: %s", _FilepathStr.c_str());
+            ImGui::TextColored({ 228, 228, 228, 255 }, "Location Selected: %s", _filepath_str.c_str());
         }
 
-        auto confirmed = ImGui::Button("Confirm") && !_Name.empty();
+        auto confirmed = ImGui::Button("Confirm") && !_name.empty();
         if(confirmed)
         {
-            EventQueue::Instance()
-                .Signal<Event::CreateProject>(
-                    _Name,
-                    _FilepathStr
+            EventQueue::instance()
+                .signal<event::CreateProject>(
+                    _name,
+                    _filepath_str
                 );
         }
         ImGui::SameLine();
         if(confirmed || ImGui::Button("Cancel"))
         {
             ImGui::CloseCurrentPopup();
-            Open = false;
-            _Name.clear();
-            _FilepathStr.clear();
+            open = false;
+            _name.clear();
+            _filepath_str.clear();
         }
 
         ImGui::EndPopup();
@@ -73,7 +73,7 @@ void ImguiWindowPopupCreateProject::operator()()
 
 void ImguiWindowPopupCreateScene::operator()(const std::shared_ptr<const Project>& project)
 {
-    if(!Open)
+    if(!open)
     {
         return;
     }
@@ -88,160 +88,160 @@ void ImguiWindowPopupCreateScene::operator()(const std::shared_ptr<const Project
 
     auto window_flags =
         ImGuiWindowFlags_NoCollapse;
-    if(ImGui::BeginPopupModal(imgui_window_title.c_str(), &Open, window_flags))
+    if(ImGui::BeginPopupModal(imgui_window_title.c_str(), &open, window_flags))
     {
         auto input_text_flags =
             ImGuiInputTextFlags_AutoSelectAll;
         ImGui::Text("Scene name");
-        if(ImGui::InputText("##scene_name", &_Name, input_text_flags))
+        if(ImGui::InputText("##scene_name", &_name, input_text_flags))
         {
-            _NameAvailable = !project->SceneSptrStorage.contains(_Name);
-            if(_Name.empty())
+            _name_available = !project->scene_sptr_storage.contains(_name);
+            if(_name.empty())
             {
                 ImGui::TextColored({ 204,80,69,255 }, "Scene name cannot empty");
             }
         }
-        if(!_NameAvailable)
+        if(!_name_available)
         {
             ImGui::PushStyleColor(ImGuiCol_Text, { 204, 80, 69, 255 });
-            ImGui::Text("Scene named \"%s\" already exsits", _Name.c_str());
+            ImGui::Text("Scene named \"%s\" already exsits", _name.c_str());
             ImGui::PopStyleColor();
         }
-        ImGui::Checkbox("As current", &_AsCurrent);
+        ImGui::Checkbox("As current", &_as_current);
 
-        auto confirmed = ImGui::Button("Confirm") && !_Name.empty() && _NameAvailable;
+        auto confirmed = ImGui::Button("Confirm") && !_name.empty() && _name_available;
         if(confirmed)
         {
-            EventQueue::Instance()
-                .Signal<Event::CreateScene>(
-                    _Name,
-                    _AsCurrent
+            EventQueue::instance()
+                .signal<event::CreateScene>(
+                    _name,
+                    _as_current
                 );
         }
         ImGui::SameLine();
         if(confirmed || ImGui::Button("Cancel"))
         {
             ImGui::CloseCurrentPopup();
-            Open = false;
-            _Name.clear();
-            _AsCurrent = true;
-            _NameAvailable = true;
+            open = false;
+            _name.clear();
+            _as_current = true;
+            _name_available = true;
         }
 
         ImGui::EndPopup();
     }
 }
 
-void ImguiWindowMainMenubar::OnEvent(EventBase& event)
+void ImguiWindowMainMenubar::on_event(EventBase& e)
 {
-    EventDispatcher{ event }
-        .Dispatch<Event::ProjectBuilt>(ACDA_BIND_MEMBER_FN(_OnProjectBuilt))
-        .Dispatch<Event::ProjectUnbuilt>(ACDA_BIND_MEMBER_FN(_OnProjectUnbuilt))
-        .Result();
+    EventDispatcher{ e }
+        .dispatch<event::ProjectBuilt>(ACDA_BIND_MEMBER_FN(_on_project_built))
+        .dispatch<event::ProjectUnbuilt>(ACDA_BIND_MEMBER_FN(_on_project_unbuilt))
+        .result();
 }
 
-void ImguiWindowMainMenubar::OnUpdate()
+void ImguiWindowMainMenubar::on_update()
 {
     if(ImGui::BeginMainMenuBar())
     {
-        _FileMenu();
-        _EditMenu();
-        _ViewMenu();
-        _OptionMenu();
+        _file_menu();
+        _edit_menu();
+        _view_menu();
+        _option_menu();
 
         ImGui::EndMainMenuBar();
     }
 }
 
-void ImguiWindowMainMenubar::_FileMenu()
+void ImguiWindowMainMenubar::_file_menu()
 {
-    auto project = _Project.lock();
+    auto project = _project.lock();
 
-    auto& event_queue = EventQueue::Instance();
+    auto& event_queue = EventQueue::instance();
 
-    _ImguiWindowPopupCreateProject();
+    _imgui_window_popup_create_project();
     if(ImGui::BeginMenu("File"))
     {
         if(ImGui::MenuItem("New Project..."))
         {
-            _ImguiWindowPopupCreateProject.Open = true;
+            _imgui_window_popup_create_project.open = true;
         }
         if(ImGui::MenuItem("Open Project..."))
         {
-            event_queue.Signal<Event::OpenProject>();
+            event_queue.signal<event::OpenProject>();
         }
         if(ImGui::MenuItem("Save Project", nullptr, nullptr, !!project))
         {
-            event_queue.Signal<Event::SaveProject>();
+            event_queue.signal<event::SaveProject>();
         }
         if(ImGui::MenuItem("Save Project As...", nullptr, nullptr, !!project))
         {
-            event_queue.Signal<Event::SaveProjectAs>();
+            event_queue.signal<event::SaveProjectAs>();
         }
         if(ImGui::MenuItem("Close Project", nullptr, nullptr, !!project))
         {
-            event_queue.Signal<Event::CloseProject>();
+            event_queue.signal<event::CloseProject>();
         }
 
         ImGui::EndMenu();
     }
 }
 
-void ImguiWindowMainMenubar::_EditMenu()
+void ImguiWindowMainMenubar::_edit_menu()
 {
-    auto project = _Project.lock();
+    auto project = _project.lock();
 
     if(project)
     {
-        _ImguiWindowPopupCreateScene(project);
+        _imgui_window_popup_create_scene(project);
     }
-    auto& event_queue = EventQueue::Instance();
+    auto& event_queue = EventQueue::instance();
     if(ImGui::BeginMenu("Edit"))
     {
         if(ImGui::MenuItem("New Scene ...", nullptr, nullptr, !!project))
         {
-            _ImguiWindowPopupCreateScene.Open = true;
+            _imgui_window_popup_create_scene.open = true;
         }
 
-        bool has_scene = project && project->SceneSptrStorage.size();
-        bool has_active_scene = has_scene && project->HasActiveScene();
+        bool has_scene = project && project->scene_sptr_storage.size();
+        bool has_active_scene = has_scene && project->has_active_scene();
 
         if(ImGui::BeginMenu("Select Scene", has_scene))
         {
             ACDA_ASSERT(project);
 
-            for(const auto& [key, scene] : project->SceneSptrStorage)
+            for(const auto& [key, scene] : project->scene_sptr_storage)
             {
                 if(ImGui::MenuItem(key.c_str()))
                 {
-                    event_queue.Signal<Event::SelectScene>(key);
+                    event_queue.signal<event::SelectScene>(key);
                 }
             }
             ImGui::EndMenu();
         }
         if(ImGui::MenuItem("Close Scene", nullptr, nullptr, has_active_scene))
         {
-            event_queue.Signal<Event::CloseScene>();
+            event_queue.signal<event::CloseScene>();
         }
         if(ImGui::MenuItem("Delete Scene", nullptr, nullptr, has_active_scene))
         {
-            event_queue.Signal<Event::DeleteScene>();
+            event_queue.signal<event::DeleteScene>();
         }
 
         ImGui::EndMenu();
     }
 }
 
-void ImguiWindowMainMenubar::_ViewMenu()
+void ImguiWindowMainMenubar::_view_menu()
 {
-    auto& event_queue = EventQueue::Instance();
+    auto& event_queue = EventQueue::instance();
     if(ImGui::BeginMenu("View"))
     {
-        for(const auto& [title, id_str] : _ImguiWindowTitleAndIdStrPairs)
+        for(const auto& [title, id_str] : _imgui_window_title_and_id_str_pairs)
         {
             if(ImGui::MenuItem(title.c_str()))
             {
-                event_queue.Signal<Event::OpenImguiWindow>(id_str);
+                event_queue.signal<event::OpenImguiWindow>(id_str);
                 ImGui::SetWindowFocus(id_str.c_str());
             }
         }
@@ -249,14 +249,14 @@ void ImguiWindowMainMenubar::_ViewMenu()
     }
 }
 
-void ImguiWindowMainMenubar::_OptionMenu()
+void ImguiWindowMainMenubar::_option_menu()
 {
-    auto& event_queue = EventQueue::Instance();
+    auto& event_queue = EventQueue::instance();
     if(ImGui::BeginMenu("Option"))
     {
-        if(ImGui::Checkbox("Show Gizmo", &_ShowGizmo))
+        if(ImGui::Checkbox("Show Gizmo", &_show_gizmo))
         {
-            event_queue.Signal<Event::ShowGizmo>(_ShowGizmo);
+            event_queue.signal<event::ShowGizmo>(_show_gizmo);
         }
 
         ImGui::EndMenu();
@@ -264,15 +264,15 @@ void ImguiWindowMainMenubar::_OptionMenu()
 }
 
 
-void ImguiWindowMainMenubar::_OnProjectBuilt(Event::ProjectBuilt& e)
+void ImguiWindowMainMenubar::_on_project_built(event::ProjectBuilt& e)
 {
     const auto& [project] = e.data_tuple;
-    _Project = project;
+    _project = project;
 }
 
-void ImguiWindowMainMenubar::_OnProjectUnbuilt(Event::ProjectUnbuilt& e)
+void ImguiWindowMainMenubar::_on_project_unbuilt(event::ProjectUnbuilt& e)
 {
-    _Project.reset();
+    _project.reset();
 }
 
 

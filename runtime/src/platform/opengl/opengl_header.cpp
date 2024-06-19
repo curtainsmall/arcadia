@@ -4,7 +4,7 @@
 
 #include"core/log/log.hpp"
 
-ACDA_API void GlCheckError(const char* fn_name, const char* file_name, int line)
+ACDA_API void gl_check_error(const char* fn_name, const char* file_name, int line)
 {
     while(GLenum error = glGetError())
     {
@@ -52,13 +52,13 @@ ACDA_API void GlCheckError(const char* fn_name, const char* file_name, int line)
                 break;
             }
         }
-        Log::Error(std::format("OpenGL ERROR CODE: {0} in {1} at {2}: {3}", err_des, std::string(fn_name), std::string(file_name), std::to_string(line)));
-        Log::Flush();
+        log_error(std::format("OpenGL ERROR CODE: {0} in {1} at {2}: {3}", err_des, std::string(fn_name), std::string(file_name), std::to_string(line)));
+        log_flush();
         //ASSERT_STATIC(false);
     }
 }
 
-ACDA_API auto GetGlTypeSize(GLenum Type) -> std::size_t
+ACDA_API auto gl_sizeof(GLenum Type) -> std::size_t
 {
     switch(Type)
     {
@@ -73,7 +73,7 @@ ACDA_API auto GetGlTypeSize(GLenum Type) -> std::size_t
     }
 }
 
-ACDA_API auto SetGlVersion() -> Version
+ACDA_API auto set_gl_version() -> Version
 {
     int
         major{ 0 },
@@ -83,13 +83,13 @@ ACDA_API auto SetGlVersion() -> Version
 
     Version version{};
 
-    version.Major = major;
-    version.Minor = minor;
+    version.major = major;
+    version.minor = minor;
 
     return version;
 }
 
-void GLAPIENTRY GlDebugCallback(
+void GLAPIENTRY gl_debug_callback(
     GLenum source,
     GLenum Type,
     GLuint id,
@@ -173,18 +173,18 @@ void GLAPIENTRY GlDebugCallback(
             break;
     }
 
-    Log::Error(std::format("GL callback\nSource: {0}\nType: {1}\nSeverity: {2}\nMessage: {3}", source_str, type_str, severity_str, message));
-    Log::Flush();
+    log_error(std::format("GL callback\nSource: {0}\nType: {1}\nSeverity: {2}\nMessage: {3}", source_str, type_str, severity_str, message));
+    log_flush();
 }
 
-ACDA_API auto GetGlMaxCombinedTextureImageUnitsCount() -> GLint
+ACDA_API auto get_gl_max_combine_texture_image_units_count() -> GLint
 {
     GLint res{ 0 };
     ACDA_GL_CALL(glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &res));
     return res;
 }
 
-ACDA_API auto GetGlMaxTextureImageUnitsCount() -> GLint
+ACDA_API auto get_gl_max_texture_image_units_count() -> GLint
 {
     GLint res{ 0 };
     ACDA_GL_CALL(glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &res));
@@ -199,7 +199,7 @@ OpenglContext::OpenglContext()
         throw GlError{ reinterpret_cast<const char*>(glewGetErrorString(error)) };
     }
     ACDA_GL_CALL(auto gl_version_str = glGetString(GL_VERSION));
-    Log::Info(std::format("OpenGL Version: {}", reinterpret_cast<const char*>(gl_version_str)));
+    log_info(std::format("OpenGL Version: {}", reinterpret_cast<const char*>(gl_version_str)));
 
 #if ACDA_GL_USE_DEBUG_CALLBACK
     if(arcadia::get_gl_version() >= arcadia::version{ 4,6,0 })
@@ -209,5 +209,5 @@ OpenglContext::OpenglContext()
     }
 #endif
 
-    Log::Flush();
+    log_flush();
 }

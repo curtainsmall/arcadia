@@ -31,10 +31,10 @@ public:
     auto operator=(self_type&& rhs) noexcept -> self_type&;
 
     [[nodiscard]]
-    auto GetGlId() const -> GLuint
+    auto gl_id() const -> GLuint
     {
-        return _GlId;
+        return _gl_id;
     }
 private:
-    GLuint _GlId{ 0 };
+    GLuint _gl_id{ 0 };
 };

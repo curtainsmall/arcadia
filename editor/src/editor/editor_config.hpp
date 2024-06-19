@@ -7,6 +7,6 @@ struct EditorConfig
 public:
     using self_type = EditorConfig;
 public:
-    static auto Instance() -> self_type&;
+    static auto instance() -> self_type&;
 public:
 };

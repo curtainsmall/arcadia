@@ -20,12 +20,12 @@ public:
     {}
     virtual ~ImguiWindowMainToolbar() = default;
 
-    virtual void OnEvent(EventBase& event) override;
-    virtual void OnUpdate() override;
+    virtual void on_event(EventBase& e) override;
+    virtual void on_update() override;
 
 private:
-    void _OnSceneActivated(Event::SceneActivated& e);
-    void _OnSceneDeactivated(Event::SceneDeactivated& e);
+    void _on_scene_activated(event::SceneActivated& e);
+    void _on_scene_deactivated(event::SceneDeactivated& e);
 private:
-    std::weak_ptr<Scene> _Scene{};
+    std::weak_ptr<Scene> _scene{};
 };

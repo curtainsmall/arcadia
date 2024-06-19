@@ -20,14 +20,14 @@ public:
     GlUniformBuffer(self_type&& rhs)noexcept;
     auto operator=(self_type&& rhs) noexcept -> self_type&;
 
-    void Bind() const;
-    void Unbind() const;
+    void bind() const;
+    void unbind() const;
 
-    void BindBufferBase(GLuint index) const;
-    void BindBufferRange(GLuint index, GLintptr Offset, GLsizeiptr size) const;
+    void bind_buffer_base(GLuint index) const;
+    void bind_buffer_range(GLuint index, GLintptr Offset, GLsizeiptr size) const;
 
-    auto SubData(GLintptr Offset, GLsizeiptr size, const GLvoid* data) const-> const self_type&;
+    auto sub_data(GLintptr offset, GLsizeiptr size, const GLvoid* data) const-> const self_type&;
 
 private:
-    GLuint _GlId{ 0 };
+    GLuint _gl_id{ 0 };
 };

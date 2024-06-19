@@ -5,5 +5,5 @@
 #include"core/base.hpp"
 #include"resource/fonts/IconsFontAwesome5.h"
 
-static std::string FontFilepathStr{ "fonts/fa-solid-900.ttf" };
-static std::size_t FontSize = 10;
+static std::string font_filepath_str{ "fonts/fa-solid-900.ttf" };
+static std::size_t font_size = 10;

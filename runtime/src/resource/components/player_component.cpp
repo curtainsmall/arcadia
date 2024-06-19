@@ -5,15 +5,15 @@
 PlayerComponent::PlayerComponent(const nlohmann::json& json)
 {}
 
-auto PlayerComponent::ToJson() const -> nlohmann::json
+auto PlayerComponent::to_json() const -> nlohmann::json
 {
     return nlohmann::json();
 }
 
-auto PlayerComponent::OnSnapshot() const -> std::shared_ptr<MementoDataBase>
+auto PlayerComponent::on_snapshot() const -> std::shared_ptr<MementoDataBase>
 {
     return std::shared_ptr<MementoDataBase>();
 }
 
-void PlayerComponent::OnRestore(const std::shared_ptr<MementoDataBase>& memento_data)
+void PlayerComponent::on_restore(const std::shared_ptr<MementoDataBase>& memento_data)
 {}

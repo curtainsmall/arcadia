@@ -52,9 +52,9 @@ public:
 public:
     void operator()(PhysicsComponent& physics_comp);
 public:
-    bool Open{ false };
+    bool open{ false };
 private:
-    JphBodyInfo _TempJphBodyInfo{};
+    JphBodyInfo _temp_jph_body_info{};
 };
 
 struct ImguiWindowPropertyPhysicsComponent
@@ -90,42 +90,42 @@ public:
     {}
     virtual ~ImguiWindowProperty() = default;
 
-    virtual void OnEvent(EventBase& event) override;
-    virtual void OnUpdate() override;
+    virtual void on_event(EventBase& e) override;
+    virtual void on_update() override;
 private:
     template<cComponent Component>
-    auto _ContainsComponent(const std::string& name) -> bool
+    auto _contains_component(const std::string& name) -> bool
     {
-        auto scene = _Scene.lock();
+        auto scene = _scene.lock();
         ACDA_ASSERT(scene);
 
-        return scene->AllOf<Component>(name);
+        return scene->all_of<Component>(name);
     }
     template<cComponent Component>
-    auto _GetComponent(const std::string& name) -> Component&
+    auto _get_component(const std::string& name) -> Component&
     {
-        auto scene = _Scene.lock();
+        auto scene = _scene.lock();
         ACDA_ASSERT(scene);
-        ACDA_ASSERT(_ContainsComponent<Component>(name));
+        ACDA_ASSERT(_contains_component<Component>(name));
 
-        return scene->Get<Component>(name);
+        return scene->get<Component>(name);
     }
 
-    void _OnOpenImguiWindow(Event::OpenImguiWindow& e);
-    void _OnSceneActivated(Event::SceneActivated& e);
-    void _OnSceneDeactivated(Event::SceneDeactivated& e);
-    void _OnSelectEntity(Event::SelectEntity& e);
-    void _OnRenameEntity(Event::RenameEntity& e);
-    void _OnDeleteEntity(Event::DeleteEntity& e);
+    void _on_open_imgui_window(event::OpenImguiWindow& e);
+    void _on_scene_activated(event::SceneActivated& e);
+    void _on_scene_deactivated(event::SceneDeactivated& e);
+    void _on_select_entity(event::SelectEntity& e);
+    void _on_rename_entity(event::RenameEntity& e);
+    void _on_delete_entity(event::DeleteEntity& e);
 
 private:
 
-    std::weak_ptr<Scene> _Scene{};
-    std::string _SelectedEntityName{};
+    std::weak_ptr<Scene> _scene{};
+    std::string _selected_entity_name{};
 
-    ImguiWindowPropertyCameraComponent _ImguiWindowPropertyCameraComponent{};
-    ImguiWindowPropertyLightComponent _ImguiWindowPropertyLightComponent{};
-    ImguiWindowPropertyModelComponent _ImguiWindowPropertyModelComponent{};
-    ImguiWindowPropertyPhysicsComponent _ImguiWindowPropertyPhysicsComponent{};
-    ImguiWindowPropertyTransformComponent _ImguiWindowPropertyTransformComponent{};
+    ImguiWindowPropertyCameraComponent _imgui_window_property_camera_component{};
+    ImguiWindowPropertyLightComponent _imgui_window_property_light_component{};
+    ImguiWindowPropertyModelComponent _imgui_window_property_model_component{};
+    ImguiWindowPropertyPhysicsComponent _imgui_window_property_physics_component{};
+    ImguiWindowPropertyTransformComponent _imgui_window_property_transform_component{};
 };

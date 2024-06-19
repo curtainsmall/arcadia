@@ -26,6 +26,7 @@
     <ClCompile Include="src\project\project_layer.cpp" />
     <ClCompile Include="src\ui\imgui_backend.cpp" />
     <ClCompile Include="src\ui\imgui_layer.cpp" />
+    <ClCompile Include="src\ui\imgui_style.cpp" />
     <ClCompile Include="src\ui\imgui_windows\imgui_window_main_manubar.cpp" />
     <ClCompile Include="src\ui\imgui_windows\imgui_window_main_toolbar.cpp" />
     <ClCompile Include="src\ui\imgui_windows\imgui_window_outliner.cpp" />

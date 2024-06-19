@@ -14,47 +14,47 @@
 #define ACDA_MAIN_FN_DECL int main()
 #endif // _WIN32
 
-extern auto CreateApplication() -> std::unique_ptr<iAppLayer>;
+extern auto create_application() -> std::unique_ptr<iAppLayer>;
 
 ACDA_MAIN_FN_DECL
 {
     // Add app_layer
-    auto & layer_stack = LayerStack::Instance();
-    layer_stack.PushLayer<iAppLayer>(layer_stack.end(), std::shared_ptr<iAppLayer>(CreateApplication()));
+    auto & layer_stack = LayerStack::instance();
+    layer_stack.push_layer<iAppLayer>(layer_stack.end(), std::shared_ptr<iAppLayer>(create_application()));
 
     // Main loop
-    auto& app_context = AppContext::Instance();
-    while(app_context.Running)
+    auto& app_context = AppContext::instance();
+    while(app_context.running)
     {
-        app_context.DeltaTime = app_context.Timer.SinceLast();
+        app_context.delta_time = app_context.timer.since_last();
 
         // Process event 
-        auto& event_queue = EventQueue::Instance();
-        event_queue.SwapQueue();
-        while(event_queue.Size())
+        auto& event_queue = EventQueue::instance();
+        event_queue.swap_queue();
+        while(event_queue.size())
         {
-            auto& event = event_queue.Read();
+            auto& event = event_queue.read();
 
-            for(auto& layer : LayerStack::Instance())
+            for(auto& layer : LayerStack::instance())
             {
-                layer->OnEvent(event);
-                if(event.Handled)
+                layer->on_event(event);
+                if(event.handled)
                 {
                     break;
                 }
 
             }
-            event_queue.Pop();
+            event_queue.pop();
         }
 
         // Updates
-        for(auto& layer : std::ranges::reverse_view{ LayerStack::Instance() })
+        for(auto& layer : std::ranges::reverse_view{ LayerStack::instance() })
         {
-            layer->OnUpdate();
+            layer->on_update();
         }
     }
 
     // Clear layer_stack
-    layer_stack.PopAll();
+    layer_stack.pop_all();
     return 0;
 }

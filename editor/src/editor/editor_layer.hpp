@@ -17,20 +17,20 @@ public:
     EditorAppLayer();
     virtual ~EditorAppLayer() = default;
 
-    virtual void OnEvent(EventBase& event) override;
-    virtual void OnUpdate() override;
+    virtual void on_event(EventBase& e) override;
+    virtual void on_update() override;
 private:
-    void _ImguiWindowInstaller(ImguiLayer& imgui_layer);
-    void _Stop();
+    void _imgui_window_installer(ImguiLayer& imgui_layer);
+    void _stop();
 
-    void _OnWindowShouldClose(Event::WindowShouldClose& e);
-    void _OnProjectUnbuilt(Event::ProjectUnbuilt& e);
-    void _OnWindowCloseCanceled(Event::WindowCloseCanceled& e);
-    void _OnPlayMode(Event::PlayMode& e);
-    void _OnInputKey(Event::InputKey& e);
+    void _on_window_should_close(event::WindowShouldClose& e);
+    void _on_project_unbuilt(event::ProjectUnbuilt& e);
+    void _on_window_close_canceled(event::WindowCloseCanceled& e);
+    void _on_play_mode(event::PlayMode& e);
+    void _on_input_key(event::InputKey& e);
 
 private:
-    bool _WaitingForProjectUnbuiltBeforeClosing{ false };
+    bool _waiting_for_project_unbuilt_before_closing{ false };
 };
 
-ACDA_API auto CreateApplication() -> std::unique_ptr<iAppLayer>;
+ACDA_API auto create_application() -> std::unique_ptr<iAppLayer>;

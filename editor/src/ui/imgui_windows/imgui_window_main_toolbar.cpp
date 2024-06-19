@@ -8,17 +8,17 @@
 #include"ui/imgui_header.hpp"
 #include"ui/ui_events.hpp"
 
-void ImguiWindowMainToolbar::OnEvent(EventBase& event)
+void ImguiWindowMainToolbar::on_event(EventBase& e)
 {
-    EventDispatcher{ event }
-        .Dispatch<Event::SceneActivated>(ACDA_BIND_MEMBER_FN(_OnSceneActivated))
-        .Dispatch<Event::SceneDeactivated>(ACDA_BIND_MEMBER_FN(_OnSceneDeactivated))
-        .Result();
+    EventDispatcher{ e }
+        .dispatch<event::SceneActivated>(ACDA_BIND_MEMBER_FN(_on_scene_activated))
+        .dispatch<event::SceneDeactivated>(ACDA_BIND_MEMBER_FN(_on_scene_deactivated))
+        .result();
 }
 
-void ImguiWindowMainToolbar::OnUpdate()
+void ImguiWindowMainToolbar::on_update()
 {
-    auto scene = _Scene.lock();
+    auto scene = _scene.lock();
 
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, glm::vec2{ 0,0 });
     auto window_flags =
@@ -28,12 +28,12 @@ void ImguiWindowMainToolbar::OnUpdate()
         | ImGuiWindowFlags_NoFocusOnAppearing;
     if(ImGui::BeginViewportSideBar("##toolbar", ImGui::GetMainViewport(), ImGuiDir_Up, ImGui::GetFrameHeight(), window_flags))
     {
-        auto& memento_list = MementoList::Instance();
+        auto& memento_list = MementoList::instance();
 
         ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, glm::vec2{ 0,4 });
         if(ImGui::Button(ICON_FA_ARROW_CIRCLE_LEFT))
         {
-            memento_list.Undo();
+            memento_list.undo();
         }
         ImGui::SetItemTooltip(" Undo ");
         ImGui::SameLine();
@@ -42,18 +42,18 @@ void ImguiWindowMainToolbar::OnUpdate()
         //ImGui::SetNextItemWidth(1.f);
         if(ImGui::BeginCombo("##undo_list", nullptr, combo_flags))
         {
-            if(memento_list.Size())
+            if(memento_list.size())
             {
                 for(auto iter = memento_list.begin(); iter != memento_list.end(); ++iter)
                 {
 
-                    if(memento_list.IsCurrent(iter))
+                    if(memento_list.is_current(iter))
                     {
-                        ImGui::MenuItem(std::format("{} {}", ICON_FA_CHECK, iter->GetDescription()).c_str());
+                        ImGui::MenuItem(std::format("{} {}", ICON_FA_CHECK, iter->description()).c_str());
                     }
                     else
                     {
-                        ImGui::MenuItem(std::format("  {}", iter->GetDescription()).c_str());
+                        ImGui::MenuItem(std::format("  {}", iter->description()).c_str());
                     }
                 }
             }
@@ -69,14 +69,14 @@ void ImguiWindowMainToolbar::OnUpdate()
         ImGui::SameLine();
         if(ImGui::Button(ICON_FA_ARROW_CIRCLE_RIGHT))
         {
-            memento_list.Redo();
+            memento_list.redo();
         }
         ImGui::SetItemTooltip(" Redo ");
 
         if(scene)
         {
             ImGui::SameLine();
-            if(EditorContext::Instance().InPlayMode)
+            if(EditorContext::instance().in_play_mode)
             {
                 ImGui::PushStyleColor(ImGuiCol_Text, glm::vec4{ 1.f,0.f,0.f,1.f });
                 ImGui::Text("Press Shift + Esc to stop play mode");
@@ -86,7 +86,7 @@ void ImguiWindowMainToolbar::OnUpdate()
             {
                 if(ImGui::Button("PLAY"))
                 {
-                    EventQueue::Instance().Signal<Event::PlayMode>(true);
+                    EventQueue::instance().signal<event::PlayMode>(true);
                 }
             }
         }
@@ -96,14 +96,14 @@ void ImguiWindowMainToolbar::OnUpdate()
     ImGui::PopStyleVar();
 }
 
-void ImguiWindowMainToolbar::_OnSceneActivated(Event::SceneActivated& e)
+void ImguiWindowMainToolbar::_on_scene_activated(event::SceneActivated& e)
 {
     const auto& [scene] = e.data_tuple;
-    _Scene = scene;
+    _scene = scene;
 }
 
 
-void ImguiWindowMainToolbar::_OnSceneDeactivated(Event::SceneDeactivated& e)
+void ImguiWindowMainToolbar::_on_scene_deactivated(event::SceneDeactivated& e)
 {
-    _Scene.reset();
+    _scene.reset();
 }

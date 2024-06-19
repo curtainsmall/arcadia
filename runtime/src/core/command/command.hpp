@@ -22,16 +22,16 @@ public:
     Command(self_type&&) noexcept = default;
     auto operator=(self_type&&) noexcept -> self_type & = default;
 
-    void Execute() const;
-    void Unexecute() const;
+    void execute() const;
+    void unexecute() const;
 
     [[nodiscard]]
-    auto GetDescription() const -> const std::string&;
+    auto description() const -> const std::string&;
 
 private:
-    std::string _Description{};
-    function_type _ExecuteFn;
-    function_type _UnexecuteFn;
+    std::string _description{};
+    function_type execute_fn;
+    function_type _unexecute_fn;
 };
 
 struct CommandList: Noncopyable
@@ -42,7 +42,7 @@ public:
     using self_type = CommandList;
 public:
     [[nodiscard]]
-    static auto Instance() -> self_type&;
+    static auto instance() -> self_type&;
 
     /// @brief Create a command
     /// @param execute_fn Function to execute
@@ -56,23 +56,23 @@ public:
 
     /// @brief Call unexecute() and move to the previous command
     /// @return Whether succeed
-    auto Undo() -> bool;
+    auto undo() -> bool;
 
     /// @brief Call execute() and move to the next command
     /// @return Whether succeed
-    auto Redo() -> bool;
+    auto redo() -> bool;
 
     [[nodiscard]]
-    auto GetCapacity() const->std::size_t;
-    void SetCapacity(std::size_t capacity);
+    auto capacity() const->std::size_t;
+    void capacity(std::size_t capacity);
 
     /// @brief Get size of command list
     /// @return Size
     [[nodiscard]]
-    auto Size() const->std::size_t;
+    auto size() const->std::size_t;
 
     /// @brief Clear command list (when you saved the project and no longer needs previous commands)
-    void Clear();
+    void clear();
 
     [[nodiscard]]
     auto begin() noexcept -> container_type::iterator;
@@ -90,7 +90,7 @@ public:
     auto cend() const noexcept->container_type::const_iterator;
 
 private:
-    std::size_t _Capacity{ 40 };
-    container_type _List{};
-    container_type::const_iterator _CurrentIter{};
+    std::size_t _capacity{ 40 };
+    container_type _list{};
+    container_type::const_iterator _current_iter{};
 };

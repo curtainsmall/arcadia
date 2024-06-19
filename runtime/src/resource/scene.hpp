@@ -14,7 +14,7 @@
 #include"resource/components/component_interface.hpp"
 #include"resource/entt_header.hpp"
 
-static inline std::array BuildInEntityTypes{
+static inline std::array buildin_entity_types{
      "actor"s,
      "camera"s,
      "light"s,
@@ -30,23 +30,23 @@ public:
         const std::string& name,
         const entt::entity entity
     ):
-        Name(name),
-        Entity(entity)
+        _name(name),
+        _entity(entity)
     {}
 
     [[nodiscard]]
-    auto GetName() const -> const std::string&;
+    auto get_name() const -> const std::string&;
 
     [[nodiscard]]
-    auto GetEntity() const->entt::entity;
+    auto get_entity() const->entt::entity;
 
 public:
-    std::string Type{}; // Type of the entity
-    bool Display{ true }; // Whether the entity will be displayed in the viewport (the renderer will skip the hidden ones)
-    bool Internal{ false }; // Whether the entity is controled internally (it will not be listed in the outliner); Note that an internal entity will still be rendered unless `Display` is set to false
-protected:
-    std::string Name{};
-    entt::entity Entity{};
+    std::string type{}; // Type of the entity
+    bool display{ true }; // Whether the entity will be displayed in the viewport (the renderer will skip the hidden ones)
+    bool internal{ false }; // Whether the entity is controled internally (it will not be listed in the outliner); Note that an internal entity will still be rendered unless `Display` is set to false
+private:
+    std::string _name{};
+    entt::entity _entity{};
 };
 
 struct Scene: Noncopyable
@@ -57,55 +57,55 @@ public:
     using self_type = Scene;
 public:
     Scene(const std::string& name):
-        Name(name)
+        name(name)
     {}
     Scene(const nlohmann::json& json);
     ~Scene() = default;
-    auto ToJson() const->nlohmann::json;
+    auto to_json() const->nlohmann::json;
 
     Scene(self_type&&) noexcept = default;
     auto operator=(self_type&&) noexcept -> self_type & = default;
 
     [[nodiscard]]
-    auto GetRegistry() const -> const registry_type&
+    auto registry() const -> const registry_type&
     {
-        return _Registry;
+        return _registry;
     }
 
     /// @brief Set name of entity
     /// @param entity Entity to set name
     /// @param name Name
     /// @note Do not use this function when iterating entities
-    void Rename(const std::string& name, const std::string& new_name);
+    void rename(const std::string& name, const std::string& new_name);
 
     /// @brief Check whether there is an entity with given name
     /// @param name Name of entity
     /// @return Result
     [[nodiscard]]
-    auto Contains(const std::string& name) const -> bool;
+    auto contains(const std::string& name) const -> bool;
 
     [[nodiscard]]
-    auto Size() const->std::size_t;
+    auto size() const->std::size_t;
 
     [[nodiscard]]
-    auto Count(const std::function<bool(const std::string&, const EntityInfo&)>& pred) const->std::size_t;
+    auto count(const std::function<bool(const std::string&, const EntityInfo&)>& pred) const->std::size_t;
 
     [[nodiscard]]
-    auto GetEntityInfo(const std::string& name) const -> const EntityInfo&;
+    auto entity_info(const std::string& name) const -> const EntityInfo&;
 
     [[nodiscard]]
-    auto GetEntityInfo(const std::string& name) -> EntityInfo&;
+    auto entity_info(const std::string& name) -> EntityInfo&;
 
     /// @brief Create an new entity
     /// @param name Name of the created entity, must be unique
     /// @param type Type of the created entity
     /// @return Entity info to the created entity
-    auto Create(const std::string& name, const std::string& type) -> EntityInfo&;
+    auto create(const std::string& name, const std::string& type) -> EntityInfo&;
 
     /// @brief Destroy entity
     /// @param name Name of the entity
     /// @return The version of recycled entity
-    void Destroy(const std::string& name);
+    void destroy(const std::string& name);
 
     /// @brief Emplace a component to an entity
     /// @tparam ...Args Types of arguments
@@ -114,9 +114,9 @@ public:
     /// @param ...args Arguments for constructing component
     /// @return Emplaced component
     template<cComponent Component, class ...Args>
-    auto Emplace(const std::string& name, Args&& ...args) -> Component&
+    auto emplace(const std::string& name, Args&& ...args) -> Component&
     {
-        return _Registry.emplace<Component>(_EntityOf(name), std::forward<Args>(args)...);
+        return _registry.emplace<Component>(_entity_of(name), std::forward<Args>(args)...);
     }
 
     /// @brief Replace component in the entity
@@ -126,11 +126,11 @@ public:
     /// @param ...args Arguments for constructing component
     /// @return Replaced component
     template<cComponent Component, class ...Args>
-    auto Replace(const std::string& name, Args&& ...args) -> Component&
+    auto replace(const std::string& name, Args&& ...args) -> Component&
     {
-        ACDA_ASSERT(AllOf<Component>(name));
+        ACDA_ASSERT(all_of<Component>(name));
 
-        return _Registry.replace<Component>(_EntityOf(name), std::forward<Args>(args)...);
+        return _registry.replace<Component>(_entity_of(name), std::forward<Args>(args)...);
     }
 
     /// @brief Emplace or replace component in the entity
@@ -140,9 +140,9 @@ public:
     /// @param ...args Arguments for constructing component
     /// @return Emplaced/replaced component
     template<cComponent Component, class ...Args>
-    auto EmplaceOrReplace(const std::string& name, Args&& ...args) -> Component&
+    auto emplace_or_replace(const std::string& name, Args&& ...args) -> Component&
     {
-        return _Registry.emplace_or_replace<Component>(_EntityOf(name), std::forward<Args>(args)...);
+        return _registry.emplace_or_replace<Component>(_entity_of(name), std::forward<Args>(args)...);
     }
 
     /// @brief Get component in the entity
@@ -151,44 +151,44 @@ public:
     /// @return Got component(s)
     template<cComponent ...Components>
     [[nodiscard]]
-    auto Get(const std::string& name) const -> decltype(auto)
+    auto get(const std::string& name) const -> decltype(auto)
     {
-        ACDA_ASSERT(AllOf<Components...>(name));
+        ACDA_ASSERT(all_of<Components...>(name));
 
-        return _Registry.get<Components...>(_EntityOf(name));
+        return _registry.get<Components...>(_entity_of(name));
     }
 
     /// @copydoc Scene::Get
     template<cComponent ...Components>
     [[nodiscard]]
-    auto Get(const std::string& name) -> decltype(auto)
+    auto get(const std::string& name) -> decltype(auto)
     {
-        ACDA_ASSERT(AllOf<Components...>(name));
+        ACDA_ASSERT(all_of<Components...>(name));
 
-        return _Registry.get<Components...>(_EntityOf(name));
+        return _registry.get<Components...>(_entity_of(name));
     }
 
     template<cComponent ...Components>
     [[nodiscard]]
-    auto AllOf(const std::string& name) const -> bool
+    auto all_of(const std::string& name) const -> bool
     {
-        return _Registry.all_of<Components...>(_EntityOf(name));
+        return _registry.all_of<Components...>(_entity_of(name));
     }
 
     template<cComponent ...Components>
     [[nodiscard]]
-    auto AnyOf(const std::string& name) const -> bool
+    auto any_of(const std::string& name) const -> bool
     {
-        return _Registry.any_of<Components...>(_EntityOf(name));
+        return _registry.any_of<Components...>(_entity_of(name));
     }
 
     /// @brief Remove component from entity
     /// @tparam ...Component Type of component
     /// @param name Name of the entity
     template<cComponent ...Component>
-    auto Remove(const std::string& name) -> registry_type::size_type
+    auto remove(const std::string& name) -> registry_type::size_type
     {
-        auto count = _Registry.remove<Component...>(_EntityOf(name));
+        auto count = _registry.remove<Component...>(_entity_of(name));
         return count;
     }
 
@@ -199,18 +199,18 @@ public:
     /// @return Created view
     template<cComponent ...Components, cComponent ...ExcludeComponents>
     [[nodiscard]]
-    auto View(entt::exclude_t<ExcludeComponents...> exclude = entt::exclude_t{}) -> decltype(auto)
+    auto view(entt::exclude_t<ExcludeComponents...> exclude = entt::exclude_t{}) -> decltype(auto)
     {
-        auto view = _Registry.view<Components...>(exclude);
+        auto view = _registry.view<Components...>(exclude);
         return view;
     }
 
     /// @copydoc scene::view
     template<cComponent ...Components, cComponent ...ExcludeComponents>
     [[nodiscard]]
-    auto View(entt::exclude_t<ExcludeComponents...> exclude= entt::exclude_t{}) const -> decltype(auto)
+    auto view(entt::exclude_t<ExcludeComponents...> exclude= entt::exclude_t{}) const -> decltype(auto)
     {
-        return _Registry.view<Components...>(exclude);
+        return _registry.view<Components...>(exclude);
     }
 
     /// @brief Get a group for the components
@@ -222,41 +222,41 @@ public:
     /// @return 
     template<cComponent ...OwnedComponents, cComponent ...GetComponents, cComponent ...ExcludeComponents>
     [[nodiscard]]
-    auto Group(entt::get_t<GetComponents...> get = entt::get_t{}, entt::exclude_t<ExcludeComponents...> exclude= entt::exclude_t{}) -> decltype(auto)
+    auto group(entt::get_t<GetComponents...> get = entt::get_t{}, entt::exclude_t<ExcludeComponents...> exclude= entt::exclude_t{}) -> decltype(auto)
     {
-        auto group = _Registry.group<OwnedComponents...>(get, exclude);
+        auto group = _registry.group<OwnedComponents...>(get, exclude);
         return group;
     }
 
     [[nodiscard]]
     auto begin() const noexcept -> entity_info_storage_type::const_iterator
     {
-        return _EntityInfoStorage.begin();
+        return _entity_info_storage.begin();
     }
     [[nodiscard]]
     auto end() const noexcept -> entity_info_storage_type::const_iterator
     {
-        return _EntityInfoStorage.end();
+        return _entity_info_storage.end();
     }
     [[nodiscard]]
     auto begin() noexcept -> entity_info_storage_type::iterator
     {
-        return _EntityInfoStorage.begin();
+        return _entity_info_storage.begin();
     }
     [[nodiscard]]
     auto end() noexcept -> entity_info_storage_type::iterator
     {
-        return _EntityInfoStorage.end();
+        return _entity_info_storage.end();
     }
 
 private:
-    auto _EntityOf(const std::string& name) const->entt::entity;
-    auto _CreateJsonComponents(const std::string& name) const->nlohmann::json;
+    auto _entity_of(const std::string& name) const->entt::entity;
+    auto _create_json_components(const std::string& name) const->nlohmann::json;
 public:
-    std::string Name;
+    std::string name;
 private:
 
-    entt::registry _Registry{};
+    entt::registry _registry{};
 
-    entity_info_storage_type _EntityInfoStorage{};
+    entity_info_storage_type _entity_info_storage{};
 };

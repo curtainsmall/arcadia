@@ -13,13 +13,13 @@ public:
 public:
     Timer();
 
-    void Reset();
+    void reset();
 
-    auto SinceStart() -> duration_type;
-    auto SinceLast() -> duration_type;
+    auto since_start() -> duration_type;
+    auto since_last() -> duration_type;
 
 private:
-    auto _Now() const->time_point_type;
+    auto _now() const->time_point_type;
 private:
     time_point_type _Start{};
     time_point_type _Last{};

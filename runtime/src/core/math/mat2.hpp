@@ -3,15 +3,15 @@
 #include"core/base.hpp"
 #include"core/math/glm_header.hpp"
 
-namespace Mat2
+namespace mat2
 {
     [[nodiscard]]
-    ACDA_API constexpr auto Zero() -> glm::mat2
+    ACDA_API constexpr auto zero() -> glm::mat2
     {
         return glm::mat2{ .0f };
     }
     [[nodiscard]]
-    ACDA_API constexpr auto Identity() -> glm::mat2
+    ACDA_API constexpr auto identity() -> glm::mat2
     {
         return glm::mat2{};
     }

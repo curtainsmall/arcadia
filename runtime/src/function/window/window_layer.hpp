@@ -21,56 +21,56 @@ public:
     virtual ~WindowLayer();
 
     [[nodiscard]]
-    auto GetGlfwWindowPtr() const -> GLFWwindow*
+    auto glfw_window() const -> GLFWwindow*
     {
-        return _GlfwWindow;
+        return _glfw_window;
     }
 
-    virtual void OnEvent(EventBase& event) override;
-    virtual void OnUpdate() override;
+    virtual void on_event(EventBase& event) override;
+    virtual void on_update() override;
 
     [[nodiscard]]
-    auto GetTitle() const->const std::string&;
+    auto title() const->const std::string&;
 
     [[nodiscard]]
-    auto GetSizeState() const->WindowSizeState;
+    auto size_state() const->WindowSizeState;
 
     [[nodiscard]]
-    auto GetSize() const->glm::ivec2;
+    auto size() const->glm::ivec2;
 
     [[nodiscard]]
-    auto GetPos() const->glm::ivec2;
+    auto pos() const->glm::ivec2;
 
     [[nodiscard]]
-    auto GetMultisampleCount() const -> int;
+    auto multisample_count() const -> int;
 
     [[nodiscard]]
-    auto GetInputModeCursor() const->WindowInputModeCursor;
+    auto input_mode_cursor() const->WindowInputModeCursor;
 
 private:
-    static auto _GetWindowPtrFromGlfwUserPtr(GLFWwindow* glfw_window) -> self_type*
+    static auto _get_window_ptr_from_glfw_user_ptr(GLFWwindow* glfw_window) -> self_type*
     {
         return static_cast<self_type*>(glfwGetWindowUserPointer(glfw_window));
     }
 
-    void _OnWindowSetInputModeCursor(Event::WindowSetInputModeCursor& e);
+    void _on_window_set_input_mode_cursor(event::WindowSetInputModeCursor& e);
 
-    void _SetupCallbacks();
+    void _setup_callbacks();
 
     /// @brief Call [glfwSwapBuffers](https://www.glfw.org/docs/3.3/group__window.html#ga15a5a1ee5b3c2ca6b15ca209a12efd14)
-    void _SwapBuffers();
+    void _swap_buffers();
 
-    void _OnWindowCloseCanceled(Event::WindowCloseCanceled& e);
+    void _on_window_close_canceled(event::WindowCloseCanceled& e);
 
 private:
-    static inline GlfwContext _GlfwContext{};
+    static inline GlfwContext _glfw_context{};
     /// @brief Cursor move offset that is out of this range will be silently ignored
-    static constexpr glm::vec2 _LegalCursorMoveRange{ -20.f,20.f };
+    static constexpr glm::vec2 _legal_cursor_move_range{ -20.f,20.f };
 
-    std::string _Title;
-    int _SwapInterval{ 0 };
+    std::string _title;
+    int _swap_interval{ 0 };
 
-    GLFWwindow* _GlfwWindow{ nullptr };
-    glm::vec2 _LastCursorPos{ .0f };
-    const int _MultisampleCount;
+    GLFWwindow* _glfw_window{ nullptr };
+    glm::vec2 _last_cursor_pos{ .0f };
+    const int _multisample_count;
 };

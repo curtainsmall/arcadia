@@ -10,35 +10,35 @@
 #include"resource/components/physics_component.hpp"
 #include"resource/components/skybox_component.hpp"
 
-void ImguiWindowOutliner::OnEvent(EventBase& event)
+void ImguiWindowOutliner::on_event(EventBase& e)
 {
-    EventDispatcher{ event }
-        .Dispatch<Event::OpenImguiWindow>(ACDA_BIND_MEMBER_FN(_OnOpenImguiWindow))
-        .Dispatch<Event::SceneActivated>(ACDA_BIND_MEMBER_FN(_OnSceneActivated))
-        .Dispatch<Event::SceneDeactivated>(ACDA_BIND_MEMBER_FN(_OnSceneDeactivated))
-        .Dispatch<Event::RenameEntity>(ACDA_BIND_MEMBER_FN(_OnRenameEntity))
-        .Result();
+    EventDispatcher{ e }
+        .dispatch<event::OpenImguiWindow>(ACDA_BIND_MEMBER_FN(_on_open_imgui_window))
+        .dispatch<event::SceneActivated>(ACDA_BIND_MEMBER_FN(_on_scene_activated))
+        .dispatch<event::SceneDeactivated>(ACDA_BIND_MEMBER_FN(_on_scene_deactivated))
+        .dispatch<event::RenameEntity>(ACDA_BIND_MEMBER_FN(_on_rename_entity))
+        .result();
 }
 
-void ImguiWindowOutliner::OnUpdate()
+void ImguiWindowOutliner::on_update()
 {
-    if(!_Open)
+    if(!_open)
     {
         return;
     }
 
-    auto scene = _Scene.lock();
+    auto scene = _scene.lock();
 
-    auto& event_queue = EventQueue::Instance();
+    auto& event_queue = EventQueue::instance();
 
     auto imgui_window_title = scene
-        ? _Title + " - " + scene->Name + GetIdStr()
-        : _Title + GetIdStr();
+        ? _title + " - " + scene->name + get_id_str()
+        : _title + get_id_str();
 
     ImGui::SetNextWindowSize(glm::vec2{ 1024,768 }, ImGuiCond_Once);
     auto window_flags =
         ImGuiWindowFlags_NoCollapse;
-    if(ImGui::Begin(imgui_window_title.c_str(), &_Open, window_flags))
+    if(ImGui::Begin(imgui_window_title.c_str(), &_open, window_flags))
     {
         if(scene && ImGui::BeginPopupContextWindow())
         {
@@ -46,22 +46,22 @@ void ImguiWindowOutliner::OnUpdate()
 
             if(ImGui::Selectable("Actor"))
             {
-                event_queue.Signal<Event::NewEntity>("actor");
+                event_queue.signal<event::NewEntity>("actor");
             }
 
             if(ImGui::Selectable("Camera"))
             {
-                event_queue.Signal<Event::NewEntity>("camera");
+                event_queue.signal<event::NewEntity>("camera");
             }
 
             if(ImGui::Selectable("Light"))
             {
-                event_queue.Signal<Event::NewEntity>("light");
+                event_queue.signal<event::NewEntity>("light");
             }
 
             /*if(ImGui::Selectable("Custom"))
             {
-                event_queue.Signal<Event::NewEntity>("");
+                event_queue.signal<event::NewEntity>("");
             }*/
             ImGui::EndPopup();
         }
@@ -87,7 +87,7 @@ void ImguiWindowOutliner::OnUpdate()
                     {
                         if(_EntityOldName != _EntityNewName)
                         {
-                            if(scene->Contains(_EntityNewName))
+                            if(scene->contains(_EntityNewName))
                             {
                                 pfd::message msg{
                                     "Rename Entity",
@@ -98,7 +98,7 @@ void ImguiWindowOutliner::OnUpdate()
                             }
                             else
                             {
-                                event_queue.Signal<Event::RenameEntity>(_EntityOldName, _EntityNewName);
+                                event_queue.signal<event::RenameEntity>(_EntityOldName, _EntityNewName);
                             }
                         }
                         _EntityOldName.clear();
@@ -108,21 +108,21 @@ void ImguiWindowOutliner::OnUpdate()
                 // Display selectable
                 else
                 {
-                    if(entity_info.Internal)
+                    if(entity_info.internal)
                     {
                         continue;
                     }
 
-                    ImGui::Checkbox(std::format("##render_in_viewport_{}", name).c_str(), &entity_info.Display);
+                    ImGui::Checkbox(std::format("##render_in_viewport_{}", name).c_str(), &entity_info.display);
                     ImGui::SameLine();
-                    if(ImGui::Selectable(name.c_str(), _SelectedEntityName == name))
+                    if(ImGui::Selectable(name.c_str(), _selected_entity_name == name))
                     {
-                        _SelectedEntityName = name;
-                        event_queue.Signal<Event::SelectEntity>(name);
+                        _selected_entity_name = name;
+                        event_queue.signal<event::SelectEntity>(name);
                     }
                     if(ImGui::IsItemHovered())
                     {
-                        ImGui::SetTooltip(entity_info.Type.c_str());
+                        ImGui::SetTooltip(entity_info.type.c_str());
                     }
 
                     if(ImGui::BeginPopupContextItem())
@@ -133,20 +133,20 @@ void ImguiWindowOutliner::OnUpdate()
                         }
                         if(ImGui::Selectable("Delete Entity"))
                         {
-                            event_queue.Signal<Event::DeleteEntity>(name);
+                            event_queue.signal<event::DeleteEntity>(name);
                         }
 
                     #if 0 // We do not allow custom entity for now
-                        if(!_SelectedEntityName.empty())
+                        if(!_selected_entity_name.empty())
                         {
                             ImGui::Separator();
                             if(ImGui::BeginMenu("Add Component"))
                             {
                                 int item_count{ 0 };
-                                _MenuItemAddComponent<CameraComponent>(item_count);
-                                _MenuItemAddComponent<LightComponent>(item_count);
-                                _MenuItemAddComponent<ModelComponent>(item_count);
-                                _MenuItemAddComponent<PhysicsComponent>(item_count);
+                                _menu_item_add_component<CameraComponent>(item_count);
+                                _menu_item_add_component<LightComponent>(item_count);
+                                _menu_item_add_component<ModelComponent>(item_count);
+                                _menu_item_add_component<PhysicsComponent>(item_count);
 
                                 if(item_count == 0)
                                 {
@@ -158,10 +158,10 @@ void ImguiWindowOutliner::OnUpdate()
                             if(ImGui::BeginMenu("Remove Component"))
                             {
                                 int item_count{ 0 };
-                                _MenuItemRemoveComponent<CameraComponent>(item_count);
-                                _MenuItemRemoveComponent<LightComponent>(item_count);
-                                _MenuItemRemoveComponent<ModelComponent>(item_count);
-                                _MenuItemRemoveComponent<PhysicsComponent>(item_count);
+                                _menu_item_remove_component<CameraComponent>(item_count);
+                                _menu_item_remove_component<LightComponent>(item_count);
+                                _menu_item_remove_component<ModelComponent>(item_count);
+                                _menu_item_remove_component<PhysicsComponent>(item_count);
 
                                 if(item_count == 0)
                                 {
@@ -183,32 +183,32 @@ void ImguiWindowOutliner::OnUpdate()
 
 }
 
-void ImguiWindowOutliner::_OnOpenImguiWindow(Event::OpenImguiWindow& e)
+void ImguiWindowOutliner::_on_open_imgui_window(event::OpenImguiWindow& e)
 {
     const auto& [id_str] = e.data_tuple;
-    if(id_str == GetIdStr())
+    if(id_str == get_id_str())
     {
-        _Open = true;
+        _open = true;
     }
 }
 
-void ImguiWindowOutliner::_OnSceneActivated(Event::SceneActivated& e)
+void ImguiWindowOutliner::_on_scene_activated(event::SceneActivated& e)
 {
     const auto& [scene] = e.data_tuple;
-    _Scene = scene;
+    _scene = scene;
 }
 
-void ImguiWindowOutliner::_OnSceneDeactivated(Event::SceneDeactivated& e)
+void ImguiWindowOutliner::_on_scene_deactivated(event::SceneDeactivated& e)
 {
-    _Scene.reset();
-    _SelectedEntityName.clear();
+    _scene.reset();
+    _selected_entity_name.clear();
 }
 
-void ImguiWindowOutliner::_OnRenameEntity(Event::RenameEntity& e)
+void ImguiWindowOutliner::_on_rename_entity(event::RenameEntity& e)
 {
     const auto& [old_name, new_name] = e.data_tuple;
-    if(old_name == _SelectedEntityName)
+    if(old_name == _selected_entity_name)
     {
-        _SelectedEntityName = new_name;
+        _selected_entity_name = new_name;
     }
 }

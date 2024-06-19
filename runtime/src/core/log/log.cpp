@@ -36,7 +36,7 @@ Logger::~Logger()
     spdlog::shutdown();
 }
 
-auto Logger::Instance() -> self_type&
+auto Logger::instance() -> self_type&
 {
     static self_type logger{};
     return logger;

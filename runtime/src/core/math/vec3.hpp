@@ -4,10 +4,10 @@
 #include"core/math/glm_header.hpp"
 #include"core/nlohmann_json_header.hpp"
 
-namespace Vec3
+namespace vec3
 {
     [[nodiscard]]
-    ACDA_API static inline auto ToJson(const glm::vec3& vec) -> nlohmann::json
+    ACDA_API static inline auto to_json(const glm::vec3& vec) -> nlohmann::json
     {
         return nlohmann::json{
                 { "x",vec.x },
@@ -16,7 +16,7 @@ namespace Vec3
         };
     }
     [[nodiscard]]
-    ACDA_API static inline auto FromJson(const nlohmann::json& json) -> glm::vec3
+    ACDA_API static inline auto from_json(const nlohmann::json& json) -> glm::vec3
     {
         return glm::vec3{
             json.at("x"),
@@ -26,39 +26,39 @@ namespace Vec3
     }
 
     [[nodiscard]]
-    ACDA_API constexpr auto Zero() -> glm::vec3
+    ACDA_API constexpr auto zero() -> glm::vec3
     {
         return glm::vec3{};
     }
     [[nodiscard]]
-    ACDA_API constexpr auto PosX() -> glm::vec3
+    ACDA_API constexpr auto pos_x() -> glm::vec3
     {
         return glm::vec3{ 1.f,.0f,.0f };
     }
     [[nodiscard]]
-    ACDA_API constexpr auto PosY() -> glm::vec3
+    ACDA_API constexpr auto pos_y() -> glm::vec3
     {
         return glm::vec3{ .0f,1.f,.0f };
     }
     [[nodiscard]]
-    ACDA_API constexpr auto PosZ() -> glm::vec3
+    ACDA_API constexpr auto pos_z() -> glm::vec3
     {
         return glm::vec3{ .0f,.0f,1.f };
     }
     [[nodiscard]]
-    ACDA_API constexpr auto NegX() -> glm::vec3
+    ACDA_API constexpr auto neg_x() -> glm::vec3
     {
-        return -PosX();
+        return -pos_x();
     }
     [[nodiscard]]
-    ACDA_API constexpr auto NegY() -> glm::vec3
+    ACDA_API constexpr auto neg_y() -> glm::vec3
     {
-        return -PosY();
+        return -pos_y();
     }
     [[nodiscard]]
-    ACDA_API constexpr auto NegZ() -> glm::vec3
+    ACDA_API constexpr auto neg_z() -> glm::vec3
     {
-        return -PosZ();
+        return -pos_z();
     }
 
     /// @brief Normalize vector with one axis fixed
@@ -67,7 +67,7 @@ namespace Vec3
     /// @return Normalized vector
     template<std::size_t Index>
     [[nodiscard]]
-    ACDA_API static inline auto FixedNormalized(const glm::vec3& vec) -> glm::vec3
+    ACDA_API static inline auto fixed_normalized(const glm::vec3& vec) -> glm::vec3
     {
         static_assert(Index >= 0 && Index < 3);
 
@@ -96,10 +96,10 @@ namespace Vec3
     }
 }
 
-namespace IVec3
+namespace ivec3
 {
     [[nodiscard]]
-    ACDA_API static inline auto ToJson(const glm::ivec3& vec) -> nlohmann::json
+    ACDA_API static inline auto to_json(const glm::ivec3& vec) -> nlohmann::json
     {
         return nlohmann::json{
                  { "x",vec.x },
@@ -108,7 +108,7 @@ namespace IVec3
         };
     }
     [[nodiscard]]
-    ACDA_API static inline auto FromJson(const nlohmann::json& json) -> glm::ivec3
+    ACDA_API static inline auto from_json(const nlohmann::json& json) -> glm::ivec3
     {
         return glm::ivec3{
             json.at("x"),

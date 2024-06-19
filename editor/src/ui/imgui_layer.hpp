@@ -21,37 +21,37 @@ public:
     ImguiLayer(
         const std::shared_ptr<const WindowLayer>& window_layer,
         const std::function<void(ImguiLayer&)>& imgui_window_installer ={},
-        const std::function<void()>& imgui_style_setter = ImguiStyle::DefaultDark
+        const std::function<void()>& imgui_style_setter = imgui_style::default_dark
     );
     virtual ~ImguiLayer();
 
     [[nodiscard]]
-    auto GetWindow() const -> std::shared_ptr<const WindowLayer>
+    auto get_window() const -> std::shared_ptr<const WindowLayer>
     {
-        return _Window.lock();
+        return _window.lock();
     }
 
     [[nodiscard]]
-    auto GetImguiWindow() const -> const std::vector<std::unique_ptr<iImguiWindow>>&
+    auto get_imgui_window() const -> const std::vector<std::unique_ptr<iImguiWindow>>&
     {
-        return _ImguiWindow;
+        return _imgui_window;
     }
 
-    virtual void OnEvent(EventBase& event) override;
-    virtual void OnUpdate() override;
+    virtual void on_event(EventBase& e) override;
+    virtual void on_update() override;
 
     template<cImguiWindow ImGuiWindow, class ...Args>
-    auto EmplaceImguiWindow(Args&& ...args) -> self_type&
+    auto emplace_imgui_window(Args&& ...args) -> self_type&
     {
-        _ImguiWindow.emplace_back(std::make_unique<ImGuiWindow>(std::forward<Args>(args)...));
+        _imgui_window.emplace_back(std::make_unique<ImGuiWindow>(std::forward<Args>(args)...));
         return *this;
     }
 
 public:
-    bool ShowDemoWindow{ false };
-    bool ShowDebugInfo{ false };
+    bool show_demo_window{ false };
+    bool show_debug_info{ false };
 private:
-    std::weak_ptr<const WindowLayer> _Window;
-    ImGuiContext* _ImguiContext{ nullptr };
-    std::vector<std::unique_ptr<iImguiWindow>> _ImguiWindow{};
+    std::weak_ptr<const WindowLayer> _window;
+    ImGuiContext* _imgui_context{ nullptr };
+    std::vector<std::unique_ptr<iImguiWindow>> _imgui_window{};
 };

@@ -8,14 +8,14 @@
 
 #define ACDA_IMGUI_WINDOW_ID_STR_GETTERS(id_str) \
 [[nodiscard]]\
-static constexpr auto GetIdStrStatic() -> std::string\
+static constexpr auto get_id_str_static() -> std::string\
 {\
     return id_str;\
 }\
 [[nodiscard]]\
-virtual auto GetIdStr() const -> std::string override\
+virtual auto get_id_str() const -> std::string override\
 {\
-    return GetIdStrStatic();\
+    return get_id_str_static();\
 }
 
 struct iImguiWindow
@@ -27,38 +27,38 @@ public:
         bool open = false,
         const std::string& title={}
     ):
-        _Open(open),
-        _Title(title)
+        _open(open),
+        _title(title)
     {}
     virtual ~iImguiWindow() = default;
 
     [[nodiscard]]
-    auto IsOpen() const -> bool
+    auto open() const -> bool
     {
-        return _Open;
+        return _open;
     }
 
     [[nodiscard]]
-    auto GetTitle() const -> const std::string&
+    auto get_title() const -> const std::string&
     {
-        return _Title;
+        return _title;
     }
 
-    virtual void OnEvent(EventBase& event)
+    virtual void on_event(EventBase& e)
     {}
-    virtual void OnUpdate() = 0;
-    virtual auto GetIdStr() const->std::string = 0;
+    virtual void on_update() = 0;
+    virtual auto get_id_str() const->std::string = 0;
 
 protected:
-    bool _Open;
-    std::string _Title{};
+    bool _open;
+    std::string _title{};
 };
 
 template<class ImGuiWindow>
 concept cImguiWindow = requires{
     std::derived_from<ImGuiWindow, iImguiWindow>;
     {
-        ImGuiWindow::GetIdStrStatic()
+        ImGuiWindow::get_id_str_static()
     } -> std::same_as<std::string>;
 };
 

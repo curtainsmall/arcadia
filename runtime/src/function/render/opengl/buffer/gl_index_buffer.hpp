@@ -18,20 +18,20 @@ public:
     auto operator=(self_type&& rhs) noexcept -> self_type&;
 
     [[nodiscard]]
-    auto GetGlId() const -> GLuint
+    auto gl_id() const -> GLuint
     {
-        return _GlId;
+        return _gl_id;
     }
 
     [[nodiscard]]
-    auto GetIndexCount() const -> GLsizei
+    auto index_count() const -> GLsizei
     {
-        return _IndexCount;
+        return _index_count;
     }
 
-    void Bind() const;
-    void Unbind() const;
+    void bind() const;
+    void unbind() const;
 private:
-    GLuint _GlId{ 0 };
-    GLsizei _IndexCount{ 0 };
+    GLuint _gl_id{ 0 };
+    GLsizei _index_count{ 0 };
 };

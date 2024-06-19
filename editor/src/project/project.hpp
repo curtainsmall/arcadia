@@ -17,33 +17,31 @@ public:
     inline Project(
         std::string name
     ):
-        _Name(name)
+        _name(name)
     {}
     Project(nlohmann::json& json);
     ~Project() = default;
     [[nodiscard]]
-    auto ToJson() const->nlohmann::json;
+    auto to_json() const->nlohmann::json;
 
     [[nodiscard]]
-    auto GetName() const -> const std::string&;
-    void SetName(const std::string& name);
+    auto get_name() const -> const std::string&;
+    void set_name(const std::string& name);
 
     [[nodiscard]]
-    auto HasActiveScene() const -> bool;
+    auto has_active_scene() const -> bool;
     [[nodiscard]]
-    auto GetActiveScene() -> Scene&;
+    auto get_active_scene() -> Scene&;
     [[nodiscard]]
-    auto GetActiveScene() const -> const Scene&;
-    void SetActiveScene(const std::string& name={});
+    auto get_active_scene() const -> const Scene&;
+    void set_active_scene(const std::string& name={});
 
-    void _SnapshotEntities();
-
-
+    void _snapshot_entities();
 public:
-    static inline std::string ProjectExtensionStr{ ".arcadia" };
+    static inline std::string project_extension_str{ ".arcadia" };
 
-    std::unordered_map<std::string, std::shared_ptr<Scene>> SceneSptrStorage{};
+    std::unordered_map<std::string, std::shared_ptr<Scene>> scene_sptr_storage{};
 private:
-    std::string _Name;
-    std::shared_ptr<Scene> _ActiveScene{};
+    std::string _name;
+    std::shared_ptr<Scene> _active_scene{};
 };

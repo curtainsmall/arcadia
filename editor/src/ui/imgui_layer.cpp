@@ -14,12 +14,12 @@ ImguiLayer::ImguiLayer(
     const std::function<void()>& imgui_style_setter
 ):
     iLayer("imgui"),
-    _Window(window_layer)
+    _window(window_layer)
 {
-    _ImguiContext = ImGui::CreateContext();
-    ImGui::SetCurrentContext(_ImguiContext);
+    _imgui_context = ImGui::CreateContext();
+    ImGui::SetCurrentContext(_imgui_context);
 
-    auto& io = _ImguiContext->IO;
+    auto& io = _imgui_context->IO;
     io.ConfigWindowsMoveFromTitleBarOnly = true;
     io.ConfigFlags =
         ImGuiConfigFlags_DockingEnable
@@ -29,8 +29,8 @@ ImguiLayer::ImguiLayer(
     ImFontConfig imgui_font_config{};
     imgui_font_config.MergeMode = true;
     static const std::array<ImWchar, 3> imgui_icon_ranges{ ICON_MIN_FA, ICON_MAX_FA,0 };
-    io.Fonts->AddFontFromFileTTF(FontFilepathStr.c_str(), FontSize, &imgui_font_config, imgui_icon_ranges.data());
-    ImguiBackend::Initialize(*_Window.lock());
+    io.Fonts->AddFontFromFileTTF(font_filepath_str.c_str(), font_size, &imgui_font_config, imgui_icon_ranges.data());
+    ImguiBackend::initialize(*_window.lock());
 
     imgui_style_setter();
     imgui_window_installer(*this);
@@ -38,61 +38,61 @@ ImguiLayer::ImguiLayer(
 
 ImguiLayer::~ImguiLayer()
 {
-    if(_ImguiContext)
+    if(_imgui_context)
     {
-        ImguiBackend::Shutdown(*_Window.lock());
-        ImGui::DestroyContext(_ImguiContext);
+        ImguiBackend::shutdown(*_window.lock());
+        ImGui::DestroyContext(_imgui_context);
     }
 }
 
-void ImguiLayer::OnEvent(EventBase& event)
+void ImguiLayer::on_event(EventBase& e)
 {
     // We do not dispatch events to ImGui when the editor is in play mode
-    if(EditorContext::Instance().InPlayMode)
+    if(EditorContext::instance().in_play_mode)
     {
         return;
     }
 
-    ImguiBackend::ImguiOnEvent(event);
-    for(auto& imgui_window : _ImguiWindow)
+    ImguiBackend::imgui_on_event(e);
+    for(auto& imgui_window : _imgui_window)
     {
-        imgui_window->OnEvent(event);
+        imgui_window->on_event(e);
     }
 }
 
-void ImguiLayer::OnUpdate()
+void ImguiLayer::on_update()
 {
-    auto window = _Window.lock();
+    auto window = _window.lock();
 
-    ImGui::SetCurrentContext(_ImguiContext);
+    ImGui::SetCurrentContext(_imgui_context);
 
-    ImguiBackend::NewFrame(*window);
+    ImguiBackend::new_frame(*window);
     ImGui::NewFrame();
     ImGuizmo::BeginFrame();
 
     ImGui::DockSpaceOverViewport();
 
-    if(ShowDebugInfo)
+    if(show_debug_info)
     {
         ImGui::ShowStackToolWindow();
         ImGui::ShowMetricsWindow();
     }
 
-    if(ShowDemoWindow)
+    if(show_demo_window)
     {
         ImGui::ShowDemoWindow();
     }
     else
     {
 
-        for(auto& imgui_window : _ImguiWindow)
+        for(auto& imgui_window : _imgui_window)
         {
-            imgui_window->OnUpdate();
+            imgui_window->on_update();
         }
     }
 
     ImGui::Render();
-    ImguiBackend::RenderDrawData(*window);
+    ImguiBackend::render_draw_data(*window);
 
     if(ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
     {

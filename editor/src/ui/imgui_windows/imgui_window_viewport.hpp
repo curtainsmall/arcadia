@@ -36,48 +36,48 @@ public:
     ACDA_IMGUI_WINDOW_ID_STR_GETTERS("###viewport");
 
     inline ImguiWindowViewport(
-        bool Open,
+        bool open,
         const std::string& title
     ):
-        iImguiWindow(Open, title)
+        iImguiWindow(open, title)
     {}
     virtual ~ImguiWindowViewport() = default;
 
-    virtual void OnEvent(EventBase& event) override;
-    virtual void OnUpdate() override;
+    virtual void on_event(EventBase& e) override;
+    virtual void on_update() override;
 
 private:
-    void _OnInputCursorMove(Event::InputCursorMove& e);
-    void _OnOpenImguiWindow(Event::OpenImguiWindow& e);
-    void _OnProjectBuilt(Event::ProjectBuilt& e);
-    void _OnProjectUnbuilt(Event::ProjectUnbuilt& e);
-    void _OnSceneActivated(Event::SceneActivated& e);
-    void _OnSceneDeactivated(Event::SceneDeactivated& e);
-    void _OnSelectEntity(Event::SelectEntity& e);
-    void _OnRenameEntity(Event::RenameEntity& e);
-    void _OnDeleteEntity(Event::DeleteEntity& e);
-    void _OnRendererBuilt(Event::RendererBuilt& e);
-    void _OnRendererUnbuilt(Event::RendererUnbuilt& e);
-    void _OnPhysicsSimualtorBuilt(Event::PhysicsSimulatorBuilt& e);
-    void _OnPhysicsSimulatorUnbuilt(Event::PhysicsSimulatorUnbuilt& e);
-    void _OnShowGizmo(Event::ShowGizmo& e);
+    void _on_input_cursor_move(event::InputCursorMove& e);
+    void _on_open_imgui_window(event::OpenImguiWindow& e);
+    void _on_project_built(event::ProjectBuilt& e);
+    void _on_project_unbuilt(event::ProjectUnbuilt& e);
+    void _on_scene_activated(event::SceneActivated& e);
+    void _on_scene_deactivated(event::SceneDeactivated& e);
+    void _on_select_entity(event::SelectEntity& e);
+    void _on_rename_entity(event::RenameEntity& e);
+    void _on_delete_entity(event::DeleteEntity& e);
+    void _on_renderer_built(event::RendererBuilt& e);
+    void _on_renderer_unbuilt(event::RendererUnbuilt& e);
+    void _on_physics_simulator_built(event::PhysicsSimulatorBuilt& e);
+    void _on_physics_simulator_unbuilt(event::PhysicsSimulatorUnbuilt& e);
+    void _on_show_gizmo(event::ShowGizmo& e);
 
 public:
-    static inline std::string ViewportCameraEntityName{ "viewport_camera" };
+    static inline std::string viewport_camera_entity_name{ "viewport_camera" };
 private:
-    std::weak_ptr<Project> _Project{};
-    std::weak_ptr<Scene> _Scene{};
-    std::weak_ptr<iRenderer> _Renderer{};
-    std::weak_ptr<PhysicsSimulator> _PhysicsSimulator{};
+    std::weak_ptr<Project> _project{};
+    std::weak_ptr<Scene> _scene{};
+    std::weak_ptr<iRenderer> _renderer{};
+    std::weak_ptr<PhysicsSimulator> _physics_simulator{};
 
-    std::string _SelectedEntityName{};
+    std::string _selected_entity_name{};
 
-    glm::vec2 _CursorMove{};
+    glm::vec2 _cursor_move{};
 
-    bool _InViewportFreeCam{ false };
-    bool _ShowGizmo{ false };
+    bool _in_viewport_free_cam{ false };
+    bool _show_gizmo{ false };
 
-    GizmoOption _GizmoOption{ GizmoOption::None };
-    GizmoMode _GizmoMode{ GizmoMode::Local };
-    bool _GizmoEdited{ false };
+    GizmoOption _gizmo_option{ GizmoOption::None };
+    GizmoMode _gizmo_mode{ GizmoMode::Local };
+    bool _gizmo_edited{ false };
 };
