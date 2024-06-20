@@ -8,7 +8,7 @@
 #include"core/base.hpp"
 #include"core/layer/layer.hpp"
 
-#if defined(_WIN32) && !defined(ACDA_IN_DEBUG)
+#if defined(_WIN32) && !defined(ACDA_DEBUG_MODE)
 #define ACDA_MAIN_FN_DECLARATION int WinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
 #else
 #define ACDA_MAIN_FN_DECL int main()

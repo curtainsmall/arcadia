@@ -68,49 +68,20 @@ private:
     std::shared_ptr<spdlog::logger> _Logger{};
 };
 
-ACDA_API static inline void log_debug(
-    const std::string& msg
-)
-{
-    Logger::instance().debug(msg);
-}
-
-ACDA_API static inline void log_info(
-    const std::string& msg
-)
-{
-    Logger::instance().info(msg);
-}
-
-ACDA_API static inline void log_warning(
-    const std::string& msg
-)
-{
-    Logger::instance().warning(msg);
-}
-
-ACDA_API static inline void log_error(
-    const std::string& msg
-)
-{
-    Logger::instance().error(msg);
-}
-
-ACDA_API static inline void log_fatal(
-    const std::string& msg
-)
-{
-    Logger::instance().fatal(msg);
-}
-
-ACDA_API static inline void log_demarcate(
-    const std::string& msg
-)
-{
-    log_debug(std::format("//==== {} ====//", msg));
-}
-
-ACDA_API static inline void log_flush()
-{
-    Logger::instance().flush();
-}
+#ifdef ACDA_DEBUG_MODE
+#   define LOG_DEBUG(msg)     Logger::instance().debug(msg)
+#   define LOG_INFO(msg)      Logger::instance().info(msg)
+#   define LOG_WARNING(msg)   Logger::instance().warning(msg)
+#   define LOG_ERROR(msg)     Logger::instance().error(msg)
+#   define LOG_FATAL(msg)     Logger::instance().fatal(msg)
+#   define LOG_DEMARCATE(msg) LOG_DEBUG(std::format("//==== {} ====//", msg))
+#   define LOG_FLUSH()        Logger::instance().flush()
+#else
+#   define LOG_DEBUG(msg)     
+#   define LOG_INFO(msg)      
+#   define LOG_WARNING(msg)   
+#   define LOG_ERROR(msg)     
+#   define LOG_FATAL(msg)     
+#   define LOG_DEMARCATE(msg) 
+#   define LOG_FLUSH()        
+#endif

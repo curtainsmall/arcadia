@@ -11,10 +11,10 @@
 #include"core/exception.hpp"
 #include"core/log/log.hpp"
 
-#ifdef ACDA_IN_DEBUG
+#ifdef ACDA_DEBUG_MODE
 #   include<unordered_set>
 #   include<typeindex>
-#endif // ACDA_IN_DEBUG
+#endif // ACDA_DEBUG_MODE
 
 #define ACDA_EVENT(event_name,...) \
 struct event_name: BasicEvent<__VA_ARGS__>\
@@ -122,10 +122,10 @@ public:
     {
         _current_queue->emplace(std::make_unique<event>(std::forward<Args>(args)...));
 
-    #ifdef ACDA_IN_DEBUG
+    #ifdef ACDA_DEBUG_MODE
         if(!debug_excluded_event_types.contains(typeid(event)))
         {
-            log_debug(std::format("Event signaled: {}", typeid(event).name()));
+            LOG_DEBUG(std::format("Event signaled: {}", typeid(event).name()));
         }
     #endif
         return *this;
@@ -147,9 +147,9 @@ public:
     auto pop() -> bool;
 
 public:
-#ifdef ACDA_IN_DEBUG
+#ifdef ACDA_DEBUG_MODE
     std::unordered_set<std::type_index> debug_excluded_event_types{};
-#endif // ACDA_IN_DEBUG
+#endif // ACDA_DEBUG_MODE
 
 private:
     _event_queue_type _queue_a{};
