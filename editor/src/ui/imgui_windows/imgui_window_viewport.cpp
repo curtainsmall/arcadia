@@ -50,11 +50,11 @@ void ImguiWindowViewport::on_update()
     {
         if(!scene)
         {
-            ImGui::Text("No scene to render here");
+            ImGui::Text("(No scene)");
         }
         else if(!renderer)
         {
-            ImGui::Text("No renderer to use here");
+            ImGui::Text("(No renderer)");
         }
         else
         {

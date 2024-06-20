@@ -17,12 +17,14 @@ public:
     glm::vec3 half_extent{ 1.f,1.f,1.f };
     float convex_radius{ JPH::cDefaultConvexRadius };
 };
+
 struct JphCapsuleShapeInfo
 {
 public:
     float radius{ 1.f };
     float half_height_of_cylinder{ 1.f };
 };
+
 struct JphCylinderShapeInfo
 {
 public:
@@ -30,11 +32,13 @@ public:
     float radius{ 1.f };
     float convex_radius{ JPH::cDefaultConvexRadius };
 };
+
 struct JphSphereShapeInfo
 {
 public:
     float radius{ 1.f };
 };
+
 using JphShapeInfo = std::variant<
     JphBoxShapeInfo,
     JphCapsuleShapeInfo,

@@ -1012,7 +1012,7 @@ auto ImguiWindowPropertyPhysicsComponent::operator()(PhysicsComponent& physics_c
         ).c_str());
         ImGui::Text(std::format("Object Layer: {}", jph_body_info_initial.jph_object_layer).c_str());
 
-        ImGui::SeparatorText("Ongoing");
+        ImGui::SeparatorText("Current");
 
         const auto& jph_body_state = physics_comp.jph_body_state;
         ImGui::Text(std::format("Active: {}", jph_body_state.active).c_str());

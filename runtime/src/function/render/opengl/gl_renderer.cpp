@@ -369,7 +369,7 @@ void GlRenderer::_draw_lights(
     {
         if(light_count > max_light_count)
         {
-            throw too_many_lights{ std::format("The max light count is {}",max_light_count) };
+            throw TooManyLights{ std::format("The max light count is {}",max_light_count) };
         }
 
         match<void>(
@@ -452,7 +452,7 @@ void GlRenderer::_draw_models(
         .set_uniform("u_view_mat", camera_view)
         .set_uniform("u_proj_mat", camera_proj)
         .set_uniform("u_view_pos", camera_pos);
-    for(auto& [Uuid, gl_meshes] : _gl_render_unit_mesh_storage)
+    for(auto& [uuid, gl_meshes] : _gl_render_unit_mesh_storage)
     {
         for(auto& [
             gl_vertex_array,
@@ -460,7 +460,7 @@ void GlRenderer::_draw_models(
                 gl_texture2d_ambient,
                 gl_texture2d_diffuse,
                 gl_texture2d_specular
-        ] : gl_meshes)
+        ]: gl_meshes)
         {
             _gl_model_pipeline
                 .set_uniform("u_transform_mat", transform_mat4)
@@ -529,7 +529,7 @@ void GlRenderer::_draw_physics_body_shape(
             .set_uniform("u_color", color);
 
         gl_vertex_arrray.bind();
-        gl_vertex_arrray.draw(GL_TRIANGLES);
+        gl_vertex_arrray.draw(GL_LINE_LOOP);
         gl_vertex_arrray.unbind();
     }
     _gl_shape_pipeline.unuse();
