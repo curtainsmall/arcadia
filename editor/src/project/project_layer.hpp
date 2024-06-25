@@ -35,26 +35,26 @@ private:
     void _save_project();
     void _load_project();
 
-    void _on_window_should_close(event::WindowShouldClose& e);
+    void _on_window_should_close(events::WindowShouldClose& e);
 
-    void _on_create_project(event::CreateProject& e);
-    void _on_open_project(event::OpenProject& e);
-    void _on_save_project(event::SaveProject& e);
-    void _on_save_project_as(event::SaveProjectAs& e);
-    void _on_close_project(event::CloseProject& e);
-    void _on_project_saved(event::ProjectSaved& e);
+    void _on_create_project(events::CreateProject& e);
+    void _on_open_project(events::OpenProject& e);
+    void _on_save_project(events::SaveProject& e);
+    void _on_save_project_as(events::SaveProjectAs& e);
+    void _on_close_project(events::CloseProject& e);
+    void _on_project_saved(events::ProjectSaved& e);
 
-    void _on_create_scene(event::CreateScene& e);
-    void _on_select_scene(event::SelectScene& e);
-    void _on_close_scene(event::CloseScene& e);
-    void _on_delete_scene(event::DeleteScene& e);
+    void _on_create_scene(events::CreateScene& e);
+    void _on_select_scene(events::SelectScene& e);
+    void _on_close_scene(events::CloseScene& e);
+    void _on_delete_scene(events::DeleteScene& e);
 
-    void _OnNewEntity(event::NewEntity& e);
-    void _on_rename_entity(event::RenameEntity& e);
-    void _on_delete_entity(event::DeleteEntity& e);
+    void _OnNewEntity(events::NewEntity& e);
+    void _on_rename_entity(events::RenameEntity& e);
+    void _on_delete_entity(events::DeleteEntity& e);
 
-    void _on_add_component(event::AddComponent& e);
-    void _on_remove_component(event::RemoveComponent& e);
+    void _on_add_component(events::AddComponent& e);
+    void _on_remove_component(events::RemoveComponent& e);
 
 private:
     std::filesystem::path _project_component{};

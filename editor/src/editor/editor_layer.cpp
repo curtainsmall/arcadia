@@ -62,10 +62,10 @@ void EditorAppLayer::on_update()
 void EditorAppLayer::on_event(EventBase& e)
 {
     EventDispatcher{ e }
-        .dispatch<event::WindowShouldClose>(ACDA_BIND_MEMBER_FN(_on_window_should_close))
-        .dispatch<event::ProjectUnbuilt>(ACDA_BIND_MEMBER_FN(_on_project_unbuilt))
-        .dispatch<event::PlayMode>(ACDA_BIND_MEMBER_FN(_on_play_mode))
-        .dispatch<event::InputKey>(ACDA_BIND_MEMBER_FN(_on_input_key))
+        .dispatch<events::WindowShouldClose>(ACDA_BIND_MEMBER_FN(_on_window_should_close))
+        .dispatch<events::ProjectUnbuilt>(ACDA_BIND_MEMBER_FN(_on_project_unbuilt))
+        .dispatch<events::PlayMode>(ACDA_BIND_MEMBER_FN(_on_play_mode))
+        .dispatch<events::InputKey>(ACDA_BIND_MEMBER_FN(_on_input_key))
         .result();
 }
 
@@ -112,7 +112,7 @@ void EditorAppLayer::_stop()
     app_context.running = false;
 }
 
-void EditorAppLayer::_on_window_should_close(event::WindowShouldClose& e)
+void EditorAppLayer::_on_window_should_close(events::WindowShouldClose& e)
 {
     auto& editor_context = EditorContext::instance();
     auto main_window_layer = editor_context.main_window_layer.lock();
@@ -129,7 +129,7 @@ void EditorAppLayer::_on_window_should_close(event::WindowShouldClose& e)
     }
 }
 
-void EditorAppLayer::_on_project_unbuilt(event::ProjectUnbuilt& e)
+void EditorAppLayer::_on_project_unbuilt(events::ProjectUnbuilt& e)
 {
     if(_waiting_for_project_unbuilt_before_closing)
     {
@@ -137,18 +137,18 @@ void EditorAppLayer::_on_project_unbuilt(event::ProjectUnbuilt& e)
     }
 }
 
-void EditorAppLayer::_on_window_close_canceled(event::WindowCloseCanceled& e)
+void EditorAppLayer::_on_window_close_canceled(events::WindowCloseCanceled& e)
 {
     _waiting_for_project_unbuilt_before_closing = false;
 }
 
-void EditorAppLayer::_on_play_mode(event::PlayMode& e)
+void EditorAppLayer::_on_play_mode(events::PlayMode& e)
 {
     const auto& [state] = e.data_tuple;
     EditorContext::instance().in_play_mode = state;
 }
 
-void EditorAppLayer::_on_input_key(event::InputKey& e)
+void EditorAppLayer::_on_input_key(events::InputKey& e)
 {
     const auto& [wnd, key, scancode, action, mods] = e.data_tuple;
 

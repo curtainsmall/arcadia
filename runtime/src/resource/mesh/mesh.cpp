@@ -285,8 +285,8 @@ auto Mesh::box(
 auto Mesh::capsule(
     float radius,
     float half_height_of_cylinder,
-    std::size_t half_sphere_stack_count,
-    std::size_t sector_count
+    size_t half_sphere_stack_count,
+    size_t sector_count
 ) -> Mesh
 {
     const auto pi = glm::pi<float>();
@@ -301,13 +301,13 @@ auto Mesh::capsule(
 
 #if 1
     // Sphere part
-    for(std::size_t j = 0; j <= half_sphere_stack_count; ++j)
+    for(size_t j = 0; j <= half_sphere_stack_count; ++j)
     {
         float stack_angle = pi / 2 - j * half_sphere_stack_step;
         float xz = radius * std::cos(stack_angle);
         float y = radius * std::sin(stack_angle) + half_height_of_cylinder;
 
-        for(std::size_t j = 0; j <= sector_count; ++j)
+        for(size_t j = 0; j <= sector_count; ++j)
         {
             float sector_angle = j * sector_step;
 
@@ -331,12 +331,12 @@ auto Mesh::capsule(
         }
     }
 
-    for(std::size_t i = 0; i < half_sphere_stack_count; ++i)
+    for(size_t i = 0; i < half_sphere_stack_count; ++i)
     {
         float k1 = i * (sector_count + 1);
         float k2 = k1 + sector_count + 1;
 
-        for(std::size_t j = 0; j < sector_count; ++j, ++k1, ++k2)
+        for(size_t j = 0; j < sector_count; ++j, ++k1, ++k2)
         {
             if(i != 0)
             {
@@ -411,7 +411,7 @@ auto Mesh::capsule(
 auto Mesh::cylinder(
     float half_height,
     float radius,
-    std::size_t sector_count
+    size_t sector_count
 )->Mesh
 {
     const auto pi = glm::pi<float>();
@@ -529,8 +529,8 @@ auto Mesh::cylinder(
 
 auto Mesh::sphere(
     float radius,
-    std::size_t stack_count,
-    std::size_t sector_count
+    size_t stack_count,
+    size_t sector_count
 ) -> Mesh
 {
     const auto pi = glm::pi<float>();
@@ -542,13 +542,13 @@ auto Mesh::sphere(
     Mesh mesh{};
 
     auto& vertices = mesh.vertices;
-    for(std::size_t i = 0; i <= stack_count; ++i)
+    for(size_t i = 0; i <= stack_count; ++i)
     {
         float stack_angle = pi / 2 - i * stack_step;
         float xz = radius * std::cos(stack_angle);
         float y = radius * std::sin(stack_angle);
 
-        for(std::size_t j = 0; j <= sector_count; ++j)
+        for(size_t j = 0; j <= sector_count; ++j)
         {
             float sector_angle = j * sector_step;
 
@@ -573,12 +573,12 @@ auto Mesh::sphere(
     }
 
     auto& indices = mesh.indices;
-    for(std::size_t i = 0; i < stack_count; ++i)
+    for(size_t i = 0; i < stack_count; ++i)
     {
         float k1 = i * (sector_count + 1);
         float k2 = k1 + sector_count + 1;
 
-        for(std::size_t j = 0; j < sector_count; ++j, ++k1, ++k2)
+        for(size_t j = 0; j < sector_count; ++j, ++k1, ++k2)
         {
             if(i != 0)
             {

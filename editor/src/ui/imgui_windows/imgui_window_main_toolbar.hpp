@@ -24,8 +24,8 @@ public:
     virtual void on_update() override;
 
 private:
-    void _on_scene_activated(event::SceneActivated& e);
-    void _on_scene_deactivated(event::SceneDeactivated& e);
+    void _on_scene_activated(events::SceneActivated& e);
+    void _on_scene_deactivated(events::SceneDeactivated& e);
 private:
     std::weak_ptr<Scene> _scene{};
 };

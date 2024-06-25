@@ -305,7 +305,7 @@ void GlRenderer::reset()
     _gl_render_unit_skybox.reset();
 }
 
-auto GlRenderer::render_result_id(std::size_t index) const -> void*
+auto GlRenderer::render_result_id(size_t index) const -> void*
 {
     return reinterpret_cast<void*>(std::get<0>(_gl_render_unit_cameras.at(index)).gl_texure2d().gl_id());
 }

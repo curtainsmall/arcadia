@@ -79,7 +79,7 @@ public:
     virtual void reset() override;
 
     [[nodiscard]]
-    virtual auto render_result_id(std::size_t index) const->void* override;
+    virtual auto render_result_id(size_t index) const->void* override;
 
     [[nodiscard]]
     virtual auto graphic_api_type() const->graphic_api::Type override

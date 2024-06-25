@@ -157,7 +157,7 @@ namespace input_modifier
     };
 }
 
-namespace event
+namespace events
 {
     ACDA_EVENT(
         InputKey,

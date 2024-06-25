@@ -111,12 +111,12 @@ private:
         return scene->get<Component>(name);
     }
 
-    void _on_open_imgui_window(event::OpenImguiWindow& e);
-    void _on_scene_activated(event::SceneActivated& e);
-    void _on_scene_deactivated(event::SceneDeactivated& e);
-    void _on_select_entity(event::SelectEntity& e);
-    void _on_rename_entity(event::RenameEntity& e);
-    void _on_delete_entity(event::DeleteEntity& e);
+    void _on_open_imgui_window(events::OpenImguiWindow& e);
+    void _on_scene_activated(events::SceneActivated& e);
+    void _on_scene_deactivated(events::SceneDeactivated& e);
+    void _on_select_entity(events::SelectEntity& e);
+    void _on_rename_entity(events::RenameEntity& e);
+    void _on_delete_entity(events::DeleteEntity& e);
 
 private:
 

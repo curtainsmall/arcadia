@@ -64,7 +64,7 @@ void GlVertexBuffer::unbind() const
 void GlVertexBuffer::setup_vertex_attrib_array() const
 {
     GLuint attrib_slot{ 0 };
-    std::size_t Offset{ 0 };
+    size_t Offset{ 0 };
 
     bind();
     for(const auto& attribute : _buffer_layout.layout_attributes)

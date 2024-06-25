@@ -37,7 +37,7 @@ namespace vec4
     /// @tparam Index Index of fixed axis, must be 0, 1, 2 or 3
     /// @param vec Vector to normalize
     /// @return Normalized vector
-    template<std::size_t Index>
+    template<size_t Index>
     [[nodiscard]]
     ACDA_API auto fixed_normalized(const glm::vec4& vec) -> glm::vec4
     {

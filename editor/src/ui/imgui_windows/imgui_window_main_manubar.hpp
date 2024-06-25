@@ -61,8 +61,8 @@ private:
     void _view_menu();
     void _option_menu();
 
-    void _on_project_built(event::ProjectBuilt& e);
-    void _on_project_unbuilt(event::ProjectUnbuilt& e);
+    void _on_project_built(events::ProjectBuilt& e);
+    void _on_project_unbuilt(events::ProjectUnbuilt& e);
 
 private:
     ImguiWindowPopupCreateProject _imgui_window_popup_create_project{};

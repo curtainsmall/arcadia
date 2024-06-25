@@ -9,7 +9,7 @@ struct iRenderer;
 struct PhysicsSimulator;
 struct Scene;
 
-namespace event
+namespace events
 {
 
     //==== Event for project ====//

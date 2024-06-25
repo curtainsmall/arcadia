@@ -59,7 +59,7 @@ public:
     BasicIdentifiable(self_type&&) noexcept = default;
     auto operator=(self_type&&) noexcept -> self_type & = default;
 
-    template<std::size_t Index>
+    template<size_t Index>
     [[nodiscard]]
     auto get() const -> const auto&
     {
@@ -97,7 +97,7 @@ namespace std
     template<>
     struct hash<Uuid>
     {
-        auto operator()(const Uuid& Uuid) const->std::size_t
+        auto operator()(const Uuid& Uuid) const->size_t
         {
             return std::hash<Uuid::value_type>{}(Uuid);
         }
@@ -117,10 +117,10 @@ namespace std
 
     template<class Value>
     struct tuple_size<BasicIdentifiable<Value>>:
-        std::integral_constant<std::size_t, 2>
+        std::integral_constant<size_t, 2>
     {};
 
-    template<std::size_t Index, class Value>
+    template<size_t Index, class Value>
     struct tuple_element<Index, BasicIdentifiable<Value>>:
         std::tuple_element<Index, std::tuple<Uuid, Value>>
     {};

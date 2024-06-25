@@ -53,14 +53,14 @@ private:
         return static_cast<self_type*>(glfwGetWindowUserPointer(glfw_window));
     }
 
-    void _on_window_set_input_mode_cursor(event::WindowSetInputModeCursor& e);
+    void _on_window_set_input_mode_cursor(events::WindowSetInputModeCursor& e);
 
     void _setup_callbacks();
 
     /// @brief Call [glfwSwapBuffers](https://www.glfw.org/docs/3.3/group__window.html#ga15a5a1ee5b3c2ca6b15ca209a12efd14)
     void _swap_buffers();
 
-    void _on_window_close_canceled(event::WindowCloseCanceled& e);
+    void _on_window_close_canceled(events::WindowCloseCanceled& e);
 
 private:
     static inline GlfwContext _glfw_context{};

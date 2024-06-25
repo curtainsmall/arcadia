@@ -14,7 +14,7 @@ auto EventQueue::swap_queue() -> bool
     return size();
 }
 
-auto EventQueue::size() const -> std::size_t
+auto EventQueue::size() const -> size_t
 {
     return _processing_queue->size();
 }

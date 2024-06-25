@@ -47,20 +47,20 @@ public:
     virtual void on_update() override;
 
 private:
-    void _on_input_cursor_move(event::InputCursorMove& e);
-    void _on_open_imgui_window(event::OpenImguiWindow& e);
-    void _on_project_built(event::ProjectBuilt& e);
-    void _on_project_unbuilt(event::ProjectUnbuilt& e);
-    void _on_scene_activated(event::SceneActivated& e);
-    void _on_scene_deactivated(event::SceneDeactivated& e);
-    void _on_select_entity(event::SelectEntity& e);
-    void _on_rename_entity(event::RenameEntity& e);
-    void _on_delete_entity(event::DeleteEntity& e);
-    void _on_renderer_built(event::RendererBuilt& e);
-    void _on_renderer_unbuilt(event::RendererUnbuilt& e);
-    void _on_physics_simulator_built(event::PhysicsSimulatorBuilt& e);
-    void _on_physics_simulator_unbuilt(event::PhysicsSimulatorUnbuilt& e);
-    void _on_show_gizmo(event::ShowGizmo& e);
+    void _on_input_cursor_move(events::InputCursorMove& e);
+    void _on_open_imgui_window(events::OpenImguiWindow& e);
+    void _on_project_built(events::ProjectBuilt& e);
+    void _on_project_unbuilt(events::ProjectUnbuilt& e);
+    void _on_scene_activated(events::SceneActivated& e);
+    void _on_scene_deactivated(events::SceneDeactivated& e);
+    void _on_select_entity(events::SelectEntity& e);
+    void _on_rename_entity(events::RenameEntity& e);
+    void _on_delete_entity(events::DeleteEntity& e);
+    void _on_renderer_built(events::RendererBuilt& e);
+    void _on_renderer_unbuilt(events::RendererUnbuilt& e);
+    void _on_physics_simulator_built(events::PhysicsSimulatorBuilt& e);
+    void _on_physics_simulator_unbuilt(events::PhysicsSimulatorUnbuilt& e);
+    void _on_show_gizmo(events::ShowGizmo& e);
 
 public:
     static inline std::string viewport_camera_entity_name{ "viewport_camera" };

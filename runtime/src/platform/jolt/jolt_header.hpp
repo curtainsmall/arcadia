@@ -87,12 +87,12 @@ namespace jph_object_layers
 {
     static constexpr JPH::ObjectLayer non_moving{ 0 };
     static constexpr JPH::ObjectLayer moving{ 1 };
-    static constexpr std::size_t num_layers{ 2 };
+    static constexpr size_t num_layers{ 2 };
 }
 
 namespace jph_broad_phase_layers
 {
     static constexpr JPH::BroadPhaseLayer non_moving{ 0 };
     static constexpr JPH::BroadPhaseLayer moving{ 0 };
-    static constexpr std::size_t num_layers{ 2 };
+    static constexpr size_t num_layers{ 2 };
 }

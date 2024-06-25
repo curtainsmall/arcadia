@@ -13,10 +13,10 @@
 void ImguiWindowOutliner::on_event(EventBase& e)
 {
     EventDispatcher{ e }
-        .dispatch<event::OpenImguiWindow>(ACDA_BIND_MEMBER_FN(_on_open_imgui_window))
-        .dispatch<event::SceneActivated>(ACDA_BIND_MEMBER_FN(_on_scene_activated))
-        .dispatch<event::SceneDeactivated>(ACDA_BIND_MEMBER_FN(_on_scene_deactivated))
-        .dispatch<event::RenameEntity>(ACDA_BIND_MEMBER_FN(_on_rename_entity))
+        .dispatch<events::OpenImguiWindow>(ACDA_BIND_MEMBER_FN(_on_open_imgui_window))
+        .dispatch<events::SceneActivated>(ACDA_BIND_MEMBER_FN(_on_scene_activated))
+        .dispatch<events::SceneDeactivated>(ACDA_BIND_MEMBER_FN(_on_scene_deactivated))
+        .dispatch<events::RenameEntity>(ACDA_BIND_MEMBER_FN(_on_rename_entity))
         .result();
 }
 
@@ -46,17 +46,17 @@ void ImguiWindowOutliner::on_update()
 
             if(ImGui::Selectable("Actor"))
             {
-                event_queue.signal<event::NewEntity>("actor");
+                event_queue.signal<events::NewEntity>("actor");
             }
 
             if(ImGui::Selectable("Camera"))
             {
-                event_queue.signal<event::NewEntity>("camera");
+                event_queue.signal<events::NewEntity>("camera");
             }
 
             if(ImGui::Selectable("Light"))
             {
-                event_queue.signal<event::NewEntity>("light");
+                event_queue.signal<events::NewEntity>("light");
             }
 
             /*if(ImGui::Selectable("Custom"))
@@ -68,7 +68,7 @@ void ImguiWindowOutliner::on_update()
 
         if(!scene)
         {
-            ImGui::Text("No scene to outline here");
+            ImGui::Text("(No scene)");
         }
         else
         {
@@ -98,7 +98,7 @@ void ImguiWindowOutliner::on_update()
                             }
                             else
                             {
-                                event_queue.signal<event::RenameEntity>(_EntityOldName, _EntityNewName);
+                                event_queue.signal<events::RenameEntity>(_EntityOldName, _EntityNewName);
                             }
                         }
                         _EntityOldName.clear();
@@ -118,7 +118,7 @@ void ImguiWindowOutliner::on_update()
                     if(ImGui::Selectable(name.c_str(), _selected_entity_name == name))
                     {
                         _selected_entity_name = name;
-                        event_queue.signal<event::SelectEntity>(name);
+                        event_queue.signal<events::SelectEntity>(name);
                     }
                     if(ImGui::IsItemHovered())
                     {
@@ -133,7 +133,7 @@ void ImguiWindowOutliner::on_update()
                         }
                         if(ImGui::Selectable("Delete Entity"))
                         {
-                            event_queue.signal<event::DeleteEntity>(name);
+                            event_queue.signal<events::DeleteEntity>(name);
                         }
 
                     #if 0 // We do not allow custom entity for now
@@ -183,7 +183,7 @@ void ImguiWindowOutliner::on_update()
 
 }
 
-void ImguiWindowOutliner::_on_open_imgui_window(event::OpenImguiWindow& e)
+void ImguiWindowOutliner::_on_open_imgui_window(events::OpenImguiWindow& e)
 {
     const auto& [id_str] = e.data_tuple;
     if(id_str == get_id_str())
@@ -192,19 +192,19 @@ void ImguiWindowOutliner::_on_open_imgui_window(event::OpenImguiWindow& e)
     }
 }
 
-void ImguiWindowOutliner::_on_scene_activated(event::SceneActivated& e)
+void ImguiWindowOutliner::_on_scene_activated(events::SceneActivated& e)
 {
     const auto& [scene] = e.data_tuple;
     _scene = scene;
 }
 
-void ImguiWindowOutliner::_on_scene_deactivated(event::SceneDeactivated& e)
+void ImguiWindowOutliner::_on_scene_deactivated(events::SceneDeactivated& e)
 {
     _scene.reset();
     _selected_entity_name.clear();
 }
 
-void ImguiWindowOutliner::_on_rename_entity(event::RenameEntity& e)
+void ImguiWindowOutliner::_on_rename_entity(events::RenameEntity& e)
 {
     const auto& [old_name, new_name] = e.data_tuple;
     if(old_name == _selected_entity_name)

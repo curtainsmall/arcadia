@@ -33,38 +33,38 @@ ProjectLayer::ProjectLayer():
     {
     }
     );
-    event_queue.signal<event::RendererBuilt>(_renderer);
+    event_queue.signal<events::RendererBuilt>(_renderer);
 
     _physics_simulator = std::make_shared<PhysicsSimulator>();
-    event_queue.signal<event::PhysicsSimulatorBuilt>(_physics_simulator);
+    event_queue.signal<events::PhysicsSimulatorBuilt>(_physics_simulator);
 }
 
 ProjectLayer::~ProjectLayer()
 {
     auto& event_queue = EventQueue::instance();
-    event_queue.signal<event::RendererUnbuilt>();
-    event_queue.signal<event::PhysicsSimulatorUnbuilt>();
+    event_queue.signal<events::RendererUnbuilt>();
+    event_queue.signal<events::PhysicsSimulatorUnbuilt>();
 }
 
 void ProjectLayer::on_event(EventBase& e)
 {
     EventDispatcher{ e }
-        .dispatch<event::WindowShouldClose>(ACDA_BIND_MEMBER_FN(_on_window_should_close))
-        .dispatch<event::CreateProject>(ACDA_BIND_MEMBER_FN(_on_create_project))
-        .dispatch<event::OpenProject>(ACDA_BIND_MEMBER_FN(_on_open_project))
-        .dispatch<event::SaveProject>(ACDA_BIND_MEMBER_FN(_on_save_project))
-        .dispatch<event::SaveProjectAs>(ACDA_BIND_MEMBER_FN(_on_save_project_as))
-        .dispatch<event::CloseProject>(ACDA_BIND_MEMBER_FN(_on_close_project))
-        .dispatch<event::ProjectSaved>(ACDA_BIND_MEMBER_FN(_on_project_saved))
-        .dispatch<event::CreateScene>(ACDA_BIND_MEMBER_FN(_on_create_scene))
-        .dispatch<event::SelectScene>(ACDA_BIND_MEMBER_FN(_on_select_scene))
-        .dispatch<event::CloseScene>(ACDA_BIND_MEMBER_FN(_on_close_scene))
-        .dispatch<event::DeleteScene>(ACDA_BIND_MEMBER_FN(_on_delete_scene))
-        .dispatch<event::NewEntity>(ACDA_BIND_MEMBER_FN(_OnNewEntity))
-        .dispatch<event::RenameEntity>(ACDA_BIND_MEMBER_FN(_on_rename_entity))
-        .dispatch<event::DeleteEntity>(ACDA_BIND_MEMBER_FN(_on_delete_entity))
-        .dispatch<event::AddComponent>(ACDA_BIND_MEMBER_FN(_on_add_component))
-        .dispatch<event::RemoveComponent>(ACDA_BIND_MEMBER_FN(_on_remove_component))
+        .dispatch<events::WindowShouldClose>(ACDA_BIND_MEMBER_FN(_on_window_should_close))
+        .dispatch<events::CreateProject>(ACDA_BIND_MEMBER_FN(_on_create_project))
+        .dispatch<events::OpenProject>(ACDA_BIND_MEMBER_FN(_on_open_project))
+        .dispatch<events::SaveProject>(ACDA_BIND_MEMBER_FN(_on_save_project))
+        .dispatch<events::SaveProjectAs>(ACDA_BIND_MEMBER_FN(_on_save_project_as))
+        .dispatch<events::CloseProject>(ACDA_BIND_MEMBER_FN(_on_close_project))
+        .dispatch<events::ProjectSaved>(ACDA_BIND_MEMBER_FN(_on_project_saved))
+        .dispatch<events::CreateScene>(ACDA_BIND_MEMBER_FN(_on_create_scene))
+        .dispatch<events::SelectScene>(ACDA_BIND_MEMBER_FN(_on_select_scene))
+        .dispatch<events::CloseScene>(ACDA_BIND_MEMBER_FN(_on_close_scene))
+        .dispatch<events::DeleteScene>(ACDA_BIND_MEMBER_FN(_on_delete_scene))
+        .dispatch<events::NewEntity>(ACDA_BIND_MEMBER_FN(_OnNewEntity))
+        .dispatch<events::RenameEntity>(ACDA_BIND_MEMBER_FN(_on_rename_entity))
+        .dispatch<events::DeleteEntity>(ACDA_BIND_MEMBER_FN(_on_delete_entity))
+        .dispatch<events::AddComponent>(ACDA_BIND_MEMBER_FN(_on_add_component))
+        .dispatch<events::RemoveComponent>(ACDA_BIND_MEMBER_FN(_on_remove_component))
         .result();
 }
 
@@ -88,7 +88,7 @@ void ProjectLayer::_save_project()
     auto ofs = File::create_ofstream(_project_component);
     ofs << std::setw(4) << json;
 
-    EventQueue::instance().signal<event::ProjectSaved>();
+    EventQueue::instance().signal<events::ProjectSaved>();
 }
 
 void ProjectLayer::_load_project()
@@ -99,10 +99,10 @@ void ProjectLayer::_load_project()
     auto json = nlohmann::json::parse(ifs);
 
     _project = std::make_shared<Project>(json);
-    EventQueue::instance().signal<event::ProjectLoaded>();
+    EventQueue::instance().signal<events::ProjectLoaded>();
 }
 
-void ProjectLayer::_on_window_should_close(event::WindowShouldClose& e)
+void ProjectLayer::_on_window_should_close(events::WindowShouldClose& e)
 {
     auto& event_queue = EventQueue::instance();
 
@@ -125,7 +125,7 @@ void ProjectLayer::_on_window_should_close(event::WindowShouldClose& e)
             {
                 case pfd::button::cancel:
                 {
-                    event_queue.signal<event::WindowCloseCanceled>(p_wnd);
+                    event_queue.signal<events::WindowCloseCanceled>(p_wnd);
                     return;
                 }
                 case pfd::button::yes:
@@ -150,12 +150,12 @@ void ProjectLayer::_on_window_should_close(event::WindowShouldClose& e)
         }
         _project.reset();
         EventQueue::instance()
-            .signal<event::ProjectUnbuilt>();
+            .signal<events::ProjectUnbuilt>();
 
     }
 }
 
-void ProjectLayer::_on_create_project(event::CreateProject& e)
+void ProjectLayer::_on_create_project(events::CreateProject& e)
 {
     if(_project)
     {
@@ -195,10 +195,10 @@ void ProjectLayer::_on_create_project(event::CreateProject& e)
     _project_component = filepath_str.size() ? to_filepath(filepath_str) : std::filesystem::path{};
 
     EventQueue::instance()
-        .signal<event::ProjectBuilt>(_project);
+        .signal<events::ProjectBuilt>(_project);
 }
 
-void ProjectLayer::_on_open_project(event::OpenProject& e)
+void ProjectLayer::_on_open_project(events::OpenProject& e)
 {
     if(_project)
     {
@@ -255,10 +255,10 @@ void ProjectLayer::_on_open_project(event::OpenProject& e)
     }
     _load_project();
     EventQueue::instance()
-        .signal<event::ProjectBuilt>(_project);
+        .signal<events::ProjectBuilt>(_project);
 }
 
-void ProjectLayer::_on_save_project(event::SaveProject& e)
+void ProjectLayer::_on_save_project(events::SaveProject& e)
 {
     ACDA_ASSERT(_project);
 
@@ -275,7 +275,7 @@ void ProjectLayer::_on_save_project(event::SaveProject& e)
     _save_project();
 }
 
-void ProjectLayer::_on_save_project_as(event::SaveProjectAs& e)
+void ProjectLayer::_on_save_project_as(events::SaveProjectAs& e)
 {
     ACDA_ASSERT(_project);
 
@@ -289,7 +289,7 @@ void ProjectLayer::_on_save_project_as(event::SaveProjectAs& e)
     _save_project();
 }
 
-void ProjectLayer::_on_close_project(event::CloseProject& e)
+void ProjectLayer::_on_close_project(events::CloseProject& e)
 {
     ACDA_ASSERT(_project);
 
@@ -332,15 +332,15 @@ void ProjectLayer::_on_close_project(event::CloseProject& e)
     }
     _project.reset();
     EventQueue::instance()
-        .signal<event::ProjectUnbuilt>();
+        .signal<events::ProjectUnbuilt>();
 }
 
-void ProjectLayer::_on_project_saved(event::ProjectSaved& e)
+void ProjectLayer::_on_project_saved(events::ProjectSaved& e)
 {
     MementoList::instance().clear();
 }
 
-void ProjectLayer::_on_create_scene(event::CreateScene& e)
+void ProjectLayer::_on_create_scene(events::CreateScene& e)
 {
     ACDA_ASSERT(_project);
 
@@ -356,7 +356,7 @@ void ProjectLayer::_on_create_scene(event::CreateScene& e)
     }
 }
 
-void ProjectLayer::_on_select_scene(event::SelectScene& e)
+void ProjectLayer::_on_select_scene(events::SelectScene& e)
 {
     ACDA_ASSERT(_project);
 
@@ -364,14 +364,14 @@ void ProjectLayer::_on_select_scene(event::SelectScene& e)
     _project->set_active_scene(name);
 }
 
-void ProjectLayer::_on_close_scene(event::CloseScene& e)
+void ProjectLayer::_on_close_scene(events::CloseScene& e)
 {
     ACDA_ASSERT(_project);
 
     _project->set_active_scene();
 }
 
-void ProjectLayer::_on_delete_scene(event::DeleteScene& e)
+void ProjectLayer::_on_delete_scene(events::DeleteScene& e)
 {
     ACDA_ASSERT(_project);
     ACDA_ASSERT(_project->has_active_scene());
@@ -400,7 +400,7 @@ void ProjectLayer::_on_delete_scene(event::DeleteScene& e)
 
 }
 
-void ProjectLayer::_OnNewEntity(event::NewEntity& e)
+void ProjectLayer::_OnNewEntity(events::NewEntity& e)
 {
     const auto& [type] = e.data_tuple;
 
@@ -450,21 +450,21 @@ void ProjectLayer::_OnNewEntity(event::NewEntity& e)
     );
 }
 
-void ProjectLayer::_on_rename_entity(event::RenameEntity& e)
+void ProjectLayer::_on_rename_entity(events::RenameEntity& e)
 {
     const auto& [old_name, new_name] = e.data_tuple;
 
     _project->get_active_scene().rename(old_name, new_name);
 }
 
-void ProjectLayer::_on_delete_entity(event::DeleteEntity& e)
+void ProjectLayer::_on_delete_entity(events::DeleteEntity& e)
 {
     const auto& [entity] = e.data_tuple;
     auto& scene = _assert_and_get_scene();
     scene.destroy(entity);
 }
 
-void ProjectLayer::_on_add_component(event::AddComponent& e)
+void ProjectLayer::_on_add_component(events::AddComponent& e)
 {
     const auto& [entity, type_str] = e.data_tuple;
     auto& scene = _assert_and_get_scene();
@@ -494,7 +494,7 @@ void ProjectLayer::_on_add_component(event::AddComponent& e)
     );
 }
 
-void ProjectLayer::_on_remove_component(event::RemoveComponent& e)
+void ProjectLayer::_on_remove_component(events::RemoveComponent& e)
 {
     const auto& [entity, type_str] = e.data_tuple;
     auto& scene = _assert_and_get_scene();

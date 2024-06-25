@@ -65,7 +65,7 @@ namespace vec3
     /// @tparam Index Index of fixed axis, must be 0, 1 or 2
     /// @param vec Vector to normalize
     /// @return Normalized vector
-    template<std::size_t Index>
+    template<size_t Index>
     [[nodiscard]]
     ACDA_API static inline auto fixed_normalized(const glm::vec3& vec) -> glm::vec3
     {
@@ -93,6 +93,24 @@ namespace vec3
         res[(Index + 1) % 3] = a;
         res[(Index + 2) % 3] = b;
         return res;
+    }
+
+    [[nodiscard]]
+    ACDA_API static inline auto fixed_normalized(const glm::vec3& compare, const glm::vec3& vec) -> glm::vec3
+    {
+        if(compare.x != vec.x)
+        {
+            return fixed_normalized<0>(vec);
+        }
+        else if(compare.y != vec.y)
+        {
+            return fixed_normalized<1>(vec);
+        }
+        else if(compare.z != vec.z)
+        {
+            return fixed_normalized<2>(vec);
+        }
+        return vec;
     }
 }
 

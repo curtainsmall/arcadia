@@ -57,7 +57,7 @@ private:
         std::vector<Mesh>& meshes,
         const aiScene* const ai_scene,
         const aiNode* const ai_node,
-        std::size_t& next_mesh_index
+        size_t& next_mesh_index
     );
 
     void _load_texture(

@@ -22,7 +22,7 @@ enum struct WindowInputModeCursor
     Captured,
 };
 
-namespace event
+namespace events
 {
     //==== Notifications ====//
 

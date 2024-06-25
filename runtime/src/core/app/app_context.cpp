@@ -17,9 +17,9 @@ AppContext::AppContext()
 #ifdef ACDA_DEBUG_MODE
     auto& set = EventQueue::instance()
         .debug_excluded_event_types;
-    set.emplace(typeid(event::InputCursorPos));
-    set.emplace(typeid(event::InputCursorMove));
-    set.emplace(typeid(event::window_pos));
+    set.emplace(typeid(events::InputCursorPos));
+    set.emplace(typeid(events::InputCursorMove));
+    set.emplace(typeid(events::window_pos));
 
 #endif // ACDA_DEBUG_MODE
 

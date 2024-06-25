@@ -20,20 +20,20 @@ public:
     static auto capsule(
         float radius,
         float half_height_of_sylinder,
-        std::size_t half_sphere_stack_count = 18,
-        std::size_t sector_count = 36
+        size_t half_sphere_stack_count = 18,
+        size_t sector_count = 36
     ) -> Mesh;
 
     static auto cylinder(
         float half_height,
         float radius,
-        std::size_t sector_count = 36
+        size_t sector_count = 36
     ) -> Mesh;
 
     static auto sphere(
         float radius,
-        std::size_t stack_count  = 36, // Along latitude
-        std::size_t sector_count = 36  // Alone longitude
+        size_t stack_count  = 36, // Along latitude
+        size_t sector_count = 36  // Alone longitude
     ) -> Mesh;
 
     std::vector<Vertex> vertices{};

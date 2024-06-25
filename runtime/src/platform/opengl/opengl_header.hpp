@@ -25,7 +25,7 @@ ACDA_EXCEPTION(GlInvalid);
 /// @param line Line where the error generated
 ACDA_API void gl_check_error(const char* fn_name, const char* file_name, int line);
 
-ACDA_API auto gl_sizeof(GLenum Type) -> std::size_t;
+ACDA_API auto gl_sizeof(GLenum Type) -> size_t;
 
 ACDA_API auto set_gl_version() -> Version;
 

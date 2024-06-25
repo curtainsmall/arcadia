@@ -40,17 +40,17 @@ auto MementoList::redo()  -> bool
     return true;
 }
 
-auto MementoList::capacity() const -> std::size_t
+auto MementoList::capacity() const -> size_t
 {
     return _capacity;
 }
 
-void MementoList::capacity(std::size_t capacity)
+void MementoList::capacity(size_t capacity)
 {
     _capacity = capacity;
 }
 
-auto MementoList::size() const -> std::size_t
+auto MementoList::size() const -> size_t
 {
     return _list.size();
 }

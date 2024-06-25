@@ -6,7 +6,7 @@
 #include"core/math.hpp"
 #include"ui/imgui_header.hpp"
 
-namespace imgui_wrapper
+namespace imgui_wrappers
 {
     ACDA_API auto checkbox(const std::string& name, bool& b) -> bool;
     ACDA_API auto checkbox(const std::string& name, std::function<bool()> getter, std::function<void(bool)> setter) -> bool;
@@ -26,6 +26,9 @@ namespace imgui_wrapper
     ACDA_API auto drag_float(const std::string& name, float& f, float speed, float min, float max, const char* format, ImGuiSliderFlags flags) -> bool;
     ACDA_API auto drag_float(const std::string& name, std::function<float()> getter, std::function<void(float)> setter, float speed, float min, float max, const char* format, ImGuiSliderFlags flags) -> bool;
 
+    ACDA_API auto drag_float3(const std::string& name, glm::vec3& vec, float speed, float min, float max, const char* format, ImGuiSliderFlags flags) -> bool;
+    ACDA_API auto drag_float3(const std::string& name, std::function<glm::vec3()> getter, std::function<void(glm::vec3)> setter, float speed, float min, float max, const char* format, ImGuiSliderFlags flags) -> bool;
+
     ACDA_API auto drag_vec2(const std::string& name, glm::vec2& vec, float speed, float min, float max, const char* format, ImGuiSliderFlags flags) -> bool;
     ACDA_API auto drag_vec2(const std::string& name, std::function<glm::vec2()> getter, std::function<void(const glm::vec2&)> setter, float speed, float min, float max, const char* format, ImGuiSliderFlags flags) -> bool;
 
@@ -44,7 +47,6 @@ namespace imgui_wrapper
     ACDA_API auto drag_quat_normalized(const std::string& name, glm::quat& quat, float speed, const char* format, ImGuiSliderFlags flags) -> bool;
     ACDA_API auto drag_quat_normalized(const std::string& name, std::function<glm::quat()> getter, std::function<void(const glm::quat&)> setter, float speed, const char* format, ImGuiSliderFlags flags) -> bool;
 
-
     ACDA_API auto color_edit_vec3(const std::string& name, glm::vec3& color) -> bool;
     ACDA_API auto color_edit_vec3(const std::string& name, std::function<glm::vec3()> getter, std::function<void(const glm::vec3&)> setter) -> bool;
 
@@ -55,4 +57,7 @@ namespace imgui_wrapper
     ACDA_API void text_vec4(const std::string& name, const glm::vec4& vec);
     ACDA_API void text_quat(const std::string& name, const glm::quat& quat);
 
+    ACDA_API void new_line(float height = -1.0f);
+
+    ACDA_API void help_mark(const std::string& icon, const std::string& text);
 }

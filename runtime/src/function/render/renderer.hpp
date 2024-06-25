@@ -59,7 +59,7 @@ public:
     /// - Vulkan: VkDescriptorSet
     /// @param index Index of framebuffer
     /// @return Representation of framebuffer object id as void*
-    virtual auto render_result_id(std::size_t index) const->void* = 0;
+    virtual auto render_result_id(size_t index) const->void* = 0;
 
     /// @brief Get the underlying graphic API type
     virtual auto graphic_api_type() const->graphic_api::Type = 0;

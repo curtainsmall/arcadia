@@ -44,7 +44,7 @@ namespace quat
     /// @tparam Index Index of fixed axis, must be 0, 1, 2 or 3
     /// @param vec Quaternion to normalize
     /// @return Normalized quaternion
-    template<std::size_t Index>
+    template<size_t Index>
     [[nodiscard]]
     ACDA_API static inline auto fixed_normalized(const glm::quat& quat) -> glm::quat
     {
@@ -77,6 +77,28 @@ namespace quat
         res[(Index + 2) % 4] = b;
         res[(Index + 3) % 4] = c;
         return res;
+    }
+
+    [[nodiscard]]
+    ACDA_API static inline auto fixed_normalized(const glm::quat& compare, const glm::quat& quat) -> glm::quat
+    {
+        if(compare.w != quat.w)
+        {
+            return fixed_normalized<0>(quat);
+        }
+        else if(compare.x != quat.x)
+        {
+            return fixed_normalized<1>(quat);
+        }
+        else if(compare.y != quat.y)
+        {
+            return fixed_normalized<2>(quat);
+        }
+        else if(compare.z != quat.x)
+        {
+            return fixed_normalized<3>(quat);
+        }
+        return quat;
     }
 }
 

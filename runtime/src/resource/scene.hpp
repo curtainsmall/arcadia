@@ -85,10 +85,10 @@ public:
     auto contains(const std::string& name) const -> bool;
 
     [[nodiscard]]
-    auto size() const->std::size_t;
+    auto size() const->size_t;
 
     [[nodiscard]]
-    auto count(const std::function<bool(const std::string&, const EntityInfo&)>& pred) const->std::size_t;
+    auto count(const std::function<bool(const std::string&, const EntityInfo&)>& pred) const->size_t;
 
     [[nodiscard]]
     auto entity_info(const std::string& name) const -> const EntityInfo&;

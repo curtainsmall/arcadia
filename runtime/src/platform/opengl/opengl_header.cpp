@@ -58,7 +58,7 @@ ACDA_API void gl_check_error(const char* fn_name, const char* file_name, int lin
     }
 }
 
-ACDA_API auto gl_sizeof(GLenum Type) -> std::size_t
+ACDA_API auto gl_sizeof(GLenum Type) -> size_t
 {
     switch(Type)
     {

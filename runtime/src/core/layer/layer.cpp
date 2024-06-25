@@ -44,7 +44,7 @@ auto LayerStack::pop_all() -> self_type&
     return *this;
 }
 
-auto LayerStack::size() -> std::size_t
+auto LayerStack::size() -> size_t
 {
     return _layers.size();
 }

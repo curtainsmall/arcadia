@@ -90,7 +90,7 @@ public:
     auto pop_all() -> self_type&;
 
     template<cLayer Layer = iLayer>
-    auto at(std::size_t idx) -> Layer&
+    auto at(size_t idx) -> Layer&
     {
         if(idx >= size())
         {
@@ -121,7 +121,7 @@ public:
     }
 
 
-    auto size() -> std::size_t;
+    auto size() -> size_t;
 
     auto begin() -> layer_vector_type::const_iterator;
     auto end() -> layer_vector_type::const_iterator;

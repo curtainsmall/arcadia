@@ -74,7 +74,7 @@ void Project::set_active_scene(const std::string& name)
         {
             _active_scene.reset();
             EventQueue::instance()
-                .signal<event::SceneDeactivated>();
+                .signal<events::SceneDeactivated>();
         }
 
         if(!name.empty() && scene_sptr_storage.find(name) != scene_sptr_storage.end())
@@ -85,7 +85,7 @@ void Project::set_active_scene(const std::string& name)
             _snapshot_entities();
 
             EventQueue::instance()
-                .signal<event::SceneActivated>(_active_scene);
+                .signal<events::SceneActivated>(_active_scene);
         }
     }
 }

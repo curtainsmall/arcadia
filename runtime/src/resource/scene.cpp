@@ -99,14 +99,14 @@ auto Scene::contains(const std::string& name) const -> bool
     return _entity_info_storage.find(name) != _entity_info_storage.end();
 }
 
-auto Scene::size() const -> std::size_t
+auto Scene::size() const -> size_t
 {
     return _entity_info_storage.size();
 }
 
-auto Scene::count(const std::function<bool(const std::string&, const EntityInfo&)>& pred) const -> std::size_t
+auto Scene::count(const std::function<bool(const std::string&, const EntityInfo&)>& pred) const -> size_t
 {
-    std::size_t count = 0;
+    size_t count = 0;
     for(const auto& [name, entity_info] : _entity_info_storage)
     {
         if(pred(name, entity_info))

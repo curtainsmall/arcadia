@@ -36,9 +36,9 @@ public:
     bool handled{ false };
 };
 
-template<class event>
+template<class Event>
 concept cEvent = requires{
-    std::derived_from<event, EventBase>;
+    std::derived_from<Event, EventBase>;
 };
 
 template<class ...Args>
@@ -64,8 +64,8 @@ public:
     const data_tuple_type data_tuple;
 };
 
-template<cEvent event>
-using EventHandler = std::function<void(event&)>;
+template<cEvent Event>
+using EventHandler = std::function<void(Event&)>;
 
 struct EventDispatcher: Noncopyable
 {
@@ -81,12 +81,12 @@ public:
     /// @tparam Event Event type to match
     /// @param handler Event handler
     /// @return Self
-    template<cEvent event>
-    auto dispatch(const EventHandler<event>& handler) -> self_type&
+    template<cEvent Event>
+    auto dispatch(const EventHandler<Event>& handler) -> self_type&
     {
-        if(typeid(*_event) == typeid(event))
+        if(typeid(*_event) == typeid(Event))
         {
-            handler(static_cast<event&>(*_event));
+            handler(static_cast<Event&>(*_event));
             _result = true;
         }
         return *this;
@@ -136,7 +136,7 @@ public:
     auto swap_queue() -> bool;
 
     /// @brief Check whther the proceessing queue contains event
-    auto size() const->std::size_t;
+    auto size() const->size_t;
 
     /// @brief Read the front event in event queue
     /// @return Event at front

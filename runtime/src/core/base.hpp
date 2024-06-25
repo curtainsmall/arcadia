@@ -5,7 +5,6 @@
 #include<cmath>
 #include<complex>
 #include<cstddef>
-#include<cstdint>
 #include<cstdlib>
 #include<functional>
 #include<string>
@@ -21,8 +20,6 @@
 #define ACDA_BIND_MEMBER_FN(fn) [this]<class ...Args>(Args&& ...args) -> decltype(auto) { return this->fn(std::forward<Args>(args)...); }
 #define ACDA_BIND_MEMBER_FN_ARBITRARY(obj, fn) [&obj]<class ...Args>(Args&& ...args) -> decltype(auto) { return obj.fn(std::forward<Args>(args)...); }
 #define ACDA_BIND_MEMBER_FN_ARBITRARY_PTR(obj_ptr, fn) [&obj_ptr]<class ...Args>(Args&& ...args) -> decltype(auto) { return obj_ptr->fn(std::forward<Args>(args)...); }
-
-#define ACDA_DISCARD(x) (void) x
 
 using namespace std::string_literals;
 using namespace std::string_view_literals;
@@ -57,10 +54,10 @@ struct ParameterPack
 public:
     using tuple_type = std::tuple<Args...>;
 
-    template<std::size_t Index>
+    template<size_t Index>
     using at_t = std::tuple_element_t<Index, tuple_type>;
 public:
-    static constexpr std::size_t size_v = std::tuple_size_v<tuple_type>;
+    static constexpr size_t size_v = std::tuple_size_v<tuple_type>;
 };
 
 template<class Enum>

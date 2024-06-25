@@ -145,11 +145,11 @@ public:
     auto redo() -> bool;
 
     [[nodiscard]]
-    auto capacity() const->std::size_t;
-    void capacity(std::size_t capacity);
+    auto capacity() const->size_t;
+    void capacity(size_t capacity);
 
     [[nodiscard]]
-    auto size() const->std::size_t;
+    auto size() const->size_t;
 
     void clear();
 
@@ -178,7 +178,7 @@ public:
     auto cend() const noexcept->container_type::const_iterator;
 
 private:
-    std::size_t _capacity{ 40 };
+    size_t _capacity{ 40 };
     container_type _list{};
     container_type::iterator _current_iter{ _list.begin() }; // Points to the memento to be undone
 };

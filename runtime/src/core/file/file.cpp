@@ -78,14 +78,14 @@ auto File::load() -> self_type&
     ifs.exceptions(std::ios_base::badbit);
 
     // Section Count
-    std::size_t section_count{ 0 };
+    size_t section_count{ 0 };
     ifs.read(reinterpret_cast<char*>(&section_count), sizeof(section_count));
 
     // For each section
     while(section_count-- > 0)
     {
         // Section name
-        std::size_t len{ 0 };
+        size_t len{ 0 };
         ifs.read(reinterpret_cast<char*>(&len), sizeof(len));
         char* buf = static_cast<char*>(std::malloc(len * sizeof(len)));
         ifs.read(buf, len);
@@ -120,7 +120,7 @@ auto File::save() -> self_type&
     for(const auto& [section_name, section] : _section_storage)
     {
         // Section name
-        std::size_t len = section_name.size();
+        size_t len = section_name.size();
         ofs.write(reinterpret_cast<const char*>(&len), sizeof(len));
         ofs.write(section_name.c_str(), len);
 

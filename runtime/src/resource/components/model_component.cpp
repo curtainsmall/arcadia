@@ -142,7 +142,7 @@ void ModelComponent::_load()
 
     std::vector<Mesh> meshes{};
 
-    std::size_t next_mesh_index{ 0 };
+    size_t next_mesh_index{ 0 };
     _process_assimp_node(
         meshes,
         ai_scene,
@@ -162,7 +162,7 @@ void ModelComponent::_process_assimp_node(
     std::vector<Mesh>& meshes,
     const aiScene* const ai_scene,
     const aiNode* const ai_node,
-    std::size_t& next_mesh_index
+    size_t& next_mesh_index
 )
 {
     // Current node

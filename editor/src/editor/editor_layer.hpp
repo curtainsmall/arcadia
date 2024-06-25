@@ -23,11 +23,11 @@ private:
     void _imgui_window_installer(ImguiLayer& imgui_layer);
     void _stop();
 
-    void _on_window_should_close(event::WindowShouldClose& e);
-    void _on_project_unbuilt(event::ProjectUnbuilt& e);
-    void _on_window_close_canceled(event::WindowCloseCanceled& e);
-    void _on_play_mode(event::PlayMode& e);
-    void _on_input_key(event::InputKey& e);
+    void _on_window_should_close(events::WindowShouldClose& e);
+    void _on_project_unbuilt(events::ProjectUnbuilt& e);
+    void _on_window_close_canceled(events::WindowCloseCanceled& e);
+    void _on_play_mode(events::PlayMode& e);
+    void _on_input_key(events::InputKey& e);
 
 private:
     bool _waiting_for_project_unbuilt_before_closing{ false };

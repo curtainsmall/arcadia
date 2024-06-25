@@ -36,15 +36,15 @@ void ImguiWindowStateRenderer::operator()(const iRenderer& renderer)
 
     ImGui::Text(std::format("Graphic API: {}", graphic_api_type_str).c_str());
 
-    ImGui::NewLine();
-    ImGui::SeparatorText("Renderer Config");
-
-    ImGui::Text("Renderer Type"); ImGui::SameLine();
-    if(ImGui::BeginCombo("##renderer_type", graphic_api_type_str.c_str()))
+    if(ImGui::TreeNodeEx("Config", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_FramePadding))
     {
-        ImGui::Selectable(graphic_api_type_str.c_str());
-
-        ImGui::EndCombo();
+        ImGui::Text("Renderer Type"); ImGui::SameLine();
+        if(ImGui::BeginCombo("##renderer_type", graphic_api_type_str.c_str()))
+        {
+            ImGui::Selectable(graphic_api_type_str.c_str());
+            ImGui::EndCombo();
+        }
+        ImGui::TreePop();
     }
 }
 
@@ -53,40 +53,24 @@ void ImguiWindowStatePhysicsSimulator::operator()(PhysicsSimulator& physics_simu
     const auto& physics_simulator_jph_body_id_storage = physics_simulator.jph_body_id_storage();
     ImGui::Text(std::format("Body Count: {}", physics_simulator_jph_body_id_storage.size()).c_str());
 
-    ImGui::NewLine();
-    ImGui::SeparatorText("Physics Simulator Config");
+    if(ImGui::TreeNodeEx("Config", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_FramePadding))
+    {
+        auto slider_flags =
+            ImGuiSliderFlags_AlwaysClamp;
+        ImGui::BeginDisabled();
+        int temp_allocator_size_in_kib = physics_simulator.get_jph_temp_allocator_size() / 1024;
+        ImGui::DragInt("Temporary Allocator Size (KiB)", &temp_allocator_size_in_kib, 1.0f, 64 /*64 KiB*/, 16 * 1024 * 1024 /*16 GiB*/, "%d", slider_flags);
+        physics_simulator.set_jph_temp_allocator_size(temp_allocator_size_in_kib * 1024);
+        ImGui::EndDisabled();
 
-    auto slider_flags =
-        ImGuiSliderFlags_AlwaysClamp;
+        auto update_per_second = physics_simulator.get_jph_physics_system_updates_per_second();
+        ImGui::DragInt("Update per Second", &update_per_second, 1.0f, 0, INT_MAX, "%d", slider_flags);
+        physics_simulator.set_jph_physics_system_updates_per_second(update_per_second);
+        ImGui::TreePop();
 
-    ImGui::NewLine();
-    ImGui::BeginDisabled();
-    int temp_allocator_size_in_kib = physics_simulator.get_jph_temp_allocator_size() / 1024;
-    imgui_wrapper::drag_int(
-        "Temporary Allocator Size (KiB)",
-        temp_allocator_size_in_kib,
-        1.f,
-        64, // 64 KiB
-        16 * 1024 * 1024, // 16 GiB
-        "%d",
-        slider_flags
-    );
-    physics_simulator.set_jph_temp_allocator_size(temp_allocator_size_in_kib * 1024);
-    ImGui::EndDisabled();
+        ImGui::NewLine();
+    }
 
-    ImGui::NewLine();
-    imgui_wrapper::drag_int(
-        "            Updates per Second",
-        ACDA_BIND_MEMBER_FN_ARBITRARY(physics_simulator, get_jph_physics_system_updates_per_second),
-        ACDA_BIND_MEMBER_FN_ARBITRARY(physics_simulator, set_jph_physics_system_updates_per_second),
-        1.f,
-        0,
-        (std::numeric_limits<int>::max)(),
-        "%d",
-        slider_flags
-    );
-
-    ImGui::NewLine();
     if(physics_simulator.is_active())
     {
         if(ImGui::Button("Stop"))
@@ -113,13 +97,13 @@ void ImguiWindowStatePhysicsSimulator::operator()(PhysicsSimulator& physics_simu
 void ImguiWindowState::on_event(EventBase& e)
 {
     EventDispatcher{ e }
-        .dispatch<event::OpenImguiWindow>(ACDA_BIND_MEMBER_FN(_on_open_imgui_window))
-        .dispatch<event::SceneActivated>(ACDA_BIND_MEMBER_FN(_on_scene_activated))
-        .dispatch<event::SceneDeactivated>(ACDA_BIND_MEMBER_FN(_on_scene_deactivated))
-        .dispatch<event::RendererBuilt>(ACDA_BIND_MEMBER_FN(_on_renderer_built))
-        .dispatch<event::RendererUnbuilt>(ACDA_BIND_MEMBER_FN(_on_renderer_unbuilt))
-        .dispatch<event::PhysicsSimulatorBuilt>(ACDA_BIND_MEMBER_FN(_on_physics_simulator_built))
-        .dispatch<event::PhysicsSimulatorUnbuilt>(ACDA_BIND_MEMBER_FN(_on_physics_simulator_unbuilt))
+        .dispatch<events::OpenImguiWindow>(ACDA_BIND_MEMBER_FN(_on_open_imgui_window))
+        .dispatch<events::SceneActivated>(ACDA_BIND_MEMBER_FN(_on_scene_activated))
+        .dispatch<events::SceneDeactivated>(ACDA_BIND_MEMBER_FN(_on_scene_deactivated))
+        .dispatch<events::RendererBuilt>(ACDA_BIND_MEMBER_FN(_on_renderer_built))
+        .dispatch<events::RendererUnbuilt>(ACDA_BIND_MEMBER_FN(_on_renderer_unbuilt))
+        .dispatch<events::PhysicsSimulatorBuilt>(ACDA_BIND_MEMBER_FN(_on_physics_simulator_built))
+        .dispatch<events::PhysicsSimulatorUnbuilt>(ACDA_BIND_MEMBER_FN(_on_physics_simulator_unbuilt))
         .result();
 }
 
@@ -149,7 +133,6 @@ void ImguiWindowState::on_update()
 
             if(ImGui::BeginTabItem("Scene"))
             {
-                ImGui::SeparatorText("Scene State");
                 if(scene)
                 {
                     _imgui_window_state_scene(*scene);
@@ -158,12 +141,10 @@ void ImguiWindowState::on_update()
                 {
                     ImGui::Text("(No scene)");
                 }
-
                 ImGui::EndTabItem();
             }
             if(ImGui::BeginTabItem("Renderer"))
             {
-                ImGui::SeparatorText("Renderer State");
                 if(renderer)
                 {
                     _imgui_window_state_renderer(*renderer);
@@ -172,12 +153,10 @@ void ImguiWindowState::on_update()
                 {
                     ImGui::Text("(No renderer)");
                 }
-
                 ImGui::EndTabItem();
             }
             if(ImGui::BeginTabItem("Physics Simulator"))
             {
-                ImGui::SeparatorText("Physics Simulator State");
                 if(physics_simualtor)
                 {
                     _imgui_window_state_physics_simulator(*physics_simualtor);
@@ -186,7 +165,6 @@ void ImguiWindowState::on_update()
                 {
                     ImGui::Text("(No physics simulator)");
                 }
-
                 ImGui::EndTabItem();
             }
 
@@ -197,40 +175,40 @@ void ImguiWindowState::on_update()
     ImGui::End();
 }
 
-void ImguiWindowState::_on_open_imgui_window(event::OpenImguiWindow& e)
+void ImguiWindowState::_on_open_imgui_window(events::OpenImguiWindow& e)
 {
     _open = true;
 }
 
-void ImguiWindowState::_on_scene_activated(event::SceneActivated& e)
+void ImguiWindowState::_on_scene_activated(events::SceneActivated& e)
 {
     const auto& [scene] = e.data_tuple;
     _scene = scene;
 }
 
-void ImguiWindowState::_on_scene_deactivated(event::SceneDeactivated& e)
+void ImguiWindowState::_on_scene_deactivated(events::SceneDeactivated& e)
 {
     _scene.reset();
 }
 
-void ImguiWindowState::_on_renderer_built(event::RendererBuilt& e)
+void ImguiWindowState::_on_renderer_built(events::RendererBuilt& e)
 {
     const auto& [renderer] = e.data_tuple;
     _renderer = renderer;
 }
 
-void ImguiWindowState::_on_renderer_unbuilt(event::RendererUnbuilt& e)
+void ImguiWindowState::_on_renderer_unbuilt(events::RendererUnbuilt& e)
 {
     _renderer.reset();
 }
 
-void ImguiWindowState::_on_physics_simulator_built(event::PhysicsSimulatorBuilt& e)
+void ImguiWindowState::_on_physics_simulator_built(events::PhysicsSimulatorBuilt& e)
 {
     const auto& [physics_simulator] = e.data_tuple;
     _physics_simulator = physics_simulator;
 }
 
-void ImguiWindowState::_on_physics_simulator_unbuilt(event::PhysicsSimulatorUnbuilt& e)
+void ImguiWindowState::_on_physics_simulator_unbuilt(events::PhysicsSimulatorUnbuilt& e)
 {
     _physics_simulator.reset();
 }

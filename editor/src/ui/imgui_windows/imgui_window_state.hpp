@@ -58,13 +58,13 @@ public:
     virtual void on_update() override;
 
 private:
-    void _on_open_imgui_window(event::OpenImguiWindow& e);
-    void _on_scene_activated(event::SceneActivated& e);
-    void _on_scene_deactivated(event::SceneDeactivated& e);
-    void _on_renderer_built(event::RendererBuilt& e);
-    void _on_renderer_unbuilt(event::RendererUnbuilt& e);
-    void _on_physics_simulator_built(event::PhysicsSimulatorBuilt& e);
-    void _on_physics_simulator_unbuilt(event::PhysicsSimulatorUnbuilt& e);
+    void _on_open_imgui_window(events::OpenImguiWindow& e);
+    void _on_scene_activated(events::SceneActivated& e);
+    void _on_scene_deactivated(events::SceneDeactivated& e);
+    void _on_renderer_built(events::RendererBuilt& e);
+    void _on_renderer_unbuilt(events::RendererUnbuilt& e);
+    void _on_physics_simulator_built(events::PhysicsSimulatorBuilt& e);
+    void _on_physics_simulator_unbuilt(events::PhysicsSimulatorUnbuilt& e);
 
 private:
     std::weak_ptr<Scene> _scene{};

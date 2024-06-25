@@ -35,10 +35,10 @@ private:
     template<cComponent Component>
     void _menu_item_remove_component(int& item_count);
 
-    void _on_open_imgui_window(event::OpenImguiWindow& e);
-    void _on_scene_activated(event::SceneActivated& e);
-    void _on_scene_deactivated(event::SceneDeactivated& e);
-    void _on_rename_entity(event::RenameEntity& e);
+    void _on_open_imgui_window(events::OpenImguiWindow& e);
+    void _on_scene_activated(events::SceneActivated& e);
+    void _on_scene_deactivated(events::SceneDeactivated& e);
+    void _on_rename_entity(events::RenameEntity& e);
 
 private:
     std::weak_ptr<Scene> _scene{};
@@ -62,7 +62,7 @@ inline void ImguiWindowOutliner::_menu_item_add_component(int& item_count)
         if(ImGui::MenuItem(type_str.c_str()))
         {
             EventQueue::instance()
-                .signal<event::AddComponent>(_selected_entity_name, type_str);
+                .signal<events::AddComponent>(_selected_entity_name, type_str);
         }
     }
 }
@@ -80,7 +80,7 @@ inline void ImguiWindowOutliner::_menu_item_remove_component(int& item_count)
         if(exists && ImGui::MenuItem(type_str.c_str()))
         {
             EventQueue::instance()
-                .signal<event::RemoveComponent>(_selected_entity_name, type_str);
+                .signal<events::RemoveComponent>(_selected_entity_name, type_str);
         }
     }
 }

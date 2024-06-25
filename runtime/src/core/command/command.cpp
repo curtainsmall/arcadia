@@ -73,17 +73,17 @@ auto CommandList::redo() -> bool
     return true;
 }
 
-auto CommandList::capacity() const -> std::size_t
+auto CommandList::capacity() const -> size_t
 {
     return _capacity;
 }
 
-void CommandList::capacity(std::size_t capacity)
+void CommandList::capacity(size_t capacity)
 {
     _capacity = capacity;
 }
 
-auto CommandList::size() const -> std::size_t
+auto CommandList::size() const -> size_t
 {
     return _list.size();
 }

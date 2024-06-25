@@ -5,7 +5,7 @@
 
 #include"core/event/event.hpp"
 
-namespace event
+namespace events
 {
     //==== Events for imgui window ====//
     ACDA_EVENT(

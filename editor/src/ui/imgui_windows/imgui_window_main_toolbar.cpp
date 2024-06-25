@@ -11,8 +11,8 @@
 void ImguiWindowMainToolbar::on_event(EventBase& e)
 {
     EventDispatcher{ e }
-        .dispatch<event::SceneActivated>(ACDA_BIND_MEMBER_FN(_on_scene_activated))
-        .dispatch<event::SceneDeactivated>(ACDA_BIND_MEMBER_FN(_on_scene_deactivated))
+        .dispatch<events::SceneActivated>(ACDA_BIND_MEMBER_FN(_on_scene_activated))
+        .dispatch<events::SceneDeactivated>(ACDA_BIND_MEMBER_FN(_on_scene_deactivated))
         .result();
 }
 
@@ -86,7 +86,7 @@ void ImguiWindowMainToolbar::on_update()
             {
                 if(ImGui::Button("PLAY"))
                 {
-                    EventQueue::instance().signal<event::PlayMode>(true);
+                    EventQueue::instance().signal<events::PlayMode>(true);
                 }
             }
         }
@@ -96,14 +96,14 @@ void ImguiWindowMainToolbar::on_update()
     ImGui::PopStyleVar();
 }
 
-void ImguiWindowMainToolbar::_on_scene_activated(event::SceneActivated& e)
+void ImguiWindowMainToolbar::_on_scene_activated(events::SceneActivated& e)
 {
     const auto& [scene] = e.data_tuple;
     _scene = scene;
 }
 
 
-void ImguiWindowMainToolbar::_on_scene_deactivated(event::SceneDeactivated& e)
+void ImguiWindowMainToolbar::_on_scene_deactivated(events::SceneDeactivated& e)
 {
     _scene.reset();
 }

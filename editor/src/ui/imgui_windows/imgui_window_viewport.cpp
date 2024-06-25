@@ -10,20 +10,20 @@
 void ImguiWindowViewport::on_event(EventBase& e)
 {
     EventDispatcher{ e }
-        .dispatch<event::InputCursorMove>(ACDA_BIND_MEMBER_FN(_on_input_cursor_move))
-        .dispatch<event::OpenImguiWindow>(ACDA_BIND_MEMBER_FN(_on_open_imgui_window))
-        .dispatch<event::ProjectBuilt>(ACDA_BIND_MEMBER_FN(_on_project_built))
-        .dispatch<event::ProjectUnbuilt>(ACDA_BIND_MEMBER_FN(_on_project_unbuilt))
-        .dispatch<event::SceneActivated>(ACDA_BIND_MEMBER_FN(_on_scene_activated))
-        .dispatch<event::SceneDeactivated>(ACDA_BIND_MEMBER_FN(_on_scene_deactivated))
-        .dispatch<event::SelectEntity>(ACDA_BIND_MEMBER_FN(_on_select_entity))
-        .dispatch<event::RenameEntity>(ACDA_BIND_MEMBER_FN(_on_rename_entity))
-        .dispatch<event::DeleteEntity>(ACDA_BIND_MEMBER_FN(_on_delete_entity))
-        .dispatch<event::RendererBuilt>(ACDA_BIND_MEMBER_FN(_on_renderer_built))
-        .dispatch<event::RendererUnbuilt>(ACDA_BIND_MEMBER_FN(_on_renderer_unbuilt))
-        .dispatch<event::PhysicsSimulatorBuilt>(ACDA_BIND_MEMBER_FN(_on_physics_simulator_built))
-        .dispatch<event::PhysicsSimulatorUnbuilt>(ACDA_BIND_MEMBER_FN(_on_physics_simulator_unbuilt))
-        .dispatch<event::ShowGizmo>(ACDA_BIND_MEMBER_FN(_on_show_gizmo))
+        .dispatch<events::InputCursorMove>(ACDA_BIND_MEMBER_FN(_on_input_cursor_move))
+        .dispatch<events::OpenImguiWindow>(ACDA_BIND_MEMBER_FN(_on_open_imgui_window))
+        .dispatch<events::ProjectBuilt>(ACDA_BIND_MEMBER_FN(_on_project_built))
+        .dispatch<events::ProjectUnbuilt>(ACDA_BIND_MEMBER_FN(_on_project_unbuilt))
+        .dispatch<events::SceneActivated>(ACDA_BIND_MEMBER_FN(_on_scene_activated))
+        .dispatch<events::SceneDeactivated>(ACDA_BIND_MEMBER_FN(_on_scene_deactivated))
+        .dispatch<events::SelectEntity>(ACDA_BIND_MEMBER_FN(_on_select_entity))
+        .dispatch<events::RenameEntity>(ACDA_BIND_MEMBER_FN(_on_rename_entity))
+        .dispatch<events::DeleteEntity>(ACDA_BIND_MEMBER_FN(_on_delete_entity))
+        .dispatch<events::RendererBuilt>(ACDA_BIND_MEMBER_FN(_on_renderer_built))
+        .dispatch<events::RendererUnbuilt>(ACDA_BIND_MEMBER_FN(_on_renderer_unbuilt))
+        .dispatch<events::PhysicsSimulatorBuilt>(ACDA_BIND_MEMBER_FN(_on_physics_simulator_built))
+        .dispatch<events::PhysicsSimulatorUnbuilt>(ACDA_BIND_MEMBER_FN(_on_physics_simulator_unbuilt))
+        .dispatch<events::ShowGizmo>(ACDA_BIND_MEMBER_FN(_on_show_gizmo))
         .result();
 }
 
@@ -91,12 +91,12 @@ void ImguiWindowViewport::on_update()
 
             if(!_in_viewport_free_cam && ImGui::IsItemHovered() && ImGui::IsMouseDown(ImGuiMouseButton_Right))
             {
-                EventQueue::instance().signal<event::WindowSetInputModeCursor>(WindowInputModeCursor::Disabled);
+                EventQueue::instance().signal<events::WindowSetInputModeCursor>(WindowInputModeCursor::Disabled);
                 _in_viewport_free_cam = true;
             }
             if(_in_viewport_free_cam && !ImGui::IsMouseDown(ImGuiMouseButton_Right))
             {
-                EventQueue::instance().signal<event::WindowSetInputModeCursor>(WindowInputModeCursor::normal);
+                EventQueue::instance().signal<events::WindowSetInputModeCursor>(WindowInputModeCursor::normal);
                 _in_viewport_free_cam = false;
             }
 
@@ -142,7 +142,12 @@ void ImguiWindowViewport::on_update()
 
             // Display viewport viewport_camera_comp info
             ImGui::SetCursorPos(image_cursor_pos);
-            ImGui::Text(std::format("Camera - Pos: {} - Direction: {}", viewport_transform_comp.position, viewport_transform_comp.direction).c_str());
+            ImGui::Text(std::format(
+                "Camera - Pos: {} | Direction: {} {}",
+                viewport_transform_comp.position,
+                viewport_transform_comp.direction,
+                _in_viewport_free_cam ? "(Free Cam) "s : ""s
+            ).c_str());
             ImGui::SameLine(ImGui::GetWindowWidth() - 300.f);
             const auto gizmo_options_cursor_pos = ImGui::GetCursorPos();
             ImGui::Dummy({ 0,0 });
@@ -322,13 +327,13 @@ void ImguiWindowViewport::on_update()
     ImGui::End();
 }
 
-void ImguiWindowViewport::_on_input_cursor_move(event::InputCursorMove& e)
+void ImguiWindowViewport::_on_input_cursor_move(events::InputCursorMove& e)
 {
     const auto& [wnd_ptr, cursor_move] = e.data_tuple;
     _cursor_move = cursor_move;
 }
 
-void ImguiWindowViewport::_on_open_imgui_window(event::OpenImguiWindow& e)
+void ImguiWindowViewport::_on_open_imgui_window(events::OpenImguiWindow& e)
 {
     const auto& [id_str] = e.data_tuple;
     if(id_str == get_id_str())
@@ -337,18 +342,18 @@ void ImguiWindowViewport::_on_open_imgui_window(event::OpenImguiWindow& e)
     }
 }
 
-void ImguiWindowViewport::_on_project_built(event::ProjectBuilt& e)
+void ImguiWindowViewport::_on_project_built(events::ProjectBuilt& e)
 {
     const auto& [project] = e.data_tuple;
     _project = project;
 }
 
-void ImguiWindowViewport::_on_project_unbuilt(event::ProjectUnbuilt& e)
+void ImguiWindowViewport::_on_project_unbuilt(events::ProjectUnbuilt& e)
 {
     _project.reset();
 }
 
-void ImguiWindowViewport::_on_scene_activated(event::SceneActivated& e)
+void ImguiWindowViewport::_on_scene_activated(events::SceneActivated& e)
 {
     const auto& [scene] = e.data_tuple;
     if(!scene->contains(viewport_camera_entity_name))
@@ -363,18 +368,18 @@ void ImguiWindowViewport::_on_scene_activated(event::SceneActivated& e)
     _scene = scene;
 }
 
-void ImguiWindowViewport::_on_scene_deactivated(event::SceneDeactivated& e)
+void ImguiWindowViewport::_on_scene_deactivated(events::SceneDeactivated& e)
 {
     _scene.reset();
 }
 
-void ImguiWindowViewport::_on_select_entity(event::SelectEntity& e)
+void ImguiWindowViewport::_on_select_entity(events::SelectEntity& e)
 {
     const auto& [entity_name] = e.data_tuple;
     _selected_entity_name = entity_name;
 }
 
-void ImguiWindowViewport::_on_rename_entity(event::RenameEntity& e)
+void ImguiWindowViewport::_on_rename_entity(events::RenameEntity& e)
 {
     const auto& [old_name, new_name] = e.data_tuple;
     if(old_name == _selected_entity_name)
@@ -383,7 +388,7 @@ void ImguiWindowViewport::_on_rename_entity(event::RenameEntity& e)
     }
 }
 
-void ImguiWindowViewport::_on_delete_entity(event::DeleteEntity& e)
+void ImguiWindowViewport::_on_delete_entity(events::DeleteEntity& e)
 {
     const auto& [entity] = e.data_tuple;
     if(_selected_entity_name == entity)
@@ -392,29 +397,29 @@ void ImguiWindowViewport::_on_delete_entity(event::DeleteEntity& e)
     }
 }
 
-void ImguiWindowViewport::_on_renderer_built(event::RendererBuilt& e)
+void ImguiWindowViewport::_on_renderer_built(events::RendererBuilt& e)
 {
     const auto& [renderer] = e.data_tuple;
     _renderer = renderer;
 }
 
-void ImguiWindowViewport::_on_renderer_unbuilt(event::RendererUnbuilt& e)
+void ImguiWindowViewport::_on_renderer_unbuilt(events::RendererUnbuilt& e)
 {
     _renderer.reset();
 }
 
-void ImguiWindowViewport::_on_physics_simulator_built(event::PhysicsSimulatorBuilt& e)
+void ImguiWindowViewport::_on_physics_simulator_built(events::PhysicsSimulatorBuilt& e)
 {
     const auto& [physics_simulator] = e.data_tuple;
     _physics_simulator = physics_simulator;
 }
 
-void ImguiWindowViewport::_on_physics_simulator_unbuilt(event::PhysicsSimulatorUnbuilt& e)
+void ImguiWindowViewport::_on_physics_simulator_unbuilt(events::PhysicsSimulatorUnbuilt& e)
 {
     _physics_simulator.reset();
 }
 
-void ImguiWindowViewport::_on_show_gizmo(event::ShowGizmo& e)
+void ImguiWindowViewport::_on_show_gizmo(events::ShowGizmo& e)
 {
     const auto& [show_gizmo] = e.data_tuple;
     _show_gizmo = show_gizmo;

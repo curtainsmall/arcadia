@@ -4,7 +4,7 @@
 
 #include"core/base.hpp"
 
-template<std::size_t N>
+template<size_t N>
 struct StringLiteral
 {
 public:
