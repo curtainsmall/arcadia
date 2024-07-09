@@ -7,7 +7,7 @@
 
 #include"core/app/app_config.hpp"
 
-ACDA_API void ImguiBackend::initialize(const WindowLayer& window)
+ACDA_API void imgui_backend::initialize(const WindowLayer& window)
 {
     const auto& app_config = AppConfig::instance();
 
@@ -40,7 +40,7 @@ ACDA_API void ImguiBackend::initialize(const WindowLayer& window)
     );
 }
 
-ACDA_API void ImguiBackend::new_frame(const WindowLayer& window)
+ACDA_API void imgui_backend::new_frame(const WindowLayer& window)
 {
     const auto& app_config = AppConfig::instance();
 
@@ -57,7 +57,7 @@ ACDA_API void ImguiBackend::new_frame(const WindowLayer& window)
     );
 }
 
-ACDA_API void ImguiBackend::render_draw_data(const WindowLayer& window)
+ACDA_API void imgui_backend::render_draw_data(const WindowLayer& window)
 {
     const auto& app_config = AppConfig::instance();
 
@@ -73,7 +73,7 @@ ACDA_API void ImguiBackend::render_draw_data(const WindowLayer& window)
     );
 }
 
-ACDA_API void ImguiBackend::shutdown(const WindowLayer& window)
+ACDA_API void imgui_backend::shutdown(const WindowLayer& window)
 {
     const auto& app_config = AppConfig::instance();
 
@@ -90,17 +90,17 @@ ACDA_API void ImguiBackend::shutdown(const WindowLayer& window)
     );
 }
 
-ACDA_API void ImguiBackend::imgui_on_event(EventBase& e)
+ACDA_API void imgui_backend::imgui_on_event(EventBase& e)
 {
     if(EventDispatcher{ e }
-       .dispatch<events::WindowFocus>(ImguiBackend::imgui_on_window_focus)
-       .dispatch<events::InputCursorEnter>(ImguiBackend::imgui_on_cursor_enter)
-       .dispatch<events::InputCursorPos>(ImguiBackend::imgui_on_cursor_pos)
-       .dispatch<events::InputMouseButton>(ImguiBackend::imgui_on_mouse_button)
-       .dispatch<events::InputScroll>(ImguiBackend::imgui_on_scroll)
-       .dispatch<events::InputKey>(ImguiBackend::imgui_on_key)
-       .dispatch<events::InputChar>(ImguiBackend::imgui_on_char)
-       //.dispatch<event::MonitorConnection>(ImguiBackend::ImguiOnMonitor); // We will manage monitors ourselves for now
+       .dispatch<events::WindowFocus>(imgui_backend::imgui_on_window_focus)
+       .dispatch<events::InputCursorEnter>(imgui_backend::imgui_on_cursor_enter)
+       .dispatch<events::InputCursorPos>(imgui_backend::imgui_on_cursor_pos)
+       .dispatch<events::InputMouseButton>(imgui_backend::imgui_on_mouse_button)
+       .dispatch<events::InputScroll>(imgui_backend::imgui_on_scroll)
+       .dispatch<events::InputKey>(imgui_backend::imgui_on_key)
+       .dispatch<events::InputChar>(imgui_backend::imgui_on_char)
+       //.dispatch<events::MonitorConnection>(imgui_backend::imgui_on_monitor) // We will manage monitors ourselves for now
        .result())
     {
         auto& io = ImGui::GetIO();
@@ -115,49 +115,49 @@ ACDA_API void ImguiBackend::imgui_on_event(EventBase& e)
     }
 }
 
-ACDA_API void ImguiBackend::imgui_on_window_focus(events::WindowFocus& WindowFocus)
+ACDA_API void imgui_backend::imgui_on_window_focus(events::WindowFocus& WindowFocus)
 {
     const auto& [wnd_ptr, focused] = WindowFocus.data_tuple;
     ImGui_ImplGlfw_WindowFocusCallback(wnd_ptr->glfw_window(), focused);
 }
 
-ACDA_API void ImguiBackend::imgui_on_cursor_enter(events::InputCursorEnter& input_cursor_enter)
+ACDA_API void imgui_backend::imgui_on_cursor_enter(events::InputCursorEnter& input_cursor_enter)
 {
     const auto& [wnd_ptr, entered] = input_cursor_enter.data_tuple;
     ImGui_ImplGlfw_CursorEnterCallback(wnd_ptr->glfw_window(), entered);
 }
 
-ACDA_API void ImguiBackend::imgui_on_cursor_pos(events::InputCursorPos& input_cursor_pos)
+ACDA_API void imgui_backend::imgui_on_cursor_pos(events::InputCursorPos& input_cursor_pos)
 {
     const auto& [wnd_ptr, pos] = input_cursor_pos.data_tuple;
     ImGui_ImplGlfw_CursorPosCallback(wnd_ptr->glfw_window(), pos.x, pos.y);
 }
 
-ACDA_API void ImguiBackend::imgui_on_mouse_button(events::InputMouseButton& input_mouse_button)
+ACDA_API void imgui_backend::imgui_on_mouse_button(events::InputMouseButton& input_mouse_button)
 {
     const auto& [wnd_ptr, button, action, mods] = input_mouse_button.data_tuple;
     ImGui_ImplGlfw_MouseButtonCallback(wnd_ptr->glfw_window(), button, action, mods);
 }
 
-ACDA_API void ImguiBackend::imgui_on_scroll(events::InputScroll& input_scroll)
+ACDA_API void imgui_backend::imgui_on_scroll(events::InputScroll& input_scroll)
 {
     const auto& [wnd_ptr, Offset] = input_scroll.data_tuple;
     ImGui_ImplGlfw_ScrollCallback(wnd_ptr->glfw_window(), Offset.x, Offset.y);
 }
 
-ACDA_API void ImguiBackend::imgui_on_key(events::InputKey& input_key)
+ACDA_API void imgui_backend::imgui_on_key(events::InputKey& input_key)
 {
     const auto& [wnd_ptr, key, scancode, action, mods] = input_key.data_tuple;
     ImGui_ImplGlfw_KeyCallback(wnd_ptr->glfw_window(), key, scancode, action, mods);
 }
 
-ACDA_API void ImguiBackend::imgui_on_char(events::InputChar& input_char)
+ACDA_API void imgui_backend::imgui_on_char(events::InputChar& input_char)
 {
     const auto& [wnd_ptr, code] = input_char.data_tuple;
     ImGui_ImplGlfw_CharCallback(wnd_ptr->glfw_window(), code);
 }
 
-ACDA_API void ImguiBackend::imgui_on_monitor(events::MonitorConnection& monitor_connection)
+ACDA_API void imgui_backend::imgui_on_monitor(events::MonitorConnection& monitor_connection)
 {
     const auto& [glfw_monitor_ptr, connection] = monitor_connection.data_tuple;
     ImGui_ImplGlfw_MonitorCallback(glfw_monitor_ptr, connection);

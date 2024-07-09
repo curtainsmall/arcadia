@@ -30,7 +30,7 @@ ImguiLayer::ImguiLayer(
     imgui_font_config.MergeMode = true;
     static const std::array<ImWchar, 3> imgui_icon_ranges{ ICON_MIN_FA, ICON_MAX_FA,0 };
     io.Fonts->AddFontFromFileTTF(font_filepath_str.c_str(), font_size, &imgui_font_config, imgui_icon_ranges.data());
-    ImguiBackend::initialize(*_window.lock());
+    imgui_backend::initialize(*_window.lock());
 
     imgui_style_setter();
     imgui_window_installer(*this);
@@ -40,7 +40,7 @@ ImguiLayer::~ImguiLayer()
 {
     if(_imgui_context)
     {
-        ImguiBackend::shutdown(*_window.lock());
+        imgui_backend::shutdown(*_window.lock());
         ImGui::DestroyContext(_imgui_context);
     }
 }
@@ -53,7 +53,7 @@ void ImguiLayer::on_event(EventBase& e)
         return;
     }
 
-    ImguiBackend::imgui_on_event(e);
+    imgui_backend::imgui_on_event(e);
     for(auto& imgui_window : _imgui_window)
     {
         imgui_window->on_event(e);
@@ -66,7 +66,7 @@ void ImguiLayer::on_update()
 
     ImGui::SetCurrentContext(_imgui_context);
 
-    ImguiBackend::new_frame(*window);
+    imgui_backend::new_frame(*window);
     ImGui::NewFrame();
     ImGuizmo::BeginFrame();
 
@@ -92,7 +92,7 @@ void ImguiLayer::on_update()
     }
 
     ImGui::Render();
-    ImguiBackend::render_draw_data(*window);
+    imgui_backend::render_draw_data(*window);
 
     if(ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
     {

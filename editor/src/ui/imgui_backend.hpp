@@ -7,7 +7,7 @@
 #include"function/window/window_events.hpp"
 #include"function/window/window_layer.hpp"
 
-namespace ImguiBackend
+namespace imgui_backend
 {
     ACDA_API void initialize(const WindowLayer& window);
     ACDA_API void new_frame(const WindowLayer& window);
