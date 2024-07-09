@@ -6,23 +6,20 @@
 #include"core/nlohmann_json_header.hpp"
 #include"resource/components/component_interface.hpp"
 
-namespace transform_component_flags
+enum struct TransformComponentFlags: uint8_t
 {
-    using value_type = std::uint8_t;
-    enum: value_type
-    {
-        None = 0,
-        UseRotation = 0x01,
-        UseDirection = 0x02,
-    };
-}
+    None = 0,
+    UseRotation = 0x01,
+    UseDirection = 0x02,
+    _EnumBitmap
+};
 
 struct TransformComponentMementoData: MementoDataBase
 {
 public:
     auto operator==(const TransformComponentMementoData&) const -> bool = default;
 public:
-    transform_component_flags::value_type Flags{ transform_component_flags::None };
+    TransformComponentFlags flags{ TransformComponentFlags::None };
 
     glm::vec3 position{ vec3::zero() };
     glm::quat rotation{ quat::identity() };
@@ -57,7 +54,7 @@ protected:
     virtual void on_restore(const std::shared_ptr<MementoDataBase>& memento_data) override;
 
 public:
-    transform_component_flags::value_type Flags{ transform_component_flags::None };
+    TransformComponentFlags flags{ TransformComponentFlags::None };
 
     glm::vec3 position{ vec3::zero() };
     glm::quat rotation{ quat::identity() };

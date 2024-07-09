@@ -36,15 +36,11 @@ void ImguiWindowStateRenderer::operator()(const iRenderer& renderer)
 
     ImGui::Text(std::format("Graphic API: {}", graphic_api_type_str).c_str());
 
-    if(ImGui::TreeNodeEx("Config", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_FramePadding))
+    ImGui::Text("Renderer Type"); ImGui::SameLine();
+    if(ImGui::BeginCombo("##renderer_type", graphic_api_type_str.c_str()))
     {
-        ImGui::Text("Renderer Type"); ImGui::SameLine();
-        if(ImGui::BeginCombo("##renderer_type", graphic_api_type_str.c_str()))
-        {
-            ImGui::Selectable(graphic_api_type_str.c_str());
-            ImGui::EndCombo();
-        }
-        ImGui::TreePop();
+        ImGui::Selectable(graphic_api_type_str.c_str());
+        ImGui::EndCombo();
     }
 }
 
@@ -53,23 +49,19 @@ void ImguiWindowStatePhysicsSimulator::operator()(PhysicsSimulator& physics_simu
     const auto& physics_simulator_jph_body_id_storage = physics_simulator.jph_body_id_storage();
     ImGui::Text(std::format("Body Count: {}", physics_simulator_jph_body_id_storage.size()).c_str());
 
-    if(ImGui::TreeNodeEx("Config", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_FramePadding))
-    {
-        auto slider_flags =
-            ImGuiSliderFlags_AlwaysClamp;
-        ImGui::BeginDisabled();
-        int temp_allocator_size_in_kib = physics_simulator.get_jph_temp_allocator_size() / 1024;
-        ImGui::DragInt("Temporary Allocator Size (KiB)", &temp_allocator_size_in_kib, 1.0f, 64 /*64 KiB*/, 16 * 1024 * 1024 /*16 GiB*/, "%d", slider_flags);
-        physics_simulator.set_jph_temp_allocator_size(temp_allocator_size_in_kib * 1024);
-        ImGui::EndDisabled();
+    auto slider_flags =
+        ImGuiSliderFlags_AlwaysClamp;
+    ImGui::BeginDisabled();
+    int temp_allocator_size_in_kib = physics_simulator.get_jph_temp_allocator_size() / 1024;
+    ImGui::DragInt("Temporary Allocator Size (KiB)", &temp_allocator_size_in_kib, 1.0f, 64 /*64 KiB*/, 16 * 1024 * 1024 /*16 GiB*/, "%d", slider_flags);
+    physics_simulator.set_jph_temp_allocator_size(temp_allocator_size_in_kib * 1024);
+    ImGui::EndDisabled();
 
-        auto update_per_second = physics_simulator.get_jph_physics_system_updates_per_second();
-        ImGui::DragInt("Update per Second", &update_per_second, 1.0f, 0, INT_MAX, "%d", slider_flags);
-        physics_simulator.set_jph_physics_system_updates_per_second(update_per_second);
-        ImGui::TreePop();
+    auto update_per_second = physics_simulator.get_jph_physics_system_updates_per_second();
+    ImGui::DragInt("Update per Second", &update_per_second, 1.0f, 0, INT_MAX, "%d", slider_flags);
+    physics_simulator.set_jph_physics_system_updates_per_second(update_per_second);
 
-        ImGui::NewLine();
-    }
+    ImGui::NewLine();
 
     if(physics_simulator.is_active())
     {
@@ -127,50 +119,46 @@ void ImguiWindowState::on_update()
     {
         auto tabbar_flags =
             ImGuiTabBarFlags_NoCloseWithMiddleMouseButton;
-        if(ImGui::BeginTabBar("##tab_bar", tabbar_flags))
+        ImGui::PushItemWidth(200.f);
+
+        if(ImGui::TreeNodeEx("Scene", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_FramePadding))
         {
-            ImGui::PushItemWidth(200.f);
-
-            if(ImGui::BeginTabItem("Scene"))
+            if(scene)
             {
-                if(scene)
-                {
-                    _imgui_window_state_scene(*scene);
-                }
-                else
-                {
-                    ImGui::Text("(No scene)");
-                }
-                ImGui::EndTabItem();
+                _imgui_window_state_scene(*scene);
             }
-            if(ImGui::BeginTabItem("Renderer"))
+            else
             {
-                if(renderer)
-                {
-                    _imgui_window_state_renderer(*renderer);
-                }
-                else
-                {
-                    ImGui::Text("(No renderer)");
-                }
-                ImGui::EndTabItem();
+                ImGui::Text("(No scene)");
             }
-            if(ImGui::BeginTabItem("Physics Simulator"))
-            {
-                if(physics_simualtor)
-                {
-                    _imgui_window_state_physics_simulator(*physics_simualtor);
-                }
-                else
-                {
-                    ImGui::Text("(No physics simulator)");
-                }
-                ImGui::EndTabItem();
-            }
-
-            ImGui::PopItemWidth();
-            ImGui::EndTabBar();
+            ImGui::TreePop();
         }
+        if(ImGui::TreeNodeEx("Renderer", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_FramePadding))
+        {
+            if(renderer)
+            {
+                _imgui_window_state_renderer(*renderer);
+            }
+            else
+            {
+                ImGui::Text("(No renderer)");
+            }
+            ImGui::TreePop();
+        }
+        if(ImGui::TreeNodeEx("Physics Simulator", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_FramePadding))
+        {
+            if(physics_simualtor)
+            {
+                _imgui_window_state_physics_simulator(*physics_simualtor);
+            }
+            else
+            {
+                ImGui::Text("(No physics simulator)");
+            }
+            ImGui::TreePop();
+        }
+
+        ImGui::PopItemWidth();
     }
     ImGui::End();
 }

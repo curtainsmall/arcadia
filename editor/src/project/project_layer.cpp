@@ -427,7 +427,7 @@ void ProjectLayer::_OnNewEntity(events::NewEntity& e)
 
         auto& transform_comp =  scene.emplace<TransformComponent>(name);
         transform_comp.snapshot();
-        transform_comp.Flags |= transform_component_flags::UseRotation;
+        transform_comp.flags |= TransformComponentFlags::UseRotation;
     },
         "camera"s,
         [&]()
@@ -436,7 +436,7 @@ void ProjectLayer::_OnNewEntity(events::NewEntity& e)
 
         auto& transform_comp = scene.emplace<TransformComponent>(name);
         transform_comp.snapshot();
-        transform_comp.Flags |= transform_component_flags::UseDirection;
+        transform_comp.flags |= TransformComponentFlags::UseDirection;
     },
         "light"s,
         [&]()
@@ -445,7 +445,7 @@ void ProjectLayer::_OnNewEntity(events::NewEntity& e)
 
         auto& transform_comp = scene.emplace<TransformComponent>(name);
         transform_comp.snapshot();
-        transform_comp.Flags |= transform_component_flags::UseDirection;
+        transform_comp.flags |= TransformComponentFlags::UseDirection;
     }
     );
 }

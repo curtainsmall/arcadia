@@ -4,7 +4,7 @@
 #include"core/math.hpp"
 
 TransformComponent::TransformComponent(const nlohmann::json& json):
-    Flags(json.at("flags")),
+    flags(json.at("flags")),
     position(vec3::from_json(json.at("position"))),
     rotation(quat::from_json(json.at("rotation"))),
     direction(vec3::from_json(json.at("direction"))),
@@ -15,7 +15,7 @@ TransformComponent::TransformComponent(const nlohmann::json& json):
 auto TransformComponent::to_json() const -> nlohmann::json
 {
     nlohmann::json json{
-        {"flags", Flags},
+        {"flags", flags},
         {"position",vec3::to_json(position)},
         {"rotation",quat::to_json(rotation)},
         {"direction",vec3::to_json(direction)},
@@ -52,7 +52,7 @@ auto TransformComponent::on_snapshot() const -> std::shared_ptr<MementoDataBase>
 {
     auto memento_data = std::make_shared<TransformComponentMementoData>();
 
-    memento_data->Flags = Flags;
+    memento_data->flags     = flags;
     memento_data->position  = position;
     memento_data->rotation  = rotation;
     memento_data->direction = direction;
@@ -66,7 +66,7 @@ void TransformComponent::on_restore(const std::shared_ptr<MementoDataBase>& meme
 {
     auto& memento_data_ = memento_data->as<TransformComponentMementoData>();
 
-    Flags = memento_data_.Flags;
+    flags = memento_data_.flags;
     position  = memento_data_.position;
     rotation  = memento_data_.rotation;
     direction = memento_data_.direction;

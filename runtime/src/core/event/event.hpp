@@ -117,15 +117,15 @@ public:
 
     /// @brief Signal @a Event
     /// @param ...args Argument to construct @a Event
-    template<cEvent event, class ...Args>
+    template<cEvent Event, class ...Args>
     auto signal(Args&& ...args) -> self_type&
     {
-        _current_queue->emplace(std::make_unique<event>(std::forward<Args>(args)...));
+        _current_queue->emplace(std::make_unique<Event>(std::forward<Args>(args)...));
 
     #ifdef ACDA_DEBUG_MODE
-        if(!debug_excluded_event_types.contains(typeid(event)))
+        if(!debug_excluded_event_types.contains(typeid(Event)))
         {
-            LOG_DEBUG(std::format("Event signaled: {}", typeid(event).name()));
+            LOG_DEBUG(std::format("Event signaled: {}", typeid(Event).name()));
         }
     #endif
         return *this;

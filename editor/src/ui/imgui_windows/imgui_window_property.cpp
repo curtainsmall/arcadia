@@ -849,24 +849,24 @@ auto ImguiWindowPropertyTransformComponent::operator()(TransformComponent& trans
     }
     position_delta = transform_comp.position - position_delta; // current - previous
 
-    if(transform_comp.Flags & transform_component_flags::UseRotation)
+    if(to_bool(transform_comp.flags & TransformComponentFlags::UseRotation))
     {
         float rotation_drag_speed{ .05f };
         glm::quat temp = transform_comp.rotation;
-        ImGui::DragFloat3("Direction", glm::value_ptr(temp), rotation_drag_speed, min, max, format, flags);
+        ImGui::DragFloat3("Rotation", glm::value_ptr(temp), rotation_drag_speed, min, max, format, flags);
         transform_comp.rotation = quat::fixed_normalized(transform_comp.rotation, temp);
-        if(ImGui::IsItemDeactivated())
+        if(ImGui::IsItemDeactivatedAfterEdit())
         {
             description = "Rotation";
         }
     }
-    if(transform_comp.Flags & transform_component_flags::UseDirection)
+    if(to_bool(transform_comp.flags & TransformComponentFlags::UseDirection))
     {
         float direction_drag_speed{ .05f };
         glm::vec3 temp = transform_comp.direction;
         ImGui::DragFloat3("Direction", glm::value_ptr(temp), direction_drag_speed, min, max, format, flags);
         transform_comp.direction = vec3::fixed_normalized(transform_comp.direction, temp);
-        if(ImGui::IsItemDeactivated())
+        if(ImGui::IsItemDeactivatedAfterEdit())
         {
             description = "Direction";
         }

@@ -2072,7 +2072,15 @@ struct ImVector
     }
     inline T* insert(const T* it, const T& v)
     {
-        IM_ASSERT(it >= Data && it <= Data + Size); const ptrdiff_t off = it - Data; if(Size == Capacity) reserve(_grow_capacity(Size + 1)); if(off < (int) Size) memmove(Data + off + 1, Data + off, ((size_t) Size - (size_t) off) * sizeof(T)); memcpy(&Data[off], &v, sizeof(v)); Size++; return Data + off;
+        IM_ASSERT(it >= Data && it <= Data + Size);
+        const ptrdiff_t off = it - Data;
+        if(Size == Capacity)
+            reserve(_grow_capacity(Size + 1));
+        if(off < (int) Size)
+            memmove(Data + off + 1, Data + off, ((size_t) Size - (size_t) off) * sizeof(T));
+        memcpy(&Data[off], &v, sizeof(v));
+        Size++;
+        return Data + off;
     }
     inline bool         contains(const T& v) const
     {

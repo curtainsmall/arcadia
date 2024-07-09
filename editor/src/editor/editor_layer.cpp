@@ -152,11 +152,10 @@ void EditorAppLayer::_on_input_key(events::InputKey& e)
 {
     const auto& [wnd, key, scancode, action, mods] = e.data_tuple;
 
-    if(key == input_key::Escape && mods & input_modifier::Shift)
+    if(key == InputKey::Escape && to_bool(mods & InputModifier::Shift))
     {
         EditorContext::instance().in_play_mode = false;
     }
-
 }
 
 auto create_application() -> std::unique_ptr<iAppLayer>

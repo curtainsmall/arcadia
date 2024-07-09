@@ -127,8 +127,9 @@ void PhysicsSimulator::update()
     JPH::TempAllocatorImpl temp_allocator{ _jph_temp_allocator_size };
     JPH::JobSystemThreadPool job_system_thread_pool{ JPH::cMaxPhysicsJobs,JPH::cMaxPhysicsBarriers,static_cast<int>(std::thread::hardware_concurrency() - 1) };
 
-
-    _jph_physics_system->Update(1.f / _jph_physics_system_updates_per_second, 60 / _jph_physics_system_updates_per_second, &temp_allocator, &job_system_thread_pool);
+    int collusion_step = 60 / _jph_physics_system_updates_per_second;
+    collusion_step = collusion_step > 0 ? collusion_step : 1;
+    _jph_physics_system->Update(1.f / _jph_physics_system_updates_per_second, collusion_step, &temp_allocator, &job_system_thread_pool);
 }
 
 void PhysicsSimulator::query(Scene& scene, const std::string& name)
