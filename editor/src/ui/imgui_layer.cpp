@@ -53,7 +53,7 @@ void ImguiLayer::on_event(EventBase& e)
         return;
     }
 
-    imgui_backend::imgui_on_event(e);
+    imgui_backend::on_event(e);
     for(auto& imgui_window : _imgui_window)
     {
         imgui_window->on_event(e);

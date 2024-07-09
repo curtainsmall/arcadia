@@ -136,7 +136,7 @@ void ModelComponent::_load()
         || !ai_scene->mRootNode
         )
     {
-        LOG_ERROR(importer.GetErrorString());
+        ACDA_LOG_ERROR(importer.GetErrorString());
         return;
     }
 

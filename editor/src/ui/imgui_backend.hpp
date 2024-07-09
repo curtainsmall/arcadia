@@ -15,13 +15,13 @@ namespace imgui_backend
     ACDA_API void shutdown(const WindowLayer& window);
 
     // Event handlers
-    ACDA_API void imgui_on_event(EventBase& e);
-    ACDA_API void imgui_on_window_focus(events::WindowFocus& WindowFocus);
-    ACDA_API void imgui_on_cursor_enter(events::InputCursorEnter& input_cursor_enter);
-    ACDA_API void imgui_on_cursor_pos(events::InputCursorPos& input_cursor_pos);
-    ACDA_API void imgui_on_mouse_button(events::InputMouseButton& input_mouse_button);
-    ACDA_API void imgui_on_scroll(events::InputScroll& input_scroll);
-    ACDA_API void imgui_on_key(events::InputKey& input_key);
-    ACDA_API void imgui_on_char(events::InputChar& input_char);
-    ACDA_API void imgui_on_monitor(events::MonitorConnection& monitor_connection);
+    ACDA_API void on_event(EventBase& e);
+    ACDA_API void on_window_focus(events::WindowFocus& WindowFocus);
+    ACDA_API void on_cursor_enter(events::InputCursorEnter& input_cursor_enter);
+    ACDA_API void on_cursor_pos(events::InputCursorPos& input_cursor_pos);
+    ACDA_API void on_mouse_button(events::InputMouseButton& input_mouse_button);
+    ACDA_API void on_scroll(events::InputScroll& input_scroll);
+    ACDA_API void on_key(events::InputKey& input_key);
+    ACDA_API void on_char(events::InputChar& input_char);
+    ACDA_API void on_monitor(events::MonitorConnection& monitor_connection);
 }

@@ -17,44 +17,32 @@ public:
 
     static auto instance() -> self_type&;
 
-    void debug(
-        const std::string& msg
-    )
+    void debug(const std::string& msg)
     {
         _Logger->debug(msg);
     }
 
-    void info(
-        const std::string& msg
-    )
+    void info(const std::string& msg)
     {
         _Logger->info(msg);
     }
 
-    void warning(
-        const std::string& msg
-    )
+    void warning(const std::string& msg)
     {
         _Logger->warn(msg);
     }
 
-    void error(
-        const std::string& msg
-    )
+    void error(const std::string& msg)
     {
         _Logger->error(msg);
     }
 
-    void fatal(
-        const std::string& msg
-    )
+    void fatal(const std::string& msg)
     {
         _Logger->critical(msg);
     }
 
-    void demarcate(
-        const std::string& msg
-    )
+    void demarcate(const std::string& msg)
     {
         debug(std::format("//==== {} ====//", msg));
     }
@@ -69,19 +57,19 @@ private:
 };
 
 #ifdef ACDA_DEBUG_MODE
-#   define LOG_DEBUG(msg)     Logger::instance().debug(msg)
-#   define LOG_INFO(msg)      Logger::instance().info(msg)
-#   define LOG_WARNING(msg)   Logger::instance().warning(msg)
-#   define LOG_ERROR(msg)     Logger::instance().error(msg)
-#   define LOG_FATAL(msg)     Logger::instance().fatal(msg)
-#   define LOG_DEMARCATE(msg) LOG_DEBUG(std::format("//==== {} ====//", msg))
-#   define LOG_FLUSH()        Logger::instance().flush()
+#   define ACDA_LOG_DEBUG(msg)     Logger::instance().debug(msg)
+#   define ACDA_LOG_INFO(msg)      Logger::instance().info(msg)
+#   define ACDA_LOG_WARNING(msg)   Logger::instance().warning(msg)
+#   define ACDA_LOG_ERROR(msg)     Logger::instance().error(msg)
+#   define ACDA_LOG_FATAL(msg)     Logger::instance().fatal(msg)
+#   define ACDA_LOG_DEMARCATE(msg) ACDA_LOG_DEBUG(std::format("//==== {} ====//", msg))
+#   define ACDA_LOG_FLUSH()        Logger::instance().flush()
 #else
-#   define LOG_DEBUG(msg)     
-#   define LOG_INFO(msg)      
-#   define LOG_WARNING(msg)   
-#   define LOG_ERROR(msg)     
-#   define LOG_FATAL(msg)     
-#   define LOG_DEMARCATE(msg) 
-#   define LOG_FLUSH()        
+#   define ACDA_LOG_DEBUG(msg)     
+#   define ACDA_LOG_INFO(msg)      
+#   define ACDA_LOG_WARNING(msg)   
+#   define ACDA_LOG_ERROR(msg)     
+#   define ACDA_LOG_FATAL(msg)     
+#   define ACDA_LOG_DEMARCATE(msg) 
+#   define ACDA_LOG_FLUSH()        
 #endif

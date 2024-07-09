@@ -214,7 +214,7 @@ auto GlPipeline::_get_uniform_location(const std::string& name) -> GLuint
         ACDA_GL_CALL(auto location = glGetUniformLocation(_gl_id, name.c_str()));
         if(location == -1)
         {
-            LOG_ERROR(std::format("Failed to get OpenGL uniform location of {}, because it does not exist", name));
+            ACDA_LOG_ERROR(std::format("Failed to get OpenGL uniform location of {}, because it does not exist", name));
         }
         _gl_uniform_location_cache.insert_or_assign(name, location);
         return location;

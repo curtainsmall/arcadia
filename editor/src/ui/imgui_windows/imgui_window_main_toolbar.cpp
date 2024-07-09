@@ -48,7 +48,6 @@ void ImguiWindowMainToolbar::on_update()
                 auto end = memento_list.end();
                 for(; iter != end; ++iter)
                 {
-
                     if(memento_list.is_current(iter))
                     {
                         ImGui::MenuItem(std::format("{} {}", ICON_FA_CHECK, iter->description()).c_str());

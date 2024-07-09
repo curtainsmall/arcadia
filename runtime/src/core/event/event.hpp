@@ -125,7 +125,7 @@ public:
     #ifdef ACDA_DEBUG_MODE
         if(!debug_excluded_event_types.contains(typeid(Event)))
         {
-            LOG_DEBUG(std::format("Event signaled: {}", typeid(Event).name()));
+            ACDA_LOG_DEBUG(std::format("Event signaled: {}", typeid(Event).name()));
         }
     #endif
         return *this;
