@@ -44,7 +44,9 @@ void ImguiWindowMainToolbar::on_update()
         {
             if(memento_list.size())
             {
-                for(auto iter = memento_list.begin(); iter != memento_list.end(); ++iter)
+                auto iter = memento_list.begin();
+                auto end = memento_list.end();
+                for(; iter != end; ++iter)
                 {
 
                     if(memento_list.is_current(iter))

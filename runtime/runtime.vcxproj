@@ -207,7 +207,7 @@
     <ClInclude Include="src\core\app\app_layer.hpp" />
     <ClInclude Include="src\core\base.hpp" />
     <ClInclude Include="src\core\command\command.hpp" />
-    <ClInclude Include="src\core\entry_point.hpp" />
+    <ClInclude Include="src\core\main.hpp" />
     <ClInclude Include="src\core\event\event.hpp" />
     <ClInclude Include="src\core\exception.hpp" />
     <ClInclude Include="src\core\file\file.hpp" />
