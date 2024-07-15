@@ -16,7 +16,7 @@ Logger::Logger()
 
     spdlog::init_thread_pool(8192, 1);
 
-    _Logger = std::make_shared<spdlog::async_logger>(
+    _logger = std::make_shared<spdlog::async_logger>(
         "main",
         sink_list.begin(),
         sink_list.end(),
@@ -24,14 +24,14 @@ Logger::Logger()
         spdlog::async_overflow_policy::block
     );
 
-    _Logger->set_level(spdlog::level::trace);
-    _Logger->flush_on(spdlog::level::debug);
-    spdlog::register_logger(_Logger);
+    _logger->set_level(spdlog::level::trace);
+    _logger->flush_on(spdlog::level::debug);
+    spdlog::register_logger(_logger);
 }
 
 Logger::~Logger()
 {
-    _Logger->flush();
+    _logger->flush();
     spdlog::drop_all();
     spdlog::shutdown();
 }

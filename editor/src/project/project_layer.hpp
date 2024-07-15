@@ -49,7 +49,7 @@ private:
     void _on_close_scene(events::CloseScene& e);
     void _on_delete_scene(events::DeleteScene& e);
 
-    void _OnNewEntity(events::NewEntity& e);
+    void _on_new_entity(events::NewEntity& e);
     void _on_rename_entity(events::RenameEntity& e);
     void _on_delete_entity(events::DeleteEntity& e);
 

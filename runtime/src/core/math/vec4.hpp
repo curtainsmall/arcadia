@@ -39,7 +39,7 @@ namespace vec4
     /// @return Normalized vector
     template<size_t Index>
     [[nodiscard]]
-    ACDA_API auto fixed_normalized(const glm::vec4& vec) -> glm::vec4
+    ACDA_API auto normalize_fixedly(const glm::vec4& vec) -> glm::vec4
     {
         static_assert(Index >= 0 && Index < vec.length());
 

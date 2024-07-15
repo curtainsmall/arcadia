@@ -24,7 +24,7 @@ void ImguiWindowViewport::on_event(EventBase& e)
         .dispatch<events::PhysicsSimulatorBuilt>(ACDA_BIND_MEMBER_FN(_on_physics_simulator_built))
         .dispatch<events::PhysicsSimulatorUnbuilt>(ACDA_BIND_MEMBER_FN(_on_physics_simulator_unbuilt))
         .dispatch<events::ShowGizmo>(ACDA_BIND_MEMBER_FN(_on_show_gizmo))
-        .result();
+        .is_dispatched();
 }
 
 void ImguiWindowViewport::on_update()

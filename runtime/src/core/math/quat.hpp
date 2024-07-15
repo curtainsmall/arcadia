@@ -46,7 +46,7 @@ namespace quat
     /// @return Normalized quaternion
     template<size_t Index>
     [[nodiscard]]
-    ACDA_API static inline auto fixed_normalized(const glm::quat& quat) -> glm::quat
+    ACDA_API static inline auto normalize_fixedly(const glm::quat& quat) -> glm::quat
     {
         static_assert(Index >= 0 && Index < 4);
 
@@ -80,23 +80,23 @@ namespace quat
     }
 
     [[nodiscard]]
-    ACDA_API static inline auto fixed_normalized(const glm::quat& compare, const glm::quat& quat) -> glm::quat
+    ACDA_API static inline auto normalize_fixedly(const glm::quat& compare, const glm::quat& quat) -> glm::quat
     {
         if(compare.w != quat.w)
         {
-            return fixed_normalized<0>(quat);
+            return normalize_fixedly<0>(quat);
         }
         else if(compare.x != quat.x)
         {
-            return fixed_normalized<1>(quat);
+            return normalize_fixedly<1>(quat);
         }
         else if(compare.y != quat.y)
         {
-            return fixed_normalized<2>(quat);
+            return normalize_fixedly<2>(quat);
         }
         else if(compare.z != quat.x)
         {
-            return fixed_normalized<3>(quat);
+            return normalize_fixedly<3>(quat);
         }
         return quat;
     }

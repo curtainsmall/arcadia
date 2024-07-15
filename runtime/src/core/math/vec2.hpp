@@ -57,7 +57,7 @@ namespace vec2
     /// @return Normalized vector
     template<size_t Index>
     [[nodiscard]]
-    ACDA_API static inline auto fixed_normalized(const glm::vec2& vec) -> glm::vec2
+    ACDA_API static inline auto normalize_fixedly(const glm::vec2& vec) -> glm::vec2
     {
         static_assert(Index >= 0 && Index < 2);
 

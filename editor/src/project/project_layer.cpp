@@ -60,12 +60,12 @@ void ProjectLayer::on_event(EventBase& e)
         .dispatch<events::SelectScene>(ACDA_BIND_MEMBER_FN(_on_select_scene))
         .dispatch<events::CloseScene>(ACDA_BIND_MEMBER_FN(_on_close_scene))
         .dispatch<events::DeleteScene>(ACDA_BIND_MEMBER_FN(_on_delete_scene))
-        .dispatch<events::NewEntity>(ACDA_BIND_MEMBER_FN(_OnNewEntity))
+        .dispatch<events::NewEntity>(ACDA_BIND_MEMBER_FN(_on_new_entity))
         .dispatch<events::RenameEntity>(ACDA_BIND_MEMBER_FN(_on_rename_entity))
         .dispatch<events::DeleteEntity>(ACDA_BIND_MEMBER_FN(_on_delete_entity))
         .dispatch<events::AddComponent>(ACDA_BIND_MEMBER_FN(_on_add_component))
         .dispatch<events::RemoveComponent>(ACDA_BIND_MEMBER_FN(_on_remove_component))
-        .result();
+        .is_dispatched();
 }
 
 void ProjectLayer::on_update()
@@ -400,7 +400,7 @@ void ProjectLayer::_on_delete_scene(events::DeleteScene& e)
 
 }
 
-void ProjectLayer::_OnNewEntity(events::NewEntity& e)
+void ProjectLayer::_on_new_entity(events::NewEntity& e)
 {
     const auto& [type] = e.data_tuple;
 

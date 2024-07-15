@@ -20,7 +20,7 @@
                             "speed": 0.25,
                             "up_epsilon": 0.001745329238474369,
                             "viewport_size": {
-                                "x": 2066,
+                                "x": 2092,
                                 "y": 1344
                             }
                         },
@@ -71,11 +71,11 @@
                                 "z": 0.5373045802116394
                             },
                             "jph_body_info_initial": {
-                                "jph_motion_type": 0,
-                                "jph_object_layer": 0,
+                                "jph_motion_type": 2,
+                                "jph_object_layer": 1,
                                 "jph_shape_info": {
                                     "info": {
-                                        "radius": 4.349999904632568
+                                        "radius": 5.0
                                     },
                                     "type": "sphere"
                                 }

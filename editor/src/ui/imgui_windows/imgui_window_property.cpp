@@ -568,7 +568,7 @@ void ImguiWindowPopupPhysicsComponentCreateBody::operator()(PhysicsComponent& ph
             // Convex radius
             auto convex_radius_min = .0f;
             auto convex_radius_max = std::min({ info.half_extent.x,info.half_extent.y,info.half_extent.z });
-            ImGui::Text("Convex Radius"); ImGui::SameLine(); ImGui::DragFloat("##convex_radius", &info.convex_radius, speed, convex_radius_min, convex_radius_max, format, slider_flags);
+            ImGui::DragFloat("Convex Radius", &info.convex_radius, speed, convex_radius_min, convex_radius_max, format, slider_flags);
 
             return _temp_jph_body_info.jph_shape_info;
         },
@@ -854,7 +854,7 @@ auto ImguiWindowPropertyTransformComponent::operator()(TransformComponent& trans
         float rotation_drag_speed{ .05f };
         glm::quat temp = transform_comp.rotation;
         ImGui::DragFloat3("Rotation", glm::value_ptr(temp), rotation_drag_speed, min, max, format, flags);
-        transform_comp.rotation = quat::fixed_normalized(transform_comp.rotation, temp);
+        transform_comp.rotation = quat::normalize_fixedly(transform_comp.rotation, temp);
         if(ImGui::IsItemDeactivatedAfterEdit())
         {
             description = "Rotation";
@@ -865,7 +865,7 @@ auto ImguiWindowPropertyTransformComponent::operator()(TransformComponent& trans
         float direction_drag_speed{ .05f };
         glm::vec3 temp = transform_comp.direction;
         ImGui::DragFloat3("Direction", glm::value_ptr(temp), direction_drag_speed, min, max, format, flags);
-        transform_comp.direction = vec3::fixed_normalized(transform_comp.direction, temp);
+        transform_comp.direction = vec3::normalize_fixedly(transform_comp.direction, temp);
         if(ImGui::IsItemDeactivatedAfterEdit())
         {
             description = "Direction";
@@ -902,7 +902,7 @@ void ImguiWindowProperty::on_event(EventBase& e)
         .dispatch<events::SelectEntity>(ACDA_BIND_MEMBER_FN(_on_select_entity))
         .dispatch<events::RenameEntity>(ACDA_BIND_MEMBER_FN(_on_rename_entity))
         .dispatch<events::DeleteEntity>(ACDA_BIND_MEMBER_FN(_on_delete_entity))
-        .result();
+        .is_dispatched();
 }
 
 #define ACDA_IMGUI_WINDOW_PROPERTY_HELPER(component_type, tab_name, property_display_fn) \

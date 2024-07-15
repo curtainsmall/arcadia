@@ -19,27 +19,27 @@ public:
 
     void debug(const std::string& msg)
     {
-        _Logger->debug(msg);
+        _logger->debug(msg);
     }
 
     void info(const std::string& msg)
     {
-        _Logger->info(msg);
+        _logger->info(msg);
     }
 
     void warning(const std::string& msg)
     {
-        _Logger->warn(msg);
+        _logger->warn(msg);
     }
 
     void error(const std::string& msg)
     {
-        _Logger->error(msg);
+        _logger->error(msg);
     }
 
     void fatal(const std::string& msg)
     {
-        _Logger->critical(msg);
+        _logger->critical(msg);
     }
 
     void demarcate(const std::string& msg)
@@ -49,11 +49,11 @@ public:
 
     void flush()
     {
-        _Logger->flush();
+        _logger->flush();
     }
 
 private:
-    std::shared_ptr<spdlog::logger> _Logger{};
+    std::shared_ptr<spdlog::logger> _logger{};
 };
 
 #ifdef ACDA_DEBUG_MODE

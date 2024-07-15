@@ -58,11 +58,6 @@ public:
 public:
     /// @brief Create a memento
     /// @tparam MementoOriginator Type of memento originator
-    /// @param originator_retriever Function used to return referece to the originator (in case the originator is in an opaque structure, or may be destroyed and recreated so that its address is unreliable)
-    /// @param ...args Arguments to construct memento data
-
-    /// @brief Create a memento
-    /// @tparam MementoOriginator Type of memento originator
     /// @param description Description
     /// @param in_place_type_originator Type deduction helper for @a MementoOriginator
     /// @param originator_retriever Originator retriever

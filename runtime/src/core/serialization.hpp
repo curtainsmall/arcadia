@@ -5,7 +5,7 @@
 
 #include"core/base.hpp"
 
-namespace Serialization
+namespace serialization
 {
     using buffer_type = std::vector<std::byte>;
 

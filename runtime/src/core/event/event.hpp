@@ -87,20 +87,20 @@ public:
         if(typeid(*_event) == typeid(Event))
         {
             handler(static_cast<Event&>(*_event));
-            _result = true;
+            _dispatched = true;
         }
         return *this;
     }
 
     /// @brief Whether any dispatch succedded
-    auto result() const -> bool
+    auto is_dispatched() const -> bool
     {
-        return _result;
+        return _dispatched;
     }
 
 private:
     EventBase* _event;
-    bool _result{ false };
+    bool _dispatched{ false };
 };
 
 struct EventQueue

@@ -66,7 +66,7 @@ void EditorAppLayer::on_event(EventBase& e)
         .dispatch<events::ProjectUnbuilt>(ACDA_BIND_MEMBER_FN(_on_project_unbuilt))
         .dispatch<events::PlayMode>(ACDA_BIND_MEMBER_FN(_on_play_mode))
         .dispatch<events::InputKey>(ACDA_BIND_MEMBER_FN(_on_input_key))
-        .result();
+        .is_dispatched();
 }
 
 void EditorAppLayer::_imgui_window_installer(ImguiLayer& imgui_layer)

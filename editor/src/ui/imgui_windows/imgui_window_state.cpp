@@ -34,10 +34,7 @@ void ImguiWindowStateRenderer::operator()(const iRenderer& renderer)
     }
     );
 
-    ImGui::Text(std::format("Graphic API: {}", graphic_api_type_str).c_str());
-
-    ImGui::Text("Renderer Type"); ImGui::SameLine();
-    if(ImGui::BeginCombo("##renderer_type", graphic_api_type_str.c_str()))
+    if(ImGui::BeginCombo("Graphic API", graphic_api_type_str.c_str()))
     {
         ImGui::Selectable(graphic_api_type_str.c_str());
         ImGui::EndCombo();
@@ -78,12 +75,13 @@ void ImguiWindowStatePhysicsSimulator::operator()(PhysicsSimulator& physics_simu
         }
     }
     ImGui::SameLine();
+    ImGui::BeginDisabled();
     if(ImGui::Button("Reset"))
     {
         physics_simulator.reset();
         physics_simulator.set_active(false);
     }
-
+    ImGui::EndDisabled();
 }
 
 void ImguiWindowState::on_event(EventBase& e)
@@ -96,7 +94,7 @@ void ImguiWindowState::on_event(EventBase& e)
         .dispatch<events::RendererUnbuilt>(ACDA_BIND_MEMBER_FN(_on_renderer_unbuilt))
         .dispatch<events::PhysicsSimulatorBuilt>(ACDA_BIND_MEMBER_FN(_on_physics_simulator_built))
         .dispatch<events::PhysicsSimulatorUnbuilt>(ACDA_BIND_MEMBER_FN(_on_physics_simulator_unbuilt))
-        .result();
+        .is_dispatched();
 }
 
 void ImguiWindowState::on_update()

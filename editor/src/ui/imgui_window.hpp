@@ -6,6 +6,7 @@
 #include"core/base.hpp"
 #include"core/event/event.hpp"
 
+// ImGui window ID should follow: Title###id so that we can change the title for a curtain window
 #define ACDA_IMGUI_WINDOW_ID_STR_GETTERS(id_str) \
 [[nodiscard]]\
 static constexpr auto get_id_str_static() -> std::string\

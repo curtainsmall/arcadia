@@ -13,7 +13,7 @@ void ImguiWindowMainToolbar::on_event(EventBase& e)
     EventDispatcher{ e }
         .dispatch<events::SceneActivated>(ACDA_BIND_MEMBER_FN(_on_scene_activated))
         .dispatch<events::SceneDeactivated>(ACDA_BIND_MEMBER_FN(_on_scene_deactivated))
-        .result();
+        .is_dispatched();
 }
 
 void ImguiWindowMainToolbar::on_update()
@@ -26,7 +26,7 @@ void ImguiWindowMainToolbar::on_update()
         | ImGuiWindowFlags_NoDocking
         | ImGuiWindowFlags_NoBringToFrontOnFocus
         | ImGuiWindowFlags_NoFocusOnAppearing;
-    if(ImGui::BeginViewportSideBar("##toolbar", ImGui::GetMainViewport(), ImGuiDir_Up, ImGui::GetFrameHeight(), window_flags))
+    if(ImGui::BeginViewportSideBar("toolbar", ImGui::GetMainViewport(), ImGuiDir_Up, ImGui::GetFrameHeight(), window_flags))
     {
         auto& memento_list = MementoList::instance();
 

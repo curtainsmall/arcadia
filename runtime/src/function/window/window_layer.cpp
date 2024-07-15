@@ -87,7 +87,7 @@ void WindowLayer::on_event(EventBase& event)
 {
     EventDispatcher{ event }
         .dispatch<events::WindowSetInputModeCursor>(ACDA_BIND_MEMBER_FN(_on_window_set_input_mode_cursor))
-        .result();
+        .is_dispatched();
 }
 
 void WindowLayer::on_update()

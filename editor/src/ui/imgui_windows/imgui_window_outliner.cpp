@@ -17,7 +17,7 @@ void ImguiWindowOutliner::on_event(EventBase& e)
         .dispatch<events::SceneActivated>(ACDA_BIND_MEMBER_FN(_on_scene_activated))
         .dispatch<events::SceneDeactivated>(ACDA_BIND_MEMBER_FN(_on_scene_deactivated))
         .dispatch<events::RenameEntity>(ACDA_BIND_MEMBER_FN(_on_rename_entity))
-        .result();
+        .is_dispatched();
 }
 
 void ImguiWindowOutliner::on_update()
@@ -81,7 +81,7 @@ void ImguiWindowOutliner::on_update()
 
                     auto input_text_flags =
                         ImGuiInputTextFlags_AutoSelectAll;
-                    ImGui::InputText("###rename_entity", &_EntityNewName, input_text_flags);
+                    ImGui::InputText("##rename_entity", &_EntityNewName, input_text_flags);
                     ImGui::SetItemDefaultFocus();
                     if(!ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Left) || ImGui::IsKeyPressed(ImGuiKey_Enter))
                     {

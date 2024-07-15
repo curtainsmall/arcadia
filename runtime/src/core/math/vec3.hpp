@@ -67,7 +67,7 @@ namespace vec3
     /// @return Normalized vector
     template<size_t Index>
     [[nodiscard]]
-    ACDA_API static inline auto fixed_normalized(const glm::vec3& vec) -> glm::vec3
+    ACDA_API static inline auto normalize_fixedly(const glm::vec3& vec) -> glm::vec3
     {
         static_assert(Index >= 0 && Index < 3);
 
@@ -96,19 +96,19 @@ namespace vec3
     }
 
     [[nodiscard]]
-    ACDA_API static inline auto fixed_normalized(const glm::vec3& compare, const glm::vec3& vec) -> glm::vec3
+    ACDA_API static inline auto normalize_fixedly(const glm::vec3& compare, const glm::vec3& vec) -> glm::vec3
     {
         if(compare.x != vec.x)
         {
-            return fixed_normalized<0>(vec);
+            return normalize_fixedly<0>(vec);
         }
         else if(compare.y != vec.y)
         {
-            return fixed_normalized<1>(vec);
+            return normalize_fixedly<1>(vec);
         }
         else if(compare.z != vec.z)
         {
-            return fixed_normalized<2>(vec);
+            return normalize_fixedly<2>(vec);
         }
         return vec;
     }

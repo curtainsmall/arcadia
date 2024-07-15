@@ -24,7 +24,7 @@ public:
     ACDA_EXCEPTION(SaveFailed);
     ACDA_EXCEPTION(SectionNotFound);
 
-    using section_type = Serialization::buffer_type;
+    using section_type = serialization::buffer_type;
     using section_storage_type = std::unordered_map<std::string, section_type>;
 
     using self_type = File;

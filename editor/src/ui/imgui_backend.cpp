@@ -101,7 +101,7 @@ ACDA_API void imgui_backend::on_event(EventBase& e)
        .dispatch<events::InputKey>(imgui_backend::on_key)
        .dispatch<events::InputChar>(imgui_backend::on_char)
        //.dispatch<events::MonitorConnection>(imgui_backend::on_monitor) // We will manage monitors ourselves for now
-       .result())
+       .is_dispatched())
     {
         auto& io = ImGui::GetIO();
         if(io.WantCaptureMouse || io.WantCaptureKeyboard)

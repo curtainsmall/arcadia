@@ -204,15 +204,15 @@ ACDA_API auto imgui_wrappers::drag_vec3_normalized(const std::string& name, glm:
     auto deactivated = imgui_wrappers::drag_vec3(name, temp_vec, speed, -1.f, 1.f, format, flags);
     if(temp_vec.x != vec.x)
     {
-        vec = vec3::fixed_normalized<0>(temp_vec);
+        vec = vec3::normalize_fixedly<0>(temp_vec);
     }
     else if(temp_vec.y != vec.y)
     {
-        vec = vec3::fixed_normalized<1>(temp_vec);
+        vec = vec3::normalize_fixedly<1>(temp_vec);
     }
     else if(temp_vec.z != vec.z)
     {
-        vec = vec3::fixed_normalized<2>(temp_vec);
+        vec = vec3::normalize_fixedly<2>(temp_vec);
     }
     return deactivated;
 }
@@ -328,19 +328,19 @@ ACDA_API auto imgui_wrappers::drag_quat_normalized(const std::string& name, glm:
     auto deactivated = imgui_wrappers::drag_quat(name, temp_quat, speed, -1.f, 1.f, format, flags);
     if(temp_quat.w != quat.w)
     {
-        quat = quat::fixed_normalized<0>(temp_quat);
+        quat = quat::normalize_fixedly<0>(temp_quat);
     }
     else if(temp_quat.x != quat.x)
     {
-        quat = quat::fixed_normalized<1>(temp_quat);
+        quat = quat::normalize_fixedly<1>(temp_quat);
     }
     else if(temp_quat.y != quat.y)
     {
-        quat = quat::fixed_normalized<2>(temp_quat);
+        quat = quat::normalize_fixedly<2>(temp_quat);
     }
     else if(temp_quat.z != quat.x)
     {
-        quat = quat::fixed_normalized<3>(temp_quat);
+        quat = quat::normalize_fixedly<3>(temp_quat);
     }
     return deactivated;
 }

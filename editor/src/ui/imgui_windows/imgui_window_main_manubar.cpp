@@ -137,7 +137,7 @@ void ImguiWindowMainMenubar::on_event(EventBase& e)
     EventDispatcher{ e }
         .dispatch<events::ProjectBuilt>(ACDA_BIND_MEMBER_FN(_on_project_built))
         .dispatch<events::ProjectUnbuilt>(ACDA_BIND_MEMBER_FN(_on_project_unbuilt))
-        .result();
+        .is_dispatched();
 }
 
 void ImguiWindowMainMenubar::on_update()
