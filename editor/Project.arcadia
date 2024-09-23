@@ -20,15 +20,15 @@
                             "speed": 0.25,
                             "up_epsilon": 0.001745329238474369,
                             "viewport_size": {
-                                "x": 2092,
-                                "y": 1344
+                                "x": 1672,
+                                "y": 1338
                             }
                         },
                         "transform": {
                             "direction": {
-                                "x": -0.2303389459848404,
-                                "y": -0.21338212490081787,
-                                "z": 0.9494271874427795
+                                "x": -0.07822473347187042,
+                                "y": -0.0839717835187912,
+                                "z": -0.9933930039405823
                             },
                             "flags": 0,
                             "pivot": {
@@ -37,9 +37,9 @@
                                 "z": 0.0
                             },
                             "position": {
-                                "x": 8.851444244384766,
-                                "y": 1.8275009393692017,
-                                "z": -22.184459686279297
+                                "x": 2.4299373626708984,
+                                "y": 9.123245239257813,
+                                "z": 15.145143508911133
                             },
                             "rotation": {
                                 "w": 1.0,
@@ -62,7 +62,7 @@
                 {
                     "components": {
                         "model": {
-                            "filepath": "D:/CppProject/arcadia/editor/asset/model/planet/planet.obj"
+                            "filepath": "D:/CppProject/arcadia/editor/asset/model/nanosuit/nanosuit.obj"
                         },
                         "physics": {
                             "body_shape_color": {
@@ -70,16 +70,7 @@
                                 "y": 0.5490195751190186,
                                 "z": 0.5373045802116394
                             },
-                            "jph_body_info_initial": {
-                                "jph_motion_type": 2,
-                                "jph_object_layer": 1,
-                                "jph_shape_info": {
-                                    "info": {
-                                        "radius": 5.0
-                                    },
-                                    "type": "sphere"
-                                }
-                            }
+                            "jph_body_info_initial": null
                         },
                         "transform": {
                             "direction": {
@@ -156,13 +147,13 @@
                             },
                             "flags": 2,
                             "pivot": {
-                                "x": 0.0,
-                                "y": 0.0,
+                                "x": 6.0,
+                                "y": 12.000385284423828,
                                 "z": 0.0
                             },
                             "position": {
-                                "x": 0.0,
-                                "y": -6.966385841369629,
+                                "x": 6.0,
+                                "y": 9.013343811035156,
                                 "z": 0.0
                             },
                             "rotation": {
