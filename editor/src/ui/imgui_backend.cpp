@@ -13,22 +13,22 @@ ACDA_API void imgui_backend::initialize(const WindowLayer& window)
 
     match<void>(
         app_config.graphic_api,
-        [&](const graphic_api::Opengl& Opengl) -> void
+        [&](const graphic_api::Opengl& opengl) -> void
     {
         std::string glsl_version{};
-        if(Opengl.version >= Version{ 3,3,0 })
+        if(opengl.version >= Version{ 3,3,0 })
         {
-            glsl_version = std::format("#version {0}{1}0", Opengl.version.major, Opengl.version.minor);
+            glsl_version = std::format("#version {0}{1}0", opengl.version.major, opengl.version.minor);
         }
         else
         {
-            if(Opengl.version >= Version{ 3,0,0 })
+            if(opengl.version >= Version{ 3,0,0 })
             {
-                glsl_version = std::format("#version 1{}0", Opengl.version.minor + 3);
+                glsl_version = std::format("#version 1{}0", opengl.version.minor + 3);
             }
             else
             {
-                glsl_version = std::format("#version 1{}0", Opengl.version.minor + 1);
+                glsl_version = std::format("#version 1{}0", opengl.version.minor + 1);
             }
         }
         ImGui_ImplGlfw_InitForOpenGL(window.glfw_window(), false);
@@ -93,15 +93,15 @@ ACDA_API void imgui_backend::shutdown(const WindowLayer& window)
 ACDA_API void imgui_backend::on_event(EventBase& e)
 {
     if(EventDispatcher{ e }
-       .dispatch<events::WindowFocus>(imgui_backend::on_window_focus)
-       .dispatch<events::InputCursorEnter>(imgui_backend::on_cursor_enter)
-       .dispatch<events::InputCursorPos>(imgui_backend::on_cursor_pos)
-       .dispatch<events::InputMouseButton>(imgui_backend::on_mouse_button)
-       .dispatch<events::InputScroll>(imgui_backend::on_scroll)
-       .dispatch<events::InputKey>(imgui_backend::on_key)
-       .dispatch<events::InputChar>(imgui_backend::on_char)
-       //.dispatch<events::MonitorConnection>(imgui_backend::on_monitor) // We will manage monitors ourselves for now
-       .is_dispatched())
+        .dispatch<events::WindowFocus>(imgui_backend::on_window_focus)
+        .dispatch<events::InputCursorEnter>(imgui_backend::on_cursor_enter)
+        .dispatch<events::InputCursorPos>(imgui_backend::on_cursor_pos)
+        .dispatch<events::InputMouseButton>(imgui_backend::on_mouse_button)
+        .dispatch<events::InputScroll>(imgui_backend::on_scroll)
+        .dispatch<events::InputKey>(imgui_backend::on_key)
+        .dispatch<events::InputChar>(imgui_backend::on_char)
+        //.dispatch<events::MonitorConnection>(imgui_backend::on_monitor) // We will manage monitors ourselves for now
+        .is_dispatched())
     {
         auto& io = ImGui::GetIO();
         if(io.WantCaptureMouse || io.WantCaptureKeyboard)
@@ -162,4 +162,3 @@ ACDA_API void imgui_backend::on_monitor(events::MonitorConnection& monitor_conne
     const auto& [glfw_monitor_ptr, connection] = monitor_connection.data_tuple;
     ImGui_ImplGlfw_MonitorCallback(glfw_monitor_ptr, connection);
 }
-

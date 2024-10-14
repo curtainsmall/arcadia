@@ -21,4 +21,6 @@ public:
     std::weak_ptr<ProjectLayer> main_project_layer{};
 
     bool in_play_mode{ false };
+
+    float ui_scale ={ -1.0f };
 };

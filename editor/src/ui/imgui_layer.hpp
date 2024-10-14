@@ -47,6 +47,11 @@ public:
         return *this;
     }
 
+    void scale_ui(float factor);
+
+private:
+    void _on_scale_imgui_window(events::ScaleImguiWindow& e);
+
 public:
     bool show_demo_window{ false };
     bool show_debug_info{ false };

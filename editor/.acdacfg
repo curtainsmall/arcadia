@@ -13,9 +13,11 @@
             "###outliner",
             "###property",
             "###state",
+            "###statusbar",
             "###toolbar",
             "###viewport"
-        ]
+        ],
+        "ui_scale": 1.0
     },
     "window": {
         "max_size": {

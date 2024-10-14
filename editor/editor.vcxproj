@@ -19,7 +19,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\editor\editor_config.cpp" />
     <ClCompile Include="src\editor\editor_context.cpp" />
     <ClCompile Include="src\editor\editor_layer.cpp" />
     <ClCompile Include="src\project\project.cpp" />
@@ -28,6 +27,7 @@
     <ClCompile Include="src\ui\imgui_layer.cpp" />
     <ClCompile Include="src\ui\imgui_style.cpp" />
     <ClCompile Include="src\ui\imgui_windows\imgui_window_main_manubar.cpp" />
+    <ClCompile Include="src\ui\imgui_windows\imgui_window_main_statusbar.cpp" />
     <ClCompile Include="src\ui\imgui_windows\imgui_window_main_toolbar.cpp" />
     <ClCompile Include="src\ui\imgui_windows\imgui_window_outliner.cpp" />
     <ClCompile Include="src\ui\imgui_windows\imgui_window_property.cpp" />
@@ -36,7 +36,6 @@
     <ClCompile Include="src\ui\imgui_wrapper.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\editor\editor_config.hpp" />
     <ClInclude Include="src\editor\editor_context.hpp" />
     <ClInclude Include="src\editor\editor_layer.hpp" />
     <ClInclude Include="src\project\project.hpp" />
@@ -48,6 +47,7 @@
     <ClInclude Include="src\ui\imgui_style.hpp" />
     <ClInclude Include="src\ui\imgui_window.hpp" />
     <ClInclude Include="src\ui\imgui_windows\imgui_window_main_manubar.hpp" />
+    <ClInclude Include="src\ui\imgui_windows\imgui_window_main_statusbar.hpp" />
     <ClInclude Include="src\ui\imgui_windows\imgui_window_main_toolbar.hpp" />
     <ClInclude Include="src\ui\imgui_windows\imgui_window_outliner.hpp" />
     <ClInclude Include="src\ui\imgui_windows\imgui_window_property.hpp" />

@@ -3,7 +3,7 @@
 #include<memory>
 
 #include"core/base.hpp"
-#include"resource/scene.hpp"    
+#include"resource/scene.hpp"
 
 #include"project/project_events.hpp"
 #include"ui/imgui_window.hpp"
@@ -15,7 +15,7 @@ public:
 public:
     ACDA_IMGUI_WINDOW_ID_STR_GETTERS("###toolbar");
 public:
-    inline ImguiWindowMainToolbar():
+    ImguiWindowMainToolbar() :
         iImguiWindow(true, "Toolbar")
     {}
     virtual ~ImguiWindowMainToolbar() = default;

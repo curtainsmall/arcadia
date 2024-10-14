@@ -103,7 +103,6 @@ void ImguiWindowMainToolbar::_on_scene_activated(events::SceneActivated& e)
     _scene = scene;
 }
 
-
 void ImguiWindowMainToolbar::_on_scene_deactivated(events::SceneDeactivated& e)
 {
     _scene.reset();

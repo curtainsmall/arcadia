@@ -13,6 +13,11 @@ namespace events
         std::string // Title of the imgui window to open
     );
 
+    ACDA_EVENT(
+        ScaleImguiWindow,
+        float // New scale
+    );
+
     //==== Events for project ====//
 
     ACDA_EVENT(

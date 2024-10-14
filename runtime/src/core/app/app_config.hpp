@@ -32,4 +32,5 @@ public:
 
     // ImGui
     std::set<std::string> imgui_opened_window_id_strs{};
+    float ui_scale ={ 1.0f };
 };

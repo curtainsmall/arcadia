@@ -8,7 +8,7 @@
 #include"core/nlohmann_json_header.hpp"
 #include"core/version/version.hpp"
 
-iAppLayer::iAppLayer():
+iAppLayer::iAppLayer() :
     iLayer("app")
 {
     // Prepare AppConfig (either read from disk or use default value)
@@ -81,6 +81,7 @@ iAppLayer::iAppLayer():
             {
                 app_config.imgui_opened_window_id_strs.emplace(id_strs);
             }
+            app_config.ui_scale = json_imgui.at("ui_scale");
         }
         catch(nlohmann::json::out_of_range)
         {
@@ -143,7 +144,8 @@ iAppLayer::~iAppLayer()
     // ImGui
     json.push_back(
         { "imgui",{
-            {"opened_window_id_strs",nlohmann::json::array()}
+            {"opened_window_id_strs",nlohmann::json::array()},
+            {"ui_scale",app_config.ui_scale}
             }
         }
     );
@@ -157,4 +159,3 @@ iAppLayer::~iAppLayer()
     auto ofs = File::create_ofstream(AppConfig::filepath);
     ofs << std::setw(4) << json;
 }
-

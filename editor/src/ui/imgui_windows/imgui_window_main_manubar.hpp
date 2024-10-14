@@ -47,7 +47,7 @@ public:
 public:
     ACDA_IMGUI_WINDOW_ID_STR_GETTERS("###menubar");
 
-    inline ImguiWindowMainMenubar(const std::initializer_list<std::tuple<std::string, std::string>>& imgui_window_title_id_pairs):
+    ImguiWindowMainMenubar(const std::initializer_list<std::tuple<std::string, std::string>>& imgui_window_title_id_pairs) :
         iImguiWindow(true, "Main Menubar"),
         _imgui_window_title_and_id_str_pairs(imgui_window_title_id_pairs)
     {}

@@ -12,12 +12,14 @@ ImguiLayer::ImguiLayer(
     const std::shared_ptr<const WindowLayer>& window_layer,
     const std::function<void(ImguiLayer&)>& imgui_window_installer,
     const std::function<void()>& imgui_style_setter
-):
+) :
     iLayer("imgui"),
     _window(window_layer)
 {
     _imgui_context = ImGui::CreateContext();
     ImGui::SetCurrentContext(_imgui_context);
+
+    scale_ui(EditorContext::instance().ui_scale);
 
     auto& io = _imgui_context->IO;
     io.ConfigWindowsMoveFromTitleBarOnly = true;
@@ -26,10 +28,12 @@ ImguiLayer::ImguiLayer(
         | ImGuiConfigFlags_NoMouseCursorChange
         | ImGuiConfigFlags_ViewportsEnable;
     io.Fonts->AddFontDefault();
+
     ImFontConfig imgui_font_config{};
     imgui_font_config.MergeMode = true;
     static const std::array<ImWchar, 3> imgui_icon_ranges{ ICON_MIN_FA, ICON_MAX_FA,0 };
     io.Fonts->AddFontFromFileTTF(font_filepath_str.c_str(), font_size, &imgui_font_config, imgui_icon_ranges.data());
+
     imgui_backend::initialize(*_window.lock());
 
     imgui_style_setter();
@@ -52,6 +56,10 @@ void ImguiLayer::on_event(EventBase& e)
     {
         return;
     }
+
+    EventDispatcher{ e }
+        .dispatch<events::ScaleImguiWindow>(ACDA_BIND_MEMBER_FN(_on_scale_imgui_window))
+        .is_dispatched();
 
     imgui_backend::on_event(e);
     for(auto& imgui_window : _imgui_window)
@@ -84,7 +92,6 @@ void ImguiLayer::on_update()
     }
     else
     {
-
         for(auto& imgui_window : _imgui_window)
         {
             imgui_window->on_update();
@@ -103,3 +110,14 @@ void ImguiLayer::on_update()
     }
 }
 
+void ImguiLayer::scale_ui(float factor)
+{
+    ImGui::GetIO().FontGlobalScale = factor;
+    ImGui::GetStyle().ScaleAllSizes(factor);
+}
+
+void ImguiLayer::_on_scale_imgui_window(events::ScaleImguiWindow& e)
+{
+    const auto& [scale] = e.data_tuple;
+    scale_ui(scale);
+}
