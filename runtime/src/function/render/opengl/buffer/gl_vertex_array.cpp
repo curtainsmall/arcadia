@@ -2,7 +2,7 @@
 
 #include "gl_vertex_array.hpp"
 
-GlVertexArray::GlVertexArray(
+Arcadia::GlVertexArray::GlVertexArray(
     const std::vector<Vertex>& vertices,
     const std::vector<Mesh::index_type>& indices
 ) :
@@ -15,12 +15,12 @@ GlVertexArray::GlVertexArray(
     Unbind();
 }
 
-GlVertexArray::~GlVertexArray()
+Arcadia::GlVertexArray::~GlVertexArray()
 {
     ACDA_GL_CALL(glDeleteVertexArrays(1, &_GlId));
 }
 
-GlVertexArray::GlVertexArray(SelfType&& rhs) noexcept :
+Arcadia::GlVertexArray::GlVertexArray(SelfType&& rhs) noexcept :
     _GlVertexBuffer(std::move(rhs._GlVertexBuffer)),
     _GlIndexBuffer(std::move(rhs._GlIndexBuffer))
 {
@@ -28,7 +28,7 @@ GlVertexArray::GlVertexArray(SelfType&& rhs) noexcept :
     rhs._GlId = 0;
 }
 
-auto GlVertexArray::operator=(SelfType&& rhs) noexcept -> SelfType&
+auto Arcadia::GlVertexArray::operator=(SelfType&& rhs) noexcept -> SelfType&
 {
     _GlVertexBuffer = std::move(rhs._GlVertexBuffer);
     _GlIndexBuffer = std::move(rhs._GlIndexBuffer);
@@ -39,7 +39,7 @@ auto GlVertexArray::operator=(SelfType&& rhs) noexcept -> SelfType&
     return *this;
 }
 
-void GlVertexArray::Bind() const
+void Arcadia::GlVertexArray::Bind() const
 {
     if(_GlId == 0)
     {
@@ -52,7 +52,7 @@ void GlVertexArray::Bind() const
     _GlIndexBuffer.Bind();
 }
 
-void GlVertexArray::Unbind() const
+void Arcadia::GlVertexArray::Unbind() const
 {
     _GlIndexBuffer.Unbind();
     _GlVertexBuffer.Unbind();
@@ -60,7 +60,7 @@ void GlVertexArray::Unbind() const
     ACDA_GL_CALL(glBindVertexArray(0));
 }
 
-void GlVertexArray::Draw(GLenum mode, GLsizei count) const
+void Arcadia::GlVertexArray::Draw(GLenum mode, GLsizei count) const
 {
     if(_GlIndexBuffer.GetIndexCount())
     {
@@ -86,22 +86,22 @@ void GlVertexArray::Draw(GLenum mode, GLsizei count) const
     }
 }
 
-void GlVertexArray::DrawArrays(GLenum mode) const
+void Arcadia::GlVertexArray::DrawArrays(GLenum mode) const
 {
     ACDA_GL_CALL(glDrawArrays(mode, 0, _GlVertexBuffer.GetVertexCount()));
 }
 
-void GlVertexArray::DrawArraysInstanced(GLenum mode, GLsizei count) const
+void Arcadia::GlVertexArray::DrawArraysInstanced(GLenum mode, GLsizei count) const
 {
     ACDA_GL_CALL(glDrawArraysInstanced(mode, 0, _GlVertexBuffer.GetVertexCount(), count));
 }
 
-void GlVertexArray::DrawIndices(GLenum mode) const
+void Arcadia::GlVertexArray::DrawIndices(GLenum mode) const
 {
     ACDA_GL_CALL(glDrawElements(mode, _GlIndexBuffer.GetIndexCount(), GL_UNSIGNED_INT, 0));
 }
 
-void GlVertexArray::DrawIndicesInstanced(GLenum mode, GLsizei count) const
+void Arcadia::GlVertexArray::DrawIndicesInstanced(GLenum mode, GLsizei count) const
 {
     ACDA_GL_CALL(glDrawElementsInstanced(mode, _GlIndexBuffer.GetIndexCount(), GL_UNSIGNED_INT, 0, count));
 }

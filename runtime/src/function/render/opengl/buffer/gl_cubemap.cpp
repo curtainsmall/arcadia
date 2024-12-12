@@ -2,7 +2,7 @@
 
 #include "gl_cubemap.hpp"
 
-GlCubemap::GlCubemap(const Cubemap& cubemap)
+Arcadia::GlCubemap::GlCubemap(const Cubemap& cubemap)
 {
     ACDA_GL_CALL(glGenTextures(1, &_GlId));
     Bind();
@@ -24,12 +24,12 @@ GlCubemap::GlCubemap(const Cubemap& cubemap)
     Unbind();
 }
 
-GlCubemap::~GlCubemap()
+Arcadia::GlCubemap::~GlCubemap()
 {
     ACDA_GL_CALL(glDeleteTextures(1, &_GlId));
 }
 
-GlCubemap::GlCubemap(SelfType&& rhs) noexcept
+Arcadia::GlCubemap::GlCubemap(SelfType&& rhs) noexcept
 {
     _GlId = rhs._GlId;
     rhs._GlId = 0;
@@ -38,7 +38,7 @@ GlCubemap::GlCubemap(SelfType&& rhs) noexcept
     rhs._Slot = -1u;
 }
 
-auto GlCubemap::operator=(SelfType&& rhs) noexcept -> SelfType&
+auto Arcadia::GlCubemap::operator=(SelfType&& rhs) noexcept -> SelfType&
 {
     _GlId = rhs._GlId;
     rhs._GlId = 0;
@@ -49,7 +49,7 @@ auto GlCubemap::operator=(SelfType&& rhs) noexcept -> SelfType&
     return *this;
 }
 
-void GlCubemap::Bind(GLenum slot)
+void Arcadia::GlCubemap::Bind(GLenum slot)
 {
     if(_GlId == 0)
     {
@@ -60,7 +60,7 @@ void GlCubemap::Bind(GLenum slot)
     ACDA_GL_CALL(glBindTexture(GL_TEXTURE_CUBE_MAP, _GlId));
 }
 
-void GlCubemap::Unbind()
+void Arcadia::GlCubemap::Unbind()
 {
     if(_Slot < 0)
     {
@@ -72,7 +72,7 @@ void GlCubemap::Unbind()
     _Slot = -1;
 }
 
-void GlCubemap::SetTextureParameter(GLenum pname, GLint param)
+void Arcadia::GlCubemap::SetTextureParameter(GLenum pname, GLint param)
 {
     if(_GlId == 0 || _Slot == -1)
     {
@@ -82,7 +82,7 @@ void GlCubemap::SetTextureParameter(GLenum pname, GLint param)
     ACDA_GL_CALL(glTexParameteri(GL_TEXTURE_CUBE_MAP, pname, param));
 }
 
-void GlCubemap::SetTextureParameter(GLenum pname, GLfloat param)
+void Arcadia::GlCubemap::SetTextureParameter(GLenum pname, GLfloat param)
 {
     if(_GlId == 0 || _Slot == -1)
     {

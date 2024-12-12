@@ -9,7 +9,7 @@
 #include"ui/imgui_header.hpp"
 #include"ui/imgui_wrapper.hpp"
 
-auto ImguiWindowPropertyCameraComponent::operator()(CameraComponent& camera_comp) -> std::string
+auto Arcadia::ImguiWindowPropertyCameraComponent::operator()(CameraComponent& camera_comp) -> std::string
 {
     const float speed = 1.f;
     const float min = .0;
@@ -88,7 +88,7 @@ auto ImguiWindowPropertyCameraComponent::operator()(CameraComponent& camera_comp
     return description;
 }
 
-auto ImguiWindowPropertyLightComponent::operator()(LightComponent& light_comp) -> std::string
+auto Arcadia::ImguiWindowPropertyLightComponent::operator()(LightComponent& light_comp) -> std::string
 {
     std::string description{};
     ImGui::BeginGroup();
@@ -152,7 +152,7 @@ auto ImguiWindowPropertyLightComponent::operator()(LightComponent& light_comp) -
             if(ImGui::Selectable("Direct Light"))
             {
                 auto res = pfd::message{
-                    "Changing Light Type",
+                    "Arcadia - Changing Light Type",
                     "Do you want to change light type to Direct Light? All properties for current light will be lost",
                     pfd::choice::yes_no,
                     pfd::icon::info
@@ -167,7 +167,7 @@ auto ImguiWindowPropertyLightComponent::operator()(LightComponent& light_comp) -
             if(ImGui::Selectable("Area Light"))
             {
                 auto res = pfd::message{
-                    "Changing Light Type",
+                    "Arcadia - Changing Light Type",
                     "Do you want to change light type to Area Light? All properties for current light will be lost",
                     pfd::choice::yes_no,
                     pfd::icon::info
@@ -182,7 +182,7 @@ auto ImguiWindowPropertyLightComponent::operator()(LightComponent& light_comp) -
             if(ImGui::Selectable("Point Light"))
             {
                 auto res = pfd::message{
-                    "Changing Light Type",
+                    "Arcadia - Changing Light Type",
                     "Do you want to change light type to Point Light? All properties for current light will be lost",
                     pfd::choice::yes_no,
                     pfd::icon::info
@@ -236,7 +236,7 @@ auto ImguiWindowPropertyLightComponent::operator()(LightComponent& light_comp) -
             if(ImGui::Selectable("Spot Light"))
             {
                 auto res = pfd::message{
-                    "Changing Light Type",
+                    "Arcadia - Changing Light Type",
                     "Do you want to change light type to Spot Light? All properties for current light will be lost",
                     pfd::choice::yes_no,
                     pfd::icon::info
@@ -251,7 +251,7 @@ auto ImguiWindowPropertyLightComponent::operator()(LightComponent& light_comp) -
             if(ImGui::Selectable("Area Light"))
             {
                 auto res = pfd::message{
-                    "Changing Light Type",
+                    "Arcadia - Changing Light Type",
                     "Do you want to change light type to Area Light? All properties for current light will be lost",
                     pfd::choice::yes_no,
                     pfd::icon::info
@@ -266,7 +266,7 @@ auto ImguiWindowPropertyLightComponent::operator()(LightComponent& light_comp) -
             if(ImGui::Selectable("Point Light"))
             {
                 auto res = pfd::message{
-                    "Changing Light Type",
+                    "Arcadia - Changing Light Type",
                     "Do you want to change light type to Point Light? All properties for current light will be lost",
                     pfd::choice::yes_no,
                     pfd::icon::info
@@ -307,7 +307,7 @@ auto ImguiWindowPropertyLightComponent::operator()(LightComponent& light_comp) -
             if(ImGui::Selectable("Spot Light"))
             {
                 auto res = pfd::message{
-                    "Changing Light Type",
+                    "Arcadia - Changing Light Type",
                     "Do you want to change light type to Spot Light? All properties for current light will be lost",
                     pfd::choice::yes_no,
                     pfd::icon::info
@@ -322,7 +322,7 @@ auto ImguiWindowPropertyLightComponent::operator()(LightComponent& light_comp) -
             if(ImGui::Selectable("Direct Light"))
             {
                 auto res = pfd::message{
-                    "Changing Light Type",
+                    "Arcadia - Changing Light Type",
                     "Do you want to change light type to Direct Light? All properties for current light will be lost",
                     pfd::choice::yes_no,
                     pfd::icon::info
@@ -337,7 +337,7 @@ auto ImguiWindowPropertyLightComponent::operator()(LightComponent& light_comp) -
             if(ImGui::Selectable("Point Light"))
             {
                 auto res = pfd::message{
-                    "Changing Light Type",
+                    "Arcadia - Changing Light Type",
                     "Do you want to change light type to Point Light? All properties for current light will be lost",
                     pfd::choice::yes_no,
                     pfd::icon::info
@@ -380,7 +380,7 @@ auto ImguiWindowPropertyLightComponent::operator()(LightComponent& light_comp) -
             if(ImGui::Selectable("Spot Light"))
             {
                 auto res = pfd::message{
-                    "Changing Light Type",
+                    "Arcadia - Changing Light Type",
                     "Do you want to change light type to Spot Light? All properties for current light will be lost",
                     pfd::choice::yes_no,
                     pfd::icon::info
@@ -395,7 +395,7 @@ auto ImguiWindowPropertyLightComponent::operator()(LightComponent& light_comp) -
             if(ImGui::Selectable("Direct Light"))
             {
                 auto res = pfd::message{
-                    "Changing Light Type",
+                    "Arcadia - Changing Light Type",
                     "Do you want to change light type to Direct Light? All properties for current light will be lost",
                     pfd::choice::yes_no,
                     pfd::icon::info
@@ -410,7 +410,7 @@ auto ImguiWindowPropertyLightComponent::operator()(LightComponent& light_comp) -
             if(ImGui::Selectable("Area Light"))
             {
                 auto res = pfd::message{
-                    "Changing Light Type",
+                    "Arcadia - Changing Light Type",
                     "Do you want to change light type to Area Light? All properties for current light will be lost",
                     pfd::choice::yes_no,
                     pfd::icon::info
@@ -456,7 +456,7 @@ auto ImguiWindowPropertyLightComponent::operator()(LightComponent& light_comp) -
     return description;
 }
 
-auto ImguiWindowPropertyModelComponent::operator()(ModelComponent& model_comp) -> std::string
+auto Arcadia::ImguiWindowPropertyModelComponent::operator()(ModelComponent& model_comp) -> std::string
 {
     std::string description{};
     ImGui::BeginGroup();
@@ -479,7 +479,7 @@ auto ImguiWindowPropertyModelComponent::operator()(ModelComponent& model_comp) -
     return description;
 }
 
-void ImguiWindowPopupPhysicsComponentCreateBody::operator()(PhysicsComponent& physics_comp)
+void Arcadia::ImguiWindowPopupPhysicsComponentCreateBody::operator()(PhysicsComponent& physics_comp)
 {
     if(!Opened)
     {
@@ -696,7 +696,7 @@ void ImguiWindowPopupPhysicsComponentCreateBody::operator()(PhysicsComponent& ph
     }
 }
 
-auto ImguiWindowPropertyPhysicsComponent::operator()(PhysicsComponent& physics_comp) -> std::string
+auto Arcadia::ImguiWindowPropertyPhysicsComponent::operator()(PhysicsComponent& physics_comp) -> std::string
 {
     _ImguiWindowPopupPhysicsComponentCreateBody(physics_comp);
 
@@ -827,7 +827,7 @@ auto ImguiWindowPropertyPhysicsComponent::operator()(PhysicsComponent& physics_c
     return description;
 }
 
-auto ImguiWindowPropertyTransformComponent::operator()(TransformComponent& transform_comp) -> std::string
+auto Arcadia::ImguiWindowPropertyTransformComponent::operator()(TransformComponent& transform_comp) -> std::string
 {
     std::string description{};
     ImGui::BeginGroup();
@@ -891,7 +891,7 @@ auto ImguiWindowPropertyTransformComponent::operator()(TransformComponent& trans
     return description;
 }
 
-void ImguiWindowProperty::OnEvent(EventBase& e)
+void Arcadia::ImguiWindowProperty::OnEvent(EventBase& e)
 {
     EventDispatcher{ e }
         .Dispatch<Events::OpenImguiWindow>(ACDA_BIND_MEMBER_FN(_OnOpenImguiWindow))
@@ -921,7 +921,7 @@ if(_ContainsComponent<component_type>(_SelectedEntityName) && ImGui::TreeNodeEx(
     ImGui::TreePop();\
 }
 
-void ImguiWindowProperty::OnUpdate()
+void Arcadia::ImguiWindowProperty::OnUpdate()
 {
     if(!_Opened)
     {
@@ -975,7 +975,7 @@ void ImguiWindowProperty::OnUpdate()
     ImGui::End();
 }
 
-void ImguiWindowProperty::_OnOpenImguiWindow(Events::OpenImguiWindow& e)
+void Arcadia::ImguiWindowProperty::_OnOpenImguiWindow(Events::OpenImguiWindow& e)
 {
     const auto& [id_str] = e.DataTuple;
     if(id_str == GetIdString())
@@ -984,25 +984,25 @@ void ImguiWindowProperty::_OnOpenImguiWindow(Events::OpenImguiWindow& e)
     }
 }
 
-void ImguiWindowProperty::_OnSceneActivated(Events::SceneActivated& e)
+void Arcadia::ImguiWindowProperty::_OnSceneActivated(Events::SceneActivated& e)
 {
     const auto& [scene] = e.DataTuple;
     _Scene = scene;
 }
 
-void ImguiWindowProperty::_OnSceneDeactivated(Events::SceneDeactivated& e)
+void Arcadia::ImguiWindowProperty::_OnSceneDeactivated(Events::SceneDeactivated& e)
 {
     _Scene.reset();
     _SelectedEntityName.clear();
 }
 
-void ImguiWindowProperty::_OnSelectEntity(Events::SelectEntity& e)
+void Arcadia::ImguiWindowProperty::_OnSelectEntity(Events::SelectEntity& e)
 {
     const auto& [entity_name] = e.DataTuple;
     _SelectedEntityName = entity_name;
 }
 
-void ImguiWindowProperty::_OnRenameEntity(Events::RenameEntity& e)
+void Arcadia::ImguiWindowProperty::_OnRenameEntity(Events::RenameEntity& e)
 {
     const auto& [old_name, new_name] = e.DataTuple;
     if(old_name == _SelectedEntityName)
@@ -1011,7 +1011,7 @@ void ImguiWindowProperty::_OnRenameEntity(Events::RenameEntity& e)
     }
 }
 
-void ImguiWindowProperty::_OnDeleteEntity(Events::DeleteEntity& e)
+void Arcadia::ImguiWindowProperty::_OnDeleteEntity(Events::DeleteEntity& e)
 {
     const auto& [entity] = e.DataTuple;
     if(_SelectedEntityName == entity)

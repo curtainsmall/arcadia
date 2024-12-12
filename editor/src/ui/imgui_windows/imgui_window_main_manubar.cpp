@@ -7,7 +7,7 @@
 
 #include"ui/ui_events.hpp"
 
-void ImguiWindowPopupCreateProject::operator()()
+void Arcadia::ImguiWindowPopupCreateProject::operator()()
 {
     if(!Opened)
     {
@@ -71,7 +71,7 @@ void ImguiWindowPopupCreateProject::operator()()
     }
 }
 
-void ImguiWindowPopupCreateScene::operator()(const std::shared_ptr<const Project>& project)
+void Arcadia::ImguiWindowPopupCreateScene::operator()(const std::shared_ptr<const Project>& project)
 {
     if(!Opened)
     {
@@ -132,7 +132,7 @@ void ImguiWindowPopupCreateScene::operator()(const std::shared_ptr<const Project
     }
 }
 
-void ImguiWindowMainMenubar::OnEvent(EventBase& e)
+void Arcadia::ImguiWindowMainMenubar::OnEvent(EventBase& e)
 {
     EventDispatcher{ e }
         .Dispatch<Events::ProjectBuilt>(ACDA_BIND_MEMBER_FN(_OnProjectBuilt))
@@ -140,7 +140,7 @@ void ImguiWindowMainMenubar::OnEvent(EventBase& e)
         .IsDispatched();
 }
 
-void ImguiWindowMainMenubar::OnUpdate()
+void Arcadia::ImguiWindowMainMenubar::OnUpdate()
 {
     if(ImGui::BeginMainMenuBar())
     {
@@ -153,7 +153,7 @@ void ImguiWindowMainMenubar::OnUpdate()
     }
 }
 
-void ImguiWindowMainMenubar::_ShowFileMenu()
+void Arcadia::ImguiWindowMainMenubar::_ShowFileMenu()
 {
     auto project = _Project.lock();
 
@@ -187,7 +187,7 @@ void ImguiWindowMainMenubar::_ShowFileMenu()
     }
 }
 
-void ImguiWindowMainMenubar::_ShowEditMenu()
+void Arcadia::ImguiWindowMainMenubar::_ShowEditMenu()
 {
     auto project = _Project.lock();
 
@@ -232,7 +232,7 @@ void ImguiWindowMainMenubar::_ShowEditMenu()
     }
 }
 
-void ImguiWindowMainMenubar::_ShowViewMenu()
+void Arcadia::ImguiWindowMainMenubar::_ShowViewMenu()
 {
     auto& event_queue = EventQueue::Instance();
     if(ImGui::BeginMenu("View"))
@@ -249,7 +249,7 @@ void ImguiWindowMainMenubar::_ShowViewMenu()
     }
 }
 
-void ImguiWindowMainMenubar::_ShowOptionMenu()
+void Arcadia::ImguiWindowMainMenubar::_ShowOptionMenu()
 {
     auto& event_queue = EventQueue::Instance();
     if(ImGui::BeginMenu("Option"))
@@ -263,13 +263,13 @@ void ImguiWindowMainMenubar::_ShowOptionMenu()
     }
 }
 
-void ImguiWindowMainMenubar::_OnProjectBuilt(Events::ProjectBuilt& e)
+void Arcadia::ImguiWindowMainMenubar::_OnProjectBuilt(Events::ProjectBuilt& e)
 {
     const auto& [project] = e.DataTuple;
     _Project = project;
 }
 
-void ImguiWindowMainMenubar::_OnProjectUnbuilt(Events::ProjectUnbuilt& e)
+void Arcadia::ImguiWindowMainMenubar::_OnProjectUnbuilt(Events::ProjectUnbuilt& e)
 {
     _Project.reset();
 }

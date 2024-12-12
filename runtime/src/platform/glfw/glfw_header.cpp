@@ -4,8 +4,7 @@
 
 #include<format>
 
-
-GlfwContext::GlfwContext()
+Arcadia::GlfwContext::GlfwContext()
 {
     if(!glfwInit())
     {
@@ -20,10 +19,9 @@ GlfwContext::GlfwContext()
         throw GlfwError{ std::format("GLFW error[{0}]: {1}", err_type,desr) };
     }
     );
-
 }
 
-GlfwContext::~GlfwContext()
+Arcadia::GlfwContext::~GlfwContext()
 {
     glfwTerminate();
 }

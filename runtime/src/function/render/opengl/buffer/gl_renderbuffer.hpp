@@ -4,32 +4,35 @@
 #include"core/math.hpp"
 #include"platform/opengl/opengl_header.hpp"
 
-class GlRenderbuffer: public Noncopyable
+namespace Arcadia
 {
-public:
-    using SelfType = GlRenderbuffer;
-public:
-    GlRenderbuffer();
-    GlRenderbuffer(GLenum format, const glm::ivec2& size);
-    ~GlRenderbuffer();
-
-    GlRenderbuffer(SelfType&&) noexcept = default;
-    auto operator=(SelfType&&) noexcept -> SelfType & = default;
-
-    [[nodiscard]]
-    auto GetGlId() const ->GLuint
+    class GlRenderbuffer: public Noncopyable
     {
-        return _GlId;
-    }
+    public:
+        using SelfType = GlRenderbuffer;
+    public:
+        GlRenderbuffer();
+        GlRenderbuffer(GLenum format, const glm::ivec2& size);
+        ~GlRenderbuffer();
 
-    void Bind() const;
-    void Unbind() const;
+        GlRenderbuffer(SelfType&&) noexcept = default;
+        auto operator=(SelfType&&) noexcept -> SelfType & = default;
 
-    void SetStorage(
-        GLenum format,
-        const glm::ivec2& size
-    );
+        [[nodiscard]]
+        auto GetGlId() const ->GLuint
+        {
+            return _GlId;
+        }
 
-private:
-    GLuint _GlId{ 0 };
-};
+        void Bind() const;
+        void Unbind() const;
+
+        void SetStorage(
+            GLenum format,
+            const glm::ivec2& size
+        );
+
+    private:
+        GLuint _GlId{ 0 };
+    };
+}

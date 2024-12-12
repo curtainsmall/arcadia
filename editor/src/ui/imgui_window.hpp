@@ -19,46 +19,49 @@ virtual auto GetIdString() const -> std::string override\
     return GetIdStringStatic();\
 }
 
-class iImguiWindow
+namespace Arcadia
 {
-public:
-    using SelfType = iImguiWindow;
-public:
-    iImguiWindow(
-        bool open = false,
-        const std::string& title={}
-    ) :
-        _Opened(open),
-        _Title(title)
-    {}
-    virtual ~iImguiWindow() = default;
-
-    [[nodiscard]]
-    auto Open() const -> bool
+    class iImguiWindow
     {
-        return _Opened;
-    }
+    public:
+        using SelfType = iImguiWindow;
+    public:
+        iImguiWindow(
+            bool open = false,
+            const std::string& title={}
+        ) :
+            _Opened(open),
+            _Title(title)
+        {}
+        virtual ~iImguiWindow() = default;
 
-    [[nodiscard]]
-    auto GetTitle() const -> const std::string&
-    {
-        return _Title;
-    }
+        [[nodiscard]]
+        auto Open() const -> bool
+        {
+            return _Opened;
+        }
 
-    virtual void OnEvent(EventBase& e)
-    {}
-    virtual void OnUpdate() = 0;
-    virtual auto GetIdString() const->std::string = 0;
+        [[nodiscard]]
+        auto GetTitle() const -> const std::string&
+        {
+            return _Title;
+        }
 
-protected:
-    bool _Opened;
-    std::string _Title{};
-};
+        virtual void OnEvent(EventBase& e)
+        {}
+        virtual void OnUpdate() = 0;
+        virtual auto GetIdString() const->std::string = 0;
 
-template<typename ImGuiWindow>
-concept cImguiWindow = requires{
-    std::derived_from<ImGuiWindow, iImguiWindow>;
-    {
-        ImGuiWindow::GetIdStringStatic()
-    } -> std::same_as<std::string>;
-};
+    protected:
+        bool _Opened;
+        std::string _Title{};
+    };
+
+    template<typename ImGuiWindow>
+    concept cImguiWindow = requires{
+        std::derived_from<ImGuiWindow, iImguiWindow>;
+        {
+            ImGuiWindow::GetIdStringStatic()
+        } -> std::same_as<std::string>;
+    };
+}

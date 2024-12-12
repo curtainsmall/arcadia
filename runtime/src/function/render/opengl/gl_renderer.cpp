@@ -11,7 +11,7 @@
 #include"resource/components/skybox_component.hpp"
 #include"resource/components/transform_component.hpp"
 
-GlRenderer::GlRenderer(const std::filesystem::path& gl_shader_folder_path) :
+Arcadia::GlRenderer::GlRenderer(const std::filesystem::path& gl_shader_folder_path) :
     _GlModelPipeline(gl_shader_folder_path, GenerateModelShadersBuilder()),
     _GlSkyboxPipeline(gl_shader_folder_path, GenerateSkyboxShadersBuilder()),
     _GlGridPipeline(gl_shader_folder_path, GenerateGridShadersBuilder()),
@@ -21,7 +21,7 @@ GlRenderer::GlRenderer(const std::filesystem::path& gl_shader_folder_path) :
     ACDA_GL_CALL(glEnable(GL_CULL_FACE));
 }
 
-void GlRenderer::Prepare()
+void Arcadia::GlRenderer::Prepare()
 {
     _AssertFrameNotInBuild();
     _InBuild = true;
@@ -42,7 +42,7 @@ void GlRenderer::Prepare()
     _SubmittedPhysicsBodyShapeUuids.clear();
 }
 
-void GlRenderer::Finalize()
+void Arcadia::GlRenderer::Finalize()
 {
     _AssertFrameInBuild();
     _InBuild = false;
@@ -72,7 +72,7 @@ void GlRenderer::Finalize()
     }
 }
 
-void GlRenderer::Submit(const Scene& scene, const std::string& name)
+void Arcadia::GlRenderer::Submit(const Scene& scene, const std::string& name)
 {
     _AssertFrameInBuild();
 
@@ -194,7 +194,7 @@ void GlRenderer::Submit(const Scene& scene, const std::string& name)
     );
 }
 
-void GlRenderer::Draw()
+void Arcadia::GlRenderer::Draw()
 {
     _AssertFrameNotInBuild();
 
@@ -291,7 +291,7 @@ void GlRenderer::Draw()
     }
 }
 
-void GlRenderer::Reset()
+void Arcadia::GlRenderer::Reset()
 {
     _GlRenderUnitCameras.clear();
     _GlRenderUnitLights.clear();
@@ -300,22 +300,22 @@ void GlRenderer::Reset()
     _GlRenderUnitSkybox.reset();
 }
 
-auto GlRenderer::GetRenderResultId(size_t index) const -> void*
+auto Arcadia::GlRenderer::GetRenderResultId(size_t index) const -> void*
 {
     return reinterpret_cast<void*>(std::get<0>(_GlRenderUnitCameras.at(index)).GetGlTexture2d().GetGlId());
 }
 
-void GlRenderer::_AssertFrameInBuild() const
+void Arcadia::GlRenderer::_AssertFrameInBuild() const
 {
     ACDA_ASSERT(_InBuild && "Frame is not in build, did you call `prepare()`?");
 }
 
-void GlRenderer::_AssertFrameNotInBuild() const
+void Arcadia::GlRenderer::_AssertFrameNotInBuild() const
 {
     ACDA_ASSERT(!_InBuild && "Frame is in build, did you call `finalize()`?");
 }
 
-void GlRenderer::_DrawGrid(
+void Arcadia::GlRenderer::_DrawGrid(
     const GlVertexArray& gl_grid_vertex_array,
     const glm::mat4& camera_view,
     const glm::mat4& camera_proj,
@@ -337,7 +337,7 @@ void GlRenderer::_DrawGrid(
     _GlGridPipeline.Unuse();
 }
 
-void GlRenderer::_DrawLights(
+void Arcadia::GlRenderer::_DrawLights(
     const GLsizeiptr light_t_size,
     const int max_light_count,
     const int light_count_size_aligned,
@@ -434,7 +434,7 @@ void GlRenderer::_DrawLights(
     gl_light_uniform_buffer.BindBufferBase(0);
 }
 
-void GlRenderer::_DrawModels(
+void Arcadia::GlRenderer::_DrawModels(
     const glm::mat4& camera_view,
     const glm::mat4& camera_proj,
     const glm::vec3& camera_pos
@@ -483,7 +483,7 @@ void GlRenderer::_DrawModels(
     _GlModelPipeline.Unuse();
 }
 
-void GlRenderer::_DrawSkybox(
+void Arcadia::GlRenderer::_DrawSkybox(
     const glm::mat4& camera_view,
     const glm::mat4& camera_proj
 )
@@ -507,7 +507,7 @@ void GlRenderer::_DrawSkybox(
     _GlSkyboxPipeline.Unuse();
 }
 
-void GlRenderer::_DrawPhysicsBodyShape(
+void Arcadia::GlRenderer::_DrawPhysicsBodyShape(
     const glm::mat4& camera_view,
     const glm::mat4& camera_proj
 )

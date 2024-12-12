@@ -4,64 +4,67 @@
 
 #include"core/event/event.hpp"
 
-class Project;
-class iRenderer;
-class PhysicsSimulator;
-class Scene;
-
-namespace Events
+namespace Arcadia
 {
-    //==== Event for project ====//
+    class Project;
+    class iRenderer;
+    class PhysicsSimulator;
+    class Scene;
 
-    ACDA_EVENT(
-        ProjectBuilt,
-        std::shared_ptr<Project>
-    );
-    ACDA_EVENT(
-        ProjectUnbuilt
-    );
-    ACDA_EVENT(
-        ProjectLoaded
-    );
-    ACDA_EVENT(
-        ProjectSaved
-    );
+    namespace Events
+    {
+        //==== Event for project ====//
 
-    //==== Event for renderer ====//
+        ACDA_EVENT(
+            ProjectBuilt,
+            std::shared_ptr<Project>
+        );
+        ACDA_EVENT(
+            ProjectUnbuilt
+        );
+        ACDA_EVENT(
+            ProjectLoaded
+        );
+        ACDA_EVENT(
+            ProjectSaved
+        );
 
-    ACDA_EVENT(
-        RendererBuilt,
-        std::shared_ptr<iRenderer>
-    );
-    ACDA_EVENT(
-        RendererUnbuilt
-    );
+        //==== Event for renderer ====//
 
-    //==== Event for physics simulator ====//
+        ACDA_EVENT(
+            RendererBuilt,
+            std::shared_ptr<iRenderer>
+        );
+        ACDA_EVENT(
+            RendererUnbuilt
+        );
 
-    ACDA_EVENT(
-        PhysicsSimulatorBuilt,
-        std::shared_ptr<PhysicsSimulator>
-    );
+        //==== Event for physics simulator ====//
 
-    ACDA_EVENT(
-        PhysicsSimulatorUnbuilt
-    );
+        ACDA_EVENT(
+            PhysicsSimulatorBuilt,
+            std::shared_ptr<PhysicsSimulator>
+        );
 
-    //==== Event for scene ====//
+        ACDA_EVENT(
+            PhysicsSimulatorUnbuilt
+        );
 
-    ACDA_EVENT(
-        SceneBuilt,
-        std::shared_ptr<Scene>
-    );
-    ACDA_EVENT(
-        SceneActivated,
-        std::shared_ptr<Scene>
-    );
-    ACDA_EVENT(
-        SceneDeactivated
-    );
-    ACDA_EVENT(
-        SceneUnbuilt
-    );
+        //==== Event for scene ====//
+
+        ACDA_EVENT(
+            SceneBuilt,
+            std::shared_ptr<Scene>
+        );
+        ACDA_EVENT(
+            SceneActivated,
+            std::shared_ptr<Scene>
+        );
+        ACDA_EVENT(
+            SceneDeactivated
+        );
+        ACDA_EVENT(
+            SceneUnbuilt
+        );
+    }
 }

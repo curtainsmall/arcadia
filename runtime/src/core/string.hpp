@@ -4,19 +4,22 @@
 
 #include"core/base.hpp"
 
-template<size_t N>
-class StringLiteral
+namespace Arcadia
 {
-public:
-    constexpr StringLiteral(const char(&str)[N])
+    template<size_t N>
+    class StringLiteral
     {
-        std::copy_n(str, N, Value);
-    }
+    public:
+        constexpr StringLiteral(const char(&str)[N])
+        {
+            std::copy_n(str, N, Value);
+        }
 
-    operator std::string() const
-    {
-        return std::string{ Value[0], Value[N - 1] };
-    }
-public:
-    char Value[N];
-};
+        operator std::string() const
+        {
+            return std::string{ Value[0], Value[N - 1] };
+        }
+    public:
+        char Value[N];
+    };
+}

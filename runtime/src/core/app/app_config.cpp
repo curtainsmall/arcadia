@@ -2,7 +2,7 @@
 
 #include "app_config.hpp"
 
-auto AppConfig::Instance() -> SelfType&
+auto Arcadia::AppConfig::Instance() -> SelfType&
 {
     static SelfType app_config{};
     return app_config;

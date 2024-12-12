@@ -2,7 +2,7 @@
 
 #include "command.hpp"
 
-Command::Command(
+Arcadia::Command::Command(
     const std::string& description,
     const FunctionType& execute_fn,
     const FunctionType& unexecute_fn
@@ -14,28 +14,28 @@ Command::Command(
     Execute();
 }
 
-void Command::Execute() const
+void Arcadia::Command::Execute() const
 {
     _ExecuteFunction();
 }
 
-void Command::Unexecute() const
+void Arcadia::Command::Unexecute() const
 {
     _UnexecuteFunction();
 }
 
-auto Command::GetDescription() const -> const std::string&
+auto Arcadia::Command::GetDescription() const -> const std::string&
 {
     return _Description;
 }
 
-auto CommandList::Instance() -> SelfType&
+auto Arcadia::CommandList::Instance() -> SelfType&
 {
     SelfType command_list{};
     return command_list;
 }
 
-void CommandList::emplace(
+void Arcadia::CommandList::emplace(
     const std::string& description,
     const FunctionType& execute_fn,
     const FunctionType& unexecute_fn
@@ -51,7 +51,7 @@ void CommandList::emplace(
     _CurrentIterator = _List.begin();
 }
 
-auto CommandList::Undo() -> bool
+auto Arcadia::CommandList::Undo() -> bool
 {
     if(_CurrentIterator == _List.begin())
     {
@@ -62,7 +62,7 @@ auto CommandList::Undo() -> bool
     return true;
 }
 
-auto CommandList::Redo() -> bool
+auto Arcadia::CommandList::Redo() -> bool
 {
     if((++_CurrentIterator)-- == _List.end())
     {
@@ -73,52 +73,52 @@ auto CommandList::Redo() -> bool
     return true;
 }
 
-auto CommandList::GetCapacity() const -> size_t
+auto Arcadia::CommandList::GetCapacity() const -> size_t
 {
     return _Capacity;
 }
 
-void CommandList::SetCapacity(size_t capacity)
+void Arcadia::CommandList::SetCapacity(size_t capacity)
 {
     _Capacity = capacity;
 }
 
-auto CommandList::GetSize() const -> size_t
+auto Arcadia::CommandList::GetSize() const -> size_t
 {
     return _List.size();
 }
 
-void CommandList::Clear()
+void Arcadia::CommandList::Clear()
 {
     _List.clear();
 }
 
-auto CommandList::begin() noexcept -> ContainerType::iterator
+auto Arcadia::CommandList::begin() noexcept -> ContainerType::iterator
 {
     return _List.begin();
 }
 
-auto CommandList::end() noexcept -> ContainerType::iterator
+auto Arcadia::CommandList::end() noexcept -> ContainerType::iterator
 {
     return _List.end();
 }
 
-auto CommandList::begin() const noexcept -> ContainerType::const_iterator
+auto Arcadia::CommandList::begin() const noexcept -> ContainerType::const_iterator
 {
     return _List.begin();
 }
 
-auto CommandList::end() const noexcept -> ContainerType::const_iterator
+auto Arcadia::CommandList::end() const noexcept -> ContainerType::const_iterator
 {
     return _List.end();
 }
 
-auto CommandList::cbegin() const noexcept -> ContainerType::const_iterator
+auto Arcadia::CommandList::cbegin() const noexcept -> ContainerType::const_iterator
 {
     return _List.cbegin();
 }
 
-auto CommandList::cend() const noexcept -> ContainerType::const_iterator
+auto Arcadia::CommandList::cend() const noexcept -> ContainerType::const_iterator
 {
     return _List.cend();
 }

@@ -10,7 +10,7 @@
 #include"resource/components/skybox_component.hpp"
 #include"ui/imgui_header.hpp"
 
-void ImguiWindowOutliner::OnEvent(EventBase& e)
+void Arcadia::ImguiWindowOutliner::OnEvent(EventBase& e)
 {
     EventDispatcher{ e }
         .Dispatch<Events::OpenImguiWindow>(ACDA_BIND_MEMBER_FN(_OnOpenImguiWindow))
@@ -20,7 +20,7 @@ void ImguiWindowOutliner::OnEvent(EventBase& e)
         .IsDispatched();
 }
 
-void ImguiWindowOutliner::OnUpdate()
+void Arcadia::ImguiWindowOutliner::OnUpdate()
 {
     if(!_Opened)
     {
@@ -182,7 +182,7 @@ void ImguiWindowOutliner::OnUpdate()
     ImGui::End();
 }
 
-void ImguiWindowOutliner::_OnOpenImguiWindow(Events::OpenImguiWindow& e)
+void Arcadia::ImguiWindowOutliner::_OnOpenImguiWindow(Events::OpenImguiWindow& e)
 {
     const auto& [id_str] = e.DataTuple;
     if(id_str == GetIdString())
@@ -191,19 +191,19 @@ void ImguiWindowOutliner::_OnOpenImguiWindow(Events::OpenImguiWindow& e)
     }
 }
 
-void ImguiWindowOutliner::_OnSceneActivated(Events::SceneActivated& e)
+void Arcadia::ImguiWindowOutliner::_OnSceneActivated(Events::SceneActivated& e)
 {
     const auto& [scene] = e.DataTuple;
     _Scene = scene;
 }
 
-void ImguiWindowOutliner::_OnSceneDeactivated(Events::SceneDeactivated& e)
+void Arcadia::ImguiWindowOutliner::_OnSceneDeactivated(Events::SceneDeactivated& e)
 {
     _Scene.reset();
     _SelectedEntityName.clear();
 }
 
-void ImguiWindowOutliner::_OnRenameEntity(Events::RenameEntity& e)
+void Arcadia::ImguiWindowOutliner::_OnRenameEntity(Events::RenameEntity& e)
 {
     const auto& [old_name, new_name] = e.DataTuple;
     if(old_name == _SelectedEntityName)

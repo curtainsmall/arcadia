@@ -8,7 +8,7 @@
 #include"ui/imgui_header.hpp"
 #include"ui/ui_events.hpp"
 
-void ImguiWindowMainToolbar::OnEvent(EventBase& e)
+void Arcadia::ImguiWindowMainToolbar::OnEvent(EventBase& e)
 {
     EventDispatcher{ e }
         .Dispatch<Events::SceneActivated>(ACDA_BIND_MEMBER_FN(_OnSceneActivated))
@@ -16,7 +16,7 @@ void ImguiWindowMainToolbar::OnEvent(EventBase& e)
         .IsDispatched();
 }
 
-void ImguiWindowMainToolbar::OnUpdate()
+void Arcadia::ImguiWindowMainToolbar::OnUpdate()
 {
     auto scene = _Scene.lock();
 
@@ -97,13 +97,13 @@ void ImguiWindowMainToolbar::OnUpdate()
     ImGui::PopStyleVar();
 }
 
-void ImguiWindowMainToolbar::_OnSceneActivated(Events::SceneActivated& e)
+void Arcadia::ImguiWindowMainToolbar::_OnSceneActivated(Events::SceneActivated& e)
 {
     const auto& [scene] = e.DataTuple;
     _Scene = scene;
 }
 
-void ImguiWindowMainToolbar::_OnSceneDeactivated(Events::SceneDeactivated& e)
+void Arcadia::ImguiWindowMainToolbar::_OnSceneDeactivated(Events::SceneDeactivated& e)
 {
     _Scene.reset();
 }

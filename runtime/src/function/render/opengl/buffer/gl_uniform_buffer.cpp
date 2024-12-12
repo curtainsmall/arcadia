@@ -4,7 +4,7 @@
 
 #include"core/log/log.hpp"
 
-GlUniformBuffer::GlUniformBuffer(
+Arcadia::GlUniformBuffer::GlUniformBuffer(
     GLsizeiptr size
 )
 {
@@ -15,31 +15,31 @@ GlUniformBuffer::GlUniformBuffer(
     Unbind();
 }
 
-GlUniformBuffer::GlUniformBuffer(GLsizeiptr size, const GLvoid* data) :
+Arcadia::GlUniformBuffer::GlUniformBuffer(GLsizeiptr size, const GLvoid* data) :
     GlUniformBuffer(size)
 {
     SetBufferSubData(0, size, data);
 }
 
-GlUniformBuffer::~GlUniformBuffer()
+Arcadia::GlUniformBuffer::~GlUniformBuffer()
 {
     ACDA_GL_CALL(glDeleteBuffers(1, &_GlId));
 }
 
-GlUniformBuffer::GlUniformBuffer(SelfType&& rhs) noexcept :
+Arcadia::GlUniformBuffer::GlUniformBuffer(SelfType&& rhs) noexcept :
     _GlId(rhs._GlId)
 {
     rhs._GlId = 0;
 }
 
-auto GlUniformBuffer::operator=(SelfType&& rhs) noexcept -> SelfType&
+auto Arcadia::GlUniformBuffer::operator=(SelfType&& rhs) noexcept -> SelfType&
 {
     _GlId = rhs._GlId;
     rhs._GlId = 0;
     return *this;
 }
 
-void GlUniformBuffer::Bind() const
+void Arcadia::GlUniformBuffer::Bind() const
 {
     if(_GlId == 0)
     {
@@ -49,26 +49,26 @@ void GlUniformBuffer::Bind() const
     ACDA_GL_CALL(glBindBuffer(GL_UNIFORM_BUFFER, _GlId));
 }
 
-void GlUniformBuffer::Unbind() const
+void Arcadia::GlUniformBuffer::Unbind() const
 {
     ACDA_GL_CALL(glBindBuffer(GL_UNIFORM_BUFFER, 0));
 }
 
-void GlUniformBuffer::BindBufferBase(GLuint index) const
+void Arcadia::GlUniformBuffer::BindBufferBase(GLuint index) const
 {
     Bind();
     ACDA_GL_CALL(glBindBufferBase(GL_UNIFORM_BUFFER, index, _GlId));
     Unbind();
 }
 
-void GlUniformBuffer::BindBufferRange(GLuint index, GLintptr Offset, GLsizeiptr size) const
+void Arcadia::GlUniformBuffer::BindBufferRange(GLuint index, GLintptr Offset, GLsizeiptr size) const
 {
     Bind();
     ACDA_GL_CALL(glBindBufferRange(GL_UNIFORM_BUFFER, index, _GlId, Offset, size));
     Unbind();
 }
 
-auto GlUniformBuffer::SetBufferSubData(GLintptr offset, GLsizeiptr size, const GLvoid* data) const -> const SelfType&
+auto Arcadia::GlUniformBuffer::SetBufferSubData(GLintptr offset, GLsizeiptr size, const GLvoid* data) const -> const SelfType&
 {
     Bind();
     ACDA_GL_CALL(glBufferSubData(GL_UNIFORM_BUFFER, offset, size, data));

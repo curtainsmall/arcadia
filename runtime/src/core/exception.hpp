@@ -13,14 +13,17 @@ Exception(msg){\
 }\
 }
 
-class Exception: public std::exception
+namespace Arcadia
 {
-public:
-    Exception() :
-        std::exception()
-    {}
+    class Exception: public std::exception
+    {
+    public:
+        Exception() :
+            std::exception()
+        {}
 
-    explicit Exception(const std::string& msg) :
-        std::exception(msg.c_str())
-    {}
-};
+        explicit Exception(const std::string& msg) :
+            std::exception(msg.c_str())
+        {}
+    };
+}

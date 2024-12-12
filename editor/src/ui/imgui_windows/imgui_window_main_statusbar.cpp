@@ -5,10 +5,10 @@
 #include"editor/editor_context.hpp"
 #include"ui/imgui_header.hpp"
 
-void ImguiWindowMainStatusbar::OnEvent(EventBase& e)
+void Arcadia::ImguiWindowMainStatusbar::OnEvent(EventBase& e)
 {}
 
-void ImguiWindowMainStatusbar::OnUpdate()
+void Arcadia::ImguiWindowMainStatusbar::OnUpdate()
 {
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, glm::vec2{ 0,0 });
     auto window_flags =

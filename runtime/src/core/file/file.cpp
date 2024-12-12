@@ -6,19 +6,19 @@
 #include<fstream>
 #include<sstream>
 
-ACDA_API auto ToFilepath(const std::string& string) -> std::filesystem::path
+ACDA_API auto Arcadia::ToFilepath(const std::string& string) -> std::filesystem::path
 {
     std::filesystem::path path{ string };
     return path.make_preferred();
 }
 
-ACDA_API auto ToFilepath(const char* str) -> std::filesystem::path
+ACDA_API auto Arcadia::ToFilepath(const char* str) -> std::filesystem::path
 {
     std::filesystem::path path{ str };
     return path.make_preferred();
 }
 
-ACDA_API auto LoadText(const std::filesystem::path& filepath) -> std::string
+ACDA_API auto Arcadia::LoadText(const std::filesystem::path& filepath) -> std::string
 {
     std::ifstream ifs{ filepath };
     std::stringstream sstream{};
@@ -28,39 +28,39 @@ ACDA_API auto LoadText(const std::filesystem::path& filepath) -> std::string
     return sstream.str();
 }
 
-auto File::CreateIfstream() -> std::ifstream
+auto Arcadia::File::CreateIfstream() -> std::ifstream
 {
     std::ifstream ifs{};
     ifs.exceptions(std::ios::failbit);
     return ifs;
 }
 
-auto File::CreateIfstream(const std::filesystem::path& filepath) -> std::ifstream
+auto Arcadia::File::CreateIfstream(const std::filesystem::path& filepath) -> std::ifstream
 {
     auto ifs = CreateIfstream();
     ifs.open(filepath);
     return ifs;
 }
 
-auto File::CreateOfstream() -> std::ofstream
+auto Arcadia::File::CreateOfstream() -> std::ofstream
 {
     std::ofstream ofs{};
     ofs.exceptions(std::ios::failbit);
     return ofs;
 }
 
-auto File::CreateOfstream(const std::filesystem::path& filepath) -> std::ofstream
+auto Arcadia::File::CreateOfstream(const std::filesystem::path& filepath) -> std::ofstream
 {
     auto ofs = CreateOfstream();
     ofs.open(filepath);
     return ofs;
 }
 
-File::File(const std::filesystem::path& filepath) :
+Arcadia::File::File(const std::filesystem::path& filepath) :
     _Filepath(filepath)
 {}
 
-File::~File()
+Arcadia::File::~File()
 {
     for(auto& [section_name, section] : _SectionStorage)
     {
@@ -68,7 +68,7 @@ File::~File()
     }
 }
 
-auto File::Load() -> SelfType&
+auto Arcadia::File::Load() -> SelfType&
 {
     std::ifstream ifs{ _Filepath,std::ios_base::binary };
     if(ifs.fail())
@@ -101,7 +101,7 @@ auto File::Load() -> SelfType&
     return *this;
 }
 
-auto File::Save() -> SelfType&
+auto Arcadia::File::Save() -> SelfType&
 {
     std::ofstream ofs{ _Filepath, std::ios_base::binary };
     if(ofs.fail())
@@ -131,7 +131,7 @@ auto File::Save() -> SelfType&
     return *this;
 }
 
-auto File::GetSectionOrCreate(const std::string& section_name) -> SectionType&
+auto Arcadia::File::GetSectionOrCreate(const std::string& section_name) -> SectionType&
 {
     if(_SectionStorage.contains(section_name))
     {
@@ -140,7 +140,7 @@ auto File::GetSectionOrCreate(const std::string& section_name) -> SectionType&
     return GetSection(section_name);
 }
 
-auto File::GetSection(const std::string& section_name) -> SectionType&
+auto Arcadia::File::GetSection(const std::string& section_name) -> SectionType&
 {
     try
     {
@@ -152,7 +152,7 @@ auto File::GetSection(const std::string& section_name) -> SectionType&
     }
 }
 
-auto File::GetSection(const std::string& section_name) const -> const SectionType&
+auto Arcadia::File::GetSection(const std::string& section_name) const -> const SectionType&
 {
     try
     {
@@ -164,12 +164,12 @@ auto File::GetSection(const std::string& section_name) const -> const SectionTyp
     }
 }
 
-auto File::HasSection(const std::string& section_name) const -> bool
+auto Arcadia::File::HasSection(const std::string& section_name) const -> bool
 {
     return _SectionStorage.contains(section_name);
 }
 
-auto File::EraseSection(const std::string& section_name) -> SelfType&
+auto Arcadia::File::EraseSection(const std::string& section_name) -> SelfType&
 {
     _SectionStorage.erase(section_name);
     return *this;

@@ -5,30 +5,33 @@
 #include"platform/opengl/opengl_header.hpp"
 #include"resource/cubemap.hpp"
 
-class GlCubemap: public Noncopyable
+namespace Arcadia
 {
-public:
-    using SelfType = GlCubemap;
-public:
-    GlCubemap(const Cubemap& cubemap);
-    ~GlCubemap();
-
-    GlCubemap(SelfType&& rhs) noexcept;
-    auto operator=(SelfType&& rhs) noexcept -> SelfType&;
-
-    [[nodiscard]]
-    auto GetGlId() const -> GLuint
+    class GlCubemap: public Noncopyable
     {
-        return _GlId;
-    }
+    public:
+        using SelfType = GlCubemap;
+    public:
+        GlCubemap(const Cubemap& cubemap);
+        ~GlCubemap();
 
-    void Bind(GLenum slot = 0);
-    void Unbind();
+        GlCubemap(SelfType&& rhs) noexcept;
+        auto operator=(SelfType&& rhs) noexcept -> SelfType&;
 
-    void SetTextureParameter(GLenum pname, GLint param);
-    void SetTextureParameter(GLenum pname, GLfloat param);
+        [[nodiscard]]
+        auto GetGlId() const -> GLuint
+        {
+            return _GlId;
+        }
 
-private:
-    GLuint _GlId{};
-    GLenum _Slot{ -1u };
-};
+        void Bind(GLenum slot = 0);
+        void Unbind();
+
+        void SetTextureParameter(GLenum pname, GLint param);
+        void SetTextureParameter(GLenum pname, GLfloat param);
+
+    private:
+        GLuint _GlId{};
+        GLenum _Slot{ -1u };
+    };
+}

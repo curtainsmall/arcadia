@@ -4,7 +4,7 @@
 
 #include"core/math.hpp"
 
-CameraComponent::CameraComponent(const nlohmann::json& json)
+Arcadia::CameraComponent::CameraComponent(const nlohmann::json& json)
 {
     NearPlane             = json.at("near_plane");
     FarPlane              = json.at("far_plane");
@@ -18,7 +18,7 @@ CameraComponent::CameraComponent(const nlohmann::json& json)
     CursorMoveOffsetRange = Vec2::FromJson(json.at("cursor_move_offset_range"));
 }
 
-auto CameraComponent::ToJson() const -> nlohmann::json
+auto Arcadia::CameraComponent::ToJson() const -> nlohmann::json
 {
     return nlohmann::json{
         { "near_plane"              ,NearPlane },
@@ -34,12 +34,12 @@ auto CameraComponent::ToJson() const -> nlohmann::json
     };
 }
 
-auto CameraComponent::GenerateViewMat4(const glm::vec3& pos, const glm::vec3& dir) -> glm::mat4
+auto Arcadia::CameraComponent::GenerateViewMat4(const glm::vec3& pos, const glm::vec3& dir) -> glm::mat4
 {
     return glm::lookAt(pos, pos + dir, Up);
 }
 
-auto CameraComponent::GenerateProjectiveMat4() const -> glm::mat4
+auto Arcadia::CameraComponent::GenerateProjectiveMat4() const -> glm::mat4
 {
     return glm::perspective(
         FovY,
@@ -49,7 +49,7 @@ auto CameraComponent::GenerateProjectiveMat4() const -> glm::mat4
     );
 }
 
-auto CameraComponent::OnSnapshot() const -> std::shared_ptr<MementoDataBase>
+auto Arcadia::CameraComponent::OnSnapshot() const -> std::shared_ptr<MementoDataBase>
 {
     auto sp_memento = std::make_shared<CameraComponentMementoData>();
 
@@ -68,7 +68,7 @@ auto CameraComponent::OnSnapshot() const -> std::shared_ptr<MementoDataBase>
     return sp_memento;
 }
 
-void CameraComponent::OnRestore(const std::shared_ptr<MementoDataBase>& sp_memento_data)
+void Arcadia::CameraComponent::OnRestore(const std::shared_ptr<MementoDataBase>& sp_memento_data)
 {
     auto& memento_data = sp_memento_data->CastTo<CameraComponentMementoData>();
 
@@ -87,44 +87,44 @@ void CameraComponent::OnRestore(const std::shared_ptr<MementoDataBase>& sp_memen
 
 #if 0
 
-auto CameraComponent::MoveForward() -> SelfType&
+auto Arcadia::CameraComponent::MoveForward() -> SelfType&
 {
     return Move(GetForwardDir() * Speed);
 }
 
-auto CameraComponent::MoveBackward() -> SelfType&
+auto Arcadia::CameraComponent::MoveBackward() -> SelfType&
 {
     return Move(-GetForwardDir() * Speed);
 }
 
-auto CameraComponent::MoveLeft() -> SelfType&
+auto Arcadia::CameraComponent::MoveLeft() -> SelfType&
 {
     return Move(GetLeftDir() * Speed);
 }
 
-auto CameraComponent::MoveRight() -> SelfType&
+auto Arcadia::CameraComponent::MoveRight() -> SelfType&
 {
     return Move(-GetLeftDir() * Speed);
 }
 
-auto CameraComponent::MoveUp() -> SelfType&
+auto Arcadia::CameraComponent::MoveUp() -> SelfType&
 {
     return Move(GetUpDir() * Speed);
 }
 
-auto CameraComponent::MoveDown() -> SelfType&
+auto Arcadia::CameraComponent::MoveDown() -> SelfType&
 {
     return Move(-GetUpDir() * Speed);
 }
 
-auto CameraComponent::Move(const glm::vec3& Offset) -> SelfType&
+auto Arcadia::CameraComponent::Move(const glm::vec3& Offset) -> SelfType&
 {
     Position += Offset;
     Target += Offset;
     return *this;
 }
 
-auto CameraComponent::DragViewMove(const glm::vec2& Offset) -> SelfType&
+auto Arcadia::CameraComponent::DragViewMove(const glm::vec2& Offset) -> SelfType&
 {
     Move(
         GetLeftDir() * Offset.x
@@ -133,7 +133,7 @@ auto CameraComponent::DragViewMove(const glm::vec2& Offset) -> SelfType&
     return *this;
 }
 
-auto CameraComponent::RotateView(const glm::vec2& Offset) -> SelfType&
+auto Arcadia::CameraComponent::RotateView(const glm::vec2& Offset) -> SelfType&
 {
     auto forward = GetForwardDir();
 
@@ -155,7 +155,7 @@ auto CameraComponent::RotateView(const glm::vec2& Offset) -> SelfType&
     return *this;
 }
 
-auto CameraComponent::DragViewRotate(const glm::vec2& Offset) -> SelfType&
+auto Arcadia::CameraComponent::DragViewRotate(const glm::vec2& Offset) -> SelfType&
 {
     if(_TestCursorMove(Offset.x, Offset.y))
     {
@@ -183,12 +183,12 @@ auto CameraComponent::DragViewRotate(const glm::vec2& Offset) -> SelfType&
     return *this;
 }
 
-auto CameraComponent::GenerateViewMat4() const -> glm::Mat4
+auto Arcadia::CameraComponent::GenerateViewMat4() const -> glm::Mat4
 {
     return glm::lookAt(Position, Target, Up);
 }
 
-auto CameraComponent::GenerateProjectiveMat4() const -> glm::Mat4
+auto Arcadia::CameraComponent::GenerateProjectiveMat4() const -> glm::Mat4
 {
     return glm::perspective(
         Fov,
@@ -198,7 +198,7 @@ auto CameraComponent::GenerateProjectiveMat4() const -> glm::Mat4
     );
 }
 
-auto CameraComponent::GenerateMat4(bool col_major) const -> glm::Mat4
+auto Arcadia::CameraComponent::GenerateMat4(bool col_major) const -> glm::Mat4
 {
     if(col_major)
     {
@@ -210,28 +210,28 @@ auto CameraComponent::GenerateMat4(bool col_major) const -> glm::Mat4
     }
 }
 
-auto CameraComponent::GetForwardDir() const -> glm::vec3
+auto Arcadia::CameraComponent::GetForwardDir() const -> glm::vec3
 {
     return glm::normalize(Target - Position);
 }
 
-auto CameraComponent::GetLeftDir() const -> glm::vec3
+auto Arcadia::CameraComponent::GetLeftDir() const -> glm::vec3
 {
     return glm::normalize(glm::cross(Up, GetForwardDir()));
 }
 
-auto CameraComponent::GetUpDir() const -> glm::vec3
+auto Arcadia::CameraComponent::GetUpDir() const -> glm::vec3
 {
     return glm::normalize(glm::cross(GetForwardDir(), GetLeftDir()));
 }
 
-auto CameraComponent::_PitchAngle() const -> float
+auto Arcadia::CameraComponent::_PitchAngle() const -> float
 {
     const auto& forward = GetForwardDir();
     return glm::half_pi<float>() - glm::angle(forward, Up);
 }
 
-auto CameraComponent::_YawAngle() const -> float
+auto Arcadia::CameraComponent::_YawAngle() const -> float
 {
     ACDA_ASSERT(false && "This function is not working");
 
@@ -244,7 +244,7 @@ auto CameraComponent::_YawAngle() const -> float
     return coef * glm::angle(yaw_vec, vec3::CreateUnitNegativeZ());
 }
 
-auto CameraComponent::_RollAngle() const -> float
+auto Arcadia::CameraComponent::_RollAngle() const -> float
 {
     ACDA_ASSERT(false && "This function is not working");
 
@@ -258,7 +258,7 @@ auto CameraComponent::_RollAngle() const -> float
     return coef * glm::angle(Up, pos_uni_y_proj_on_forward_and_Up);
 }
 
-auto CameraComponent::_TestCursorMove(float x_offset, float y_offset) -> bool
+auto Arcadia::CameraComponent::_TestCursorMove(float x_offset, float y_offset) -> bool
 {
     return IsInRange(x_offset, CursorMoveOffsetRange.x, CursorMoveOffsetRange.y)
         && IsInRange(y_offset, CursorMoveOffsetRange.x, CursorMoveOffsetRange.y);

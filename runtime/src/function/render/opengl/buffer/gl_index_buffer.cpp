@@ -2,7 +2,7 @@
 
 #include "gl_index_buffer.hpp"
 
-GlIndexBuffer::GlIndexBuffer(const std::vector<Mesh::index_type>& indices) :
+Arcadia::GlIndexBuffer::GlIndexBuffer(const std::vector<Mesh::index_type>& indices) :
     _IndexCount(indices.size())
 {
     ACDA_GL_CALL(glGenBuffers(1, &_GlId));
@@ -11,12 +11,12 @@ GlIndexBuffer::GlIndexBuffer(const std::vector<Mesh::index_type>& indices) :
     Unbind();
 }
 
-GlIndexBuffer::~GlIndexBuffer()
+Arcadia::GlIndexBuffer::~GlIndexBuffer()
 {
     ACDA_GL_CALL(glDeleteBuffers(1, &_GlId));
 }
 
-GlIndexBuffer::GlIndexBuffer(SelfType&& rhs) noexcept
+Arcadia::GlIndexBuffer::GlIndexBuffer(SelfType&& rhs) noexcept
 {
     _GlId = rhs._GlId;
     rhs._GlId = 0;
@@ -25,7 +25,7 @@ GlIndexBuffer::GlIndexBuffer(SelfType&& rhs) noexcept
     rhs._IndexCount = 0;
 }
 
-auto GlIndexBuffer::operator=(SelfType&& rhs) noexcept -> SelfType&
+auto Arcadia::GlIndexBuffer::operator=(SelfType&& rhs) noexcept -> SelfType&
 {
     _GlId = rhs._GlId;
     rhs._GlId = 0;
@@ -36,7 +36,7 @@ auto GlIndexBuffer::operator=(SelfType&& rhs) noexcept -> SelfType&
     return *this;
 }
 
-void GlIndexBuffer::Bind() const
+void Arcadia::GlIndexBuffer::Bind() const
 {
     if(_GlId == 0)
     {
@@ -46,7 +46,7 @@ void GlIndexBuffer::Bind() const
     ACDA_GL_CALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _GlId));
 }
 
-void GlIndexBuffer::Unbind() const
+void Arcadia::GlIndexBuffer::Unbind() const
 {
     ACDA_GL_CALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
 }

@@ -8,7 +8,7 @@
 #include"ui/imgui_header.hpp"
 #include"ui/imgui_wrapper.hpp"
 
-void ImguiWindowStateScene::operator()(const Scene& scene)
+void Arcadia::ImguiWindowStateScene::operator()(const Scene& scene)
 {
     ImGui::Text(std::format("Entity Count: {}", scene.CountEntity([&](const std::string&, const EntityInfo& info)->bool
     {
@@ -16,7 +16,7 @@ void ImguiWindowStateScene::operator()(const Scene& scene)
     })).c_str());
 }
 
-void ImguiWindowStateRenderer::operator()(const iRenderer& renderer)
+void Arcadia::ImguiWindowStateRenderer::operator()(const iRenderer& renderer)
 {
     auto graphic_api_type_str = Match<std::string>(
         renderer.GetGraphicApiType(),
@@ -41,7 +41,7 @@ void ImguiWindowStateRenderer::operator()(const iRenderer& renderer)
     }
 }
 
-void ImguiWindowStatePhysicsSimulator::operator()(PhysicsSimulator& physics_simulator)
+void Arcadia::ImguiWindowStatePhysicsSimulator::operator()(PhysicsSimulator& physics_simulator)
 {
     const auto& physics_simulator_jph_body_id_storage = physics_simulator.GetJphBodyIdStorage();
     ImGui::Text(std::format("Body Count: {}", physics_simulator_jph_body_id_storage.size()).c_str());
@@ -84,7 +84,7 @@ void ImguiWindowStatePhysicsSimulator::operator()(PhysicsSimulator& physics_simu
     ImGui::EndDisabled();
 }
 
-void ImguiWindowState::OnEvent(EventBase& e)
+void Arcadia::ImguiWindowState::OnEvent(EventBase& e)
 {
     EventDispatcher{ e }
         .Dispatch<Events::OpenImguiWindow>(ACDA_BIND_MEMBER_FN(_OnOpenImguiWindow))
@@ -97,7 +97,7 @@ void ImguiWindowState::OnEvent(EventBase& e)
         .IsDispatched();
 }
 
-void ImguiWindowState::OnUpdate()
+void Arcadia::ImguiWindowState::OnUpdate()
 {
     if(!_Opened)
     {
@@ -161,40 +161,40 @@ void ImguiWindowState::OnUpdate()
     ImGui::End();
 }
 
-void ImguiWindowState::_OnOpenImguiWindow(Events::OpenImguiWindow& e)
+void Arcadia::ImguiWindowState::_OnOpenImguiWindow(Events::OpenImguiWindow& e)
 {
     _Opened = true;
 }
 
-void ImguiWindowState::_OnSceneActivated(Events::SceneActivated& e)
+void Arcadia::ImguiWindowState::_OnSceneActivated(Events::SceneActivated& e)
 {
     const auto& [scene] = e.DataTuple;
     _Scene = scene;
 }
 
-void ImguiWindowState::_OnSceneDeactivated(Events::SceneDeactivated& e)
+void Arcadia::ImguiWindowState::_OnSceneDeactivated(Events::SceneDeactivated& e)
 {
     _Scene.reset();
 }
 
-void ImguiWindowState::_OnRendererBuilt(Events::RendererBuilt& e)
+void Arcadia::ImguiWindowState::_OnRendererBuilt(Events::RendererBuilt& e)
 {
     const auto& [renderer] = e.DataTuple;
     _Renderer = renderer;
 }
 
-void ImguiWindowState::_OnRendererUnbuilt(Events::RendererUnbuilt& e)
+void Arcadia::ImguiWindowState::_OnRendererUnbuilt(Events::RendererUnbuilt& e)
 {
     _Renderer.reset();
 }
 
-void ImguiWindowState::_OnPhysicsSimulatorBuilt(Events::PhysicsSimulatorBuilt& e)
+void Arcadia::ImguiWindowState::_OnPhysicsSimulatorBuilt(Events::PhysicsSimulatorBuilt& e)
 {
     const auto& [physics_simulator] = e.DataTuple;
     _PhysicsSimulator = physics_simulator;
 }
 
-void ImguiWindowState::_OnPhysicsSimulatorUnbuilt(Events::PhysicsSimulatorUnbuilt& e)
+void Arcadia::ImguiWindowState::_OnPhysicsSimulatorUnbuilt(Events::PhysicsSimulatorUnbuilt& e)
 {
     _PhysicsSimulator.reset();
 }

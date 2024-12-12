@@ -8,7 +8,7 @@
 #include"core/nlohmann_json_header.hpp"
 #include"core/version/version.hpp"
 
-iAppLayer::iAppLayer() :
+Arcadia::iAppLayer::iAppLayer() :
     iLayer("app")
 {
     // Prepare AppConfig (either read from disk or use default value)
@@ -94,7 +94,7 @@ iAppLayer::iAppLayer() :
     }
 }
 
-iAppLayer::~iAppLayer()
+Arcadia::iAppLayer::~iAppLayer()
 {
     auto& app_config = AppConfig::Instance();
 

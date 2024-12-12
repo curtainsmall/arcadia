@@ -7,7 +7,7 @@
 
 #include"core/app/app_config.hpp"
 
-ACDA_API void ImguiBackend::Initialize(const WindowLayer& window)
+ACDA_API void Arcadia::ImguiBackend::Initialize(const WindowLayer& window)
 {
     const auto& app_config = AppConfig::Instance();
 
@@ -40,7 +40,7 @@ ACDA_API void ImguiBackend::Initialize(const WindowLayer& window)
     );
 }
 
-ACDA_API void ImguiBackend::NewFrame(const WindowLayer& window)
+ACDA_API void Arcadia::ImguiBackend::NewFrame(const WindowLayer& window)
 {
     const auto& app_config = AppConfig::Instance();
 
@@ -57,7 +57,7 @@ ACDA_API void ImguiBackend::NewFrame(const WindowLayer& window)
     );
 }
 
-ACDA_API void ImguiBackend::RenderDrawData(const WindowLayer& window)
+ACDA_API void Arcadia::ImguiBackend::RenderDrawData(const WindowLayer& window)
 {
     const auto& app_config = AppConfig::Instance();
 
@@ -73,7 +73,7 @@ ACDA_API void ImguiBackend::RenderDrawData(const WindowLayer& window)
     );
 }
 
-ACDA_API void ImguiBackend::Shutdown(const WindowLayer& window)
+ACDA_API void Arcadia::ImguiBackend::Shutdown(const WindowLayer& window)
 {
     const auto& app_config = AppConfig::Instance();
 
@@ -90,7 +90,7 @@ ACDA_API void ImguiBackend::Shutdown(const WindowLayer& window)
     );
 }
 
-ACDA_API void ImguiBackend::OnEvent(EventBase& e)
+ACDA_API void Arcadia::ImguiBackend::OnEvent(EventBase& e)
 {
     if(EventDispatcher{ e }
         .Dispatch<Events::WindowFocused>(ImguiBackend::OnWindowFocus)
@@ -115,49 +115,49 @@ ACDA_API void ImguiBackend::OnEvent(EventBase& e)
     }
 }
 
-ACDA_API void ImguiBackend::OnWindowFocus(Events::WindowFocused& window_focused)
+ACDA_API void Arcadia::ImguiBackend::OnWindowFocus(Events::WindowFocused& window_focused)
 {
     const auto& [wnd_ptr, focused] = window_focused.DataTuple;
     ImGui_ImplGlfw_WindowFocusCallback(wnd_ptr->GetGlfwWindow(), focused);
 }
 
-ACDA_API void ImguiBackend::OnInputCursorEnter(Events::InputCursorEnter& input_cursor_enter)
+ACDA_API void Arcadia::ImguiBackend::OnInputCursorEnter(Events::InputCursorEnter& input_cursor_enter)
 {
     const auto& [wnd_ptr, entered] = input_cursor_enter.DataTuple;
     ImGui_ImplGlfw_CursorEnterCallback(wnd_ptr->GetGlfwWindow(), entered);
 }
 
-ACDA_API void ImguiBackend::OnInputCursorPos(Events::InputCursorPos& input_cursor_pos)
+ACDA_API void Arcadia::ImguiBackend::OnInputCursorPos(Events::InputCursorPos& input_cursor_pos)
 {
     const auto& [wnd_ptr, pos] = input_cursor_pos.DataTuple;
     ImGui_ImplGlfw_CursorPosCallback(wnd_ptr->GetGlfwWindow(), pos.x, pos.y);
 }
 
-ACDA_API void ImguiBackend::OnInputMouseButton(Events::InputMouseButton& input_mouse_button)
+ACDA_API void Arcadia::ImguiBackend::OnInputMouseButton(Events::InputMouseButton& input_mouse_button)
 {
     const auto& [wnd_ptr, button, action, mods] = input_mouse_button.DataTuple;
     ImGui_ImplGlfw_MouseButtonCallback(wnd_ptr->GetGlfwWindow(), button, action, mods);
 }
 
-ACDA_API void ImguiBackend::OnInputScroll(Events::InputScroll& input_scroll)
+ACDA_API void Arcadia::ImguiBackend::OnInputScroll(Events::InputScroll& input_scroll)
 {
     const auto& [wnd_ptr, Offset] = input_scroll.DataTuple;
     ImGui_ImplGlfw_ScrollCallback(wnd_ptr->GetGlfwWindow(), Offset.x, Offset.y);
 }
 
-ACDA_API void ImguiBackend::OnInputKey(Events::InputKey& input_key)
+ACDA_API void Arcadia::ImguiBackend::OnInputKey(Events::InputKey& input_key)
 {
     const auto& [wnd_ptr, key, scancode, action, mods] = input_key.DataTuple;
     ImGui_ImplGlfw_KeyCallback(wnd_ptr->GetGlfwWindow(), key, scancode, action, mods);
 }
 
-ACDA_API void ImguiBackend::OnInputChar(Events::InputChar& input_char)
+ACDA_API void Arcadia::ImguiBackend::OnInputChar(Events::InputChar& input_char)
 {
     const auto& [wnd_ptr, code] = input_char.DataTuple;
     ImGui_ImplGlfw_CharCallback(wnd_ptr->GetGlfwWindow(), code);
 }
 
-ACDA_API void ImguiBackend::OnMonitorConnect(Events::MonitorConnect& monitor_connection)
+ACDA_API void Arcadia::ImguiBackend::OnMonitorConnect(Events::MonitorConnect& monitor_connection)
 {
     const auto& [glfw_monitor_ptr, connection] = monitor_connection.DataTuple;
     ImGui_ImplGlfw_MonitorCallback(glfw_monitor_ptr, connection);

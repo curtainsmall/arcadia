@@ -26,258 +26,261 @@ using namespace std::string_view_literals;
 using namespace std::chrono_literals;
 using namespace std::complex_literals;
 
-class Noncopyable
+namespace Arcadia
 {
-protected:
-    Noncopyable() = default;
-    Noncopyable(const Noncopyable&) = delete;
-    auto operator=(const Noncopyable&) = delete;
-};
-
-template<typename ...Fns>
-class OverloadedFunctionsWrapper: public Fns...
-{
-public:
-    using Fns::operator()...;
-};
-
-template<typename, template<typename ...> typename>
-constexpr bool IsSpecializationOf = false;
-template<template<typename...> typename T, typename ...Args>
-constexpr bool IsSpecializationOf<T<Args...>, T> = true;
-
-template<typename Type, template<typename ...> typename Template>
-concept cInstantiatedFrom = IsSpecializationOf<Type, Template>;
-
-template<typename ...Args>
-class ParameterPack
-{
-public:
-    using TupleType = std::tuple<Args...>;
-
-    template<size_t Index>
-    using ElementTypeAt = std::tuple_element_t<Index, TupleType>;
-public:
-    static constexpr size_t Size = std::tuple_size_v<TupleType>;
-};
-
-template<typename Enum>
-    requires std::is_enum_v<Enum>
-ACDA_API auto ToUnderlying(Enum e) -> std::underlying_type_t<Enum>
-{
-    return static_cast<std::underlying_type_t<Enum>>(e);
-}
-
-template<
-    typename Ret,
-    cInstantiatedFrom<std::variant> Variant,
-    typename ...BranchFns
->
-ACDA_API auto Match(Variant& variant, BranchFns&& ...fns) -> Ret
-{
-    return std::visit<Ret>(
-        OverloadedFunctionsWrapper{
-            std::forward<BranchFns>(fns)...
-        },
-        variant
-    );
-}
-
-template<
-    typename Ret,
-    cInstantiatedFrom<std::variant> Variant,
-    typename ...BranchFns
->
-ACDA_API auto Match(const Variant& variant, BranchFns&& ...fns) -> Ret
-{
-    return std::visit<Ret>(
-        OverloadedFunctionsWrapper{
-            std::forward<BranchFns>(fns)...
-        },
-        variant
-    );
-}
-
-template<
-    typename Ret,
-    typename Case,
-    std::convertible_to<Case> Cond,
-    typename ...Cases
->
-    requires (sizeof...(Cases) % 2 == 0)
-ACDA_API auto Match(const Cond& cond, const Case& case_expr, const std::function<Ret()>& case_fn, Cases&& ...cases) -> Ret
-{
-    if constexpr(sizeof...(Cases) == 0)
+    class Noncopyable
     {
-        return cond == case_expr ? case_fn() : Ret();
-    }
-    else
+    protected:
+        Noncopyable() = default;
+        Noncopyable(const Noncopyable&) = delete;
+        auto operator=(const Noncopyable&) = delete;
+    };
+
+    template<typename ...Fns>
+    class OverloadedFunctionsWrapper: public Fns...
     {
-        return cond == case_expr ? case_fn() : Match<Ret, Cond, Case>(cond, std::forward<Cases>(cases)...);
-    }
-}
+    public:
+        using Fns::operator()...;
+    };
 
-template<
-    typename Ret,
-    typename Case,
-    std::convertible_to<Case> Cond,
-    typename ...Cases
->
-    requires (sizeof...(Cases) % 2 == 0)
-ACDA_API auto Match(const Cond& cond, const std::function<Ret()>& default_fn, const Case& case_expr, const std::function<Ret()>& case_fn, Cases&& ...cases) -> Ret
-{
-    if constexpr(sizeof...(Cases) == 0)
+    template<typename, template<typename ...> typename>
+    constexpr bool IsSpecializationOf = false;
+    template<template<typename...> typename T, typename ...Args>
+    constexpr bool IsSpecializationOf<T<Args...>, T> = true;
+
+    template<typename Type, template<typename ...> typename Template>
+    concept cInstantiatedFrom = IsSpecializationOf<Type, Template>;
+
+    template<typename ...Args>
+    class ParameterPack
     {
-        return cond == case_expr ? case_fn() : default_fn();
-    }
-    else
+    public:
+        using TupleType = std::tuple<Args...>;
+
+        template<size_t Index>
+        using ElementTypeAt = std::tuple_element_t<Index, TupleType>;
+    public:
+        static constexpr size_t Size = std::tuple_size_v<TupleType>;
+    };
+
+    template<typename Enum>
+        requires std::is_enum_v<Enum>
+    ACDA_API auto ToUnderlying(Enum e) -> std::underlying_type_t<Enum>
     {
-        return cond == case_expr ? case_fn() : Match<Ret, Cond, Case>(cond, std::forward<Cases>(cases)...);
+        return static_cast<std::underlying_type_t<Enum>>(e);
     }
-}
 
-template<
-    typename Res,
-    typename Case,
-    std::convertible_to<Case> Cond,
-    typename ...Cases
->
-    requires (sizeof...(Cases) % 2 == 0)
-ACDA_API auto Match(const Cond& cond, const Case& case_expr, const Res& case_res, Cases&& ...cases) -> Res
-{
-    if constexpr(sizeof...(Cases) == 0)
+    template<
+        typename Ret,
+        cInstantiatedFrom<std::variant> Variant,
+        typename ...BranchFns
+    >
+    ACDA_API auto Match(Variant& variant, BranchFns&& ...fns) -> Ret
     {
-        return cond == case_expr ? case_res : Res();
+        return std::visit<Ret>(
+            OverloadedFunctionsWrapper{
+                std::forward<BranchFns>(fns)...
+            },
+            variant
+        );
     }
-    else
+
+    template<
+        typename Ret,
+        cInstantiatedFrom<std::variant> Variant,
+        typename ...BranchFns
+    >
+    ACDA_API auto Match(const Variant& variant, BranchFns&& ...fns) -> Ret
     {
-        return cond == case_expr ? case_res : Match<Res, Cond, Case>(cond, std::forward<Cases>(cases)...);
+        return std::visit<Ret>(
+            OverloadedFunctionsWrapper{
+                std::forward<BranchFns>(fns)...
+            },
+            variant
+        );
     }
-}
 
-template<
-    typename Res,
-    typename Case,
-    std::convertible_to<Case> Cond,
-    typename ...Cases
->
-    requires (sizeof...(Cases) % 2 == 0)
-ACDA_API auto Match(const Cond& cond, const Res& default_res, const Case& case_expr, const Res& case_res, Cases&& ...cases) -> Res
-{
-    if constexpr(sizeof...(Cases) == 0)
+    template<
+        typename Ret,
+        typename Case,
+        std::convertible_to<Case> Cond,
+        typename ...Cases
+    >
+        requires (sizeof...(Cases) % 2 == 0)
+    ACDA_API auto Match(const Cond& cond, const Case& case_expr, const std::function<Ret()>& case_fn, Cases&& ...cases) -> Ret
     {
-        return cond == case_expr ? case_res : default_res;
+        if constexpr(sizeof...(Cases) == 0)
+        {
+            return cond == case_expr ? case_fn() : Ret();
+        }
+        else
+        {
+            return cond == case_expr ? case_fn() : Match<Ret, Cond, Case>(cond, std::forward<Cases>(cases)...);
+        }
     }
-    else
+
+    template<
+        typename Ret,
+        typename Case,
+        std::convertible_to<Case> Cond,
+        typename ...Cases
+    >
+        requires (sizeof...(Cases) % 2 == 0)
+    ACDA_API auto Match(const Cond& cond, const std::function<Ret()>& default_fn, const Case& case_expr, const std::function<Ret()>& case_fn, Cases&& ...cases) -> Ret
     {
-        return cond == case_expr ? case_res : Match<Res, Cond, Case>(cond, std::forward<Cases>(cases)...);
+        if constexpr(sizeof...(Cases) == 0)
+        {
+            return cond == case_expr ? case_fn() : default_fn();
+        }
+        else
+        {
+            return cond == case_expr ? case_fn() : Match<Ret, Cond, Case>(cond, std::forward<Cases>(cases)...);
+        }
     }
-}
 
-template<typename Enum>
-concept cEnumBitmask = requires{
-    std::is_enum_v<Enum>;
-    Enum::_EnumBitmap;
-};
+    template<
+        typename Res,
+        typename Case,
+        std::convertible_to<Case> Cond,
+        typename ...Cases
+    >
+        requires (sizeof...(Cases) % 2 == 0)
+    ACDA_API auto Match(const Cond& cond, const Case& case_expr, const Res& case_res, Cases&& ...cases) -> Res
+    {
+        if constexpr(sizeof...(Cases) == 0)
+        {
+            return cond == case_expr ? case_res : Res();
+        }
+        else
+        {
+            return cond == case_expr ? case_res : Match<Res, Cond, Case>(cond, std::forward<Cases>(cases)...);
+        }
+    }
 
-template<cEnumBitmask Enum>
-ACDA_API auto operator|(const Enum& a, const Enum& b) -> Enum
-{
-    return static_cast<Enum>(ToUnderlying(a) | ToUnderlying(b));
-}
+    template<
+        typename Res,
+        typename Case,
+        std::convertible_to<Case> Cond,
+        typename ...Cases
+    >
+        requires (sizeof...(Cases) % 2 == 0)
+    ACDA_API auto Match(const Cond& cond, const Res& default_res, const Case& case_expr, const Res& case_res, Cases&& ...cases) -> Res
+    {
+        if constexpr(sizeof...(Cases) == 0)
+        {
+            return cond == case_expr ? case_res : default_res;
+        }
+        else
+        {
+            return cond == case_expr ? case_res : Match<Res, Cond, Case>(cond, std::forward<Cases>(cases)...);
+        }
+    }
 
-template<cEnumBitmask Enum>
-ACDA_API auto operator|=(Enum& a, const Enum& b) -> Enum&
-{
-    a = a | b;
-    return a;
-}
+    template<typename Enum>
+    concept cEnumBitmask = requires{
+        std::is_enum_v<Enum>;
+        Enum::_EnumBitmap;
+    };
 
-template<cEnumBitmask Enum>
-ACDA_API auto operator&(const Enum& a, const Enum& b) -> Enum
-{
-    return static_cast<Enum>(ToUnderlying(a) & ToUnderlying(b));
-}
+    template<cEnumBitmask Enum>
+    ACDA_API auto operator|(const Enum& a, const Enum& b) -> Enum
+    {
+        return static_cast<Enum>(ToUnderlying(a) | ToUnderlying(b));
+    }
 
-template<cEnumBitmask Enum>
-ACDA_API auto operator&=(Enum& a, const Enum& b) -> Enum&
-{
-    a = a & b;
-    return a;
-}
+    template<cEnumBitmask Enum>
+    ACDA_API auto operator|=(Enum& a, const Enum& b) -> Enum&
+    {
+        a = a | b;
+        return a;
+    }
 
-template<cEnumBitmask Enum>
-ACDA_API auto operator~(const Enum& a) -> Enum
-{
-    return static_cast<Enum>(~ToUnderlying(a));
-}
+    template<cEnumBitmask Enum>
+    ACDA_API auto operator&(const Enum& a, const Enum& b) -> Enum
+    {
+        return static_cast<Enum>(ToUnderlying(a) & ToUnderlying(b));
+    }
 
-template<cEnumBitmask Enum>
-ACDA_API auto operator!(const Enum& a) -> bool
-{
-    return !ToUnderlying(a);
-}
+    template<cEnumBitmask Enum>
+    ACDA_API auto operator&=(Enum& a, const Enum& b) -> Enum&
+    {
+        a = a & b;
+        return a;
+    }
 
-template<typename Enum, typename Int>
-    requires std::is_enum_v<Enum>&& std::is_integral_v<Int>
-ACDA_API auto operator==(const Enum& lhs, const Int& rhs) -> bool
-{
-    return static_cast<Enum>(rhs) == lhs;
-}
+    template<cEnumBitmask Enum>
+    ACDA_API auto operator~(const Enum& a) -> Enum
+    {
+        return static_cast<Enum>(~ToUnderlying(a));
+    }
 
-template<typename Enum, typename Int>
-    requires std::is_enum_v<Enum>&& std::is_integral_v<Int>
-ACDA_API auto operator==(const Int& lhs, const Enum& rhs) -> bool
-{
-    return rhs == lhs;
-}
+    template<cEnumBitmask Enum>
+    ACDA_API auto operator!(const Enum& a) -> bool
+    {
+        return !ToUnderlying(a);
+    }
 
-template<cEnumBitmask Enum, typename Int>
-    requires std::is_integral_v<Int>
-ACDA_API auto operator&(const Enum& lhs, const Int& rhs) -> Enum
-{
-    return static_cast<Enum>(static_cast<Int>(lhs) & rhs);
-}
+    template<typename Enum, typename Int>
+        requires std::is_enum_v<Enum>&& std::is_integral_v<Int>
+    ACDA_API auto operator==(const Enum& lhs, const Int& rhs) -> bool
+    {
+        return static_cast<Enum>(rhs) == lhs;
+    }
 
-template<cEnumBitmask Enum, typename Int>
-    requires std::is_integral_v<Int>
-ACDA_API auto operator&(const Int& lhs, const Enum& rhs) -> Enum
-{
-    return rhs & lhs;
-}
+    template<typename Enum, typename Int>
+        requires std::is_enum_v<Enum>&& std::is_integral_v<Int>
+    ACDA_API auto operator==(const Int& lhs, const Enum& rhs) -> bool
+    {
+        return rhs == lhs;
+    }
 
-template<cEnumBitmask Enum, typename Int>
-    requires std::is_integral_v<Int>
-ACDA_API auto operator&=(Enum& lhs, const Int& rhs) -> Enum&
-{
-    lhs = lhs & rhs;
-    return lhs;
-}
+    template<cEnumBitmask Enum, typename Int>
+        requires std::is_integral_v<Int>
+    ACDA_API auto operator&(const Enum& lhs, const Int& rhs) -> Enum
+    {
+        return static_cast<Enum>(static_cast<Int>(lhs) & rhs);
+    }
 
-template<cEnumBitmask Enum, typename Int>
-    requires std::is_integral_v<Int>
-ACDA_API auto operator|(const Enum& lhs, const Int& rhs) -> Enum
-{
-    return static_cast<Enum>(static_cast<Int>(lhs) | rhs);
-}
+    template<cEnumBitmask Enum, typename Int>
+        requires std::is_integral_v<Int>
+    ACDA_API auto operator&(const Int& lhs, const Enum& rhs) -> Enum
+    {
+        return rhs & lhs;
+    }
 
-template<cEnumBitmask Enum, typename Int>
-    requires std::is_integral_v<Int>
-ACDA_API auto operator|(const Int& lhs, const Enum& rhs) -> Enum
-{
-    return rhs | lhs;
-}
+    template<cEnumBitmask Enum, typename Int>
+        requires std::is_integral_v<Int>
+    ACDA_API auto operator&=(Enum& lhs, const Int& rhs) -> Enum&
+    {
+        lhs = lhs & rhs;
+        return lhs;
+    }
 
-template<cEnumBitmask Enum, typename Int>
-    requires std::is_integral_v<Int>
-ACDA_API auto operator|=(Enum& lhs, const Int& rhs) -> Enum&
-{
-    lhs = lhs | rhs;
-    return lhs;
-}
+    template<cEnumBitmask Enum, typename Int>
+        requires std::is_integral_v<Int>
+    ACDA_API auto operator|(const Enum& lhs, const Int& rhs) -> Enum
+    {
+        return static_cast<Enum>(static_cast<Int>(lhs) | rhs);
+    }
 
-template<typename T>
-ACDA_API auto ToBool(const T& val) -> bool
-{
-    return static_cast<bool>(val);
+    template<cEnumBitmask Enum, typename Int>
+        requires std::is_integral_v<Int>
+    ACDA_API auto operator|(const Int& lhs, const Enum& rhs) -> Enum
+    {
+        return rhs | lhs;
+    }
+
+    template<cEnumBitmask Enum, typename Int>
+        requires std::is_integral_v<Int>
+    ACDA_API auto operator|=(Enum& lhs, const Int& rhs) -> Enum&
+    {
+        lhs = lhs | rhs;
+        return lhs;
+    }
+
+    template<typename T>
+    ACDA_API auto ToBool(const T& val) -> bool
+    {
+        return static_cast<bool>(val);
+    }
 }

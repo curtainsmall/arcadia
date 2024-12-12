@@ -14,28 +14,28 @@
 #define ACDA_MAIN_FN_DECL int main()
 #endif // _WIN32
 
-extern auto CreateApplication() -> std::unique_ptr<iAppLayer>;
+extern auto Arcadia::CreateApplication()->std::unique_ptr<Arcadia::iAppLayer>;
 
 ACDA_MAIN_FN_DECL
 {
     // Add app_layer
-    auto & layer_stack = LayerStack::Instance();
-    layer_stack.PushLayer<iAppLayer>(layer_stack.end(), std::shared_ptr<iAppLayer>(CreateApplication()));
+    auto & layer_stack = Arcadia::LayerStack::Instance();
+    layer_stack.PushLayer<Arcadia::iAppLayer>(layer_stack.end(), std::shared_ptr<Arcadia::iAppLayer>(Arcadia::CreateApplication()));
 
     // Main loop
-    auto& app_context = AppContext::Instance();
+    auto& app_context = Arcadia::AppContext::Instance();
     while(app_context.Running)
     {
         app_context.DeltaTime = app_context.Timer.Segment();
 
         // Process event
-        auto& event_queue = EventQueue::Instance();
+        auto& event_queue = Arcadia::EventQueue::Instance();
         event_queue.SwapQueue();
         while(event_queue.GetSize())
         {
             auto& event = event_queue.ReadFront();
 
-            for(auto& layer : LayerStack::Instance())
+            for(auto& layer : Arcadia::LayerStack::Instance())
             {
                 layer->OnEvent(event);
                 if(event.Handled)
@@ -47,7 +47,7 @@ ACDA_MAIN_FN_DECL
         }
 
         // Updates
-        for(auto& layer : std::ranges::reverse_view{ LayerStack::Instance() })
+        for(auto& layer : std::ranges::reverse_view{ Arcadia::LayerStack::Instance() })
         {
             layer->OnUpdate();
         }

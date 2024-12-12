@@ -5,35 +5,38 @@
 #include"platform/opengl/opengl_header.hpp"
 #include"resource/material/texture2d.hpp"
 
-class GlTexture2d: public Noncopyable
+namespace Arcadia
 {
-public:
-    using SelfType = GlTexture2d;
-public:
-    GlTexture2d(
-        const glm::ivec2& size,
-        void* ptr = nullptr
-    );
-    GlTexture2d(
-        const Texture2d& texture2d
-    );
-    ~GlTexture2d();
-
-    GlTexture2d(SelfType&& rhs) noexcept;
-    auto operator=(SelfType&& rhs) noexcept -> SelfType&;
-
-    [[nodiscard]]
-    auto GetGlId() const -> GLuint
+    class GlTexture2d: public Noncopyable
     {
-        return _GlId;
-    }
+    public:
+        using SelfType = GlTexture2d;
+    public:
+        GlTexture2d(
+            const glm::ivec2& size,
+            void* ptr = nullptr
+        );
+        GlTexture2d(
+            const Texture2d& texture2d
+        );
+        ~GlTexture2d();
 
-    void Bind(GLenum slot = 0);
-    void Unbind();
+        GlTexture2d(SelfType&& rhs) noexcept;
+        auto operator=(SelfType&& rhs) noexcept -> SelfType&;
 
-    void SetTextureParameter(GLenum pname, GLint param) const;
-    void SetTextureParameter(GLenum pname, GLfloat param) const;
-private:
-    GLuint _GlId{ 0 };
-    GLenum _Slot{ -1u };
-};
+        [[nodiscard]]
+        auto GetGlId() const -> GLuint
+        {
+            return _GlId;
+        }
+
+        void Bind(GLenum slot = 0);
+        void Unbind();
+
+        void SetTextureParameter(GLenum pname, GLint param) const;
+        void SetTextureParameter(GLenum pname, GLfloat param) const;
+    private:
+        GLuint _GlId{ 0 };
+        GLenum _Slot{ -1u };
+    };
+}

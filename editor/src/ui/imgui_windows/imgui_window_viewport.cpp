@@ -7,7 +7,7 @@
 #include"resource/components/physics_component.hpp"
 #include"resource/components/transform_component.hpp"
 
-void ImguiWindowViewport::OnEvent(EventBase& e)
+void Arcadia::ImguiWindowViewport::OnEvent(EventBase& e)
 {
     EventDispatcher{ e }
         .Dispatch<Events::InputCursorMove>(ACDA_BIND_MEMBER_FN(_OnInputCursorMove))
@@ -27,7 +27,7 @@ void ImguiWindowViewport::OnEvent(EventBase& e)
         .IsDispatched();
 }
 
-void ImguiWindowViewport::OnUpdate()
+void Arcadia::ImguiWindowViewport::OnUpdate()
 {
     if(!_Opened)
     {
@@ -289,17 +289,17 @@ void ImguiWindowViewport::OnUpdate()
                         std::string description{};
                         switch(_GizmoOption)
                         {
-                            case ImguiWindowViewport::GizmoOption::Translation:
+                            case Arcadia::ImguiWindowViewport::GizmoOption::Translation:
                             {
                                 description = "Translation";
                                 break;
                             }
-                            case ImguiWindowViewport::GizmoOption::Rotation:
+                            case Arcadia::ImguiWindowViewport::GizmoOption::Rotation:
                             {
                                 description = "Rotation";
                                 break;
                             }
-                            case ImguiWindowViewport::GizmoOption::Scale:
+                            case Arcadia::ImguiWindowViewport::GizmoOption::Scale:
                             {
                                 description = "Scale";
                                 break;
@@ -326,13 +326,13 @@ void ImguiWindowViewport::OnUpdate()
     ImGui::End();
 }
 
-void ImguiWindowViewport::_OnInputCursorMove(Events::InputCursorMove& e)
+void Arcadia::ImguiWindowViewport::_OnInputCursorMove(Events::InputCursorMove& e)
 {
     const auto& [wnd_ptr, cursor_move] = e.DataTuple;
     _CursorMoveDistance = cursor_move;
 }
 
-void ImguiWindowViewport::_OnOpenImguiWindow(Events::OpenImguiWindow& e)
+void Arcadia::ImguiWindowViewport::_OnOpenImguiWindow(Events::OpenImguiWindow& e)
 {
     const auto& [id_str] = e.DataTuple;
     if(id_str == GetIdString())
@@ -341,18 +341,18 @@ void ImguiWindowViewport::_OnOpenImguiWindow(Events::OpenImguiWindow& e)
     }
 }
 
-void ImguiWindowViewport::_OnProjectBuilt(Events::ProjectBuilt& e)
+void Arcadia::ImguiWindowViewport::_OnProjectBuilt(Events::ProjectBuilt& e)
 {
     const auto& [project] = e.DataTuple;
     _Project = project;
 }
 
-void ImguiWindowViewport::_OnProjectUnbuilt(Events::ProjectUnbuilt& e)
+void Arcadia::ImguiWindowViewport::_OnProjectUnbuilt(Events::ProjectUnbuilt& e)
 {
     _Project.reset();
 }
 
-void ImguiWindowViewport::_OnSceneActivated(Events::SceneActivated& e)
+void Arcadia::ImguiWindowViewport::_OnSceneActivated(Events::SceneActivated& e)
 {
     const auto& [scene] = e.DataTuple;
     if(!scene->ContainsEntity(ViewportCameraEntityName))
@@ -367,18 +367,18 @@ void ImguiWindowViewport::_OnSceneActivated(Events::SceneActivated& e)
     _Scene = scene;
 }
 
-void ImguiWindowViewport::_OnSceneDeactivated(Events::SceneDeactivated& e)
+void Arcadia::ImguiWindowViewport::_OnSceneDeactivated(Events::SceneDeactivated& e)
 {
     _Scene.reset();
 }
 
-void ImguiWindowViewport::_OnSelectEntity(Events::SelectEntity& e)
+void Arcadia::ImguiWindowViewport::_OnSelectEntity(Events::SelectEntity& e)
 {
     const auto& [entity_name] = e.DataTuple;
     _SelectedEntityName = entity_name;
 }
 
-void ImguiWindowViewport::_OnRenameEntity(Events::RenameEntity& e)
+void Arcadia::ImguiWindowViewport::_OnRenameEntity(Events::RenameEntity& e)
 {
     const auto& [old_name, new_name] = e.DataTuple;
     if(old_name == _SelectedEntityName)
@@ -387,7 +387,7 @@ void ImguiWindowViewport::_OnRenameEntity(Events::RenameEntity& e)
     }
 }
 
-void ImguiWindowViewport::_OnDeleteEntity(Events::DeleteEntity& e)
+void Arcadia::ImguiWindowViewport::_OnDeleteEntity(Events::DeleteEntity& e)
 {
     const auto& [entity] = e.DataTuple;
     if(_SelectedEntityName == entity)
@@ -396,29 +396,29 @@ void ImguiWindowViewport::_OnDeleteEntity(Events::DeleteEntity& e)
     }
 }
 
-void ImguiWindowViewport::_OnRendererBuilt(Events::RendererBuilt& e)
+void Arcadia::ImguiWindowViewport::_OnRendererBuilt(Events::RendererBuilt& e)
 {
     const auto& [renderer] = e.DataTuple;
     _Renderer = renderer;
 }
 
-void ImguiWindowViewport::_OnRendererUnbuilt(Events::RendererUnbuilt& e)
+void Arcadia::ImguiWindowViewport::_OnRendererUnbuilt(Events::RendererUnbuilt& e)
 {
     _Renderer.reset();
 }
 
-void ImguiWindowViewport::_OnPhysicsSimulatorBuilt(Events::PhysicsSimulatorBuilt& e)
+void Arcadia::ImguiWindowViewport::_OnPhysicsSimulatorBuilt(Events::PhysicsSimulatorBuilt& e)
 {
     const auto& [physics_simulator] = e.DataTuple;
     _PhysicsSimulator = physics_simulator;
 }
 
-void ImguiWindowViewport::_OnPhysicsSimulatorUnbuilt(Events::PhysicsSimulatorUnbuilt& e)
+void Arcadia::ImguiWindowViewport::_OnPhysicsSimulatorUnbuilt(Events::PhysicsSimulatorUnbuilt& e)
 {
     _PhysicsSimulator.reset();
 }
 
-void ImguiWindowViewport::_OnShowGizmo(Events::ShowGizmo& e)
+void Arcadia::ImguiWindowViewport::_OnShowGizmo(Events::ShowGizmo& e)
 {
     const auto& [show_gizmo] = e.DataTuple;
     _ShowGizmo = show_gizmo;

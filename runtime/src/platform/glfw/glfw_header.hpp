@@ -5,13 +5,16 @@
 #include"core/base.hpp"
 #include"core/exception.hpp"
 
-ACDA_EXCEPTION(GlfwError);
-
-class GlfwContext: public Noncopyable
+namespace Arcadia
 {
-public:
-    using SelfType = GlfwContext;
-public:
-    GlfwContext();
-    ~GlfwContext();
-};
+    ACDA_EXCEPTION(GlfwError);
+
+    class GlfwContext: public Noncopyable
+    {
+    public:
+        using SelfType = GlfwContext;
+    public:
+        GlfwContext();
+        ~GlfwContext();
+    };
+}

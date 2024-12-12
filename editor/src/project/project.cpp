@@ -6,7 +6,7 @@
 #include"resource/components/physics_component.hpp"
 #include"resource/components/transform_component.hpp"
 
-Project::Project(nlohmann::json& json) :
+Arcadia::Project::Project(nlohmann::json& json) :
     _Name(json.at("name"))
 {
     for(const auto& json_scene : json.at("scenes"))
@@ -17,7 +17,7 @@ Project::Project(nlohmann::json& json) :
     SetActiveScene(json.at("active_scene_name"));
 }
 
-auto Project::ToJson() const -> nlohmann::json
+auto Arcadia::Project::ToJson() const -> nlohmann::json
 {
     nlohmann::json json{
         {"name",GetName()},
@@ -34,35 +34,35 @@ auto Project::ToJson() const -> nlohmann::json
     return json;
 }
 
-auto Project::GetName() const -> const std::string&
+auto Arcadia::Project::GetName() const -> const std::string&
 {
     return _Name;
 }
 
-void Project::SetName(const std::string& name)
+void Arcadia::Project::SetName(const std::string& name)
 {
     _Name = name;
 }
 
-auto Project::HasActiveScene() const -> bool
+auto Arcadia::Project::HasActiveScene() const -> bool
 {
     return !!_ActiveScene;
 }
 
-auto Project::GetActiveScene() -> Scene&
+auto Arcadia::Project::GetActiveScene() -> Scene&
 {
     ACDA_ASSERT(HasActiveScene());
     // If scene is modified, it will record it internally so we does not need to change _modified here
     return *_ActiveScene;
 }
 
-auto Project::GetActiveScene() const -> const Scene&
+auto Arcadia::Project::GetActiveScene() const -> const Scene&
 {
     ACDA_ASSERT(HasActiveScene());
     return *_ActiveScene;
 }
 
-void Project::SetActiveScene(const std::string& name)
+void Arcadia::Project::SetActiveScene(const std::string& name)
 {
     auto is_same_scene = _ActiveScene && name == _ActiveScene->Name;
 
@@ -90,7 +90,7 @@ void Project::SetActiveScene(const std::string& name)
     }
 }
 
-void Project::_SnapshotEntities()
+void Arcadia::Project::_SnapshotEntities()
 {
     for(auto [entity, comp] : _ActiveScene->GetComponentView<CameraComponent>().each())
     {

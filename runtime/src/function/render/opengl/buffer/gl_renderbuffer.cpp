@@ -2,23 +2,23 @@
 
 #include "gl_renderbuffer.hpp"
 
-GlRenderbuffer::GlRenderbuffer()
+Arcadia::GlRenderbuffer::GlRenderbuffer()
 {
     ACDA_GL_CALL(glGenRenderbuffers(1, &_GlId));
 }
 
-GlRenderbuffer::GlRenderbuffer(GLenum format, const glm::ivec2& size) :
+Arcadia::GlRenderbuffer::GlRenderbuffer(GLenum format, const glm::ivec2& size) :
     GlRenderbuffer()
 {
     SetStorage(format, size);
 }
 
-GlRenderbuffer::~GlRenderbuffer()
+Arcadia::GlRenderbuffer::~GlRenderbuffer()
 {
     ACDA_GL_CALL(glDeleteRenderbuffers(1, &_GlId));
 }
 
-void GlRenderbuffer::Bind() const
+void Arcadia::GlRenderbuffer::Bind() const
 {
     if(_GlId == 0)
     {
@@ -28,12 +28,12 @@ void GlRenderbuffer::Bind() const
     ACDA_GL_CALL(glBindRenderbuffer(GL_RENDERBUFFER, _GlId));
 }
 
-void GlRenderbuffer::Unbind() const
+void Arcadia::GlRenderbuffer::Unbind() const
 {
     ACDA_GL_CALL(glBindRenderbuffer(GL_RENDERBUFFER, 0));
 }
 
-void GlRenderbuffer::SetStorage(GLenum format, const glm::ivec2& size)
+void Arcadia::GlRenderbuffer::SetStorage(GLenum format, const glm::ivec2& size)
 {
     Bind();
     ACDA_GL_CALL(glRenderbufferStorage(GL_RENDERBUFFER, format, size.x, size.y));

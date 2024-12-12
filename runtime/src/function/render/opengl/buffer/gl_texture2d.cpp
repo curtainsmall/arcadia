@@ -2,7 +2,7 @@
 
 #include "gl_texture2d.hpp"
 
-GlTexture2d::GlTexture2d(
+Arcadia::GlTexture2d::GlTexture2d(
     const glm::ivec2& size,
     void* ptr
 )
@@ -18,7 +18,7 @@ GlTexture2d::GlTexture2d(
     Unbind();
 }
 
-GlTexture2d::GlTexture2d(const Texture2d& texture2d)
+Arcadia::GlTexture2d::GlTexture2d(const Texture2d& texture2d)
 {
     ACDA_GL_CALL(glGenTextures(1, &_GlId));
     Bind();
@@ -31,12 +31,12 @@ GlTexture2d::GlTexture2d(const Texture2d& texture2d)
     Unbind();
 }
 
-GlTexture2d::~GlTexture2d()
+Arcadia::GlTexture2d::~GlTexture2d()
 {
     ACDA_GL_CALL(glDeleteTextures(1, &_GlId));
 }
 
-GlTexture2d::GlTexture2d(SelfType&& rhs) noexcept :
+Arcadia::GlTexture2d::GlTexture2d(SelfType&& rhs) noexcept :
     _GlId(rhs._GlId),
     _Slot(rhs._Slot)
 {
@@ -44,7 +44,7 @@ GlTexture2d::GlTexture2d(SelfType&& rhs) noexcept :
     rhs._Slot = -1u;
 }
 
-auto GlTexture2d::operator=(SelfType&& rhs) noexcept -> SelfType&
+auto Arcadia::GlTexture2d::operator=(SelfType&& rhs) noexcept -> SelfType&
 {
     _GlId = rhs._GlId;
     rhs._GlId = 0;
@@ -55,7 +55,7 @@ auto GlTexture2d::operator=(SelfType&& rhs) noexcept -> SelfType&
     return *this;
 }
 
-void GlTexture2d::Bind(GLenum slot)
+void Arcadia::GlTexture2d::Bind(GLenum slot)
 {
     if(_GlId == 0)
     {
@@ -66,7 +66,7 @@ void GlTexture2d::Bind(GLenum slot)
     ACDA_GL_CALL(glBindTexture(GL_TEXTURE_2D, _GlId));
 }
 
-void GlTexture2d::Unbind()
+void Arcadia::GlTexture2d::Unbind()
 {
     if(_Slot == -1)
     {
@@ -78,7 +78,7 @@ void GlTexture2d::Unbind()
     _Slot = -1;
 }
 
-void GlTexture2d::SetTextureParameter(GLenum pname, GLint param) const
+void Arcadia::GlTexture2d::SetTextureParameter(GLenum pname, GLint param) const
 {
     if(_GlId == 0 || _Slot == -1)
     {
@@ -88,7 +88,7 @@ void GlTexture2d::SetTextureParameter(GLenum pname, GLint param) const
     ACDA_GL_CALL(glTexParameteri(GL_TEXTURE_2D, pname, param));
 }
 
-void GlTexture2d::SetTextureParameter(GLenum pname, GLfloat param) const
+void Arcadia::GlTexture2d::SetTextureParameter(GLenum pname, GLfloat param) const
 {
     if(_GlId == 0 || _Slot == -1)
     {

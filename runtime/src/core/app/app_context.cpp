@@ -6,20 +6,20 @@
 #   include"core/event/event.hpp"
 #endif
 
-auto AppContext::Instance() -> SelfType&
+auto Arcadia::AppContext::Instance() -> SelfType&
 {
     static SelfType app_context{};
     return app_context;
 }
 
-AppContext::AppContext()
+Arcadia::AppContext::AppContext()
 {
 #ifdef ACDA_DEBUG_MODE
     auto& set = EventQueue::Instance()
         .DebugExcludedEventTypeIndexes;
     set.emplace(typeid(Events::InputCursorPos));
     set.emplace(typeid(Events::InputCursorMove));
-    set.emplace(typeid(Events::WindowPosition));
+    set.emplace(typeid(Events::WindowSetPosition));
 
 #endif // ACDA_DEBUG_MODE
 }

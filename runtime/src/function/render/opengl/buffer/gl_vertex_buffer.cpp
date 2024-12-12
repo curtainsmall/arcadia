@@ -2,7 +2,7 @@
 
 #include "gl_vertex_buffer.hpp"
 
-GlVertexBuffer::GlVertexBuffer(const std::vector<Vertex>& vertices) :
+Arcadia::GlVertexBuffer::GlVertexBuffer(const std::vector<Vertex>& vertices) :
     _VertexCount(vertices.size())
 {
     ACDA_GL_CALL(glGenBuffers(1, &_GlId));
@@ -17,12 +17,12 @@ GlVertexBuffer::GlVertexBuffer(const std::vector<Vertex>& vertices) :
         .Push<glm::vec2>(); // For tex_coord
 }
 
-GlVertexBuffer::~GlVertexBuffer()
+Arcadia::GlVertexBuffer::~GlVertexBuffer()
 {
     ACDA_GL_CALL(glDeleteBuffers(1, &_GlId));
 }
 
-GlVertexBuffer::GlVertexBuffer(SelfType&& rhs) noexcept
+Arcadia::GlVertexBuffer::GlVertexBuffer(SelfType&& rhs) noexcept
 {
     _GlId = rhs._GlId;
     rhs._GlId = 0;
@@ -33,7 +33,7 @@ GlVertexBuffer::GlVertexBuffer(SelfType&& rhs) noexcept
     rhs._VertexCount = 0;
 }
 
-auto GlVertexBuffer::operator=(SelfType&& rhs) noexcept -> SelfType&
+auto Arcadia::GlVertexBuffer::operator=(SelfType&& rhs) noexcept -> SelfType&
 {
     _GlId = rhs._GlId;
     rhs._GlId = 0;
@@ -46,7 +46,7 @@ auto GlVertexBuffer::operator=(SelfType&& rhs) noexcept -> SelfType&
     return *this;
 }
 
-void GlVertexBuffer::Bind() const
+void Arcadia::GlVertexBuffer::Bind() const
 {
     if(_GlId == 0)
     {
@@ -56,12 +56,12 @@ void GlVertexBuffer::Bind() const
     ACDA_GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, _GlId));
 }
 
-void GlVertexBuffer::Unbind() const
+void Arcadia::GlVertexBuffer::Unbind() const
 {
     ACDA_GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, 0));
 }
 
-void GlVertexBuffer::SetupVertexAttributeArray() const
+void Arcadia::GlVertexBuffer::SetupVertexAttributeArray() const
 {
     GLuint attrib_slot{ 0 };
     size_t Offset{ 0 };

@@ -11,7 +11,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include"stb/stb_image.h"
 
-ModelComponent::ModelComponent(const std::filesystem::path& filepath) :
+Arcadia::ModelComponent::ModelComponent(const std::filesystem::path& filepath) :
     _Filepath(filepath)
 {
     if(!_Filepath.empty())
@@ -20,7 +20,7 @@ ModelComponent::ModelComponent(const std::filesystem::path& filepath) :
     }
 }
 
-ModelComponent::ModelComponent(const nlohmann::json& json) :
+Arcadia::ModelComponent::ModelComponent(const nlohmann::json& json) :
     _Filepath(ToFilepath(json.at("filepath")))
 {
     if(!_Filepath.empty())
@@ -29,7 +29,7 @@ ModelComponent::ModelComponent(const nlohmann::json& json) :
     }
 }
 
-auto ModelComponent::ToJson() const -> nlohmann::json
+auto Arcadia::ModelComponent::ToJson() const -> nlohmann::json
 {
     nlohmann::json json{
         {"filepath", _Filepath.generic_string() }
@@ -37,31 +37,31 @@ auto ModelComponent::ToJson() const -> nlohmann::json
     return json;
 }
 
-auto ModelComponent::OnSnapshot() const -> std::shared_ptr<MementoDataBase>
+auto Arcadia::ModelComponent::OnSnapshot() const -> std::shared_ptr<MementoDataBase>
 {
     return nullptr;
 }
 
-void ModelComponent::OnRestore(const std::shared_ptr<MementoDataBase>& sp_memento_data)
+void Arcadia::ModelComponent::OnRestore(const std::shared_ptr<MementoDataBase>& sp_memento_data)
 {}
 
-auto ModelComponent::GetFilepath() const -> const std::filesystem::path&
+auto Arcadia::ModelComponent::GetFilepath() const -> const std::filesystem::path&
 {
     return _Filepath;
 }
 
-auto ModelComponent::HasIdentifiableMeshes() const -> bool
+auto Arcadia::ModelComponent::HasIdentifiableMeshes() const -> bool
 {
     return _IdentifiableMeshes.get();
 }
 
-auto ModelComponent::GetIdentifiableMeshes() const -> const IdentifiableMeshesType&
+auto Arcadia::ModelComponent::GetIdentifiableMeshes() const -> const IdentifiableMeshesType&
 {
     ACDA_ASSERT(HasIdentifiableMeshes());
     return *_IdentifiableMeshes;
 }
 
-void ModelComponent::Import(const std::filesystem::path& filepath)
+void Arcadia::ModelComponent::Import(const std::filesystem::path& filepath)
 {
     if(!_Filepath.empty() && !filepath.empty())
     {
@@ -118,7 +118,7 @@ void ModelComponent::Import(const std::filesystem::path& filepath)
     }
 }
 
-void ModelComponent::_Load()
+void Arcadia::ModelComponent::_Load()
 {
     Assimp::Importer importer{};
     auto ai_scene = importer.ReadFile(
@@ -152,12 +152,12 @@ void ModelComponent::_Load()
     _IdentifiableMeshes = std::make_unique<IdentifiableMeshesType>(std::move(meshes));
 }
 
-void ModelComponent::_Unload()
+void Arcadia::ModelComponent::_Unload()
 {
     _IdentifiableMeshes.reset();
 }
 
-void ModelComponent::_ProcessAssimpNode(
+void Arcadia::ModelComponent::_ProcessAssimpNode(
     std::vector<Mesh>& meshes,
     const aiScene* const ai_scene,
     const aiNode* const ai_node,
@@ -258,7 +258,7 @@ void ModelComponent::_ProcessAssimpNode(
     }
 }
 
-void ModelComponent::_LoadTexture(
+void Arcadia::ModelComponent::_LoadTexture(
     const std::filesystem::path& directory,
     const aiMaterial* const ai_material,
     aiTextureType ai_texture_type,

@@ -2,13 +2,13 @@
 
 #include "version.hpp"
 
-Version::Version(const nlohmann::json& json) :
+Arcadia::Version::Version(const nlohmann::json& json) :
     Major(json.at("major")),
     Minor(json.at("minor")),
     Patch(json.at("patch"))
 {}
 
-auto Version::ToJson() const -> nlohmann::json
+auto Arcadia::Version::ToJson() const -> nlohmann::json
 {
     return nlohmann::json{
         {"major",Major},
@@ -17,7 +17,7 @@ auto Version::ToJson() const -> nlohmann::json
     };
 }
 
-Version::operator std::string() const
+Arcadia::Version::operator std::string() const
 {
     return std::format("{0}.{1}.{2}", Major, Minor, Patch);
 }

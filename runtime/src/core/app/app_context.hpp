@@ -6,17 +6,20 @@
 #   include"function/input/input_events.hpp"
 #endif
 
-class AppContext
+namespace Arcadia
 {
-public:
-    using SelfType = AppContext;
-public:
-    static auto Instance() -> SelfType&;
+    class AppContext
+    {
+    public:
+        using SelfType = AppContext;
+    public:
+        static auto Instance() -> SelfType&;
 
-    AppContext();
+        AppContext();
 
-public:
-    bool Running{ false };
-    Timer Timer{};
-    std::chrono::nanoseconds DeltaTime{};
-};
+    public:
+        bool Running{ false };
+        Timer Timer{};
+        std::chrono::nanoseconds DeltaTime{};
+    };
+}

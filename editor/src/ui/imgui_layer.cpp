@@ -8,7 +8,7 @@
 #include"editor/editor_context.hpp"
 #include"ui/imgui_backend.hpp"
 
-ImguiLayer::ImguiLayer(
+Arcadia::ImguiLayer::ImguiLayer(
     const std::shared_ptr<const WindowLayer>& window_layer,
     const std::function<void(ImguiLayer&)>& imgui_window_installer,
     const std::function<void()>& imgui_style_setter
@@ -40,7 +40,7 @@ ImguiLayer::ImguiLayer(
     imgui_window_installer(*this);
 }
 
-ImguiLayer::~ImguiLayer()
+Arcadia::ImguiLayer::~ImguiLayer()
 {
     if(_ImguiContext)
     {
@@ -49,7 +49,7 @@ ImguiLayer::~ImguiLayer()
     }
 }
 
-void ImguiLayer::OnEvent(EventBase& e)
+void Arcadia::ImguiLayer::OnEvent(EventBase& e)
 {
     // We do not dispatch events to ImGui when the editor is in play mode
     if(EditorContext::Instance().InPlayMode)
@@ -68,7 +68,7 @@ void ImguiLayer::OnEvent(EventBase& e)
     }
 }
 
-void ImguiLayer::OnUpdate()
+void Arcadia::ImguiLayer::OnUpdate()
 {
     auto window = _Window.lock();
 
@@ -110,13 +110,13 @@ void ImguiLayer::OnUpdate()
     }
 }
 
-void ImguiLayer::ScaleUi(float factor)
+void Arcadia::ImguiLayer::ScaleUi(float factor)
 {
     ImGui::GetIO().FontGlobalScale = factor;
     ImGui::GetStyle().ScaleAllSizes(factor);
 }
 
-void ImguiLayer::_OnScaleImguiWindow(Events::ScaleImguiWindow& e)
+void Arcadia::ImguiLayer::_OnScaleImguiWindow(Events::ScaleImguiWindow& e)
 {
     const auto& [scale] = e.DataTuple;
     ScaleUi(scale);

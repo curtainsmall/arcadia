@@ -4,7 +4,7 @@
 
 #include"boost/range/combine.hpp"
 
-auto Texture2d::Cascade(
+auto Arcadia::Texture2d::Cascade(
     const Texture2d& texture2d_1,
     const Texture2d& texture2d_2,
     const std::function<glm::vec4(const glm::vec4&, const glm::vec4&)>& method

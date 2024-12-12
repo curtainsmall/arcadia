@@ -8,69 +8,72 @@
 #include"platform/glfw/glfw_header.hpp"
 #include"platform/graphic_api/graphic_api.hpp"
 
-class WindowLayer: public iLayer
+namespace Arcadia
 {
-public:
-    using SelfType = WindowLayer;
-public:
-    WindowLayer(
-        glm::ivec2 size ={ 800,600 },
-        std::string title = "Untitled",
-        int multisample_count = 0
-    );
-    virtual ~WindowLayer();
-
-    [[nodiscard]]
-    auto GetGlfwWindow() const -> GLFWwindow*
+    class WindowLayer: public iLayer
     {
-        return _GlfwWindow;
-    }
+    public:
+        using SelfType = WindowLayer;
+    public:
+        WindowLayer(
+            glm::ivec2 size ={ 800,600 },
+            std::string title = "Untitled",
+            int multisample_count = 0
+        );
+        virtual ~WindowLayer();
 
-    virtual void OnEvent(EventBase& event) override;
-    virtual void OnUpdate() override;
+        [[nodiscard]]
+        auto GetGlfwWindow() const -> GLFWwindow*
+        {
+            return _GlfwWindow;
+        }
 
-    [[nodiscard]]
-    auto GetTitle() const->const std::string&;
+        virtual void OnEvent(EventBase& event) override;
+        virtual void OnUpdate() override;
 
-    [[nodiscard]]
-    auto GetSizeState() const->WindowSizeState;
+        [[nodiscard]]
+        auto GetTitle() const->const std::string&;
 
-    [[nodiscard]]
-    auto GetSize() const->glm::ivec2;
+        [[nodiscard]]
+        auto GetSizeState() const->WindowSizeState;
 
-    [[nodiscard]]
-    auto GetPosition() const->glm::ivec2;
+        [[nodiscard]]
+        auto GetSize() const->glm::ivec2;
 
-    [[nodiscard]]
-    auto GetMultisampleCount() const -> int;
+        [[nodiscard]]
+        auto GetPosition() const->glm::ivec2;
 
-    [[nodiscard]]
-    auto GetCursorInputMode() const->WindowCursorInputMode;
+        [[nodiscard]]
+        auto GetMultisampleCount() const -> int;
 
-private:
-    static auto _GetWindowPointerFromGlfwUserPointer(GLFWwindow* glfw_window) -> SelfType*
-    {
-        return static_cast<SelfType*>(glfwGetWindowUserPointer(glfw_window));
-    }
+        [[nodiscard]]
+        auto GetCursorInputMode() const->WindowCursorInputMode;
 
-    void _OnWindowSetCursorInputMode(Events::WindowSetCursorInputMode& e);
+    private:
+        static auto _GetWindowPointerFromGlfwUserPointer(GLFWwindow* glfw_window) -> SelfType*
+        {
+            return static_cast<SelfType*>(glfwGetWindowUserPointer(glfw_window));
+        }
 
-    void _SetupCallbacks();
+        void _OnWindowSetCursorInputMode(Events::WindowSetCursorInputMode& e);
 
-    /// @brief Call [glfwSwapBuffers](https://www.glfw.org/docs/3.3/group__window.html#ga15a5a1ee5b3c2ca6b15ca209a12efd14)
-    void _SwapBuffers();
+        void _SetupCallbacks();
 
-    void _OnWindowCloseCanceled(Events::WindowCloseCanceled& e);
+        /// @brief Call [glfwSwapBuffers](https://www.glfw.org/docs/3.3/group__window.html#ga15a5a1ee5b3c2ca6b15ca209a12efd14)
+        void _SwapBuffers();
 
-private:
-    static inline GlfwContext _GlfwContext{};
-    /// @brief Cursor move offset that is out of this range will be silently ignored
-    static constexpr glm::vec2 _LegalCursorMoveRange{ -20.f,20.f };
+        void _OnWindowCloseCanceled(Events::WindowCloseCanceled& e);
 
-    std::string _Title;
-    int _SwapInterval{ 0 };
+    private:
+        static inline GlfwContext _GlfwContext{};
+        /// @brief Cursor move offset that is out of this range will be silently ignored
+        static constexpr glm::vec2 _LegalCursorMoveRange{ -20.f,20.f };
 
-    GLFWwindow* _GlfwWindow{ nullptr };
-    glm::vec2 _LastCursorPosition{ .0f };
-    const int _MultisampleCount;
-};
+        std::string _Title;
+        int _SwapInterval{ 0 };
+
+        GLFWwindow* _GlfwWindow{ nullptr };
+        glm::vec2 _LastCursorPosition{ .0f };
+        const int _MultisampleCount;
+    };
+}

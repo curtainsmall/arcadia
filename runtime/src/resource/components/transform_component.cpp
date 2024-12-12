@@ -3,7 +3,7 @@
 
 #include"core/math.hpp"
 
-TransformComponent::TransformComponent(const nlohmann::json& json) :
+Arcadia::TransformComponent::TransformComponent(const nlohmann::json& json) :
     Flags(json.at("flags")),
     Position(Vec3::FromJson(json.at("position"))),
     Rotation(Quat::FromJson(json.at("rotation"))),
@@ -12,7 +12,7 @@ TransformComponent::TransformComponent(const nlohmann::json& json) :
     Pivot(Vec3::FromJson(json.at("pivot")))
 {}
 
-auto TransformComponent::ToJson() const -> nlohmann::json
+auto Arcadia::TransformComponent::ToJson() const -> nlohmann::json
 {
     nlohmann::json json{
         {"flags", Flags},
@@ -26,7 +26,7 @@ auto TransformComponent::ToJson() const -> nlohmann::json
     return json;
 }
 
-auto TransformComponent::GenerateTransformMat4() const -> glm::mat4
+auto Arcadia::TransformComponent::GenerateTransformMat4() const -> glm::mat4
 {
     glm::mat4 mat = Mat4::CreateIdentity();
 
@@ -48,7 +48,7 @@ auto TransformComponent::GenerateTransformMat4() const -> glm::mat4
     return mat;
 }
 
-auto TransformComponent::OnSnapshot() const -> std::shared_ptr<MementoDataBase>
+auto Arcadia::TransformComponent::OnSnapshot() const -> std::shared_ptr<MementoDataBase>
 {
     auto memento_data = std::make_shared<TransformComponentMementoData>();
 
@@ -62,7 +62,7 @@ auto TransformComponent::OnSnapshot() const -> std::shared_ptr<MementoDataBase>
     return memento_data;
 }
 
-void TransformComponent::OnRestore(const std::shared_ptr<MementoDataBase>& memento_data)
+void Arcadia::TransformComponent::OnRestore(const std::shared_ptr<MementoDataBase>& memento_data)
 {
     auto& memento_data_ = memento_data->CastTo<TransformComponentMementoData>();
 

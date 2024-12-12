@@ -6,59 +6,62 @@
 #include"core/nlohmann_json_header.hpp"
 #include"resource/components/component_interface.hpp"
 
-enum class TransformComponentFlags: uint8_t
+namespace Arcadia
 {
-    None = 0,
-    UseRotation = 0x01,
-    UseDirection = 0x02,
-    _EnumBitmap
-};
+    enum class TransformComponentFlags: uint8_t
+    {
+        None = 0,
+        UseRotation = 0x01,
+        UseDirection = 0x02,
+        _EnumBitmap
+    };
 
-class TransformComponentMementoData: public MementoDataBase
-{
-public:
-    auto operator==(const TransformComponentMementoData&) const -> bool = default;
-public:
-    TransformComponentFlags Flags{ TransformComponentFlags::None };
+    class TransformComponentMementoData: public MementoDataBase
+    {
+    public:
+        auto operator==(const TransformComponentMementoData&) const -> bool = default;
+    public:
+        TransformComponentFlags Flags{ TransformComponentFlags::None };
 
-    glm::vec3 Position{ Vec3::CreateZero() };
-    glm::quat Rotation{ Quat::CreateIdentity() };
-    glm::vec3 Direction{ Vec3::CreateUnitPositiveZ() };
-    glm::vec3 Scale{ 1,1,1 };
-    glm::vec3 Pivot{ Vec3::CreateZero() };
-};
+        glm::vec3 Position{ Vec3::CreateZero() };
+        glm::quat Rotation{ Quat::CreateIdentity() };
+        glm::vec3 Direction{ Vec3::CreateUnitPositiveZ() };
+        glm::vec3 Scale{ 1,1,1 };
+        glm::vec3 Pivot{ Vec3::CreateZero() };
+    };
 
-class TransformComponent:
-    public iComponent,
-    public iMementoOriginator
-{
-public:
-    using SelfType = TransformComponent;
-public:
-    ACDA_COMPONENT_TYPE_STR_GETTERS("transform");
+    class TransformComponent:
+        public iComponent,
+        public iMementoOriginator
+    {
+    public:
+        using SelfType = TransformComponent;
+    public:
+        ACDA_COMPONENT_TYPE_STR_GETTERS("transform");
 
-    TransformComponent() = default;
-    TransformComponent(const nlohmann::json& json);
-    ~TransformComponent() = default;
-    [[nodiscard]]
-    auto ToJson() const->nlohmann::json;
+        TransformComponent() = default;
+        TransformComponent(const nlohmann::json& json);
+        ~TransformComponent() = default;
+        [[nodiscard]]
+        auto ToJson() const->nlohmann::json;
 
-    TransformComponent(SelfType&&) noexcept = default;
-    auto operator=(SelfType&&) noexcept -> SelfType & = default;
+        TransformComponent(SelfType&&) noexcept = default;
+        auto operator=(SelfType&&) noexcept -> SelfType & = default;
 
-    auto GenerateTransformMat4() const->glm::mat4;
+        auto GenerateTransformMat4() const->glm::mat4;
 
-protected:
-    [[nodiscard]]
-    virtual auto OnSnapshot() const->std::shared_ptr<MementoDataBase> override;
-    virtual void OnRestore(const std::shared_ptr<MementoDataBase>& memento_data) override;
+    protected:
+        [[nodiscard]]
+        virtual auto OnSnapshot() const->std::shared_ptr<MementoDataBase> override;
+        virtual void OnRestore(const std::shared_ptr<MementoDataBase>& memento_data) override;
 
-public:
-    TransformComponentFlags Flags{ TransformComponentFlags::None };
+    public:
+        TransformComponentFlags Flags{ TransformComponentFlags::None };
 
-    glm::vec3 Position{ Vec3::CreateZero() };
-    glm::quat Rotation{ Quat::CreateIdentity() };
-    glm::vec3 Direction{ Vec3::CreateUnitPositiveZ() };
-    glm::vec3 Scale{ 1,1,1 };
-    glm::vec3 Pivot{ Vec3::CreateZero() };
-};
+        glm::vec3 Position{ Vec3::CreateZero() };
+        glm::quat Rotation{ Quat::CreateIdentity() };
+        glm::vec3 Direction{ Vec3::CreateUnitPositiveZ() };
+        glm::vec3 Scale{ 1,1,1 };
+        glm::vec3 Pivot{ Vec3::CreateZero() };
+    };
+}

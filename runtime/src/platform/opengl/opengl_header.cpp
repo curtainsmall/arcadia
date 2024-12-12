@@ -4,7 +4,7 @@
 
 #include"core/log/log.hpp"
 
-ACDA_API void GlCheckError(const char* fn_name, const char* file_name, int line)
+ACDA_API void Arcadia::GlCheckError(const char* fn_name, const char* file_name, int line)
 {
     while(GLenum error = glGetError())
     {
@@ -58,7 +58,7 @@ ACDA_API void GlCheckError(const char* fn_name, const char* file_name, int line)
     }
 }
 
-ACDA_API auto GlGetTypeSize(GLenum Type) -> size_t
+ACDA_API auto Arcadia::GlGetTypeSize(GLenum Type) -> size_t
 {
     switch(Type)
     {
@@ -73,7 +73,7 @@ ACDA_API auto GlGetTypeSize(GLenum Type) -> size_t
     }
 }
 
-ACDA_API auto SetGlVersion() -> Version
+ACDA_API auto Arcadia::SetGlVersion() -> Version
 {
     int
         major{ 0 },
@@ -89,7 +89,7 @@ ACDA_API auto SetGlVersion() -> Version
     return version;
 }
 
-void GLAPIENTRY GlDebugCallback(
+void GLAPIENTRY Arcadia::GlDebugCallback(
     GLenum source,
     GLenum Type,
     GLuint id,
@@ -177,21 +177,21 @@ void GLAPIENTRY GlDebugCallback(
     ACDA_LOG_FLUSH();
 }
 
-ACDA_API auto GetGlMaxCombineTextureImageUnitsCount() -> GLint
+ACDA_API auto Arcadia::GetGlMaxCombineTextureImageUnitsCount() -> GLint
 {
     GLint res{ 0 };
     ACDA_GL_CALL(glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &res));
     return res;
 }
 
-ACDA_API auto GetGlMaxTextureImageUnitsCount() -> GLint
+ACDA_API auto Arcadia::GetGlMaxTextureImageUnitsCount() -> GLint
 {
     GLint res{ 0 };
     ACDA_GL_CALL(glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &res));
     return res;
 }
 
-OpenglContext::OpenglContext()
+Arcadia::OpenglContext::OpenglContext()
 {
     auto error = glewInit();
     if(error != GLEW_OK)

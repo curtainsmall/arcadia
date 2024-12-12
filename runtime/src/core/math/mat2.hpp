@@ -3,16 +3,19 @@
 #include"core/base.hpp"
 #include"core/math/glm_header.hpp"
 
-namespace Mat2
+namespace Arcadia
 {
-    [[nodiscard]]
-    ACDA_API constexpr auto CreateZero() -> glm::mat2
+    namespace Mat2
     {
-        return glm::mat2{ .0f };
-    }
-    [[nodiscard]]
-    ACDA_API constexpr auto CreateIdentity() -> glm::mat2
-    {
-        return glm::mat2{};
+        [[nodiscard]]
+        ACDA_API constexpr auto CreateZero() -> glm::mat2
+        {
+            return glm::mat2{ .0f };
+        }
+        [[nodiscard]]
+        ACDA_API constexpr auto CreateIdentity() -> glm::mat2
+        {
+            return glm::mat2{};
+        }
     }
 }

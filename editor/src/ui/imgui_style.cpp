@@ -4,22 +4,22 @@
 #include "imgui_style.hpp"
 #include"imgui_style.hpp"
 
-void ImguiStyle::SetToDefaultDark()
+void Arcadia::ImguiStyle::SetToDefaultDark()
 {
     ImGui::StyleColorsDark();
 }
 
-void ImguiStyle::SetToDefaultClassic()
+void Arcadia::ImguiStyle::SetToDefaultClassic()
 {
     ImGui::StyleColorsClassic();
 }
 
-void ImguiStyle::SetToDefaultLight()
+void Arcadia::ImguiStyle::SetToDefaultLight()
 {
     ImGui::StyleColorsLight();
 }
 
-void ImguiStyle::SetToEmbraceDarkness()
+void Arcadia::ImguiStyle::SetToEmbraceDarkness()
 {
     ImGuiStyle& style = ImGui::GetStyle();
     style.WindowPadding                     = ImVec2(8.00f, 8.00f);
@@ -103,7 +103,7 @@ void ImguiStyle::SetToEmbraceDarkness()
     colors[ImGuiCol_ModalWindowDimBg]       = ImVec4(1.00f, 0.00f, 0.00f, 0.35f);
 }
 
-void ImguiStyle::SetToDark()
+void Arcadia::ImguiStyle::SetToDark()
 {
     auto& colors = ImGui::GetStyle().Colors;
     colors[ImGuiCol_WindowBg] = ImVec4{ 0.1f, 0.105f, 0.11f, 1.0f };

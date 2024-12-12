@@ -6,7 +6,7 @@
 
 #include"core/math.hpp"
 
-PhysicsComponent::PhysicsComponent(const nlohmann::json& json) :
+Arcadia::PhysicsComponent::PhysicsComponent(const nlohmann::json& json) :
     BodyShapeColor(Vec3::FromJson(json.at("body_shape_color")))
 {
     const auto& json_body_info_initial = json.at("jph_body_info_initial");
@@ -59,7 +59,7 @@ PhysicsComponent::PhysicsComponent(const nlohmann::json& json) :
     }
 }
 
-auto PhysicsComponent::ToJson() const -> nlohmann::json
+auto Arcadia::PhysicsComponent::ToJson() const -> nlohmann::json
 {
     nlohmann::json json_body_info_initial{};
     if(HasBodyInfo())
@@ -129,7 +129,7 @@ auto PhysicsComponent::ToJson() const -> nlohmann::json
     };
 }
 
-auto PhysicsComponent::OnSnapshot() const -> std::shared_ptr<MementoDataBase>
+auto Arcadia::PhysicsComponent::OnSnapshot() const -> std::shared_ptr<MementoDataBase>
 {
     auto sp_memento = std::make_shared<PhysicsComponentMementoData>();
 
@@ -138,25 +138,25 @@ auto PhysicsComponent::OnSnapshot() const -> std::shared_ptr<MementoDataBase>
     return sp_memento;
 }
 
-void PhysicsComponent::OnRestore(const std::shared_ptr<MementoDataBase>& sp_memento_data)
+void Arcadia::PhysicsComponent::OnRestore(const std::shared_ptr<MementoDataBase>& sp_memento_data)
 {
     auto& memento_data = sp_memento_data->CastTo<PhysicsComponentMementoData>();
 
     BodyShapeColor = memento_data.BodyShapeColor;
 }
 
-auto PhysicsComponent::HasBodyInfo() const -> bool
+auto Arcadia::PhysicsComponent::HasBodyInfo() const -> bool
 {
     return !!_IdentifiableJphBodyInfo;
 }
 
-auto PhysicsComponent::GetIdentifiableJphBodyInfo() const -> const IdentifiableJphBodyInfoType&
+auto Arcadia::PhysicsComponent::GetIdentifiableJphBodyInfo() const -> const IdentifiableJphBodyInfoType&
 {
     ACDA_ASSERT(HasBodyInfo());
     return *_IdentifiableJphBodyInfo;
 }
 
-void PhysicsComponent::BuildIndentifiableJphBodyInfo(
+void Arcadia::PhysicsComponent::BuildIndentifiableJphBodyInfo(
     JPH::EMotionType jph_motion_type,
     JPH::ObjectLayer jph_object_layer,
     const JphShapeInfo& jph_shape_info
@@ -165,14 +165,14 @@ void PhysicsComponent::BuildIndentifiableJphBodyInfo(
     BuildIndentifiableJphBodyInfo({ jph_motion_type,jph_object_layer,jph_shape_info });
 }
 
-void PhysicsComponent::BuildIndentifiableJphBodyInfo(const JphBodyInfo& jph_body_info_initial)
+void Arcadia::PhysicsComponent::BuildIndentifiableJphBodyInfo(const JphBodyInfo& jph_body_info_initial)
 {
     _IdentifiableJphBodyInfo = std::make_unique<IdentifiableJphBodyInfoType>(
         jph_body_info_initial
     );
 }
 
-void PhysicsComponent::DestroyJphBodyInfo()
+void Arcadia::PhysicsComponent::DestroyJphBodyInfo()
 {
     _IdentifiableJphBodyInfo.reset();
 }

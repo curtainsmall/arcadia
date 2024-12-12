@@ -2,7 +2,7 @@
 
 #include "mesh.hpp"
 
-auto Mesh::CreateBox(
+auto Arcadia::Mesh::CreateBox(
     const glm::vec3& half_extent
 ) -> Mesh
 {
@@ -281,7 +281,7 @@ auto Mesh::CreateBox(
     return mesh;
 }
 
-auto Mesh::CreateCapsule(
+auto Arcadia::Mesh::CreateCapsule(
     float radius,
     float half_height_of_cylinder,
     size_t half_sphere_stack_count,
@@ -403,7 +403,7 @@ auto Mesh::CreateCapsule(
     return mesh;
 }
 
-auto Mesh::CreateCylinder(
+auto Arcadia::Mesh::CreateCylinder(
     float half_height,
     float radius,
     size_t sector_count
@@ -522,7 +522,7 @@ auto Mesh::CreateCylinder(
     return mesh;
 }
 
-auto Mesh::CreateSphere(
+auto Arcadia::Mesh::CreateSphere(
     float radius,
     size_t stack_count,
     size_t sector_count

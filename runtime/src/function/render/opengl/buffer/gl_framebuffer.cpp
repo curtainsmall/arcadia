@@ -2,7 +2,7 @@
 
 #include "gl_framebuffer.hpp"
 
-GlFramebuffer::GlFramebuffer(
+Arcadia::GlFramebuffer::GlFramebuffer(
     const glm::ivec2& viewport_size,
     float near_plane,
     float far_plane
@@ -23,19 +23,19 @@ GlFramebuffer::GlFramebuffer(
     }
 }
 
-GlFramebuffer::~GlFramebuffer()
+Arcadia::GlFramebuffer::~GlFramebuffer()
 {
     ACDA_GL_CALL(glDeleteFramebuffers(1, &_GlId));
 }
 
-GlFramebuffer::GlFramebuffer(SelfType&& rhs) noexcept :
+Arcadia::GlFramebuffer::GlFramebuffer(SelfType&& rhs) noexcept :
     _GlTexture2d(std::move(rhs._GlTexture2d))
 {
     _GlId = rhs._GlId;
     rhs._GlId = 0;
 }
 
-auto GlFramebuffer::operator=(SelfType&& rhs) noexcept -> SelfType&
+auto Arcadia::GlFramebuffer::operator=(SelfType&& rhs) noexcept -> SelfType&
 {
     _GlTexture2d = std::move(rhs._GlTexture2d);
 
@@ -45,7 +45,7 @@ auto GlFramebuffer::operator=(SelfType&& rhs) noexcept -> SelfType&
     return *this;
 }
 
-void GlFramebuffer::Bind() const
+void Arcadia::GlFramebuffer::Bind() const
 {
     if(_GlId == 0)
     {
@@ -55,12 +55,12 @@ void GlFramebuffer::Bind() const
     ACDA_GL_CALL(glBindFramebuffer(GL_FRAMEBUFFER, _GlId));
 }
 
-void GlFramebuffer::Unbind() const
+void Arcadia::GlFramebuffer::Unbind() const
 {
     ACDA_GL_CALL(glBindFramebuffer(GL_FRAMEBUFFER, 0));
 }
 
-auto GlFramebuffer::IsComplete() const -> GLenum
+auto Arcadia::GlFramebuffer::IsComplete() const -> GLenum
 {
     if(_GlId == 0)
     {

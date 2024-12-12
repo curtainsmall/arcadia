@@ -5,21 +5,24 @@
 
 #include"ui/imgui_window.hpp"
 
-class ImguiWindowMainStatusbar: public iImguiWindow
+namespace Arcadia
 {
-public:
-    using SelfType = ImguiWindowMainStatusbar;
+    class ImguiWindowMainStatusbar: public iImguiWindow
+    {
+    public:
+        using SelfType = ImguiWindowMainStatusbar;
 
-    ACDA_IMGUI_WINDOW_ID_STR_GETTERS("###statusbar");
+        ACDA_IMGUI_WINDOW_ID_STR_GETTERS("###statusbar");
 
-    ImguiWindowMainStatusbar() :
-        iImguiWindow(true, "Statusbar")
-    {}
-    virtual ~ImguiWindowMainStatusbar() = default;
+        ImguiWindowMainStatusbar() :
+            iImguiWindow(true, "Statusbar")
+        {}
+        virtual ~ImguiWindowMainStatusbar() = default;
 
-    virtual void OnEvent(EventBase& e) override;
-    virtual void OnUpdate() override;
+        virtual void OnEvent(EventBase& e) override;
+        virtual void OnUpdate() override;
 
-private:
-    float _UiScale{};
-};
+    private:
+        float _UiScale{};
+    };
+}

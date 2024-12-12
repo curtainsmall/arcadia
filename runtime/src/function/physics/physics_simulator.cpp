@@ -7,7 +7,7 @@
 #include"resource/components/physics_component.hpp"
 #include"resource/components/transform_component.hpp"
 
-PhysicsSimulator::PhysicsSimulator()
+Arcadia::PhysicsSimulator::PhysicsSimulator()
 {
     JPH::RegisterDefaultAllocator();
     JPH::Factory::sInstance = new JPH::Factory{};
@@ -22,14 +22,14 @@ PhysicsSimulator::PhysicsSimulator()
     _JphPhysicsSystem->Init(max_bodies, num_body_mutexes, max_body_pair, max_contact_constraints, _JphBroadPhaseLayer, _JphObjectVsBroadLayerFilter, _JphObjectLayerPairFilter);
 }
 
-PhysicsSimulator::~PhysicsSimulator()
+Arcadia::PhysicsSimulator::~PhysicsSimulator()
 {
     JPH::UnregisterTypes();
     delete JPH::Factory::sInstance;
     JPH::Factory::sInstance = nullptr;
 }
 
-void PhysicsSimulator::Prepare()
+void Arcadia::PhysicsSimulator::Prepare()
 {
     _AssertFrameNotInBuild();
     _InBuild = true;
@@ -38,7 +38,7 @@ void PhysicsSimulator::Prepare()
     _SubmittedBodyInfos.clear();
 }
 
-void PhysicsSimulator::Finalize()
+void Arcadia::PhysicsSimulator::Finalize()
 {
     _AssertFrameInBuild();
     _InBuild = false;
@@ -61,7 +61,7 @@ void PhysicsSimulator::Finalize()
     _JphPhysicsSystem->OptimizeBroadPhase();
 }
 
-void PhysicsSimulator::Submit(const Scene& scene, const std::string& name)
+void Arcadia::PhysicsSimulator::Submit(const Scene& scene, const std::string& name)
 {
     _AssertFrameInBuild();
 
@@ -117,7 +117,7 @@ void PhysicsSimulator::Submit(const Scene& scene, const std::string& name)
     }
 }
 
-void PhysicsSimulator::Update()
+void Arcadia::PhysicsSimulator::Update()
 {
     if(!_Active)
     {
@@ -132,7 +132,7 @@ void PhysicsSimulator::Update()
     _JphPhysicsSystem->Update(1.f / _JphPhysicsSystemUpdatesPerSecond, collusion_step, &temp_allocator, &job_system_thread_pool);
 }
 
-void PhysicsSimulator::Query(Scene& scene, const std::string& name)
+void Arcadia::PhysicsSimulator::Query(Scene& scene, const std::string& name)
 {
     _AssertFrameNotInBuild();
 
@@ -168,7 +168,7 @@ void PhysicsSimulator::Query(Scene& scene, const std::string& name)
     }
 }
 
-void PhysicsSimulator::Reset()
+void Arcadia::PhysicsSimulator::Reset()
 {
     auto& jph_body_interface = _JphPhysicsSystem->GetBodyInterface();
     for(const auto& [uuid, body_id] : _JphBodyIdStorage)
@@ -180,52 +180,52 @@ void PhysicsSimulator::Reset()
     _SubmittedBodyInfos.clear();
 }
 
-auto PhysicsSimulator::IsActive() const -> bool
+auto Arcadia::PhysicsSimulator::IsActive() const -> bool
 {
     return _Active;
 }
 
-void PhysicsSimulator::SetActive(bool should_update)
+void Arcadia::PhysicsSimulator::SetActive(bool should_update)
 {
     _Active = should_update;
 }
 
-auto PhysicsSimulator::GetJphTempAllocatorSize() const -> JPH::uint
+auto Arcadia::PhysicsSimulator::GetJphTempAllocatorSize() const -> JPH::uint
 {
     return _JphTempAllocatorSize;
 }
 
-void PhysicsSimulator::SetJphTempAllocatorSize(JPH::uint get_jph_temp_allocator_size)
+void Arcadia::PhysicsSimulator::SetJphTempAllocatorSize(JPH::uint get_jph_temp_allocator_size)
 {
     _JphTempAllocatorSize = get_jph_temp_allocator_size;
 }
 
-auto PhysicsSimulator::GetJphPhysicsSystemUpdatesPerSecond() const -> int
+auto Arcadia::PhysicsSimulator::GetJphPhysicsSystemUpdatesPerSecond() const -> int
 {
     return _JphPhysicsSystemUpdatesPerSecond;
 }
 
-void PhysicsSimulator::SetJphPhysicsSystemUpdatesPerSecond(int jph_physics_system_updates_per_second)
+void Arcadia::PhysicsSimulator::SetJphPhysicsSystemUpdatesPerSecond(int jph_physics_system_updates_per_second)
 {
     _JphPhysicsSystemUpdatesPerSecond = jph_physics_system_updates_per_second;
 }
 
-auto PhysicsSimulator::GetJphBodyIdStorage() const -> const JphBodyIdStorageType&
+auto Arcadia::PhysicsSimulator::GetJphBodyIdStorage() const -> const JphBodyIdStorageType&
 {
     return _JphBodyIdStorage;
 }
 
-void PhysicsSimulator::_AssertFrameInBuild() const
+void Arcadia::PhysicsSimulator::_AssertFrameInBuild() const
 {
     ACDA_ASSERT(_InBuild && "Frame is not in build, did you call `prepare()`?");
 }
 
-void PhysicsSimulator::_AssertFrameNotInBuild() const
+void Arcadia::PhysicsSimulator::_AssertFrameNotInBuild() const
 {
     ACDA_ASSERT(!_InBuild && "Frame is in build, did you call `finalize()`?");
 }
 
-auto JphObjectLayerPairFilerImpl::ShouldCollide(JPH::ObjectLayer obj_1, JPH::ObjectLayer obj_2) const -> bool
+auto Arcadia::JphObjectLayerPairFilerImpl::ShouldCollide(JPH::ObjectLayer obj_1, JPH::ObjectLayer obj_2) const -> bool
 {
     switch(obj_1)
     {
@@ -244,24 +244,24 @@ auto JphObjectLayerPairFilerImpl::ShouldCollide(JPH::ObjectLayer obj_1, JPH::Obj
     }
 }
 
-JphBroadPhaseLayerImpl::JphBroadPhaseLayerImpl()
+Arcadia::JphBroadPhaseLayerImpl::JphBroadPhaseLayerImpl()
 {
     _ObjectToBroadPhase[JphObjectLayers::NonMoving] = JphBroadPhaseLayers::NonMoving;
     _ObjectToBroadPhase[JphObjectLayers::Moving] = JphBroadPhaseLayers::Moving;
 }
 
-auto JphBroadPhaseLayerImpl::GetNumBroadPhaseLayers() const -> JPH::uint
+auto Arcadia::JphBroadPhaseLayerImpl::GetNumBroadPhaseLayers() const -> JPH::uint
 {
     return JphBroadPhaseLayers::NumLayers;
 }
 
-auto JphBroadPhaseLayerImpl::GetBroadPhaseLayer(JPH::ObjectLayer layer) const -> JPH::BroadPhaseLayer
+auto Arcadia::JphBroadPhaseLayerImpl::GetBroadPhaseLayer(JPH::ObjectLayer layer) const -> JPH::BroadPhaseLayer
 {
     ACDA_ASSERT(layer < GetNumBroadPhaseLayers());
     return _ObjectToBroadPhase[layer];
 }
 
-auto JphObjectVsBroadPhaseLayerFilterImpl::ShouldCollide(JPH::ObjectLayer obj, JPH::BroadPhaseLayer bp) const -> bool
+auto Arcadia::JphObjectVsBroadPhaseLayerFilterImpl::ShouldCollide(JPH::ObjectLayer obj, JPH::BroadPhaseLayer bp) const -> bool
 {
     switch(obj)
     {

@@ -1,28 +1,28 @@
 #include"pch.hpp"
 #include"time.hpp"
 
-Timer::Timer()
+Arcadia::Timer::Timer()
 {
     Reset();
 }
 
-void Timer::Reset()
+void Arcadia::Timer::Reset()
 {
     _Start = _Now();
     _Last = _Start;
 }
 
-auto Timer::GetDurationSinceStart() -> DurationType
+auto Arcadia::Timer::GetDurationSinceStart() -> DurationType
 {
     return _Now() - _Start;
 }
 
-auto Timer::GetDurationSinceLast() -> DurationType
+auto Arcadia::Timer::GetDurationSinceLast() -> DurationType
 {
     return _Now() - _Last;
 }
 
-auto Timer::Segment() -> DurationType
+auto Arcadia::Timer::Segment() -> DurationType
 {
     auto now = _Now();
     auto diff = now - _Last;
@@ -30,7 +30,7 @@ auto Timer::Segment() -> DurationType
     return diff;
 }
 
-auto Timer::_Now() const->TimePointType
+auto Arcadia::Timer::_Now() const->TimePointType
 {
     return std::chrono::steady_clock::now();
 }

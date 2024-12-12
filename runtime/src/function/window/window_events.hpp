@@ -5,67 +5,70 @@
 
 class GLFWmonitor;
 
-class WindowLayer;
-
-enum class WindowSizeState
+namespace Arcadia
 {
-    Minimized = -1,
-    Restored = 0,
-    Maxmized = 1,
-};
+    class WindowLayer;
 
-enum class WindowCursorInputMode
-{
-    Normal,
-    Hidden,
-    Disabled,
-    Captured,
-};
+    enum class WindowSizeState
+    {
+        Minimized = -1,
+        Restored = 0,
+        Maxmized = 1,
+    };
 
-namespace Events
-{
-    //==== Notifications ====//
+    enum class WindowCursorInputMode
+    {
+        Normal,
+        Hidden,
+        Disabled,
+        Captured,
+    };
 
-    ACDA_EVENT(
-        WindowShouldClose,
-        WindowLayer* // Window to close
-    );
-    ACDA_EVENT(
-        WindowCloseCanceled,
-        WindowLayer* // Window to cancel close
-    );
+    namespace Events
+    {
+        //==== Notifications ====//
 
-    ACDA_EVENT(
-        WindowSize,
-        WindowLayer*,
-        glm::ivec2 // New size
-    );
-    ACDA_EVENT(
-        WindowPosition,
-        WindowLayer*,
-        glm::ivec2 // New position
-    );
-    ACDA_EVENT(
-        WindowSizeState,
-        WindowLayer*,
-        ::WindowSizeState // New state
-    );
-    ACDA_EVENT(
-        WindowFocused,
-        WindowLayer*,
-        bool
-    );
+        ACDA_EVENT(
+            WindowShouldClose,
+            WindowLayer* // Window to close
+        );
+        ACDA_EVENT(
+            WindowCloseCanceled,
+            WindowLayer* // Window to cancel close
+        );
 
-    ACDA_EVENT(
-        MonitorConnect,
-        GLFWmonitor*, // TODO: Use custom monitor type
-        bool // Whether the monitor is connected or not
-    );
+        ACDA_EVENT(
+            WindowSetSize,
+            WindowLayer*,
+            glm::ivec2 // New size
+        );
+        ACDA_EVENT(
+            WindowSetPosition,
+            WindowLayer*,
+            glm::ivec2 // New position
+        );
+        ACDA_EVENT(
+            WindowSizeStateChanged,
+            WindowLayer*,
+            WindowSizeState // New state
+        );
+        ACDA_EVENT(
+            WindowFocused,
+            WindowLayer*,
+            bool
+        );
 
-    //==== Adjustments ====//
+        ACDA_EVENT(
+            MonitorConnect,
+            ::GLFWmonitor*, // TODO: Use custom monitor type
+            bool // Whether the monitor is connected or not
+        );
 
-    ACDA_EVENT(
-        WindowSetCursorInputMode,
-        WindowCursorInputMode
-    );
+        //==== Adjustments ====//
+
+        ACDA_EVENT(
+            WindowSetCursorInputMode,
+            WindowCursorInputMode
+        );
+    }
 }

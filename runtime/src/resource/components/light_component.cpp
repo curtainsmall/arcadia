@@ -2,7 +2,7 @@
 
 #include "light_component.hpp"
 
-LightComponent::LightComponent(const nlohmann::json& json)
+Arcadia::LightComponent::LightComponent(const nlohmann::json& json)
 {
     std::string type_str = json.at("type");
     auto& json_light = json.at("light");
@@ -60,7 +60,7 @@ LightComponent::LightComponent(const nlohmann::json& json)
     );
 }
 
-auto LightComponent::ToJson() const -> nlohmann::json
+auto Arcadia::LightComponent::ToJson() const -> nlohmann::json
 {
     return Match<nlohmann::json>(
         Light,
@@ -130,7 +130,7 @@ auto LightComponent::ToJson() const -> nlohmann::json
     );
 }
 
-auto LightComponent::OnSnapshot() const -> std::shared_ptr<MementoDataBase>
+auto Arcadia::LightComponent::OnSnapshot() const -> std::shared_ptr<MementoDataBase>
 {
     auto sp_memento_data = std::make_shared<LightComponentMementoData>();
 
@@ -139,7 +139,7 @@ auto LightComponent::OnSnapshot() const -> std::shared_ptr<MementoDataBase>
     return sp_memento_data;
 }
 
-void LightComponent::OnRestore(const std::shared_ptr<MementoDataBase>& sp_memento_data)
+void Arcadia::LightComponent::OnRestore(const std::shared_ptr<MementoDataBase>& sp_memento_data)
 {
     auto& memento_data = sp_memento_data->CastTo<LightComponentMementoData>();
 

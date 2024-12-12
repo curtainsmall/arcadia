@@ -16,7 +16,7 @@
 
 #include"editor/editor_context.hpp"
 
-ProjectLayer::ProjectLayer() :
+Arcadia::ProjectLayer::ProjectLayer() :
     iLayer("project")
 {
     const auto& app_config = AppConfig::Instance();
@@ -39,14 +39,14 @@ ProjectLayer::ProjectLayer() :
     event_queue.Signal<Events::PhysicsSimulatorBuilt>(_PhysicsSimulator);
 }
 
-ProjectLayer::~ProjectLayer()
+Arcadia::ProjectLayer::~ProjectLayer()
 {
     auto& event_queue = EventQueue::Instance();
     event_queue.Signal<Events::RendererUnbuilt>();
     event_queue.Signal<Events::PhysicsSimulatorUnbuilt>();
 }
 
-void ProjectLayer::OnEvent(EventBase& e)
+void Arcadia::ProjectLayer::OnEvent(EventBase& e)
 {
     EventDispatcher{ e }
         .Dispatch<Events::WindowShouldClose>(ACDA_BIND_MEMBER_FN(_OnWindowShouldClose))
@@ -68,10 +68,10 @@ void ProjectLayer::OnEvent(EventBase& e)
         .IsDispatched();
 }
 
-void ProjectLayer::OnUpdate()
+void Arcadia::ProjectLayer::OnUpdate()
 {}
 
-auto ProjectLayer::_AssertAndGetScene() -> Scene&
+auto Arcadia::ProjectLayer::_AssertAndGetScene() -> Scene&
 {
     ACDA_ASSERT(_Project);
     ACDA_ASSERT(_Project->HasActiveScene());
@@ -79,7 +79,7 @@ auto ProjectLayer::_AssertAndGetScene() -> Scene&
     return _Project->GetActiveScene();
 }
 
-void ProjectLayer::_SaveProject()
+void Arcadia::ProjectLayer::_SaveProject()
 {
     ACDA_ASSERT(_Project);
 
@@ -91,7 +91,7 @@ void ProjectLayer::_SaveProject()
     EventQueue::Instance().Signal<Events::ProjectSaved>();
 }
 
-void ProjectLayer::_LoadProject()
+void Arcadia::ProjectLayer::_LoadProject()
 {
     ACDA_ASSERT(!_Project);
 
@@ -102,7 +102,7 @@ void ProjectLayer::_LoadProject()
     EventQueue::Instance().Signal<Events::ProjectLoaded>();
 }
 
-void ProjectLayer::_OnWindowShouldClose(Events::WindowShouldClose& e)
+void Arcadia::ProjectLayer::_OnWindowShouldClose(Events::WindowShouldClose& e)
 {
     auto& event_queue = EventQueue::Instance();
 
@@ -154,7 +154,7 @@ void ProjectLayer::_OnWindowShouldClose(Events::WindowShouldClose& e)
     }
 }
 
-void ProjectLayer::_OnCreateProject(Events::CreateProject& e)
+void Arcadia::ProjectLayer::_OnCreateProject(Events::CreateProject& e)
 {
     if(_Project)
     {
@@ -197,7 +197,7 @@ void ProjectLayer::_OnCreateProject(Events::CreateProject& e)
         .Signal<Events::ProjectBuilt>(_Project);
 }
 
-void ProjectLayer::_OnOpenProject(Events::OpenProject& e)
+void Arcadia::ProjectLayer::_OnOpenProject(Events::OpenProject& e)
 {
     if(_Project)
     {
@@ -257,7 +257,7 @@ void ProjectLayer::_OnOpenProject(Events::OpenProject& e)
         .Signal<Events::ProjectBuilt>(_Project);
 }
 
-void ProjectLayer::_OnSaveProject(Events::SaveProject& e)
+void Arcadia::ProjectLayer::_OnSaveProject(Events::SaveProject& e)
 {
     ACDA_ASSERT(_Project);
 
@@ -274,7 +274,7 @@ void ProjectLayer::_OnSaveProject(Events::SaveProject& e)
     _SaveProject();
 }
 
-void ProjectLayer::_OnSaveProjectAs(Events::SaveProjectAs& e)
+void Arcadia::ProjectLayer::_OnSaveProjectAs(Events::SaveProjectAs& e)
 {
     ACDA_ASSERT(_Project);
 
@@ -288,7 +288,7 @@ void ProjectLayer::_OnSaveProjectAs(Events::SaveProjectAs& e)
     _SaveProject();
 }
 
-void ProjectLayer::_OnCloseProject(Events::CloseProject& e)
+void Arcadia::ProjectLayer::_OnCloseProject(Events::CloseProject& e)
 {
     ACDA_ASSERT(_Project);
 
@@ -334,12 +334,12 @@ void ProjectLayer::_OnCloseProject(Events::CloseProject& e)
         .Signal<Events::ProjectUnbuilt>();
 }
 
-void ProjectLayer::_OnProjectSaved(Events::ProjectSaved& e)
+void Arcadia::ProjectLayer::_OnProjectSaved(Events::ProjectSaved& e)
 {
     MementoList::Instance().Clear();
 }
 
-void ProjectLayer::_OnCreateScene(Events::CreateScene& e)
+void Arcadia::ProjectLayer::_OnCreateScene(Events::CreateScene& e)
 {
     ACDA_ASSERT(_Project);
 
@@ -355,7 +355,7 @@ void ProjectLayer::_OnCreateScene(Events::CreateScene& e)
     }
 }
 
-void ProjectLayer::_OnSelectScene(Events::SelectScene& e)
+void Arcadia::ProjectLayer::_OnSelectScene(Events::SelectScene& e)
 {
     ACDA_ASSERT(_Project);
 
@@ -363,14 +363,14 @@ void ProjectLayer::_OnSelectScene(Events::SelectScene& e)
     _Project->SetActiveScene(name);
 }
 
-void ProjectLayer::_OnCloseScene(Events::CloseScene& e)
+void Arcadia::ProjectLayer::_OnCloseScene(Events::CloseScene& e)
 {
     ACDA_ASSERT(_Project);
 
     _Project->SetActiveScene();
 }
 
-void ProjectLayer::_OnDeleteScene(Events::DeleteScene& e)
+void Arcadia::ProjectLayer::_OnDeleteScene(Events::DeleteScene& e)
 {
     ACDA_ASSERT(_Project);
     ACDA_ASSERT(_Project->HasActiveScene());
@@ -398,7 +398,7 @@ void ProjectLayer::_OnDeleteScene(Events::DeleteScene& e)
     }
 }
 
-void ProjectLayer::_OnNewEntity(Events::NewEntity& e)
+void Arcadia::ProjectLayer::_OnNewEntity(Events::NewEntity& e)
 {
     const auto& [type] = e.DataTuple;
 
@@ -448,21 +448,21 @@ void ProjectLayer::_OnNewEntity(Events::NewEntity& e)
     );
 }
 
-void ProjectLayer::_OnRenameEntity(Events::RenameEntity& e)
+void Arcadia::ProjectLayer::_OnRenameEntity(Events::RenameEntity& e)
 {
     const auto& [old_name, new_name] = e.DataTuple;
 
     _Project->GetActiveScene().RenameEntity(old_name, new_name);
 }
 
-void ProjectLayer::_OnDeleteEntity(Events::DeleteEntity& e)
+void Arcadia::ProjectLayer::_OnDeleteEntity(Events::DeleteEntity& e)
 {
     const auto& [entity] = e.DataTuple;
     auto& scene = _AssertAndGetScene();
     scene.DestroyEntity(entity);
 }
 
-void ProjectLayer::_OnAddComponent(Events::AddComponent& e)
+void Arcadia::ProjectLayer::_OnAddComponent(Events::AddComponent& e)
 {
     const auto& [entity, type_str] = e.DataTuple;
     auto& scene = _AssertAndGetScene();
@@ -492,7 +492,7 @@ void ProjectLayer::_OnAddComponent(Events::AddComponent& e)
     );
 }
 
-void ProjectLayer::_OnRemoveComponent(Events::RemoveComponent& e)
+void Arcadia::ProjectLayer::_OnRemoveComponent(Events::RemoveComponent& e)
 {
     const auto& [entity, type_str] = e.DataTuple;
     auto& scene = _AssertAndGetScene();

@@ -2,22 +2,22 @@
 
 #include "layer.hpp"
 
-iLayer::iLayer(const std::string& name) :
+Arcadia::iLayer::iLayer(const std::string& name) :
     _Name(name)
 {}
 
-auto iLayer::GetName() const -> const std::string&
+auto Arcadia::iLayer::GetName() const -> const std::string&
 {
     return _Name;
 }
 
-auto LayerStack::Instance() -> SelfType&
+auto Arcadia::LayerStack::Instance() -> SelfType&
 {
     static SelfType layer_stack{};
     return layer_stack;
 }
 
-auto LayerStack::PopLayer() -> SelfType&
+auto Arcadia::LayerStack::PopLayer() -> SelfType&
 {
     if(GetSize())
     {
@@ -26,7 +26,7 @@ auto LayerStack::PopLayer() -> SelfType&
     return *this;
 }
 
-auto LayerStack::PopLayer(LayerVectorType::const_iterator iter) -> SelfType&
+auto Arcadia::LayerStack::PopLayer(LayerVectorType::const_iterator iter) -> SelfType&
 {
     _Layers.erase(
         iter
@@ -35,7 +35,7 @@ auto LayerStack::PopLayer(LayerVectorType::const_iterator iter) -> SelfType&
     return *this;
 }
 
-auto LayerStack::PopAllLayers() -> SelfType&
+auto Arcadia::LayerStack::PopAllLayers() -> SelfType&
 {
     while(GetSize())
     {
@@ -44,27 +44,27 @@ auto LayerStack::PopAllLayers() -> SelfType&
     return *this;
 }
 
-auto LayerStack::GetSize() -> size_t
+auto Arcadia::LayerStack::GetSize() -> size_t
 {
     return _Layers.size();
 }
 
-auto LayerStack::begin() -> LayerVectorType::const_iterator
+auto Arcadia::LayerStack::begin() -> LayerVectorType::const_iterator
 {
     return _Layers.begin();
 }
 
-auto LayerStack::end() -> LayerVectorType::const_iterator
+auto Arcadia::LayerStack::end() -> LayerVectorType::const_iterator
 {
     return _Layers.end();
 }
 
-auto LayerStack::rbegin() -> LayerVectorType::const_reverse_iterator
+auto Arcadia::LayerStack::rbegin() -> LayerVectorType::const_reverse_iterator
 {
     return _Layers.rbegin();
 }
 
-auto LayerStack::rend() -> LayerVectorType::const_reverse_iterator
+auto Arcadia::LayerStack::rend() -> LayerVectorType::const_reverse_iterator
 {
     return _Layers.rend();
 }
