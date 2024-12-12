@@ -6,17 +6,17 @@
 #   include"function/input/input_events.hpp"
 #endif
 
-struct AppContext
+class AppContext
 {
 public:
-    using self_type = AppContext;
+    using SelfType = AppContext;
 public:
-    static auto instance() -> self_type&;
+    static auto Instance() -> SelfType&;
 
     AppContext();
 
 public:
-    bool running{ false };
-    Timer timer{};
-    std::chrono::nanoseconds delta_time{};
+    bool Running{ false };
+    Timer Timer{};
+    std::chrono::nanoseconds DeltaTime{};
 };

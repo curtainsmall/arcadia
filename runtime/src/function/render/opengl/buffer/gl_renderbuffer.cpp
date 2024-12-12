@@ -4,38 +4,38 @@
 
 GlRenderbuffer::GlRenderbuffer()
 {
-    ACDA_GL_CALL(glGenRenderbuffers(1, &_gl_id));
+    ACDA_GL_CALL(glGenRenderbuffers(1, &_GlId));
 }
 
-GlRenderbuffer::GlRenderbuffer(GLenum format, const glm::ivec2& size):
+GlRenderbuffer::GlRenderbuffer(GLenum format, const glm::ivec2& size) :
     GlRenderbuffer()
 {
-    set_storage(format, size);
+    SetStorage(format, size);
 }
 
 GlRenderbuffer::~GlRenderbuffer()
 {
-    ACDA_GL_CALL(glDeleteRenderbuffers(1, &_gl_id));
+    ACDA_GL_CALL(glDeleteRenderbuffers(1, &_GlId));
 }
 
-void GlRenderbuffer::bind() const
+void GlRenderbuffer::Bind() const
 {
-    if(_gl_id == 0)
+    if(_GlId == 0)
     {
         throw GlInvalid{ "Cannot bind null OpenGL renderbuffer" };
     }
 
-    ACDA_GL_CALL(glBindRenderbuffer(GL_RENDERBUFFER, _gl_id));
+    ACDA_GL_CALL(glBindRenderbuffer(GL_RENDERBUFFER, _GlId));
 }
 
-void GlRenderbuffer::unbind() const
+void GlRenderbuffer::Unbind() const
 {
     ACDA_GL_CALL(glBindRenderbuffer(GL_RENDERBUFFER, 0));
 }
 
-void GlRenderbuffer::set_storage(GLenum format, const glm::ivec2& size)
+void GlRenderbuffer::SetStorage(GLenum format, const glm::ivec2& size)
 {
-    bind();
+    Bind();
     ACDA_GL_CALL(glRenderbufferStorage(GL_RENDERBUFFER, format, size.x, size.y));
-    unbind();
+    Unbind();
 }

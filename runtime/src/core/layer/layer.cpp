@@ -2,71 +2,69 @@
 
 #include "layer.hpp"
 
-iLayer::iLayer(const std::string& name):
-    _name(name)
+iLayer::iLayer(const std::string& name) :
+    _Name(name)
 {}
 
-auto iLayer::name() const -> const std::string&
+auto iLayer::GetName() const -> const std::string&
 {
-    return _name;
+    return _Name;
 }
 
-auto LayerStack::instance() -> self_type&
+auto LayerStack::Instance() -> SelfType&
 {
-    static self_type layer_stack{};
+    static SelfType layer_stack{};
     return layer_stack;
 }
 
-auto LayerStack::pop_layer() -> self_type&
+auto LayerStack::PopLayer() -> SelfType&
 {
-    if(size())
+    if(GetSize())
     {
-        _layers.erase(_layers.begin());
+        _Layers.erase(_Layers.begin());
     }
     return *this;
 }
 
-auto LayerStack::pop_layer(layer_vector_type::const_iterator iter) -> self_type&
+auto LayerStack::PopLayer(LayerVectorType::const_iterator iter) -> SelfType&
 {
-    _layers.erase(
+    _Layers.erase(
         iter
     );
 
     return *this;
 }
 
-auto LayerStack::pop_all() -> self_type&
+auto LayerStack::PopAllLayers() -> SelfType&
 {
-    while(size())
+    while(GetSize())
     {
-        pop_layer();
+        PopLayer();
     }
     return *this;
 }
 
-auto LayerStack::size() -> size_t
+auto LayerStack::GetSize() -> size_t
 {
-    return _layers.size();
+    return _Layers.size();
 }
 
-auto LayerStack::begin() -> layer_vector_type::const_iterator
+auto LayerStack::begin() -> LayerVectorType::const_iterator
 {
-    return _layers.begin();
+    return _Layers.begin();
 }
 
-auto LayerStack::end() -> layer_vector_type::const_iterator
+auto LayerStack::end() -> LayerVectorType::const_iterator
 {
-    return _layers.end();
+    return _Layers.end();
 }
 
-auto LayerStack::rbegin() -> layer_vector_type::const_reverse_iterator
+auto LayerStack::rbegin() -> LayerVectorType::const_reverse_iterator
 {
-    return _layers.rbegin();
+    return _Layers.rbegin();
 }
 
-auto LayerStack::rend() -> layer_vector_type::const_reverse_iterator
+auto LayerStack::rend() -> LayerVectorType::const_reverse_iterator
 {
-    return _layers.rend();
+    return _Layers.rend();
 }
-
-

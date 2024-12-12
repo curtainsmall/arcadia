@@ -6,7 +6,7 @@
 #include"core/nlohmann_json_header.hpp"
 #include"resource/components/component_interface.hpp"
 
-enum struct TransformComponentFlags: uint8_t
+enum class TransformComponentFlags: uint8_t
 {
     None = 0,
     UseRotation = 0x01,
@@ -14,26 +14,26 @@ enum struct TransformComponentFlags: uint8_t
     _EnumBitmap
 };
 
-struct TransformComponentMementoData: MementoDataBase
+class TransformComponentMementoData: public MementoDataBase
 {
 public:
     auto operator==(const TransformComponentMementoData&) const -> bool = default;
 public:
-    TransformComponentFlags flags{ TransformComponentFlags::None };
+    TransformComponentFlags Flags{ TransformComponentFlags::None };
 
-    glm::vec3 position{ vec3::zero() };
-    glm::quat rotation{ quat::identity() };
-    glm::vec3 direction{ vec3::pos_z() };
-    glm::vec3 scale{ 1,1,1 };
-    glm::vec3 pivot{ vec3::zero() };
+    glm::vec3 Position{ Vec3::CreateZero() };
+    glm::quat Rotation{ Quat::CreateIdentity() };
+    glm::vec3 Direction{ Vec3::CreateUnitPositiveZ() };
+    glm::vec3 Scale{ 1,1,1 };
+    glm::vec3 Pivot{ Vec3::CreateZero() };
 };
 
-struct TransformComponent:
-    iComponent,
-    iMementoOriginator
+class TransformComponent:
+    public iComponent,
+    public iMementoOriginator
 {
 public:
-    using self_type = TransformComponent;
+    using SelfType = TransformComponent;
 public:
     ACDA_COMPONENT_TYPE_STR_GETTERS("transform");
 
@@ -41,25 +41,24 @@ public:
     TransformComponent(const nlohmann::json& json);
     ~TransformComponent() = default;
     [[nodiscard]]
-    auto to_json() const->nlohmann::json;
+    auto ToJson() const->nlohmann::json;
 
-    TransformComponent(self_type&&) noexcept = default;
-    auto operator=(self_type&&) noexcept -> self_type & = default;
+    TransformComponent(SelfType&&) noexcept = default;
+    auto operator=(SelfType&&) noexcept -> SelfType & = default;
 
-    auto generate_transform_matrix() const->glm::mat4;
+    auto GenerateTransformMat4() const->glm::mat4;
 
 protected:
     [[nodiscard]]
-    virtual auto on_snapshot() const->std::shared_ptr<MementoDataBase> override;
-    virtual void on_restore(const std::shared_ptr<MementoDataBase>& memento_data) override;
+    virtual auto OnSnapshot() const->std::shared_ptr<MementoDataBase> override;
+    virtual void OnRestore(const std::shared_ptr<MementoDataBase>& memento_data) override;
 
 public:
-    TransformComponentFlags flags{ TransformComponentFlags::None };
+    TransformComponentFlags Flags{ TransformComponentFlags::None };
 
-    glm::vec3 position{ vec3::zero() };
-    glm::quat rotation{ quat::identity() };
-    glm::vec3 direction{ vec3::pos_z() };
-    glm::vec3 scale{ 1,1,1 };
-    glm::vec3 pivot{ vec3::zero() };
+    glm::vec3 Position{ Vec3::CreateZero() };
+    glm::quat Rotation{ Quat::CreateIdentity() };
+    glm::vec3 Direction{ Vec3::CreateUnitPositiveZ() };
+    glm::vec3 Scale{ 1,1,1 };
+    glm::vec3 Pivot{ Vec3::CreateZero() };
 };
-

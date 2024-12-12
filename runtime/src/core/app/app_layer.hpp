@@ -8,17 +8,17 @@
 
 auto main() -> int;
 
-struct iAppLayer: iLayer
+class iAppLayer: public iLayer
 {
     friend auto ::main() -> int;
 public:
-    using self_type = iAppLayer;
+    using SelfType = iAppLayer;
 public:
     iAppLayer();
     virtual ~iAppLayer();
 
-    virtual void on_event(EventBase&) override = 0;
-    virtual void on_update() override = 0;
+    virtual void OnEvent(EventBase&) override = 0;
+    virtual void OnUpdate() override = 0;
 };
 
-ACDA_API auto create_application() -> std::unique_ptr<iAppLayer>;
+ACDA_API auto CreateApplication() -> std::unique_ptr<iAppLayer>;

@@ -11,64 +11,63 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include"stb/stb_image.h"
 
-ModelComponent::ModelComponent(const std::filesystem::path& filepath):
-    _filepath(filepath)
+ModelComponent::ModelComponent(const std::filesystem::path& filepath) :
+    _Filepath(filepath)
 {
-    if(!_filepath.empty())
+    if(!_Filepath.empty())
     {
-        _load();
+        _Load();
     }
 }
 
-ModelComponent::ModelComponent(const nlohmann::json& json):
-    _filepath(to_filepath(json.at("filepath")))
+ModelComponent::ModelComponent(const nlohmann::json& json) :
+    _Filepath(ToFilepath(json.at("filepath")))
 {
-    if(!_filepath.empty())
+    if(!_Filepath.empty())
     {
-        _load();
+        _Load();
     }
 }
 
-auto ModelComponent::to_json() const -> nlohmann::json
+auto ModelComponent::ToJson() const -> nlohmann::json
 {
     nlohmann::json json{
-        {"filepath", _filepath.generic_string() }
+        {"filepath", _Filepath.generic_string() }
     };
     return json;
 }
 
-auto ModelComponent::on_snapshot() const -> std::shared_ptr<MementoDataBase>
+auto ModelComponent::OnSnapshot() const -> std::shared_ptr<MementoDataBase>
 {
     return nullptr;
 }
 
-void ModelComponent::on_restore(const std::shared_ptr<MementoDataBase>& sp_memento_data)
+void ModelComponent::OnRestore(const std::shared_ptr<MementoDataBase>& sp_memento_data)
 {}
 
-auto ModelComponent::filepath() const -> const std::filesystem::path&
+auto ModelComponent::GetFilepath() const -> const std::filesystem::path&
 {
-    return _filepath;
+    return _Filepath;
 }
 
-auto ModelComponent::has_identifiable_meshes() const -> bool
+auto ModelComponent::HasIdentifiableMeshes() const -> bool
 {
-    return _identifiable_meshes.get();
+    return _IdentifiableMeshes.get();
 }
 
-auto ModelComponent::identifiable_meshes() const -> const identifiable_meshes_type&
+auto ModelComponent::GetIdentifiableMeshes() const -> const IdentifiableMeshesType&
 {
-    ACDA_ASSERT(has_identifiable_meshes());
-    return *_identifiable_meshes;
+    ACDA_ASSERT(HasIdentifiableMeshes());
+    return *_IdentifiableMeshes;
 }
 
-
-void ModelComponent::import(const std::filesystem::path & filepath)
+void ModelComponent::Import(const std::filesystem::path& filepath)
 {
-    if(!_filepath.empty() && !filepath.empty())
+    if(!_Filepath.empty() && !filepath.empty())
     {
         auto res = pfd::message{
              "Replacing Model",
-             std::format("Do you want to replace model from {} with model from {}",_filepath.generic_string(),filepath.generic_string()),
+             std::format("Do you want to replace model from {} with model from {}",_Filepath.generic_string(),filepath.generic_string()),
              pfd::choice::yes_no,
              pfd::icon::info
         }.result();
@@ -77,9 +76,9 @@ void ModelComponent::import(const std::filesystem::path & filepath)
         {
             case pfd::button::yes:
             {
-                _unload();
-                _filepath = filepath;
-                _load();
+                _Unload();
+                _Filepath = filepath;
+                _Load();
                 break;
             }
             case pfd::button::no:
@@ -89,11 +88,11 @@ void ModelComponent::import(const std::filesystem::path & filepath)
             }
         }
     }
-    else if(!_filepath.empty() && filepath.empty())
+    else if(!_Filepath.empty() && filepath.empty())
     {
         auto res = pfd::message{
             "Unloading Model",
-            std::format("Do you want to unload model from {}",_filepath.generic_string()),
+            std::format("Do you want to unload model from {}",_Filepath.generic_string()),
             pfd::choice::yes_no,
             pfd::icon::info
         }.result();
@@ -101,8 +100,8 @@ void ModelComponent::import(const std::filesystem::path & filepath)
         {
             case pfd::button::yes:
             {
-                _unload();
-                _filepath = filepath;
+                _Unload();
+                _Filepath = filepath;
                 break;
             }
             case pfd::button::no:
@@ -114,16 +113,16 @@ void ModelComponent::import(const std::filesystem::path & filepath)
     }
     else if(!filepath.empty())
     {
-        _filepath = filepath;
-        _load();
+        _Filepath = filepath;
+        _Load();
     }
 }
 
-void ModelComponent::_load()
+void ModelComponent::_Load()
 {
     Assimp::Importer importer{};
     auto ai_scene = importer.ReadFile(
-        _filepath.generic_string(),
+        _Filepath.generic_string(),
         aiProcess_Triangulate
         | aiProcess_GenNormals
         | aiProcess_CalcTangentSpace
@@ -143,22 +142,22 @@ void ModelComponent::_load()
     std::vector<Mesh> meshes{};
 
     size_t next_mesh_index{ 0 };
-    _process_assimp_node(
+    _ProcessAssimpNode(
         meshes,
         ai_scene,
         ai_scene->mRootNode,
         next_mesh_index
     );
 
-    _identifiable_meshes = std::make_unique<identifiable_meshes_type>(std::move(meshes));
+    _IdentifiableMeshes = std::make_unique<IdentifiableMeshesType>(std::move(meshes));
 }
 
-void ModelComponent::_unload()
+void ModelComponent::_Unload()
 {
-    _identifiable_meshes.reset();
+    _IdentifiableMeshes.reset();
 }
 
-void ModelComponent::_process_assimp_node(
+void ModelComponent::_ProcessAssimpNode(
     std::vector<Mesh>& meshes,
     const aiScene* const ai_scene,
     const aiNode* const ai_node,
@@ -176,13 +175,13 @@ void ModelComponent::_process_assimp_node(
         auto& mesh = meshes.emplace_back();
 
         // Vertex
-        mesh.vertices.reserve(ai_mesh->mNumVertices);
+        mesh.Vertices.reserve(ai_mesh->mNumVertices);
         for(unsigned int i = 0; i < ai_mesh->mNumVertices; ++i)
         {
-            auto& vertex = mesh.vertices.emplace_back();
+            auto& vertex = mesh.Vertices.emplace_back();
 
             auto ai_vertex = ai_mesh->mVertices[i];
-            vertex.coord = glm::vec3{
+            vertex.Coordinate = glm::vec3{
                 ai_vertex.x,
                 ai_vertex.y,
                 ai_vertex.z
@@ -191,7 +190,7 @@ void ModelComponent::_process_assimp_node(
             if(ai_mesh->HasNormals())
             {
                 auto ai_normal = ai_mesh->mNormals[i];
-                vertex.normal = glm::vec3{
+                vertex.Normal = glm::vec3{
                     ai_normal.x,
                     ai_normal.y,
                     ai_normal.z
@@ -201,7 +200,7 @@ void ModelComponent::_process_assimp_node(
             if(ai_mesh->HasTextureCoords(0))
             {
                 auto ai_tex_coord = ai_mesh->mTextureCoords[0][i];
-                vertex.tex_coord = glm::vec2{
+                vertex.TextureCoordinate = glm::vec2{
                     ai_tex_coord.x,
                     ai_tex_coord.y
                 };
@@ -209,40 +208,40 @@ void ModelComponent::_process_assimp_node(
         }
 
         // Index
-        mesh.indices.reserve(ai_mesh->mNumFaces * 3u);
+        mesh.Indices.reserve(ai_mesh->mNumFaces * 3u);
         for(unsigned int i = 0; i < ai_mesh->mNumFaces; ++i)
         {
             auto& ai_face = ai_mesh->mFaces[i];
             for(unsigned int j = 0; j < ai_face.mNumIndices; ++j)
             {
-                mesh.indices.emplace_back(ai_face.mIndices[j]);
+                mesh.Indices.emplace_back(ai_face.mIndices[j]);
             }
         }
 
         // Material
         if(ai_mesh->mMaterialIndex >= 0)
         {
-            auto& material = mesh.material;
+            auto& material = mesh.Material;
             auto ai_material = ai_scene->mMaterials[ai_mesh->mMaterialIndex];
-            auto model_directory = _filepath.parent_path();
+            auto model_directory = _Filepath.parent_path();
 
-            _load_texture(
+            _LoadTexture(
                 model_directory,
                 ai_material,
                 aiTextureType_AMBIENT,
-                material.ambient_texture2d
+                material.AmbientTexture2d
             );
-            _load_texture(
+            _LoadTexture(
                 model_directory,
                 ai_material,
                 aiTextureType_DIFFUSE,
-                material.diffuse_texture2d
+                material.DiffuseTexture2d
             );
-            _load_texture(
+            _LoadTexture(
                 model_directory,
                 ai_material,
                 aiTextureType_SPECULAR,
-                material.specular_texture2d
+                material.SepcularTexture2d
             );
         }
     }
@@ -250,7 +249,7 @@ void ModelComponent::_process_assimp_node(
     // Sub-nodes
     for(unsigned int i = 0; i < ai_node->mNumChildren; ++i)
     {
-        _process_assimp_node(
+        _ProcessAssimpNode(
             meshes,
             ai_scene,
             ai_node->mChildren[i],
@@ -259,7 +258,7 @@ void ModelComponent::_process_assimp_node(
     }
 }
 
-void ModelComponent::_load_texture(
+void ModelComponent::_LoadTexture(
     const std::filesystem::path& directory,
     const aiMaterial* const ai_material,
     aiTextureType ai_texture_type,
@@ -274,10 +273,10 @@ void ModelComponent::_load_texture(
             y{ 0 };
         auto filepath = directory / std::filesystem::path{ str.C_Str() };
         float* ptr = reinterpret_cast<float*>(stbi_load(filepath.string().c_str(), &x, &y, nullptr, 4));
-        texture.size = glm::ivec2{ x,y };
+        texture.Size = glm::ivec2{ x,y };
         for(unsigned int i = 0; i < x * y; i+=4)
         {
-            texture.pixels.emplace_back(
+            texture.Pixels.emplace_back(
                 ptr[i],
                 ptr[i + 1],
                 ptr[i + 2],

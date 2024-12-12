@@ -4,14 +4,13 @@
 
 #include"core/event/event.hpp"
 
-struct Project;
-struct iRenderer;
-struct PhysicsSimulator;
-struct Scene;
+class Project;
+class iRenderer;
+class PhysicsSimulator;
+class Scene;
 
-namespace events
+namespace Events
 {
-
     //==== Event for project ====//
 
     ACDA_EVENT(

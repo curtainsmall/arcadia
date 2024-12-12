@@ -4,10 +4,10 @@
 #include"core/math/glm_header.hpp"
 #include"core/nlohmann_json_header.hpp"
 
-namespace vec4
+namespace Vec4
 {
     [[nodiscard]]
-    ACDA_API static inline auto to_json(const glm::vec4& vec) -> nlohmann::json
+    ACDA_API static inline auto ToJson(const glm::vec4& vec) -> nlohmann::json
     {
         return nlohmann::json{
             {"x",vec.x},
@@ -17,7 +17,7 @@ namespace vec4
         };
     }
     [[nodiscard]]
-    ACDA_API static inline auto from_json(const nlohmann::json& json) -> glm::vec4
+    ACDA_API static inline auto FromJson(const nlohmann::json& json) -> glm::vec4
     {
         return glm::vec4{
             json.at("x"),
@@ -28,7 +28,7 @@ namespace vec4
     }
 
     [[nodiscard]]
-    ACDA_API constexpr auto zero() -> glm::vec4
+    ACDA_API constexpr auto CreateZero() -> glm::vec4
     {
         return glm::vec4{};
     }
@@ -39,7 +39,7 @@ namespace vec4
     /// @return Normalized vector
     template<size_t Index>
     [[nodiscard]]
-    ACDA_API auto normalize_fixedly(const glm::vec4& vec) -> glm::vec4
+    ACDA_API auto NormalizeFixedly(const glm::vec4& vec) -> glm::vec4
     {
         static_assert(Index >= 0 && Index < vec.length());
 
@@ -75,8 +75,9 @@ namespace vec4
 namespace std
 {
     template<>
-    struct std::formatter<glm::vec4>: std::formatter<std::string>
+    class formatter<glm::vec4>: public std::formatter<std::string>
     {
+    public:
         auto format(const glm::vec4& vec, std::format_context& ctx) const
         {
             return std::formatter<std::string>::format(

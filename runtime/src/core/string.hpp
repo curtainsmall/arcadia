@@ -5,18 +5,18 @@
 #include"core/base.hpp"
 
 template<size_t N>
-struct StringLiteral
+class StringLiteral
 {
 public:
     constexpr StringLiteral(const char(&str)[N])
     {
-        std::copy_n(str, N, value);
+        std::copy_n(str, N, Value);
     }
 
     operator std::string() const
     {
-        return std::string{ value[0], value[N - 1] };
+        return std::string{ Value[0], Value[N - 1] };
     }
 public:
-    char value[N];
+    char Value[N];
 };

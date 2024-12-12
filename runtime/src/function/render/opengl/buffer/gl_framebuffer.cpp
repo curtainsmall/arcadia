@@ -6,18 +6,18 @@ GlFramebuffer::GlFramebuffer(
     const glm::ivec2& viewport_size,
     float near_plane,
     float far_plane
-):
-    _gl_texture2d(viewport_size),
-    _gl_depth_stencil_renderbuffer(GL_DEPTH24_STENCIL8, viewport_size)
+) :
+    _GlTexture2d(viewport_size),
+    _GlDepthStencilRenderbuffer(GL_DEPTH24_STENCIL8, viewport_size)
 {
-    ACDA_GL_CALL(glGenFramebuffers(1, &_gl_id));
+    ACDA_GL_CALL(glGenFramebuffers(1, &_GlId));
 
-    bind();
-    ACDA_GL_CALL(glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, _gl_texture2d.gl_id(), 0));
-    ACDA_GL_CALL(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, _gl_depth_stencil_renderbuffer.gl_id()));
-    unbind();
+    Bind();
+    ACDA_GL_CALL(glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, _GlTexture2d.GetGlId(), 0));
+    ACDA_GL_CALL(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, _GlDepthStencilRenderbuffer.GetGlId()));
+    Unbind();
 
-    if(auto res = is_complete(); res != GL_FRAMEBUFFER_COMPLETE)
+    if(auto res = IsComplete(); res != GL_FRAMEBUFFER_COMPLETE)
     {
         throw GlInvalid{ std::format("OpenGL framebuffer incomplete: {}",res) };
     }
@@ -25,51 +25,51 @@ GlFramebuffer::GlFramebuffer(
 
 GlFramebuffer::~GlFramebuffer()
 {
-    ACDA_GL_CALL(glDeleteFramebuffers(1, &_gl_id));
+    ACDA_GL_CALL(glDeleteFramebuffers(1, &_GlId));
 }
 
-GlFramebuffer::GlFramebuffer(self_type&& rhs) noexcept:
-    _gl_texture2d(std::move(rhs._gl_texture2d))
+GlFramebuffer::GlFramebuffer(SelfType&& rhs) noexcept :
+    _GlTexture2d(std::move(rhs._GlTexture2d))
 {
-    _gl_id = rhs._gl_id;
-    rhs._gl_id = 0;
+    _GlId = rhs._GlId;
+    rhs._GlId = 0;
 }
 
-auto GlFramebuffer::operator=(self_type&& rhs) noexcept -> self_type&
+auto GlFramebuffer::operator=(SelfType&& rhs) noexcept -> SelfType&
 {
-    _gl_texture2d = std::move(rhs._gl_texture2d);
+    _GlTexture2d = std::move(rhs._GlTexture2d);
 
-    _gl_id = rhs._gl_id;
-    rhs._gl_id = 0;
+    _GlId = rhs._GlId;
+    rhs._GlId = 0;
 
     return *this;
 }
 
-void GlFramebuffer::bind() const
+void GlFramebuffer::Bind() const
 {
-    if(_gl_id == 0)
+    if(_GlId == 0)
     {
         throw GlInvalid{ "Cannot bind null OpenGL framebuffer" };
     }
 
-    ACDA_GL_CALL(glBindFramebuffer(GL_FRAMEBUFFER, _gl_id));
+    ACDA_GL_CALL(glBindFramebuffer(GL_FRAMEBUFFER, _GlId));
 }
 
-void GlFramebuffer::unbind() const
+void GlFramebuffer::Unbind() const
 {
     ACDA_GL_CALL(glBindFramebuffer(GL_FRAMEBUFFER, 0));
 }
 
-auto GlFramebuffer::is_complete() const -> GLenum
+auto GlFramebuffer::IsComplete() const -> GLenum
 {
-    if(_gl_id == 0)
+    if(_GlId == 0)
     {
         throw GlInvalid{ "Cannot check completeness of null OpenGL framebuffer" };
     }
 
-    bind();
+    Bind();
     ACDA_GL_CALL(auto res = glCheckFramebufferStatus(GL_FRAMEBUFFER));
-    unbind();
+    Unbind();
 
     return res;
 }

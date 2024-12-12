@@ -17,15 +17,15 @@
 #endif // ACDA_DEBUG_MODE
 
 #define ACDA_EVENT(event_name,...) \
-struct event_name: BasicEvent<__VA_ARGS__>\
+class event_name: public BasicEvent<__VA_ARGS__>\
 {\
 public:\
-    using self_type = event_name;\
+    using SelfType = event_name;\
 public:\
     using BasicEvent<__VA_ARGS__>::BasicEvent;\
 }
 
-struct EventBase: Noncopyable
+class EventBase: public Noncopyable
 {
 public:
     EventBase() = default;
@@ -33,47 +33,47 @@ public:
     virtual ~EventBase()
     {};
 public:
-    bool handled{ false };
+    bool Handled{ false };
 };
 
-template<class Event>
+template<typename Event>
 concept cEvent = requires{
     std::derived_from<Event, EventBase>;
 };
 
-template<class ...Args>
-struct BasicEvent: EventBase
+template<typename ...Args>
+class BasicEvent: public EventBase
 {
 public:
-    using data_tuple_type = std::tuple<Args...>;
+    using DataTupleType = std::tuple<Args...>;
 
-    using self_type = BasicEvent<Args...>;
+    using SelfType = BasicEvent<Args...>;
 public:
-    /// @brief Construct a signaled event
-    BasicEvent(Args ...args):
-        data_tuple(std::make_tuple<Args...>(std::forward<Args>(args)...))
+    /// @brief Conclass a signaled event
+    BasicEvent(Args ...args) :
+        DataTuple(std::make_tuple<Args...>(std::forward<Args>(args)...))
     {}
     virtual ~BasicEvent() = default;
 
-    operator const data_tuple_type() const
+    operator const DataTupleType() const
     {
-        return data_tuple;
+        return DataTuple;
     }
 
 public:
-    const data_tuple_type data_tuple;
+    const DataTupleType DataTuple;
 };
 
 template<cEvent Event>
 using EventHandler = std::function<void(Event&)>;
 
-struct EventDispatcher: Noncopyable
+class EventDispatcher: public Noncopyable
 {
 public:
-    using self_type = EventDispatcher;
+    using SelfType = EventDispatcher;
 public:
-    EventDispatcher(EventBase& event):
-        _event(&event)
+    EventDispatcher(EventBase& event) :
+        _Event(&event)
     {}
     ~EventDispatcher() = default;
 
@@ -82,78 +82,78 @@ public:
     /// @param handler Event handler
     /// @return Self
     template<cEvent Event>
-    auto dispatch(const EventHandler<Event>& handler) -> self_type&
+    auto Dispatch(const EventHandler<Event>& handler) -> SelfType&
     {
-        if(typeid(*_event) == typeid(Event))
+        if(typeid(*_Event) == typeid(Event))
         {
-            handler(static_cast<Event&>(*_event));
-            _dispatched = true;
+            handler(static_cast<Event&>(*_Event));
+            _Dispatched = true;
         }
         return *this;
     }
 
     /// @brief Whether any dispatch succedded
-    auto is_dispatched() const -> bool
+    auto IsDispatched() const -> bool
     {
-        return _dispatched;
+        return _Dispatched;
     }
 
 private:
-    EventBase* _event;
-    bool _dispatched{ false };
+    EventBase* _Event;
+    bool _Dispatched{ false };
 };
 
-struct EventQueue
+class EventQueue
 {
 public:
     ACDA_EXCEPTION(EmptyQueue);
 
-    using self_type = EventQueue;
+    using SelfType = EventQueue;
 private:
-    using _event_queue_type = std::queue<std::unique_ptr<EventBase>>;
+    using _EventQueueType = std::queue<std::unique_ptr<EventBase>>;
 
 public:
-    static auto instance() -> self_type&;
+    static auto Instance() -> SelfType&;
 
     /// @brief Signal @a Event
     /// @param ...args Argument to construct @a Event
-    template<cEvent Event, class ...Args>
-    auto signal(Args&& ...args) -> self_type&
+    template<cEvent Event, typename ...Args>
+    auto Signal(Args&& ...args) -> SelfType&
     {
-        _current_queue->emplace(std::make_unique<Event>(std::forward<Args>(args)...));
+        _CurrentQueue->emplace(std::make_unique<Event>(std::forward<Args>(args)...));
 
-    #ifdef ACDA_DEBUG_MODE
-        if(!debug_excluded_event_types.contains(typeid(Event)))
+#ifdef ACDA_DEBUG_MODE
+        if(!DebugExcludedEventTypeIndexes.contains(typeid(Event)))
         {
             ACDA_LOG_DEBUG(std::format("Event signaled: {}", typeid(Event).name()));
         }
-    #endif
+#endif
         return *this;
     }
 
     /// @brief Swap current queue and processing queue
     /// @return whether the processing queue contains event after swap
-    auto swap_queue() -> bool;
+    auto SwapQueue() -> bool;
 
     /// @brief Check whther the proceessing queue contains event
-    auto size() const->size_t;
+    auto GetSize() const->size_t;
 
     /// @brief Read the front event in event queue
     /// @return Event at front
-    auto read() -> EventBase&;
+    auto ReadFront() -> EventBase&;
 
     /// @brief Pop front event
     /// @return whether the processing queue contains event after pop;
-    auto pop() -> bool;
+    auto PopFront() -> bool;
 
 public:
 #ifdef ACDA_DEBUG_MODE
-    std::unordered_set<std::type_index> debug_excluded_event_types{};
+    std::unordered_set<std::type_index> DebugExcludedEventTypeIndexes{};
 #endif // ACDA_DEBUG_MODE
 
 private:
-    _event_queue_type _queue_a{};
-    _event_queue_type _queue_b{};
-    _event_queue_type* _processing_queue{ &_queue_a };
-    _event_queue_type* _current_queue{ &_queue_b };
+    _EventQueueType _QueueA{};
+    _EventQueueType _QueueB{};
+    _EventQueueType* _ProcessingQueue{ &_QueueA };
+    _EventQueueType* _CurrentQueue{ &_QueueB };
 };

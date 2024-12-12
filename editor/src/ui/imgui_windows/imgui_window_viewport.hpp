@@ -8,76 +8,76 @@
 #include"function/input/input_events.hpp"
 #include"function/physics/physics_simulator.hpp"
 #include"function/render/renderer.hpp"
-#include"ui/imgui_header.hpp"
 #include"resource/scene.hpp"
+#include"ui/imgui_header.hpp"
 
-#include"ui/imgui_window.hpp"
 #include"project/project.hpp"
 #include"project/project_events.hpp"
+#include"ui/imgui_window.hpp"
 #include"ui/ui_events.hpp"
 
-struct ImguiWindowViewport: iImguiWindow
+class ImguiWindowViewport: public iImguiWindow
 {
 public:
-    enum struct GizmoOption
+    enum class GizmoOption
     {
         None = 0,
         Translation = ImGuizmo::OPERATION::TRANSLATE,
         Rotation = ImGuizmo::OPERATION::ROTATE,
         Scale = ImGuizmo::OPERATION::SCALE,
     };
-    enum struct GizmoMode
+    enum class GizmoMode
     {
         Local = ImGuizmo::MODE::LOCAL,
         World = ImGuizmo::MODE::WORLD,
     };
-    using self_type = ImguiWindowViewport;
+    using SelfType = ImguiWindowViewport;
 public:
     ACDA_IMGUI_WINDOW_ID_STR_GETTERS("###viewport");
 
     inline ImguiWindowViewport(
         bool open,
         const std::string& title
-    ):
+    ) :
         iImguiWindow(open, title)
     {}
     virtual ~ImguiWindowViewport() = default;
 
-    virtual void on_event(EventBase& e) override;
-    virtual void on_update() override;
+    virtual void OnEvent(EventBase& e) override;
+    virtual void OnUpdate() override;
 
 private:
-    void _on_input_cursor_move(events::InputCursorMove& e);
-    void _on_open_imgui_window(events::OpenImguiWindow& e);
-    void _on_project_built(events::ProjectBuilt& e);
-    void _on_project_unbuilt(events::ProjectUnbuilt& e);
-    void _on_scene_activated(events::SceneActivated& e);
-    void _on_scene_deactivated(events::SceneDeactivated& e);
-    void _on_select_entity(events::SelectEntity& e);
-    void _on_rename_entity(events::RenameEntity& e);
-    void _on_delete_entity(events::DeleteEntity& e);
-    void _on_renderer_built(events::RendererBuilt& e);
-    void _on_renderer_unbuilt(events::RendererUnbuilt& e);
-    void _on_physics_simulator_built(events::PhysicsSimulatorBuilt& e);
-    void _on_physics_simulator_unbuilt(events::PhysicsSimulatorUnbuilt& e);
-    void _on_show_gizmo(events::ShowGizmo& e);
+    void _OnInputCursorMove(Events::InputCursorMove& e);
+    void _OnOpenImguiWindow(Events::OpenImguiWindow& e);
+    void _OnProjectBuilt(Events::ProjectBuilt& e);
+    void _OnProjectUnbuilt(Events::ProjectUnbuilt& e);
+    void _OnSceneActivated(Events::SceneActivated& e);
+    void _OnSceneDeactivated(Events::SceneDeactivated& e);
+    void _OnSelectEntity(Events::SelectEntity& e);
+    void _OnRenameEntity(Events::RenameEntity& e);
+    void _OnDeleteEntity(Events::DeleteEntity& e);
+    void _OnRendererBuilt(Events::RendererBuilt& e);
+    void _OnRendererUnbuilt(Events::RendererUnbuilt& e);
+    void _OnPhysicsSimulatorBuilt(Events::PhysicsSimulatorBuilt& e);
+    void _OnPhysicsSimulatorUnbuilt(Events::PhysicsSimulatorUnbuilt& e);
+    void _OnShowGizmo(Events::ShowGizmo& e);
 
 public:
-    static inline std::string viewport_camera_entity_name{ "viewport_camera" };
+    static inline std::string ViewportCameraEntityName{ "viewport_camera" };
 private:
-    std::weak_ptr<Project> _project{};
-    std::weak_ptr<Scene> _scene{};
-    std::weak_ptr<iRenderer> _renderer{};
-    std::weak_ptr<PhysicsSimulator> _physics_simulator{};
+    std::weak_ptr<Project> _Project{};
+    std::weak_ptr<Scene> _Scene{};
+    std::weak_ptr<iRenderer> _Renderer{};
+    std::weak_ptr<PhysicsSimulator> _PhysicsSimulator{};
 
-    std::string _selected_entity_name{};
+    std::string _SelectedEntityName{};
 
-    glm::vec2 _cursor_move{};
+    glm::vec2 _CursorMoveDistance{};
 
-    bool _in_viewport_free_cam{ false };
-    bool _show_gizmo{ false };
+    bool _InViewportFreecamMode{ false };
+    bool _ShowGizmo{ false };
 
-    GizmoOption _gizmo_option{ GizmoOption::None };
-    GizmoMode _gizmo_mode{ GizmoMode::Local };
-    bool _gizmo_edited{ false };
+    GizmoOption _GizmoOption{ GizmoOption::None };
+    GizmoMode _GizmoMode{ GizmoMode::Local };
+    bool _GizmoEdited{ false };
 };

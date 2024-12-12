@@ -8,10 +8,10 @@
 #include"project/project_events.hpp"
 #include"ui/imgui_window.hpp"
 
-struct ImguiWindowMainToolbar: iImguiWindow
+class ImguiWindowMainToolbar: public iImguiWindow
 {
 public:
-    using self_type = ImguiWindowMainToolbar;
+    using SelfType = ImguiWindowMainToolbar;
 public:
     ACDA_IMGUI_WINDOW_ID_STR_GETTERS("###toolbar");
 public:
@@ -20,12 +20,12 @@ public:
     {}
     virtual ~ImguiWindowMainToolbar() = default;
 
-    virtual void on_event(EventBase& e) override;
-    virtual void on_update() override;
+    virtual void OnEvent(EventBase& e) override;
+    virtual void OnUpdate() override;
 
 private:
-    void _on_scene_activated(events::SceneActivated& e);
-    void _on_scene_deactivated(events::SceneDeactivated& e);
+    void _OnSceneActivated(Events::SceneActivated& e);
+    void _OnSceneDeactivated(Events::SceneDeactivated& e);
 private:
-    std::weak_ptr<Scene> _scene{};
+    std::weak_ptr<Scene> _Scene{};
 };

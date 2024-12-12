@@ -4,23 +4,24 @@
 
 #include"core/base.hpp"
 
-struct Timer
+class Timer
 {
 public:
-    using clock_type = std::chrono::steady_clock;
-    using duration_type = clock_type::duration;
-    using time_point_type = std::chrono::time_point<clock_type>;
+    using ClockType = std::chrono::steady_clock;
+    using DurationType = ClockType::duration;
+    using TimePointType = std::chrono::time_point<ClockType>;
 public:
     Timer();
 
-    void reset();
+    void Reset();
 
-    auto since_start() -> duration_type;
-    auto since_last() -> duration_type;
+    auto GetDurationSinceStart() -> DurationType;
+    auto GetDurationSinceLast() -> DurationType;
+    auto Segment() -> DurationType;
 
 private:
-    auto _now() const->time_point_type;
+    auto _Now() const->TimePointType;
 private:
-    time_point_type _Start{};
-    time_point_type _Last{};
+    TimePointType _Start{};
+    TimePointType _Last{};
 };

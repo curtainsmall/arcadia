@@ -6,19 +6,19 @@
 #include<fstream>
 #include<sstream>
 
-ACDA_API auto to_filepath(const std::string& string) -> std::filesystem::path
+ACDA_API auto ToFilepath(const std::string& string) -> std::filesystem::path
 {
     std::filesystem::path path{ string };
     return path.make_preferred();
 }
 
-ACDA_API auto to_filepath(const char* str) -> std::filesystem::path
+ACDA_API auto ToFilepath(const char* str) -> std::filesystem::path
 {
     std::filesystem::path path{ str };
     return path.make_preferred();
 }
 
-ACDA_API auto load_text(const std::filesystem::path& filepath) -> std::string
+ACDA_API auto LoadText(const std::filesystem::path& filepath) -> std::string
 {
     std::ifstream ifs{ filepath };
     std::stringstream sstream{};
@@ -28,52 +28,52 @@ ACDA_API auto load_text(const std::filesystem::path& filepath) -> std::string
     return sstream.str();
 }
 
-auto File::create_ifstream() -> std::ifstream
+auto File::CreateIfstream() -> std::ifstream
 {
     std::ifstream ifs{};
     ifs.exceptions(std::ios::failbit);
     return ifs;
 }
 
-auto File::create_ifstream(const std::filesystem::path& filepath) -> std::ifstream
+auto File::CreateIfstream(const std::filesystem::path& filepath) -> std::ifstream
 {
-    auto ifs = create_ifstream();
+    auto ifs = CreateIfstream();
     ifs.open(filepath);
     return ifs;
 }
 
-auto File::create_ofstream() -> std::ofstream
+auto File::CreateOfstream() -> std::ofstream
 {
     std::ofstream ofs{};
     ofs.exceptions(std::ios::failbit);
     return ofs;
 }
 
-auto File::create_ofstream(const std::filesystem::path& filepath) -> std::ofstream
+auto File::CreateOfstream(const std::filesystem::path& filepath) -> std::ofstream
 {
-    auto ofs = create_ofstream();
+    auto ofs = CreateOfstream();
     ofs.open(filepath);
     return ofs;
 }
 
-File::File(const std::filesystem::path& filepath):
-    _filepath(filepath)
+File::File(const std::filesystem::path& filepath) :
+    _Filepath(filepath)
 {}
 
 File::~File()
 {
-    for(auto& [section_name, section] : _section_storage)
+    for(auto& [section_name, section] : _SectionStorage)
     {
         section.clear();
     }
 }
 
-auto File::load() -> self_type&
+auto File::Load() -> SelfType&
 {
-    std::ifstream ifs{ _filepath,std::ios_base::binary };
+    std::ifstream ifs{ _Filepath,std::ios_base::binary };
     if(ifs.fail())
     {
-        throw LoadFailed(std::format("Cannot open file at", _filepath.generic_string()));
+        throw LoadFailed(std::format("Cannot open file at", _Filepath.generic_string()));
     }
     ifs.exceptions(std::ios_base::badbit);
 
@@ -93,31 +93,29 @@ auto File::load() -> self_type&
 
         // Section
         ifs.read(reinterpret_cast<char*>(&len), sizeof(len));
-        section_type section{ len };
+        SectionType section{ len };
         ifs.read(reinterpret_cast<char*>(section.data()), section.size());
-        _section_storage.insert_or_assign(section_name, section);
-
+        _SectionStorage.insert_or_assign(section_name, section);
     }
 
     return *this;
-
 }
 
-auto File::save() -> self_type&
+auto File::Save() -> SelfType&
 {
-    std::ofstream ofs{ _filepath, std::ios_base::binary };
+    std::ofstream ofs{ _Filepath, std::ios_base::binary };
     if(ofs.fail())
     {
-        throw SaveFailed{ std::format("Cannot open file at {}",_filepath.generic_string()) };
+        throw SaveFailed{ std::format("Cannot open file at {}",_Filepath.generic_string()) };
     }
     ofs.exceptions(std::ios_base::badbit);
 
     // Section Count
-    auto section_count = _section_storage.size();
+    auto section_count = _SectionStorage.size();
     ofs.write(reinterpret_cast<const char*>(&section_count), sizeof(section_count));
 
     // For each section
-    for(const auto& [section_name, section] : _section_storage)
+    for(const auto& [section_name, section] : _SectionStorage)
     {
         // Section name
         size_t len = section_name.size();
@@ -133,20 +131,20 @@ auto File::save() -> self_type&
     return *this;
 }
 
-auto File::get_section_or_create(const std::string& section_name) -> section_type&
+auto File::GetSectionOrCreate(const std::string& section_name) -> SectionType&
 {
-    if(_section_storage.contains(section_name))
+    if(_SectionStorage.contains(section_name))
     {
-        _section_storage.insert_or_assign(section_name, section_type{});
+        _SectionStorage.insert_or_assign(section_name, SectionType());
     }
-    return get_section(section_name);
+    return GetSection(section_name);
 }
 
-auto File::get_section(const std::string& section_name) -> section_type&
+auto File::GetSection(const std::string& section_name) -> SectionType&
 {
     try
     {
-        return _section_storage.at(section_name);
+        return _SectionStorage.at(section_name);
     }
     catch(const std::out_of_range)
     {
@@ -154,11 +152,11 @@ auto File::get_section(const std::string& section_name) -> section_type&
     }
 }
 
-auto File::get_section(const std::string& section_name) const -> const section_type&
+auto File::GetSection(const std::string& section_name) const -> const SectionType&
 {
     try
     {
-        return _section_storage.at(section_name);
+        return _SectionStorage.at(section_name);
     }
     catch(const std::out_of_range)
     {
@@ -166,14 +164,13 @@ auto File::get_section(const std::string& section_name) const -> const section_t
     }
 }
 
-auto File::has_section(const std::string& section_name) const -> bool
+auto File::HasSection(const std::string& section_name) const -> bool
 {
-    return _section_storage.contains(section_name);
+    return _SectionStorage.contains(section_name);
 }
 
-auto File::erase_section(const std::string& section_name) -> self_type&
+auto File::EraseSection(const std::string& section_name) -> SelfType&
 {
-    _section_storage.erase(section_name);
+    _SectionStorage.erase(section_name);
     return *this;
 }
-

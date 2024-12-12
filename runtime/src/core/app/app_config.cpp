@@ -2,8 +2,8 @@
 
 #include "app_config.hpp"
 
-auto AppConfig::instance() -> self_type&
+auto AppConfig::Instance() -> SelfType&
 {
-    static self_type app_config{};
+    static SelfType app_config{};
     return app_config;
 }

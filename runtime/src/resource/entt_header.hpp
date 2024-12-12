@@ -6,7 +6,7 @@
 
 #include"core/base.hpp"
 
-static inline auto to_string(const entt::entity entity) -> std::string
+static inline auto ToString(const entt::entity entity) -> std::string
 {
     return std::to_string(static_cast<entt::id_type>(entity));
 }
@@ -14,12 +14,13 @@ static inline auto to_string(const entt::entity entity) -> std::string
 namespace std
 {
     template<>
-    struct std::formatter<entt::entity>: std::formatter<std::string>
+    class formatter<entt::entity>: public std::formatter<std::string>
     {
+    public:
         auto format(const entt::entity& entity, std::format_context& ctx) const
         {
             return std::formatter<std::string>::format(
-                std::format("{}", to_underlying(entity)),
+                std::format("{}", ToUnderlying(entity)),
                 ctx
             );
         }

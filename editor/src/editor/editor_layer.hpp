@@ -11,26 +11,26 @@
 #include"project/project_layer.hpp"
 #include"ui/imgui_layer.hpp"
 
-struct EditorAppLayer: iAppLayer
+class EditorAppLayer: public iAppLayer
 {
 public:
     EditorAppLayer();
     virtual ~EditorAppLayer() = default;
 
-    virtual void on_event(EventBase& e) override;
-    virtual void on_update() override;
+    virtual void OnEvent(EventBase& e) override;
+    virtual void OnUpdate() override;
 private:
-    void _imgui_window_installer(ImguiLayer& imgui_layer);
-    void _stop();
+    void _InstallImguiWindow(ImguiLayer& imgui_layer);
+    void _Stop();
 
-    void _on_window_should_close(events::WindowShouldClose& e);
-    void _on_project_unbuilt(events::ProjectUnbuilt& e);
-    void _on_window_close_canceled(events::WindowCloseCanceled& e);
-    void _on_play_mode(events::PlayMode& e);
-    void _on_input_key(events::InputKey& e);
+    void _OnWindowShouldClose(Events::WindowShouldClose& e);
+    void _OnProjectUnbuilt(Events::ProjectUnbuilt& e);
+    void _OnWindowCloseCanceled(Events::WindowCloseCanceled& e);
+    void _OnTogglePlayMode(Events::TogglePlayMode& e);
+    void _OnInputKey(Events::InputKey& e);
 
 private:
-    bool _waiting_for_project_unbuilt_before_closing{ false };
+    bool _WaitingForProjectUnbuiltBeforeClosing{ false };
 };
 
-ACDA_API auto create_application() -> std::unique_ptr<iAppLayer>;
+ACDA_API auto CreateApplication() -> std::unique_ptr<iAppLayer>;

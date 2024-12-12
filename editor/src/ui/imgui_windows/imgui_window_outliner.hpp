@@ -4,83 +4,81 @@
 #include<string>
 
 #include"core/base.hpp"
+#include"resource/scene.hpp"
 #include"ui/imgui_header.hpp"
 #include"ui/imgui_window.hpp"
-#include"resource/scene.hpp"
 
 #include"project/project_events.hpp"
 #include"ui/ui_events.hpp"
 
-struct ImguiWindowOutliner: iImguiWindow
+class ImguiWindowOutliner: public iImguiWindow
 {
 public:
-    using self_type = ImguiWindowOutliner;
+    using SelfType = ImguiWindowOutliner;
 public:
     ACDA_IMGUI_WINDOW_ID_STR_GETTERS("###outliner");
 
     inline ImguiWindowOutliner(
         bool open,
         const std::string& title
-    ):
+    ) :
         iImguiWindow(open, title)
     {}
     virtual ~ImguiWindowOutliner() = default;
 
-    virtual void on_event(EventBase& e);
-    virtual void on_update();
+    virtual void OnEvent(EventBase& e);
+    virtual void OnUpdate();
 
 private:
     template<cComponent Component>
-    void _menu_item_add_component(int& item_count);
+    void _MenuItemAddComponent(int& item_count);
     template<cComponent Component>
-    void _menu_item_remove_component(int& item_count);
+    void _MenuItemRemoveComponent(int& item_count);
 
-    void _on_open_imgui_window(events::OpenImguiWindow& e);
-    void _on_scene_activated(events::SceneActivated& e);
-    void _on_scene_deactivated(events::SceneDeactivated& e);
-    void _on_rename_entity(events::RenameEntity& e);
+    void _OnOpenImguiWindow(Events::OpenImguiWindow& e);
+    void _OnSceneActivated(Events::SceneActivated& e);
+    void _OnSceneDeactivated(Events::SceneDeactivated& e);
+    void _OnRenameEntity(Events::RenameEntity& e);
 
 private:
-    std::weak_ptr<Scene> _scene{};
+    std::weak_ptr<Scene> _Scene{};
 
-    std::string _selected_entity_name{};
+    std::string _SelectedEntityName{};
 
     std::string _EntityOldName{};
     std::string _EntityNewName{};
-
 };
 
 template<cComponent Component>
-inline void ImguiWindowOutliner::_menu_item_add_component(int& item_count)
+inline void ImguiWindowOutliner::_MenuItemAddComponent(int& item_count)
 {
-    std::string type_str = Component::get_type_str_static();
-    bool exists = _scene.lock()->all_of<Component>(_selected_entity_name);
+    std::string type_str = Component::GetTypeStringStatic();
+    bool exists = _Scene.lock()->ContainsAllComponents<Component>(_SelectedEntityName);
 
     if(!exists)
     {
         ++item_count;
         if(ImGui::MenuItem(type_str.c_str()))
         {
-            EventQueue::instance()
-                .signal<events::AddComponent>(_selected_entity_name, type_str);
+            EventQueue::Instance()
+                .Signal<Events::AddComponent>(_SelectedEntityName, type_str);
         }
     }
 }
 
 template<cComponent Component>
-inline void ImguiWindowOutliner::_menu_item_remove_component(int& item_count)
+inline void ImguiWindowOutliner::_MenuItemRemoveComponent(int& item_count)
 {
-
-    std::string type_str = Component::get_type_str_static();
-    bool exists = _scene.lock()->all_of<Component>(_selected_entity_name);
+    std::string type_str = Component::GetTypeStringStatic();
+    bool exists = _Scene.lock()->ContainsAllComponents<Component>(_SelectedEntityName);
 
     if(exists)
     {
         ++item_count;
         if(exists && ImGui::MenuItem(type_str.c_str()))
         {
-            EventQueue::instance()
-                .signal<events::RemoveComponent>(_selected_entity_name, type_str);
+            EventQueue::Instance()
+                .Signal<Events::RemoveComponent>(_SelectedEntityName, type_str);
         }
     }
 }

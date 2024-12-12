@@ -2,7 +2,7 @@
 
 #include "algorithm.hpp"
 
-auto decompose(const glm::mat4& transform) -> std::optional<std::tuple<glm::vec3, glm::vec3, glm::vec3>>
+auto Decompose(const glm::mat4& transform) -> std::optional<std::tuple<glm::vec3, glm::vec3, glm::vec3>>
 {
     // From glm::decompose in matrix_decompose.inl
 
@@ -10,7 +10,6 @@ auto decompose(const glm::mat4& transform) -> std::optional<std::tuple<glm::vec3
         translation{},
         rotation{},
         scale{};
-
 
     using T = float;
 
@@ -59,7 +58,7 @@ auto decompose(const glm::mat4& transform) -> std::optional<std::tuple<glm::vec3
     {
         for(glm::length_t i = 0; i < 3; i++)
         {
-            scale[i] *= static_cast<T>(-1);
+            Scale[i] *= static_cast<T>(-1);
             Row[i] *= static_cast<T>(-1);
         }
     }
@@ -77,7 +76,5 @@ auto decompose(const glm::mat4& transform) -> std::optional<std::tuple<glm::vec3
         rotation.z = 0;
     }
 
-
     return std::make_tuple(translation, rotation, scale);
-
 }

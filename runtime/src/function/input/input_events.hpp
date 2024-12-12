@@ -7,7 +7,7 @@
 #include"core/math.hpp"
 #include"function/window/window_layer.hpp"
 
-enum struct InputKey
+enum class InputKey
 {
     Unknown          = GLFW_KEY_UNKNOWN,
     Space            = GLFW_KEY_SPACE,
@@ -118,19 +118,19 @@ enum struct InputKey
     RightSuper       = GLFW_KEY_RIGHT_SUPER,
     Menu             = GLFW_KEY_MENU,
 };
-enum struct InputMouse
+enum class InputMouse
 {
     ButtonLeft   = GLFW_MOUSE_BUTTON_LEFT,
     ButtonRight  = GLFW_MOUSE_BUTTON_RIGHT,
     ButtonMiddle = GLFW_MOUSE_BUTTON_MIDDLE,
 };
-enum struct InputAction
+enum class InputAction
 {
     Release = GLFW_RELEASE,
     Press   = GLFW_PRESS,
     Repeat  = GLFW_REPEAT,
 };
-enum struct InputModifier
+enum class InputModifier
 {
     Shift     = GLFW_MOD_SHIFT,
     Ctrl      = GLFW_MOD_CONTROL,
@@ -141,7 +141,7 @@ enum struct InputModifier
     _EnumBitmap
 };
 
-namespace events
+namespace Events
 {
     ACDA_EVENT(
         InputKey,

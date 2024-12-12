@@ -62,7 +62,7 @@
                 {
                     "components": {
                         "model": {
-                            "filepath": "D:/CppProject/arcadia/editor/asset/model/nanosuit/nanosuit.obj"
+                            "filepath": "D:/CppProject/arcadia/editor/assets/models/nanosuit/nanosuit.obj"
                         },
                         "physics": {
                             "body_shape_color": {

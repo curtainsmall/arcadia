@@ -7,46 +7,46 @@
 #include"resource/components/physics_component.hpp"
 #include"resource/components/transform_component.hpp"
 
-void ImguiWindowViewport::on_event(EventBase& e)
+void ImguiWindowViewport::OnEvent(EventBase& e)
 {
     EventDispatcher{ e }
-        .dispatch<events::InputCursorMove>(ACDA_BIND_MEMBER_FN(_on_input_cursor_move))
-        .dispatch<events::OpenImguiWindow>(ACDA_BIND_MEMBER_FN(_on_open_imgui_window))
-        .dispatch<events::ProjectBuilt>(ACDA_BIND_MEMBER_FN(_on_project_built))
-        .dispatch<events::ProjectUnbuilt>(ACDA_BIND_MEMBER_FN(_on_project_unbuilt))
-        .dispatch<events::SceneActivated>(ACDA_BIND_MEMBER_FN(_on_scene_activated))
-        .dispatch<events::SceneDeactivated>(ACDA_BIND_MEMBER_FN(_on_scene_deactivated))
-        .dispatch<events::SelectEntity>(ACDA_BIND_MEMBER_FN(_on_select_entity))
-        .dispatch<events::RenameEntity>(ACDA_BIND_MEMBER_FN(_on_rename_entity))
-        .dispatch<events::DeleteEntity>(ACDA_BIND_MEMBER_FN(_on_delete_entity))
-        .dispatch<events::RendererBuilt>(ACDA_BIND_MEMBER_FN(_on_renderer_built))
-        .dispatch<events::RendererUnbuilt>(ACDA_BIND_MEMBER_FN(_on_renderer_unbuilt))
-        .dispatch<events::PhysicsSimulatorBuilt>(ACDA_BIND_MEMBER_FN(_on_physics_simulator_built))
-        .dispatch<events::PhysicsSimulatorUnbuilt>(ACDA_BIND_MEMBER_FN(_on_physics_simulator_unbuilt))
-        .dispatch<events::ShowGizmo>(ACDA_BIND_MEMBER_FN(_on_show_gizmo))
-        .is_dispatched();
+        .Dispatch<Events::InputCursorMove>(ACDA_BIND_MEMBER_FN(_OnInputCursorMove))
+        .Dispatch<Events::OpenImguiWindow>(ACDA_BIND_MEMBER_FN(_OnOpenImguiWindow))
+        .Dispatch<Events::ProjectBuilt>(ACDA_BIND_MEMBER_FN(_OnProjectBuilt))
+        .Dispatch<Events::ProjectUnbuilt>(ACDA_BIND_MEMBER_FN(_OnProjectUnbuilt))
+        .Dispatch<Events::SceneActivated>(ACDA_BIND_MEMBER_FN(_OnSceneActivated))
+        .Dispatch<Events::SceneDeactivated>(ACDA_BIND_MEMBER_FN(_OnSceneDeactivated))
+        .Dispatch<Events::SelectEntity>(ACDA_BIND_MEMBER_FN(_OnSelectEntity))
+        .Dispatch<Events::RenameEntity>(ACDA_BIND_MEMBER_FN(_OnRenameEntity))
+        .Dispatch<Events::DeleteEntity>(ACDA_BIND_MEMBER_FN(_OnDeleteEntity))
+        .Dispatch<Events::RendererBuilt>(ACDA_BIND_MEMBER_FN(_OnRendererBuilt))
+        .Dispatch<Events::RendererUnbuilt>(ACDA_BIND_MEMBER_FN(_OnRendererUnbuilt))
+        .Dispatch<Events::PhysicsSimulatorBuilt>(ACDA_BIND_MEMBER_FN(_OnPhysicsSimulatorBuilt))
+        .Dispatch<Events::PhysicsSimulatorUnbuilt>(ACDA_BIND_MEMBER_FN(_OnPhysicsSimulatorUnbuilt))
+        .Dispatch<Events::ShowGizmo>(ACDA_BIND_MEMBER_FN(_OnShowGizmo))
+        .IsDispatched();
 }
 
-void ImguiWindowViewport::on_update()
+void ImguiWindowViewport::OnUpdate()
 {
-    if(!_open)
+    if(!_Opened)
     {
         return;
     }
 
-    auto scene = _scene.lock();
-    auto physics_simulator = _physics_simulator.lock();
-    auto renderer = _renderer.lock();
-    auto project = _project.lock();
+    auto scene = _Scene.lock();
+    auto physics_simulator = _PhysicsSimulator.lock();
+    auto renderer = _Renderer.lock();
+    auto project = _Project.lock();
 
-    const auto& app_context = AppContext::instance();
+    const auto& app_context = AppContext::Instance();
 
-    auto imgui_title = _title + get_id_str();
+    auto imgui_title = _Title + GetIdString();
 
     ImGui::SetNextWindowSize(glm::vec2{ 1024,768 }, ImGuiCond_Once);
     auto window_flags =
         ImGuiWindowFlags_NoCollapse;
-    if(ImGui::Begin(imgui_title.c_str(), &_open, window_flags))
+    if(ImGui::Begin(imgui_title.c_str(), &_Opened, window_flags))
     {
         if(!scene)
         {
@@ -61,104 +61,103 @@ void ImguiWindowViewport::on_update()
             ACDA_ASSERT(physics_simulator);
             ACDA_ASSERT(renderer);
 
-            physics_simulator->prepare();
-            renderer->prepare();
+            physics_simulator->Prepare();
+            renderer->Prepare();
 
-            auto [viewport_camera_comp, viewport_transform_comp] = scene->get<CameraComponent, TransformComponent>(viewport_camera_entity_name);
-            viewport_camera_comp.viewport_size = ImGui::GetContentRegionAvail();
+            auto [viewport_camera_comp, viewport_transform_comp] = scene->GetComponent<CameraComponent, TransformComponent>(ViewportCameraEntityName);
+            viewport_camera_comp.ViewportSize = ImGui::GetContentRegionAvail();
             for(const auto& [name, entity_info] : *scene)
             {
-                physics_simulator->submit(*scene, name);
+                physics_simulator->Submit(*scene, name);
             }
-            physics_simulator->finalize();
-            physics_simulator->update();
+            physics_simulator->Finalize();
+            physics_simulator->Update();
             for(const auto& [name, entity_info] : *scene)
             {
-                physics_simulator->query(*scene, name);
+                physics_simulator->Query(*scene, name);
 
                 // We submit entity to renderer after query
-                if(entity_info.display)
+                if(entity_info.Display)
                 {
-                    renderer->submit(*scene, name);
+                    renderer->Submit(*scene, name);
                 }
             }
 
-            renderer->finalize();
-            renderer->draw();
+            renderer->Finalize();
+            renderer->Draw();
 
             glm::vec2 image_cursor_pos = ImGui::GetCursorPos();
-            ImGui::Image(renderer->render_result_id(0), viewport_camera_comp.viewport_size, { 0,1 }, { 1,0 });
+            ImGui::Image(renderer->GetRenderResultId(0), viewport_camera_comp.ViewportSize, { 0,1 }, { 1,0 });
 
-            if(!_in_viewport_free_cam && ImGui::IsItemHovered() && ImGui::IsMouseDown(ImGuiMouseButton_Right))
+            if(!_InViewportFreecamMode && ImGui::IsItemHovered() && ImGui::IsMouseDown(ImGuiMouseButton_Right))
             {
-                EventQueue::instance().signal<events::WindowSetInputModeCursor>(WindowInputModeCursor::Disabled);
-                _in_viewport_free_cam = true;
+                EventQueue::Instance().Signal<Events::WindowSetCursorInputMode>(WindowCursorInputMode::Disabled);
+                _InViewportFreecamMode = true;
             }
-            if(_in_viewport_free_cam && !ImGui::IsMouseDown(ImGuiMouseButton_Right))
+            if(_InViewportFreecamMode && !ImGui::IsMouseDown(ImGuiMouseButton_Right))
             {
-                EventQueue::instance().signal<events::WindowSetInputModeCursor>(WindowInputModeCursor::normal);
-                _in_viewport_free_cam = false;
+                EventQueue::Instance().Signal<Events::WindowSetCursorInputMode>(WindowCursorInputMode::Normal);
+                _InViewportFreecamMode = false;
             }
 
             // Viewport camera control
-            if(_in_viewport_free_cam)
+            if(_InViewportFreecamMode)
             {
                 // Scroll to zoom (move viewport_camera_comp forwards or backwards along direction)
                 if(ImGui::IsKeyDown(ImGuiKey_W))
                 {
-                    viewport_transform_comp.position += viewport_transform_comp.direction * viewport_camera_comp.speed;
+                    viewport_transform_comp.Position += viewport_transform_comp.Direction * viewport_camera_comp.Speed;
                 }
                 else if(ImGui::IsKeyDown(ImGuiKey_S))
                 {
-                    viewport_transform_comp.position -= viewport_transform_comp.direction * viewport_camera_comp.speed;
+                    viewport_transform_comp.Position -= viewport_transform_comp.Direction * viewport_camera_comp.Speed;
                 }
                 else if(ImGui::IsKeyDown(ImGuiKey_A))
                 {
-                    viewport_transform_comp.position += glm::cross(CameraComponent::up, viewport_transform_comp.direction) * viewport_camera_comp.speed;
+                    viewport_transform_comp.Position += glm::cross(CameraComponent::Up, viewport_transform_comp.Direction) * viewport_camera_comp.Speed;
                 }
                 else if(ImGui::IsKeyDown(ImGuiKey_D))
                 {
-                    viewport_transform_comp.position -= glm::cross(CameraComponent::up, viewport_transform_comp.direction) * viewport_camera_comp.speed;
+                    viewport_transform_comp.Position -= glm::cross(CameraComponent::Up, viewport_transform_comp.Direction) * viewport_camera_comp.Speed;
                 }
                 else if(ImGui::IsKeyDown(ImGuiKey_E))
                 {
-                    viewport_transform_comp.position += glm::cross(viewport_transform_comp.direction, glm::cross(CameraComponent::up, viewport_transform_comp.direction)) * viewport_camera_comp.speed;
+                    viewport_transform_comp.Position += glm::cross(viewport_transform_comp.Direction, glm::cross(CameraComponent::Up, viewport_transform_comp.Direction)) * viewport_camera_comp.Speed;
                 }
                 else if(ImGui::IsKeyDown(ImGuiKey_Q))
                 {
-                    viewport_transform_comp.position -= glm::cross(viewport_transform_comp.direction, glm::cross(CameraComponent::up, viewport_transform_comp.direction)) * viewport_camera_comp.speed;
+                    viewport_transform_comp.Position -= glm::cross(viewport_transform_comp.Direction, glm::cross(CameraComponent::Up, viewport_transform_comp.Direction)) * viewport_camera_comp.Speed;
                 }
 
                 // Rotate view
-                auto offset = _cursor_move * .005f;
+                auto offset = _CursorMoveDistance * .005f;
                 auto x_angle_offset = -offset.x;
-                viewport_transform_comp.direction = glm::normalize(glm::angleAxis(x_angle_offset, viewport_camera_comp.up) * viewport_transform_comp.direction);
-                auto pitch_angle = glm::half_pi<float>() - glm::angle(viewport_transform_comp.direction, viewport_camera_comp.up);
-                auto y_angle_offset = glm::clamp(-offset.y + pitch_angle, -glm::half_pi<float>() + viewport_camera_comp.up_epsilon, glm::half_pi<float>() - viewport_camera_comp.up_epsilon) - pitch_angle;
-                viewport_transform_comp.direction = glm::normalize(glm::angleAxis(y_angle_offset, glm::cross(viewport_transform_comp.direction, viewport_camera_comp.up)) * viewport_transform_comp.direction);
+                viewport_transform_comp.Direction = glm::normalize(glm::angleAxis(x_angle_offset, viewport_camera_comp.Up) * viewport_transform_comp.Direction);
+                auto pitch_angle = glm::half_pi<float>() - glm::angle(viewport_transform_comp.Direction, viewport_camera_comp.Up);
+                auto y_angle_offset = glm::clamp(-offset.y + pitch_angle, -glm::half_pi<float>() + viewport_camera_comp.UpEpsilon, glm::half_pi<float>() - viewport_camera_comp.UpEpsilon) - pitch_angle;
+                viewport_transform_comp.Direction = glm::normalize(glm::angleAxis(y_angle_offset, glm::cross(viewport_transform_comp.Direction, viewport_camera_comp.Up)) * viewport_transform_comp.Direction);
 
-                _cursor_move = vec2::zero();
+                _CursorMoveDistance = Vec2::CreateZero();
             }
 
             // Display viewport viewport_camera_comp info
             ImGui::SetCursorPos(image_cursor_pos);
             ImGui::Text(std::format(
                 "Camera - Pos: {} | Direction: {} {}",
-                viewport_transform_comp.position,
-                viewport_transform_comp.direction,
-                _in_viewport_free_cam ? "(Free Cam) "s : ""s
+                viewport_transform_comp.Position,
+                viewport_transform_comp.Direction,
+                _InViewportFreecamMode ? "(Free Cam) "s : ""s
             ).c_str());
             ImGui::SameLine(ImGui::GetWindowWidth() - 300.f);
             const auto gizmo_options_cursor_pos = ImGui::GetCursorPos();
             ImGui::Dummy({ 0,0 });
-            float fps = 1.f / std::chrono::duration_cast<std::chrono::duration<float>>(app_context.delta_time).count();
+            float fps = 1.f / std::chrono::duration_cast<std::chrono::duration<float>>(app_context.DeltaTime).count();
             ImGui::Text(std::format("FPS: {:.2f}", fps).c_str());
 
             ImGui::SetCursorPos(gizmo_options_cursor_pos);
 
-            if(_show_gizmo)
+            if(_ShowGizmo)
             {
-
                 // Gizmo option
                 auto selected_color = IM_COL32(50, 50, 120, 255);
                 auto hovered_color = selected_color;
@@ -167,87 +166,87 @@ void ImguiWindowViewport::on_update()
                 ImGui::PushStyleColor(ImGuiCol_ButtonHovered, hovered_color);
                 ImGui::PushStyleColor(ImGuiCol_ButtonActive, active_color);
 
-                if(_gizmo_option == GizmoOption::None)
+                if(_GizmoOption == GizmoOption::None)
                 {
                     ImGui::PushStyleColor(ImGuiCol_Button, selected_color);
                 }
                 ImGui::Button("None");
-                if(_gizmo_option == GizmoOption::None)
+                if(_GizmoOption == GizmoOption::None)
                 {
                     ImGui::PopStyleColor();
                 }
-                if(!_in_viewport_free_cam && (ImGui::IsItemClicked() || ImGui::IsKeyDown(ImGuiKey_Q)))
+                if(!_InViewportFreecamMode && (ImGui::IsItemClicked() || ImGui::IsKeyDown(ImGuiKey_Q)))
                 {
-                    _gizmo_option = GizmoOption::None;
+                    _GizmoOption = GizmoOption::None;
                 }
                 ImGui::SetItemTooltip("Turn off gizmo (Q)");
 
                 ImGui::SameLine();
-                if(_gizmo_option == GizmoOption::Translation)
+                if(_GizmoOption == GizmoOption::Translation)
                 {
                     ImGui::PushStyleColor(ImGuiCol_Button, selected_color);
                 }
                 ImGui::Button("Translation");
-                if(_gizmo_option == GizmoOption::Translation)
+                if(_GizmoOption == GizmoOption::Translation)
                 {
                     ImGui::PopStyleColor();
                 }
-                if(!_in_viewport_free_cam && (ImGui::IsItemClicked() || ImGui::IsKeyDown(ImGuiKey_W)))
+                if(!_InViewportFreecamMode && (ImGui::IsItemClicked() || ImGui::IsKeyDown(ImGuiKey_W)))
                 {
-                    _gizmo_option = GizmoOption::Translation;
+                    _GizmoOption = GizmoOption::Translation;
                 }
                 ImGui::SetItemTooltip("Set gizmo to translation mode (W)");
 
                 ImGui::SameLine();
-                if(_gizmo_option == GizmoOption::Rotation)
+                if(_GizmoOption == GizmoOption::Rotation)
                 {
                     ImGui::PushStyleColor(ImGuiCol_Button, selected_color);
                 }
                 ImGui::Button("Rotation");
-                if(_gizmo_option == GizmoOption::Rotation)
+                if(_GizmoOption == GizmoOption::Rotation)
                 {
                     ImGui::PopStyleColor();
                 }
-                if(!_in_viewport_free_cam && (ImGui::IsItemClicked() || ImGui::IsKeyDown(ImGuiKey_E)))
+                if(!_InViewportFreecamMode && (ImGui::IsItemClicked() || ImGui::IsKeyDown(ImGuiKey_E)))
                 {
-                    _gizmo_option = GizmoOption::Rotation;
+                    _GizmoOption = GizmoOption::Rotation;
                 }
                 ImGui::SetItemTooltip("Set gizmo to rotation mode (E)");
 
                 ImGui::SameLine();
-                if(_gizmo_option == GizmoOption::Scale)
+                if(_GizmoOption == GizmoOption::Scale)
                 {
                     ImGui::PushStyleColor(ImGuiCol_Button, selected_color);
                 }
                 ImGui::Button("Scale");
-                if(_gizmo_option == GizmoOption::Scale)
+                if(_GizmoOption == GizmoOption::Scale)
                 {
                     ImGui::PopStyleColor();
                 }
-                if(!_in_viewport_free_cam && (ImGui::IsItemClicked() || ImGui::IsKeyDown(ImGuiKey_R)))
+                if(!_InViewportFreecamMode && (ImGui::IsItemClicked() || ImGui::IsKeyDown(ImGuiKey_R)))
                 {
-                    _gizmo_option = GizmoOption::Scale;
+                    _GizmoOption = GizmoOption::Scale;
                 }
                 ImGui::SetItemTooltip("Set gizmo to scale mode (R)");
 
                 ImGui::PopStyleColor(2);
 
                 // Gizmo
-                if(!_selected_entity_name.empty() && scene->all_of<TransformComponent>(_selected_entity_name))
+                if(!_SelectedEntityName.empty() && scene->ContainsAllComponents<TransformComponent>(_SelectedEntityName))
                 {
                     ImGuizmo::SetDrawlist();
 
-                    ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, viewport_camera_comp.viewport_size.x, viewport_camera_comp.viewport_size.y);
-                    glm::mat4 view_mat = viewport_camera_comp.generate_view_mat4(viewport_transform_comp.position, viewport_transform_comp.direction);
-                    glm::mat4 proj_mat = viewport_camera_comp.generate_proj_mat4();
+                    ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, viewport_camera_comp.ViewportSize.x, viewport_camera_comp.ViewportSize.y);
+                    glm::mat4 view_mat = viewport_camera_comp.GenerateViewMat4(viewport_transform_comp.Position, viewport_transform_comp.Direction);
+                    glm::mat4 proj_mat = viewport_camera_comp.GenerateProjectiveMat4();
 
-                    auto& transform_comp = scene->get<TransformComponent>(_selected_entity_name);
-                    glm::mat4 transform_mat = transform_comp.generate_transform_matrix();
+                    auto& transform_comp = scene->GetComponent<TransformComponent>(_SelectedEntityName);
+                    glm::mat4 transform_mat = transform_comp.GenerateTransformMat4();
                     ImGuizmo::Manipulate(
                         glm::value_ptr(view_mat),
                         glm::value_ptr(proj_mat),
-                        static_cast<ImGuizmo::OPERATION>(_gizmo_option),
-                        static_cast<ImGuizmo::MODE>(_gizmo_mode),
+                        static_cast<ImGuizmo::OPERATION>(_GizmoOption),
+                        static_cast<ImGuizmo::MODE>(_GizmoMode),
                         glm::value_ptr(transform_mat)
                     );
 
@@ -265,30 +264,30 @@ void ImguiWindowViewport::on_update()
 
                         glm::decompose(transform_mat, scale, rotation, translation, skew, perspective);
 
-                        if(transform_comp.position != translation
-                           || transform_comp.rotation != rotation
-                           || transform_comp.scale != scale)
+                        if(transform_comp.Position != translation
+                           || transform_comp.Rotation != rotation
+                           || transform_comp.Scale != scale)
                         {
-                            _gizmo_edited = true;
+                            _GizmoEdited = true;
                         }
 
-                        if(transform_comp.position != translation)
+                        if(transform_comp.Position != translation)
                         {
                             //transform_comp.pivot += translation - transform_comp.position;
                         }
 
-                        transform_comp.position = translation;
-                        transform_comp.rotation = rotation;
-                        transform_comp.scale = scale;
+                        transform_comp.Position = translation;
+                        transform_comp.Rotation = rotation;
+                        transform_comp.Scale = scale;
                     }
 
                     // On release gizmo
-                    if(!ImGuizmo::IsUsingAny() && _gizmo_edited)
+                    if(!ImGuizmo::IsUsingAny() && _GizmoEdited)
                     {
-                        _gizmo_edited = false;
+                        _GizmoEdited = false;
 
                         std::string description{};
-                        switch(_gizmo_option)
+                        switch(_GizmoOption)
                         {
                             case ImguiWindowViewport::GizmoOption::Translation:
                             {
@@ -310,14 +309,14 @@ void ImguiWindowViewport::on_update()
                         }
                         if(!description.empty())
                         {
-                            MementoList::instance()
-                                .snapshot<TransformComponent>(
+                            MementoList::Instance()
+                                .Snapshot<TransformComponent>(
                                     std::format("{} - {}", "Transform"s, description),
-                                    [_scene = scene, _entity_name = _selected_entity_name]() -> TransformComponent&
+                                    [scene, this]() -> TransformComponent&
                             {
-                                return _scene->get<TransformComponent>(_entity_name);
+                                return scene->GetComponent<TransformComponent>(_SelectedEntityName);
                             }
-                            );
+                                );
                         }
                     }
                 }
@@ -327,100 +326,100 @@ void ImguiWindowViewport::on_update()
     ImGui::End();
 }
 
-void ImguiWindowViewport::_on_input_cursor_move(events::InputCursorMove& e)
+void ImguiWindowViewport::_OnInputCursorMove(Events::InputCursorMove& e)
 {
-    const auto& [wnd_ptr, cursor_move] = e.data_tuple;
-    _cursor_move = cursor_move;
+    const auto& [wnd_ptr, cursor_move] = e.DataTuple;
+    _CursorMoveDistance = cursor_move;
 }
 
-void ImguiWindowViewport::_on_open_imgui_window(events::OpenImguiWindow& e)
+void ImguiWindowViewport::_OnOpenImguiWindow(Events::OpenImguiWindow& e)
 {
-    const auto& [id_str] = e.data_tuple;
-    if(id_str == get_id_str())
+    const auto& [id_str] = e.DataTuple;
+    if(id_str == GetIdString())
     {
-        _open = true;
+        _Opened = true;
     }
 }
 
-void ImguiWindowViewport::_on_project_built(events::ProjectBuilt& e)
+void ImguiWindowViewport::_OnProjectBuilt(Events::ProjectBuilt& e)
 {
-    const auto& [project] = e.data_tuple;
-    _project = project;
+    const auto& [project] = e.DataTuple;
+    _Project = project;
 }
 
-void ImguiWindowViewport::_on_project_unbuilt(events::ProjectUnbuilt& e)
+void ImguiWindowViewport::_OnProjectUnbuilt(Events::ProjectUnbuilt& e)
 {
-    _project.reset();
+    _Project.reset();
 }
 
-void ImguiWindowViewport::_on_scene_activated(events::SceneActivated& e)
+void ImguiWindowViewport::_OnSceneActivated(Events::SceneActivated& e)
 {
-    const auto& [scene] = e.data_tuple;
-    if(!scene->contains(viewport_camera_entity_name))
+    const auto& [scene] = e.DataTuple;
+    if(!scene->ContainsEntity(ViewportCameraEntityName))
     {
-        auto& entity_info = scene->create(viewport_camera_entity_name, "camera");
-        entity_info.internal = true;
-        scene->emplace<CameraComponent>(viewport_camera_entity_name);
-        auto& transform_comp = scene->emplace<TransformComponent>(viewport_camera_entity_name);
-        transform_comp.position = glm::vec3{ 1.f,1.f,1.f };
-        transform_comp.direction = -transform_comp.position;
+        auto& entity_info = scene->CreateEntity(ViewportCameraEntityName, "camera");
+        entity_info.Internal = true;
+        scene->EmplaceComponent<CameraComponent>(ViewportCameraEntityName);
+        auto& transform_comp = scene->EmplaceComponent<TransformComponent>(ViewportCameraEntityName);
+        transform_comp.Position = glm::vec3{ 1.f,1.f,1.f };
+        transform_comp.Direction = -transform_comp.Position;
     }
-    _scene = scene;
+    _Scene = scene;
 }
 
-void ImguiWindowViewport::_on_scene_deactivated(events::SceneDeactivated& e)
+void ImguiWindowViewport::_OnSceneDeactivated(Events::SceneDeactivated& e)
 {
-    _scene.reset();
+    _Scene.reset();
 }
 
-void ImguiWindowViewport::_on_select_entity(events::SelectEntity& e)
+void ImguiWindowViewport::_OnSelectEntity(Events::SelectEntity& e)
 {
-    const auto& [entity_name] = e.data_tuple;
-    _selected_entity_name = entity_name;
+    const auto& [entity_name] = e.DataTuple;
+    _SelectedEntityName = entity_name;
 }
 
-void ImguiWindowViewport::_on_rename_entity(events::RenameEntity& e)
+void ImguiWindowViewport::_OnRenameEntity(Events::RenameEntity& e)
 {
-    const auto& [old_name, new_name] = e.data_tuple;
-    if(old_name == _selected_entity_name)
+    const auto& [old_name, new_name] = e.DataTuple;
+    if(old_name == _SelectedEntityName)
     {
-        _selected_entity_name = new_name;
-    }
-}
-
-void ImguiWindowViewport::_on_delete_entity(events::DeleteEntity& e)
-{
-    const auto& [entity] = e.data_tuple;
-    if(_selected_entity_name == entity)
-    {
-        _selected_entity_name.clear();
+        _SelectedEntityName = new_name;
     }
 }
 
-void ImguiWindowViewport::_on_renderer_built(events::RendererBuilt& e)
+void ImguiWindowViewport::_OnDeleteEntity(Events::DeleteEntity& e)
 {
-    const auto& [renderer] = e.data_tuple;
-    _renderer = renderer;
+    const auto& [entity] = e.DataTuple;
+    if(_SelectedEntityName == entity)
+    {
+        _SelectedEntityName.clear();
+    }
 }
 
-void ImguiWindowViewport::_on_renderer_unbuilt(events::RendererUnbuilt& e)
+void ImguiWindowViewport::_OnRendererBuilt(Events::RendererBuilt& e)
 {
-    _renderer.reset();
+    const auto& [renderer] = e.DataTuple;
+    _Renderer = renderer;
 }
 
-void ImguiWindowViewport::_on_physics_simulator_built(events::PhysicsSimulatorBuilt& e)
+void ImguiWindowViewport::_OnRendererUnbuilt(Events::RendererUnbuilt& e)
 {
-    const auto& [physics_simulator] = e.data_tuple;
-    _physics_simulator = physics_simulator;
+    _Renderer.reset();
 }
 
-void ImguiWindowViewport::_on_physics_simulator_unbuilt(events::PhysicsSimulatorUnbuilt& e)
+void ImguiWindowViewport::_OnPhysicsSimulatorBuilt(Events::PhysicsSimulatorBuilt& e)
 {
-    _physics_simulator.reset();
+    const auto& [physics_simulator] = e.DataTuple;
+    _PhysicsSimulator = physics_simulator;
 }
 
-void ImguiWindowViewport::_on_show_gizmo(events::ShowGizmo& e)
+void ImguiWindowViewport::_OnPhysicsSimulatorUnbuilt(Events::PhysicsSimulatorUnbuilt& e)
 {
-    const auto& [show_gizmo] = e.data_tuple;
-    _show_gizmo = show_gizmo;
+    _PhysicsSimulator.reset();
+}
+
+void ImguiWindowViewport::_OnShowGizmo(Events::ShowGizmo& e)
+{
+    const auto& [show_gizmo] = e.DataTuple;
+    _ShowGizmo = show_gizmo;
 }

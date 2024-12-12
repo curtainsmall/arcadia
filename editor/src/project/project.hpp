@@ -9,39 +9,39 @@
 #include"resource/components/camera_component.hpp"
 #include"resource/scene.hpp"
 
-struct Project: Noncopyable
+class Project: public Noncopyable
 {
 public:
-    using self_type = Project;
+    using SelfType = Project;
 public:
     inline Project(
         std::string name
-    ):
-        _name(name)
+    ) :
+        _Name(name)
     {}
     Project(nlohmann::json& json);
     ~Project() = default;
     [[nodiscard]]
-    auto to_json() const->nlohmann::json;
+    auto ToJson() const->nlohmann::json;
 
     [[nodiscard]]
-    auto get_name() const -> const std::string&;
-    void set_name(const std::string& name);
+    auto GetName() const -> const std::string&;
+    void SetName(const std::string& name);
 
     [[nodiscard]]
-    auto has_active_scene() const -> bool;
+    auto HasActiveScene() const -> bool;
     [[nodiscard]]
-    auto get_active_scene() -> Scene&;
+    auto GetActiveScene() -> Scene&;
     [[nodiscard]]
-    auto get_active_scene() const -> const Scene&;
-    void set_active_scene(const std::string& name={});
+    auto GetActiveScene() const -> const Scene&;
+    void SetActiveScene(const std::string& name={});
 
-    void _snapshot_entities();
+    void _SnapshotEntities();
 public:
-    static inline std::string project_extension_str{ ".arcadia" };
+    static inline std::string ProjectExtensionString{ ".arcadia" };
 
-    std::unordered_map<std::string, std::shared_ptr<Scene>> scene_sptr_storage{};
+    std::unordered_map<std::string, std::shared_ptr<Scene>> Scenes{};
 private:
-    std::string _name;
-    std::shared_ptr<Scene> _active_scene{};
+    std::string _Name;
+    std::shared_ptr<Scene> _ActiveScene{};
 };

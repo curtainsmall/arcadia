@@ -3,29 +3,34 @@
 
 Timer::Timer()
 {
-    reset();
+    Reset();
 }
 
-void Timer::reset()
+void Timer::Reset()
 {
-    _Start = _now();
+    _Start = _Now();
     _Last = _Start;
 }
 
-auto Timer::since_start() -> duration_type
+auto Timer::GetDurationSinceStart() -> DurationType
 {
-    return _now() - _Start;
+    return _Now() - _Start;
 }
 
-auto Timer::since_last() -> duration_type
+auto Timer::GetDurationSinceLast() -> DurationType
 {
-    auto now = _now();
+    return _Now() - _Last;
+}
+
+auto Timer::Segment() -> DurationType
+{
+    auto now = _Now();
     auto diff = now - _Last;
     _Last = now;
     return diff;
 }
 
-auto Timer::_now() const->time_point_type
+auto Timer::_Now() const->TimePointType
 {
     return std::chrono::steady_clock::now();
 }

@@ -5,10 +5,10 @@
 
 #include"ui/imgui_window.hpp"
 
-struct ImguiWindowMainStatusbar: iImguiWindow
+class ImguiWindowMainStatusbar: public iImguiWindow
 {
 public:
-    using self_type = ImguiWindowMainStatusbar;
+    using SelfType = ImguiWindowMainStatusbar;
 
     ACDA_IMGUI_WINDOW_ID_STR_GETTERS("###statusbar");
 
@@ -17,9 +17,9 @@ public:
     {}
     virtual ~ImguiWindowMainStatusbar() = default;
 
-    virtual void on_event(EventBase& e) override;
-    virtual void on_update() override;
+    virtual void OnEvent(EventBase& e) override;
+    virtual void OnUpdate() override;
 
 private:
-    float _ui_scale{};
+    float _UiScale{};
 };

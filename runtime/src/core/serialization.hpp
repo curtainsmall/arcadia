@@ -5,19 +5,19 @@
 
 #include"core/base.hpp"
 
-namespace serialization
+namespace Serialization
 {
-    using buffer_type = std::vector<std::byte>;
+    using BufferType = std::vector<std::byte>;
 
 #if 0
-    template<class Data, class ...Args>
+    template<typename Data, typename ...Args>
         requires requires (flatbuffers::FlatBufferBuilder builder, Data data, Args&& ...args)
     {
         {
             Data::to_flatbuffers(builder, data, std::forward<Args>(args)...)
         } -> std::same_as<flatbuffers::Offset<typename Data::serialization_type>>;
     }
-    auto to_flatbuffers(const Data& data, Args&& ...args) -> buffer_type
+    auto to_flatbuffers(const Data& data, Args&& ...args) -> BufferType
     {
         flatbuffers::FlatBufferBuilder builder{};
         auto flat_data = Data::to_flatbuffers(
@@ -27,22 +27,22 @@ namespace serialization
         );
         builder.Finish(flat_data);
 
-        buffer_type::value_type* pointer = builder.GetBufferPointer();
-        buffer_type::size_type   len = builder.size();
-        return buffer_type{
+        BufferType::value_type* pointer = builder.GetBufferPointer();
+        BufferType::size_type   len = builder.GetSize();
+        return BufferType{
             pointer,
             pointer + len
         };
     }
 
-    template<class Data, class ...Args>
+    template<typename Data, typename ...Args>
         requires requires(typename Data::serialization_type flat_data, Args&& ...args)
     {
         {
             Data::from_flatbuffers(flat_data, std::forward<Args>(args)...)
         } -> std::same_as<Data>;
     }
-    auto from_flatbuffers(const buffer_type& buf, Args&& ...args) -> Data
+    auto from_flatbuffers(const BufferType& buf, Args&& ...args) -> Data
     {
         return Data::from_flatbuffers(
             *flatbuffers::GetRoot<typename Data::serialization_type>(buf.data()),
@@ -50,14 +50,14 @@ namespace serialization
         );
     }
 
-    template<class Data, class ...Args>
+    template<typename Data, typename ...Args>
         requires requires(typename Data::serialization_type flat_data, Args&& ...args)
     {
         {
             Data::from_flatbuffers_unique(flat_data, std::forward<Args>(args)...)
         } -> std::same_as<std::unique_ptr<Data>>;
     }
-    auto from_flatbuffers_unique(const buffer_type& buf, Args&& ...args) -> std::unique_ptr<Data>
+    auto from_flatbuffers_unique(const BufferType& buf, Args&& ...args) -> std::unique_ptr<Data>
     {
         return Data::from_flatbuffers_unique(
             *flatbuffers::GetRoot<typename Data::serialization_type>(buf.data()),

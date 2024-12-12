@@ -8,17 +8,17 @@
 #include"ui/imgui_header.hpp"
 #include"ui/ui_events.hpp"
 
-void ImguiWindowMainToolbar::on_event(EventBase& e)
+void ImguiWindowMainToolbar::OnEvent(EventBase& e)
 {
     EventDispatcher{ e }
-        .dispatch<events::SceneActivated>(ACDA_BIND_MEMBER_FN(_on_scene_activated))
-        .dispatch<events::SceneDeactivated>(ACDA_BIND_MEMBER_FN(_on_scene_deactivated))
-        .is_dispatched();
+        .Dispatch<Events::SceneActivated>(ACDA_BIND_MEMBER_FN(_OnSceneActivated))
+        .Dispatch<Events::SceneDeactivated>(ACDA_BIND_MEMBER_FN(_OnSceneDeactivated))
+        .IsDispatched();
 }
 
-void ImguiWindowMainToolbar::on_update()
+void ImguiWindowMainToolbar::OnUpdate()
 {
-    auto scene = _scene.lock();
+    auto scene = _Scene.lock();
 
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, glm::vec2{ 0,0 });
     auto window_flags =
@@ -28,12 +28,12 @@ void ImguiWindowMainToolbar::on_update()
         | ImGuiWindowFlags_NoFocusOnAppearing;
     if(ImGui::BeginViewportSideBar("toolbar", ImGui::GetMainViewport(), ImGuiDir_Up, ImGui::GetFrameHeight(), window_flags))
     {
-        auto& memento_list = MementoList::instance();
+        auto& memento_list = MementoList::Instance();
 
         ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, glm::vec2{ 0,4 });
         if(ImGui::Button(ICON_FA_ARROW_CIRCLE_LEFT))
         {
-            memento_list.undo();
+            memento_list.Undo();
         }
         ImGui::SetItemTooltip(" Undo ");
         ImGui::SameLine();
@@ -42,19 +42,19 @@ void ImguiWindowMainToolbar::on_update()
         //ImGui::SetNextItemWidth(1.f);
         if(ImGui::BeginCombo("##undo_list", nullptr, combo_flags))
         {
-            if(memento_list.size())
+            if(memento_list.GetSize())
             {
                 auto iter = memento_list.begin();
                 auto end = memento_list.end();
                 for(; iter != end; ++iter)
                 {
-                    if(memento_list.is_current(iter))
+                    if(memento_list.IsCurrent(iter))
                     {
-                        ImGui::MenuItem(std::format("{} {}", ICON_FA_CHECK, iter->description()).c_str());
+                        ImGui::MenuItem(std::format("{} {}", ICON_FA_CHECK, iter->GetDescription()).c_str());
                     }
                     else
                     {
-                        ImGui::MenuItem(std::format("  {}", iter->description()).c_str());
+                        ImGui::MenuItem(std::format("  {}", iter->GetDescription()).c_str());
                     }
                 }
             }
@@ -70,14 +70,14 @@ void ImguiWindowMainToolbar::on_update()
         ImGui::SameLine();
         if(ImGui::Button(ICON_FA_ARROW_CIRCLE_RIGHT))
         {
-            memento_list.redo();
+            memento_list.Redo();
         }
         ImGui::SetItemTooltip(" Redo ");
 
         if(scene)
         {
             ImGui::SameLine();
-            if(EditorContext::instance().in_play_mode)
+            if(EditorContext::Instance().InPlayMode)
             {
                 ImGui::PushStyleColor(ImGuiCol_Text, glm::vec4{ 1.f,0.f,0.f,1.f });
                 ImGui::Text("Press Shift + Esc to stop play mode");
@@ -87,7 +87,7 @@ void ImguiWindowMainToolbar::on_update()
             {
                 if(ImGui::Button("PLAY"))
                 {
-                    EventQueue::instance().signal<events::PlayMode>(true);
+                    EventQueue::Instance().Signal<Events::TogglePlayMode>(true);
                 }
             }
         }
@@ -97,13 +97,13 @@ void ImguiWindowMainToolbar::on_update()
     ImGui::PopStyleVar();
 }
 
-void ImguiWindowMainToolbar::_on_scene_activated(events::SceneActivated& e)
+void ImguiWindowMainToolbar::_OnSceneActivated(Events::SceneActivated& e)
 {
-    const auto& [scene] = e.data_tuple;
-    _scene = scene;
+    const auto& [scene] = e.DataTuple;
+    _Scene = scene;
 }
 
-void ImguiWindowMainToolbar::_on_scene_deactivated(events::SceneDeactivated& e)
+void ImguiWindowMainToolbar::_OnSceneDeactivated(Events::SceneDeactivated& e)
 {
-    _scene.reset();
+    _Scene.reset();
 }

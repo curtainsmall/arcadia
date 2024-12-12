@@ -6,20 +6,21 @@
 #include"core/base.hpp"
 
 #define ACDA_EXCEPTION(exception_name) \
-struct exception_name: Exception{\
+class exception_name: public Exception{\
+public:\
 inline exception_name(const std::string& msg = #exception_name ):\
 Exception(msg){\
 }\
 }
 
-struct Exception: std::exception
+class Exception: public std::exception
 {
 public:
-    Exception():
+    Exception() :
         std::exception()
     {}
 
-    explicit Exception(const std::string& msg):
+    explicit Exception(const std::string& msg) :
         std::exception(msg.c_str())
     {}
 };

@@ -7,19 +7,19 @@
 #include"core/exception.hpp"
 #include"core/math.hpp"
 
-struct Texture2d
+class Texture2d
 {
 public:
     ACDA_EXCEPTION(IncompatibleTextureSize);
 
-    using self_type = Texture2d;
+    using SelfType = Texture2d;
 public:
-    static auto cascade(
+    static auto Cascade(
         const Texture2d& texture2d_1,
         const Texture2d& texture2d_2,
         const std::function<glm::vec4(const glm::vec4&, const glm::vec4&)>& method
     ) -> Texture2d;
 public:
-    std::vector<glm::vec4> pixels{};
-    glm::ivec2 size{ 0,0 };
+    std::vector<glm::vec4> Pixels{};
+    glm::ivec2 Size{ 0,0 };
 };

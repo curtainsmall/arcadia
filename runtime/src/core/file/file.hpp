@@ -9,63 +9,63 @@
 #include"core/serialization.hpp"
 
 [[nodiscard]]
-ACDA_API auto to_filepath(const std::string& string) -> std::filesystem::path;
+ACDA_API auto ToFilepath(const std::string& string) -> std::filesystem::path;
 
 [[nodiscard]]
-ACDA_API auto to_filepath(const char* str) -> std::filesystem::path;
+ACDA_API auto ToFilepath(const char* str) -> std::filesystem::path;
 
 [[nodiscard]]
-ACDA_API auto load_text(const std::filesystem::path& filepath) -> std::string;
+ACDA_API auto LoadText(const std::filesystem::path& filepath) -> std::string;
 
-struct File
+class File
 {
 public:
     ACDA_EXCEPTION(LoadFailed);
     ACDA_EXCEPTION(SaveFailed);
     ACDA_EXCEPTION(SectionNotFound);
 
-    using section_type = serialization::buffer_type;
-    using section_storage_type = std::unordered_map<std::string, section_type>;
+    using SectionType = Serialization::BufferType;
+    using SectionStorageType = std::unordered_map<std::string, SectionType>;
 
-    using self_type = File;
+    using SelfType = File;
 public:
 
-    static auto create_ifstream() -> std::ifstream;
-    static auto create_ifstream(const std::filesystem::path& filepath) -> std::ifstream;
-    static auto create_ofstream() -> std::ofstream;
-    static auto create_ofstream(const std::filesystem::path& filepath) -> std::ofstream;
+    static auto CreateIfstream() -> std::ifstream;
+    static auto CreateIfstream(const std::filesystem::path& filepath) -> std::ifstream;
+    static auto CreateOfstream() -> std::ofstream;
+    static auto CreateOfstream(const std::filesystem::path& filepath) -> std::ofstream;
 
     File(const std::filesystem::path& filepath);
-    File(const self_type&) = default;
-    File(self_type&&) = default;
+    File(const SelfType&) = default;
+    File(SelfType&&) = default;
     ~File();
 
-    auto operator=(const self_type&)->self_type & = default;
-    auto operator=(self_type&&)->self_type & = default;
+    auto operator=(const SelfType&)->SelfType & = default;
+    auto operator=(SelfType&&)->SelfType & = default;
 
     /// @brief Load file from disk
-    /// 
+    ///
     /// @throw File::LoadFailed if failed to load
-    auto load() -> self_type&;
+    auto Load() -> SelfType&;
 
     /// @brief Save file to disk
     ///
     /// @throw File::LoadFailed if failed to load
-    auto save() -> self_type&;
+    auto Save() -> SelfType&;
 
     [[nodiscard]]
-    auto get_section_or_create(const std::string& section_name) -> section_type&;
+    auto GetSectionOrCreate(const std::string& section_name) -> SectionType&;
 
     [[nodiscard]]
-    auto get_section(const std::string& section_name) -> section_type&;
+    auto GetSection(const std::string& section_name) -> SectionType&;
     [[nodiscard]]
-    auto get_section(const std::string& section_name) const -> const section_type&;
+    auto GetSection(const std::string& section_name) const -> const SectionType&;
 
-    auto has_section(const std::string& section_name) const -> bool;
+    auto HasSection(const std::string& section_name) const -> bool;
 
-    auto erase_section(const std::string& section_name) -> self_type&;
+    auto EraseSection(const std::string& section_name) -> SelfType&;
 
 private:
-    std::filesystem::path _filepath{};
-    section_storage_type _section_storage{};
+    std::filesystem::path _Filepath{};
+    SectionStorageType _SectionStorage{};
 };

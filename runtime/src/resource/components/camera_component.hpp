@@ -6,62 +6,60 @@
 #include"core/nlohmann_json_header.hpp"
 #include"resource/components/component_interface.hpp"
 
-struct CameraComponentMementoData: MementoDataBase
+class CameraComponentMementoData: public MementoDataBase
 {
 public:
     auto operator==(const CameraComponentMementoData&) const -> bool = default;
 public:
-    float      near_plane{ .1f };
-    float      far_plane{ 100.f };
-    float      fovy{ 90.f };
-    float      fovy_min{ 1.f };
-    float      fovy_max{ 120.f };
-    float      speed{ .25f };
-    glm::ivec2 viewport_size{ 800,600 };
-    bool       fixed_up{ true };
-    float      up_epsilon{ .1f };
-    glm::vec2  cursor_move_offset_range{ -100.f,100.f };
-    bool       should_display_grid{ false };
+    float      NearPlane{ .1f };
+    float      FarPlane{ 100.f };
+    float      FovY{ 90.f };
+    float      FovYMin{ 1.f };
+    float      FovYMax{ 120.f };
+    float      Speed{ .25f };
+    glm::ivec2 ViewportSize{ 800,600 };
+    bool       FixedUp{ true };
+    float      UpEpsilon{ .1f };
+    glm::vec2  CursorMoveOffsetRange{ -100.f,100.f };
+    bool       ShouldDisplayGrid{ false };
 };
 
-struct CameraComponent:
-    iComponent,
-    iMementoOriginator
+class CameraComponent:
+    public iComponent,
+    public iMementoOriginator
 {
 public:
-    using self_type = CameraComponent;
+    using SelfType = CameraComponent;
 public:
     ACDA_COMPONENT_TYPE_STR_GETTERS("camera");
-
-
 
     CameraComponent() = default;
     CameraComponent(const nlohmann::json& json);
     ~CameraComponent() = default;
     [[nodiscard]]
-    auto to_json() const->nlohmann::json;
+    auto ToJson() const->nlohmann::json;
 
 #if 0
-    auto MoveForward() -> self_type&;
-    auto MoveBackward() -> self_type&;
-    auto MoveLeft() -> self_type&;
-    auto MoveRight() -> self_type&;
-    auto MoveUp() -> self_type&;
-    auto MoveDown() -> self_type&;
-    auto Move(const glm::vec3& Offset) -> self_type&;
-    auto DragViewMove(const glm::vec2& Offset) -> self_type&;
+    auto MoveForward() -> SelfType&;
+    auto MoveBackward() -> SelfType&;
+    auto MoveLeft() -> SelfType&;
+    auto MoveRight() -> SelfType&;
+    auto MoveUp() -> SelfType&;
+    auto MoveDown() -> SelfType&;
+    auto Move(const glm::vec3& Offset) -> SelfType&;
+    auto DragViewMove(const glm::vec2& Offset) -> SelfType&;
 
-    auto RotateView(const glm::vec2& Offset) -> self_type&;
-    auto DragViewRotate(const glm::vec2& Offset) -> self_type&;
-
-    [[nodiscard]]
-    auto generate_view_mat4() const->glm::mat4;
+    auto RotateView(const glm::vec2& Offset) -> SelfType&;
+    auto DragViewRotate(const glm::vec2& Offset) -> SelfType&;
 
     [[nodiscard]]
-    auto generate_proj_mat4() const->glm::mat4;
+    auto GenerateViewMat4() const->glm::Mat4;
 
     [[nodiscard]]
-    auto GenerateMat4(bool col_major = true) const->glm::mat4;
+    auto GenerateProjectiveMat4() const->glm::Mat4;
+
+    [[nodiscard]]
+    auto GenerateMat4(bool col_major = true) const->glm::Mat4;
 
     // Get forward vector by position and target
     auto GetForwardDir() const->glm::vec3;
@@ -69,14 +67,14 @@ public:
     auto GetUpDir() const->glm::vec3;
 #endif
 
-    static auto generate_view_mat4(const glm::vec3& pos, const glm::vec3& dir) -> glm::mat4;
+    static auto GenerateViewMat4(const glm::vec3& pos, const glm::vec3& dir) -> glm::mat4;
 
-    auto generate_proj_mat4() const->glm::mat4;
+    auto GenerateProjectiveMat4() const->glm::mat4;
 
 protected:
     [[nodiscard]]
-    virtual auto on_snapshot() const->std::shared_ptr<MementoDataBase> override;
-    virtual void on_restore(const std::shared_ptr<MementoDataBase>& sp_memento_data) override;
+    virtual auto OnSnapshot() const->std::shared_ptr<MementoDataBase> override;
+    virtual void OnRestore(const std::shared_ptr<MementoDataBase>& sp_memento_data) override;
 
 #if 0
 private:
@@ -100,38 +98,38 @@ private:
 #endif
 
 public:
-    static inline glm::vec3 up{ vec3::pos_y() };
+    static inline glm::vec3 Up{ Vec3::CreateUnitPositiveY() };
 
     /// @brief Near plane of clip space
-    float near_plane{ .1f };
+    float NearPlane{ .1f };
 
     /// @brief Far plane of clip space
-    float far_plane{ 100.f };
+    float FarPlane{ 100.f };
 
     /// @brief FOV angle in vertical direction
-    float fovy{ glm::radians(75.f) };
+    float FovY{ glm::radians(75.f) };
 
     /// @brief Minimun value fo @ref Camera::Fovy
-    float fovy_min{ glm::radians(1.f) };
+    float FovYMin{ glm::radians(1.f) };
 
     /// @brief Maximun value of @ref Camera::Fovy
-    float fovy_max{ glm::radians(120.f) };
+    float FovYMax{ glm::radians(120.f) };
 
     /// @brief Move speed of free-camera
-    float speed{ .25f };
+    float Speed{ .25f };
 
     /// @brief Size of the viewport of this camera
-    glm::ivec2 viewport_size{ 800,600 };
+    glm::ivec2 ViewportSize{ 800,600 };
 
     /// @brief Whether @ref camera::up should be fixed
-    bool fixed_up{ true };
+    bool FixedUp{ true };
 
     /// @brief How small angle between @ref camera::up and @ref camera::target can be
-    float up_epsilon{ glm::degrees(0.1f) };
+    float UpEpsilon{ glm::degrees(0.1f) };
 
     /// @brief Cursor move offset that is out of this range will be silently ignored
-    glm::vec2 cursor_move_offset_range{ -100.f,100.f };
+    glm::vec2 CursorMoveOffsetRange{ -100.f,100.f };
 
     /// @brief Display a grid a X-Z plane
-    bool should_display_grid{ false };
+    bool ShouldDisplayGrid{ false };
 };

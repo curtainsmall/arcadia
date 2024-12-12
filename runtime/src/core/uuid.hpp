@@ -4,60 +4,60 @@
 
 #include"core/base.hpp"
 
-struct Uuid
+class Uuid
 {
 public:
-    using value_type = std::uint64_t;
-    using self_type = Uuid;
+    using ValueType = std::uint64_t;
+    using SelfType = Uuid;
 public:
-    static auto zero() -> Uuid
+    static auto CreateZero() -> Uuid
     {
         return Uuid{ 0 };
     }
 
-    Uuid():
-        _val(_next_val++)
+    Uuid() :
+        _Value(_NextValue++)
     {}
-    Uuid(value_type val):
-        _val(val)
+    Uuid(ValueType val) :
+        _Value(val)
     {}
 
     [[nodiscard]]
-    auto value() const -> value_type
+    auto GetValue() const -> ValueType
     {
-        return _val;
+        return _Value;
     }
 
-    operator value_type() const
+    operator ValueType() const
     {
-        return value();
+        return GetValue();
     }
 private:
-    static inline value_type _next_val{ 1 };
-    value_type _val;
+    static inline ValueType _NextValue{ 1 };
+    ValueType _Value;
 };
 
-template<class Value>
-struct BasicIdentifiable: Noncopyable
+template<typename Value>
+class BasicIdentifiable: public Noncopyable
 {
 public:
-    using value_type = Value;
-    using self_type = BasicIdentifiable<value_type>;
+    using ValueType = Value;
+    using SelfType = BasicIdentifiable<ValueType>;
 public:
     BasicIdentifiable() = default;
-    BasicIdentifiable(const value_type& val):
-        _value(val)
+    BasicIdentifiable(const ValueType& val) :
+        _Value(val)
     {}
-    BasicIdentifiable(value_type&& val):
-        _value(val)
+    BasicIdentifiable(ValueType&& val) :
+        _Value(val)
     {}
-    template<class ...Args>
+    template<typename ...Args>
     BasicIdentifiable(Args&& ...args) :
-        _value(std::forward<Args>(args)...)
+        _Value(std::forward<Args>(args)...)
     {}
 
-    BasicIdentifiable(self_type&&) noexcept = default;
-    auto operator=(self_type&&) noexcept -> self_type & = default;
+    BasicIdentifiable(SelfType&&) noexcept = default;
+    auto operator=(SelfType&&) noexcept -> SelfType & = default;
 
     template<size_t Index>
     [[nodiscard]]
@@ -67,61 +67,63 @@ public:
 
         if constexpr(Index == 0)
         {
-            return uuid();
+            return GetUuid();
         }
         else
         {
-            return value();
+            return GetValue();
         }
     }
 
     [[nodiscard]]
-    auto uuid() const -> const Uuid&
+    auto GetUuid() const -> const Uuid&
     {
-        return _uuid;
+        return _Uuid;
     }
 
     [[nodiscard]]
-    auto value() const -> const value_type&
+    auto GetValue() const -> const ValueType&
     {
-        return _value;
+        return _Value;
     }
 
 private:
-    Uuid _uuid{};
-    value_type _value{};
+    Uuid _Uuid{};
+    ValueType _Value{};
 };
 
 namespace std
 {
     template<>
-    struct hash<Uuid>
+    class hash<Uuid>
     {
+    public:
         auto operator()(const Uuid& Uuid) const->size_t
         {
-            return std::hash<Uuid::value_type>{}(Uuid);
+            return std::hash<Uuid::ValueType>()(Uuid);
         }
     };
 
     template<>
-    struct std::formatter<Uuid>: std::formatter<std::string>
+    class formatter<Uuid>: public std::formatter<std::string>
     {
+    public:
         auto format(const Uuid& Uuid, std::format_context& ctx) const
         {
             return std::formatter<std::string>::format(
-                std::format("{}", Uuid.value()),
+                std::format("{}", Uuid.GetValue()),
                 ctx
             );
         }
     };
 
-    template<class Value>
-    struct tuple_size<BasicIdentifiable<Value>>:
-        std::integral_constant<size_t, 2>
+    template<typename Value>
+    class tuple_size<BasicIdentifiable<Value>>:
+        public std::integral_constant<size_t, 2>
     {};
 
-    template<size_t Index, class Value>
-    struct tuple_element<Index, BasicIdentifiable<Value>>:
-        std::tuple_element<Index, std::tuple<Uuid, Value>>
+    template<size_t Index, typename Value>
+    class tuple_element<Index, BasicIdentifiable<Value>>:
+        public std::tuple_element<Index, std::tuple<Uuid, Value>>
     {};
 }

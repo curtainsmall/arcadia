@@ -11,32 +11,32 @@
 #include"platform/jolt/jolt_header.hpp"
 #include"resource/components/component_interface.hpp"
 
-struct JphBoxShapeInfo
+class JphBoxShapeInfo
 {
 public:
-    glm::vec3 half_extent{ 1.f,1.f,1.f };
-    float convex_radius{ JPH::cDefaultConvexRadius };
+    glm::vec3 HalfExtent{ 1.f,1.f,1.f };
+    float ConvexRadius{ JPH::cDefaultConvexRadius };
 };
 
-struct JphCapsuleShapeInfo
+class JphCapsuleShapeInfo
 {
 public:
-    float radius{ 1.f };
-    float half_height_of_cylinder{ 1.f };
+    float Radius{ 1.f };
+    float HalfHeightOfCylinder{ 1.f };
 };
 
-struct JphCylinderShapeInfo
+class JphCylinderShapeInfo
 {
 public:
-    float half_height{ 1.f };
-    float radius{ 1.f };
-    float convex_radius{ JPH::cDefaultConvexRadius };
+    float HalfHeight{ 1.f };
+    float Radius{ 1.f };
+    float ConvexRadius{ JPH::cDefaultConvexRadius };
 };
 
-struct JphSphereShapeInfo
+class JphSphereShapeInfo
 {
 public:
-    float radius{ 1.f };
+    float Radius{ 1.f };
 };
 
 using JphShapeInfo = std::variant<
@@ -46,44 +46,43 @@ using JphShapeInfo = std::variant<
     JphSphereShapeInfo
 >;
 
-struct JphBodyInfo
+class JphBodyInfo
 {
 public:
-    using self_type = JphBodyInfo;
+    using SelfType = JphBodyInfo;
 public:
     // Transform information comes from transform component
 
-    JPH::EMotionType jph_motion_type{ JPH::EMotionType::Static };
-    JPH::ObjectLayer jph_object_layer{ jph_object_layers::non_moving };
-    JphShapeInfo jph_shape_info{ JphBoxShapeInfo{} };
+    JPH::EMotionType JphMotionType{ JPH::EMotionType::Static };
+    JPH::ObjectLayer JphObjectLayer{ JphObjectLayers::NonMoving };
+    JphShapeInfo JphShapeInfo{ JphBoxShapeInfo{} };
 };
 
-struct JphBodyState
+class JphBodyState
 {
 public:
-    using self_type = JphBodyState;
+    using SelfType = JphBodyState;
 public:
-    bool active{ false };
-    glm::vec3 linear_velocity{ vec3::zero() };
-    glm::vec3 angular_velocity{ vec3::zero() };
-
+    bool Active{ false };
+    glm::vec3 LinearVelocity{ Vec3::CreateZero() };
+    glm::vec3 AngularVelocity{ Vec3::CreateZero() };
 };
 
-struct PhysicsComponentMementoData: MementoDataBase
+class PhysicsComponentMementoData: public MementoDataBase
 {
 public:
     auto operator==(const PhysicsComponentMementoData&) const -> bool = default;
 public:
-    glm::vec3 body_shape_color{};
+    glm::vec3 BodyShapeColor{};
 };
 
-struct PhysicsComponent:
-    iComponent,
-    iMementoOriginator
+class PhysicsComponent:
+    public iComponent,
+    public iMementoOriginator
 {
 public:
-    using identifiable_jph_body_info_type = BasicIdentifiable<JphBodyInfo>;
-    using self_type = PhysicsComponent;
+    using IdentifiableJphBodyInfoType = BasicIdentifiable<JphBodyInfo>;
+    using SelfType = PhysicsComponent;
 public:
     ACDA_COMPONENT_TYPE_STR_GETTERS("physics");
 
@@ -91,35 +90,35 @@ public:
     PhysicsComponent(const nlohmann::json& json);
     ~PhysicsComponent() = default;
     [[nodiscard]]
-    auto to_json() const->nlohmann::json;
+    auto ToJson() const->nlohmann::json;
 
     [[nodiscard]]
-    auto has_body_info() const -> bool;
+    auto HasBodyInfo() const -> bool;
 
     [[nodiscard]]
-    auto get_identifiable_jph_body_info() const -> const identifiable_jph_body_info_type&;
+    auto GetIdentifiableJphBodyInfo() const -> const IdentifiableJphBodyInfoType&;
 
-    void build_identifiable_jph_body_info(
+    void BuildIndentifiableJphBodyInfo(
         JPH::EMotionType jph_motion_type,
         JPH::ObjectLayer jph_object_layer,
         const JphShapeInfo& jph_shape_info
     );
 
-    void build_identifiable_jph_body_info(
+    void BuildIndentifiableJphBodyInfo(
         const JphBodyInfo& jph_body_info_initial
     );
 
-    void destroy_jph_body_info();
+    void DestroyJphBodyInfo();
 
 protected:
     [[nodiscard]]
-    virtual auto on_snapshot() const->std::shared_ptr<MementoDataBase> override;
-    virtual void on_restore(const std::shared_ptr<MementoDataBase>& memento_data) override;
+    virtual auto OnSnapshot() const->std::shared_ptr<MementoDataBase> override;
+    virtual void OnRestore(const std::shared_ptr<MementoDataBase>& memento_data) override;
 
 public:
-    glm::vec3 body_shape_color{ .2f,.2f,.2f };
+    glm::vec3 BodyShapeColor{ .2f,.2f,.2f };
 
-    JphBodyState jph_body_state{};
+    JphBodyState JphBodyState{};
 private:
-    std::unique_ptr<identifiable_jph_body_info_type> _identifiable_jph_body_info{};
+    std::unique_ptr<IdentifiableJphBodyInfoType> _IdentifiableJphBodyInfo{};
 };

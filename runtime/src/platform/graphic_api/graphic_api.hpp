@@ -5,35 +5,35 @@
 #include"core/base.hpp"
 #include"core/version/version.hpp"
 
-namespace graphic_api
+namespace GraphicApi
 {
-    struct Directx
+    class Directx
     {
     public:
-        using self_type = Directx;
+        using SelfType = Directx;
     public:
-        Version version{ 12,0,0 };
+        Version Version{ 12,0,0 };
     };
 
-    struct Opengl
+    class Opengl
     {
     public:
-        using self_type = Opengl;
+        using SelfType = Opengl;
     public:
-        Version version{ 4,6,0 };
+        Version Version{ 4,6,0 };
     };
 
-    struct Vulkan
+    class Vulkan
     {
     public:
-        using self_type = Vulkan;
+        using SelfType = Vulkan;
     public:
-        Version version{ 1,3,0 };
+        Version Version{ 1,3,0 };
     };
 
     using Type = std::variant<
-        graphic_api::Opengl,
-        graphic_api::Directx,
-        graphic_api::Vulkan
+        GraphicApi::Opengl,
+        GraphicApi::Directx,
+        GraphicApi::Vulkan
     >;
 }

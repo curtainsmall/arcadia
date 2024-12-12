@@ -1,7 +1,7 @@
 #include "editor_context.hpp"
 
-auto EditorContext::instance() -> self_type&
+auto EditorContext::Instance() -> SelfType&
 {
-    static self_type editor_context{};
+    static SelfType editor_context{};
     return editor_context;
 }

@@ -5,10 +5,10 @@
 #include"editor/editor_context.hpp"
 #include"ui/imgui_header.hpp"
 
-void ImguiWindowMainStatusbar::on_event(EventBase& e)
+void ImguiWindowMainStatusbar::OnEvent(EventBase& e)
 {}
 
-void ImguiWindowMainStatusbar::on_update()
+void ImguiWindowMainStatusbar::OnUpdate()
 {
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, glm::vec2{ 0,0 });
     auto window_flags =
@@ -20,8 +20,8 @@ void ImguiWindowMainStatusbar::on_update()
     {
         auto combo_flags =
             ImGuiComboFlags_NoPreview;
-        auto& editor_context = EditorContext::instance();
-        auto& app_config = AppConfig::instance();
+        auto& editor_context = EditorContext::Instance();
+        auto& app_config = AppConfig::Instance();
 
         static const std::array<std::pair<std::string, float>, 3> scales{
             std::make_pair("70%",0.7f),
@@ -35,12 +35,12 @@ void ImguiWindowMainStatusbar::on_update()
                 scales.end(),
                 [&](const std::pair<std::string, float>& pair)-> bool
         {
-            return pair.second == editor_context.ui_scale;
+            return pair.second == editor_context.UiScale;
         }
             )
         );
         //ImGui::SetNextWindowSizeConstraints({ -1,-1 }, { 20,50 });
-        if(ImGui::BeginCombo(std::format("{}##ui_scale", scales[scale_idx].first).c_str(), nullptr, combo_flags))
+        if(ImGui::BeginCombo(std::format("{}##UiScale", scales[scale_idx].first).c_str(), nullptr, combo_flags))
         {
             int new_idx = -1;
             for(auto& [str, factor] : scales)
@@ -48,15 +48,15 @@ void ImguiWindowMainStatusbar::on_update()
                 new_idx++;
                 if(ImGui::MenuItem(str.c_str()))
                 {
-                    editor_context.ui_scale = factor;
+                    editor_context.UiScale = factor;
                     scale_idx = new_idx;
                 }
             }
 
-            if(app_config.ui_scale != editor_context.ui_scale)
+            if(app_config.UiScale != editor_context.UiScale)
             {
-                app_config.ui_scale = editor_context.ui_scale;
-                EventQueue::instance().signal<events::ScaleImguiWindow>(editor_context.ui_scale);
+                app_config.UiScale = editor_context.UiScale;
+                EventQueue::Instance().Signal<Events::ScaleImguiWindow>(editor_context.UiScale);
             }
 
             ImGui::EndCombo();

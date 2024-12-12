@@ -7,42 +7,42 @@
 
 #include"core/base.hpp"
 
-struct Command: Noncopyable
+class Command: public Noncopyable
 {
 public:
-    using function_type = std::function<void()>;
-    using self_type = Command;
+    using FunctionType = std::function<void()>;
+    using SelfType = Command;
 public:
     Command(
         const std::string& description,
-        const function_type& execute_fn,
-        const function_type& unexecute_fn
+        const FunctionType& execute_fn,
+        const FunctionType& unexecute_fn
     );
 
-    Command(self_type&&) noexcept = default;
-    auto operator=(self_type&&) noexcept -> self_type & = default;
+    Command(SelfType&&) noexcept = default;
+    auto operator=(SelfType&&) noexcept -> SelfType & = default;
 
-    void execute() const;
-    void unexecute() const;
+    void Execute() const;
+    void Unexecute() const;
 
     [[nodiscard]]
-    auto description() const -> const std::string&;
+    auto GetDescription() const -> const std::string&;
 
 private:
-    std::string _description{};
-    function_type execute_fn;
-    function_type _unexecute_fn;
+    std::string _Description{};
+    FunctionType _ExecuteFunction;
+    FunctionType _UnexecuteFunction;
 };
 
-struct CommandList: Noncopyable
+class CommandList: public Noncopyable
 {
 public:
-    using function_type = Command::function_type;
-    using container_type = std::list<Command>;
-    using self_type = CommandList;
+    using FunctionType = Command::FunctionType;
+    using ContainerType = std::list<Command>;
+    using SelfType = CommandList;
 public:
     [[nodiscard]]
-    static auto instance() -> self_type&;
+    static auto Instance() -> SelfType&;
 
     /// @brief Create a command
     /// @param execute_fn Function to execute
@@ -50,47 +50,47 @@ public:
     /// @note The command will be executed once when it is contructed
     void emplace(
         const std::string& description,
-        const function_type& execute_fn,
-        const function_type& unexecute_fn
+        const FunctionType& execute_fn,
+        const FunctionType& unexecute_fn
     );
 
     /// @brief Call unexecute() and move to the previous command
     /// @return Whether succeed
-    auto undo() -> bool;
+    auto Undo() -> bool;
 
     /// @brief Call execute() and move to the next command
     /// @return Whether succeed
-    auto redo() -> bool;
+    auto Redo() -> bool;
 
     [[nodiscard]]
-    auto capacity() const->size_t;
-    void capacity(size_t capacity);
+    auto GetCapacity() const->size_t;
+    void SetCapacity(size_t capacity);
 
     /// @brief Get size of command list
     /// @return Size
     [[nodiscard]]
-    auto size() const->size_t;
+    auto GetSize() const->size_t;
 
     /// @brief Clear command list (when you saved the project and no longer needs previous commands)
-    void clear();
+    void Clear();
 
     [[nodiscard]]
-    auto begin() noexcept -> container_type::iterator;
+    auto begin() noexcept -> ContainerType::iterator;
     [[nodiscard]]
-    auto end() noexcept -> container_type::iterator;
+    auto end() noexcept -> ContainerType::iterator;
 
     [[nodiscard]]
-    auto begin() const noexcept->container_type::const_iterator;
+    auto begin() const noexcept->ContainerType::const_iterator;
     [[nodiscard]]
-    auto end() const noexcept->container_type::const_iterator;
+    auto end() const noexcept->ContainerType::const_iterator;
 
     [[nodiscard]]
-    auto cbegin() const noexcept->container_type::const_iterator;
+    auto cbegin() const noexcept->ContainerType::const_iterator;
     [[nodiscard]]
-    auto cend() const noexcept->container_type::const_iterator;
+    auto cend() const noexcept->ContainerType::const_iterator;
 
 private:
-    size_t _capacity{ 40 };
-    container_type _list{};
-    container_type::const_iterator _current_iter{};
+    size_t _Capacity{ 40 };
+    ContainerType _List{};
+    ContainerType::const_iterator _CurrentIterator{};
 };

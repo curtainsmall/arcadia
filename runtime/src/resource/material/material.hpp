@@ -3,12 +3,12 @@
 #include"core/base.hpp"
 #include"resource/material/texture2d.hpp"
 
-struct Material
+class Material
 {
 public:
-    using self_type = Material;
+    using SelfType = Material;
 public:
-    Texture2d ambient_texture2d{};
-    Texture2d diffuse_texture2d{};
-    Texture2d specular_texture2d{};
+    Texture2d AmbientTexture2d{};
+    Texture2d DiffuseTexture2d{};
+    Texture2d SepcularTexture2d{};
 };

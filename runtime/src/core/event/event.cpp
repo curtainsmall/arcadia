@@ -2,35 +2,35 @@
 
 #include "event.hpp"
 
-auto EventQueue::instance() -> self_type&
+auto EventQueue::Instance() -> SelfType&
 {
-    static self_type event_queue{};
+    static SelfType event_queue{};
     return event_queue;
 }
 
-auto EventQueue::swap_queue() -> bool
+auto EventQueue::SwapQueue() -> bool
 {
-    std::swap(_current_queue, _processing_queue);
-    return size();
+    std::swap(_CurrentQueue, _ProcessingQueue);
+    return GetSize();
 }
 
-auto EventQueue::size() const -> size_t
+auto EventQueue::GetSize() const -> size_t
 {
-    return _processing_queue->size();
+    return _ProcessingQueue->size();
 }
 
-auto EventQueue::read() -> EventBase&
+auto EventQueue::ReadFront() -> EventBase&
 {
-    if(!size())
+    if(!GetSize())
     {
         throw EmptyQueue{};
     }
 
-    return *_processing_queue->front();
+    return *_ProcessingQueue->front();
 }
 
-auto EventQueue::pop() -> bool
+auto EventQueue::PopFront() -> bool
 {
-    _processing_queue->pop();
-    return size();
+    _ProcessingQueue->pop();
+    return GetSize();
 }

@@ -14,47 +14,46 @@
 #define ACDA_MAIN_FN_DECL int main()
 #endif // _WIN32
 
-extern auto create_application() -> std::unique_ptr<iAppLayer>;
+extern auto CreateApplication() -> std::unique_ptr<iAppLayer>;
 
 ACDA_MAIN_FN_DECL
 {
     // Add app_layer
-    auto & layer_stack = LayerStack::instance();
-    layer_stack.push_layer<iAppLayer>(layer_stack.end(), std::shared_ptr<iAppLayer>(create_application()));
+    auto & layer_stack = LayerStack::Instance();
+    layer_stack.PushLayer<iAppLayer>(layer_stack.end(), std::shared_ptr<iAppLayer>(CreateApplication()));
 
     // Main loop
-    auto& app_context = AppContext::instance();
-    while(app_context.running)
+    auto& app_context = AppContext::Instance();
+    while(app_context.Running)
     {
-        app_context.delta_time = app_context.timer.since_last();
+        app_context.DeltaTime = app_context.Timer.Segment();
 
-        // Process event 
-        auto& event_queue = EventQueue::instance();
-        event_queue.swap_queue();
-        while(event_queue.size())
+        // Process event
+        auto& event_queue = EventQueue::Instance();
+        event_queue.SwapQueue();
+        while(event_queue.GetSize())
         {
-            auto& event = event_queue.read();
+            auto& event = event_queue.ReadFront();
 
-            for(auto& layer : LayerStack::instance())
+            for(auto& layer : LayerStack::Instance())
             {
-                layer->on_event(event);
-                if(event.handled)
+                layer->OnEvent(event);
+                if(event.Handled)
                 {
                     break;
                 }
-
             }
-            event_queue.pop();
+            event_queue.PopFront();
         }
 
         // Updates
-        for(auto& layer : std::ranges::reverse_view{ LayerStack::instance() })
+        for(auto& layer : std::ranges::reverse_view{ LayerStack::Instance() })
         {
-            layer->on_update();
+            layer->OnUpdate();
         }
     }
 
     // Clear layer_stack
-    layer_stack.pop_all();
+    layer_stack.PopAllLayers();
     return 0;
 }

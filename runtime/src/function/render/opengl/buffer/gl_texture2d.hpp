@@ -5,10 +5,10 @@
 #include"platform/opengl/opengl_header.hpp"
 #include"resource/material/texture2d.hpp"
 
-struct GlTexture2d: Noncopyable
+class GlTexture2d: public Noncopyable
 {
 public:
-    using self_type = GlTexture2d;
+    using SelfType = GlTexture2d;
 public:
     GlTexture2d(
         const glm::ivec2& size,
@@ -19,22 +19,21 @@ public:
     );
     ~GlTexture2d();
 
-    GlTexture2d(self_type&& rhs) noexcept;
-    auto operator=(self_type&& rhs) noexcept -> self_type&;
+    GlTexture2d(SelfType&& rhs) noexcept;
+    auto operator=(SelfType&& rhs) noexcept -> SelfType&;
 
     [[nodiscard]]
-    auto gl_id() const -> GLuint
+    auto GetGlId() const -> GLuint
     {
-        return _gl_id;
+        return _GlId;
     }
 
-    void bind(GLenum slot = 0);
-    void unbind();
+    void Bind(GLenum slot = 0);
+    void Unbind();
 
-    void set_tex_param(GLenum pname, GLint param) const;
-    void set_tex_param(GLenum pname, GLfloat param) const;
+    void SetTextureParameter(GLenum pname, GLint param) const;
+    void SetTextureParameter(GLenum pname, GLfloat param) const;
 private:
-    GLuint _gl_id{ 0 };
-    GLenum _slot{ -1u };
-
+    GLuint _GlId{ 0 };
+    GLenum _Slot{ -1u };
 };

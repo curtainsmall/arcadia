@@ -5,12 +5,12 @@
 #include"core/nlohmann_json_header.hpp"
 #include"resource/components/component_interface.hpp"
 
-struct PlayerComponent:
-    iComponent,
-    iMementoOriginator
+class PlayerComponent:
+    public iComponent,
+    public iMementoOriginator
 {
 public:
-    using self_type = PlayerComponent;
+    using SelfType = PlayerComponent;
 public:
     ACDA_COMPONENT_TYPE_STR_GETTERS("player");
 
@@ -18,11 +18,10 @@ public:
     PlayerComponent(const nlohmann::json& json);
     ~PlayerComponent() = default;
     [[nodiscard]]
-    auto to_json() const->nlohmann::json;
+    auto ToJson() const->nlohmann::json;
 
 protected:
     [[nodiscard]]
-    virtual auto on_snapshot() const->std::shared_ptr<MementoDataBase> override;
-    virtual void on_restore(const std::shared_ptr<MementoDataBase>& memento_data) override;
+    virtual auto OnSnapshot() const->std::shared_ptr<MementoDataBase> override;
+    virtual void OnRestore(const std::shared_ptr<MementoDataBase>& memento_data) override;
 };
-

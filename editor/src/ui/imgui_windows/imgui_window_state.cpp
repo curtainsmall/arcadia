@@ -1,36 +1,36 @@
 #include "imgui_window_state.hpp"
 
 #include"core/file/pfd_header.hpp"
-#include"ui/imgui_header.hpp"
-#include"ui/imgui_wrapper.hpp"
 #include"resource/components/camera_component.hpp"
 #include"resource/components/light_component.hpp"
 #include"resource/components/model_component.hpp"
 #include"resource/components/physics_component.hpp"
+#include"ui/imgui_header.hpp"
+#include"ui/imgui_wrapper.hpp"
 
 void ImguiWindowStateScene::operator()(const Scene& scene)
 {
-    ImGui::Text(std::format("Entity Count: {}", scene.count([&](const std::string&, const EntityInfo& info)->bool
+    ImGui::Text(std::format("Entity Count: {}", scene.CountEntity([&](const std::string&, const EntityInfo& info)->bool
     {
-        return !info.internal;
+        return !info.Internal;
     })).c_str());
 }
 
 void ImguiWindowStateRenderer::operator()(const iRenderer& renderer)
 {
-    auto graphic_api_type_str = match<std::string>(
-        renderer.graphic_api_type(),
-        [&](const graphic_api::Opengl& api)
+    auto graphic_api_type_str = Match<std::string>(
+        renderer.GetGraphicApiType(),
+        [&](const GraphicApi::Opengl& api)
     {
-        return std::format("OpenGL ({})", api.version);
+        return std::format("OpenGL ({})", api.Version);
     },
-        [&](const graphic_api::Directx& api)
+        [&](const GraphicApi::Directx& api)
     {
-        return std::format("DirectX ({})", api.version);
+        return std::format("DirectX ({})", api.Version);
     },
-        [&](const graphic_api::Vulkan& api)
+        [&](const GraphicApi::Vulkan& api)
     {
-        return std::format("Vulkan ({})", api.version);
+        return std::format("Vulkan ({})", api.Version);
     }
     );
 
@@ -43,77 +43,77 @@ void ImguiWindowStateRenderer::operator()(const iRenderer& renderer)
 
 void ImguiWindowStatePhysicsSimulator::operator()(PhysicsSimulator& physics_simulator)
 {
-    const auto& physics_simulator_jph_body_id_storage = physics_simulator.jph_body_id_storage();
+    const auto& physics_simulator_jph_body_id_storage = physics_simulator.GetJphBodyIdStorage();
     ImGui::Text(std::format("Body Count: {}", physics_simulator_jph_body_id_storage.size()).c_str());
 
     auto slider_flags =
         ImGuiSliderFlags_AlwaysClamp;
     ImGui::BeginDisabled();
-    int temp_allocator_size_in_kib = physics_simulator.get_jph_temp_allocator_size() / 1024;
+    int temp_allocator_size_in_kib = physics_simulator.GetJphTempAllocatorSize() / 1024;
     ImGui::DragInt("Temporary Allocator Size (KiB)", &temp_allocator_size_in_kib, 1.0f, 64 /*64 KiB*/, 16 * 1024 * 1024 /*16 GiB*/, "%d", slider_flags);
-    physics_simulator.set_jph_temp_allocator_size(temp_allocator_size_in_kib * 1024);
+    physics_simulator.SetJphTempAllocatorSize(temp_allocator_size_in_kib * 1024);
     ImGui::EndDisabled();
 
-    auto update_per_second = physics_simulator.get_jph_physics_system_updates_per_second();
+    auto update_per_second = physics_simulator.GetJphPhysicsSystemUpdatesPerSecond();
     ImGui::DragInt("Update per Second", &update_per_second, 1.0f, 0, INT_MAX, "%d", slider_flags);
-    physics_simulator.set_jph_physics_system_updates_per_second(update_per_second);
+    physics_simulator.SetJphPhysicsSystemUpdatesPerSecond(update_per_second);
 
     ImGui::NewLine();
 
-    if(physics_simulator.is_active())
+    if(physics_simulator.IsActive())
     {
         if(ImGui::Button("Stop"))
         {
-            physics_simulator.set_active(false);
+            physics_simulator.SetActive(false);
         }
     }
     else
     {
         if(ImGui::Button("Start"))
         {
-            physics_simulator.set_active(true);
+            physics_simulator.SetActive(true);
         }
     }
     ImGui::SameLine();
     ImGui::BeginDisabled();
     if(ImGui::Button("Reset"))
     {
-        physics_simulator.reset();
-        physics_simulator.set_active(false);
+        physics_simulator.Reset();
+        physics_simulator.SetActive(false);
     }
     ImGui::EndDisabled();
 }
 
-void ImguiWindowState::on_event(EventBase& e)
+void ImguiWindowState::OnEvent(EventBase& e)
 {
     EventDispatcher{ e }
-        .dispatch<events::OpenImguiWindow>(ACDA_BIND_MEMBER_FN(_on_open_imgui_window))
-        .dispatch<events::SceneActivated>(ACDA_BIND_MEMBER_FN(_on_scene_activated))
-        .dispatch<events::SceneDeactivated>(ACDA_BIND_MEMBER_FN(_on_scene_deactivated))
-        .dispatch<events::RendererBuilt>(ACDA_BIND_MEMBER_FN(_on_renderer_built))
-        .dispatch<events::RendererUnbuilt>(ACDA_BIND_MEMBER_FN(_on_renderer_unbuilt))
-        .dispatch<events::PhysicsSimulatorBuilt>(ACDA_BIND_MEMBER_FN(_on_physics_simulator_built))
-        .dispatch<events::PhysicsSimulatorUnbuilt>(ACDA_BIND_MEMBER_FN(_on_physics_simulator_unbuilt))
-        .is_dispatched();
+        .Dispatch<Events::OpenImguiWindow>(ACDA_BIND_MEMBER_FN(_OnOpenImguiWindow))
+        .Dispatch<Events::SceneActivated>(ACDA_BIND_MEMBER_FN(_OnSceneActivated))
+        .Dispatch<Events::SceneDeactivated>(ACDA_BIND_MEMBER_FN(_OnSceneDeactivated))
+        .Dispatch<Events::RendererBuilt>(ACDA_BIND_MEMBER_FN(_OnRendererBuilt))
+        .Dispatch<Events::RendererUnbuilt>(ACDA_BIND_MEMBER_FN(_OnRendererUnbuilt))
+        .Dispatch<Events::PhysicsSimulatorBuilt>(ACDA_BIND_MEMBER_FN(_OnPhysicsSimulatorBuilt))
+        .Dispatch<Events::PhysicsSimulatorUnbuilt>(ACDA_BIND_MEMBER_FN(_OnPhysicsSimulatorUnbuilt))
+        .IsDispatched();
 }
 
-void ImguiWindowState::on_update()
+void ImguiWindowState::OnUpdate()
 {
-    if(!_open)
+    if(!_Opened)
     {
         return;
     }
 
-    auto scene = _scene.lock();
-    auto renderer = _renderer.lock();
-    auto physics_simualtor = _physics_simulator.lock();
+    auto scene = _Scene.lock();
+    auto renderer = _Renderer.lock();
+    auto physics_simualtor = _PhysicsSimulator.lock();
 
-    auto imgui_window_title = _title + get_id_str();
+    auto imgui_window_title = _Title + GetIdString();
 
     ImGui::SetNextWindowSize(glm::vec2{ 1024,768 }, ImGuiCond_Once);
     auto window_flags =
         ImGuiWindowFlags_NoCollapse;
-    if(ImGui::Begin(imgui_window_title.c_str(), &_open, window_flags))
+    if(ImGui::Begin(imgui_window_title.c_str(), &_Opened, window_flags))
     {
         auto tabbar_flags =
             ImGuiTabBarFlags_NoCloseWithMiddleMouseButton;
@@ -123,7 +123,7 @@ void ImguiWindowState::on_update()
         {
             if(scene)
             {
-                _imgui_window_state_scene(*scene);
+                _ImguiWindowStateScene(*scene);
             }
             else
             {
@@ -135,7 +135,7 @@ void ImguiWindowState::on_update()
         {
             if(renderer)
             {
-                _imgui_window_state_renderer(*renderer);
+                _ImguiWindowStateRenderer(*renderer);
             }
             else
             {
@@ -147,7 +147,7 @@ void ImguiWindowState::on_update()
         {
             if(physics_simualtor)
             {
-                _imgui_window_state_physics_simulator(*physics_simualtor);
+                _ImguiWindowStatePhysicsSimulator(*physics_simualtor);
             }
             else
             {
@@ -161,42 +161,40 @@ void ImguiWindowState::on_update()
     ImGui::End();
 }
 
-void ImguiWindowState::_on_open_imgui_window(events::OpenImguiWindow& e)
+void ImguiWindowState::_OnOpenImguiWindow(Events::OpenImguiWindow& e)
 {
-    _open = true;
+    _Opened = true;
 }
 
-void ImguiWindowState::_on_scene_activated(events::SceneActivated& e)
+void ImguiWindowState::_OnSceneActivated(Events::SceneActivated& e)
 {
-    const auto& [scene] = e.data_tuple;
-    _scene = scene;
+    const auto& [scene] = e.DataTuple;
+    _Scene = scene;
 }
 
-void ImguiWindowState::_on_scene_deactivated(events::SceneDeactivated& e)
+void ImguiWindowState::_OnSceneDeactivated(Events::SceneDeactivated& e)
 {
-    _scene.reset();
+    _Scene.reset();
 }
 
-void ImguiWindowState::_on_renderer_built(events::RendererBuilt& e)
+void ImguiWindowState::_OnRendererBuilt(Events::RendererBuilt& e)
 {
-    const auto& [renderer] = e.data_tuple;
-    _renderer = renderer;
+    const auto& [renderer] = e.DataTuple;
+    _Renderer = renderer;
 }
 
-void ImguiWindowState::_on_renderer_unbuilt(events::RendererUnbuilt& e)
+void ImguiWindowState::_OnRendererUnbuilt(Events::RendererUnbuilt& e)
 {
-    _renderer.reset();
+    _Renderer.reset();
 }
 
-void ImguiWindowState::_on_physics_simulator_built(events::PhysicsSimulatorBuilt& e)
+void ImguiWindowState::_OnPhysicsSimulatorBuilt(Events::PhysicsSimulatorBuilt& e)
 {
-    const auto& [physics_simulator] = e.data_tuple;
-    _physics_simulator = physics_simulator;
+    const auto& [physics_simulator] = e.DataTuple;
+    _PhysicsSimulator = physics_simulator;
 }
 
-void ImguiWindowState::_on_physics_simulator_unbuilt(events::PhysicsSimulatorUnbuilt& e)
+void ImguiWindowState::_OnPhysicsSimulatorUnbuilt(Events::PhysicsSimulatorUnbuilt& e)
 {
-    _physics_simulator.reset();
+    _PhysicsSimulator.reset();
 }
-
-

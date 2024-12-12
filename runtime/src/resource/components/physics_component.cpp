@@ -6,8 +6,8 @@
 
 #include"core/math.hpp"
 
-PhysicsComponent::PhysicsComponent(const nlohmann::json& json):
-    body_shape_color(vec3::from_json(json.at("body_shape_color")))
+PhysicsComponent::PhysicsComponent(const nlohmann::json& json) :
+    BodyShapeColor(Vec3::FromJson(json.at("body_shape_color")))
 {
     const auto& json_body_info_initial = json.at("jph_body_info_initial");
     if(!json_body_info_initial.is_null())
@@ -15,13 +15,13 @@ PhysicsComponent::PhysicsComponent(const nlohmann::json& json):
         const auto& json_shape_info = json_body_info_initial.at("jph_shape_info");
         const std::string& json_shape_info_type_str = json_shape_info.at("type");
         const auto& json_shape_info_info = json_shape_info.at("info");
-        auto shape_info = match<JphShapeInfo>(
+        auto shape_info = Match<JphShapeInfo>(
             json_shape_info_type_str,
             "box_shape"s,
             [&]() -> JphShapeInfo
         {
             return JphBoxShapeInfo{
-                vec3::from_json(json_shape_info_info.at("half_extent")),
+                Vec3::FromJson(json_shape_info_info.at("half_extent")),
                 json_shape_info_info.at("convex_radius")
             };
         },
@@ -51,30 +51,29 @@ PhysicsComponent::PhysicsComponent(const nlohmann::json& json):
         }
         );
 
-        build_identifiable_jph_body_info(
+        BuildIndentifiableJphBodyInfo(
             JPH::EMotionType{ json_body_info_initial.at("jph_motion_type") },
             JPH::ObjectLayer{ json_body_info_initial.at("jph_object_layer") },
             shape_info
         );
-
     }
 }
 
-auto PhysicsComponent::to_json() const -> nlohmann::json
+auto PhysicsComponent::ToJson() const -> nlohmann::json
 {
     nlohmann::json json_body_info_initial{};
-    if(has_body_info())
+    if(HasBodyInfo())
     {
-        const auto& [uuid, body_info] = get_identifiable_jph_body_info();
-        auto json_shape_info = match<nlohmann::json>(
-            body_info.jph_shape_info,
+        const auto& [uuid, body_info] = GetIdentifiableJphBodyInfo();
+        auto json_shape_info = Match<nlohmann::json>(
+            body_info.JphShapeInfo,
             [&](const JphBoxShapeInfo& info)
         {
             return nlohmann::json{
                 {"type","box_shape"},
                 {"info", {
-                        {"half_extent",vec3::to_json(info.half_extent)},
-                        {"convex_radius",info.convex_radius}
+                        {"half_extent",Vec3::ToJson(info.HalfExtent)},
+                        {"convex_radius",info.ConvexRadius}
                     }
                 }
             };
@@ -84,8 +83,8 @@ auto PhysicsComponent::to_json() const -> nlohmann::json
             return nlohmann::json{
                 {"type","capsule_shape"},
                 {"info", {
-                        {"radius",info.radius},
-                        {"half_height_of_cylinder",info.half_height_of_cylinder}
+                        {"radius",info.Radius},
+                        {"half_height_of_cylinder",info.HalfHeightOfCylinder}
                     }
                 }
             };
@@ -95,12 +94,11 @@ auto PhysicsComponent::to_json() const -> nlohmann::json
             return nlohmann::json{
                 {"type","cylinder"},
                 {"info", {
-                        {"half_height",info.half_height},
-                        {"radius",info.radius},
-                        {"convex_radius",info.convex_radius}
+                        {"half_height",info.HalfHeight},
+                        {"radius",info.Radius},
+                        {"convex_radius",info.ConvexRadius}
                     }
                 }
-
             };
         },
             [&](const JphSphereShapeInfo& info)
@@ -108,16 +106,15 @@ auto PhysicsComponent::to_json() const -> nlohmann::json
             return nlohmann::json{
                 {"type","sphere"},
                 {"info", {
-                        {"radius",info.radius}
+                        {"radius",info.Radius}
                     }
                 }
-
             };
         }
         );
         json_body_info_initial = nlohmann::json{
-            {"jph_motion_type", to_underlying(body_info.jph_motion_type)},
-            {"jph_object_layer",body_info.jph_object_layer},
+            {"jph_motion_type", ToUnderlying(body_info.JphMotionType)},
+            {"jph_object_layer",body_info.JphObjectLayer},
             {"jph_shape_info",json_shape_info}
         };
     }
@@ -128,55 +125,54 @@ auto PhysicsComponent::to_json() const -> nlohmann::json
 
     return nlohmann::json{
         {"jph_body_info_initial",json_body_info_initial},
-        {"body_shape_color",vec3::to_json(body_shape_color)}
+        {"body_shape_color",Vec3::ToJson(BodyShapeColor)}
     };
 }
 
-auto PhysicsComponent::on_snapshot() const -> std::shared_ptr<MementoDataBase>
+auto PhysicsComponent::OnSnapshot() const -> std::shared_ptr<MementoDataBase>
 {
     auto sp_memento = std::make_shared<PhysicsComponentMementoData>();
 
-    sp_memento->body_shape_color = body_shape_color;
+    sp_memento->BodyShapeColor = BodyShapeColor;
 
     return sp_memento;
 }
 
-void PhysicsComponent::on_restore(const std::shared_ptr<MementoDataBase>& sp_memento_data)
+void PhysicsComponent::OnRestore(const std::shared_ptr<MementoDataBase>& sp_memento_data)
 {
-    auto& memento_data = sp_memento_data->as<PhysicsComponentMementoData>();
+    auto& memento_data = sp_memento_data->CastTo<PhysicsComponentMementoData>();
 
-    body_shape_color = memento_data.body_shape_color;
+    BodyShapeColor = memento_data.BodyShapeColor;
 }
 
-auto PhysicsComponent::has_body_info() const -> bool
+auto PhysicsComponent::HasBodyInfo() const -> bool
 {
-    return !!_identifiable_jph_body_info;
+    return !!_IdentifiableJphBodyInfo;
 }
 
-auto PhysicsComponent::get_identifiable_jph_body_info() const -> const identifiable_jph_body_info_type&
+auto PhysicsComponent::GetIdentifiableJphBodyInfo() const -> const IdentifiableJphBodyInfoType&
 {
-    ACDA_ASSERT(has_body_info());
-    return *_identifiable_jph_body_info;
+    ACDA_ASSERT(HasBodyInfo());
+    return *_IdentifiableJphBodyInfo;
 }
 
-void PhysicsComponent::build_identifiable_jph_body_info(
+void PhysicsComponent::BuildIndentifiableJphBodyInfo(
     JPH::EMotionType jph_motion_type,
     JPH::ObjectLayer jph_object_layer,
     const JphShapeInfo& jph_shape_info
 )
 {
-    build_identifiable_jph_body_info({ jph_motion_type,jph_object_layer,jph_shape_info });
+    BuildIndentifiableJphBodyInfo({ jph_motion_type,jph_object_layer,jph_shape_info });
 }
 
-void PhysicsComponent::build_identifiable_jph_body_info(const JphBodyInfo& jph_body_info_initial)
+void PhysicsComponent::BuildIndentifiableJphBodyInfo(const JphBodyInfo& jph_body_info_initial)
 {
-    _identifiable_jph_body_info = std::make_unique<identifiable_jph_body_info_type>(
+    _IdentifiableJphBodyInfo = std::make_unique<IdentifiableJphBodyInfoType>(
         jph_body_info_initial
     );
-
 }
 
-void PhysicsComponent::destroy_jph_body_info()
+void PhysicsComponent::DestroyJphBodyInfo()
 {
-    _identifiable_jph_body_info.reset();
+    _IdentifiableJphBodyInfo.reset();
 }

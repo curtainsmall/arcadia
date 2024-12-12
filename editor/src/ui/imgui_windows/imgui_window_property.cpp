@@ -21,67 +21,67 @@ auto ImguiWindowPropertyCameraComponent::operator()(CameraComponent& camera_comp
     std::string description{};
     ImGui::BeginGroup();
 
-    ImGui::DragFloat("Near Plane", &camera_comp.near_plane, speed, min, max, format, flags);
+    ImGui::DragFloat("Near Plane", &camera_comp.NearPlane, speed, min, max, format, flags);
     if(ImGui::IsItemDeactivatedAfterEdit())
     {
         description = "Near Plane";
     }
 
-    ImGui::DragFloat("Far Plane", &camera_comp.far_plane, speed, min, max, format, flags);
+    ImGui::DragFloat("Far Plane", &camera_comp.FarPlane, speed, min, max, format, flags);
     if(ImGui::IsItemDeactivatedAfterEdit())
     {
         description = "Far Plane";
     }
 
-    auto fovy = glm::degrees(camera_comp.fovy);
-    ImGui::DragFloat("FOV-Y", &fovy, speed, camera_comp.fovy_min, camera_comp.fovy_max, format, flags);
+    auto fovy = glm::degrees(camera_comp.FovY);
+    ImGui::DragFloat("FOV-Y", &fovy, speed, camera_comp.FovYMin, camera_comp.FovYMax, format, flags);
     if(ImGui::IsItemDeactivatedAfterEdit())
     {
         description = "FOV";
     }
-    camera_comp.fovy = glm::radians(fovy);
+    camera_comp.FovY = glm::radians(fovy);
 
-    auto fovy_min = glm::degrees(camera_comp.fovy_min);
+    auto fovy_min = glm::degrees(camera_comp.FovYMin);
     ImGui::DragFloat("FOV-Y Min", &fovy_min, speed, 0.0f, 180.0f, format, flags);
     if(ImGui::IsItemDeactivatedAfterEdit())
     {
         description = "FOV Min";
     }
-    camera_comp.fovy_min = glm::radians(fovy_min);
+    camera_comp.FovYMin = glm::radians(fovy_min);
 
-    auto fovy_max = glm::degrees(camera_comp.fovy_max);
+    auto fovy_max = glm::degrees(camera_comp.FovYMax);
     ImGui::DragFloat("FOV-Y Max", &fovy_max, speed, 0.0f, 180.0f, format, flags);
     if(ImGui::IsItemDeactivatedAfterEdit())
     {
         description = "FOV Max";
     }
-    camera_comp.fovy_max = glm::radians(fovy_max);
+    camera_comp.FovYMax = glm::radians(fovy_max);
 
-    ImGui::DragFloat("Speed", &camera_comp.speed, speed, min, max, format, flags);
+    ImGui::DragFloat("Speed", &camera_comp.Speed, speed, min, max, format, flags);
     if(ImGui::IsItemDeactivatedAfterEdit())
     {
         description = "Speed";
     }
 
-    ImGui::DragInt2("Viewport Size", glm::value_ptr(camera_comp.viewport_size), speed, 1.0f, FLT_MAX, format, flags);
+    ImGui::DragInt2("Viewport Size", glm::value_ptr(camera_comp.ViewportSize), speed, 1.0f, INT_MAX, format, flags);
     if(ImGui::IsItemDeactivatedAfterEdit())
     {
         description = "Viewport Size";
     }
 
-    ImGui::Checkbox("Fixed Up", &camera_comp.fixed_up);
+    ImGui::Checkbox("Fixed Up", &camera_comp.FixedUp);
     if(ImGui::IsItemDeactivatedAfterEdit())
     {
         description = "Fixed Up";
     }
 
-    auto up_epsilon = glm::degrees(camera_comp.up_epsilon);
+    auto up_epsilon = glm::degrees(camera_comp.UpEpsilon);
     ImGui::DragFloat("Up Epsilon", &up_epsilon, speed, min, max, format, flags);
     if(ImGui::IsItemDeactivatedAfterEdit())
     {
         description = "Up Epsilon";
     }
-    camera_comp.up_epsilon = glm::radians(up_epsilon);
+    camera_comp.UpEpsilon = glm::radians(up_epsilon);
 
     ImGui::EndGroup();
 
@@ -109,33 +109,33 @@ auto ImguiWindowPropertyLightComponent::operator()(LightComponent& light_comp) -
     const auto format = "%.3f";
     const auto flags =
         ImGuiSliderFlags_AlwaysClamp;
-    if(match<bool>(
-        light_comp.light,
+    if(Match<bool>(
+        light_comp.Light,
         [&](NullLight&)
     {
         if(ImGui::BeginCombo("Light Typee", "(No light)"))
         {
             if(ImGui::Selectable("Spot Light"))
             {
-                light_comp.light = SpotLight{};
+                light_comp.Light = SpotLight{};
                 ImGui::EndCombo();
                 return true;
             }
             if(ImGui::Selectable("Direct Light"))
             {
-                light_comp.light = DirectLight{};
+                light_comp.Light = DirectLight{};
                 ImGui::EndCombo();
                 return true;
             }
             if(ImGui::Selectable("Area Light"))
             {
-                light_comp.light = AreaLight{};
+                light_comp.Light = AreaLight{};
                 ImGui::EndCombo();
                 return true;
             }
             if(ImGui::Selectable("Point Light"))
             {
-                light_comp.light = PointLight{};
+                light_comp.Light = PointLight{};
                 ImGui::EndCombo();
                 return true;
             }
@@ -159,7 +159,7 @@ auto ImguiWindowPropertyLightComponent::operator()(LightComponent& light_comp) -
                 }.result();
                 if(res == pfd::button::yes)
                 {
-                    light_comp.light = DirectLight{};
+                    light_comp.Light = DirectLight{};
                     ImGui::EndCombo();
                     return true;
                 }
@@ -174,7 +174,7 @@ auto ImguiWindowPropertyLightComponent::operator()(LightComponent& light_comp) -
                 }.result();
                 if(res == pfd::button::yes)
                 {
-                    light_comp.light = AreaLight{};
+                    light_comp.Light = AreaLight{};
                     ImGui::EndCombo();
                     return true;
                 }
@@ -189,7 +189,7 @@ auto ImguiWindowPropertyLightComponent::operator()(LightComponent& light_comp) -
                 }.result();
                 if(res == pfd::button::yes)
                 {
-                    light_comp.light = PointLight{};
+                    light_comp.Light = PointLight{};
                     ImGui::EndCombo();
                     return true;
                 }
@@ -198,31 +198,31 @@ auto ImguiWindowPropertyLightComponent::operator()(LightComponent& light_comp) -
         }
         ImGui::NewLine();
 
-        ImGui::DragFloat3("Attenuation", glm::value_ptr(light.attenuation_coefs), speed, min, max, format, flags);
+        ImGui::DragFloat3("Attenuation", glm::value_ptr(light.AttenuationCoefficients), speed, min, max, format, flags);
         edited |= ImGui::IsItemDeactivatedAfterEdit();
         ImGui::SameLine();
-        imgui_wrappers::help_mark(ICON_FA_QUESTION, "In order of constant, linear and quadratic terms");
+        ImguiWrappers::HelpMark(ICON_FA_QUESTION, "In order of constant, linear and quadratic terms");
 
         const float cutoff_angle_drag_speend = .1f;
         const float cutoff_angle_min = 0.f;
         const float cutoff_angle_max = 180.f;
-        ImGui::DragFloat2("Cutoff Angle", glm::value_ptr(light.cutoff_angles), cutoff_angle_drag_speend, cutoff_angle_min, cutoff_angle_max, format, flags);
+        ImGui::DragFloat2("Cutoff Angle", glm::value_ptr(light.CutoffAngles), cutoff_angle_drag_speend, cutoff_angle_min, cutoff_angle_max, format, flags);
         edited |= ImGui::IsItemDeactivatedAfterEdit();
         ImGui::SameLine();
-        imgui_wrappers::help_mark(ICON_FA_QUESTION, "Inner and outter");
+        ImguiWrappers::HelpMark(ICON_FA_QUESTION, "Inner and outter");
 
-        ImGui::ColorEdit3("Color", glm::value_ptr(light.color));
+        ImGui::ColorEdit3("Color", glm::value_ptr(light.Color));
         edited |= ImGui::IsItemDeactivatedAfterEdit();
 
         ImGui::NewLine();
 
-        ImGui::DragFloat3("Ambient Strenght", glm::value_ptr(light.ambient_strength), speed, min, max, format, flags);
+        ImGui::DragFloat3("Ambient Strenght", glm::value_ptr(light.AmbientStrength), speed, min, max, format, flags);
         edited |= ImGui::IsItemDeactivatedAfterEdit();
 
-        ImGui::DragFloat3("Diffuse Strenght", glm::value_ptr(light.ambient_strength), speed, min, max, format, flags);
+        ImGui::DragFloat3("Diffuse Strenght", glm::value_ptr(light.AmbientStrength), speed, min, max, format, flags);
         edited |= ImGui::IsItemDeactivatedAfterEdit();
 
-        ImGui::DragFloat3("Specular Strenght", glm::value_ptr(light.ambient_strength), speed, min, max, format, flags);
+        ImGui::DragFloat3("Specular Strenght", glm::value_ptr(light.AmbientStrength), speed, min, max, format, flags);
         edited |= ImGui::IsItemDeactivatedAfterEdit();
 
         return edited;
@@ -243,7 +243,7 @@ auto ImguiWindowPropertyLightComponent::operator()(LightComponent& light_comp) -
                 }.result();
                 if(res == pfd::button::yes)
                 {
-                    light_comp.light = SpotLight{};
+                    light_comp.Light = SpotLight{};
                     ImGui::EndCombo();
                     return true;
                 }
@@ -258,7 +258,7 @@ auto ImguiWindowPropertyLightComponent::operator()(LightComponent& light_comp) -
                 }.result();
                 if(res == pfd::button::yes)
                 {
-                    light_comp.light = AreaLight{};
+                    light_comp.Light = AreaLight{};
                     ImGui::EndCombo();
                     return true;
                 }
@@ -273,7 +273,7 @@ auto ImguiWindowPropertyLightComponent::operator()(LightComponent& light_comp) -
                 }.result();
                 if(res == pfd::button::yes)
                 {
-                    light_comp.light = PointLight{};
+                    light_comp.Light = PointLight{};
                     ImGui::EndCombo();
                     return true;
                 }
@@ -282,18 +282,18 @@ auto ImguiWindowPropertyLightComponent::operator()(LightComponent& light_comp) -
         }
         ImGui::NewLine();
 
-        ImGui::ColorEdit3("Color", glm::value_ptr(light.color));
+        ImGui::ColorEdit3("Color", glm::value_ptr(light.Color));
         edited |= ImGui::IsItemDeactivatedAfterEdit();
 
         ImGui::NewLine();
 
-        ImGui::DragFloat3("Ambient Strenght", glm::value_ptr(light.ambient_strength), speed, min, max, format, flags);
+        ImGui::DragFloat3("Ambient Strenght", glm::value_ptr(light.AmbientStrength), speed, min, max, format, flags);
         edited |= ImGui::IsItemDeactivatedAfterEdit();
 
-        ImGui::DragFloat3("Diffuse Strenght", glm::value_ptr(light.ambient_strength), speed, min, max, format, flags);
+        ImGui::DragFloat3("Diffuse Strenght", glm::value_ptr(light.AmbientStrength), speed, min, max, format, flags);
         edited |= ImGui::IsItemDeactivatedAfterEdit();
 
-        ImGui::DragFloat3("Specular Strenght", glm::value_ptr(light.ambient_strength), speed, min, max, format, flags);
+        ImGui::DragFloat3("Specular Strenght", glm::value_ptr(light.AmbientStrength), speed, min, max, format, flags);
         edited |= ImGui::IsItemDeactivatedAfterEdit();
 
         return edited;
@@ -314,7 +314,7 @@ auto ImguiWindowPropertyLightComponent::operator()(LightComponent& light_comp) -
                 }.result();
                 if(res == pfd::button::yes)
                 {
-                    light_comp.light = SpotLight{};
+                    light_comp.Light = SpotLight{};
                     ImGui::EndCombo();
                     return true;
                 }
@@ -329,7 +329,7 @@ auto ImguiWindowPropertyLightComponent::operator()(LightComponent& light_comp) -
                 }.result();
                 if(res == pfd::button::yes)
                 {
-                    light_comp.light = DirectLight{};
+                    light_comp.Light = DirectLight{};
                     ImGui::EndCombo();
                     return true;
                 }
@@ -344,7 +344,7 @@ auto ImguiWindowPropertyLightComponent::operator()(LightComponent& light_comp) -
                 }.result();
                 if(res == pfd::button::yes)
                 {
-                    light_comp.light = PointLight{};
+                    light_comp.Light = PointLight{};
                     ImGui::EndCombo();
                     return true;
                 }
@@ -353,20 +353,20 @@ auto ImguiWindowPropertyLightComponent::operator()(LightComponent& light_comp) -
         }
         ImGui::NewLine();
 
-        ImGui::DragFloat2("Size", glm::value_ptr(light.size), speed, min, max, format, flags);
+        ImGui::DragFloat2("Size", glm::value_ptr(light.Size), speed, min, max, format, flags);
 
-        ImGui::ColorEdit3("Color", glm::value_ptr(light.color));
+        ImGui::ColorEdit3("Color", glm::value_ptr(light.Color));
         edited |= ImGui::IsItemDeactivatedAfterEdit();
 
         ImGui::NewLine();
 
-        ImGui::DragFloat3("Ambient Strenght", glm::value_ptr(light.ambient_strength), speed, min, max, format, flags);
+        ImGui::DragFloat3("Ambient Strenght", glm::value_ptr(light.AmbientStrength), speed, min, max, format, flags);
         edited |= ImGui::IsItemDeactivatedAfterEdit();
 
-        ImGui::DragFloat3("Diffuse Strenght", glm::value_ptr(light.ambient_strength), speed, min, max, format, flags);
+        ImGui::DragFloat3("Diffuse Strenght", glm::value_ptr(light.AmbientStrength), speed, min, max, format, flags);
         edited |= ImGui::IsItemDeactivatedAfterEdit();
 
-        ImGui::DragFloat3("Specular Strenght", glm::value_ptr(light.ambient_strength), speed, min, max, format, flags);
+        ImGui::DragFloat3("Specular Strenght", glm::value_ptr(light.AmbientStrength), speed, min, max, format, flags);
         edited |= ImGui::IsItemDeactivatedAfterEdit();
 
         return edited;
@@ -387,7 +387,7 @@ auto ImguiWindowPropertyLightComponent::operator()(LightComponent& light_comp) -
                 }.result();
                 if(res == pfd::button::yes)
                 {
-                    light_comp.light = SpotLight{};
+                    light_comp.Light = SpotLight{};
                     ImGui::EndCombo();
                     return true;
                 }
@@ -402,7 +402,7 @@ auto ImguiWindowPropertyLightComponent::operator()(LightComponent& light_comp) -
                 }.result();
                 if(res == pfd::button::yes)
                 {
-                    light_comp.light = DirectLight{};
+                    light_comp.Light = DirectLight{};
                     ImGui::EndCombo();
                     return true;
                 }
@@ -417,7 +417,7 @@ auto ImguiWindowPropertyLightComponent::operator()(LightComponent& light_comp) -
                 }.result();
                 if(res == pfd::button::yes)
                 {
-                    light_comp.light = AreaLight{};
+                    light_comp.Light = AreaLight{};
                     ImGui::EndCombo();
                     return true;
                 }
@@ -426,23 +426,23 @@ auto ImguiWindowPropertyLightComponent::operator()(LightComponent& light_comp) -
         }
         ImGui::NewLine();
 
-        ImGui::DragFloat3("Attenuation", glm::value_ptr(light.attenuation_coefs), speed, min, max, format, flags);
+        ImGui::DragFloat3("Attenuation", glm::value_ptr(light.AttenuationCoefficients), speed, min, max, format, flags);
         edited |= ImGui::IsItemDeactivatedAfterEdit();
         ImGui::SameLine();
-        imgui_wrappers::help_mark(ICON_FA_QUESTION, "In order of constant, linear and quadratic terms");
+        ImguiWrappers::HelpMark(ICON_FA_QUESTION, "In order of constant, linear and quadratic terms");
 
-        ImGui::ColorEdit3("Color", glm::value_ptr(light.color));
+        ImGui::ColorEdit3("Color", glm::value_ptr(light.Color));
         edited |= ImGui::IsItemDeactivatedAfterEdit();
 
         ImGui::NewLine();
 
-        ImGui::DragFloat3("Ambient Strenght", glm::value_ptr(light.ambient_strength), speed, min, max, format, flags);
+        ImGui::DragFloat3("Ambient Strenght", glm::value_ptr(light.AmbientStrength), speed, min, max, format, flags);
         edited |= ImGui::IsItemDeactivatedAfterEdit();
 
-        ImGui::DragFloat3("Diffuse Strenght", glm::value_ptr(light.ambient_strength), speed, min, max, format, flags);
+        ImGui::DragFloat3("Diffuse Strenght", glm::value_ptr(light.AmbientStrength), speed, min, max, format, flags);
         edited |= ImGui::IsItemDeactivatedAfterEdit();
 
-        ImGui::DragFloat3("Specular Strenght", glm::value_ptr(light.ambient_strength), speed, min, max, format, flags);
+        ImGui::DragFloat3("Specular Strenght", glm::value_ptr(light.AmbientStrength), speed, min, max, format, flags);
         edited |= ImGui::IsItemDeactivatedAfterEdit();
 
         return edited;
@@ -462,16 +462,16 @@ auto ImguiWindowPropertyModelComponent::operator()(ModelComponent& model_comp) -
     ImGui::BeginGroup();
 
     ImGui::SeparatorText("Filepath");
-    auto filepath_str = model_comp.filepath().empty()
+    auto filepath_str = model_comp.GetFilepath().empty()
         ? "(No filepath)"s
-        : model_comp.filepath().generic_string();
+        : model_comp.GetFilepath().generic_string();
     ImGui::TextWrapped(filepath_str.c_str());
     if(ImGui::Button("..."))
     {
         auto res = pfd::open_file{
             "Import Model"
         }.result();
-        model_comp.import(res.size() ? res.at(0) : ""s);
+        model_comp.Import(res.size() ? res.at(0) : ""s);
     }
 
     ImGui::EndGroup();
@@ -481,7 +481,7 @@ auto ImguiWindowPropertyModelComponent::operator()(ModelComponent& model_comp) -
 
 void ImguiWindowPopupPhysicsComponentCreateBody::operator()(PhysicsComponent& physics_comp)
 {
-    if(!open)
+    if(!Opened)
     {
         return;
     }
@@ -494,7 +494,7 @@ void ImguiWindowPopupPhysicsComponentCreateBody::operator()(PhysicsComponent& ph
 
     auto window_flags =
         ImGuiWindowFlags_NoCollapse;
-    if(ImGui::BeginPopupModal(imgui_window_title.c_str(), &open, window_flags))
+    if(ImGui::BeginPopupModal(imgui_window_title.c_str(), &Opened, window_flags))
     {
         float speed = .05f;
         float min = .0f;
@@ -504,8 +504,8 @@ void ImguiWindowPopupPhysicsComponentCreateBody::operator()(PhysicsComponent& ph
             ImGuiSliderFlags_AlwaysClamp;
 
         // Motion type
-        auto jph_motion_type_preview = match<std::string>(
-            _temp_jph_body_info.jph_motion_type,
+        auto jph_motion_type_preview = Match<std::string>(
+            _TempJphBodyInfo.JphMotionType,
             JPH::EMotionType::Static,
             "Static"s,
             JPH::EMotionType::Dynamic,
@@ -517,25 +517,25 @@ void ImguiWindowPopupPhysicsComponentCreateBody::operator()(PhysicsComponent& ph
         {
             if(ImGui::Selectable("Static"))
             {
-                _temp_jph_body_info.jph_motion_type = JPH::EMotionType::Static;
-                _temp_jph_body_info.jph_object_layer = jph_object_layers::non_moving;
+                _TempJphBodyInfo.JphMotionType = JPH::EMotionType::Static;
+                _TempJphBodyInfo.JphObjectLayer = JphObjectLayers::NonMoving;
             }
             if(ImGui::Selectable("Dynamic"))
             {
-                _temp_jph_body_info.jph_motion_type = JPH::EMotionType::Dynamic;
-                _temp_jph_body_info.jph_object_layer = jph_object_layers::moving;
+                _TempJphBodyInfo.JphMotionType = JPH::EMotionType::Dynamic;
+                _TempJphBodyInfo.JphObjectLayer = JphObjectLayers::Moving;
             }
             if(ImGui::Selectable("Kinematic"))
             {
-                _temp_jph_body_info.jph_motion_type = JPH::EMotionType::Kinematic;
-                _temp_jph_body_info.jph_object_layer = jph_object_layers::moving;
+                _TempJphBodyInfo.JphMotionType = JPH::EMotionType::Kinematic;
+                _TempJphBodyInfo.JphObjectLayer = JphObjectLayers::Moving;
             }
             ImGui::EndCombo();
         }
 
         //Shape
-        _temp_jph_body_info.jph_shape_info = match<JphShapeInfo>(
-            _temp_jph_body_info.jph_shape_info,
+        _TempJphBodyInfo.JphShapeInfo = Match<JphShapeInfo>(
+            _TempJphBodyInfo.JphShapeInfo,
             [&](JphBoxShapeInfo& info) -> JphShapeInfo
         {
             if(ImGui::BeginCombo("Shape Type", "Box Shape"))
@@ -561,16 +561,16 @@ void ImguiWindowPopupPhysicsComponentCreateBody::operator()(PhysicsComponent& ph
             ImGui::SeparatorText("Box Shape");
 
             // Half extent
-            auto half_extent_min = std::max({ .01f,info.convex_radius });
+            auto half_extent_min = std::max({ .01f,info.ConvexRadius });
             auto half_extent_max = FLT_MAX;
-            ImGui::DragFloat3("Half Extent", glm::value_ptr(info.half_extent), speed, half_extent_min, half_extent_max, format, slider_flags);
+            ImGui::DragFloat3("Half Extent", glm::value_ptr(info.HalfExtent), speed, half_extent_min, half_extent_max, format, slider_flags);
 
             // Convex radius
             auto convex_radius_min = .0f;
-            auto convex_radius_max = std::min({ info.half_extent.x,info.half_extent.y,info.half_extent.z });
-            ImGui::DragFloat("Convex Radius", &info.convex_radius, speed, convex_radius_min, convex_radius_max, format, slider_flags);
+            auto convex_radius_max = std::min({ info.HalfExtent.x,info.HalfExtent.y,info.HalfExtent.z });
+            ImGui::DragFloat("Convex Radius", &info.ConvexRadius, speed, convex_radius_min, convex_radius_max, format, slider_flags);
 
-            return _temp_jph_body_info.jph_shape_info;
+            return _TempJphBodyInfo.JphShapeInfo;
         },
             [&](JphCapsuleShapeInfo& info) -> JphShapeInfo
         {
@@ -598,13 +598,13 @@ void ImguiWindowPopupPhysicsComponentCreateBody::operator()(PhysicsComponent& ph
 
             auto radius_min = .0f;
             auto radius_max = FLT_MAX;
-            ImGui::DragFloat("Radius", &info.radius, speed, radius_min, radius_max, format, slider_flags);
+            ImGui::DragFloat("Radius", &info.Radius, speed, radius_min, radius_max, format, slider_flags);
 
             auto half_height_of_cylinder_min = .0f;
             auto half_height_of_cylinder_max = FLT_MAX;
-            ImGui::DragFloat("Half Height if Cylinder", &info.half_height_of_cylinder, speed, half_height_of_cylinder_min, half_height_of_cylinder_max, format, slider_flags);
+            ImGui::DragFloat("Half Height if Cylinder", &info.HalfHeightOfCylinder, speed, half_height_of_cylinder_min, half_height_of_cylinder_max, format, slider_flags);
 
-            return _temp_jph_body_info.jph_shape_info;
+            return _TempJphBodyInfo.JphShapeInfo;
         },
             [&](JphCylinderShapeInfo& info) -> JphShapeInfo
         {
@@ -632,17 +632,17 @@ void ImguiWindowPopupPhysicsComponentCreateBody::operator()(PhysicsComponent& ph
 
             auto half_height_min = .0f;
             auto half_height_max = FLT_MAX;
-            ImGui::DragFloat("Half Height", &info.half_height, speed, half_height_min, half_height_max, format, slider_flags);
+            ImGui::DragFloat("Half Height", &info.HalfHeight, speed, half_height_min, half_height_max, format, slider_flags);
 
             auto radius_min = .0f;
             auto radius_max = FLT_MAX;
-            ImGui::DragFloat("Radius", &info.radius, speed, radius_min, radius_max, format, slider_flags);
+            ImGui::DragFloat("Radius", &info.Radius, speed, radius_min, radius_max, format, slider_flags);
 
             auto convex_radius_min = .0f;
             auto convex_radius_max = FLT_MAX;
-            ImGui::DragFloat("Convex Radius", &info.convex_radius, speed, convex_radius_min, convex_radius_max, format, slider_flags);
+            ImGui::DragFloat("Convex Radius", &info.ConvexRadius, speed, convex_radius_min, convex_radius_max, format, slider_flags);
 
-            return _temp_jph_body_info.jph_shape_info;
+            return _TempJphBodyInfo.JphShapeInfo;
         },
             [&](JphSphereShapeInfo& info) -> JphShapeInfo
         {
@@ -670,9 +670,9 @@ void ImguiWindowPopupPhysicsComponentCreateBody::operator()(PhysicsComponent& ph
 
             auto radius_min = .0f;
             auto radius_max = FLT_MAX;
-            ImGui::DragFloat("Radius", &info.radius, speed, radius_min, radius_max, format, slider_flags);
+            ImGui::DragFloat("Radius", &info.Radius, speed, radius_min, radius_max, format, slider_flags);
 
-            return _temp_jph_body_info.jph_shape_info;
+            return _TempJphBodyInfo.JphShapeInfo;
         }
         );
 
@@ -680,17 +680,16 @@ void ImguiWindowPopupPhysicsComponentCreateBody::operator()(PhysicsComponent& ph
         auto confirmed = ImGui::Button("Confirm");
         if(confirmed)
         {
-            physics_comp.build_identifiable_jph_body_info(
-                _temp_jph_body_info
+            physics_comp.BuildIndentifiableJphBodyInfo(
+                _TempJphBodyInfo
             );
-
         }
         ImGui::SameLine();
         if(confirmed || ImGui::Button("Cancel"))
         {
             ImGui::CloseCurrentPopup();
-            open = false;
-            _temp_jph_body_info = JphBodyInfo{};
+            Opened = false;
+            _TempJphBodyInfo = JphBodyInfo{};
         }
 
         ImGui::EndPopup();
@@ -699,22 +698,21 @@ void ImguiWindowPopupPhysicsComponentCreateBody::operator()(PhysicsComponent& ph
 
 auto ImguiWindowPropertyPhysicsComponent::operator()(PhysicsComponent& physics_comp) -> std::string
 {
-    _imgui_window_popup_physics_component_create_body(physics_comp);
+    _ImguiWindowPopupPhysicsComponentCreateBody(physics_comp);
 
     std::string description{};
     ImGui::BeginGroup();
 
-    if(physics_comp.has_body_info())
+    if(physics_comp.HasBodyInfo())
     {
-        const auto& [uuid, jph_body_info_initial] = physics_comp.get_identifiable_jph_body_info();
+        const auto& [uuid, jph_body_info_initial] = physics_comp.GetIdentifiableJphBodyInfo();
 
         if(ImGui::TreeNodeEx("Initial", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_FramePadding))
         {
-
             ImGui::Text(std::format(
                 "Motion Type: {}",
-                match<std::string>(
-                    jph_body_info_initial.jph_motion_type,
+                Match<std::string>(
+                    jph_body_info_initial.JphMotionType,
                     JPH::EMotionType::Static,
                     [&]()
             {
@@ -732,28 +730,28 @@ auto ImguiWindowPropertyPhysicsComponent::operator()(PhysicsComponent& physics_c
             }
                 )
             ).c_str());
-            ImGui::Text(std::format("Object Layer: {}", jph_body_info_initial.jph_object_layer).c_str());
+            ImGui::Text(std::format("Object Layer: {}", jph_body_info_initial.JphObjectLayer).c_str());
             ImGui::TreePop();
         }
 
         if(ImGui::TreeNodeEx("Current", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_FramePadding))
         {
-            const auto& jph_body_state = physics_comp.jph_body_state;
-            ImGui::Text(std::format("Active: {}", jph_body_state.active).c_str());
-            ImGui::Text(std::format("Linear Velocity - {}", jph_body_state.linear_velocity).c_str());
-            ImGui::Text(std::format("Angular Velocity - {}", jph_body_state.angular_velocity).c_str());
+            const auto& jph_body_state = physics_comp.JphBodyState;
+            ImGui::Text(std::format("Active: {}", jph_body_state.Active).c_str());
+            ImGui::Text(std::format("Linear Velocity - {}", jph_body_state.LinearVelocity).c_str());
+            ImGui::Text(std::format("Angular Velocity - {}", jph_body_state.AngularVelocity).c_str());
             ImGui::TreePop();
         }
 
-        bool tree_open = match<bool>(
-            jph_body_info_initial.jph_shape_info,
+        bool tree_open = Match<bool>(
+            jph_body_info_initial.JphShapeInfo,
             [&](const JphBoxShapeInfo& info)
         {
             bool tree_open = ImGui::TreeNodeEx("Body Shape - Box", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_FramePadding);
             if(tree_open)
             {
-                ImGui::Text(std::format("Half Extent: {}", info.half_extent).c_str());
-                ImGui::Text(std::format("Convex Radius: {:.2f}", info.convex_radius).c_str());
+                ImGui::Text(std::format("Half Extent: {}", info.HalfExtent).c_str());
+                ImGui::Text(std::format("Convex Radius: {:.2f}", info.ConvexRadius).c_str());
             }
             return tree_open;
         },
@@ -762,8 +760,8 @@ auto ImguiWindowPropertyPhysicsComponent::operator()(PhysicsComponent& physics_c
             bool tree_open = ImGui::TreeNodeEx("Body Shape - Capsule", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_FramePadding);
             if(tree_open)
             {
-                ImGui::Text(std::format("Radius: {:.2f}", info.radius).c_str());
-                ImGui::Text(std::format("Half Height of Cylinder: {:.2f}", info.half_height_of_cylinder).c_str());
+                ImGui::Text(std::format("Radius: {:.2f}", info.Radius).c_str());
+                ImGui::Text(std::format("Half Height of Cylinder: {:.2f}", info.HalfHeightOfCylinder).c_str());
             }
             return tree_open;
         },
@@ -772,9 +770,9 @@ auto ImguiWindowPropertyPhysicsComponent::operator()(PhysicsComponent& physics_c
             bool tree_open = ImGui::TreeNodeEx("Body Shape - Cylinder", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_FramePadding);
             if(tree_open)
             {
-                ImGui::Text(std::format("Half Height: {:.2f}", info.half_height).c_str());
-                ImGui::Text(std::format("Radius: {:.2f}", info.radius).c_str());
-                ImGui::Text(std::format("Convex Radius: {:.2f}", info.convex_radius).c_str());
+                ImGui::Text(std::format("Half Height: {:.2f}", info.HalfHeight).c_str());
+                ImGui::Text(std::format("Radius: {:.2f}", info.Radius).c_str());
+                ImGui::Text(std::format("Convex Radius: {:.2f}", info.ConvexRadius).c_str());
             }
             return tree_open;
         },
@@ -783,7 +781,7 @@ auto ImguiWindowPropertyPhysicsComponent::operator()(PhysicsComponent& physics_c
             bool tree_open = ImGui::TreeNodeEx("Body Shape - Sphere", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_FramePadding);
             if(tree_open)
             {
-                ImGui::Text(std::format("Radius: {:.2f}", info.radius).c_str());
+                ImGui::Text(std::format("Radius: {:.2f}", info.Radius).c_str());
             }
             return tree_open;
         }
@@ -798,9 +796,9 @@ auto ImguiWindowPropertyPhysicsComponent::operator()(PhysicsComponent& physics_c
         ImGui::Text("(No body state)");
     }
 
-    if(physics_comp.has_body_info())
+    if(physics_comp.HasBodyInfo())
     {
-        ImGui::ColorEdit3("Body Shape Color", glm::value_ptr(physics_comp.body_shape_color));
+        ImGui::ColorEdit3("Body Shape Color", glm::value_ptr(physics_comp.BodyShapeColor));
         if(ImGui::IsItemDeactivatedAfterEdit())
         {
             description = "Body Shape Color";
@@ -808,19 +806,19 @@ auto ImguiWindowPropertyPhysicsComponent::operator()(PhysicsComponent& physics_c
 
         if(ImGui::Button("Recreate Body"))
         {
-            _imgui_window_popup_physics_component_create_body.open = true;
+            _ImguiWindowPopupPhysicsComponentCreateBody.Opened = true;
         }
         ImGui::SameLine();
         if(ImGui::Button("Destroy Body"))
         {
-            physics_comp.destroy_jph_body_info();
+            physics_comp.DestroyJphBodyInfo();
         }
     }
     else
     {
         if(ImGui::Button("Create Body"))
         {
-            _imgui_window_popup_physics_component_create_body.open = true;
+            _ImguiWindowPopupPhysicsComponentCreateBody.Opened = true;
         }
     }
 
@@ -841,48 +839,48 @@ auto ImguiWindowPropertyTransformComponent::operator()(TransformComponent& trans
     const auto flags =
         ImGuiSliderFlags_AlwaysClamp;
 
-    auto position_delta = transform_comp.position; // Previous position
-    ImGui::DragFloat3("Position", glm::value_ptr(transform_comp.position), speed, min, max, format, flags);
+    auto position_delta = transform_comp.Position; // Previous position
+    ImGui::DragFloat3("Position", glm::value_ptr(transform_comp.Position), speed, min, max, format, flags);
     if(ImGui::IsItemDeactivatedAfterEdit())
     {
         description = "Position";
     }
-    position_delta = transform_comp.position - position_delta; // current - previous
+    position_delta = transform_comp.Position - position_delta; // current - previous
 
-    if(to_bool(transform_comp.flags & TransformComponentFlags::UseRotation))
+    if(ToBool(transform_comp.Flags & TransformComponentFlags::UseRotation))
     {
         float rotation_drag_speed{ .05f };
-        glm::quat temp = transform_comp.rotation;
+        glm::quat temp = transform_comp.Rotation;
         ImGui::DragFloat3("Rotation", glm::value_ptr(temp), rotation_drag_speed, min, max, format, flags);
-        transform_comp.rotation = quat::normalize_fixedly(transform_comp.rotation, temp);
+        transform_comp.Rotation = Quat::NormalizeFixedly(transform_comp.Rotation, temp);
         if(ImGui::IsItemDeactivatedAfterEdit())
         {
             description = "Rotation";
         }
     }
-    if(to_bool(transform_comp.flags & TransformComponentFlags::UseDirection))
+    if(ToBool(transform_comp.Flags & TransformComponentFlags::UseDirection))
     {
         float direction_drag_speed{ .05f };
-        glm::vec3 temp = transform_comp.direction;
+        glm::vec3 temp = transform_comp.Direction;
         ImGui::DragFloat3("Direction", glm::value_ptr(temp), direction_drag_speed, min, max, format, flags);
-        transform_comp.direction = vec3::normalize_fixedly(transform_comp.direction, temp);
+        transform_comp.Direction = Vec3::NormalizeFixedly(transform_comp.Direction, temp);
         if(ImGui::IsItemDeactivatedAfterEdit())
         {
             description = "Direction";
         }
     }
 
-    ImGui::DragFloat3("Scale", glm::value_ptr(transform_comp.scale), speed, min, max, format, flags);
+    ImGui::DragFloat3("Scale", glm::value_ptr(transform_comp.Scale), speed, min, max, format, flags);
     if(ImGui::IsItemDeactivatedAfterEdit())
     {
         description = "Scale";
     }
 
-    if(position_delta != vec3::zero())
+    if(position_delta != Vec3::CreateZero())
     {
-        transform_comp.pivot += position_delta; // Make pivot move with translation
+        transform_comp.Pivot += position_delta; // Make pivot move with translation
     }
-    ImGui::DragFloat3("Pivot", glm::value_ptr(transform_comp.pivot), speed, min, max, format, flags);
+    ImGui::DragFloat3("Pivot", glm::value_ptr(transform_comp.Pivot), speed, min, max, format, flags);
     if(ImGui::IsItemDeactivatedAfterEdit())
     {
         description = "Pivot";
@@ -893,58 +891,58 @@ auto ImguiWindowPropertyTransformComponent::operator()(TransformComponent& trans
     return description;
 }
 
-void ImguiWindowProperty::on_event(EventBase& e)
+void ImguiWindowProperty::OnEvent(EventBase& e)
 {
     EventDispatcher{ e }
-        .dispatch<events::OpenImguiWindow>(ACDA_BIND_MEMBER_FN(_on_open_imgui_window))
-        .dispatch<events::SceneActivated>(ACDA_BIND_MEMBER_FN(_on_scene_activated))
-        .dispatch<events::SceneDeactivated>(ACDA_BIND_MEMBER_FN(_on_scene_deactivated))
-        .dispatch<events::SelectEntity>(ACDA_BIND_MEMBER_FN(_on_select_entity))
-        .dispatch<events::RenameEntity>(ACDA_BIND_MEMBER_FN(_on_rename_entity))
-        .dispatch<events::DeleteEntity>(ACDA_BIND_MEMBER_FN(_on_delete_entity))
-        .is_dispatched();
+        .Dispatch<Events::OpenImguiWindow>(ACDA_BIND_MEMBER_FN(_OnOpenImguiWindow))
+        .Dispatch<Events::SceneActivated>(ACDA_BIND_MEMBER_FN(_OnSceneActivated))
+        .Dispatch<Events::SceneDeactivated>(ACDA_BIND_MEMBER_FN(_OnSceneDeactivated))
+        .Dispatch<Events::SelectEntity>(ACDA_BIND_MEMBER_FN(_OnSelectEntity))
+        .Dispatch<Events::RenameEntity>(ACDA_BIND_MEMBER_FN(_OnRenameEntity))
+        .Dispatch<Events::DeleteEntity>(ACDA_BIND_MEMBER_FN(_OnDeleteEntity))
+        .IsDispatched();
 }
 
 #define ACDA_IMGUI_WINDOW_PROPERTY_HELPER(component_type, tab_name, property_display_fn) \
-if(_contains_component<component_type>(_selected_entity_name) && ImGui::TreeNodeEx(tab_name.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_FramePadding))\
+if(_ContainsComponent<component_type>(_SelectedEntityName) && ImGui::TreeNodeEx(tab_name.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_FramePadding))\
 {\
-    auto description = property_display_fn(_get_component<component_type>(_selected_entity_name));\
+    auto description = property_display_fn(_GetComponent<component_type>(_SelectedEntityName));\
     if(!description.empty())\
     {\
         memento_list\
-            .snapshot<component_type>(\
+            .Snapshot<component_type>(\
                 std::format("{} - {}", tab_name, description),\
-                [_scene = scene, _entity_name = _selected_entity_name]() -> component_type&\
+                [scene,this]() -> component_type&\
             {\
-                return _scene->get<component_type>(_entity_name);\
+                return scene->GetComponent<component_type>(_SelectedEntityName);\
             }\
         );\
     }\
     ImGui::TreePop();\
 }
 
-void ImguiWindowProperty::on_update()
+void ImguiWindowProperty::OnUpdate()
 {
-    if(!_open)
+    if(!_Opened)
     {
         return;
     }
 
-    auto scene = _scene.lock();
+    auto scene = _Scene.lock();
 
     if(scene)
     {
         int i = 0;
     }
 
-    auto imgui_title = scene && !_selected_entity_name.empty()
-        ? _title + " - " + _selected_entity_name + get_id_str()
-        : _title + get_id_str();
+    auto imgui_title = scene && !_SelectedEntityName.empty()
+        ? _Title + " - " + _SelectedEntityName + GetIdString()
+        : _Title + GetIdString();
 
     ImGui::SetNextWindowSize(glm::vec2{ 1024,768 }, ImGuiCond_Once);
     auto window_flags =
         ImGuiWindowFlags_NoCollapse;
-    if(ImGui::Begin(imgui_title.c_str(), &_open, window_flags))
+    if(ImGui::Begin(imgui_title.c_str(), &_Opened, window_flags))
     {
         if(!scene)
         {
@@ -958,17 +956,17 @@ void ImguiWindowProperty::on_update()
                 | ImGuiTabBarFlags_AutoSelectNewTabs
                 | ImGuiTabBarFlags_FittingPolicyScroll
                 | ImGuiTabBarFlags_Reorderable;
-            if(!_selected_entity_name.empty())
+            if(!_SelectedEntityName.empty())
             {
                 ImGui::PushItemWidth(200.f);
 
-                auto& memento_list = MementoList::instance();
+                auto& memento_list = MementoList::Instance();
 
-                ACDA_IMGUI_WINDOW_PROPERTY_HELPER(CameraComponent, "Camera"s, _imgui_window_property_camera_component);
-                ACDA_IMGUI_WINDOW_PROPERTY_HELPER(LightComponent, "Light"s, _imgui_window_property_light_component);
-                ACDA_IMGUI_WINDOW_PROPERTY_HELPER(ModelComponent, "Model"s, _imgui_window_property_model_component);
-                ACDA_IMGUI_WINDOW_PROPERTY_HELPER(PhysicsComponent, "Physics"s, _imgui_window_property_physics_component);
-                ACDA_IMGUI_WINDOW_PROPERTY_HELPER(TransformComponent, "Transform"s, _imgui_window_property_transform_component);
+                ACDA_IMGUI_WINDOW_PROPERTY_HELPER(CameraComponent, "Camera"s, _ImguiWindowPropertyCameraComponent);
+                ACDA_IMGUI_WINDOW_PROPERTY_HELPER(LightComponent, "Light"s, _ImguiWindowPropertyLightComponent);
+                ACDA_IMGUI_WINDOW_PROPERTY_HELPER(ModelComponent, "Model"s, _ImguiWindowPropertyModelComponent);
+                ACDA_IMGUI_WINDOW_PROPERTY_HELPER(PhysicsComponent, "Physics"s, _ImguiWindowPropertyPhysicsComponent);
+                ACDA_IMGUI_WINDOW_PROPERTY_HELPER(TransformComponent, "Transform"s, _ImguiWindowPropertyTransformComponent);
 
                 ImGui::PopItemWidth();
             }
@@ -977,49 +975,47 @@ void ImguiWindowProperty::on_update()
     ImGui::End();
 }
 
-void ImguiWindowProperty::_on_open_imgui_window(events::OpenImguiWindow& e)
+void ImguiWindowProperty::_OnOpenImguiWindow(Events::OpenImguiWindow& e)
 {
-    const auto& [id_str] = e.data_tuple;
-    if(id_str == get_id_str())
+    const auto& [id_str] = e.DataTuple;
+    if(id_str == GetIdString())
     {
-        _open = true;
+        _Opened = true;
     }
 }
 
-void ImguiWindowProperty::_on_scene_activated(events::SceneActivated& e)
+void ImguiWindowProperty::_OnSceneActivated(Events::SceneActivated& e)
 {
-    const auto& [scene] = e.data_tuple;
-    _scene = scene;
+    const auto& [scene] = e.DataTuple;
+    _Scene = scene;
 }
 
-void ImguiWindowProperty::_on_scene_deactivated(events::SceneDeactivated& e)
+void ImguiWindowProperty::_OnSceneDeactivated(Events::SceneDeactivated& e)
 {
-    _scene.reset();
-    _selected_entity_name.clear();
+    _Scene.reset();
+    _SelectedEntityName.clear();
 }
 
-void ImguiWindowProperty::_on_select_entity(events::SelectEntity& e)
+void ImguiWindowProperty::_OnSelectEntity(Events::SelectEntity& e)
 {
-    const auto& [entity_name] = e.data_tuple;
-    _selected_entity_name = entity_name;
+    const auto& [entity_name] = e.DataTuple;
+    _SelectedEntityName = entity_name;
 }
 
-void ImguiWindowProperty::_on_rename_entity(events::RenameEntity& e)
+void ImguiWindowProperty::_OnRenameEntity(Events::RenameEntity& e)
 {
-    const auto& [old_name, new_name] = e.data_tuple;
-    if(old_name == _selected_entity_name)
+    const auto& [old_name, new_name] = e.DataTuple;
+    if(old_name == _SelectedEntityName)
     {
-        _selected_entity_name = new_name;
+        _SelectedEntityName = new_name;
     }
 }
 
-void ImguiWindowProperty::_on_delete_entity(events::DeleteEntity& e)
+void ImguiWindowProperty::_OnDeleteEntity(Events::DeleteEntity& e)
 {
-    const auto& [entity] = e.data_tuple;
-    if(_selected_entity_name == entity)
+    const auto& [entity] = e.DataTuple;
+    if(_SelectedEntityName == entity)
     {
-        _selected_entity_name.clear();
+        _SelectedEntityName.clear();
     }
 }
-
-

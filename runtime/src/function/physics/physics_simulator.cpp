@@ -18,8 +18,8 @@ PhysicsSimulator::PhysicsSimulator()
     const unsigned int max_body_pair = 65535;
     const unsigned int max_contact_constraints = 10240;
 
-    _jph_physics_system = std::make_unique<JPH::PhysicsSystem>();
-    _jph_physics_system->Init(max_bodies, num_body_mutexes, max_body_pair, max_contact_constraints, _jph_broad_phase_layer, _jph_object_vs_broad_layer_filter, _jph_object_layer_pair_filter);
+    _JphPhysicsSystem = std::make_unique<JPH::PhysicsSystem>();
+    _JphPhysicsSystem->Init(max_bodies, num_body_mutexes, max_body_pair, max_contact_constraints, _JphBroadPhaseLayer, _JphObjectVsBroadLayerFilter, _JphObjectLayerPairFilter);
 }
 
 PhysicsSimulator::~PhysicsSimulator()
@@ -29,28 +29,28 @@ PhysicsSimulator::~PhysicsSimulator()
     JPH::Factory::sInstance = nullptr;
 }
 
-void PhysicsSimulator::prepare()
+void PhysicsSimulator::Prepare()
 {
-    _assert_frame_not_in_build();
-    _in_build = true;
+    _AssertFrameNotInBuild();
+    _InBuild = true;
 
     // Clear submitted body uuids
-    _submitted_body_infos.clear();
+    _SubmittedBodyInfos.clear();
 }
 
-void PhysicsSimulator::finalize()
+void PhysicsSimulator::Finalize()
 {
-    _assert_frame_in_build();
-    _in_build = false;
+    _AssertFrameInBuild();
+    _InBuild = false;
 
-    auto& jph_body_interface = _jph_physics_system->GetBodyInterface();
-    for(auto iter = _jph_body_id_storage.begin(); iter != _jph_body_id_storage.end();)
+    auto& jph_body_interface = _JphPhysicsSystem->GetBodyInterface();
+    for(auto iter = _JphBodyIdStorage.begin(); iter != _JphBodyIdStorage.end();)
     {
-        if(!_submitted_body_infos.contains(iter->first))
+        if(!_SubmittedBodyInfos.contains(iter->first))
         {
             jph_body_interface.RemoveBody(iter->second);
             jph_body_interface.DestroyBody(iter->second);
-            iter = _jph_body_id_storage.erase(iter);
+            iter = _JphBodyIdStorage.erase(iter);
         }
         else
         {
@@ -58,182 +58,182 @@ void PhysicsSimulator::finalize()
         }
     }
 
-    _jph_physics_system->OptimizeBroadPhase();
+    _JphPhysicsSystem->OptimizeBroadPhase();
 }
 
-void PhysicsSimulator::submit(const Scene& scene, const std::string& name)
+void PhysicsSimulator::Submit(const Scene& scene, const std::string& name)
 {
-    _assert_frame_in_build();
+    _AssertFrameInBuild();
 
-    const auto& entity_info = scene.entity_info(name);
+    const auto& entity_info = scene.GetEntityInfo(name);
 
     // For now, only actor entity has physics component
-    if(entity_info.type != "actor")
+    if(entity_info.Type != "actor")
     {
         return;
     }
 
-    const auto [physics_comp, transform_comp] = scene.get<PhysicsComponent, TransformComponent>(name);
+    const auto [physics_comp, transform_comp] = scene.GetComponent<PhysicsComponent, TransformComponent>(name);
 
-    if(physics_comp.has_body_info())
+    if(physics_comp.HasBodyInfo())
     {
-        const auto& [uuid, body_info] = physics_comp.get_identifiable_jph_body_info();
-        if(!_jph_body_id_storage.contains(uuid))
+        const auto& [uuid, body_info] = physics_comp.GetIdentifiableJphBodyInfo();
+        if(!_JphBodyIdStorage.contains(uuid))
         {
-            auto& jph_body_interface = _jph_physics_system->GetBodyInterface();
-            JPH::ShapeRefC jph_shape_refc = match<JPH::Shape*>(
-                body_info.jph_shape_info,
+            auto& jph_body_interface = _JphPhysicsSystem->GetBodyInterface();
+            JPH::ShapeRefC jph_shape_refc = Match<JPH::Shape*>(
+                body_info.JphShapeInfo,
                 [&](const JphBoxShapeInfo& info)
             {
-                return new JPH::BoxShape{ to_jph_vec3(info.half_extent), info.convex_radius };
+                return new JPH::BoxShape{ ToJphVec3(info.HalfExtent), info.ConvexRadius };
             },
                 [&](const JphCapsuleShapeInfo& info)
             {
-                return new JPH::CapsuleShape{ info.half_height_of_cylinder,info.radius };
+                return new JPH::CapsuleShape{ info.HalfHeightOfCylinder,info.Radius };
             },
                 [&](const JphCylinderShapeInfo& info)
             {
-                return new JPH::CylinderShape{ info.half_height,info.radius,info.convex_radius };
+                return new JPH::CylinderShape{ info.HalfHeight,info.Radius,info.ConvexRadius };
             },
                 [&](const JphSphereShapeInfo& info)
             {
-                return new JPH::SphereShape{ info.radius };
+                return new JPH::SphereShape{ info.Radius };
             }
             );
             const auto body_id = jph_body_interface.CreateAndAddBody(
                 JPH::BodyCreationSettings{
                     jph_shape_refc,
-                    to_jph_vec3(transform_comp.position),
-                    to_jph_quat(transform_comp.rotation),
-                    body_info.jph_motion_type,
-                    body_info.jph_object_layer
+                    ToJphVec3(transform_comp.Position),
+                    ToJphQuat(transform_comp.Rotation),
+                    body_info.JphMotionType,
+                    body_info.JphObjectLayer
                 },
                 JPH::EActivation::Activate
             );
             ACDA_ASSERT(!body_id.IsInvalid() && "Failed to create body");
-            _jph_body_id_storage.try_emplace(uuid, body_id);
+            _JphBodyIdStorage.try_emplace(uuid, body_id);
         }
-        _submitted_body_infos.emplace(uuid);
+        _SubmittedBodyInfos.emplace(uuid);
     }
 }
 
-void PhysicsSimulator::update()
+void PhysicsSimulator::Update()
 {
-    if(!_active)
+    if(!_Active)
     {
         return;
     }
 
-    JPH::TempAllocatorImpl temp_allocator{ _jph_temp_allocator_size };
+    JPH::TempAllocatorImpl temp_allocator{ _JphTempAllocatorSize };
     JPH::JobSystemThreadPool job_system_thread_pool{ JPH::cMaxPhysicsJobs,JPH::cMaxPhysicsBarriers,static_cast<int>(std::thread::hardware_concurrency() - 1) };
 
-    int collusion_step = 60 / _jph_physics_system_updates_per_second;
+    int collusion_step = 60 / _JphPhysicsSystemUpdatesPerSecond;
     collusion_step = collusion_step > 0 ? collusion_step : 1;
-    _jph_physics_system->Update(1.f / _jph_physics_system_updates_per_second, collusion_step, &temp_allocator, &job_system_thread_pool);
+    _JphPhysicsSystem->Update(1.f / _JphPhysicsSystemUpdatesPerSecond, collusion_step, &temp_allocator, &job_system_thread_pool);
 }
 
-void PhysicsSimulator::query(Scene& scene, const std::string& name)
+void PhysicsSimulator::Query(Scene& scene, const std::string& name)
 {
-    _assert_frame_not_in_build();
+    _AssertFrameNotInBuild();
 
-    if(!_active)
+    if(!_Active)
     {
         return;
     }
 
-    const auto& entity_info = scene.entity_info(name);
+    const auto& entity_info = scene.GetEntityInfo(name);
 
     // For now, only actor entity has physics component
-    if(entity_info.type != "actor")
+    if(entity_info.Type != "actor")
     {
         return;
     }
 
-    auto [physics_comp, transform_comp] = scene.get<PhysicsComponent, TransformComponent>(name);
+    auto [physics_comp, transform_comp] = scene.GetComponent<PhysicsComponent, TransformComponent>(name);
 
-    if(physics_comp.has_body_info())
+    if(physics_comp.HasBodyInfo())
     {
-        const auto& [uuid, jph_body_info_initial] = physics_comp.get_identifiable_jph_body_info();
-        ACDA_ASSERT(_jph_body_id_storage.contains(uuid));
-        const auto& jph_body_interface = _jph_physics_system->GetBodyInterface();
-        const auto& body_id = _jph_body_id_storage.at(uuid);
+        const auto& [uuid, jph_body_info_initial] = physics_comp.GetIdentifiableJphBodyInfo();
+        ACDA_ASSERT(_JphBodyIdStorage.contains(uuid));
+        const auto& jph_body_interface = _JphPhysicsSystem->GetBodyInterface();
+        const auto& body_id = _JphBodyIdStorage.at(uuid);
 
-        auto& jph_body_state = physics_comp.jph_body_state;
-        jph_body_state.active = jph_body_interface.IsActive(body_id);
-        jph_body_state.linear_velocity = from_jph_vec3(jph_body_interface.GetLinearVelocity(body_id));
-        jph_body_state.angular_velocity = from_jph_vec3(jph_body_interface.GetAngularVelocity(body_id));
+        auto& jph_body_state = physics_comp.JphBodyState;
+        jph_body_state.Active = jph_body_interface.IsActive(body_id);
+        jph_body_state.LinearVelocity = FromJphVec3(jph_body_interface.GetLinearVelocity(body_id));
+        jph_body_state.AngularVelocity = FromJphVec3(jph_body_interface.GetAngularVelocity(body_id));
 
-        transform_comp.position = from_jph_vec3(jph_body_interface.GetPosition(body_id));
-        transform_comp.rotation = from_jph_quat(jph_body_interface.GetRotation(body_id));
+        transform_comp.Position = FromJphVec3(jph_body_interface.GetPosition(body_id));
+        transform_comp.Rotation = FromJphQuat(jph_body_interface.GetRotation(body_id));
     }
 }
 
-void PhysicsSimulator::reset()
+void PhysicsSimulator::Reset()
 {
-    auto& jph_body_interface = _jph_physics_system->GetBodyInterface();
-    for(const auto& [uuid, body_id] : _jph_body_id_storage)
+    auto& jph_body_interface = _JphPhysicsSystem->GetBodyInterface();
+    for(const auto& [uuid, body_id] : _JphBodyIdStorage)
     {
         jph_body_interface.RemoveBody(body_id);
         jph_body_interface.DestroyBody(body_id);
     }
-    _jph_body_id_storage.clear();
-    _submitted_body_infos.clear();
+    _JphBodyIdStorage.clear();
+    _SubmittedBodyInfos.clear();
 }
 
-auto PhysicsSimulator::is_active() const -> bool
+auto PhysicsSimulator::IsActive() const -> bool
 {
-    return _active;
+    return _Active;
 }
 
-void PhysicsSimulator::set_active(bool should_update)
+void PhysicsSimulator::SetActive(bool should_update)
 {
-    _active = should_update;
+    _Active = should_update;
 }
 
-auto PhysicsSimulator::get_jph_temp_allocator_size() const -> JPH::uint
+auto PhysicsSimulator::GetJphTempAllocatorSize() const -> JPH::uint
 {
-    return _jph_temp_allocator_size;
+    return _JphTempAllocatorSize;
 }
 
-void PhysicsSimulator::set_jph_temp_allocator_size(JPH::uint get_jph_temp_allocator_size)
+void PhysicsSimulator::SetJphTempAllocatorSize(JPH::uint get_jph_temp_allocator_size)
 {
-    _jph_temp_allocator_size = get_jph_temp_allocator_size;
+    _JphTempAllocatorSize = get_jph_temp_allocator_size;
 }
 
-auto PhysicsSimulator::get_jph_physics_system_updates_per_second() const -> int
+auto PhysicsSimulator::GetJphPhysicsSystemUpdatesPerSecond() const -> int
 {
-    return _jph_physics_system_updates_per_second;
+    return _JphPhysicsSystemUpdatesPerSecond;
 }
 
-void PhysicsSimulator::set_jph_physics_system_updates_per_second(int jph_physics_system_updates_per_second)
+void PhysicsSimulator::SetJphPhysicsSystemUpdatesPerSecond(int jph_physics_system_updates_per_second)
 {
-    _jph_physics_system_updates_per_second = jph_physics_system_updates_per_second;
+    _JphPhysicsSystemUpdatesPerSecond = jph_physics_system_updates_per_second;
 }
 
-auto PhysicsSimulator::jph_body_id_storage() const -> const jph_body_id_storage_type&
+auto PhysicsSimulator::GetJphBodyIdStorage() const -> const JphBodyIdStorageType&
 {
-    return _jph_body_id_storage;
+    return _JphBodyIdStorage;
 }
 
-void PhysicsSimulator::_assert_frame_in_build() const
+void PhysicsSimulator::_AssertFrameInBuild() const
 {
-    ACDA_ASSERT(_in_build && "Frame is not in build, did you call `prepare()`?");
+    ACDA_ASSERT(_InBuild && "Frame is not in build, did you call `prepare()`?");
 }
 
-void PhysicsSimulator::_assert_frame_not_in_build() const
+void PhysicsSimulator::_AssertFrameNotInBuild() const
 {
-    ACDA_ASSERT(!_in_build && "Frame is in build, did you call `finalize()`?");
+    ACDA_ASSERT(!_InBuild && "Frame is in build, did you call `finalize()`?");
 }
 
 auto JphObjectLayerPairFilerImpl::ShouldCollide(JPH::ObjectLayer obj_1, JPH::ObjectLayer obj_2) const -> bool
 {
     switch(obj_1)
     {
-        case jph_object_layers::non_moving:
+        case JphObjectLayers::NonMoving:
         {
-            return obj_2 == jph_object_layers::moving; // Non moving only collides with moving
+            return obj_2 == JphObjectLayers::Moving; // Non moving only collides with moving
         }
-        case jph_object_layers::moving:
+        case JphObjectLayers::Moving:
         {
             return true; // Moving collides with everything
         }
@@ -246,30 +246,30 @@ auto JphObjectLayerPairFilerImpl::ShouldCollide(JPH::ObjectLayer obj_1, JPH::Obj
 
 JphBroadPhaseLayerImpl::JphBroadPhaseLayerImpl()
 {
-    _object_to_broad_phase[jph_object_layers::non_moving] = jph_broad_phase_layers::non_moving;
-    _object_to_broad_phase[jph_object_layers::moving] = jph_broad_phase_layers::moving;
+    _ObjectToBroadPhase[JphObjectLayers::NonMoving] = JphBroadPhaseLayers::NonMoving;
+    _ObjectToBroadPhase[JphObjectLayers::Moving] = JphBroadPhaseLayers::Moving;
 }
 
 auto JphBroadPhaseLayerImpl::GetNumBroadPhaseLayers() const -> JPH::uint
 {
-    return jph_broad_phase_layers::num_layers;
+    return JphBroadPhaseLayers::NumLayers;
 }
 
 auto JphBroadPhaseLayerImpl::GetBroadPhaseLayer(JPH::ObjectLayer layer) const -> JPH::BroadPhaseLayer
 {
     ACDA_ASSERT(layer < GetNumBroadPhaseLayers());
-    return _object_to_broad_phase[layer];
+    return _ObjectToBroadPhase[layer];
 }
 
 auto JphObjectVsBroadPhaseLayerFilterImpl::ShouldCollide(JPH::ObjectLayer obj, JPH::BroadPhaseLayer bp) const -> bool
 {
     switch(obj)
     {
-        case jph_object_layers::non_moving:
+        case JphObjectLayers::NonMoving:
         {
-            return bp == jph_broad_phase_layers::moving;
+            return bp == JphBroadPhaseLayers::Moving;
         }
-        case jph_object_layers::moving:
+        case JphObjectLayers::Moving:
         {
             return true;
         }

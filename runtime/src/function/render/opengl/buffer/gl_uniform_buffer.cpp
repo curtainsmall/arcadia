@@ -8,71 +8,71 @@ GlUniformBuffer::GlUniformBuffer(
     GLsizeiptr size
 )
 {
-    ACDA_GL_CALL(glGenBuffers(1, &_gl_id));
+    ACDA_GL_CALL(glGenBuffers(1, &_GlId));
 
-    bind();
+    Bind();
     ACDA_GL_CALL(glBufferData(GL_UNIFORM_BUFFER, size, nullptr, GL_STATIC_DRAW));
-    unbind();
+    Unbind();
 }
 
-GlUniformBuffer::GlUniformBuffer(GLsizeiptr size, const GLvoid* data):
+GlUniformBuffer::GlUniformBuffer(GLsizeiptr size, const GLvoid* data) :
     GlUniformBuffer(size)
 {
-    sub_data(0, size, data);
+    SetBufferSubData(0, size, data);
 }
 
 GlUniformBuffer::~GlUniformBuffer()
 {
-    ACDA_GL_CALL(glDeleteBuffers(1, &_gl_id));
+    ACDA_GL_CALL(glDeleteBuffers(1, &_GlId));
 }
 
-GlUniformBuffer::GlUniformBuffer(self_type&& rhs) noexcept:
-    _gl_id(rhs._gl_id)
+GlUniformBuffer::GlUniformBuffer(SelfType&& rhs) noexcept :
+    _GlId(rhs._GlId)
 {
-    rhs._gl_id = 0;
+    rhs._GlId = 0;
 }
 
-auto GlUniformBuffer::operator=(self_type&& rhs) noexcept -> self_type&
+auto GlUniformBuffer::operator=(SelfType&& rhs) noexcept -> SelfType&
 {
-    _gl_id = rhs._gl_id;
-    rhs._gl_id = 0;
+    _GlId = rhs._GlId;
+    rhs._GlId = 0;
     return *this;
 }
 
-void GlUniformBuffer::bind() const
+void GlUniformBuffer::Bind() const
 {
-    if(_gl_id == 0)
+    if(_GlId == 0)
     {
         throw GlInvalid{ "Cannot bind null OpenGL uniform buffer" };
     }
 
-    ACDA_GL_CALL(glBindBuffer(GL_UNIFORM_BUFFER, _gl_id));
+    ACDA_GL_CALL(glBindBuffer(GL_UNIFORM_BUFFER, _GlId));
 }
 
-void GlUniformBuffer::unbind() const
+void GlUniformBuffer::Unbind() const
 {
     ACDA_GL_CALL(glBindBuffer(GL_UNIFORM_BUFFER, 0));
 }
 
-void GlUniformBuffer::bind_buffer_base(GLuint index) const
+void GlUniformBuffer::BindBufferBase(GLuint index) const
 {
-    bind();
-    ACDA_GL_CALL(glBindBufferBase(GL_UNIFORM_BUFFER, index, _gl_id));
-    unbind();
+    Bind();
+    ACDA_GL_CALL(glBindBufferBase(GL_UNIFORM_BUFFER, index, _GlId));
+    Unbind();
 }
 
-void GlUniformBuffer::bind_buffer_range(GLuint index, GLintptr Offset, GLsizeiptr size) const
+void GlUniformBuffer::BindBufferRange(GLuint index, GLintptr Offset, GLsizeiptr size) const
 {
-    bind();
-    ACDA_GL_CALL(glBindBufferRange(GL_UNIFORM_BUFFER, index, _gl_id, Offset, size));
-    unbind();
+    Bind();
+    ACDA_GL_CALL(glBindBufferRange(GL_UNIFORM_BUFFER, index, _GlId, Offset, size));
+    Unbind();
 }
 
-auto GlUniformBuffer::sub_data(GLintptr offset, GLsizeiptr size, const GLvoid* data) const -> const self_type&
+auto GlUniformBuffer::SetBufferSubData(GLintptr offset, GLsizeiptr size, const GLvoid* data) const -> const SelfType&
 {
-    bind();
+    Bind();
     ACDA_GL_CALL(glBufferSubData(GL_UNIFORM_BUFFER, offset, size, data));
-    unbind();
+    Unbind();
 
     return *this;
 }

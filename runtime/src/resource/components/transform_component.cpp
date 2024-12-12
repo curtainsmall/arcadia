@@ -3,73 +3,73 @@
 
 #include"core/math.hpp"
 
-TransformComponent::TransformComponent(const nlohmann::json& json):
-    flags(json.at("flags")),
-    position(vec3::from_json(json.at("position"))),
-    rotation(quat::from_json(json.at("rotation"))),
-    direction(vec3::from_json(json.at("direction"))),
-    scale(vec3::from_json(json.at("scale"))),
-    pivot(vec3::from_json(json.at("pivot")))
+TransformComponent::TransformComponent(const nlohmann::json& json) :
+    Flags(json.at("flags")),
+    Position(Vec3::FromJson(json.at("position"))),
+    Rotation(Quat::FromJson(json.at("rotation"))),
+    Direction(Vec3::FromJson(json.at("direction"))),
+    Scale(Vec3::FromJson(json.at("scale"))),
+    Pivot(Vec3::FromJson(json.at("pivot")))
 {}
 
-auto TransformComponent::to_json() const -> nlohmann::json
+auto TransformComponent::ToJson() const -> nlohmann::json
 {
     nlohmann::json json{
-        {"flags", flags},
-        {"position",vec3::to_json(position)},
-        {"rotation",quat::to_json(rotation)},
-        {"direction",vec3::to_json(direction)},
-        {"scale"   ,vec3::to_json(scale)},
-        {"pivot"   ,vec3::to_json(pivot)}
+        {"flags", Flags},
+        {"position",Vec3::ToJson(Position)},
+        {"rotation",Quat::ToJson(Rotation)},
+        {"direction",Vec3::ToJson(Direction)},
+        {"scale"   ,Vec3::ToJson(Scale)},
+        {"pivot"   ,Vec3::ToJson(Pivot)}
     };
 
     return json;
 }
 
-auto TransformComponent::generate_transform_matrix() const -> glm::mat4
+auto TransformComponent::GenerateTransformMat4() const -> glm::mat4
 {
-    glm::mat4 mat = mat4::identity();
+    glm::mat4 mat = Mat4::CreateIdentity();
 
     // Move pivot to origin
     //mat = glm::translate(mat, -Pivot);
 
     // Scale about origin (which is pivot now)
-    mat = glm::scale(mat, scale);
+    mat = glm::scale(mat, Scale);
 
     // Rotate
-    mat = glm::mat4_cast(rotation) * mat;
+    mat = glm::mat4_cast(Rotation) * mat;
 
     // Move pivot back from origin
     //mat = glm::translate(mat, Pivot);
 
     // Translate
-    mat = glm::translate(mat, position);
+    mat = glm::translate(mat, Position);
 
     return mat;
 }
 
-auto TransformComponent::on_snapshot() const -> std::shared_ptr<MementoDataBase>
+auto TransformComponent::OnSnapshot() const -> std::shared_ptr<MementoDataBase>
 {
     auto memento_data = std::make_shared<TransformComponentMementoData>();
 
-    memento_data->flags     = flags;
-    memento_data->position  = position;
-    memento_data->rotation  = rotation;
-    memento_data->direction = direction;
-    memento_data->scale     = scale;
-    memento_data->pivot     = pivot;
+    memento_data->Flags     = Flags;
+    memento_data->Position  = Position;
+    memento_data->Rotation  = Rotation;
+    memento_data->Direction = Direction;
+    memento_data->Scale     = Scale;
+    memento_data->Pivot     = Pivot;
 
     return memento_data;
 }
 
-void TransformComponent::on_restore(const std::shared_ptr<MementoDataBase>& memento_data)
+void TransformComponent::OnRestore(const std::shared_ptr<MementoDataBase>& memento_data)
 {
-    auto& memento_data_ = memento_data->as<TransformComponentMementoData>();
+    auto& memento_data_ = memento_data->CastTo<TransformComponentMementoData>();
 
-    flags = memento_data_.flags;
-    position  = memento_data_.position;
-    rotation  = memento_data_.rotation;
-    direction = memento_data_.direction;
-    scale     = memento_data_.scale;
-    pivot     = memento_data_.pivot;
+    Flags = memento_data_.Flags;
+    Position  = memento_data_.Position;
+    Rotation  = memento_data_.Rotation;
+    Direction = memento_data_.Direction;
+    Scale     = memento_data_.Scale;
+    Pivot     = memento_data_.Pivot;
 }

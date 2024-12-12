@@ -3,15 +3,15 @@
 #include"core/base.hpp"
 #include"core/math/glm_header.hpp"
 
-namespace mat4
+namespace Mat4
 {
     [[nodiscard]]
-    ACDA_API constexpr auto zero() -> glm::mat4
+    ACDA_API constexpr auto CreateZero() -> glm::mat4
     {
         return glm::mat4{ .0f };
     }
     [[nodiscard]]
-    ACDA_API constexpr auto zero_affine() -> glm::mat4
+    ACDA_API constexpr auto CreateZeroAffine() -> glm::mat4
     {
         return glm::mat4{
             glm::vec4{},
@@ -21,7 +21,7 @@ namespace mat4
         };
     }
     [[nodiscard]]
-    ACDA_API constexpr auto identity() -> glm::mat4
+    ACDA_API constexpr auto CreateIdentity() -> glm::mat4
     {
         return glm::mat4{};
     }

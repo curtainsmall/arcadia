@@ -5,103 +5,103 @@
 GlVertexArray::GlVertexArray(
     const std::vector<Vertex>& vertices,
     const std::vector<Mesh::index_type>& indices
-):
-    _gl_vertex_buffer(vertices),
-    _gl_index_buffer(indices)
+) :
+    _GlVertexBuffer(vertices),
+    _GlIndexBuffer(indices)
 {
-    ACDA_GL_CALL(glGenVertexArrays(1, &_gl_id));
-    bind();
-    _gl_vertex_buffer.setup_vertex_attrib_array();
-    unbind();
+    ACDA_GL_CALL(glGenVertexArrays(1, &_GlId));
+    Bind();
+    _GlVertexBuffer.SetupVertexAttributeArray();
+    Unbind();
 }
 
 GlVertexArray::~GlVertexArray()
 {
-    ACDA_GL_CALL(glDeleteVertexArrays(1, &_gl_id));
+    ACDA_GL_CALL(glDeleteVertexArrays(1, &_GlId));
 }
 
-GlVertexArray::GlVertexArray(self_type&& rhs) noexcept:
-    _gl_vertex_buffer(std::move(rhs._gl_vertex_buffer)),
-    _gl_index_buffer(std::move(rhs._gl_index_buffer))
+GlVertexArray::GlVertexArray(SelfType&& rhs) noexcept :
+    _GlVertexBuffer(std::move(rhs._GlVertexBuffer)),
+    _GlIndexBuffer(std::move(rhs._GlIndexBuffer))
 {
-    _gl_id = rhs._gl_id;
-    rhs._gl_id = 0;
+    _GlId = rhs._GlId;
+    rhs._GlId = 0;
 }
 
-auto GlVertexArray::operator=(self_type&& rhs) noexcept -> self_type&
+auto GlVertexArray::operator=(SelfType&& rhs) noexcept -> SelfType&
 {
-    _gl_vertex_buffer = std::move(rhs._gl_vertex_buffer);
-    _gl_index_buffer = std::move(rhs._gl_index_buffer);
+    _GlVertexBuffer = std::move(rhs._GlVertexBuffer);
+    _GlIndexBuffer = std::move(rhs._GlIndexBuffer);
 
-    _gl_id = rhs._gl_id;
-    rhs._gl_id = 0;
+    _GlId = rhs._GlId;
+    rhs._GlId = 0;
 
     return *this;
 }
 
-void GlVertexArray::bind() const
+void GlVertexArray::Bind() const
 {
-    if(_gl_id == 0)
+    if(_GlId == 0)
     {
         throw GlInvalid{ "Cannot bind null OpenGL vertex array" };
     }
 
-    ACDA_GL_CALL(glBindVertexArray(_gl_id));
+    ACDA_GL_CALL(glBindVertexArray(_GlId));
 
-    _gl_vertex_buffer.bind();
-    _gl_index_buffer.bind();
+    _GlVertexBuffer.Bind();
+    _GlIndexBuffer.Bind();
 }
 
-void GlVertexArray::unbind() const
+void GlVertexArray::Unbind() const
 {
-    _gl_index_buffer.unbind();
-    _gl_vertex_buffer.unbind();
+    _GlIndexBuffer.Unbind();
+    _GlVertexBuffer.Unbind();
 
     ACDA_GL_CALL(glBindVertexArray(0));
 }
 
-void GlVertexArray::draw(GLenum mode, GLsizei count) const
+void GlVertexArray::Draw(GLenum mode, GLsizei count) const
 {
-    if(_gl_index_buffer.index_count())
+    if(_GlIndexBuffer.GetIndexCount())
     {
         if(count < 0)
         {
-            draw_indices(mode);
+            DrawIndices(mode);
         }
         else
         {
-            draw_indices_instanced(mode, count);
+            DrawIndicesInstanced(mode, count);
         }
     }
     else
     {
         if(count < 0)
         {
-            draw_arrays(mode);
+            DrawArrays(mode);
         }
         else
         {
-            draw_arrays_instanced(mode, count);
+            DrawArraysInstanced(mode, count);
         }
     }
 }
 
-void GlVertexArray::draw_arrays(GLenum mode) const
+void GlVertexArray::DrawArrays(GLenum mode) const
 {
-    ACDA_GL_CALL(glDrawArrays(mode, 0, _gl_vertex_buffer.vertex_count()));
+    ACDA_GL_CALL(glDrawArrays(mode, 0, _GlVertexBuffer.GetVertexCount()));
 }
 
-void GlVertexArray::draw_arrays_instanced(GLenum mode, GLsizei count) const
+void GlVertexArray::DrawArraysInstanced(GLenum mode, GLsizei count) const
 {
-    ACDA_GL_CALL(glDrawArraysInstanced(mode, 0, _gl_vertex_buffer.vertex_count(), count));
+    ACDA_GL_CALL(glDrawArraysInstanced(mode, 0, _GlVertexBuffer.GetVertexCount(), count));
 }
 
-void GlVertexArray::draw_indices(GLenum mode) const
+void GlVertexArray::DrawIndices(GLenum mode) const
 {
-    ACDA_GL_CALL(glDrawElements(mode, _gl_index_buffer.index_count(), GL_UNSIGNED_INT, 0));
+    ACDA_GL_CALL(glDrawElements(mode, _GlIndexBuffer.GetIndexCount(), GL_UNSIGNED_INT, 0));
 }
 
-void GlVertexArray::draw_indices_instanced(GLenum mode, GLsizei count) const
+void GlVertexArray::DrawIndicesInstanced(GLenum mode, GLsizei count) const
 {
-    ACDA_GL_CALL(glDrawElementsInstanced(mode, _gl_index_buffer.index_count(), GL_UNSIGNED_INT, 0, count));
+    ACDA_GL_CALL(glDrawElementsInstanced(mode, _GlIndexBuffer.GetIndexCount(), GL_UNSIGNED_INT, 0, count));
 }

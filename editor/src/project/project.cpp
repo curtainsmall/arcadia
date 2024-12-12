@@ -6,110 +6,110 @@
 #include"resource/components/physics_component.hpp"
 #include"resource/components/transform_component.hpp"
 
-Project::Project(nlohmann::json& json):
-    _name(json.at("name"))
+Project::Project(nlohmann::json& json) :
+    _Name(json.at("name"))
 {
     for(const auto& json_scene : json.at("scenes"))
     {
-        scene_sptr_storage.try_emplace(json_scene.at("name"), std::make_shared<Scene>(json_scene));
+        Scenes.try_emplace(json_scene.at("name"), std::make_shared<Scene>(json_scene));
     }
 
-    set_active_scene(json.at("active_scene_name"));
+    SetActiveScene(json.at("active_scene_name"));
 }
 
-auto Project::to_json() const -> nlohmann::json
+auto Project::ToJson() const -> nlohmann::json
 {
     nlohmann::json json{
-        {"name",get_name()},
+        {"name",GetName()},
         {"scenes",nlohmann::json::array()},
-        {"active_scene_name",has_active_scene() ? get_active_scene().name : ""s}
+        {"active_scene_name",HasActiveScene() ? GetActiveScene().Name : ""s}
     };
 
-    for(const auto& [name, scene] : scene_sptr_storage)
+    for(const auto& [name, scene] : Scenes)
     {
         json.at("scenes")
-            .push_back(scene->to_json());
+            .push_back(scene->ToJson());
     }
 
     return json;
 }
 
-auto Project::get_name() const -> const std::string&
+auto Project::GetName() const -> const std::string&
 {
-    return _name;
+    return _Name;
 }
 
-void Project::set_name(const std::string& name)
+void Project::SetName(const std::string& name)
 {
-    _name = name;
+    _Name = name;
 }
 
-auto Project::has_active_scene() const -> bool
+auto Project::HasActiveScene() const -> bool
 {
-    return !!_active_scene;
+    return !!_ActiveScene;
 }
 
-auto Project::get_active_scene() -> Scene&
+auto Project::GetActiveScene() -> Scene&
 {
-    ACDA_ASSERT(has_active_scene());
+    ACDA_ASSERT(HasActiveScene());
     // If scene is modified, it will record it internally so we does not need to change _modified here
-    return *_active_scene;
+    return *_ActiveScene;
 }
 
-auto Project::get_active_scene() const -> const Scene&
+auto Project::GetActiveScene() const -> const Scene&
 {
-    ACDA_ASSERT(has_active_scene());
-    return *_active_scene;
+    ACDA_ASSERT(HasActiveScene());
+    return *_ActiveScene;
 }
 
-void Project::set_active_scene(const std::string& name)
+void Project::SetActiveScene(const std::string& name)
 {
-    auto is_same_scene = _active_scene && name == _active_scene->name;
+    auto is_same_scene = _ActiveScene && name == _ActiveScene->Name;
 
     if(!is_same_scene)
     {
-        MementoList::instance().clear();
+        MementoList::Instance().Clear();
 
-        if(_active_scene)
+        if(_ActiveScene)
         {
-            _active_scene.reset();
-            EventQueue::instance()
-                .signal<events::SceneDeactivated>();
+            _ActiveScene.reset();
+            EventQueue::Instance()
+                .Signal<Events::SceneDeactivated>();
         }
 
-        if(!name.empty() && scene_sptr_storage.find(name) != scene_sptr_storage.end())
+        if(!name.empty() && Scenes.find(name) != Scenes.end())
         {
-            _active_scene = scene_sptr_storage.at(name);
+            _ActiveScene = Scenes.at(name);
 
             // Snapshot the scene but not put it into memento list
-            _snapshot_entities();
+            _SnapshotEntities();
 
-            EventQueue::instance()
-                .signal<events::SceneActivated>(_active_scene);
+            EventQueue::Instance()
+                .Signal<Events::SceneActivated>(_ActiveScene);
         }
     }
 }
 
-void Project::_snapshot_entities()
+void Project::_SnapshotEntities()
 {
-    for(auto [entity, comp] : _active_scene->view<CameraComponent>().each())
+    for(auto [entity, comp] : _ActiveScene->GetComponentView<CameraComponent>().each())
     {
-        comp.snapshot();
+        comp.Snapshot();
     }
-    for(auto [entity, comp] : _active_scene->view<LightComponent>().each())
+    for(auto [entity, comp] : _ActiveScene->GetComponentView<LightComponent>().each())
     {
-        comp.snapshot();
+        comp.Snapshot();
     }
-    for(auto [entity, comp] : _active_scene->view<ModelComponent>().each())
+    for(auto [entity, comp] : _ActiveScene->GetComponentView<ModelComponent>().each())
     {
-        comp.snapshot();
+        comp.Snapshot();
     }
-    for(auto [entity, comp] : _active_scene->view<PhysicsComponent>().each())
+    for(auto [entity, comp] : _ActiveScene->GetComponentView<PhysicsComponent>().each())
     {
-        comp.snapshot();
+        comp.Snapshot();
     }
-    for(auto [entity, comp] : _active_scene->view<TransformComponent>().each())
+    for(auto [entity, comp] : _ActiveScene->GetComponentView<TransformComponent>().each())
     {
-        comp.snapshot();
+        comp.Snapshot();
     }
 }

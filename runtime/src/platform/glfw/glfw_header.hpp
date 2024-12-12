@@ -7,10 +7,10 @@
 
 ACDA_EXCEPTION(GlfwError);
 
-struct GlfwContext: Noncopyable
+class GlfwContext: public Noncopyable
 {
 public:
-    using self_type = GlfwContext;
+    using SelfType = GlfwContext;
 public:
     GlfwContext();
     ~GlfwContext();

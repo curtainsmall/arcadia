@@ -8,19 +8,19 @@
 
 #include"project/project_layer.hpp"
 
-struct EditorContext
+class EditorContext
 {
 public:
-    using self_type = EditorContext;
+    using SelfType = EditorContext;
 public:
-    static auto instance() -> self_type&;
+    static auto Instance() -> SelfType&;
 
 public:
-    std::weak_ptr<WindowLayer> main_window_layer{};
-    std::weak_ptr<ImguiLayer> main_imgui_layer{};
-    std::weak_ptr<ProjectLayer> main_project_layer{};
+    std::weak_ptr<WindowLayer> MainWindowLayer{};
+    std::weak_ptr<ImguiLayer> MainImguiLayer{};
+    std::weak_ptr<ProjectLayer> MainProjectLayer{};
 
-    bool in_play_mode{ false };
+    bool InPlayMode{ false };
 
-    float ui_scale ={ -1.0f };
+    float UiScale ={ -1.0f };
 };

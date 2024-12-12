@@ -4,32 +4,32 @@
 #include"core/math.hpp"
 #include"platform/opengl/opengl_header.hpp"
 
-struct GlRenderbuffer: Noncopyable
+class GlRenderbuffer: public Noncopyable
 {
 public:
-    using self_type = GlRenderbuffer;
+    using SelfType = GlRenderbuffer;
 public:
     GlRenderbuffer();
     GlRenderbuffer(GLenum format, const glm::ivec2& size);
     ~GlRenderbuffer();
 
-    GlRenderbuffer(self_type&&) noexcept = default;
-    auto operator=(self_type&&) noexcept -> self_type & = default;
+    GlRenderbuffer(SelfType&&) noexcept = default;
+    auto operator=(SelfType&&) noexcept -> SelfType & = default;
 
     [[nodiscard]]
-    auto gl_id() const ->GLuint
+    auto GetGlId() const ->GLuint
     {
-        return _gl_id;
+        return _GlId;
     }
 
-    void bind() const;
-    void unbind() const;
+    void Bind() const;
+    void Unbind() const;
 
-    void set_storage(
+    void SetStorage(
         GLenum format,
         const glm::ivec2& size
     );
 
 private:
-    GLuint _gl_id{ 0 };
+    GLuint _GlId{ 0 };
 };

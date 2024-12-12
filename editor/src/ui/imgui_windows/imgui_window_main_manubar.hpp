@@ -12,65 +12,65 @@
 #include"project/project.hpp"
 #include"project/project_events.hpp"
 
-struct ImguiWindowPopupCreateProject
+class ImguiWindowPopupCreateProject
 {
 public:
-    using self_type = ImguiWindowPopupCreateProject;
+    using SelfType = ImguiWindowPopupCreateProject;
 public:
     void operator()();
 public:
-    bool open{ false };
+    bool Opened{ false };
 private:
-    std::string _name{};
-    std::string _filepath_str{};
-    bool _display_empty_name_warning{ true };
+    std::string _Name{};
+    std::string _FilepathString{};
+    bool _ShouldShowEmptyNameWarning{ true };
 };
 
-struct ImguiWindowPopupCreateScene
+class ImguiWindowPopupCreateScene
 {
 public:
-    using self_type = ImguiWindowPopupCreateScene;
+    using SelfType = ImguiWindowPopupCreateScene;
 public:
     void operator()(const std::shared_ptr<const Project>& project);
 public:
-    bool open{ false };
+    bool Opened{ false };
 private:
-    std::string _name{};
-    bool _as_current{ true };
-    bool _name_available{ true };
+    std::string _Name{};
+    bool _AsCurrent{ true };
+    bool _NameAvailable{ true };
 };
 
-struct ImguiWindowMainMenubar: iImguiWindow
+class ImguiWindowMainMenubar: public iImguiWindow
 {
 public:
-    using self_type = ImguiWindowMainMenubar;
+    using SelfType = ImguiWindowMainMenubar;
 public:
     ACDA_IMGUI_WINDOW_ID_STR_GETTERS("###menubar");
 
     ImguiWindowMainMenubar(const std::initializer_list<std::tuple<std::string, std::string>>& imgui_window_title_id_pairs) :
         iImguiWindow(true, "Main Menubar"),
-        _imgui_window_title_and_id_str_pairs(imgui_window_title_id_pairs)
+        _ImguiWindowTitleAndIdStringPairs(imgui_window_title_id_pairs)
     {}
     virtual ~ImguiWindowMainMenubar() = default;
 
-    virtual void on_event(EventBase& e) override;
-    virtual void on_update() override;
+    virtual void OnEvent(EventBase& e) override;
+    virtual void OnUpdate() override;
 private:
-    void _file_menu();
-    void _edit_menu();
-    void _view_menu();
-    void _option_menu();
+    void _ShowFileMenu();
+    void _ShowEditMenu();
+    void _ShowViewMenu();
+    void _ShowOptionMenu();
 
-    void _on_project_built(events::ProjectBuilt& e);
-    void _on_project_unbuilt(events::ProjectUnbuilt& e);
+    void _OnProjectBuilt(Events::ProjectBuilt& e);
+    void _OnProjectUnbuilt(Events::ProjectUnbuilt& e);
 
 private:
-    ImguiWindowPopupCreateProject _imgui_window_popup_create_project{};
-    ImguiWindowPopupCreateScene _imgui_window_popup_create_scene{};
+    ImguiWindowPopupCreateProject _ImguiWindowPopupCreateProject{};
+    ImguiWindowPopupCreateScene _ImguiWindowPopupCreateScene{};
 
-    std::weak_ptr<const Project> _project{};
+    std::weak_ptr<const Project> _Project{};
 
-    std::vector<std::tuple<std::string, std::string>> _imgui_window_title_and_id_str_pairs{};
+    std::vector<std::tuple<std::string, std::string>> _ImguiWindowTitleAndIdStringPairs{};
 
-    bool _show_gizmo{ false };
+    bool _ShouldShowGizmo{ false };
 };

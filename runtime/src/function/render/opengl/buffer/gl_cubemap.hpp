@@ -5,30 +5,30 @@
 #include"platform/opengl/opengl_header.hpp"
 #include"resource/cubemap.hpp"
 
-struct GlCubemap: Noncopyable
+class GlCubemap: public Noncopyable
 {
 public:
-    using self_type = GlCubemap;
+    using SelfType = GlCubemap;
 public:
     GlCubemap(const Cubemap& cubemap);
     ~GlCubemap();
 
-    GlCubemap(self_type&& rhs) noexcept;
-    auto operator=(self_type&& rhs) noexcept -> self_type&;
+    GlCubemap(SelfType&& rhs) noexcept;
+    auto operator=(SelfType&& rhs) noexcept -> SelfType&;
 
     [[nodiscard]]
-    auto gl_id() const -> GLuint
+    auto GetGlId() const -> GLuint
     {
-        return _gl_id;
+        return _GlId;
     }
 
-    void bind(GLenum slot = 0);
-    void unbind();
+    void Bind(GLenum slot = 0);
+    void Unbind();
 
-    void set_tex_param(GLenum pname, GLint param);
-    void set_tex_param(GLenum pname, GLfloat param);
+    void SetTextureParameter(GLenum pname, GLint param);
+    void SetTextureParameter(GLenum pname, GLfloat param);
 
 private:
-    GLuint _gl_id{};
-    GLenum _slot{ -1u };
+    GLuint _GlId{};
+    GLenum _Slot{ -1u };
 };

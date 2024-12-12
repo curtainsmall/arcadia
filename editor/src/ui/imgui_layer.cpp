@@ -14,14 +14,14 @@ ImguiLayer::ImguiLayer(
     const std::function<void()>& imgui_style_setter
 ) :
     iLayer("imgui"),
-    _window(window_layer)
+    _Window(window_layer)
 {
-    _imgui_context = ImGui::CreateContext();
-    ImGui::SetCurrentContext(_imgui_context);
+    _ImguiContext = ImGui::CreateContext();
+    ImGui::SetCurrentContext(_ImguiContext);
 
-    scale_ui(EditorContext::instance().ui_scale);
+    ScaleUi(EditorContext::Instance().UiScale);
 
-    auto& io = _imgui_context->IO;
+    auto& io = _ImguiContext->IO;
     io.ConfigWindowsMoveFromTitleBarOnly = true;
     io.ConfigFlags =
         ImGuiConfigFlags_DockingEnable
@@ -32,9 +32,9 @@ ImguiLayer::ImguiLayer(
     ImFontConfig imgui_font_config{};
     imgui_font_config.MergeMode = true;
     static const std::array<ImWchar, 3> imgui_icon_ranges{ ICON_MIN_FA, ICON_MAX_FA,0 };
-    io.Fonts->AddFontFromFileTTF(font_filepath_str.c_str(), font_size, &imgui_font_config, imgui_icon_ranges.data());
+    io.Fonts->AddFontFromFileTTF(FontFilepathString.c_str(), FontSize, &imgui_font_config, imgui_icon_ranges.data());
 
-    imgui_backend::initialize(*_window.lock());
+    ImguiBackend::Initialize(*_Window.lock());
 
     imgui_style_setter();
     imgui_window_installer(*this);
@@ -42,64 +42,64 @@ ImguiLayer::ImguiLayer(
 
 ImguiLayer::~ImguiLayer()
 {
-    if(_imgui_context)
+    if(_ImguiContext)
     {
-        imgui_backend::shutdown(*_window.lock());
-        ImGui::DestroyContext(_imgui_context);
+        ImguiBackend::Shutdown(*_Window.lock());
+        ImGui::DestroyContext(_ImguiContext);
     }
 }
 
-void ImguiLayer::on_event(EventBase& e)
+void ImguiLayer::OnEvent(EventBase& e)
 {
     // We do not dispatch events to ImGui when the editor is in play mode
-    if(EditorContext::instance().in_play_mode)
+    if(EditorContext::Instance().InPlayMode)
     {
         return;
     }
 
     EventDispatcher{ e }
-        .dispatch<events::ScaleImguiWindow>(ACDA_BIND_MEMBER_FN(_on_scale_imgui_window))
-        .is_dispatched();
+        .Dispatch<Events::ScaleImguiWindow>(ACDA_BIND_MEMBER_FN(_OnScaleImguiWindow))
+        .IsDispatched();
 
-    imgui_backend::on_event(e);
-    for(auto& imgui_window : _imgui_window)
+    ImguiBackend::OnEvent(e);
+    for(auto& imgui_window : _ImguiWindow)
     {
-        imgui_window->on_event(e);
+        imgui_window->OnEvent(e);
     }
 }
 
-void ImguiLayer::on_update()
+void ImguiLayer::OnUpdate()
 {
-    auto window = _window.lock();
+    auto window = _Window.lock();
 
-    ImGui::SetCurrentContext(_imgui_context);
+    ImGui::SetCurrentContext(_ImguiContext);
 
-    imgui_backend::new_frame(*window);
+    ImguiBackend::NewFrame(*window);
     ImGui::NewFrame();
     ImGuizmo::BeginFrame();
 
     ImGui::DockSpaceOverViewport();
 
-    if(show_debug_info)
+    if(ShouldShowDebugInfo)
     {
         ImGui::ShowStackToolWindow();
         ImGui::ShowMetricsWindow();
     }
 
-    if(show_demo_window)
+    if(ShouldShowDemoWindow)
     {
         ImGui::ShowDemoWindow();
     }
     else
     {
-        for(auto& imgui_window : _imgui_window)
+        for(auto& imgui_window : _ImguiWindow)
         {
-            imgui_window->on_update();
+            imgui_window->OnUpdate();
         }
     }
 
     ImGui::Render();
-    imgui_backend::render_draw_data(*window);
+    ImguiBackend::RenderDrawData(*window);
 
     if(ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
     {
@@ -110,14 +110,14 @@ void ImguiLayer::on_update()
     }
 }
 
-void ImguiLayer::scale_ui(float factor)
+void ImguiLayer::ScaleUi(float factor)
 {
     ImGui::GetIO().FontGlobalScale = factor;
     ImGui::GetStyle().ScaleAllSizes(factor);
 }
 
-void ImguiLayer::_on_scale_imgui_window(events::ScaleImguiWindow& e)
+void ImguiLayer::_OnScaleImguiWindow(Events::ScaleImguiWindow& e)
 {
-    const auto& [scale] = e.data_tuple;
-    scale_ui(scale);
+    const auto& [scale] = e.DataTuple;
+    ScaleUi(scale);
 }

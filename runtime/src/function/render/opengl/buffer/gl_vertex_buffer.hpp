@@ -7,147 +7,147 @@
 #include"platform/opengl/opengl_header.hpp"
 #include"resource/mesh/vertex.hpp"
 
-struct GlBufferLayout
+class GlBufferLayout
 {
 public:
-    struct Attribute
+    class Attribute
     {
-        GLuint count;
-        GLenum type;
-        GLboolean normalized;
-        GLuint divisor;
+    public:
+        GLuint Count;
+        GLenum Type;
+        GLboolean Normalized;
+        GLuint Divisor;
     };
-    using self_type = GlBufferLayout;
+    using SelfType = GlBufferLayout;
 public:
     GlBufferLayout() = default;
     ~GlBufferLayout() = default;
 
-    template<class Type>
-    auto push(GLuint count = 1, GLuint dividor = 0) -> self_type&
+    template<typename Type>
+    auto Push(GLuint count = 1, GLuint dividor = 0) -> SelfType&
     {
         ACDA_ASSERT(false && "This generic template should never be occured");
         return *this;
     }
 
     template<>
-    auto push<glm::vec4>(GLuint count, GLuint divisor) -> self_type&
+    auto Push<glm::vec4>(GLuint count, GLuint divisor) -> SelfType&
     {
         for(GLuint i = 0; i < count; ++i)
         {
-            push<float>(4, divisor);
+            Push<float>(4, divisor);
         }
         return *this;
     }
 
     template<>
-    auto push<glm::vec3>(GLuint count, GLuint divisor) -> self_type&
+    auto Push<glm::vec3>(GLuint count, GLuint divisor) -> SelfType&
     {
         for(GLuint i = 0; i < count; ++i)
         {
-            push<float>(3, divisor);
+            Push<float>(3, divisor);
         }
         return *this;
     }
 
     template<>
-    auto push<glm::vec2>(GLuint count, GLuint divisor) -> self_type&
+    auto Push<glm::vec2>(GLuint count, GLuint divisor) -> SelfType&
     {
         for(GLuint i = 0; i < count; ++i)
         {
-            push<float>(2, divisor);
+            Push<float>(2, divisor);
         }
         return *this;
     }
 
     template<>
-    auto push<glm::mat4>(GLuint count, GLuint divisor) -> self_type&
+    auto Push<glm::mat4>(GLuint count, GLuint divisor) -> SelfType&
     {
         for(GLuint i = 0; i < count; i++)
         {
-            push<glm::vec4>(4, divisor);
+            Push<glm::vec4>(4, divisor);
         }
         return *this;
     }
 
     template<>
-    auto push<glm::mat3>(GLuint count, GLuint divisor) -> self_type&
+    auto Push<glm::mat3>(GLuint count, GLuint divisor) -> SelfType&
     {
         for(GLuint i = 0; i < count; i++)
         {
-            push<glm::vec3>(3, divisor);
+            Push<glm::vec3>(3, divisor);
         }
         return *this;
     }
 
     template<>
-    auto push<glm::mat2>(GLuint count, GLuint divisor) -> self_type&
+    auto Push<glm::mat2>(GLuint count, GLuint divisor) -> SelfType&
     {
         for(GLuint i = 0; i < count; i++)
         {
-            push<glm::vec2>(2, divisor);
+            Push<glm::vec2>(2, divisor);
         }
         return *this;
     }
 
     template<>
-    auto push<float>(GLuint count, GLuint divisor) -> self_type&
+    auto Push<float>(GLuint count, GLuint divisor) -> SelfType&
     {
-        layout_attributes.emplace_back(count, GL_FLOAT, GL_FALSE, divisor);
-        stride += gl_sizeof(GL_FLOAT) * count;
+        LayoutAttributes.emplace_back(count, GL_FLOAT, GL_FALSE, divisor);
+        Stride += GlGetTypeSize(GL_FLOAT) * count;
         return *this;
     }
 
     template<>
-    auto push<unsigned int>(GLuint count, GLuint divisor) -> self_type&
+    auto Push<unsigned int>(GLuint count, GLuint divisor) -> SelfType&
     {
-        layout_attributes.emplace_back(count, GL_UNSIGNED_INT, GL_FALSE, divisor);
-        stride += gl_sizeof(GL_UNSIGNED_INT) * count;
+        LayoutAttributes.emplace_back(count, GL_UNSIGNED_INT, GL_FALSE, divisor);
+        Stride += GlGetTypeSize(GL_UNSIGNED_INT) * count;
         return *this;
     }
 
     template<>
-    auto push<unsigned char>(GLuint count, GLuint divisor) -> self_type&
+    auto Push<unsigned char>(GLuint count, GLuint divisor) -> SelfType&
     {
-        layout_attributes.emplace_back(count, GL_UNSIGNED_BYTE, GL_FALSE, divisor);
-        stride += gl_sizeof(GL_UNSIGNED_BYTE) * count;
+        LayoutAttributes.emplace_back(count, GL_UNSIGNED_BYTE, GL_FALSE, divisor);
+        Stride += GlGetTypeSize(GL_UNSIGNED_BYTE) * count;
         return *this;
     }
 public:
-    std::vector<Attribute> layout_attributes{};
-    GLsizei stride{};
-
+    std::vector<Attribute> LayoutAttributes{};
+    GLsizei Stride{};
 };
 
-struct GlVertexBuffer: Noncopyable
+class GlVertexBuffer: public Noncopyable
 {
 public:
-    using self_type = GlVertexBuffer;
+    using SelfType = GlVertexBuffer;
 public:
     GlVertexBuffer(const std::vector<Vertex>& vertices);
     ~GlVertexBuffer();
 
-    GlVertexBuffer(self_type&& rhs) noexcept;
-    auto operator=(self_type&& rhs) noexcept -> self_type&;
+    GlVertexBuffer(SelfType&& rhs) noexcept;
+    auto operator=(SelfType&& rhs) noexcept -> SelfType&;
 
     [[nodiscard]]
-    auto gl_id() const -> GLuint
+    auto GetGlId() const -> GLuint
     {
-        return _gl_id;
+        return _GlId;
     }
 
     [[nodiscard]]
-    auto vertex_count() const -> GLsizei
+    auto GetVertexCount() const -> GLsizei
     {
-        return _vertex_count;
+        return _VertexCount;
     }
 
-    void bind() const;
-    void unbind() const;
+    void Bind() const;
+    void Unbind() const;
 
     /// @note Call this function @b after the OpenGL vertex array you want to use has been bound
-    void setup_vertex_attrib_array() const;
+    void SetupVertexAttributeArray() const;
 private:
-    GLuint _gl_id{ 0 };
-    GlBufferLayout _buffer_layout{};
-    GLsizei _vertex_count{ 0 };
+    GLuint _GlId{ 0 };
+    GlBufferLayout _BufferLayout{};
+    GLsizei _VertexCount{ 0 };
 };

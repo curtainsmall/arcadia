@@ -3,12 +3,12 @@
 #include"core/base.hpp"
 #include"core/math.hpp"
 
-struct Vertex
+class Vertex
 {
 public:
-    using self_type = Vertex;
+    using SelfType = Vertex;
 public:
-    glm::vec3 coord{ vec3::zero() };
-    glm::vec3 normal{ vec3::zero() };
-    glm::vec2 tex_coord{ vec2::zero() };
+    glm::vec3 Coordinate{ Vec3::CreateZero() };
+    glm::vec3 Normal{ Vec3::CreateZero() };
+    glm::vec2 TextureCoordinate{ Vec2::CreateZero() };
 };

@@ -14,52 +14,52 @@
 #include"project/project_events.hpp"
 #include"ui/ui_events.hpp"
 
-struct ProjectLayer: iLayer
+class ProjectLayer: public iLayer
 {
 public:
     ProjectLayer();
     virtual ~ProjectLayer();
 
-    virtual void on_event(EventBase& e) override;
-    virtual void on_update() override;
+    virtual void OnEvent(EventBase& e) override;
+    virtual void OnUpdate() override;
 
     [[nodiscard]]
-    inline auto has_project() const noexcept -> bool
+    inline auto HasProject() const noexcept -> bool
     {
-        return !!_project;
+        return !!_Project;
     }
 private:
     [[nodiscard]]
-    auto _assert_and_get_scene() -> Scene&;
+    auto _AssertAndGetScene() -> Scene&;
 
-    void _save_project();
-    void _load_project();
+    void _SaveProject();
+    void _LoadProject();
 
-    void _on_window_should_close(events::WindowShouldClose& e);
+    void _OnWindowShouldClose(Events::WindowShouldClose& e);
 
-    void _on_create_project(events::CreateProject& e);
-    void _on_open_project(events::OpenProject& e);
-    void _on_save_project(events::SaveProject& e);
-    void _on_save_project_as(events::SaveProjectAs& e);
-    void _on_close_project(events::CloseProject& e);
-    void _on_project_saved(events::ProjectSaved& e);
+    void _OnCreateProject(Events::CreateProject& e);
+    void _OnOpenProject(Events::OpenProject& e);
+    void _OnSaveProject(Events::SaveProject& e);
+    void _OnSaveProjectAs(Events::SaveProjectAs& e);
+    void _OnCloseProject(Events::CloseProject& e);
+    void _OnProjectSaved(Events::ProjectSaved& e);
 
-    void _on_create_scene(events::CreateScene& e);
-    void _on_select_scene(events::SelectScene& e);
-    void _on_close_scene(events::CloseScene& e);
-    void _on_delete_scene(events::DeleteScene& e);
+    void _OnCreateScene(Events::CreateScene& e);
+    void _OnSelectScene(Events::SelectScene& e);
+    void _OnCloseScene(Events::CloseScene& e);
+    void _OnDeleteScene(Events::DeleteScene& e);
 
-    void _on_new_entity(events::NewEntity& e);
-    void _on_rename_entity(events::RenameEntity& e);
-    void _on_delete_entity(events::DeleteEntity& e);
+    void _OnNewEntity(Events::NewEntity& e);
+    void _OnRenameEntity(Events::RenameEntity& e);
+    void _OnDeleteEntity(Events::DeleteEntity& e);
 
-    void _on_add_component(events::AddComponent& e);
-    void _on_remove_component(events::RemoveComponent& e);
+    void _OnAddComponent(Events::AddComponent& e);
+    void _OnRemoveComponent(Events::RemoveComponent& e);
 
 private:
-    std::filesystem::path _project_component{};
-    std::shared_ptr<Project> _project{};
+    std::filesystem::path _ProjectFilepath{};
+    std::shared_ptr<Project> _Project{};
 
-    std::shared_ptr<iRenderer> _renderer{};
-    std::shared_ptr<PhysicsSimulator> _physics_simulator{};
+    std::shared_ptr<iRenderer> _Renderer{};
+    std::shared_ptr<PhysicsSimulator> _PhysicsSimulator{};
 };

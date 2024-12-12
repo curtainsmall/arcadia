@@ -4,12 +4,12 @@
 #include"resource/components/component_interface.hpp"
 #include"resource/cubemap.hpp"
 
-struct SkyboxComponent: iComponent
+class SkyboxComponent: iComponent
 {
 public:
-    using self_type = SkyboxComponent;
+    using SelfType = SkyboxComponent;
 public:
-    ACDA_COMPONENT_TYPE_STR_GETTERS("Skybox");
+    ACDA_COMPONENT_TYPE_STR_GETTERS("skybox");
 
     SkyboxComponent() = default;
     ~SkyboxComponent() = default;

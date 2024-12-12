@@ -9,7 +9,7 @@
 /// @brief Decompse transform matrix to translation, rotation and scale components
 /// @param transform Transform matrix
 /// @return Decomposed components, or nullopt if the transform matrix is zero
-auto decompose(const glm::mat4& transform)
+auto Decompose(const glm::mat4& transform)
 -> std::optional<std::tuple<
     glm::vec3, // Translation
     glm::vec3, // Rotation

@@ -6,10 +6,10 @@
 #include"core/math/glm_header.hpp"
 #include"core/nlohmann_json_header.hpp"
 
-namespace vec2
+namespace Vec2
 {
     [[nodiscard]]
-    ACDA_API static inline auto to_json(const glm::vec2& vec) -> nlohmann::json
+    ACDA_API static inline auto ToJson(const glm::vec2& vec) -> nlohmann::json
     {
         return nlohmann::json{
              { "x",vec.x },
@@ -17,7 +17,7 @@ namespace vec2
         };
     }
     [[nodiscard]]
-    ACDA_API static inline auto from_json(const nlohmann::json& json) -> glm::vec2
+    ACDA_API static inline auto FromJson(const nlohmann::json& json) -> glm::vec2
     {
         return glm::vec2{
             json.at("x"),
@@ -26,29 +26,29 @@ namespace vec2
     }
 
     [[nodiscard]]
-    ACDA_API constexpr auto zero() -> glm::vec2
+    ACDA_API constexpr auto CreateZero() -> glm::vec2
     {
         return glm::vec2{};
     }
     [[nodiscard]]
-    ACDA_API constexpr auto pos_x() -> glm::vec2
+    ACDA_API constexpr auto CreateUnitPositiveX() -> glm::vec2
     {
         return glm::vec2{ 1.f,.0f };
     }
     [[nodiscard]]
-    ACDA_API constexpr auto pos_y() -> glm::vec2
+    ACDA_API constexpr auto CreateUnitPositiveY() -> glm::vec2
     {
         return glm::vec2{ .0f,1.f };
     }
     [[nodiscard]]
-    ACDA_API constexpr auto neg_x() -> glm::vec2
+    ACDA_API constexpr auto CreateUnitNegativeX() -> glm::vec2
     {
-        return -pos_x();
+        return -CreateUnitPositiveX();
     }
     [[nodiscard]]
-    ACDA_API constexpr auto neg_y() -> glm::vec2
+    ACDA_API constexpr auto CreateUnitNegativeY() -> glm::vec2
     {
-        return -pos_y();
+        return -CreateUnitPositiveY();
     }
 
     /// @brief Normalize vector with one axis fixed
@@ -57,7 +57,7 @@ namespace vec2
     /// @return Normalized vector
     template<size_t Index>
     [[nodiscard]]
-    ACDA_API static inline auto normalize_fixedly(const glm::vec2& vec) -> glm::vec2
+    ACDA_API static inline auto NormalizeFixedly(const glm::vec2& vec) -> glm::vec2
     {
         static_assert(Index >= 0 && Index < 2);
 
@@ -74,14 +74,12 @@ namespace vec2
         res[1 - Index] = a;
         return res;
     }
-
 }
 
-namespace ivec2
+namespace IntVec2
 {
-
     [[nodiscard]]
-    ACDA_API static inline auto to_json(const glm::ivec2& vec) -> nlohmann::json
+    ACDA_API static inline auto ToJson(const glm::ivec2& vec) -> nlohmann::json
     {
         return nlohmann::json{
             {"x",vec.x},
@@ -89,7 +87,7 @@ namespace ivec2
         };
     }
     [[nodiscard]]
-    ACDA_API static inline auto from_json(const nlohmann::json& json) -> glm::ivec2
+    ACDA_API static inline auto FromJson(const nlohmann::json& json) -> glm::ivec2
     {
         return glm::ivec2{
                 json.at("x"),
@@ -101,8 +99,9 @@ namespace ivec2
 namespace std
 {
     template<>
-    struct std::formatter<glm::vec2>: std::formatter<std::string>
+    class formatter<glm::vec2>:public std::formatter<std::string>
     {
+    public:
         auto format(const glm::vec2& vec, std::format_context& ctx) const
         {
             return std::formatter<std::string>::format(
@@ -113,8 +112,9 @@ namespace std
     };
 
     template<>
-    struct std::formatter<glm::ivec2>: std::formatter<std::string>
+    class formatter<glm::ivec2>: public std::formatter<std::string>
     {
+    public:
         auto format(const glm::ivec2& vec, std::format_context& ctx) const
         {
             return std::formatter<std::string>::format(

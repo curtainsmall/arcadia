@@ -9,28 +9,28 @@
 #include"core/math.hpp"
 #include"platform/graphic_api/graphic_api.hpp"
 
-struct AppConfig
+class AppConfig
 {
 public:
-    using self_type = AppConfig;
+    using SelfType = AppConfig;
 public:
-    static auto instance() -> self_type&;
+    static auto Instance() -> SelfType&;
 public:
-    static inline std::filesystem::path filepath{ to_filepath(".acdacfg") };
+    static inline std::filesystem::path Filepath{ ToFilepath(".acdacfg") };
 
-    std::filesystem::path working_directory{ to_filepath("./") };
-    graphic_api::Type graphic_api{};
+    std::filesystem::path WorkingDirectory{ ToFilepath("./") };
+    GraphicApi::Type GraphicApi{};
 
     // Window
-    glm::ivec2 window_pos{ -1,-1 }; // Use negative value for `don't care`
-    glm::ivec2 window_size{ 1280,768 };
-    glm::ivec2 window_size_min{ 800,600 };
-    glm::ivec2 window_size_max{ -1,-1 }; // Use negative value for `don't care`
-    std::string window_title{ "Arcadia" };
-    int window_multisample_count{ 0 };
-    bool window_maxmized{ true };
+    glm::ivec2 WindowPosition{ -1,-1 }; // Use negative value for `don't care`
+    glm::ivec2 WindowSize{ 1280,768 };
+    glm::ivec2 WindowSizeMin{ 800,600 };
+    glm::ivec2 WindowSizeMax{ -1,-1 }; // Use negative value for `don't care`
+    std::string WindowTitle{ "Arcadia" };
+    int WindowMultisampleCount{ 0 };
+    bool WindowMaxmized{ true };
 
     // ImGui
-    std::set<std::string> imgui_opened_window_id_strs{};
-    float ui_scale ={ 1.0f };
+    std::set<std::string> ImguiOpenedWindowIdStrings{};
+    float UiScale ={ 1.0f };
 };

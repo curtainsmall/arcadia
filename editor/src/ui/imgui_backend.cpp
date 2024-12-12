@@ -7,31 +7,31 @@
 
 #include"core/app/app_config.hpp"
 
-ACDA_API void imgui_backend::initialize(const WindowLayer& window)
+ACDA_API void ImguiBackend::Initialize(const WindowLayer& window)
 {
-    const auto& app_config = AppConfig::instance();
+    const auto& app_config = AppConfig::Instance();
 
-    match<void>(
-        app_config.graphic_api,
-        [&](const graphic_api::Opengl& opengl) -> void
+    Match<void>(
+        app_config.GraphicApi,
+        [&](const GraphicApi::Opengl& opengl) -> void
     {
         std::string glsl_version{};
-        if(opengl.version >= Version{ 3,3,0 })
+        if(opengl.Version >= Version{ 3,3,0 })
         {
-            glsl_version = std::format("#version {0}{1}0", opengl.version.major, opengl.version.minor);
+            glsl_version = std::format("#version {0}{1}0", opengl.Version.Major, opengl.Version.Minor);
         }
         else
         {
-            if(opengl.version >= Version{ 3,0,0 })
+            if(opengl.Version >= Version{ 3,0,0 })
             {
-                glsl_version = std::format("#version 1{}0", opengl.version.minor + 3);
+                glsl_version = std::format("#version 1{}0", opengl.Version.Minor + 3);
             }
             else
             {
-                glsl_version = std::format("#version 1{}0", opengl.version.minor + 1);
+                glsl_version = std::format("#version 1{}0", opengl.Version.Minor + 1);
             }
         }
-        ImGui_ImplGlfw_InitForOpenGL(window.glfw_window(), false);
+        ImGui_ImplGlfw_InitForOpenGL(window.GetGlfwWindow(), false);
         ImGui_ImplOpenGL3_Init(glsl_version.c_str());
     },
         [](auto&&) -> void
@@ -40,13 +40,13 @@ ACDA_API void imgui_backend::initialize(const WindowLayer& window)
     );
 }
 
-ACDA_API void imgui_backend::new_frame(const WindowLayer& window)
+ACDA_API void ImguiBackend::NewFrame(const WindowLayer& window)
 {
-    const auto& app_config = AppConfig::instance();
+    const auto& app_config = AppConfig::Instance();
 
-    match<void>(
-        app_config.graphic_api,
-        [](const graphic_api::Opengl&) -> void
+    Match<void>(
+        app_config.GraphicApi,
+        [](const GraphicApi::Opengl&) -> void
     {
         ImGui_ImplGlfw_NewFrame();
         ImGui_ImplOpenGL3_NewFrame();
@@ -57,13 +57,13 @@ ACDA_API void imgui_backend::new_frame(const WindowLayer& window)
     );
 }
 
-ACDA_API void imgui_backend::render_draw_data(const WindowLayer& window)
+ACDA_API void ImguiBackend::RenderDrawData(const WindowLayer& window)
 {
-    const auto& app_config = AppConfig::instance();
+    const auto& app_config = AppConfig::Instance();
 
-    match<void>(
-        app_config.graphic_api,
-        [](const graphic_api::Opengl&) -> void
+    Match<void>(
+        app_config.GraphicApi,
+        [](const GraphicApi::Opengl&) -> void
     {
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
     },
@@ -73,13 +73,13 @@ ACDA_API void imgui_backend::render_draw_data(const WindowLayer& window)
     );
 }
 
-ACDA_API void imgui_backend::shutdown(const WindowLayer& window)
+ACDA_API void ImguiBackend::Shutdown(const WindowLayer& window)
 {
-    const auto& app_config = AppConfig::instance();
+    const auto& app_config = AppConfig::Instance();
 
-    match<void>(
-        app_config.graphic_api,
-        [](const graphic_api::Opengl&) -> void
+    Match<void>(
+        app_config.GraphicApi,
+        [](const GraphicApi::Opengl&) -> void
     {
         ImGui_ImplOpenGL3_Shutdown();
         ImGui_ImplGlfw_Shutdown();
@@ -90,75 +90,75 @@ ACDA_API void imgui_backend::shutdown(const WindowLayer& window)
     );
 }
 
-ACDA_API void imgui_backend::on_event(EventBase& e)
+ACDA_API void ImguiBackend::OnEvent(EventBase& e)
 {
     if(EventDispatcher{ e }
-        .dispatch<events::WindowFocus>(imgui_backend::on_window_focus)
-        .dispatch<events::InputCursorEnter>(imgui_backend::on_cursor_enter)
-        .dispatch<events::InputCursorPos>(imgui_backend::on_cursor_pos)
-        .dispatch<events::InputMouseButton>(imgui_backend::on_mouse_button)
-        .dispatch<events::InputScroll>(imgui_backend::on_scroll)
-        .dispatch<events::InputKey>(imgui_backend::on_key)
-        .dispatch<events::InputChar>(imgui_backend::on_char)
-        //.dispatch<events::MonitorConnection>(imgui_backend::on_monitor) // We will manage monitors ourselves for now
-        .is_dispatched())
+        .Dispatch<Events::WindowFocused>(ImguiBackend::OnWindowFocus)
+        .Dispatch<Events::InputCursorEnter>(ImguiBackend::OnInputCursorEnter)
+        .Dispatch<Events::InputCursorPos>(ImguiBackend::OnInputCursorPos)
+        .Dispatch<Events::InputMouseButton>(ImguiBackend::OnInputMouseButton)
+        .Dispatch<Events::InputScroll>(ImguiBackend::OnInputScroll)
+        .Dispatch<Events::InputKey>(ImguiBackend::OnInputKey)
+        .Dispatch<Events::InputChar>(ImguiBackend::OnInputChar)
+        //.dispatch<Events::MonitorConnect>(ImguiBackend::OnMonitorConnect) // We will manage monitors ourselves for now
+        .IsDispatched())
     {
         auto& io = ImGui::GetIO();
         if(io.WantCaptureMouse || io.WantCaptureKeyboard)
         {
-            e.handled = true;
+            e.Handled = true;
         }
         else
         {
-            e.handled = false;
+            e.Handled = false;
         }
     }
 }
 
-ACDA_API void imgui_backend::on_window_focus(events::WindowFocus& WindowFocus)
+ACDA_API void ImguiBackend::OnWindowFocus(Events::WindowFocused& window_focused)
 {
-    const auto& [wnd_ptr, focused] = WindowFocus.data_tuple;
-    ImGui_ImplGlfw_WindowFocusCallback(wnd_ptr->glfw_window(), focused);
+    const auto& [wnd_ptr, focused] = window_focused.DataTuple;
+    ImGui_ImplGlfw_WindowFocusCallback(wnd_ptr->GetGlfwWindow(), focused);
 }
 
-ACDA_API void imgui_backend::on_cursor_enter(events::InputCursorEnter& input_cursor_enter)
+ACDA_API void ImguiBackend::OnInputCursorEnter(Events::InputCursorEnter& input_cursor_enter)
 {
-    const auto& [wnd_ptr, entered] = input_cursor_enter.data_tuple;
-    ImGui_ImplGlfw_CursorEnterCallback(wnd_ptr->glfw_window(), entered);
+    const auto& [wnd_ptr, entered] = input_cursor_enter.DataTuple;
+    ImGui_ImplGlfw_CursorEnterCallback(wnd_ptr->GetGlfwWindow(), entered);
 }
 
-ACDA_API void imgui_backend::on_cursor_pos(events::InputCursorPos& input_cursor_pos)
+ACDA_API void ImguiBackend::OnInputCursorPos(Events::InputCursorPos& input_cursor_pos)
 {
-    const auto& [wnd_ptr, pos] = input_cursor_pos.data_tuple;
-    ImGui_ImplGlfw_CursorPosCallback(wnd_ptr->glfw_window(), pos.x, pos.y);
+    const auto& [wnd_ptr, pos] = input_cursor_pos.DataTuple;
+    ImGui_ImplGlfw_CursorPosCallback(wnd_ptr->GetGlfwWindow(), pos.x, pos.y);
 }
 
-ACDA_API void imgui_backend::on_mouse_button(events::InputMouseButton& input_mouse_button)
+ACDA_API void ImguiBackend::OnInputMouseButton(Events::InputMouseButton& input_mouse_button)
 {
-    const auto& [wnd_ptr, button, action, mods] = input_mouse_button.data_tuple;
-    ImGui_ImplGlfw_MouseButtonCallback(wnd_ptr->glfw_window(), button, action, mods);
+    const auto& [wnd_ptr, button, action, mods] = input_mouse_button.DataTuple;
+    ImGui_ImplGlfw_MouseButtonCallback(wnd_ptr->GetGlfwWindow(), button, action, mods);
 }
 
-ACDA_API void imgui_backend::on_scroll(events::InputScroll& input_scroll)
+ACDA_API void ImguiBackend::OnInputScroll(Events::InputScroll& input_scroll)
 {
-    const auto& [wnd_ptr, Offset] = input_scroll.data_tuple;
-    ImGui_ImplGlfw_ScrollCallback(wnd_ptr->glfw_window(), Offset.x, Offset.y);
+    const auto& [wnd_ptr, Offset] = input_scroll.DataTuple;
+    ImGui_ImplGlfw_ScrollCallback(wnd_ptr->GetGlfwWindow(), Offset.x, Offset.y);
 }
 
-ACDA_API void imgui_backend::on_key(events::InputKey& input_key)
+ACDA_API void ImguiBackend::OnInputKey(Events::InputKey& input_key)
 {
-    const auto& [wnd_ptr, key, scancode, action, mods] = input_key.data_tuple;
-    ImGui_ImplGlfw_KeyCallback(wnd_ptr->glfw_window(), key, scancode, action, mods);
+    const auto& [wnd_ptr, key, scancode, action, mods] = input_key.DataTuple;
+    ImGui_ImplGlfw_KeyCallback(wnd_ptr->GetGlfwWindow(), key, scancode, action, mods);
 }
 
-ACDA_API void imgui_backend::on_char(events::InputChar& input_char)
+ACDA_API void ImguiBackend::OnInputChar(Events::InputChar& input_char)
 {
-    const auto& [wnd_ptr, code] = input_char.data_tuple;
-    ImGui_ImplGlfw_CharCallback(wnd_ptr->glfw_window(), code);
+    const auto& [wnd_ptr, code] = input_char.DataTuple;
+    ImGui_ImplGlfw_CharCallback(wnd_ptr->GetGlfwWindow(), code);
 }
 
-ACDA_API void imgui_backend::on_monitor(events::MonitorConnection& monitor_connection)
+ACDA_API void ImguiBackend::OnMonitorConnect(Events::MonitorConnect& monitor_connection)
 {
-    const auto& [glfw_monitor_ptr, connection] = monitor_connection.data_tuple;
+    const auto& [glfw_monitor_ptr, connection] = monitor_connection.DataTuple;
     ImGui_ImplGlfw_MonitorCallback(glfw_monitor_ptr, connection);
 }

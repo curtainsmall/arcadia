@@ -7,8 +7,6 @@
 #include"core/base.hpp"
 #include"core/event/event.hpp"
 #include"function/physics/physics_simulator.hpp"
-#include"ui/imgui_header.hpp"
-#include"ui/imgui_window.hpp"
 #include"platform/jolt/jolt_header.hpp"
 #include"resource/components/camera_component.hpp"
 #include"resource/components/light_component.hpp"
@@ -17,115 +15,117 @@
 #include"resource/components/skybox_component.hpp"
 #include"resource/components/transform_component.hpp"
 #include"resource/scene.hpp"
+#include"ui/imgui_header.hpp"
+#include"ui/imgui_window.hpp"
 
 #include"project/project_events.hpp"
 #include"ui/ui_events.hpp"
 
-struct ImguiWindowPropertyCameraComponent
+class ImguiWindowPropertyCameraComponent
 {
 public:
-    using self_type = ImguiWindowPropertyCameraComponent;
+    using SelfType = ImguiWindowPropertyCameraComponent;
 public:
     auto operator()(CameraComponent& camera_comp)->std::string;
 };
 
-struct ImguiWindowPropertyLightComponent
+class ImguiWindowPropertyLightComponent
 {
 public:
-    using self_type = ImguiWindowPropertyLightComponent;
+    using SelfType = ImguiWindowPropertyLightComponent;
 public:
     auto operator()(LightComponent& light_comp)->std::string;
 };
 
-struct ImguiWindowPropertyModelComponent
+class ImguiWindowPropertyModelComponent
 {
 public:
-    using self_type = ImguiWindowPropertyModelComponent;
+    using SelfType = ImguiWindowPropertyModelComponent;
 public:
     auto operator()(ModelComponent& model_comp)->std::string;
 };
 
-struct ImguiWindowPopupPhysicsComponentCreateBody
+class ImguiWindowPopupPhysicsComponentCreateBody
 {
 public:
-    using self_type = ImguiWindowPopupPhysicsComponentCreateBody;
+    using SelfType = ImguiWindowPopupPhysicsComponentCreateBody;
 public:
     void operator()(PhysicsComponent& physics_comp);
 public:
-    bool open{ false };
+    bool Opened{ false };
 private:
-    JphBodyInfo _temp_jph_body_info{};
+    JphBodyInfo _TempJphBodyInfo{};
 };
 
-struct ImguiWindowPropertyPhysicsComponent
+class ImguiWindowPropertyPhysicsComponent
 {
 public:
-    using self_type = ImguiWindowPropertyPhysicsComponent;
+    using SelfType = ImguiWindowPropertyPhysicsComponent;
 public:
     auto operator()(PhysicsComponent& physics_comp)->std::string;
 private:
-    ImguiWindowPopupPhysicsComponentCreateBody _imgui_window_popup_physics_component_create_body{};
+    ImguiWindowPopupPhysicsComponentCreateBody _ImguiWindowPopupPhysicsComponentCreateBody{};
 };
 
-struct ImguiWindowPropertyTransformComponent
+class ImguiWindowPropertyTransformComponent
 {
 public:
-    using self_type = ImguiWindowPropertyTransformComponent;
+    using SelfType = ImguiWindowPropertyTransformComponent;
 public:
     auto operator()(TransformComponent& transform_comp)->std::string;
 };
 
-struct ImguiWindowProperty: iImguiWindow
+class ImguiWindowProperty: public iImguiWindow
 {
 public:
-    using self_type = ImguiWindowProperty;
+    using SelfType = ImguiWindowProperty;
 public:
     ACDA_IMGUI_WINDOW_ID_STR_GETTERS("###property");
 
     inline ImguiWindowProperty(
         bool open,
         const std::string& title
-    ):
+    ) :
         iImguiWindow(open, title)
     {}
     virtual ~ImguiWindowProperty() = default;
 
-    virtual void on_event(EventBase& e) override;
-    virtual void on_update() override;
+    virtual void OnEvent(EventBase& e) override;
+    virtual void OnUpdate() override;
 private:
     template<cComponent Component>
-    auto _contains_component(const std::string& name) -> bool
+    auto _ContainsComponent(const std::string& name) -> bool
     {
-        auto scene = _scene.lock();
+        auto scene = _Scene.lock();
         ACDA_ASSERT(scene);
 
-        return scene->all_of<Component>(name);
+        return scene->ContainsAllComponents<Component>(name);
     }
     template<cComponent Component>
-    auto _get_component(const std::string& name) -> Component&
+    auto _GetComponent(const std::string& name) -> Component&
     {
-        auto scene = _scene.lock();
+        auto scene = _Scene.lock();
         ACDA_ASSERT(scene);
-        ACDA_ASSERT(_contains_component<Component>(name));
+        ACDA_ASSERT(_ContainsComponent<Component>(name));
 
-        return scene->get<Component>(name);
+        return scene->GetComponent<Component>(name);
     }
 
-    void _on_open_imgui_window(events::OpenImguiWindow& e);
-    void _on_scene_activated(events::SceneActivated& e);
-    void _on_scene_deactivated(events::SceneDeactivated& e);
-    void _on_select_entity(events::SelectEntity& e);
-    void _on_rename_entity(events::RenameEntity& e);
-    void _on_delete_entity(events::DeleteEntity& e);
+    void _OnOpenImguiWindow(Events::OpenImguiWindow& e);
+    void _OnSceneActivated(Events::SceneActivated& e);
+    void _OnSceneDeactivated(Events::SceneDeactivated& e);
+    void _OnSelectEntity(Events::SelectEntity& e);
+    void _OnRenameEntity(Events::RenameEntity& e);
+    void _OnDeleteEntity(Events::DeleteEntity& e);
 
 private:
 
-    std::weak_ptr<Scene> _scene{};
-    std::string _selected_entity_name{};
+    std::weak_ptr<Scene> _Scene{};
+    std::string _SelectedEntityName{};
 
-    ImguiWindowPropertyCameraComponent _imgui_window_property_camera_component{};
-    ImguiWindowPropertyLightComponent _imgui_window_property_light_component{};
-    ImguiWindowPropertyModelComponent _imgui_window_property_model_component{};
-    ImguiWindowPropertyPhysicsComponent _imgui_window_property_physics_component{};
-    ImguiWindowPropertyTransformComponent _imgui_window_property_transform_component{};
+    ImguiWindowPropertyCameraComponent _ImguiWindowPropertyCameraComponent{};
+    ImguiWindowPropertyLightComponent _ImguiWindowPropertyLightComponent{};
+    ImguiWindowPropertyModelComponent _ImguiWindowPropertyModelComponent{};
+    ImguiWindowPropertyPhysicsComponent _ImguiWindowPropertyPhysicsComponent{};
+    ImguiWindowPropertyTransformComponent _ImguiWindowPropertyTransformComponent{};
 };

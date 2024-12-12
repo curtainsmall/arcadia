@@ -13,50 +13,50 @@
 
 ACDA_EXCEPTION(ImguiError);
 
-struct ImguiLayer: iLayer
+class ImguiLayer: public iLayer
 {
 public:
-    using self_type = ImguiLayer;
+    using SelfType = ImguiLayer;
 public:
     ImguiLayer(
         const std::shared_ptr<const WindowLayer>& window_layer,
         const std::function<void(ImguiLayer&)>& imgui_window_installer ={},
-        const std::function<void()>& imgui_style_setter = imgui_style::default_dark
+        const std::function<void()>& imgui_style_setter = ImguiStyle::SetToDefaultDark
     );
     virtual ~ImguiLayer();
 
     [[nodiscard]]
-    auto get_window() const -> std::shared_ptr<const WindowLayer>
+    auto GetWindow() const -> std::shared_ptr<const WindowLayer>
     {
-        return _window.lock();
+        return _Window.lock();
     }
 
     [[nodiscard]]
-    auto get_imgui_window() const -> const std::vector<std::unique_ptr<iImguiWindow>>&
+    auto GetImguiWindow() const -> const std::vector<std::unique_ptr<iImguiWindow>>&
     {
-        return _imgui_window;
+        return _ImguiWindow;
     }
 
-    virtual void on_event(EventBase& e) override;
-    virtual void on_update() override;
+    virtual void OnEvent(EventBase& e) override;
+    virtual void OnUpdate() override;
 
-    template<cImguiWindow ImGuiWindow, class ...Args>
-    auto emplace_imgui_window(Args&& ...args) -> self_type&
+    template<cImguiWindow ImGuiWindow, typename ...Args>
+    auto EmplaceImguiWindow(Args&& ...args) -> SelfType&
     {
-        _imgui_window.emplace_back(std::make_unique<ImGuiWindow>(std::forward<Args>(args)...));
+        _ImguiWindow.emplace_back(std::make_unique<ImGuiWindow>(std::forward<Args>(args)...));
         return *this;
     }
 
-    void scale_ui(float factor);
+    void ScaleUi(float factor);
 
 private:
-    void _on_scale_imgui_window(events::ScaleImguiWindow& e);
+    void _OnScaleImguiWindow(Events::ScaleImguiWindow& e);
 
 public:
-    bool show_demo_window{ false };
-    bool show_debug_info{ false };
+    bool ShouldShowDemoWindow{ false };
+    bool ShouldShowDebugInfo{ false };
 private:
-    std::weak_ptr<const WindowLayer> _window;
-    ImGuiContext* _imgui_context{ nullptr };
-    std::vector<std::unique_ptr<iImguiWindow>> _imgui_window{};
+    std::weak_ptr<const WindowLayer> _Window;
+    ImGuiContext* _ImguiContext{ nullptr };
+    std::vector<std::unique_ptr<iImguiWindow>> _ImguiWindow{};
 };

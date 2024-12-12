@@ -5,36 +5,41 @@
 #include"core/base.hpp"
 #include"platform/opengl/opengl_header.hpp"
 
-struct GlShader: Noncopyable
+enum class GlShaderType: unsigned int
+{
+    None = GL_NONE,
+    VertexShader = GL_VERTEX_SHADER,
+    FragementShader = GL_FRAGMENT_SHADER,
+    ComputeShader = GL_COMPUTE_SHADER,
+    GeometryShader = GL_GEOMETRY_SHADER,
+    TessControlShader = GL_TESS_CONTROL_SHADER,
+    TessEvaluationShader = GL_TESS_EVALUATION_SHADER,
+};
+
+class GlShader: public Noncopyable
 {
 public:
     ACDA_EXCEPTION(CompileFail);
 
-    using self_type = GlShader;
+    using SelfType = GlShader;
 public:
     /// @brief Create an OpenGL shader object
     /// @param source_code Source code of the shader
-    /// @param shader_type Type of shader, must be one of
-    /// - GL_COMPUT_SHADER
-    /// - GL_FRAGMENT_SHADER
-    /// - GL_GEOMETRY_SHADER
-    /// - GL_TESS_CONTROL_SHADER
-    /// - GL_TESS_EVALUATION_SHADER
-    /// - GL_VERTEX_SHADER
+    /// @param shader_type Type of shader
     GlShader(
         const std::string& source_code,
-        GLenum shader_type
+        GlShaderType shader_type
     );
     ~GlShader();
 
-    GlShader(self_type&& rhs) noexcept;
-    auto operator=(self_type&& rhs) noexcept -> self_type&;
+    GlShader(SelfType&& rhs) noexcept;
+    auto operator=(SelfType&& rhs) noexcept -> SelfType&;
 
     [[nodiscard]]
-    auto gl_id() const -> GLuint
+    auto GetGlId() const -> GLuint
     {
-        return _gl_id;
+        return _GlId;
     }
 private:
-    GLuint _gl_id{ 0 };
+    GLuint _GlId{ 0 };
 };

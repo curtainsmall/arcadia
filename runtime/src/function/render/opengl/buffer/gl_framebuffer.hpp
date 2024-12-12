@@ -6,12 +6,12 @@
 #include"function/render/opengl/buffer/gl_texture2d.hpp"
 #include"platform/opengl/opengl_header.hpp"
 
-struct GlFramebuffer:Noncopyable
+class GlFramebuffer:Noncopyable
 {
 public:
     ACDA_EXCEPTION(Imcomplete);
 
-    using self_type = GlFramebuffer;
+    using SelfType = GlFramebuffer;
 public:
     GlFramebuffer(
         const glm::ivec2& viewport_size,
@@ -20,27 +20,27 @@ public:
     );
     ~GlFramebuffer();
 
-    GlFramebuffer(self_type&& rhs) noexcept;
-    auto operator=(self_type&& rhs) noexcept -> self_type&;
+    GlFramebuffer(SelfType&& rhs) noexcept;
+    auto operator=(SelfType&& rhs) noexcept -> SelfType&;
 
     [[nodiscard]]
-    auto gl_id() const -> GLuint
+    auto GetGlId() const -> GLuint
     {
-        return _gl_id;
+        return _GlId;
     }
 
     [[nodiscard]]
-    auto gl_texure2d() const -> const GlTexture2d&
+    auto GetGlTexture2d() const -> const GlTexture2d&
     {
-        return _gl_texture2d;
+        return _GlTexture2d;
     }
 
-    void bind() const;
-    void unbind() const;
+    void Bind() const;
+    void Unbind() const;
 
-    auto is_complete() const->GLenum;
+    auto IsComplete() const->GLenum;
 private:
-    GLuint _gl_id{ 0 };
-    GlTexture2d _gl_texture2d;
-    GlRenderbuffer _gl_depth_stencil_renderbuffer{};
+    GLuint _GlId{ 0 };
+    GlTexture2d _GlTexture2d;
+    GlRenderbuffer _GlDepthStencilRenderbuffer{};
 };

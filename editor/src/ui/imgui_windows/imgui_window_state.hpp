@@ -12,66 +12,66 @@
 #include"project/project_events.hpp"
 #include"ui/ui_events.hpp"
 
-struct ImguiWindowStateScene
+class ImguiWindowStateScene
 {
 public:
-    using self_type = ImguiWindowStateScene;
+    using SelfType = ImguiWindowStateScene;
 public:
     void operator()(const Scene& scene);
 };
 
-struct ImguiWindowStateRenderer
+class ImguiWindowStateRenderer
 {
 public:
-    using self_type = ImguiWindowStateRenderer;
+    using SelfType = ImguiWindowStateRenderer;
 public:
     void operator()(const iRenderer& renderer);
 };
 
-struct ImguiWindowStatePhysicsSimulator
+class ImguiWindowStatePhysicsSimulator
 {
 public:
-    using self_type = ImguiWindowStatePhysicsSimulator;
+    using SelfType = ImguiWindowStatePhysicsSimulator;
 public:
     void operator()(PhysicsSimulator& physics_simulator);
 private:
-    bool _enable_modifying_temp_allocator_size{ false };
-    bool _link_ups_and_spu{ true };
+    bool _EnabledModifyingTempAllocatorSize{ false };
+    bool _ShouldLinkUpsAndSpu{ true };
 };
 
-struct ImguiWindowState: iImguiWindow
+class ImguiWindowState: public iImguiWindow
 {
 public:
-    using self_type = ImguiWindowState;
+    using SelfType = ImguiWindowState;
 public:
     ACDA_IMGUI_WINDOW_ID_STR_GETTERS("###state");
 
     inline ImguiWindowState(
         bool open,
         const std::string& title
-    ):
+    ) :
         iImguiWindow(open, title)
     {}
     virtual ~ImguiWindowState() = default;
 
-    virtual void on_event(EventBase& e) override;
-    virtual void on_update() override;
+    virtual void OnEvent(EventBase& e) override;
+    virtual void OnUpdate() override;
 
 private:
-    void _on_open_imgui_window(events::OpenImguiWindow& e);
-    void _on_scene_activated(events::SceneActivated& e);
-    void _on_scene_deactivated(events::SceneDeactivated& e);
-    void _on_renderer_built(events::RendererBuilt& e);
-    void _on_renderer_unbuilt(events::RendererUnbuilt& e);
-    void _on_physics_simulator_built(events::PhysicsSimulatorBuilt& e);
-    void _on_physics_simulator_unbuilt(events::PhysicsSimulatorUnbuilt& e);
+    void _OnOpenImguiWindow(Events::OpenImguiWindow& e);
+    void _OnSceneActivated(Events::SceneActivated& e);
+    void _OnSceneDeactivated(Events::SceneDeactivated& e);
+    void _OnRendererBuilt(Events::RendererBuilt& e);
+    void _OnRendererUnbuilt(Events::RendererUnbuilt& e);
+    void _OnPhysicsSimulatorBuilt(Events::PhysicsSimulatorBuilt& e);
+    void _OnPhysicsSimulatorUnbuilt(Events::PhysicsSimulatorUnbuilt& e);
 
 private:
-    std::weak_ptr<Scene> _scene{};
-    std::weak_ptr<iRenderer> _renderer{};
-    std::weak_ptr<PhysicsSimulator> _physics_simulator{};
+    std::weak_ptr<Scene> _Scene{};
+    std::weak_ptr<iRenderer> _Renderer{};
+    std::weak_ptr<PhysicsSimulator> _PhysicsSimulator{};
 
-    ImguiWindowStateScene _imgui_window_state_scene{};
-    ImguiWindowStateRenderer _imgui_window_state_renderer{};
-    ImguiWindowStatePhysicsSimulator _imgui_window_state_physics_simulator{};
+    ImguiWindowStateScene _ImguiWindowStateScene{};
+    ImguiWindowStateRenderer _ImguiWindowStateRenderer{};
+    ImguiWindowStatePhysicsSimulator _ImguiWindowStatePhysicsSimulator{};
 };

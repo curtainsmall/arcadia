@@ -19,150 +19,150 @@
 
 EditorAppLayer::EditorAppLayer()
 {
-    auto& layer_stack = LayerStack::instance();
-    const auto& app_config = AppConfig::instance();
-    auto& app_context = AppContext::instance();
-    auto& editor_context = EditorContext::instance();
+    auto& layer_stack = LayerStack::Instance();
+    const auto& app_config = AppConfig::Instance();
+    auto& app_context = AppContext::Instance();
+    auto& editor_context = EditorContext::Instance();
 
-    editor_context.ui_scale = app_config.ui_scale;
+    editor_context.UiScale = app_config.UiScale;
 
     // Window layer
     {
-        editor_context.main_window_layer = layer_stack
-            .push_layer<WindowLayer>(
-                app_config.window_size,
-                app_config.window_title,
-                app_config.window_multisample_count
+        editor_context.MainWindowLayer = layer_stack
+            .PushLayer<WindowLayer>(
+                app_config.WindowSize,
+                app_config.WindowTitle,
+                app_config.WindowMultisampleCount
             )
-            .top<WindowLayer>();
+            .GetTopLayer<WindowLayer>();
     }
 
     // Project layer
     {
-        editor_context.main_project_layer = layer_stack
-            .push_layer<ProjectLayer>()
-            .top<ProjectLayer>();
+        editor_context.MainProjectLayer = layer_stack
+            .PushLayer<ProjectLayer>()
+            .GetTopLayer<ProjectLayer>();
     }
 
     // Editor ImGui layer
     {
-        editor_context.main_imgui_layer = layer_stack
-            .push_layer<ImguiLayer>(
-                editor_context.main_window_layer.lock(),
-                ACDA_BIND_MEMBER_FN(_imgui_window_installer),
-                imgui_style::dark
+        editor_context.MainImguiLayer = layer_stack
+            .PushLayer<ImguiLayer>(
+                editor_context.MainWindowLayer.lock(),
+                ACDA_BIND_MEMBER_FN(_InstallImguiWindow),
+                ImguiStyle::SetToDark
             )
-            .top<ImguiLayer>();
+            .GetTopLayer<ImguiLayer>();
 
         //editor_context._wpmain_imgui_layer.lock()->ShowDemoWindow = true;
     }
-    app_context.running = true;
+    app_context.Running = true;
 }
 
-void EditorAppLayer::on_update()
+void EditorAppLayer::OnUpdate()
 {}
 
-void EditorAppLayer::on_event(EventBase& e)
+void EditorAppLayer::OnEvent(EventBase& e)
 {
     EventDispatcher{ e }
-        .dispatch<events::WindowShouldClose>(ACDA_BIND_MEMBER_FN(_on_window_should_close))
-        .dispatch<events::ProjectUnbuilt>(ACDA_BIND_MEMBER_FN(_on_project_unbuilt))
-        .dispatch<events::PlayMode>(ACDA_BIND_MEMBER_FN(_on_play_mode))
-        .dispatch<events::InputKey>(ACDA_BIND_MEMBER_FN(_on_input_key))
-        .is_dispatched();
+        .Dispatch<Events::WindowShouldClose>(ACDA_BIND_MEMBER_FN(_OnWindowShouldClose))
+        .Dispatch<Events::ProjectUnbuilt>(ACDA_BIND_MEMBER_FN(_OnProjectUnbuilt))
+        .Dispatch<Events::TogglePlayMode>(ACDA_BIND_MEMBER_FN(_OnTogglePlayMode))
+        .Dispatch<Events::InputKey>(ACDA_BIND_MEMBER_FN(_OnInputKey))
+        .IsDispatched();
 }
 
-void EditorAppLayer::_imgui_window_installer(ImguiLayer& imgui_layer)
+void EditorAppLayer::_InstallImguiWindow(ImguiLayer& imgui_layer)
 {
-    const auto& app_config = AppConfig::instance();
-    const auto& id_strs = app_config.imgui_opened_window_id_strs;
+    const auto& app_config = AppConfig::Instance();
+    const auto& id_strs = app_config.ImguiOpenedWindowIdStrings;
 
     std::initializer_list<std::tuple<std::string, std::string>> imgui_window_ids{
-        std::make_tuple("Outliner"s,ImguiWindowOutliner::get_id_str_static()),
-        std::make_tuple("Viewport"s,ImguiWindowViewport::get_id_str_static()),
-        std::make_tuple("Property"s,ImguiWindowProperty::get_id_str_static()),
-        std::make_tuple("State"s,ImguiWindowState::get_id_str_static())
+        std::make_tuple("Outliner"s,ImguiWindowOutliner::GetIdStringStatic()),
+        std::make_tuple("Viewport"s,ImguiWindowViewport::GetIdStringStatic()),
+        std::make_tuple("Property"s,ImguiWindowProperty::GetIdStringStatic()),
+        std::make_tuple("State"s,ImguiWindowState::GetIdStringStatic())
     };
     imgui_layer
-        .emplace_imgui_window<ImguiWindowMainMenubar>(imgui_window_ids)
-        .emplace_imgui_window<ImguiWindowMainToolbar>()
-        .emplace_imgui_window<ImguiWindowMainStatusbar>()
-        .emplace_imgui_window<ImguiWindowOutliner>(id_strs.contains(ImguiWindowOutliner::get_id_str_static()), "Outliner")
-        .emplace_imgui_window<ImguiWindowViewport>(id_strs.contains(ImguiWindowViewport::get_id_str_static()), "Viewport")
-        .emplace_imgui_window<ImguiWindowProperty>(id_strs.contains(ImguiWindowProperty::get_id_str_static()), "Property")
-        .emplace_imgui_window<ImguiWindowState>(id_strs.contains(ImguiWindowState::get_id_str_static()), "State");
+        .EmplaceImguiWindow<ImguiWindowMainMenubar>(imgui_window_ids)
+        .EmplaceImguiWindow<ImguiWindowMainToolbar>()
+        .EmplaceImguiWindow<ImguiWindowMainStatusbar>()
+        .EmplaceImguiWindow<ImguiWindowOutliner>(id_strs.contains(ImguiWindowOutliner::GetIdStringStatic()), "Outliner")
+        .EmplaceImguiWindow<ImguiWindowViewport>(id_strs.contains(ImguiWindowViewport::GetIdStringStatic()), "Viewport")
+        .EmplaceImguiWindow<ImguiWindowProperty>(id_strs.contains(ImguiWindowProperty::GetIdStringStatic()), "Property")
+        .EmplaceImguiWindow<ImguiWindowState>(id_strs.contains(ImguiWindowState::GetIdStringStatic()), "State");
 }
 
-void EditorAppLayer::_stop()
+void EditorAppLayer::_Stop()
 {
-    auto& editor_context = EditorContext::instance();
-    auto main_window_layer = editor_context.main_window_layer.lock();
-    auto main_imgui_layer = editor_context.main_imgui_layer.lock();
+    auto& editor_context = EditorContext::Instance();
+    auto main_window_layer = editor_context.MainWindowLayer.lock();
+    auto main_imgui_layer = editor_context.MainImguiLayer.lock();
 
-    auto& app_config = AppConfig::instance();
-    app_config.window_size = main_window_layer->size();
-    app_config.window_pos = main_window_layer->pos();
-    app_config.window_maxmized = main_window_layer->size_state() == WindowSizeState::Maxmized;
+    auto& app_config = AppConfig::Instance();
+    app_config.WindowSize = main_window_layer->GetSize();
+    app_config.WindowPosition = main_window_layer->GetPosition();
+    app_config.WindowMaxmized = main_window_layer->GetSizeState() == WindowSizeState::Maxmized;
 
-    for(const auto& imgui_window : main_imgui_layer->get_imgui_window())
+    for(const auto& imgui_window : main_imgui_layer->GetImguiWindow())
     {
-        if(imgui_window->open())
+        if(imgui_window->Open())
         {
-            app_config.imgui_opened_window_id_strs.emplace(imgui_window->get_id_str());
+            app_config.ImguiOpenedWindowIdStrings.emplace(imgui_window->GetIdString());
         }
     }
 
-    auto& app_context = AppContext::instance();
-    app_context.running = false;
+    auto& app_context = AppContext::Instance();
+    app_context.Running = false;
 }
 
-void EditorAppLayer::_on_window_should_close(events::WindowShouldClose& e)
+void EditorAppLayer::_OnWindowShouldClose(Events::WindowShouldClose& e)
 {
-    auto& editor_context = EditorContext::instance();
-    auto main_window_layer = editor_context.main_window_layer.lock();
-    auto main_project_layer = editor_context.main_project_layer.lock();
+    auto& editor_context = EditorContext::Instance();
+    auto main_window_layer = editor_context.MainWindowLayer.lock();
+    auto main_project_layer = editor_context.MainProjectLayer.lock();
 
-    const auto& [p_wnd] = e.data_tuple;
-    if(p_wnd == main_window_layer.get() && main_project_layer->has_project())
+    const auto& [p_wnd] = e.DataTuple;
+    if(p_wnd == main_window_layer.get() && main_project_layer->HasProject())
     {
-        _waiting_for_project_unbuilt_before_closing = true;
+        _WaitingForProjectUnbuiltBeforeClosing = true;
     }
     else
     {
-        _stop();
+        _Stop();
     }
 }
 
-void EditorAppLayer::_on_project_unbuilt(events::ProjectUnbuilt& e)
+void EditorAppLayer::_OnProjectUnbuilt(Events::ProjectUnbuilt& e)
 {
-    if(_waiting_for_project_unbuilt_before_closing)
+    if(_WaitingForProjectUnbuiltBeforeClosing)
     {
-        _stop();
+        _Stop();
     }
 }
 
-void EditorAppLayer::_on_window_close_canceled(events::WindowCloseCanceled& e)
+void EditorAppLayer::_OnWindowCloseCanceled(Events::WindowCloseCanceled& e)
 {
-    _waiting_for_project_unbuilt_before_closing = false;
+    _WaitingForProjectUnbuiltBeforeClosing = false;
 }
 
-void EditorAppLayer::_on_play_mode(events::PlayMode& e)
+void EditorAppLayer::_OnTogglePlayMode(Events::TogglePlayMode& e)
 {
-    const auto& [state] = e.data_tuple;
-    EditorContext::instance().in_play_mode = state;
+    const auto& [state] = e.DataTuple;
+    EditorContext::Instance().InPlayMode = state;
 }
 
-void EditorAppLayer::_on_input_key(events::InputKey& e)
+void EditorAppLayer::_OnInputKey(Events::InputKey& e)
 {
-    const auto& [wnd, key, scancode, action, mods] = e.data_tuple;
+    const auto& [wnd, key, scancode, action, mods] = e.DataTuple;
 
-    if(key == InputKey::Escape && to_bool(mods & InputModifier::Shift))
+    if(key == InputKey::Escape && ToBool(mods & InputModifier::Shift))
     {
-        EditorContext::instance().in_play_mode = false;
+        EditorContext::Instance().InPlayMode = false;
     }
 }
 
-auto create_application() -> std::unique_ptr<iAppLayer>
+auto CreateApplication() -> std::unique_ptr<iAppLayer>
 {
     return std::make_unique<EditorAppLayer>();
 }

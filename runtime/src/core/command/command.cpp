@@ -4,123 +4,121 @@
 
 Command::Command(
     const std::string& description,
-    const function_type& execute_fn,
-    const function_type& unexecute_fn
-):
-    _description(description),
-    execute_fn(execute_fn),
-    _unexecute_fn(unexecute_fn)
+    const FunctionType& execute_fn,
+    const FunctionType& unexecute_fn
+) :
+    _Description(description),
+    _ExecuteFunction(execute_fn),
+    _UnexecuteFunction(unexecute_fn)
 {
-    execute();
+    Execute();
 }
 
-void Command::execute() const
+void Command::Execute() const
 {
-    execute_fn();
+    _ExecuteFunction();
 }
 
-void Command::unexecute() const
+void Command::Unexecute() const
 {
-    _unexecute_fn();
+    _UnexecuteFunction();
 }
 
-auto Command::description() const -> const std::string&
+auto Command::GetDescription() const -> const std::string&
 {
-    return _description;
+    return _Description;
 }
 
-auto CommandList::instance() -> self_type&
+auto CommandList::Instance() -> SelfType&
 {
-    self_type command_list{};
+    SelfType command_list{};
     return command_list;
 }
 
 void CommandList::emplace(
     const std::string& description,
-    const function_type& execute_fn,
-    const function_type& unexecute_fn
+    const FunctionType& execute_fn,
+    const FunctionType& unexecute_fn
 )
 {
     // Erase restored command since a new command should be on a new branch from current position
-    _list.erase(_list.begin(), _current_iter);
+    _List.erase(_List.begin(), _CurrentIterator);
 
     // Emplace new command
-    _list.emplace_front(description, execute_fn, unexecute_fn);
+    _List.emplace_front(description, execute_fn, unexecute_fn);
 
     // Relocate current position
-    _current_iter = _list.begin();
+    _CurrentIterator = _List.begin();
 }
 
-auto CommandList::undo() -> bool
+auto CommandList::Undo() -> bool
 {
-    if(_current_iter == _list.begin())
+    if(_CurrentIterator == _List.begin())
     {
         return false;
     }
 
-    (_current_iter--)->unexecute();
+    (_CurrentIterator--)->Unexecute();
     return true;
 }
 
-auto CommandList::redo() -> bool
+auto CommandList::Redo() -> bool
 {
-    if((++_current_iter)-- == _list.end())
+    if((++_CurrentIterator)-- == _List.end())
     {
         return false;
     }
 
-    (_current_iter++)->execute();
+    (_CurrentIterator++)->Execute();
     return true;
 }
 
-auto CommandList::capacity() const -> size_t
+auto CommandList::GetCapacity() const -> size_t
 {
-    return _capacity;
+    return _Capacity;
 }
 
-void CommandList::capacity(size_t capacity)
+void CommandList::SetCapacity(size_t capacity)
 {
-    _capacity = capacity;
+    _Capacity = capacity;
 }
 
-auto CommandList::size() const -> size_t
+auto CommandList::GetSize() const -> size_t
 {
-    return _list.size();
+    return _List.size();
 }
 
-void CommandList::clear()
+void CommandList::Clear()
 {
-    _list.clear();
+    _List.clear();
 }
 
-auto CommandList::begin() noexcept -> container_type::iterator
+auto CommandList::begin() noexcept -> ContainerType::iterator
 {
-    return _list.begin();
+    return _List.begin();
 }
 
-auto CommandList::end() noexcept -> container_type::iterator
+auto CommandList::end() noexcept -> ContainerType::iterator
 {
-    return _list.end();
+    return _List.end();
 }
 
-auto CommandList::begin() const noexcept -> container_type::const_iterator
+auto CommandList::begin() const noexcept -> ContainerType::const_iterator
 {
-    return _list.begin();
+    return _List.begin();
 }
 
-auto CommandList::end() const noexcept -> container_type::const_iterator
+auto CommandList::end() const noexcept -> ContainerType::const_iterator
 {
-    return _list.end();
+    return _List.end();
 }
 
-auto CommandList::cbegin() const noexcept -> container_type::const_iterator
+auto CommandList::cbegin() const noexcept -> ContainerType::const_iterator
 {
-    return _list.cbegin();
+    return _List.cbegin();
 }
 
-auto CommandList::cend() const noexcept -> container_type::const_iterator
+auto CommandList::cend() const noexcept -> ContainerType::const_iterator
 {
-    return _list.cend();
+    return _List.cend();
 }
-
-

@@ -8,13 +8,13 @@
 #include"platform/jolt/jolt_header.hpp"
 #include"resource/scene.hpp"
 
-struct JphObjectLayerPairFilerImpl: JPH::ObjectLayerPairFilter
+class JphObjectLayerPairFilerImpl final: public JPH::ObjectLayerPairFilter
 {
 public:
     virtual auto ShouldCollide(JPH::ObjectLayer obj_1, JPH::ObjectLayer obj_2) const -> bool override;
 };
 
-struct JphBroadPhaseLayerImpl final: JPH::BroadPhaseLayerInterface
+class JphBroadPhaseLayerImpl final: public JPH::BroadPhaseLayerInterface
 {
 public:
     JphBroadPhaseLayerImpl();
@@ -32,20 +32,20 @@ public:
     }
 
 private:
-    JPH::BroadPhaseLayer _object_to_broad_phase[jph_object_layers::num_layers];
+    JPH::BroadPhaseLayer _ObjectToBroadPhase[JphObjectLayers::NumLayers];
 };
 
-struct JphObjectVsBroadPhaseLayerFilterImpl: JPH::ObjectVsBroadPhaseLayerFilter
+class JphObjectVsBroadPhaseLayerFilterImpl final: public JPH::ObjectVsBroadPhaseLayerFilter
 {
 public:
     virtual auto ShouldCollide(JPH::ObjectLayer obj, JPH::BroadPhaseLayer bp) const -> bool override;
 };
 
-struct PhysicsSimulator
+class PhysicsSimulator
 {
 public:
-    using jph_body_id_storage_type = std::unordered_map<Uuid, JPH::BodyID>;
-    using self_type = PhysicsSimulator;
+    using JphBodyIdStorageType = std::unordered_map<Uuid, JPH::BodyID>;
+    using SelfType = PhysicsSimulator;
 public:
     PhysicsSimulator();
     ~PhysicsSimulator();
@@ -53,65 +53,65 @@ public:
     /// @brief Start building the physics simulator
     /// @details This function signs that the physics simulator is in build
     /// @note This function can only be called when the physics simulator is not in build
-    void prepare();
+    void Prepare();
 
     /// @brief Finish building the physcis simulator
     /// @note This function can only be called when the physics simulator is in build
-    void finalize();
+    void Finalize();
 
     /// @brief Submit a entity to the physics simulator
     /// @param name Entity to submit
     /// @note Entity that does not have physics component will be ignored
     /// @note This function can only be called when the physics simulator is in build
-    void submit(const Scene& scene, const std::string& name);
+    void Submit(const Scene& scene, const std::string& name);
 
     /// @brief Update physcis simulator for one step
     /// @note This function can only be called when the physics simulator is not in build
-    void update();
+    void Update();
 
     /// @brief Query the updated data of the physics component from the physcis simulator
     /// @param name Entity to quary
     /// @note Entity that does not have physics component will be ignored
     /// @note This function can only be called when the physics simulator is not in build
-    void query(Scene& scene, const std::string& name);
+    void Query(Scene& scene, const std::string& name);
 
     /// @brief Reset the physics simulator, all caches will be cleared
-    void reset();
+    void Reset();
 
     [[nodiscard]]
-    auto is_active() const -> bool;
-    void set_active(bool should_update);
+    auto IsActive() const -> bool;
+    void SetActive(bool should_update);
 
     [[nodiscard]]
-    auto get_jph_temp_allocator_size() const->JPH::uint;
-    void set_jph_temp_allocator_size(JPH::uint get_jph_temp_allocator_size);
+    auto GetJphTempAllocatorSize() const->JPH::uint;
+    void SetJphTempAllocatorSize(JPH::uint get_jph_temp_allocator_size);
 
     [[nodiscard]]
-    auto get_jph_physics_system_updates_per_second() const -> int;
-    void set_jph_physics_system_updates_per_second(int jph_physics_system_updates_per_second);
+    auto GetJphPhysicsSystemUpdatesPerSecond() const -> int;
+    void SetJphPhysicsSystemUpdatesPerSecond(int jph_physics_system_updates_per_second);
 
     [[nodiscard]]
-    auto jph_body_id_storage() const -> const jph_body_id_storage_type&;
+    auto GetJphBodyIdStorage() const -> const JphBodyIdStorageType&;
 
 private:
-    void _assert_frame_in_build() const;
-    void _assert_frame_not_in_build() const;
+    void _AssertFrameInBuild() const;
+    void _AssertFrameNotInBuild() const;
 public:
 private:
-    bool _in_build{ false };
+    bool _InBuild{ false };
 
-    bool _active{ false };
+    bool _Active{ false };
 
-    JPH::uint _jph_temp_allocator_size{ 10 * 1024 * 1024 };
+    JPH::uint _JphTempAllocatorSize{ 10 * 1024 * 1024 };
 
-    int _jph_physics_system_updates_per_second{ 60 };
+    int _JphPhysicsSystemUpdatesPerSecond{ 60 };
 
-    jph_body_id_storage_type _jph_body_id_storage{};
-    std::set<Uuid> _submitted_body_infos{};
+    JphBodyIdStorageType _JphBodyIdStorage{};
+    std::set<Uuid> _SubmittedBodyInfos{};
 
-    JphBroadPhaseLayerImpl _jph_broad_phase_layer{};
-    JphObjectVsBroadPhaseLayerFilterImpl _jph_object_vs_broad_layer_filter{};
-    JphObjectLayerPairFilerImpl _jph_object_layer_pair_filter{};
+    JphBroadPhaseLayerImpl _JphBroadPhaseLayer{};
+    JphObjectVsBroadPhaseLayerFilterImpl _JphObjectVsBroadLayerFilter{};
+    JphObjectLayerPairFilerImpl _JphObjectLayerPairFilter{};
 
-    std::unique_ptr<JPH::PhysicsSystem> _jph_physics_system{};
+    std::unique_ptr<JPH::PhysicsSystem> _JphPhysicsSystem{};
 };

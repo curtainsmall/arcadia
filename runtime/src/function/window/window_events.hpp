@@ -3,26 +3,26 @@
 #include"core/event/event.hpp"
 #include"core/math.hpp"
 
-struct GLFWmonitor;
+class GLFWmonitor;
 
-struct WindowLayer;
+class WindowLayer;
 
-enum struct WindowSizeState
+enum class WindowSizeState
 {
     Minimized = -1,
     Restored = 0,
     Maxmized = 1,
 };
 
-enum struct WindowInputModeCursor
+enum class WindowCursorInputMode
 {
-    normal,
+    Normal,
     Hidden,
     Disabled,
     Captured,
 };
 
-namespace events
+namespace Events
 {
     //==== Notifications ====//
 
@@ -36,12 +36,12 @@ namespace events
     );
 
     ACDA_EVENT(
-        window_size,
+        WindowSize,
         WindowLayer*,
         glm::ivec2 // New size
     );
     ACDA_EVENT(
-        window_pos,
+        WindowPosition,
         WindowLayer*,
         glm::ivec2 // New position
     );
@@ -51,13 +51,13 @@ namespace events
         ::WindowSizeState // New state
     );
     ACDA_EVENT(
-        WindowFocus,
+        WindowFocused,
         WindowLayer*,
         bool
     );
 
     ACDA_EVENT(
-        MonitorConnection,
+        MonitorConnect,
         GLFWmonitor*, // TODO: Use custom monitor type
         bool // Whether the monitor is connected or not
     );
@@ -65,7 +65,7 @@ namespace events
     //==== Adjustments ====//
 
     ACDA_EVENT(
-        WindowSetInputModeCursor,
-        WindowInputModeCursor
+        WindowSetCursorInputMode,
+        WindowCursorInputMode
     );
 }

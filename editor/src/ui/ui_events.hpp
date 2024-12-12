@@ -5,7 +5,7 @@
 
 #include"core/event/event.hpp"
 
-namespace events
+namespace Events
 {
     //==== Events for imgui window ====//
     ACDA_EVENT(
@@ -111,7 +111,7 @@ namespace events
     //==== Events for modes ====//
 
     ACDA_EVENT(
-        PlayMode,
+        TogglePlayMode,
         bool
     );
 

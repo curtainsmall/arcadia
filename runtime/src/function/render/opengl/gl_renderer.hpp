@@ -55,50 +55,50 @@ using GlRenderUnitPhysicsBodyShape = std::tuple<
     glm::vec3 // color
 >;
 
-struct GlRenderer: iRenderer
+class GlRenderer: public iRenderer
 {
 public:
     ACDA_EXCEPTION(TooManyLights);
-    using self_type = GlRenderer;
+    using SelfType = GlRenderer;
 public:
     GlRenderer(const std::filesystem::path& gl_shader_folder_path);
     virtual ~GlRenderer() = default;
 
-    /// @copydoc renderer::is_in_build
+    /// @copydoc iRenderer::IsInBuild
     [[nodiscard]]
-    virtual auto is_in_build() const -> bool override
+    virtual auto IsInBuild() const -> bool override
     {
-        return _in_build;
+        return _InBuild;
     }
 
-    virtual void prepare() override;
-    virtual void finalize() override;
-    virtual void submit(const Scene& scene, const std::string& name) override;
-    virtual void draw() override;
+    virtual void Prepare() override;
+    virtual void Finalize() override;
+    virtual void Submit(const Scene& scene, const std::string& name) override;
+    virtual void Draw() override;
 
-    virtual void reset() override;
-
-    [[nodiscard]]
-    virtual auto render_result_id(size_t index) const->void* override;
+    virtual void Reset() override;
 
     [[nodiscard]]
-    virtual auto graphic_api_type() const->graphic_api::Type override
+    virtual auto GetRenderResultId(size_t index) const->void* override;
+
+    [[nodiscard]]
+    virtual auto GetGraphicApiType() const->GraphicApi::Type override
     {
-        return graphic_api::Opengl{ Version{4, 6, 0} };
+        return GraphicApi::Opengl{ Version{4, 6, 0} };
     }
 
 public:
-    void _assert_frame_in_build() const;
-    void _assert_frame_not_in_build() const;
+    void _AssertFrameInBuild() const;
+    void _AssertFrameNotInBuild() const;
 
-    void _draw_grid(
+    void _DrawGrid(
         const GlVertexArray& gl_grid_vertex_array,
         const glm::mat4& camera_view,
         const glm::mat4& camera_proj,
         float near_plane,
         float far_plane
     );
-    void _draw_lights(
+    void _DrawLights(
         const GLsizeiptr light_t_size,
         const int max_light_count,
         const int light_count_size_aligned,
@@ -107,35 +107,35 @@ public:
         const glm::mat4& camera_view,
         const glm::mat4& camera_proj
     );
-    void _draw_models(
+    void _DrawModels(
         const glm::mat4& camera_view,
         const glm::mat4& camera_proj,
         const glm::vec3& camera_pos
     );
-    void _draw_skybox(
+    void _DrawSkybox(
         const glm::mat4& camera_view,
         const glm::mat4& camera_proj
     );
-    void _draw_physics_body_shape(
+    void _DrawPhysicsBodyShape(
         const glm::mat4& camera_view,
         const glm::mat4& camera_proj
     );
 
 private:
-    bool _in_build{ false };
+    bool _InBuild{ false };
 
-    std::unordered_map<Uuid, std::vector<GlRenderUnitMesh>> _gl_render_unit_mesh_storage{};
-    std::set<Uuid> _submitted_mesh_uuids{};
+    std::unordered_map<Uuid, std::vector<GlRenderUnitMesh>> _GlRenderUnitMeshStorage{};
+    std::set<Uuid> _SubmittedMeshUuids{};
 
-    std::unordered_map<Uuid, GlRenderUnitPhysicsBodyShape> _gl_render_unit_physics_body_shape_storage{};
-    std::set<Uuid> _submitted_physics_body_shape_uuids{};
+    std::unordered_map<Uuid, GlRenderUnitPhysicsBodyShape> _GlRenderUnitPhysicsBodyShapeStorage{};
+    std::set<Uuid> _SubmittedPhysicsBodyShapeUuids{};
 
-    std::vector<GlRenderUnitCamera> _gl_render_unit_cameras{};
-    std::vector<GlRenderUnitLight> _gl_render_unit_lights{};
-    std::optional<GlRenderUnitSkybox> _gl_render_unit_skybox{};
+    std::vector<GlRenderUnitCamera> _GlRenderUnitCameras{};
+    std::vector<GlRenderUnitLight> _GlRenderUnitLights{};
+    std::optional<GlRenderUnitSkybox> _GlRenderUnitSkybox{};
 
-    GlPipeline _gl_model_pipeline;
-    GlPipeline _gl_skybox_pipeline;
-    GlPipeline _gl_grid_pipeline;
-    GlPipeline _gl_shape_pipeline;
+    GlPipeline _GlModelPipeline;
+    GlPipeline _GlSkyboxPipeline;
+    GlPipeline _GlGridPipeline;
+    GlPipeline _GlShapePipeline;
 };

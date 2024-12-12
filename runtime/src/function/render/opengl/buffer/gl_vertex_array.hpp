@@ -8,10 +8,10 @@
 #include"platform/opengl/opengl_header.hpp"
 #include"resource/mesh/mesh.hpp"
 
-struct GlVertexArray: Noncopyable
+class GlVertexArray: public Noncopyable
 {
 public:
-    using self_type = GlVertexArray;
+    using SelfType = GlVertexArray;
 
 public:
     GlVertexArray(
@@ -20,31 +20,31 @@ public:
     );
     ~GlVertexArray();
 
-    GlVertexArray(self_type&& rhs) noexcept;
-    auto operator=(self_type&& rhs) noexcept -> self_type&;
+    GlVertexArray(SelfType&& rhs) noexcept;
+    auto operator=(SelfType&& rhs) noexcept -> SelfType&;
 
     [[nodiscard]]
-    auto gl_id() const -> GLuint
+    auto GetGlId() const -> GLuint
     {
-        return _gl_id;
+        return _GlId;
     }
 
-    void bind() const;
-    void unbind() const;
+    void Bind() const;
+    void Unbind() const;
 
     /// @brief Call @ref DrawArrays, @ref DrawArraysInstanced, @ref DrawIndices or @ref DrawIndicesInstanced based on parameters and state of gl_vertex_array
     /// @param mode OpenGL draw mode
-    /// @param count Count of instance to draw, use @a count < 0 to not draw instanced
-    void draw(GLenum mode, GLsizei count = -1) const;
+    /// @param count Count of Instance to draw, use @a count < 0 to not draw instanced
+    void Draw(GLenum mode, GLsizei count = -1) const;
 
-    void draw_arrays(GLenum mode) const;
-    void draw_arrays_instanced(GLenum mode, GLsizei count) const;
-    void draw_indices(GLenum mode) const;
-    void draw_indices_instanced(GLenum mode, GLsizei count) const;
+    void DrawArrays(GLenum mode) const;
+    void DrawArraysInstanced(GLenum mode, GLsizei count) const;
+    void DrawIndices(GLenum mode) const;
+    void DrawIndicesInstanced(GLenum mode, GLsizei count) const;
 
 private:
-    GLuint _gl_id{ 0 };
+    GLuint _GlId{ 0 };
 
-    GlVertexBuffer _gl_vertex_buffer;
-    GlIndexBuffer _gl_index_buffer;
+    GlVertexBuffer _GlVertexBuffer;
+    GlIndexBuffer _GlIndexBuffer;
 };

@@ -2,115 +2,115 @@
 
 #include "memento.hpp"
 
-void Memento::restore() const
+void Memento::Restore() const
 {
-    _originator_restore_fn();
+    _OriginatorRestoreFunction();
 }
 
-auto Memento::description() const -> const std::string&
+auto Memento::GetDescription() const -> const std::string&
 {
-    return _description;
+    return _Description;
 }
 
-auto MementoList::instance() -> self_type&
+auto MementoList::Instance() -> SelfType&
 {
-    static self_type memento_list{};
+    static SelfType memento_list{};
     return memento_list;
 }
 
-auto MementoList::undo()  -> bool
+auto MementoList::Undo()  -> bool
 {
-    if(_current_iter == _list.end())
+    if(_CurrentIterator == _List.end())
     {
         return false;
     }
 
-    (_current_iter++)->restore();
+    (_CurrentIterator++)->Restore();
     return true;
 }
 
-auto MementoList::redo()  -> bool
+auto MementoList::Redo()  -> bool
 {
-    if(_current_iter == _list.begin())
+    if(_CurrentIterator == _List.begin())
     {
         return false;
     }
 
-    (--_current_iter)->restore();
+    (--_CurrentIterator)->Restore();
     return true;
 }
 
-auto MementoList::capacity() const -> size_t
+auto MementoList::GetCapacity() const -> size_t
 {
-    return _capacity;
+    return _Capacity;
 }
 
-void MementoList::capacity(size_t capacity)
+void MementoList::SetCapacity(size_t capacity)
 {
-    _capacity = capacity;
+    _Capacity = capacity;
 }
 
-auto MementoList::size() const -> size_t
+auto MementoList::GetSize() const -> size_t
 {
-    return _list.size();
+    return _List.size();
 }
 
-void MementoList::clear()
+void MementoList::Clear()
 {
-    _list.clear();
+    _List.clear();
 }
 
-auto MementoList::is_current(const container_type::const_iterator& iter) const -> bool
+auto MementoList::IsCurrent(const ContainerType::const_iterator& iter) const -> bool
 {
-    return iter == _current_iter;
+    return iter == _CurrentIterator;
 }
 
-auto MementoList::begin() noexcept -> container_type::iterator
+auto MementoList::begin() noexcept -> ContainerType::iterator
 {
-    return _list.begin();
+    return _List.begin();
 }
 
-auto MementoList::end() noexcept -> container_type::iterator
+auto MementoList::end() noexcept -> ContainerType::iterator
 {
-    return _list.end();
+    return _List.end();
 }
 
-auto MementoList::begin() const noexcept -> container_type::const_iterator
+auto MementoList::begin() const noexcept -> ContainerType::const_iterator
 {
-    return _list.begin();
+    return _List.begin();
 }
 
-auto MementoList::end() const noexcept -> container_type::const_iterator
+auto MementoList::end() const noexcept -> ContainerType::const_iterator
 {
-    return _list.end();
+    return _List.end();
 }
 
-auto MementoList::cbegin() const noexcept -> container_type::const_iterator
+auto MementoList::cbegin() const noexcept -> ContainerType::const_iterator
 {
-    return _list.cbegin();
+    return _List.cbegin();
 }
 
-auto MementoList::cend() const noexcept -> container_type::const_iterator
+auto MementoList::cend() const noexcept -> ContainerType::const_iterator
 {
-    return _list.cend();
+    return _List.cend();
 }
 
-auto iMementoOriginator::snapshot() -> std::shared_ptr<MementoDataBase>
+auto iMementoOriginator::Snapshot() -> std::shared_ptr<MementoDataBase>
 {
-    auto memento_data = on_snapshot();
-    if(!_prev_memento_data)
+    auto memento_data = OnSnapshot();
+    if(!_PreviousMementoData)
     {
-        _prev_memento_data = memento_data;
+        _PreviousMementoData = memento_data;
     }
-    else if(memento_data != _prev_memento_data)
+    else if(memento_data != _PreviousMementoData)
     {
-        std::swap(memento_data, _prev_memento_data);
+        std::swap(memento_data, _PreviousMementoData);
     }
     return memento_data;
 }
 
-void iMementoOriginator::restore(const std::shared_ptr<MementoDataBase>& memento_data)
+void iMementoOriginator::Restore(const std::shared_ptr<MementoDataBase>& memento_data)
 {
-    on_restore(memento_data);
-    _prev_memento_data = memento_data;
+    OnRestore(memento_data);
+    _PreviousMementoData = memento_data;
 }
