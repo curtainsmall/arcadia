@@ -165,8 +165,7 @@ void Arcadia::ModelComponent::_ProcessAssimpNode(
 )
 {
     // Current node
-    for(
-        unsigned int i = 0;
+    for(size_t i = 0;
         i < ai_node->mNumMeshes;
         ++i, ++next_mesh_index
         )
@@ -176,7 +175,7 @@ void Arcadia::ModelComponent::_ProcessAssimpNode(
 
         // Vertex
         mesh.Vertices.reserve(ai_mesh->mNumVertices);
-        for(unsigned int i = 0; i < ai_mesh->mNumVertices; ++i)
+        for(size_t i = 0; i < ai_mesh->mNumVertices; ++i)
         {
             auto& vertex = mesh.Vertices.emplace_back();
 
@@ -209,10 +208,10 @@ void Arcadia::ModelComponent::_ProcessAssimpNode(
 
         // Index
         mesh.Indices.reserve(ai_mesh->mNumFaces * 3u);
-        for(unsigned int i = 0; i < ai_mesh->mNumFaces; ++i)
+        for(size_t i = 0; i < ai_mesh->mNumFaces; ++i)
         {
             auto& ai_face = ai_mesh->mFaces[i];
-            for(unsigned int j = 0; j < ai_face.mNumIndices; ++j)
+            for(size_t j = 0; j < ai_face.mNumIndices; ++j)
             {
                 mesh.Indices.emplace_back(ai_face.mIndices[j]);
             }
@@ -247,7 +246,7 @@ void Arcadia::ModelComponent::_ProcessAssimpNode(
     }
 
     // Sub-nodes
-    for(unsigned int i = 0; i < ai_node->mNumChildren; ++i)
+    for(size_t i = 0; i < ai_node->mNumChildren; ++i)
     {
         _ProcessAssimpNode(
             meshes,
@@ -266,7 +265,7 @@ void Arcadia::ModelComponent::_LoadTexture(
 )
 {
     aiString str{};
-    for(unsigned int i = 0; i < ai_material->GetTextureCount(ai_texture_type); ++i)
+    for(size_t i = 0; i < ai_material->GetTextureCount(ai_texture_type); ++i)
     {
         ai_material->GetTexture(ai_texture_type, i, &str);
         int x{ 0 },
@@ -274,7 +273,7 @@ void Arcadia::ModelComponent::_LoadTexture(
         auto filepath = directory / std::filesystem::path{ str.C_Str() };
         float* ptr = reinterpret_cast<float*>(stbi_load(filepath.string().c_str(), &x, &y, nullptr, 4));
         texture.Size = glm::ivec2{ x,y };
-        for(unsigned int i = 0; i < x * y; i+=4)
+        for(size_t i = 0; i < x * y; i+=4)
         {
             texture.Pixels.emplace_back(
                 ptr[i],

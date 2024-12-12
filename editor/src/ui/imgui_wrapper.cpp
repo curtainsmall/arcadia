@@ -16,13 +16,17 @@ ACDA_API auto Arcadia::ImguiWrappers::Checkbox(const std::string& name, std::fun
     return deactivated;
 }
 
-ACDA_API auto Arcadia::ImguiWrappers::DragInt(const std::string& name, int& i, float speed, int min, int max, const char* format, ImGuiSliderFlags flags) -> bool
+ACDA_API auto Arcadia::ImguiWrappers::DragInt(const std::string& name, int32_t& i, float speed, int32_t min, int32_t max, const char* format, ImGuiSliderFlags flags) -> bool
 {
-    ImGui::Text(name.c_str()); ImGui::SameLine(); ImGui::DragInt(std::format("##{}", name).c_str(), &i, speed, min, max, format, flags);
+    int _i = i;
+    ImGui::Text(name.c_str());
+    ImGui::SameLine();
+    ImGui::DragInt(std::format("##{}", name).c_str(), &_i, speed, min, max, format, flags);
+    i = _i;
     return ImGui::IsItemDeactivatedAfterEdit();
 }
 
-ACDA_API auto Arcadia::ImguiWrappers::DragInt(const std::string& name, std::function<int()> getter, std::function<void(int)> setter, float speed, int min, int max, const char* format, ImGuiSliderFlags flags) -> bool
+ACDA_API auto Arcadia::ImguiWrappers::DragInt(const std::string& name, std::function<int32_t()> getter, std::function<void(int32_t)> setter, float speed, int32_t min, int32_t max, const char* format, ImGuiSliderFlags flags) -> bool
 {
     auto i = getter();
     auto deactivated = ImguiWrappers::DragInt(name, i, speed, min, max, format, flags);
@@ -30,7 +34,7 @@ ACDA_API auto Arcadia::ImguiWrappers::DragInt(const std::string& name, std::func
     return deactivated;
 }
 
-ACDA_API auto Arcadia::ImguiWrappers::DragIntVec2(const std::string& name, glm::ivec2& vec, float speed, int min, int max, const char* format, ImGuiSliderFlags flags) -> bool
+ACDA_API auto Arcadia::ImguiWrappers::DragIntVec2(const std::string& name, glm::ivec2& vec, float speed, int32_t min, int32_t max, const char* format, ImGuiSliderFlags flags) -> bool
 {
     bool deactivated{ false };
     ImGui::Text(std::format("{:>{}} X", name, name.size()).c_str()); ImGui::SameLine(); ImGui::DragInt(std::format("##{}_x", name).c_str(), &vec.x, speed, min, max, format, flags);
@@ -46,7 +50,7 @@ ACDA_API auto Arcadia::ImguiWrappers::DragIntVec2(const std::string& name, glm::
     return deactivated;
 }
 
-ACDA_API auto Arcadia::ImguiWrappers::DragIntVec2(const std::string& name, std::function<glm::ivec2()> getter, std::function<void(const glm::ivec2&)> setter, float speed, int min, int max, const char* format, ImGuiSliderFlags flags) -> bool
+ACDA_API auto Arcadia::ImguiWrappers::DragIntVec2(const std::string& name, std::function<glm::ivec2()> getter, std::function<void(const glm::ivec2&)> setter, float speed, int32_t min, int32_t max, const char* format, ImGuiSliderFlags flags) -> bool
 {
     auto vec = getter();
     auto deactivated = ImguiWrappers::DragIntVec2(name, vec, speed, min, max, format, flags);
@@ -54,7 +58,7 @@ ACDA_API auto Arcadia::ImguiWrappers::DragIntVec2(const std::string& name, std::
     return deactivated;
 }
 
-ACDA_API auto Arcadia::ImguiWrappers::DragIntVec3(const std::string& name, glm::ivec3& vec, float speed, int min, int max, const char* format, ImGuiSliderFlags flags) -> bool
+ACDA_API auto Arcadia::ImguiWrappers::DragIntVec3(const std::string& name, glm::ivec3& vec, float speed, int32_t min, int32_t max, const char* format, ImGuiSliderFlags flags) -> bool
 {
     bool deactivated{ false };
     ImGui::Text(std::format("{:>{}} X", name, name.size()).c_str()); ImGui::SameLine(); ImGui::DragInt(std::format("##{}_x", name).c_str(), &vec.x, speed, min, max, format, flags);
@@ -75,7 +79,7 @@ ACDA_API auto Arcadia::ImguiWrappers::DragIntVec3(const std::string& name, glm::
     return deactivated;
 }
 
-ACDA_API auto Arcadia::ImguiWrappers::DragIntVec3(const std::string& name, std::function<glm::ivec3()> getter, std::function<void(const glm::ivec3&)> setter, float speed, int min, int max, const char* format, ImGuiSliderFlags flags) -> bool
+ACDA_API auto Arcadia::ImguiWrappers::DragIntVec3(const std::string& name, std::function<glm::ivec3()> getter, std::function<void(const glm::ivec3&)> setter, float speed, int32_t min, int32_t max, const char* format, ImGuiSliderFlags flags) -> bool
 {
     auto vec = getter();
     auto deactivated = ImguiWrappers::DragIntVec3(name, vec, speed, min, max, format, flags);
@@ -83,7 +87,7 @@ ACDA_API auto Arcadia::ImguiWrappers::DragIntVec3(const std::string& name, std::
     return deactivated;
 }
 
-ACDA_API auto Arcadia::ImguiWrappers::DragIntVec4(const std::string& name, glm::ivec4& vec, float speed, int min, int max, const char* format, ImGuiSliderFlags flags) -> bool
+ACDA_API auto Arcadia::ImguiWrappers::DragIntVec4(const std::string& name, glm::ivec4& vec, float speed, int32_t min, int32_t max, const char* format, ImGuiSliderFlags flags) -> bool
 {
     bool deactivated{ false };
     ImGui::Text(std::format("{:>{}} X", name, name.size()).c_str()); ImGui::SameLine(); ImGui::DragInt(std::format("##{}_x", name).c_str(), &vec.x, speed, min, max, format, flags);
@@ -109,7 +113,7 @@ ACDA_API auto Arcadia::ImguiWrappers::DragIntVec4(const std::string& name, glm::
     return deactivated;
 }
 
-ACDA_API auto Arcadia::ImguiWrappers::DragIntVec4(const std::string& name, std::function<glm::ivec4()> getter, std::function<void(const glm::ivec4&)> setter, float speed, int min, int max, const char* format, ImGuiSliderFlags flags) -> bool
+ACDA_API auto Arcadia::ImguiWrappers::DragIntVec4(const std::string& name, std::function<glm::ivec4()> getter, std::function<void(const glm::ivec4&)> setter, float speed, int32_t min, int32_t max, const char* format, ImGuiSliderFlags flags) -> bool
 {
     auto vec = getter();
     auto deactivated = ImguiWrappers::DragIntVec4(name, vec, speed, min, max, format, flags);
@@ -119,7 +123,9 @@ ACDA_API auto Arcadia::ImguiWrappers::DragIntVec4(const std::string& name, std::
 
 ACDA_API auto Arcadia::ImguiWrappers::DragFloat(const std::string& name, float& f, float speed, float min, float max, const char* format, ImGuiSliderFlags flags) -> bool
 {
-    ImGui::Text(name.c_str()); ImGui::SameLine(); ImGui::DragFloat(std::format("##{}", name).c_str(), &f, speed, min, max, format, flags);
+    ImGui::Text(name.c_str());
+    ImGui::SameLine();
+    ImGui::DragFloat(std::format("##{}", name).c_str(), &f, speed, min, max, format, flags);
     return ImGui::IsItemDeactivatedAfterEdit();
 }
 

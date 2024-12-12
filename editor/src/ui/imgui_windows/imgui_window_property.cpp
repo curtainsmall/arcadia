@@ -930,11 +930,6 @@ void Arcadia::ImguiWindowProperty::OnUpdate()
 
     auto scene = _Scene.lock();
 
-    if(scene)
-    {
-        int i = 0;
-    }
-
     auto imgui_title = scene && !_SelectedEntityName.empty()
         ? _Title + " - " + _SelectedEntityName + GetIdString()
         : _Title + GetIdString();

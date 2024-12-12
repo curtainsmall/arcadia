@@ -2,12 +2,12 @@
 
 #include "gl_index_buffer.hpp"
 
-Arcadia::GlIndexBuffer::GlIndexBuffer(const std::vector<Mesh::index_type>& indices) :
+Arcadia::GlIndexBuffer::GlIndexBuffer(const std::vector<Mesh::IndexType>& indices) :
     _IndexCount(indices.size())
 {
     ACDA_GL_CALL(glGenBuffers(1, &_GlId));
     Bind();
-    ACDA_GL_CALL(glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(Mesh::index_type), indices.data(), GL_STATIC_DRAW));
+    ACDA_GL_CALL(glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(Mesh::IndexType), indices.data(), GL_STATIC_DRAW));
     Unbind();
 }
 

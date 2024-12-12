@@ -232,7 +232,7 @@ void Arcadia::GlRenderer::Draw()
                     Vertex{ glm::vec3{1,-1,0} },
                     Vertex{ glm::vec3{1,1,0} }
             };
-            std::vector<Mesh::index_type> grid_indices{
+            std::vector<Mesh::IndexType> grid_indices{
                 0,1,2,
                 2,3,0
             };
@@ -243,14 +243,13 @@ void Arcadia::GlRenderer::Draw()
                 camera_view,
                 camera_proj,
                 near_plane,
-                far_plane
-            );
+                far_plane);
         }
 
         // Lights
         const GLsizeiptr light_t_size{ 128 };
-        const int max_light_count = 32;
-        const int light_count_size_aligned = 16; // Sizeof `u_light_count` in fragment shader with alignment considered
+        const int32_t max_light_count = 32;
+        const int32_t light_count_size_aligned = 16; // Sizeof `u_light_count` in fragment shader with alignment considered
         GlUniformBuffer GlUniformBuffer{ light_count_size_aligned + light_t_size * max_light_count };
 
         auto light_box_shape = Mesh::CreateBox(glm::vec3{ 1,1,1 });
@@ -263,8 +262,7 @@ void Arcadia::GlRenderer::Draw()
             GlUniformBuffer,
             gl_light_box_shape_vertex_array,
             camera_view,
-            camera_proj
-        );
+            camera_proj);
 
         // Draw with mesh pipeline
         _DrawModels(
@@ -339,19 +337,19 @@ void Arcadia::GlRenderer::_DrawGrid(
 
 void Arcadia::GlRenderer::_DrawLights(
     const GLsizeiptr light_t_size,
-    const int max_light_count,
-    const int light_count_size_aligned,
+    const int32_t max_light_count,
+    const int32_t light_count_size_aligned,
     GlUniformBuffer& gl_light_uniform_buffer,
     const GlVertexArray& gl_light_shape_vertex_array,
     const glm::mat4& camera_view,
     const glm::mat4& camera_proj
 )
 {
-    const int light_type_none = 0;
-    const int light_type_spot = 1;
-    const int light_type_direct = 2;
-    const int light_type_area = 3;
-    const int light_type_point = 4;
+    const int32_t light_type_none = 0;
+    const int32_t light_type_spot = 1;
+    const int32_t light_type_direct = 2;
+    const int32_t light_type_area = 3;
+    const int32_t light_type_point = 4;
 
     _GlShapePipeline.Use();
     _GlShapePipeline

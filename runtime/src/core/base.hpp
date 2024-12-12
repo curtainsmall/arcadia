@@ -28,6 +28,8 @@ using namespace std::complex_literals;
 
 namespace Arcadia
 {
+    using UnicodeCodepoint = uint32_t;
+
     class Noncopyable
     {
     protected:

@@ -13,7 +13,7 @@ namespace Arcadia
     public:
         using SelfType = GlIndexBuffer;
     public:
-        GlIndexBuffer(const std::vector<Mesh::index_type>& indices);
+        GlIndexBuffer(const std::vector<Mesh::IndexType>& indices);
         ~GlIndexBuffer();
 
         GlIndexBuffer(SelfType&& rhs) noexcept;

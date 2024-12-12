@@ -28,7 +28,7 @@ void Arcadia::ImguiWindowMainStatusbar::OnUpdate()
             std::make_pair("100%",1.0f),
             std::make_pair("150%",1.5f)
         };
-        static int scale_idx = std::distance(
+        static int32_t scale_idx = std::distance(
             scales.begin(),
             std::find_if(
                 scales.begin(),
@@ -42,7 +42,7 @@ void Arcadia::ImguiWindowMainStatusbar::OnUpdate()
         //ImGui::SetNextWindowSizeConstraints({ -1,-1 }, { 20,50 });
         if(ImGui::BeginCombo(std::format("{}##UiScale", scales[scale_idx].first).c_str(), nullptr, combo_flags))
         {
-            int new_idx = -1;
+            int32_t new_idx = -1;
             for(auto& [str, factor] : scales)
             {
                 new_idx++;

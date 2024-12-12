@@ -83,7 +83,7 @@ namespace Arcadia
         // Angle of pitch
         // Look from right:
         // increase when rotating counter-clockwise
-        auto _PitchAngle() const -> float;
+        auto _PitchAngle() const->float;
 
         // Angle of yaw
         // Look from top:

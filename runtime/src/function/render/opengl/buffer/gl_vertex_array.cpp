@@ -4,7 +4,7 @@
 
 Arcadia::GlVertexArray::GlVertexArray(
     const std::vector<Vertex>& vertices,
-    const std::vector<Mesh::index_type>& indices
+    const std::vector<Mesh::IndexType>& indices
 ) :
     _GlVertexBuffer(vertices),
     _GlIndexBuffer(indices)

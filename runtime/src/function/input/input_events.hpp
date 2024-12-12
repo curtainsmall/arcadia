@@ -148,10 +148,10 @@ namespace Arcadia
         ACDA_EVENT(
             InputKey,
             WindowLayer*, // Input window
-            int, // Key code
-            int, // Key scancode
-            int, // Input action
-            int  // Input modifiers
+            int32_t, // Key code
+            int32_t, // Key scancode
+            int32_t, // Input action
+            int32_t  // Input modifiers
         );
         ACDA_EVENT(
             InputCursorPos,
@@ -171,9 +171,9 @@ namespace Arcadia
         ACDA_EVENT(
             InputMouseButton,
             WindowLayer*, // Input window
-            int, // Mouse code
-            int, // Input action
-            int  // Input modifiers
+            int32_t, // Mouse code
+            int32_t, // Input action
+            int32_t  // Input modifiers
         );
         ACDA_EVENT(
             InputCursorEnter,
@@ -183,7 +183,7 @@ namespace Arcadia
         ACDA_EVENT(
             InputChar,
             WindowLayer*,
-            unsigned int // Unicode code points
+            UnicodeCodepoint // Unicode code points
         );
     }
 }

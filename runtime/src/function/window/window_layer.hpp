@@ -18,7 +18,7 @@ namespace Arcadia
         WindowLayer(
             glm::ivec2 size ={ 800,600 },
             std::string title = "Untitled",
-            int multisample_count = 0
+            int32_t multisample_count = 0
         );
         virtual ~WindowLayer();
 
@@ -44,7 +44,7 @@ namespace Arcadia
         auto GetPosition() const->glm::ivec2;
 
         [[nodiscard]]
-        auto GetMultisampleCount() const -> int;
+        auto GetMultisampleCount() const->int32_t;
 
         [[nodiscard]]
         auto GetCursorInputMode() const->WindowCursorInputMode;
@@ -70,10 +70,10 @@ namespace Arcadia
         static constexpr glm::vec2 _LegalCursorMoveRange{ -20.f,20.f };
 
         std::string _Title;
-        int _SwapInterval{ 0 };
+        int32_t _SwapInterval{ 0 };
 
         GLFWwindow* _GlfwWindow{ nullptr };
         glm::vec2 _LastCursorPosition{ .0f };
-        const int _MultisampleCount;
+        const int32_t _MultisampleCount;
     };
 }

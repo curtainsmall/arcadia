@@ -13,10 +13,10 @@ Arcadia::PhysicsSimulator::PhysicsSimulator()
     JPH::Factory::sInstance = new JPH::Factory{};
     JPH::RegisterTypes();
 
-    const unsigned int max_bodies = 65536;
-    const unsigned int num_body_mutexes = 0;
-    const unsigned int max_body_pair = 65535;
-    const unsigned int max_contact_constraints = 10240;
+    const JPH::uint max_bodies = 65536;
+    const JPH::uint num_body_mutexes = 0;
+    const JPH::uint max_body_pair = 65535;
+    const JPH::uint max_contact_constraints = 10240;
 
     _JphPhysicsSystem = std::make_unique<JPH::PhysicsSystem>();
     _JphPhysicsSystem->Init(max_bodies, num_body_mutexes, max_body_pair, max_contact_constraints, _JphBroadPhaseLayer, _JphObjectVsBroadLayerFilter, _JphObjectLayerPairFilter);
@@ -200,12 +200,12 @@ void Arcadia::PhysicsSimulator::SetJphTempAllocatorSize(JPH::uint get_jph_temp_a
     _JphTempAllocatorSize = get_jph_temp_allocator_size;
 }
 
-auto Arcadia::PhysicsSimulator::GetJphPhysicsSystemUpdatesPerSecond() const -> int
+auto Arcadia::PhysicsSimulator::GetJphPhysicsSystemUpdatesPerSecond() const -> int32_t
 {
     return _JphPhysicsSystemUpdatesPerSecond;
 }
 
-void Arcadia::PhysicsSimulator::SetJphPhysicsSystemUpdatesPerSecond(int jph_physics_system_updates_per_second)
+void Arcadia::PhysicsSimulator::SetJphPhysicsSystemUpdatesPerSecond(int32_t jph_physics_system_updates_per_second)
 {
     _JphPhysicsSystemUpdatesPerSecond = jph_physics_system_updates_per_second;
 }

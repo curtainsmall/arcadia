@@ -102,8 +102,8 @@ namespace Arcadia
         );
         void _DrawLights(
             const GLsizeiptr light_t_size,
-            const int max_light_count,
-            const int light_count_size_aligned,
+            const int32_t max_light_count,
+            const int32_t light_count_size_aligned,
             GlUniformBuffer& gl_light_uniform_buffer,
             const GlVertexArray& gl_light_shape_vertex_array,
             const glm::mat4& camera_view,

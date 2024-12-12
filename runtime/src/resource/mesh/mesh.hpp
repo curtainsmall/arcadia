@@ -12,7 +12,7 @@ namespace Arcadia
     class Mesh
     {
     public:
-        using index_type = unsigned int;
+        using IndexType = unsigned int;
         using SelfType = Mesh;
     public:
         static auto CreateBox(
@@ -39,7 +39,7 @@ namespace Arcadia
         ) -> Mesh;
 
         std::vector<Vertex> Vertices{};
-        std::vector<index_type> Indices{};
+        std::vector<IndexType> Indices{};
 
         Material Material{};
     };

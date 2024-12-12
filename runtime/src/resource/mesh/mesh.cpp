@@ -357,7 +357,7 @@ auto Arcadia::Mesh::CreateCapsule(
 #if 1
     // Cylinder part
     std::vector<float> unit_circle_vertices{};
-    for(int i = 0; i <= sector_count; ++i)
+    for(size_t i = 0; i <= sector_count; ++i)
     {
         float sector_angle = i * sector_step;
         unit_circle_vertices.emplace_back(std::sin(sector_angle));
@@ -365,14 +365,14 @@ auto Arcadia::Mesh::CreateCapsule(
         unit_circle_vertices.emplace_back(std::cos(sector_angle));
     }
 
-    int k1 = vertices.size();
-    int k2 = k1 + sector_count + 1;
-    for(int i = 0; i < 2; ++i)
+    size_t k1 = vertices.size();
+    size_t k2 = k1 + sector_count + 1;
+    for(size_t i = 0; i < 2; ++i)
     {
         float h = -half_height_of_cylinder + i * half_height_of_cylinder * 2;
         float tex_coord_y = 1.f - i;
 
-        for(int j = 0, k = 0; j <= sector_count; ++j, k += 3)
+        for(size_t j = 0, k = 0; j <= sector_count; ++j, k += 3)
         {
             float ux = unit_circle_vertices.at(k);
             float uy = unit_circle_vertices.at(k + 1);
@@ -388,7 +388,7 @@ auto Arcadia::Mesh::CreateCapsule(
         }
     }
 
-    for(int i = 0; i < sector_count; ++i, ++k1, ++k2)
+    for(size_t i = 0; i < sector_count; ++i, ++k1, ++k2)
     {
         indices.emplace_back(k1);
         indices.emplace_back(k1 + 1);
@@ -413,7 +413,7 @@ auto Arcadia::Mesh::CreateCylinder(
     float sector_step = 2 * pi / sector_count;
 
     std::vector<float> unit_circle_vertices{};
-    for(int i = 0; i <= sector_count; ++i)
+    for(size_t i = 0; i <= sector_count; ++i)
     {
         float sector_angle = i * sector_step;
         unit_circle_vertices.emplace_back(std::sin(sector_angle));
@@ -424,12 +424,12 @@ auto Arcadia::Mesh::CreateCylinder(
     Mesh mesh{};
     auto& vertices = mesh.Vertices;
 
-    for(int i = 0; i < 2; ++i)
+    for(size_t i = 0; i < 2; ++i)
     {
         float h = -half_height + i * half_height * 2;
         float tex_coord_y = 1.f - i;
 
-        for(int j = 0, k = 0; j <= sector_count; ++j, k += 3)
+        for(size_t j = 0, k = 0; j <= sector_count; ++j, k += 3)
         {
             float ux = unit_circle_vertices.at(k);
             float uy = unit_circle_vertices.at(k + 1);
@@ -444,9 +444,9 @@ auto Arcadia::Mesh::CreateCylinder(
             );
         }
     }
-    int base_center_index = vertices.size();
-    int top_center_index = base_center_index + sector_count + 1;
-    for(int i = 0; i < 2; ++i)
+    size_t base_center_index = vertices.size();
+    size_t top_center_index = base_center_index + sector_count + 1;
+    for(size_t i = 0; i < 2; ++i)
     {
         float h = -half_height + i * half_height * 2;
         float ny = -1 + i * 2;
@@ -460,7 +460,7 @@ auto Arcadia::Mesh::CreateCylinder(
             }
         );
 
-        for(int j = 0, k = 0; j < sector_count; ++j, k += 3)
+        for(size_t j = 0, k = 0; j < sector_count; ++j, k += 3)
         {
             float ux = unit_circle_vertices.at(k);
             float uz = unit_circle_vertices.at(k + 2);
@@ -476,9 +476,9 @@ auto Arcadia::Mesh::CreateCylinder(
     }
 
     auto& indices = mesh.Indices;
-    int k1 = 0;
-    int k2 = sector_count + 1;
-    for(int i = 0; i < sector_count; ++i, ++k1, ++k2)
+    size_t k1 = 0;
+    size_t k2 = sector_count + 1;
+    for(size_t i = 0; i < sector_count; ++i, ++k1, ++k2)
     {
         indices.emplace_back(k1);
         indices.emplace_back(k1 + 1);
@@ -488,7 +488,7 @@ auto Arcadia::Mesh::CreateCylinder(
         indices.emplace_back(k1 + 1);
         indices.emplace_back(k2 + 1);
     }
-    for(int i = 0, k = base_center_index + 1; i < sector_count; ++i, ++k)
+    for(size_t i = 0, k = base_center_index + 1; i < sector_count; ++i, ++k)
     {
         if(i < sector_count - 1)
         {
@@ -503,7 +503,7 @@ auto Arcadia::Mesh::CreateCylinder(
             indices.emplace_back(k);
         }
     }
-    for(int i = 0, k = top_center_index + 1; i < sector_count; ++i, ++k)
+    for(size_t i = 0, k = top_center_index + 1; i < sector_count; ++i, ++k)
     {
         if(i < sector_count - 1)
         {

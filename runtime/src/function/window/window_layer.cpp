@@ -8,7 +8,7 @@
 Arcadia::WindowLayer::WindowLayer(
     glm::ivec2 size,
     std::string title,
-    int multisample_count
+    int32_t multisample_count
 ) :
     iLayer(std::format("window_{}", title)),
     _Title(title),
@@ -134,7 +134,7 @@ auto Arcadia::WindowLayer::GetPosition() const -> glm::ivec2
 void Arcadia::WindowLayer::_OnWindowSetCursorInputMode(Events::WindowSetCursorInputMode& e)
 {
     auto& [value] = e.DataTuple;
-    int val = Match<int>(
+    int32_t val = Match<int>(
         value,
         WindowCursorInputMode::Normal,
         GLFW_CURSOR_NORMAL,
@@ -368,7 +368,7 @@ void Arcadia::WindowLayer::_OnWindowCloseCanceled(Events::WindowCloseCanceled& e
     }
 }
 
-auto Arcadia::WindowLayer::GetMultisampleCount() const -> int
+auto Arcadia::WindowLayer::GetMultisampleCount() const -> int32_t
 {
     return _MultisampleCount;
 }

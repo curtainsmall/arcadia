@@ -29,7 +29,7 @@ namespace Arcadia
         glm::ivec2 WindowSizeMin{ 800,600 };
         glm::ivec2 WindowSizeMax{ -1,-1 }; // Use negative value for `don't care`
         std::string WindowTitle{ "Arcadia" };
-        int WindowMultisampleCount{ 0 };
+        int32_t WindowMultisampleCount{ 0 };
         bool WindowMaxmized{ true };
 
         // ImGui
