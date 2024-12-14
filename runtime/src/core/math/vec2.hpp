@@ -8,7 +8,7 @@
 
 namespace Arcadia
 {
-    namespace Vec2
+    namespace GlmVec2
     {
         [[nodiscard]]
         ACDA_API static inline auto ToJson(const glm::vec2& vec) -> nlohmann::json

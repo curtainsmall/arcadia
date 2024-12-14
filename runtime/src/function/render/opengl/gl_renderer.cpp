@@ -11,7 +11,7 @@
 #include"resource/components/skybox_component.hpp"
 #include"resource/components/transform_component.hpp"
 
-Arcadia::GlRenderer::GlRenderer(const std::filesystem::path& gl_shader_folder_path) :
+Arcadia::GlRenderer::GlRenderer(const std::filesystem::path& gl_shader_folder_path):
     _GlModelPipeline(gl_shader_folder_path, GenerateModelShadersBuilder()),
     _GlSkyboxPipeline(gl_shader_folder_path, GenerateSkyboxShadersBuilder()),
     _GlGridPipeline(gl_shader_folder_path, GenerateGridShadersBuilder()),
@@ -388,7 +388,7 @@ void Arcadia::GlRenderer::_DrawLights(
             ++light_count;
 
             _GlShapePipeline
-                .SetUniform("u_transform_mat", glm::translate(Mat4::CreateIdentity(), position))
+                .SetUniform("u_transform_mat", glm::translate(GlmMat4::CreateIdentity(), position))
                 .SetUniform("u_color", light.Color);
         },
             [&](const DirectLight& light)
@@ -419,7 +419,7 @@ void Arcadia::GlRenderer::_DrawLights(
             ++light_count;
 
             _GlShapePipeline
-                .SetUniform("u_transform_mat", glm::translate(Mat4::CreateIdentity(), position))
+                .SetUniform("u_transform_mat", glm::translate(GlmMat4::CreateIdentity(), position))
                 .SetUniform("u_color", light.Color);
         }
         );

@@ -852,7 +852,7 @@ auto Arcadia::ImguiWindowPropertyTransformComponent::operator()(TransformCompone
         float rotation_drag_speed{ .05f };
         glm::quat temp = transform_comp.Rotation;
         ImGui::DragFloat3("Rotation", glm::value_ptr(temp), rotation_drag_speed, min, max, format, flags);
-        transform_comp.Rotation = Quat::NormalizeFixedly(transform_comp.Rotation, temp);
+        transform_comp.Rotation = GlmQuat::NormalizeFixedly(transform_comp.Rotation, temp);
         if(ImGui::IsItemDeactivatedAfterEdit())
         {
             description = "Rotation";
@@ -863,7 +863,7 @@ auto Arcadia::ImguiWindowPropertyTransformComponent::operator()(TransformCompone
         float direction_drag_speed{ .05f };
         glm::vec3 temp = transform_comp.Direction;
         ImGui::DragFloat3("Direction", glm::value_ptr(temp), direction_drag_speed, min, max, format, flags);
-        transform_comp.Direction = Vec3::NormalizeFixedly(transform_comp.Direction, temp);
+        transform_comp.Direction = GlmVec3::NormalizeFixedly(transform_comp.Direction, temp);
         if(ImGui::IsItemDeactivatedAfterEdit())
         {
             description = "Direction";
@@ -876,7 +876,7 @@ auto Arcadia::ImguiWindowPropertyTransformComponent::operator()(TransformCompone
         description = "Scale";
     }
 
-    if(position_delta != Vec3::CreateZero())
+    if(position_delta != GlmVec3::CreateZero())
     {
         transform_comp.Pivot += position_delta; // Make pivot move with translation
     }

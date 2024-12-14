@@ -41,7 +41,7 @@ namespace Arcadia
         [[nodiscard]]
         auto ToJson() const->nlohmann::json;
 
-#if 0
+    #if 0
         auto MoveForward() -> SelfType&;
         auto MoveBackward() -> SelfType&;
         auto MoveLeft() -> SelfType&;
@@ -55,19 +55,19 @@ namespace Arcadia
         auto DragViewRotate(const glm::vec2& Offset) -> SelfType&;
 
         [[nodiscard]]
-        auto GenerateViewMat4() const->glm::Mat4;
+        auto GenerateViewMat4() const->glm::mat4;
 
         [[nodiscard]]
-        auto GenerateProjectiveMat4() const->glm::Mat4;
+        auto GenerateProjectiveMat4() const->glm::mat4;
 
         [[nodiscard]]
-        auto GenerateMat4(bool col_major = true) const->glm::Mat4;
+        auto GenerateMat4(bool col_major = true) const->glm::mat4;
 
         // Get forward vector by position and target
         auto GetForwardDir() const->glm::vec3;
         auto GetLeftDir() const->glm::vec3;
         auto GetUpDir() const->glm::vec3;
-#endif
+    #endif
 
         static auto GenerateViewMat4(const glm::vec3& pos, const glm::vec3& dir) -> glm::mat4;
 
@@ -78,7 +78,7 @@ namespace Arcadia
         virtual auto OnSnapshot() const->std::shared_ptr<MementoDataBase> override;
         virtual void OnRestore(const std::shared_ptr<MementoDataBase>& sp_memento_data) override;
 
-#if 0
+    #if 0
     private:
         // Angle of pitch
         // Look from right:
@@ -97,10 +97,10 @@ namespace Arcadia
 
         // Test whether a cursor move should be filtered
         auto _TestCursorMove(float x_offset, float y_offset) -> bool;
-#endif
+    #endif
 
     public:
-        static inline glm::vec3 Up{ Vec3::CreateUnitPositiveY() };
+        static inline glm::vec3 Up{ GlmVec3::CreateUnitPositiveY() };
 
         /// @brief Near plane of clip space
         float NearPlane{ .1f };

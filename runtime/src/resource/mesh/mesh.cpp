@@ -18,42 +18,42 @@ auto Arcadia::Mesh::CreateBox(
     vertices.emplace_back(
         Vertex{
             glm::vec3{x, y, z},
-            Vec3::CreateUnitPositiveX(),
+            GlmVec3::CreateUnitPositiveX(),
             glm::vec2{.5f,.67f}
         }
     );
     vertices.emplace_back(
         Vertex{
             glm::vec3{x, -y,z},
-            Vec3::CreateUnitPositiveX(),
+            GlmVec3::CreateUnitPositiveX(),
             glm::vec2{.5f,.33f}
         }
     );
     vertices.emplace_back(
         Vertex{
             glm::vec3{x,y,-z},
-            Vec3::CreateUnitPositiveX(),
+            GlmVec3::CreateUnitPositiveX(),
             glm::vec2{.75f,.67f}
         }
     );
     vertices.emplace_back(
         Vertex{
             glm::vec3{x,y,-z},
-            Vec3::CreateUnitPositiveX(),
+            GlmVec3::CreateUnitPositiveX(),
             glm::vec2{.75f,.67f}
         }
     );
     vertices.emplace_back(
         Vertex{
             glm::vec3{x,-y,z},
-            Vec3::CreateUnitPositiveX(),
+            GlmVec3::CreateUnitPositiveX(),
             glm::vec2{.5f,.33f}
         }
     );
     vertices.emplace_back(
         Vertex{
             glm::vec3{x,-y,-z},
-            Vec3::CreateUnitPositiveX(),
+            GlmVec3::CreateUnitPositiveX(),
             glm::vec2{.75f,.33f}
         }
     );
@@ -62,42 +62,42 @@ auto Arcadia::Mesh::CreateBox(
     vertices.emplace_back(
         Vertex{
             glm::vec3{-x, y, -z},
-            Vec3::CreateUnitNegativeX(),
+            GlmVec3::CreateUnitNegativeX(),
             glm::vec2{.0f,.67f}
         }
     );
     vertices.emplace_back(
         Vertex{
             glm::vec3{-x, -y,-z},
-            Vec3::CreateUnitNegativeX(),
+            GlmVec3::CreateUnitNegativeX(),
             glm::vec2{.0f,.33f}
         }
     );
     vertices.emplace_back(
         Vertex{
             glm::vec3{-x,y,z},
-            Vec3::CreateUnitNegativeX(),
+            GlmVec3::CreateUnitNegativeX(),
             glm::vec2{.25f,.67f}
         }
     );
     vertices.emplace_back(
         Vertex{
             glm::vec3{-x,y,z},
-            Vec3::CreateUnitNegativeX(),
+            GlmVec3::CreateUnitNegativeX(),
             glm::vec2{.25f,.67f}
         }
     );
     vertices.emplace_back(
         Vertex{
             glm::vec3{-x,-y,-z},
-            Vec3::CreateUnitNegativeX(),
+            GlmVec3::CreateUnitNegativeX(),
             glm::vec2{.0f,.33f}
         }
     );
     vertices.emplace_back(
         Vertex{
             glm::vec3{-x,-y,z},
-            Vec3::CreateUnitPositiveY(),
+            GlmVec3::CreateUnitPositiveY(),
             glm::vec2{.25f,.33f}
         }
     );
@@ -106,42 +106,42 @@ auto Arcadia::Mesh::CreateBox(
     vertices.emplace_back(
         Vertex{
             glm::vec3{-x, y, -z},
-            Vec3::CreateUnitPositiveY(),
+            GlmVec3::CreateUnitPositiveY(),
             glm::vec2{.25f,1.f}
         }
     );
     vertices.emplace_back(
         Vertex{
             glm::vec3{-x, y,z},
-            Vec3::CreateUnitPositiveY(),
+            GlmVec3::CreateUnitPositiveY(),
             glm::vec2{.25f,.67f}
         }
     );
     vertices.emplace_back(
         Vertex{
             glm::vec3{x,y,-z},
-            Vec3::CreateUnitPositiveY(),
+            GlmVec3::CreateUnitPositiveY(),
             glm::vec2{.5f,1.f}
         }
     );
     vertices.emplace_back(
         Vertex{
             glm::vec3{x,y,-z},
-            Vec3::CreateUnitPositiveY(),
+            GlmVec3::CreateUnitPositiveY(),
             glm::vec2{.5f,1.f}
         }
     );
     vertices.emplace_back(
         Vertex{
             glm::vec3{-x,y,z},
-            Vec3::CreateUnitPositiveY(),
+            GlmVec3::CreateUnitPositiveY(),
             glm::vec2{.25f,.67f}
         }
     );
     vertices.emplace_back(
         Vertex{
             glm::vec3{x,y,z},
-            Vec3::CreateUnitPositiveY(),
+            GlmVec3::CreateUnitPositiveY(),
             glm::vec2{.5f,.67f}
         }
     );
@@ -150,42 +150,42 @@ auto Arcadia::Mesh::CreateBox(
     vertices.emplace_back(
         Vertex{
             glm::vec3{-x, -y, z},
-            Vec3::CreateUnitNegativeY(),
+            GlmVec3::CreateUnitNegativeY(),
             glm::vec2{.25f,.33f}
         }
     );
     vertices.emplace_back(
         Vertex{
             glm::vec3{-x, -y,-z},
-            Vec3::CreateUnitNegativeY(),
+            GlmVec3::CreateUnitNegativeY(),
             glm::vec2{.25f,.0f}
         }
     );
     vertices.emplace_back(
         Vertex{
             glm::vec3{x,-y,z},
-            Vec3::CreateUnitNegativeY(),
+            GlmVec3::CreateUnitNegativeY(),
             glm::vec2{.25f,.5f}
         }
     );
     vertices.emplace_back(
         Vertex{
             glm::vec3{x,-y,z},
-            Vec3::CreateUnitNegativeY(),
+            GlmVec3::CreateUnitNegativeY(),
             glm::vec2{.25f,.5f}
         }
     );
     vertices.emplace_back(
         Vertex{
             glm::vec3{-x,-y,-z},
-            Vec3::CreateUnitNegativeY(),
+            GlmVec3::CreateUnitNegativeY(),
             glm::vec2{.25f,.0f}
         }
     );
     vertices.emplace_back(
         Vertex{
             glm::vec3{x,-y,-z},
-            Vec3::CreateUnitNegativeY(),
+            GlmVec3::CreateUnitNegativeY(),
             glm::vec2{.5f,.0f}
         }
     );
@@ -194,42 +194,42 @@ auto Arcadia::Mesh::CreateBox(
     vertices.emplace_back(
         Vertex{
             glm::vec3{-x, y, z},
-            Vec3::CreateUnitPositiveZ(),
+            GlmVec3::CreateUnitPositiveZ(),
             glm::vec2{.25f,.67f}
         }
     );
     vertices.emplace_back(
         Vertex{
             glm::vec3{-x, -y,z},
-            Vec3::CreateUnitPositiveZ(),
+            GlmVec3::CreateUnitPositiveZ(),
             glm::vec2{.25f,.33f}
         }
     );
     vertices.emplace_back(
         Vertex{
             glm::vec3{x,y,z},
-            Vec3::CreateUnitPositiveZ(),
+            GlmVec3::CreateUnitPositiveZ(),
             glm::vec2{.5f,.67f}
         }
     );
     vertices.emplace_back(
         Vertex{
             glm::vec3{x,y,z},
-            Vec3::CreateUnitPositiveZ(),
+            GlmVec3::CreateUnitPositiveZ(),
             glm::vec2{.5f,.67f}
         }
     );
     vertices.emplace_back(
         Vertex{
             glm::vec3{-x, -y,z},
-            Vec3::CreateUnitPositiveZ(),
+            GlmVec3::CreateUnitPositiveZ(),
             glm::vec2{.25f,.33f}
         }
     );
     vertices.emplace_back(
         Vertex{
             glm::vec3{x,-y,z},
-            Vec3::CreateUnitPositiveZ(),
+            GlmVec3::CreateUnitPositiveZ(),
             glm::vec2{.5f,.33f}
         }
     );
@@ -238,42 +238,42 @@ auto Arcadia::Mesh::CreateBox(
     vertices.emplace_back(
         Vertex{
             glm::vec3{x, y, -z},
-            Vec3::CreateUnitNegativeZ(),
+            GlmVec3::CreateUnitNegativeZ(),
             glm::vec2{.75f,.67f}
         }
     );
     vertices.emplace_back(
         Vertex{
             glm::vec3{x, -y,-z},
-            Vec3::CreateUnitNegativeZ(),
+            GlmVec3::CreateUnitNegativeZ(),
             glm::vec2{.75f,.33f}
         }
     );
     vertices.emplace_back(
         Vertex{
             glm::vec3{-x,y,-z},
-            Vec3::CreateUnitNegativeZ(),
+            GlmVec3::CreateUnitNegativeZ(),
             glm::vec2{1.f,.67f}
         }
     );
     vertices.emplace_back(
         Vertex{
             glm::vec3{-x,y,-z},
-            Vec3::CreateUnitNegativeZ(),
+            GlmVec3::CreateUnitNegativeZ(),
             glm::vec2{1.f,.67f}
         }
     );
     vertices.emplace_back(
         Vertex{
             glm::vec3{x, -y,-z},
-            Vec3::CreateUnitNegativeZ(),
+            GlmVec3::CreateUnitNegativeZ(),
             glm::vec2{.75f,.33f}
         }
     );
     vertices.emplace_back(
         Vertex{
             glm::vec3{-x,-y,-z},
-            Vec3::CreateUnitNegativeZ(),
+            GlmVec3::CreateUnitNegativeZ(),
             glm::vec2{1.f,.33f}
         }
     );

@@ -23,11 +23,11 @@ namespace Arcadia
     public:
         TransformComponentFlags Flags{ TransformComponentFlags::None };
 
-        glm::vec3 Position{ Vec3::CreateZero() };
-        glm::quat Rotation{ Quat::CreateIdentity() };
-        glm::vec3 Direction{ Vec3::CreateUnitPositiveZ() };
+        glm::vec3 Position{ GlmVec3::CreateZero() };
+        glm::quat Rotation{ GlmQuat::CreateIdentity() };
+        glm::vec3 Direction{ GlmVec3::CreateUnitPositiveZ() };
         glm::vec3 Scale{ 1,1,1 };
-        glm::vec3 Pivot{ Vec3::CreateZero() };
+        glm::vec3 Pivot{ GlmVec3::CreateZero() };
     };
 
     class TransformComponent:
@@ -58,10 +58,10 @@ namespace Arcadia
     public:
         TransformComponentFlags Flags{ TransformComponentFlags::None };
 
-        glm::vec3 Position{ Vec3::CreateZero() };
-        glm::quat Rotation{ Quat::CreateIdentity() };
-        glm::vec3 Direction{ Vec3::CreateUnitPositiveZ() };
+        glm::vec3 Position{ GlmVec3::CreateZero() };
+        glm::quat Rotation{ GlmQuat::CreateIdentity() };
+        glm::vec3 Direction{ GlmVec3::CreateUnitPositiveZ() };
         glm::vec3 Scale{ 1,1,1 };
-        glm::vec3 Pivot{ Vec3::CreateZero() };
+        glm::vec3 Pivot{ GlmVec3::CreateZero() };
     };
 }

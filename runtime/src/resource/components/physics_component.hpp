@@ -66,8 +66,8 @@ namespace Arcadia
         using SelfType = JphBodyState;
     public:
         bool Active{ false };
-        glm::vec3 LinearVelocity{ Vec3::CreateZero() };
-        glm::vec3 AngularVelocity{ Vec3::CreateZero() };
+        glm::vec3 LinearVelocity{ GlmVec3::CreateZero() };
+        glm::vec3 AngularVelocity{ GlmVec3::CreateZero() };
     };
 
     class PhysicsComponentMementoData: public MementoDataBase

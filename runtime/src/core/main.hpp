@@ -33,7 +33,7 @@ ACDA_MAIN_FN_DECL
         event_queue.SwapQueue();
         while(event_queue.GetSize())
         {
-            auto& event = event_queue.ReadFront();
+            auto& event = event_queue.GetFront();
 
             for(auto& layer : Arcadia::LayerStack::Instance())
             {

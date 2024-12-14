@@ -6,8 +6,8 @@
 
 #include"core/math.hpp"
 
-Arcadia::PhysicsComponent::PhysicsComponent(const nlohmann::json& json) :
-    BodyShapeColor(Vec3::FromJson(json.at("body_shape_color")))
+Arcadia::PhysicsComponent::PhysicsComponent(const nlohmann::json& json):
+    BodyShapeColor(GlmVec3::FromJson(json.at("body_shape_color")))
 {
     const auto& json_body_info_initial = json.at("jph_body_info_initial");
     if(!json_body_info_initial.is_null())
@@ -21,7 +21,7 @@ Arcadia::PhysicsComponent::PhysicsComponent(const nlohmann::json& json) :
             [&]() -> JphShapeInfo
         {
             return JphBoxShapeInfo{
-                Vec3::FromJson(json_shape_info_info.at("half_extent")),
+                GlmVec3::FromJson(json_shape_info_info.at("half_extent")),
                 json_shape_info_info.at("convex_radius")
             };
         },
@@ -72,7 +72,7 @@ auto Arcadia::PhysicsComponent::ToJson() const -> nlohmann::json
             return nlohmann::json{
                 {"type","box_shape"},
                 {"info", {
-                        {"half_extent",Vec3::ToJson(info.HalfExtent)},
+                        {"half_extent",GlmVec3::ToJson(info.HalfExtent)},
                         {"convex_radius",info.ConvexRadius}
                     }
                 }
@@ -125,7 +125,7 @@ auto Arcadia::PhysicsComponent::ToJson() const -> nlohmann::json
 
     return nlohmann::json{
         {"jph_body_info_initial",json_body_info_initial},
-        {"body_shape_color",Vec3::ToJson(BodyShapeColor)}
+        {"body_shape_color",GlmVec3::ToJson(BodyShapeColor)}
     };
 }
 

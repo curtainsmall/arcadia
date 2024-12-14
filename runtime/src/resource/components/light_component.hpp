@@ -24,9 +24,9 @@ namespace Arcadia
         glm::vec3 AttenuationCoefficients{ 1.f,.045f,.0075f };
         glm::vec2 CutoffAngles{ glm::radians(30.f),glm::radians(32.f) };
         glm::vec3 Color{ 1.f,1.f,1.f };
-        glm::vec3 AmbientStrength{ Vec3::CreateZero() };
+        glm::vec3 AmbientStrength{ GlmVec3::CreateZero() };
         glm::vec3 DiffuseStrength{ 5.f,5.f,5.f };
-        glm::vec3 SepcularStrength{ Vec3::CreateZero() };
+        glm::vec3 SepcularStrength{ GlmVec3::CreateZero() };
     };
 
     class DirectLight
@@ -35,9 +35,9 @@ namespace Arcadia
         auto operator==(const DirectLight&) const -> bool = default;
     public:
         glm::vec3 Color{ 1.f,1.f,1.f };
-        glm::vec3 AmbientStrength{ Vec3::CreateZero() };
+        glm::vec3 AmbientStrength{ GlmVec3::CreateZero() };
         glm::vec3 DiffuseStrength{ 5.f,5.f,5.f };
-        glm::vec3 SepcularStrength{ Vec3::CreateZero() };
+        glm::vec3 SepcularStrength{ GlmVec3::CreateZero() };
     };
 
     class AreaLight
@@ -45,11 +45,11 @@ namespace Arcadia
     public:
         auto operator==(const AreaLight&) const -> bool = default;
     public:
-        glm::vec2 Size{ Vec2::CreateZero() };
+        glm::vec2 Size{ GlmVec2::CreateZero() };
         glm::vec3 Color{ 1.f,1.f,1.f };
-        glm::vec3 AmbientStrength{ Vec3::CreateZero() };
+        glm::vec3 AmbientStrength{ GlmVec3::CreateZero() };
         glm::vec3 DiffuseStrength{ 5.f,5.f,5.f };
-        glm::vec3 SepcularStrength{ Vec3::CreateZero() };
+        glm::vec3 SepcularStrength{ GlmVec3::CreateZero() };
     };
 
     class PointLight
@@ -59,9 +59,9 @@ namespace Arcadia
     public:
         glm::vec3 AttenuationCoefficients{ 1.f,.045f,.0075f };
         glm::vec3 Color{ 1.f,1.f,1.f };
-        glm::vec3 AmbientStrength{ Vec3::CreateZero() };
+        glm::vec3 AmbientStrength{ GlmVec3::CreateZero() };
         glm::vec3 DiffuseStrength{ 5.f,5.f,5.f };
-        glm::vec3 SepcularStrength{ Vec3::CreateZero() };
+        glm::vec3 SepcularStrength{ GlmVec3::CreateZero() };
     };
 
     using LightType = std::variant<

@@ -8,7 +8,7 @@
 
 namespace Arcadia
 {
-    namespace Quat
+    namespace GlmQuat
     {
         [[nodiscard]]
         ACDA_API static inline auto ToJson(const glm::quat& quat) -> nlohmann::json

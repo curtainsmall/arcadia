@@ -19,7 +19,7 @@ auto Arcadia::EventQueue::GetSize() const -> size_t
     return _ProcessingQueue->size();
 }
 
-auto Arcadia::EventQueue::ReadFront() -> EventBase&
+auto Arcadia::EventQueue::GetFront() -> EventBase&
 {
     if(!GetSize())
     {

@@ -3,24 +3,24 @@
 
 #include"core/math.hpp"
 
-Arcadia::TransformComponent::TransformComponent(const nlohmann::json& json) :
+Arcadia::TransformComponent::TransformComponent(const nlohmann::json& json):
     Flags(json.at("flags")),
-    Position(Vec3::FromJson(json.at("position"))),
-    Rotation(Quat::FromJson(json.at("rotation"))),
-    Direction(Vec3::FromJson(json.at("direction"))),
-    Scale(Vec3::FromJson(json.at("scale"))),
-    Pivot(Vec3::FromJson(json.at("pivot")))
+    Position(GlmVec3::FromJson(json.at("position"))),
+    Rotation(GlmQuat::FromJson(json.at("rotation"))),
+    Direction(GlmVec3::FromJson(json.at("direction"))),
+    Scale(GlmVec3::FromJson(json.at("scale"))),
+    Pivot(GlmVec3::FromJson(json.at("pivot")))
 {}
 
 auto Arcadia::TransformComponent::ToJson() const -> nlohmann::json
 {
     nlohmann::json json{
         {"flags", Flags},
-        {"position",Vec3::ToJson(Position)},
-        {"rotation",Quat::ToJson(Rotation)},
-        {"direction",Vec3::ToJson(Direction)},
-        {"scale"   ,Vec3::ToJson(Scale)},
-        {"pivot"   ,Vec3::ToJson(Pivot)}
+        {"position",GlmVec3::ToJson(Position)},
+        {"rotation",GlmQuat::ToJson(Rotation)},
+        {"direction",GlmVec3::ToJson(Direction)},
+        {"scale"   ,GlmVec3::ToJson(Scale)},
+        {"pivot"   ,GlmVec3::ToJson(Pivot)}
     };
 
     return json;
@@ -28,7 +28,7 @@ auto Arcadia::TransformComponent::ToJson() const -> nlohmann::json
 
 auto Arcadia::TransformComponent::GenerateTransformMat4() const -> glm::mat4
 {
-    glm::mat4 mat = Mat4::CreateIdentity();
+    glm::mat4 mat = GlmMat4::CreateIdentity();
 
     // Move pivot to origin
     //mat = glm::translate(mat, -Pivot);

@@ -15,7 +15,7 @@ Arcadia::CameraComponent::CameraComponent(const nlohmann::json& json)
     ViewportSize          = IntVec2::FromJson(json.at("viewport_size"));
     FixedUp               = json.at("fixed_up");
     UpEpsilon             = json.at("up_epsilon");
-    CursorMoveOffsetRange = Vec2::FromJson(json.at("cursor_move_offset_range"));
+    CursorMoveOffsetRange = GlmVec2::FromJson(json.at("cursor_move_offset_range"));
 }
 
 auto Arcadia::CameraComponent::ToJson() const -> nlohmann::json
@@ -30,7 +30,7 @@ auto Arcadia::CameraComponent::ToJson() const -> nlohmann::json
         { "viewport_size"           ,IntVec2::ToJson(ViewportSize) },
         { "fixed_up"                ,FixedUp },
         { "up_epsilon"              ,UpEpsilon },
-        { "cursor_move_offset_range",Vec2::ToJson(CursorMoveOffsetRange) }
+        { "cursor_move_offset_range",GlmVec2::ToJson(CursorMoveOffsetRange) }
     };
 }
 
@@ -183,12 +183,12 @@ auto Arcadia::CameraComponent::DragViewRotate(const glm::vec2& Offset) -> SelfTy
     return *this;
 }
 
-auto Arcadia::CameraComponent::GenerateViewMat4() const -> glm::Mat4
+auto Arcadia::CameraComponent::GenerateViewMat4() const -> glm::mat4
 {
     return glm::lookAt(Position, Target, Up);
 }
 
-auto Arcadia::CameraComponent::GenerateProjectiveMat4() const -> glm::Mat4
+auto Arcadia::CameraComponent::GenerateProjectiveMat4() const -> glm::mat4
 {
     return glm::perspective(
         Fov,
@@ -198,7 +198,7 @@ auto Arcadia::CameraComponent::GenerateProjectiveMat4() const -> glm::Mat4
     );
 }
 
-auto Arcadia::CameraComponent::GenerateMat4(bool col_major) const -> glm::Mat4
+auto Arcadia::CameraComponent::GenerateMat4(bool col_major) const -> glm::mat4
 {
     if(col_major)
     {

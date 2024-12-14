@@ -5,7 +5,7 @@
 
 namespace Arcadia
 {
-    namespace Mat2
+    namespace GlmMat2
     {
         [[nodiscard]]
         ACDA_API constexpr auto CreateZero() -> glm::mat2
