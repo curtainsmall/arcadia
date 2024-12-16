@@ -40,17 +40,17 @@ auto Arcadia::MementoList::Redo()  -> bool
     return true;
 }
 
-auto Arcadia::MementoList::GetCapacity() const -> size_t
+auto Arcadia::MementoList::GetCapacity() const -> std::size_t
 {
     return _Capacity;
 }
 
-void Arcadia::MementoList::SetCapacity(size_t capacity)
+void Arcadia::MementoList::SetCapacity(std::size_t capacity)
 {
     _Capacity = capacity;
 }
 
-auto Arcadia::MementoList::GetSize() const -> size_t
+auto Arcadia::MementoList::GetSize() const -> std::size_t
 {
     return _List.size();
 }

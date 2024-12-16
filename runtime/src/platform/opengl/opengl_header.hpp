@@ -27,7 +27,7 @@ namespace Arcadia
     /// @param line Line where the error generated
     ACDA_API void GlCheckError(const char* fn_name, const char* file_name, int line);
 
-    ACDA_API auto GlGetTypeSize(GLenum Type) -> size_t;
+    ACDA_API auto GlGetTypeSize(GLenum Type) -> std::size_t;
 
     ACDA_API auto SetGlVersion() -> Version;
 

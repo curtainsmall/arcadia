@@ -4,14 +4,14 @@
 
 Arcadia::LightComponent::LightComponent(const nlohmann::json& json)
 {
-    std::string type_str = json.at("type");
+    std::string type_string = json.at("type");
     auto& json_light = json.at("light");
     Light = Match<LightType>(
-        type_str,
+        type_string,
         "null"s,
         [&]()
     {
-        return LightType{ NullLight{} };
+        return LightType(NullLight{});
     },
         "spot"s,
         [&]()
@@ -23,7 +23,7 @@ Arcadia::LightComponent::LightComponent(const nlohmann::json& json)
         light.AmbientStrength  = GlmVec3::FromJson(json_light.at("ambient_strength"));
         light.DiffuseStrength  = GlmVec3::FromJson(json_light.at("diffuse_strength"));
         light.SepcularStrength = GlmVec3::FromJson(json_light.at("specular_strength"));
-        return LightType{ light };
+        return LightType(light);
     },
         "direct"s,
         [&]()
@@ -33,7 +33,7 @@ Arcadia::LightComponent::LightComponent(const nlohmann::json& json)
         light.AmbientStrength  = GlmVec3::FromJson(json_light.at("ambient_strength"));
         light.DiffuseStrength  = GlmVec3::FromJson(json_light.at("diffuse_strength"));
         light.SepcularStrength = GlmVec3::FromJson(json_light.at("specular_strength"));
-        return LightType{ light };
+        return LightType(light);
     },
         "area"s,
         [&]()
@@ -44,7 +44,7 @@ Arcadia::LightComponent::LightComponent(const nlohmann::json& json)
         light.AmbientStrength  = GlmVec3::FromJson(json_light.at("ambient_strength"));
         light.DiffuseStrength  = GlmVec3::FromJson(json_light.at("diffuse_strength"));
         light.SepcularStrength = GlmVec3::FromJson(json_light.at("specular_strength"));
-        return LightType{ light };
+        return LightType(light);
     },
         "point"s,
         [&]()
@@ -55,7 +55,7 @@ Arcadia::LightComponent::LightComponent(const nlohmann::json& json)
         light.AmbientStrength  = GlmVec3::FromJson(json_light.at("ambient_strength"));
         light.DiffuseStrength  = GlmVec3::FromJson(json_light.at("diffuse_strength"));
         light.SepcularStrength = GlmVec3::FromJson(json_light.at("specular_strength"));
-        return LightType{ light };
+        return LightType(light);
     }
     );
 }

@@ -61,7 +61,7 @@ namespace Arcadia
         BasicIdentifiable(SelfType&&) noexcept = default;
         auto operator=(SelfType&&) noexcept -> SelfType & = default;
 
-        template<size_t Index>
+        template<std::size_t Index>
         [[nodiscard]]
         auto get() const -> const auto&
         {
@@ -101,7 +101,7 @@ namespace std
     class hash<Arcadia::Uuid>
     {
     public:
-        auto operator()(const Arcadia::Uuid& Uuid) const->size_t
+        auto operator()(const Arcadia::Uuid& Uuid) const->std::size_t
         {
             return std::hash<Arcadia::Uuid::ValueType>()(Uuid);
         }
@@ -122,10 +122,10 @@ namespace std
 
     template<typename Value>
     class tuple_size<Arcadia::BasicIdentifiable<Value>>:
-        public std::integral_constant<size_t, 2>
+        public std::integral_constant<std::size_t, 2>
     {};
 
-    template<size_t Index, typename Value>
+    template<std::size_t Index, typename Value>
     class tuple_element<Index, Arcadia::BasicIdentifiable<Value>>:
         public std::tuple_element<Index, std::tuple<Arcadia::Uuid, Value>>
     {};

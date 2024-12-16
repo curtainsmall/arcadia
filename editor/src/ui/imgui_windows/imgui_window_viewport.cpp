@@ -361,7 +361,7 @@ void Arcadia::ImguiWindowViewport::_OnSceneActivated(Events::SceneActivated& e)
         entity_info.Internal = true;
         scene->EmplaceComponent<CameraComponent>(ViewportCameraEntityName);
         auto& transform_comp = scene->EmplaceComponent<TransformComponent>(ViewportCameraEntityName);
-        transform_comp.Position = glm::vec3{ 1.f,1.f,1.f };
+        transform_comp.Position = glm::vec3(1.f, 1.f, 1.f);
         transform_comp.Direction = -transform_comp.Position;
     }
     _Scene = scene;

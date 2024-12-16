@@ -11,7 +11,7 @@
 #include"resource/components/skybox_component.hpp"
 #include"resource/components/transform_component.hpp"
 
-Arcadia::GlRenderer::GlRenderer(const std::filesystem::path& gl_shader_folder_path):
+Arcadia::GlRenderer::GlRenderer(const std::filesystem::path& gl_shader_folder_path) :
     _GlModelPipeline(gl_shader_folder_path, GenerateModelShadersBuilder()),
     _GlSkyboxPipeline(gl_shader_folder_path, GenerateSkyboxShadersBuilder()),
     _GlGridPipeline(gl_shader_folder_path, GenerateGridShadersBuilder()),
@@ -247,13 +247,13 @@ void Arcadia::GlRenderer::Draw()
         }
 
         // Lights
-        const GLsizeiptr light_t_size{ 128 };
-        const int32_t max_light_count = 32;
-        const int32_t light_count_size_aligned = 16; // Sizeof `u_light_count` in fragment shader with alignment considered
-        GlUniformBuffer GlUniformBuffer{ light_count_size_aligned + light_t_size * max_light_count };
+        const GLsizeiptr light_t_size = 128;
+        const std::int32_t max_light_count = 32;
+        const std::int32_t light_count_size_aligned = 16; // Sizeof `u_light_count` in fragment shader with alignment considered
+        GlUniformBuffer GlUniformBuffer(light_count_size_aligned + light_t_size * max_light_count);
 
-        auto light_box_shape = Mesh::CreateBox(glm::vec3{ 1,1,1 });
-        GlVertexArray gl_light_box_shape_vertex_array{ light_box_shape.Vertices ,light_box_shape.Indices };
+        auto light_box_shape = Mesh::CreateBox(glm::vec3(1, 1, 1));
+        GlVertexArray gl_light_box_shape_vertex_array(light_box_shape.Vertices, light_box_shape.Indices);
 
         _DrawLights(
             light_t_size,
@@ -262,7 +262,8 @@ void Arcadia::GlRenderer::Draw()
             GlUniformBuffer,
             gl_light_box_shape_vertex_array,
             camera_view,
-            camera_proj);
+            camera_proj
+        );
 
         // Draw with mesh pipeline
         _DrawModels(
@@ -298,7 +299,7 @@ void Arcadia::GlRenderer::Reset()
     _GlRenderUnitSkybox.reset();
 }
 
-auto Arcadia::GlRenderer::GetRenderResultId(size_t index) const -> void*
+auto Arcadia::GlRenderer::GetRenderResultId(std::size_t index) const -> void*
 {
     return reinterpret_cast<void*>(std::get<0>(_GlRenderUnitCameras.at(index)).GetGlTexture2d().GetGlId());
 }
@@ -337,19 +338,19 @@ void Arcadia::GlRenderer::_DrawGrid(
 
 void Arcadia::GlRenderer::_DrawLights(
     const GLsizeiptr light_t_size,
-    const int32_t max_light_count,
-    const int32_t light_count_size_aligned,
+    const std::int32_t max_light_count,
+    const std::int32_t light_count_size_aligned,
     GlUniformBuffer& gl_light_uniform_buffer,
     const GlVertexArray& gl_light_shape_vertex_array,
     const glm::mat4& camera_view,
     const glm::mat4& camera_proj
 )
 {
-    const int32_t light_type_none = 0;
-    const int32_t light_type_spot = 1;
-    const int32_t light_type_direct = 2;
-    const int32_t light_type_area = 3;
-    const int32_t light_type_point = 4;
+    const std::int32_t light_type_none = 0;
+    const std::int32_t light_type_spot = 1;
+    const std::int32_t light_type_direct = 2;
+    const std::int32_t light_type_area = 3;
+    const std::int32_t light_type_point = 4;
 
     _GlShapePipeline.Use();
     _GlShapePipeline
@@ -362,7 +363,7 @@ void Arcadia::GlRenderer::_DrawLights(
     {
         if(light_count > max_light_count)
         {
-            throw TooManyLights{ std::format("The max light count is {}",max_light_count) };
+            throw TooManyLights(std::format("The max light count is {}", max_light_count));
         }
 
         Match<void>(

@@ -6,9 +6,9 @@
 #include"function/input/input_events.hpp"
 
 Arcadia::WindowLayer::WindowLayer(
-    glm::ivec2 size,
+    glm::i32vec2 size,
     std::string title,
-    int32_t multisample_count
+    std::int32_t multisample_count
 ) :
     iLayer(std::format("window_{}", title)),
     _Title(title),
@@ -38,9 +38,9 @@ Arcadia::WindowLayer::WindowLayer(
     _GlfwWindow = glfwCreateWindow(size.x, size.y, _Title.c_str(), nullptr, nullptr);
     if(!_GlfwWindow)
     {
-        const char* desr{ nullptr };
+        const char* desr = nullptr;
         auto err_code = glfwGetError(&desr);
-        throw GlfwError{ std::format("Failed to create GLFW window, because {}",desr) };
+        throw GlfwError(std::format("Failed to create GLFW window, because {}", desr));
     }
     glfwMakeContextCurrent(_GlfwWindow);
 
@@ -117,16 +117,16 @@ auto Arcadia::WindowLayer::GetSizeState() const -> WindowSizeState
     }
 }
 
-auto Arcadia::WindowLayer::GetSize() const -> glm::ivec2
+auto Arcadia::WindowLayer::GetSize() const -> glm::i32vec2
 {
-    glm::ivec2 vec{};
+    glm::i32vec2 vec{};
     glfwGetWindowSize(_GlfwWindow, &vec.x, &vec.y);
     return vec;
 }
 
-auto Arcadia::WindowLayer::GetPosition() const -> glm::ivec2
+auto Arcadia::WindowLayer::GetPosition() const -> glm::i32vec2
 {
-    glm::ivec2 vec{};
+    glm::i32vec2 vec{};
     glfwGetWindowPos(_GlfwWindow, &vec.x, &vec.y);
     return vec;
 }
@@ -134,7 +134,7 @@ auto Arcadia::WindowLayer::GetPosition() const -> glm::ivec2
 void Arcadia::WindowLayer::_OnWindowSetCursorInputMode(Events::WindowSetCursorInputMode& e)
 {
     auto& [value] = e.DataTuple;
-    int32_t val = Match<int>(
+    std::int32_t val = Match<int>(
         value,
         WindowCursorInputMode::Normal,
         GLFW_CURSOR_NORMAL,
@@ -169,7 +169,7 @@ void Arcadia::WindowLayer::_SetupCallbacks()
         _GlfwWindow,
         [](GLFWwindow* glfw_wnd_ptr, double xpos, double ypos) -> void
     {
-        glm::vec2 cursor_pos{ xpos,ypos };
+        glm::vec2 cursor_pos(xpos, ypos);
         auto wnd_ptr = _GetWindowPointerFromGlfwUserPointer(glfw_wnd_ptr);
         auto& event_queue = EventQueue::Instance();
 
@@ -222,7 +222,7 @@ void Arcadia::WindowLayer::_SetupCallbacks()
         EventQueue::Instance()
             .Signal<Events::WindowSetSize>(
                 _GetWindowPointerFromGlfwUserPointer(glfw_wnd_ptr),
-                glm::ivec2{ width,height }
+                glm::i32vec2{ width,height }
             );
     }
     );
@@ -233,7 +233,7 @@ void Arcadia::WindowLayer::_SetupCallbacks()
         EventQueue::Instance()
             .Signal<Events::WindowSetPosition>(
                 _GetWindowPointerFromGlfwUserPointer(glfw_wnd_ptr),
-                glm::ivec2{ xpos,ypos }
+                glm::i32vec2{ xpos,ypos }
             );
     }
     );
@@ -315,7 +315,7 @@ void Arcadia::WindowLayer::_SetupCallbacks()
     glfwSetMonitorCallback(
         [](GLFWmonitor* glfw_monitor_ptr, int event) -> void
     {
-        bool connection{ false };
+        bool connection = false;
         if(event == GLFW_CONNECTED)
         {
             connection = true;
@@ -368,7 +368,7 @@ void Arcadia::WindowLayer::_OnWindowCloseCanceled(Events::WindowCloseCanceled& e
     }
 }
 
-auto Arcadia::WindowLayer::GetMultisampleCount() const -> int32_t
+auto Arcadia::WindowLayer::GetMultisampleCount() const -> std::int32_t
 {
     return _MultisampleCount;
 }

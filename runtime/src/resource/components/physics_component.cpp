@@ -6,54 +6,54 @@
 
 #include"core/math.hpp"
 
-Arcadia::PhysicsComponent::PhysicsComponent(const nlohmann::json& json):
+Arcadia::PhysicsComponent::PhysicsComponent(const nlohmann::json& json) :
     BodyShapeColor(GlmVec3::FromJson(json.at("body_shape_color")))
 {
     const auto& json_body_info_initial = json.at("jph_body_info_initial");
     if(!json_body_info_initial.is_null())
     {
         const auto& json_shape_info = json_body_info_initial.at("jph_shape_info");
-        const std::string& json_shape_info_type_str = json_shape_info.at("type");
+        const std::string& json_shape_info_type_string = json_shape_info.at("type");
         const auto& json_shape_info_info = json_shape_info.at("info");
         auto shape_info = Match<JphShapeInfo>(
-            json_shape_info_type_str,
+            json_shape_info_type_string,
             "box_shape"s,
             [&]() -> JphShapeInfo
         {
-            return JphBoxShapeInfo{
+            return JphBoxShapeInfo(
                 GlmVec3::FromJson(json_shape_info_info.at("half_extent")),
                 json_shape_info_info.at("convex_radius")
-            };
+            );
         },
             "capsule_shape"s,
             [&]() -> JphShapeInfo
         {
-            return JphCapsuleShapeInfo{
+            return JphCapsuleShapeInfo(
                 json_shape_info_info.at("radius"),
                 json_shape_info_info.at("half_height_of_cylinder")
-            };
+            );
         },
             "cylinder"s,
             [&]() -> JphShapeInfo
         {
-            return JphCylinderShapeInfo{
+            return JphCylinderShapeInfo(
                 json_shape_info_info.at("half_height"),
                 json_shape_info_info.at("radius"),
                 json_shape_info_info.at("convex_radius")
-            };
+            );
         },
             "sphere"s,
             [&]() -> JphShapeInfo
         {
-            return JphSphereShapeInfo{
+            return JphSphereShapeInfo(
                 json_shape_info_info.at("radius")
-            };
+            );
         }
         );
 
         BuildIndentifiableJphBodyInfo(
-            JPH::EMotionType{ json_body_info_initial.at("jph_motion_type") },
-            JPH::ObjectLayer{ json_body_info_initial.at("jph_object_layer") },
+            JPH::EMotionType(json_body_info_initial.at("jph_motion_type")),
+            JPH::ObjectLayer(json_body_info_initial.at("jph_object_layer")),
             shape_info
         );
     }

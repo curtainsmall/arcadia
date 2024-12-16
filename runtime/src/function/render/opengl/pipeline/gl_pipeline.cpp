@@ -19,32 +19,32 @@ Arcadia::GlPipeline::GlPipeline(
     }
 
     ACDA_GL_CALL(glLinkProgram(_GlId));
-    GLint status{ GL_FALSE };
+    GLint status = GL_FALSE;
     ACDA_GL_CALL(glGetProgramiv(_GlId, GL_LINK_STATUS, &status));
     if(status == GL_FALSE)
     {
-        GLint length{ 0 };
+        GLint length = 0;
         ACDA_GL_CALL(glGetProgramiv(_GlId, GL_INFO_LOG_LENGTH, &length));
         std::string msg{};
         msg.reserve(length);
         ACDA_GL_CALL(glGetProgramInfoLog(_GlId, length, nullptr, msg.data()));
         ACDA_GL_CALL(glDeleteProgram(_GlId));
         _GlId = 0;
-        throw LinkFail{ msg };
+        throw LinkFail(msg);
     }
 
     ACDA_GL_CALL(glValidateProgram(_GlId));
     ACDA_GL_CALL(glGetProgramiv(_GlId, GL_VALIDATE_STATUS, &status));
     if(status == GL_FALSE)
     {
-        GLint length{ 0 };
+        GLint length = 0;
         ACDA_GL_CALL(glGetProgramiv(_GlId, GL_INFO_LOG_LENGTH, &length));
         std::string msg{};
         msg.reserve(length);
         ACDA_GL_CALL(glGetProgramInfoLog(_GlId, length, nullptr, msg.data()));
         ACDA_GL_CALL(glDeleteProgram(_GlId));
         _GlId = 0;
-        throw LinkFail{ msg };
+        throw LinkFail(msg);
     }
 }
 
@@ -76,7 +76,7 @@ void Arcadia::GlPipeline::Use() const
 {
     if(_GlId == 0)
     {
-        throw GlInvalid{ "Cannot use null OpenGL pipeline" };
+        throw GlInvalid("Cannot use null OpenGL pipeline");
     }
     ACDA_GL_CALL(glUseProgram(_GlId));
 }

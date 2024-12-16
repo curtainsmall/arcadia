@@ -53,7 +53,7 @@ void Arcadia::GlCubemap::Bind(GLenum slot)
 {
     if(_GlId == 0)
     {
-        throw GlInvalid{ "Cannot bind null OpenGL cubemap" };
+        throw GlInvalid("Cannot bind null OpenGL cubemap");
     }
     _Slot = slot;
     ACDA_GL_CALL(glActiveTexture(GL_TEXTURE0 + slot));
@@ -76,7 +76,7 @@ void Arcadia::GlCubemap::SetTextureParameter(GLenum pname, GLint param)
 {
     if(_GlId == 0 || _Slot == -1)
     {
-        throw GlInvalid{ "Cannot set texture parameter to an unbound OpenGL Texture" };
+        throw GlInvalid("Cannot set texture parameter to an unbound OpenGL Texture");
     }
 
     ACDA_GL_CALL(glTexParameteri(GL_TEXTURE_CUBE_MAP, pname, param));
@@ -86,7 +86,7 @@ void Arcadia::GlCubemap::SetTextureParameter(GLenum pname, GLfloat param)
 {
     if(_GlId == 0 || _Slot == -1)
     {
-        throw GlInvalid{ "Cannot set texture parameter to an unbound OpenGL Texture" };
+        throw GlInvalid("Cannot set texture parameter to an unbound OpenGL Texture");
     }
 
     ACDA_GL_CALL(glTexParameterf(GL_TEXTURE_CUBE_MAP, pname, param));

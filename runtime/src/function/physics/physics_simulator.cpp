@@ -85,29 +85,29 @@ void Arcadia::PhysicsSimulator::Submit(const Scene& scene, const std::string& na
                 body_info.JphShapeInfo,
                 [&](const JphBoxShapeInfo& info)
             {
-                return new JPH::BoxShape{ ToJphVec3(info.HalfExtent), info.ConvexRadius };
+                return new JPH::BoxShape(ToJphVec3(info.HalfExtent), info.ConvexRadius);
             },
                 [&](const JphCapsuleShapeInfo& info)
             {
-                return new JPH::CapsuleShape{ info.HalfHeightOfCylinder,info.Radius };
+                return new JPH::CapsuleShape(info.HalfHeightOfCylinder, info.Radius);
             },
                 [&](const JphCylinderShapeInfo& info)
             {
-                return new JPH::CylinderShape{ info.HalfHeight,info.Radius,info.ConvexRadius };
+                return new JPH::CylinderShape(info.HalfHeight, info.Radius, info.ConvexRadius);
             },
                 [&](const JphSphereShapeInfo& info)
             {
-                return new JPH::SphereShape{ info.Radius };
+                return new JPH::SphereShape(info.Radius);
             }
             );
             const auto body_id = jph_body_interface.CreateAndAddBody(
-                JPH::BodyCreationSettings{
+                JPH::BodyCreationSettings(
                     jph_shape_refc,
                     ToJphVec3(transform_comp.Position),
                     ToJphQuat(transform_comp.Rotation),
                     body_info.JphMotionType,
                     body_info.JphObjectLayer
-                },
+                ),
                 JPH::EActivation::Activate
             );
             ACDA_ASSERT(!body_id.IsInvalid() && "Failed to create body");
@@ -124,8 +124,8 @@ void Arcadia::PhysicsSimulator::Update()
         return;
     }
 
-    JPH::TempAllocatorImpl temp_allocator{ _JphTempAllocatorSize };
-    JPH::JobSystemThreadPool job_system_thread_pool{ JPH::cMaxPhysicsJobs,JPH::cMaxPhysicsBarriers,static_cast<int>(std::thread::hardware_concurrency() - 1) };
+    JPH::TempAllocatorImpl temp_allocator(_JphTempAllocatorSize);
+    JPH::JobSystemThreadPool job_system_thread_pool(JPH::cMaxPhysicsJobs, JPH::cMaxPhysicsBarriers, static_cast<int>(std::thread::hardware_concurrency() - 1));
 
     int collusion_step = 60 / _JphPhysicsSystemUpdatesPerSecond;
     collusion_step = collusion_step > 0 ? collusion_step : 1;
@@ -200,12 +200,12 @@ void Arcadia::PhysicsSimulator::SetJphTempAllocatorSize(JPH::uint get_jph_temp_a
     _JphTempAllocatorSize = get_jph_temp_allocator_size;
 }
 
-auto Arcadia::PhysicsSimulator::GetJphPhysicsSystemUpdatesPerSecond() const -> int32_t
+auto Arcadia::PhysicsSimulator::GetJphPhysicsSystemUpdatesPerSecond() const -> std::int32_t
 {
     return _JphPhysicsSystemUpdatesPerSecond;
 }
 
-void Arcadia::PhysicsSimulator::SetJphPhysicsSystemUpdatesPerSecond(int32_t jph_physics_system_updates_per_second)
+void Arcadia::PhysicsSimulator::SetJphPhysicsSystemUpdatesPerSecond(std::int32_t jph_physics_system_updates_per_second)
 {
     _JphPhysicsSystemUpdatesPerSecond = jph_physics_system_updates_per_second;
 }

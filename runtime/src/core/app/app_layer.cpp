@@ -26,28 +26,28 @@ Arcadia::iAppLayer::iAppLayer() :
         try
         {
             const auto& json_graphic_api = json.at("graphic_api");
-            Version graphic_api_version{ json_graphic_api.at("version") };
+            Version graphic_api_version(json_graphic_api.at("version"));
             std::string graphic_api_type_str = json_graphic_api.at("type");
             app_config.GraphicApi = Match<GraphicApi::Type>(
                 graphic_api_type_str,
                 []()
             {
-                return GraphicApi::Type{};
+                return GraphicApi::Type();
             },
                 "opengl"s,
                 [&]()
             {
-                return GraphicApi::Opengl{ graphic_api_version };
+                return GraphicApi::Opengl(graphic_api_version);
             },
                 "directx"s,
                 [&]()
             {
-                return GraphicApi::Directx{ graphic_api_version };
+                return GraphicApi::Directx(graphic_api_version);
             },
                 "vulkan"s,
                 [&]()
             {
-                return GraphicApi::Vulkan{ graphic_api_version };
+                return GraphicApi::Vulkan(graphic_api_version);
             }
             );
         }
@@ -59,14 +59,14 @@ Arcadia::iAppLayer::iAppLayer() :
         // Window
         try
         {
-            const auto& json_window             = json.at("window");
-            app_config.WindowPosition               = IntVec2::FromJson(json_window.value("pos", IntVec2::ToJson(app_config.WindowPosition)));
-            app_config.WindowSize              = IntVec2::FromJson(json_window.value("size", IntVec2::ToJson(app_config.WindowSize)));
-            app_config.WindowSizeMax          = IntVec2::FromJson(json_window.value("max_size", IntVec2::ToJson(app_config.WindowSizeMax)));
-            app_config.WindowSizeMin          = IntVec2::FromJson(json_window.value("min_size", IntVec2::ToJson(app_config.WindowSizeMin)));
+            const auto& json_window           = json.at("window");
+            app_config.WindowPosition         = GlmInt32Vec2::FromJson(json_window.value("pos", GlmInt32Vec2::ToJson(app_config.WindowPosition)));
+            app_config.WindowSize             = GlmInt32Vec2::FromJson(json_window.value("size", GlmInt32Vec2::ToJson(app_config.WindowSize)));
+            app_config.WindowSizeMax          = GlmInt32Vec2::FromJson(json_window.value("max_size", GlmInt32Vec2::ToJson(app_config.WindowSizeMax)));
+            app_config.WindowSizeMin          = GlmInt32Vec2::FromJson(json_window.value("min_size", GlmInt32Vec2::ToJson(app_config.WindowSizeMin)));
             app_config.WindowMultisampleCount = json_window.value("multisample_count", app_config.WindowMultisampleCount);
-            app_config.WindowTitle             = json_window.value("title", app_config.WindowTitle);
-            app_config.WindowMaxmized          = json_window.value("maxmized", app_config.WindowMaxmized);
+            app_config.WindowTitle            = json_window.value("title", app_config.WindowTitle);
+            app_config.WindowMaxmized         = json_window.value("maxmized", app_config.WindowMaxmized);
         }
         catch(nlohmann::json::out_of_range)
         {
@@ -130,10 +130,10 @@ Arcadia::iAppLayer::~iAppLayer()
     // Window
     json.push_back(
         { "window",{
-            {"pos", IntVec2::ToJson(app_config.WindowPosition)},
-            {"size",IntVec2::ToJson(app_config.WindowSize)},
-            {"max_size",IntVec2::ToJson(app_config.WindowSizeMax)},
-            {"min_size",IntVec2::ToJson(app_config.WindowSizeMin)},
+            {"pos", GlmInt32Vec2::ToJson(app_config.WindowPosition)},
+            {"size",GlmInt32Vec2::ToJson(app_config.WindowSize)},
+            {"max_size",GlmInt32Vec2::ToJson(app_config.WindowSizeMax)},
+            {"min_size",GlmInt32Vec2::ToJson(app_config.WindowSizeMin)},
             {"multisample_count",app_config.WindowMultisampleCount},
             {"title",app_config.WindowTitle},
             {"maxmized",app_config.WindowMaxmized}

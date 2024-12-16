@@ -50,7 +50,7 @@ void Arcadia::GlVertexBuffer::Bind() const
 {
     if(_GlId == 0)
     {
-        throw GlInvalid{ "Cannot bind null OpenGL vertex buffer" };
+        throw GlInvalid("Cannot bind null OpenGL vertex buffer");
     }
 
     ACDA_GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, _GlId));
@@ -64,7 +64,7 @@ void Arcadia::GlVertexBuffer::Unbind() const
 void Arcadia::GlVertexBuffer::SetupVertexAttributeArray() const
 {
     GLuint attrib_slot{ 0 };
-    size_t Offset{ 0 };
+    std::size_t Offset{ 0 };
 
     Bind();
     for(const auto& attribute : _BufferLayout.LayoutAttributes)

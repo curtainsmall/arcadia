@@ -23,6 +23,6 @@ namespace Arcadia
         ) -> Texture2d;
     public:
         std::vector<glm::vec4> Pixels{};
-        glm::ivec2 Size{ 0,0 };
+        glm::i32vec2 Size{ 0,0 };
     };
 }

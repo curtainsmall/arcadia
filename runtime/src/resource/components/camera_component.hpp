@@ -19,7 +19,7 @@ namespace Arcadia
         float      FovYMin{ 1.f };
         float      FovYMax{ 120.f };
         float      Speed{ .25f };
-        glm::ivec2 ViewportSize{ 800,600 };
+        glm::i32vec2 ViewportSize{ 800,600 };
         bool       FixedUp{ true };
         float      UpEpsilon{ .1f };
         glm::vec2  CursorMoveOffsetRange{ -100.f,100.f };
@@ -41,7 +41,7 @@ namespace Arcadia
         [[nodiscard]]
         auto ToJson() const->nlohmann::json;
 
-    #if 0
+#if 0
         auto MoveForward() -> SelfType&;
         auto MoveBackward() -> SelfType&;
         auto MoveLeft() -> SelfType&;
@@ -67,7 +67,7 @@ namespace Arcadia
         auto GetForwardDir() const->glm::vec3;
         auto GetLeftDir() const->glm::vec3;
         auto GetUpDir() const->glm::vec3;
-    #endif
+#endif
 
         static auto GenerateViewMat4(const glm::vec3& pos, const glm::vec3& dir) -> glm::mat4;
 
@@ -78,7 +78,7 @@ namespace Arcadia
         virtual auto OnSnapshot() const->std::shared_ptr<MementoDataBase> override;
         virtual void OnRestore(const std::shared_ptr<MementoDataBase>& sp_memento_data) override;
 
-    #if 0
+#if 0
     private:
         // Angle of pitch
         // Look from right:
@@ -97,7 +97,7 @@ namespace Arcadia
 
         // Test whether a cursor move should be filtered
         auto _TestCursorMove(float x_offset, float y_offset) -> bool;
-    #endif
+#endif
 
     public:
         static inline glm::vec3 Up{ GlmVec3::CreateUnitPositiveY() };
@@ -121,7 +121,7 @@ namespace Arcadia
         float Speed{ .25f };
 
         /// @brief Size of the viewport of this camera
-        glm::ivec2 ViewportSize{ 800,600 };
+        glm::i32vec2 ViewportSize{ 800,600 };
 
         /// @brief Whether @ref camera::up should be fixed
         bool FixedUp{ true };

@@ -406,7 +406,7 @@ void Arcadia::ProjectLayer::_OnNewEntity(Events::NewEntity& e)
 
     std::string temp_name = "New Entity";
     std::string name = temp_name;
-    int32_t postfix{ 1 };
+    std::int32_t postfix{ 1 };
     while(scene.ContainsEntity(name))
     {
         name = std::format("{} {}", temp_name, ++postfix);

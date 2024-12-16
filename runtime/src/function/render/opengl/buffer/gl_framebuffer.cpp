@@ -3,7 +3,7 @@
 #include "gl_framebuffer.hpp"
 
 Arcadia::GlFramebuffer::GlFramebuffer(
-    const glm::ivec2& viewport_size,
+    const glm::i32vec2& viewport_size,
     float near_plane,
     float far_plane
 ) :
@@ -19,7 +19,7 @@ Arcadia::GlFramebuffer::GlFramebuffer(
 
     if(auto res = IsComplete(); res != GL_FRAMEBUFFER_COMPLETE)
     {
-        throw GlInvalid{ std::format("OpenGL framebuffer incomplete: {}",res) };
+        throw GlInvalid(std::format("OpenGL framebuffer incomplete: {}", res));
     }
 }
 
@@ -49,7 +49,7 @@ void Arcadia::GlFramebuffer::Bind() const
 {
     if(_GlId == 0)
     {
-        throw GlInvalid{ "Cannot bind null OpenGL framebuffer" };
+        throw GlInvalid("Cannot bind null OpenGL framebuffer");
     }
 
     ACDA_GL_CALL(glBindFramebuffer(GL_FRAMEBUFFER, _GlId));
@@ -64,7 +64,7 @@ auto Arcadia::GlFramebuffer::IsComplete() const -> GLenum
 {
     if(_GlId == 0)
     {
-        throw GlInvalid{ "Cannot check completeness of null OpenGL framebuffer" };
+        throw GlInvalid("Cannot check completeness of null OpenGL framebuffer");
     }
 
     Bind();

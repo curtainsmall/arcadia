@@ -141,11 +141,11 @@ namespace Arcadia
         auto Redo() -> bool;
 
         [[nodiscard]]
-        auto GetCapacity() const->size_t;
-        void SetCapacity(size_t capacity);
+        auto GetCapacity() const->std::size_t;
+        void SetCapacity(std::size_t capacity);
 
         [[nodiscard]]
-        auto GetSize() const->size_t;
+        auto GetSize() const->std::size_t;
 
         void Clear();
 
@@ -174,7 +174,7 @@ namespace Arcadia
         auto cend() const noexcept->ContainerType::const_iterator;
 
     private:
-        size_t _Capacity{ 40 };
+        std::size_t _Capacity{ 40 };
         ContainerType _List{};
         ContainerType::iterator _CurrentIterator{ _List.begin() }; // Points to the memento to be undone
     };

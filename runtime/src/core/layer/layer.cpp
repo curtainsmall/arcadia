@@ -44,7 +44,7 @@ auto Arcadia::LayerStack::PopAllLayers() -> SelfType&
     return *this;
 }
 
-auto Arcadia::LayerStack::GetSize() -> size_t
+auto Arcadia::LayerStack::GetSize() -> std::size_t
 {
     return _Layers.size();
 }

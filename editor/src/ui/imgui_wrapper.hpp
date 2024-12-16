@@ -13,17 +13,17 @@ namespace Arcadia
         ACDA_API auto Checkbox(const std::string& name, bool& b) -> bool;
         ACDA_API auto Checkbox(const std::string& name, std::function<bool()> getter, std::function<void(bool)> setter) -> bool;
 
-        ACDA_API auto DragInt(const std::string& name, int32_t& i, float speed, int32_t min, int32_t max, const char* format, ImGuiSliderFlags flags) -> bool;
-        ACDA_API auto DragInt(const std::string& name, std::function<int32_t()> getter, std::function<void(int32_t)> setter, float speed, int32_t min, int32_t max, const char* format, ImGuiSliderFlags flags) -> bool;
+        ACDA_API auto DragInt(const std::string& name, std::int32_t& i, float speed, std::int32_t min, std::int32_t max, const char* format, ImGuiSliderFlags flags) -> bool;
+        ACDA_API auto DragInt(const std::string& name, std::function<std::int32_t()> getter, std::function<void(std::int32_t)> setter, float speed, std::int32_t min, std::int32_t max, const char* format, ImGuiSliderFlags flags) -> bool;
 
-        ACDA_API auto DragIntVec2(const std::string& name, glm::ivec2& vec, float speed, int32_t min, int32_t max, const char* format, ImGuiSliderFlags flags) -> bool;
-        ACDA_API auto DragIntVec2(const std::string& name, std::function<glm::ivec2()> getter, std::function<void(const glm::ivec2&)> setter, float speed, int32_t min, int32_t max, const char* format, ImGuiSliderFlags flags) -> bool;
+        ACDA_API auto DragInt32Vec2(const std::string& name, glm::i32vec2& vec, float speed, std::int32_t min, std::int32_t max, const char* format, ImGuiSliderFlags flags) -> bool;
+        ACDA_API auto DragInt32Vec2(const std::string& name, std::function<glm::i32vec2()> getter, std::function<void(const glm::i32vec2&)> setter, float speed, std::int32_t min, std::int32_t max, const char* format, ImGuiSliderFlags flags) -> bool;
 
-        ACDA_API auto DragIntVec3(const std::string& name, glm::ivec3& vec, float speed, int32_t min, int32_t max, const char* format, ImGuiSliderFlags flags) -> bool;
-        ACDA_API auto DragIntVec3(const std::string& name, std::function<glm::ivec3()> getter, std::function<void(const glm::ivec3&)> setter, float speed, int32_t min, int32_t max, const char* format, ImGuiSliderFlags flags) -> bool;
+        ACDA_API auto DragInt32Vec3(const std::string& name, glm::i32vec3& vec, float speed, std::int32_t min, std::int32_t max, const char* format, ImGuiSliderFlags flags) -> bool;
+        ACDA_API auto DragInt32Vec3(const std::string& name, std::function<glm::i32vec3()> getter, std::function<void(const glm::i32vec3&)> setter, float speed, std::int32_t min, std::int32_t max, const char* format, ImGuiSliderFlags flags) -> bool;
 
-        ACDA_API auto DragIntVec4(const std::string& name, glm::ivec4& vec, float speed, int32_t min, int32_t max, const char* format, ImGuiSliderFlags flags) -> bool;
-        ACDA_API auto DragIntVec4(const std::string& name, std::function<glm::ivec4()> getter, std::function<void(const glm::ivec4&)> setter, float speed, int32_t min, int32_t max, const char* format, ImGuiSliderFlags flags) -> bool;
+        ACDA_API auto DragInt32Vec4(const std::string& name, glm::i32vec4& vec, float speed, std::int32_t min, std::int32_t max, const char* format, ImGuiSliderFlags flags) -> bool;
+        ACDA_API auto DragInt32Vec4(const std::string& name, std::function<glm::i32vec4()> getter, std::function<void(const glm::i32vec4&)> setter, float speed, std::int32_t min, std::int32_t max, const char* format, ImGuiSliderFlags flags) -> bool;
 
         ACDA_API auto DragFloat(const std::string& name, float& f, float speed, float min, float max, const char* format, ImGuiSliderFlags flags) -> bool;
         ACDA_API auto DragFloat(const std::string& name, std::function<float()> getter, std::function<void(float)> setter, float speed, float min, float max, const char* format, ImGuiSliderFlags flags) -> bool;

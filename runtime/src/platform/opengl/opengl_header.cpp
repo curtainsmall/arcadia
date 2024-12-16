@@ -58,7 +58,7 @@ ACDA_API void Arcadia::GlCheckError(const char* fn_name, const char* file_name, 
     }
 }
 
-ACDA_API auto Arcadia::GlGetTypeSize(GLenum Type) -> size_t
+ACDA_API auto Arcadia::GlGetTypeSize(GLenum Type) -> std::size_t
 {
     switch(Type)
     {
@@ -75,9 +75,8 @@ ACDA_API auto Arcadia::GlGetTypeSize(GLenum Type) -> size_t
 
 ACDA_API auto Arcadia::SetGlVersion() -> Version
 {
-    int
-        major{ 0 },
-        minor{ 0 };
+    int major = 0;
+    int minor = 0;
     ACDA_GL_CALL(glGetIntegerv(GL_MAJOR_VERSION, &major));
     ACDA_GL_CALL(glGetIntegerv(GL_MINOR_VERSION, &minor));
 
@@ -99,28 +98,31 @@ void GLAPIENTRY Arcadia::GlDebugCallback(
     const void* user_param
 )
 {
-    if(id == 131169 || id == 131185 || id == 131218 || id == 131204) return;
+    if(id == 131169 || id == 131185 || id == 131218 || id == 131204)
+    {
+        return;
+    }
 
-    std::string source_str{};
+    std::string source_string{};
     switch(source)
     {
         case GL_DEBUG_SOURCE_API:
-            source_str = "API";
+            source_string = "API";
             break;
         case GL_DEBUG_SOURCE_WINDOW_SYSTEM:
-            source_str = "Window System";
+            source_string = "Window System";
             break;
         case GL_DEBUG_SOURCE_SHADER_COMPILER:
-            source_str = "Shader Compiler";
+            source_string = "Shader Compiler";
             break;
         case GL_DEBUG_SOURCE_THIRD_PARTY:
-            source_str = "Third Party";
+            source_string = "Third Party";
             break;
         case GL_DEBUG_SOURCE_APPLICATION:
-            source_str = "Application";
+            source_string = "Application";
             break;
         case GL_DEBUG_SOURCE_OTHER:
-            source_str = "Other";
+            source_string = "Other";
             break;
     }
 
@@ -173,20 +175,20 @@ void GLAPIENTRY Arcadia::GlDebugCallback(
             break;
     }
 
-    ACDA_LOG_ERROR(std::format("GL callback\nSource: {0}\nType: {1}\nSeverity: {2}\nMessage: {3}", source_str, type_str, severity_str, message));
+    ACDA_LOG_ERROR(std::format("GL callback\nSource: {0}\nType: {1}\nSeverity: {2}\nMessage: {3}", source_string, type_str, severity_str, message));
     ACDA_LOG_FLUSH();
 }
 
 ACDA_API auto Arcadia::GetGlMaxCombineTextureImageUnitsCount() -> GLint
 {
-    GLint res{ 0 };
+    GLint res = 0;
     ACDA_GL_CALL(glGetIntegerv(GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &res));
     return res;
 }
 
 ACDA_API auto Arcadia::GetGlMaxTextureImageUnitsCount() -> GLint
 {
-    GLint res{ 0 };
+    GLint res = 0;
     ACDA_GL_CALL(glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &res));
     return res;
 }
@@ -196,7 +198,7 @@ Arcadia::OpenglContext::OpenglContext()
     auto error = glewInit();
     if(error != GLEW_OK)
     {
-        throw GlError{ reinterpret_cast<const char*>(glewGetErrorString(error)) };
+        throw GlError(reinterpret_cast<const char*>(glewGetErrorString(error)));
     }
     ACDA_GL_CALL(auto gl_version_str = glGetString(GL_VERSION));
     ACDA_LOG_INFO(std::format("OpenGL Version: {}", reinterpret_cast<const char*>(gl_version_str)));

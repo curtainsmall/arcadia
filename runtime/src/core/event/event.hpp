@@ -52,7 +52,7 @@ namespace Arcadia
         using SelfType = BasicEvent<Args...>;
     public:
         /// @brief Conclass a signaled event
-        BasicEvent(Args ...args):
+        BasicEvent(Args ...args) :
             DataTuple(std::make_tuple<Args...>(std::forward<Args>(args)...))
         {}
         virtual ~BasicEvent() = default;
@@ -74,7 +74,7 @@ namespace Arcadia
     public:
         using SelfType = EventDispatcher;
     public:
-        EventDispatcher(EventBase& event):
+        EventDispatcher(EventBase& event) :
             _Event(&event)
         {}
         ~EventDispatcher() = default;
@@ -111,6 +111,7 @@ namespace Arcadia
         ACDA_EXCEPTION(EmptyQueue);
 
         using SelfType = EventQueue;
+        using DebugExcludedEventTypeSetType = std::unordered_set<std::type_index>;
     private:
         using _EventQueueType = std::queue<std::unique_ptr<EventBase>>;
 
@@ -124,12 +125,12 @@ namespace Arcadia
         {
             _CurrentQueue->emplace(std::make_unique<Event>(std::forward<Args>(args)...));
 
-        #ifdef ACDA_DEBUG_MODE
-            if(!DebugExcludedEventTypeIndexes.contains(typeid(Event)))
+#ifdef ACDA_DEBUG_MODE
+            if(!DebugExcludedEventTypeSet.contains(typeid(Event)))
             {
                 ACDA_LOG_DEBUG(std::format("Event signaled: {}", typeid(Event).name()));
             }
-        #endif
+#endif
             return *this;
         }
 
@@ -138,7 +139,7 @@ namespace Arcadia
         auto SwapQueue() -> bool;
 
         /// @brief Check whther the proceessing queue contains event
-        auto GetSize() const->size_t;
+        auto GetSize() const->std::size_t;
 
         /// @brief Read the front event in event queue
         /// @return Event at front
@@ -149,9 +150,9 @@ namespace Arcadia
         auto PopFront() -> bool;
 
     public:
-    #ifdef ACDA_DEBUG_MODE
-        std::unordered_set<std::type_index> DebugExcludedEventTypeIndexes{};
-    #endif // ACDA_DEBUG_MODE
+#ifdef ACDA_DEBUG_MODE
+        DebugExcludedEventTypeSetType DebugExcludedEventTypeSet{};
+#endif // ACDA_DEBUG_MODE
 
     private:
         _EventQueueType _QueueA{};

@@ -42,7 +42,7 @@
     <ClCompile Include="src\core\log\log.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\math\algorithm.cpp">
+    <ClCompile Include="src\core\math\glm_algorithm.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\core\memento\memento.cpp">
@@ -158,34 +158,34 @@
     <ClInclude Include="src\core\log\log.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\math\algorithm.hpp">
+    <ClInclude Include="src\core\math\glm_algorithm.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\core\math\glm_header.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\math\mat2.hpp">
+    <ClInclude Include="src\core\math\glm_mat2.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\math\mat3.hpp">
+    <ClInclude Include="src\core\math\glm_mat3.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\math\mat4.hpp">
+    <ClInclude Include="src\core\math\glm_mat4.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\core\math\numeric.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\math\quat.hpp">
+    <ClInclude Include="src\core\math\glm_quat.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\math\vec2.hpp">
+    <ClInclude Include="src\core\math\glm_vec2.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\math\vec3.hpp">
+    <ClInclude Include="src\core\math\glm_vec3.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\math\vec4.hpp">
+    <ClInclude Include="src\core\math\glm_vec4.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\core\memento\memento.hpp">

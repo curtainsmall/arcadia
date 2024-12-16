@@ -3,8 +3,8 @@
 #include<optional>
 #include<tuple>
 
-#include"core/math/mat4.hpp"
-#include"core/math/vec3.hpp"
+#include"core/math/glm_mat4.hpp"
+#include"core/math/glm_vec3.hpp"
 
 namespace Arcadia
 {

@@ -40,12 +40,12 @@ namespace Arcadia
         ACDA_EVENT(
             WindowSetSize,
             WindowLayer*,
-            glm::ivec2 // New size
+            glm::i32vec2 // New size
         );
         ACDA_EVENT(
             WindowSetPosition,
             WindowLayer*,
-            glm::ivec2 // New position
+            glm::i32vec2 // New position
         );
         ACDA_EVENT(
             WindowSizeStateChanged,

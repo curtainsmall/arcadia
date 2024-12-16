@@ -20,11 +20,11 @@ namespace Arcadia
         [[nodiscard]]
         ACDA_API static inline auto FromJson(const nlohmann::json& json) -> glm::vec3
         {
-            return glm::vec3{
+            return glm::vec3(
                 json.at("x"),
                 json.at("y"),
                 json.at("z")
-            };
+            );
         }
 
         [[nodiscard]]
@@ -35,17 +35,17 @@ namespace Arcadia
         [[nodiscard]]
         ACDA_API constexpr auto CreateUnitPositiveX() -> glm::vec3
         {
-            return glm::vec3{ 1.f,.0f,.0f };
+            return glm::vec3(1.f, .0f, .0f);
         }
         [[nodiscard]]
         ACDA_API constexpr auto CreateUnitPositiveY() -> glm::vec3
         {
-            return glm::vec3{ .0f,1.f,.0f };
+            return glm::vec3(.0f, 1.f, .0f);
         }
         [[nodiscard]]
         ACDA_API constexpr auto CreateUnitPositiveZ() -> glm::vec3
         {
-            return glm::vec3{ .0f,.0f,1.f };
+            return glm::vec3(.0f, .0f, 1.f);
         }
         [[nodiscard]]
         ACDA_API constexpr auto CreateUnitNegativeX() -> glm::vec3
@@ -67,7 +67,7 @@ namespace Arcadia
         /// @tparam Index Index of fixed axis, must be 0, 1 or 2
         /// @param vec Vector to normalize
         /// @return Normalized vector
-        template<size_t Index>
+        template<std::size_t Index>
         [[nodiscard]]
         ACDA_API static inline auto NormalizeFixedly(const glm::vec3& vec) -> glm::vec3
         {
@@ -116,10 +116,10 @@ namespace Arcadia
         }
     }
 
-    namespace IntVec3
+    namespace GlmInt32Vec3
     {
         [[nodiscard]]
-        ACDA_API static inline auto ToJson(const glm::ivec3& vec) -> nlohmann::json
+        ACDA_API static inline auto ToJson(const glm::i32vec3& vec) -> nlohmann::json
         {
             return nlohmann::json{
                      { "x",vec.x },
@@ -128,13 +128,13 @@ namespace Arcadia
             };
         }
         [[nodiscard]]
-        ACDA_API static inline auto FromJson(const nlohmann::json& json) -> glm::ivec3
+        ACDA_API static inline auto FromJson(const nlohmann::json& json) -> glm::i32vec3
         {
-            return glm::ivec3{
+            return glm::i32vec3(
                 json.at("x"),
                 json.at("y"),
                 json.at("z")
-            };
+            );
         }
     }
 }
@@ -155,10 +155,10 @@ namespace std
     };
 
     template<>
-    class formatter<glm::ivec3>: public std::formatter<std::string>
+    class formatter<glm::i32vec3>: public std::formatter<std::string>
     {
     public:
-        auto format(const glm::ivec3& vec, std::format_context& ctx) const
+        auto format(const glm::i32vec3& vec, std::format_context& ctx) const
         {
             return std::formatter<std::string>::format(
                 std::format("{:.2f}, {:.2f}, {:.2f}", vec.x, vec.y, vec.z),

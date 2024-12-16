@@ -49,7 +49,7 @@ void Arcadia::ImguiWindowStatePhysicsSimulator::operator()(PhysicsSimulator& phy
     auto slider_flags =
         ImGuiSliderFlags_AlwaysClamp;
     ImGui::BeginDisabled();
-    int32_t temp_allocator_size_in_kib = physics_simulator.GetJphTempAllocatorSize() / 1024;
+    std::int32_t temp_allocator_size_in_kib = physics_simulator.GetJphTempAllocatorSize() / 1024;
     ImguiWrappers::DragInt("Temporary Allocator Size (KiB)", temp_allocator_size_in_kib, 1.0f, 64 /*64 KiB*/, 16 * 1024 * 1024 /*16 GiB*/, "%d", slider_flags);
     physics_simulator.SetJphTempAllocatorSize(temp_allocator_size_in_kib * 1024);
     ImGui::EndDisabled();

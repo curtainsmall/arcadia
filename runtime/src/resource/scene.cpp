@@ -97,14 +97,14 @@ auto Arcadia::Scene::ContainsEntity(const std::string& name) const -> bool
     return _EntityInfoStorage.find(name) != _EntityInfoStorage.end();
 }
 
-auto Arcadia::Scene::GetSize() const -> size_t
+auto Arcadia::Scene::GetSize() const -> std::size_t
 {
     return _EntityInfoStorage.size();
 }
 
-auto Arcadia::Scene::CountEntity(const std::function<bool(const std::string&, const EntityInfo&)>& pred) const -> size_t
+auto Arcadia::Scene::CountEntity(const std::function<bool(const std::string&, const EntityInfo&)>& pred) const -> std::size_t
 {
-    size_t count = 0;
+    std::size_t count = 0;
     for(const auto& [name, entity_info] : _EntityInfoStorage)
     {
         if(pred(name, entity_info))
@@ -131,7 +131,7 @@ auto Arcadia::Scene::CreateEntity(const std::string& name, const std::string& ty
 {
     auto entity = _Registry.create();
 
-    EntityInfo entity_info{ name, entity };
+    EntityInfo entity_info(name, entity);
     entity_info.Type = type;
 
     _EntityInfoStorage.try_emplace(

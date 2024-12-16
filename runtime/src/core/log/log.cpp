@@ -12,7 +12,7 @@ Arcadia::Logger::Logger()
     console_sink->set_level(spdlog::level::trace);
     console_sink->set_pattern("%^[%x %X]%$ %v");
 
-    const spdlog::sinks_init_list sink_list ={ console_sink };
+    const spdlog::sinks_init_list sink_list{ console_sink };
 
     spdlog::init_thread_pool(8192, 1);
 

@@ -141,7 +141,7 @@ void Arcadia::ModelComponent::_Load()
 
     std::vector<Mesh> meshes{};
 
-    size_t next_mesh_index{ 0 };
+    std::size_t next_mesh_index = 0;
     _ProcessAssimpNode(
         meshes,
         ai_scene,
@@ -161,11 +161,11 @@ void Arcadia::ModelComponent::_ProcessAssimpNode(
     std::vector<Mesh>& meshes,
     const aiScene* const ai_scene,
     const aiNode* const ai_node,
-    size_t& next_mesh_index
+    std::size_t& next_mesh_index
 )
 {
     // Current node
-    for(size_t i = 0;
+    for(std::size_t i = 0;
         i < ai_node->mNumMeshes;
         ++i, ++next_mesh_index
         )
@@ -175,43 +175,43 @@ void Arcadia::ModelComponent::_ProcessAssimpNode(
 
         // Vertex
         mesh.Vertices.reserve(ai_mesh->mNumVertices);
-        for(size_t i = 0; i < ai_mesh->mNumVertices; ++i)
+        for(std::size_t i = 0; i < ai_mesh->mNumVertices; ++i)
         {
             auto& vertex = mesh.Vertices.emplace_back();
 
             auto ai_vertex = ai_mesh->mVertices[i];
-            vertex.Coordinate = glm::vec3{
+            vertex.Coordinate = glm::vec3(
                 ai_vertex.x,
                 ai_vertex.y,
                 ai_vertex.z
-            };
+            );
 
             if(ai_mesh->HasNormals())
             {
                 auto ai_normal = ai_mesh->mNormals[i];
-                vertex.Normal = glm::vec3{
+                vertex.Normal = glm::vec3(
                     ai_normal.x,
                     ai_normal.y,
                     ai_normal.z
-                };
+                );
             }
 
             if(ai_mesh->HasTextureCoords(0))
             {
                 auto ai_tex_coord = ai_mesh->mTextureCoords[0][i];
-                vertex.TextureCoordinate = glm::vec2{
+                vertex.TextureCoordinate = glm::vec2(
                     ai_tex_coord.x,
                     ai_tex_coord.y
-                };
+                );
             }
         }
 
         // Index
         mesh.Indices.reserve(ai_mesh->mNumFaces * 3u);
-        for(size_t i = 0; i < ai_mesh->mNumFaces; ++i)
+        for(std::size_t i = 0; i < ai_mesh->mNumFaces; ++i)
         {
             auto& ai_face = ai_mesh->mFaces[i];
-            for(size_t j = 0; j < ai_face.mNumIndices; ++j)
+            for(std::size_t j = 0; j < ai_face.mNumIndices; ++j)
             {
                 mesh.Indices.emplace_back(ai_face.mIndices[j]);
             }
@@ -246,7 +246,7 @@ void Arcadia::ModelComponent::_ProcessAssimpNode(
     }
 
     // Sub-nodes
-    for(size_t i = 0; i < ai_node->mNumChildren; ++i)
+    for(std::size_t i = 0; i < ai_node->mNumChildren; ++i)
     {
         _ProcessAssimpNode(
             meshes,
@@ -265,15 +265,15 @@ void Arcadia::ModelComponent::_LoadTexture(
 )
 {
     aiString str{};
-    for(size_t i = 0; i < ai_material->GetTextureCount(ai_texture_type); ++i)
+    for(std::size_t i = 0; i < ai_material->GetTextureCount(ai_texture_type); ++i)
     {
         ai_material->GetTexture(ai_texture_type, i, &str);
-        int x{ 0 },
-            y{ 0 };
-        auto filepath = directory / std::filesystem::path{ str.C_Str() };
+        int x = 0;
+        int y = 0;
+        auto filepath = directory / std::filesystem::path(str.C_Str());
         float* ptr = reinterpret_cast<float*>(stbi_load(filepath.string().c_str(), &x, &y, nullptr, 4));
-        texture.Size = glm::ivec2{ x,y };
-        for(size_t i = 0; i < x * y; i+=4)
+        texture.Size = glm::i32vec2(x, y);
+        for(std::size_t i = 0; i < x * y; i+=4)
         {
             texture.Pixels.emplace_back(
                 ptr[i],

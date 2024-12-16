@@ -13,7 +13,7 @@ namespace Arcadia
         using SelfType = GlTexture2d;
     public:
         GlTexture2d(
-            const glm::ivec2& size,
+            const glm::i32vec2& size,
             void* ptr = nullptr
         );
         GlTexture2d(

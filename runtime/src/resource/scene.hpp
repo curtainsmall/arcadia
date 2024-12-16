@@ -83,10 +83,10 @@ namespace Arcadia
         auto ContainsEntity(const std::string& name) const -> bool;
 
         [[nodiscard]]
-        auto GetSize() const->size_t;
+        auto GetSize() const->std::size_t;
 
         [[nodiscard]]
-        auto CountEntity(const std::function<bool(const std::string&, const EntityInfo&)>& pred) const->size_t;
+        auto CountEntity(const std::function<bool(const std::string&, const EntityInfo&)>& pred) const->std::size_t;
 
         [[nodiscard]]
         auto GetEntityInfo(const std::string& name) const -> const EntityInfo&;

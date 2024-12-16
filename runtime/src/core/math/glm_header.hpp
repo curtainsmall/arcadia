@@ -12,3 +12,7 @@
 #include"glm/gtx/matrix_decompose.hpp"
 #include"glm/gtx/rotate_vector.hpp"
 #include"glm/gtx/vector_angle.hpp"
+
+namespace Arcadia
+{
+}

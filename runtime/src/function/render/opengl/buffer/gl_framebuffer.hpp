@@ -16,7 +16,7 @@ namespace Arcadia
         using SelfType = GlFramebuffer;
     public:
         GlFramebuffer(
-            const glm::ivec2& viewport_size,
+            const glm::i32vec2& viewport_size,
             float near_plane,
             float far_plane
         );

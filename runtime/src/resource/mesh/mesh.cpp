@@ -284,8 +284,8 @@ auto Arcadia::Mesh::CreateBox(
 auto Arcadia::Mesh::CreateCapsule(
     float radius,
     float half_height_of_cylinder,
-    size_t half_sphere_stack_count,
-    size_t sector_count
+    std::size_t half_sphere_stack_count,
+    std::size_t sector_count
 ) -> Mesh
 {
     const auto pi = glm::pi<float>();
@@ -300,13 +300,13 @@ auto Arcadia::Mesh::CreateCapsule(
 
 #if 1
     // Sphere part
-    for(size_t j = 0; j <= half_sphere_stack_count; ++j)
+    for(std::size_t j = 0; j <= half_sphere_stack_count; ++j)
     {
         float stack_angle = pi / 2 - j * half_sphere_stack_step;
         float xz = radius * std::cos(stack_angle);
         float y = radius * std::sin(stack_angle) + half_height_of_cylinder;
 
-        for(size_t j = 0; j <= sector_count; ++j)
+        for(std::size_t j = 0; j <= sector_count; ++j)
         {
             float sector_angle = j * sector_step;
 
@@ -330,12 +330,12 @@ auto Arcadia::Mesh::CreateCapsule(
         }
     }
 
-    for(size_t i = 0; i < half_sphere_stack_count; ++i)
+    for(std::size_t i = 0; i < half_sphere_stack_count; ++i)
     {
         float k1 = i * (sector_count + 1);
         float k2 = k1 + sector_count + 1;
 
-        for(size_t j = 0; j < sector_count; ++j, ++k1, ++k2)
+        for(std::size_t j = 0; j < sector_count; ++j, ++k1, ++k2)
         {
             if(i != 0)
             {
@@ -357,7 +357,7 @@ auto Arcadia::Mesh::CreateCapsule(
 #if 1
     // Cylinder part
     std::vector<float> unit_circle_vertices{};
-    for(size_t i = 0; i <= sector_count; ++i)
+    for(std::size_t i = 0; i <= sector_count; ++i)
     {
         float sector_angle = i * sector_step;
         unit_circle_vertices.emplace_back(std::sin(sector_angle));
@@ -365,14 +365,14 @@ auto Arcadia::Mesh::CreateCapsule(
         unit_circle_vertices.emplace_back(std::cos(sector_angle));
     }
 
-    size_t k1 = vertices.size();
-    size_t k2 = k1 + sector_count + 1;
-    for(size_t i = 0; i < 2; ++i)
+    std::size_t k1 = vertices.size();
+    std::size_t k2 = k1 + sector_count + 1;
+    for(std::size_t i = 0; i < 2; ++i)
     {
         float h = -half_height_of_cylinder + i * half_height_of_cylinder * 2;
         float tex_coord_y = 1.f - i;
 
-        for(size_t j = 0, k = 0; j <= sector_count; ++j, k += 3)
+        for(std::size_t j = 0, k = 0; j <= sector_count; ++j, k += 3)
         {
             float ux = unit_circle_vertices.at(k);
             float uy = unit_circle_vertices.at(k + 1);
@@ -388,7 +388,7 @@ auto Arcadia::Mesh::CreateCapsule(
         }
     }
 
-    for(size_t i = 0; i < sector_count; ++i, ++k1, ++k2)
+    for(std::size_t i = 0; i < sector_count; ++i, ++k1, ++k2)
     {
         indices.emplace_back(k1);
         indices.emplace_back(k1 + 1);
@@ -406,14 +406,14 @@ auto Arcadia::Mesh::CreateCapsule(
 auto Arcadia::Mesh::CreateCylinder(
     float half_height,
     float radius,
-    size_t sector_count
+    std::size_t sector_count
 )->Mesh
 {
     const auto pi = glm::pi<float>();
     float sector_step = 2 * pi / sector_count;
 
     std::vector<float> unit_circle_vertices{};
-    for(size_t i = 0; i <= sector_count; ++i)
+    for(std::size_t i = 0; i <= sector_count; ++i)
     {
         float sector_angle = i * sector_step;
         unit_circle_vertices.emplace_back(std::sin(sector_angle));
@@ -424,12 +424,12 @@ auto Arcadia::Mesh::CreateCylinder(
     Mesh mesh{};
     auto& vertices = mesh.Vertices;
 
-    for(size_t i = 0; i < 2; ++i)
+    for(std::size_t i = 0; i < 2; ++i)
     {
         float h = -half_height + i * half_height * 2;
         float tex_coord_y = 1.f - i;
 
-        for(size_t j = 0, k = 0; j <= sector_count; ++j, k += 3)
+        for(std::size_t j = 0, k = 0; j <= sector_count; ++j, k += 3)
         {
             float ux = unit_circle_vertices.at(k);
             float uy = unit_circle_vertices.at(k + 1);
@@ -444,9 +444,9 @@ auto Arcadia::Mesh::CreateCylinder(
             );
         }
     }
-    size_t base_center_index = vertices.size();
-    size_t top_center_index = base_center_index + sector_count + 1;
-    for(size_t i = 0; i < 2; ++i)
+    std::size_t base_center_index = vertices.size();
+    std::size_t top_center_index = base_center_index + sector_count + 1;
+    for(std::size_t i = 0; i < 2; ++i)
     {
         float h = -half_height + i * half_height * 2;
         float ny = -1 + i * 2;
@@ -460,7 +460,7 @@ auto Arcadia::Mesh::CreateCylinder(
             }
         );
 
-        for(size_t j = 0, k = 0; j < sector_count; ++j, k += 3)
+        for(std::size_t j = 0, k = 0; j < sector_count; ++j, k += 3)
         {
             float ux = unit_circle_vertices.at(k);
             float uz = unit_circle_vertices.at(k + 2);
@@ -476,9 +476,9 @@ auto Arcadia::Mesh::CreateCylinder(
     }
 
     auto& indices = mesh.Indices;
-    size_t k1 = 0;
-    size_t k2 = sector_count + 1;
-    for(size_t i = 0; i < sector_count; ++i, ++k1, ++k2)
+    std::size_t k1 = 0;
+    std::size_t k2 = sector_count + 1;
+    for(std::size_t i = 0; i < sector_count; ++i, ++k1, ++k2)
     {
         indices.emplace_back(k1);
         indices.emplace_back(k1 + 1);
@@ -488,7 +488,7 @@ auto Arcadia::Mesh::CreateCylinder(
         indices.emplace_back(k1 + 1);
         indices.emplace_back(k2 + 1);
     }
-    for(size_t i = 0, k = base_center_index + 1; i < sector_count; ++i, ++k)
+    for(std::size_t i = 0, k = base_center_index + 1; i < sector_count; ++i, ++k)
     {
         if(i < sector_count - 1)
         {
@@ -503,7 +503,7 @@ auto Arcadia::Mesh::CreateCylinder(
             indices.emplace_back(k);
         }
     }
-    for(size_t i = 0, k = top_center_index + 1; i < sector_count; ++i, ++k)
+    for(std::size_t i = 0, k = top_center_index + 1; i < sector_count; ++i, ++k)
     {
         if(i < sector_count - 1)
         {
@@ -524,8 +524,8 @@ auto Arcadia::Mesh::CreateCylinder(
 
 auto Arcadia::Mesh::CreateSphere(
     float radius,
-    size_t stack_count,
-    size_t sector_count
+    std::size_t stack_count,
+    std::size_t sector_count
 ) -> Mesh
 {
     const auto pi = glm::pi<float>();
@@ -537,13 +537,13 @@ auto Arcadia::Mesh::CreateSphere(
     Mesh mesh{};
 
     auto& vertices = mesh.Vertices;
-    for(size_t i = 0; i <= stack_count; ++i)
+    for(std::size_t i = 0; i <= stack_count; ++i)
     {
         float stack_angle = pi / 2 - i * stack_step;
         float xz = radius * std::cos(stack_angle);
         float y = radius * std::sin(stack_angle);
 
-        for(size_t j = 0; j <= sector_count; ++j)
+        for(std::size_t j = 0; j <= sector_count; ++j)
         {
             float sector_angle = j * sector_step;
 
@@ -568,12 +568,12 @@ auto Arcadia::Mesh::CreateSphere(
     }
 
     auto& indices = mesh.Indices;
-    for(size_t i = 0; i < stack_count; ++i)
+    for(std::size_t i = 0; i < stack_count; ++i)
     {
         float k1 = i * (sector_count + 1);
         float k2 = k1 + sector_count + 1;
 
-        for(size_t j = 0; j < sector_count; ++j, ++k1, ++k2)
+        for(std::size_t j = 0; j < sector_count; ++j, ++k1, ++k2)
         {
             if(i != 0)
             {

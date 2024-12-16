@@ -13,7 +13,7 @@ namespace Arcadia
         None = 0,
         UseRotation = 0x01,
         UseDirection = 0x02,
-        _EnumBitmap
+        _EnumBitfield
     };
 
     class TransformComponentMementoData: public MementoDataBase

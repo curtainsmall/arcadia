@@ -23,7 +23,7 @@ namespace Arcadia
 {
     using GlRenderUnitCamera = std::tuple<
         GlFramebuffer, // gl_framebuffer
-        glm::ivec2, // viewport_size
+        glm::i32vec2, // viewport_size
         glm::mat4, // camera_view_mat4
         glm::mat4, // camera_proj_mat4
         glm::vec3, // camera_position
@@ -81,12 +81,12 @@ namespace Arcadia
         virtual void Reset() override;
 
         [[nodiscard]]
-        virtual auto GetRenderResultId(size_t index) const->void* override;
+        virtual auto GetRenderResultId(std::size_t index) const->void* override;
 
         [[nodiscard]]
         virtual auto GetGraphicApiType() const->GraphicApi::Type override
         {
-            return GraphicApi::Opengl{ Version{4, 6, 0} };
+            return GraphicApi::Opengl(Version(4, 6, 0));
         }
 
     public:
@@ -102,8 +102,8 @@ namespace Arcadia
         );
         void _DrawLights(
             const GLsizeiptr light_t_size,
-            const int32_t max_light_count,
-            const int32_t light_count_size_aligned,
+            const std::int32_t max_light_count,
+            const std::int32_t light_count_size_aligned,
             GlUniformBuffer& gl_light_uniform_buffer,
             const GlVertexArray& gl_light_shape_vertex_array,
             const glm::mat4& camera_view,

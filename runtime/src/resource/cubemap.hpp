@@ -18,6 +18,6 @@ namespace Arcadia
         std::vector<glm::vec4> NegativeYFacePixels{};
         std::vector<glm::vec4> PositiveZFacePixels{};
         std::vector<glm::vec4> NegatieZFacePixels{};
-        glm::ivec2 Size{};
+        glm::i32vec2 Size{};
     };
 }

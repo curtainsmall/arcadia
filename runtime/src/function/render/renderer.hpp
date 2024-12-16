@@ -14,7 +14,7 @@ namespace Arcadia
     {
     public:
         void* id;
-        glm::ivec2 size;
+        glm::i32vec2 size;
     };
 
     class iRenderer: public Noncopyable
@@ -61,7 +61,7 @@ namespace Arcadia
         /// - Vulkan: VkDescriptorSet
         /// @param index Index of framebuffer
         /// @return Representation of framebuffer object id as void*
-        virtual auto GetRenderResultId(size_t index) const->void* = 0;
+        virtual auto GetRenderResultId(std::size_t index) const->void* = 0;
 
         /// @brief Get the underlying graphic API type
         virtual auto GetGraphicApiType() const->GraphicApi::Type = 0;

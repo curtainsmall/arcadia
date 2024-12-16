@@ -28,8 +28,6 @@ using namespace std::complex_literals;
 
 namespace Arcadia
 {
-    using UnicodeCodepoint = uint32_t;
-
     class Noncopyable
     {
     protected:
@@ -59,10 +57,10 @@ namespace Arcadia
     public:
         using TupleType = std::tuple<Args...>;
 
-        template<size_t Index>
+        template<std::size_t Index>
         using ElementTypeAt = std::tuple_element_t<Index, TupleType>;
     public:
-        static constexpr size_t Size = std::tuple_size_v<TupleType>;
+        static constexpr std::size_t Size = std::tuple_size_v<TupleType>;
     };
 
     template<typename Enum>
@@ -179,44 +177,44 @@ namespace Arcadia
     }
 
     template<typename Enum>
-    concept cEnumBitmask = requires{
+    concept cEnumBitfield = requires{
         std::is_enum_v<Enum>;
-        Enum::_EnumBitmap;
+        Enum::_EnumBitfield;
     };
 
-    template<cEnumBitmask Enum>
+    template<cEnumBitfield Enum>
     ACDA_API auto operator|(const Enum& a, const Enum& b) -> Enum
     {
         return static_cast<Enum>(ToUnderlying(a) | ToUnderlying(b));
     }
 
-    template<cEnumBitmask Enum>
+    template<cEnumBitfield Enum>
     ACDA_API auto operator|=(Enum& a, const Enum& b) -> Enum&
     {
         a = a | b;
         return a;
     }
 
-    template<cEnumBitmask Enum>
+    template<cEnumBitfield Enum>
     ACDA_API auto operator&(const Enum& a, const Enum& b) -> Enum
     {
         return static_cast<Enum>(ToUnderlying(a) & ToUnderlying(b));
     }
 
-    template<cEnumBitmask Enum>
+    template<cEnumBitfield Enum>
     ACDA_API auto operator&=(Enum& a, const Enum& b) -> Enum&
     {
         a = a & b;
         return a;
     }
 
-    template<cEnumBitmask Enum>
+    template<cEnumBitfield Enum>
     ACDA_API auto operator~(const Enum& a) -> Enum
     {
         return static_cast<Enum>(~ToUnderlying(a));
     }
 
-    template<cEnumBitmask Enum>
+    template<cEnumBitfield Enum>
     ACDA_API auto operator!(const Enum& a) -> bool
     {
         return !ToUnderlying(a);
@@ -236,21 +234,21 @@ namespace Arcadia
         return rhs == lhs;
     }
 
-    template<cEnumBitmask Enum, typename Int>
+    template<cEnumBitfield Enum, typename Int>
         requires std::is_integral_v<Int>
     ACDA_API auto operator&(const Enum& lhs, const Int& rhs) -> Enum
     {
         return static_cast<Enum>(static_cast<Int>(lhs) & rhs);
     }
 
-    template<cEnumBitmask Enum, typename Int>
+    template<cEnumBitfield Enum, typename Int>
         requires std::is_integral_v<Int>
     ACDA_API auto operator&(const Int& lhs, const Enum& rhs) -> Enum
     {
         return rhs & lhs;
     }
 
-    template<cEnumBitmask Enum, typename Int>
+    template<cEnumBitfield Enum, typename Int>
         requires std::is_integral_v<Int>
     ACDA_API auto operator&=(Enum& lhs, const Int& rhs) -> Enum&
     {
@@ -258,21 +256,21 @@ namespace Arcadia
         return lhs;
     }
 
-    template<cEnumBitmask Enum, typename Int>
+    template<cEnumBitfield Enum, typename Int>
         requires std::is_integral_v<Int>
     ACDA_API auto operator|(const Enum& lhs, const Int& rhs) -> Enum
     {
         return static_cast<Enum>(static_cast<Int>(lhs) | rhs);
     }
 
-    template<cEnumBitmask Enum, typename Int>
+    template<cEnumBitfield Enum, typename Int>
         requires std::is_integral_v<Int>
     ACDA_API auto operator|(const Int& lhs, const Enum& rhs) -> Enum
     {
         return rhs | lhs;
     }
 
-    template<cEnumBitmask Enum, typename Int>
+    template<cEnumBitfield Enum, typename Int>
         requires std::is_integral_v<Int>
     ACDA_API auto operator|=(Enum& lhs, const Int& rhs) -> Enum&
     {

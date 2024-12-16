@@ -31,7 +31,7 @@ auto Arcadia::Command::GetDescription() const -> const std::string&
 
 auto Arcadia::CommandList::Instance() -> SelfType&
 {
-    SelfType command_list{};
+    static SelfType command_list{};
     return command_list;
 }
 
@@ -73,17 +73,17 @@ auto Arcadia::CommandList::Redo() -> bool
     return true;
 }
 
-auto Arcadia::CommandList::GetCapacity() const -> size_t
+auto Arcadia::CommandList::GetCapacity() const -> std::size_t
 {
     return _Capacity;
 }
 
-void Arcadia::CommandList::SetCapacity(size_t capacity)
+void Arcadia::CommandList::SetCapacity(std::size_t capacity)
 {
     _Capacity = capacity;
 }
 
-auto Arcadia::CommandList::GetSize() const -> size_t
+auto Arcadia::CommandList::GetSize() const -> std::size_t
 {
     return _List.size();
 }

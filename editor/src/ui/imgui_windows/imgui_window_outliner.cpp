@@ -142,7 +142,7 @@ void Arcadia::ImguiWindowOutliner::OnUpdate()
                             ImGui::Separator();
                             if(ImGui::BeginMenu("Add Component"))
                             {
-                                int32_t item_count{ 0 };
+                                std::int32_t item_count = 0;
                                 _MenuItemAddComponent<CameraComponent>(item_count);
                                 _MenuItemAddComponent<LightComponent>(item_count);
                                 _MenuItemAddComponent<ModelComponent>(item_count);
@@ -157,7 +157,7 @@ void Arcadia::ImguiWindowOutliner::OnUpdate()
                             }
                             if(ImGui::BeginMenu("Remove Component"))
                             {
-                                int32_t item_count{ 0 };
+                                std::int32_t item_count = 0;
                                 _MenuItemRemoveComponent<CameraComponent>(item_count);
                                 _MenuItemRemoveComponent<LightComponent>(item_count);
                                 _MenuItemRemoveComponent<ModelComponent>(item_count);

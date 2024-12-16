@@ -12,7 +12,7 @@ namespace Arcadia
         using SelfType = GlRenderbuffer;
     public:
         GlRenderbuffer();
-        GlRenderbuffer(GLenum format, const glm::ivec2& size);
+        GlRenderbuffer(GLenum format, const glm::i32vec2& size);
         ~GlRenderbuffer();
 
         GlRenderbuffer(SelfType&&) noexcept = default;
@@ -29,7 +29,7 @@ namespace Arcadia
 
         void SetStorage(
             GLenum format,
-            const glm::ivec2& size
+            const glm::i32vec2& size
         );
 
     private:

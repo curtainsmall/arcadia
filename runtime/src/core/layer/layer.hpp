@@ -92,7 +92,7 @@ namespace Arcadia
         auto PopAllLayers() -> SelfType&;
 
         template<cLayer Layer = iLayer>
-        auto GetLayer(size_t idx) -> Layer&
+        auto GetLayer(std::size_t idx) -> Layer&
         {
             if(idx >= GetSize())
             {
@@ -122,7 +122,7 @@ namespace Arcadia
             return std::static_pointer_cast<Layer>(_Layers.back());
         }
 
-        auto GetSize() -> size_t;
+        auto GetSize() -> std::size_t;
 
         auto begin() -> LayerVectorType::const_iterator;
         auto end() -> LayerVectorType::const_iterator;

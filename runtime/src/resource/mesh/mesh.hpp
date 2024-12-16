@@ -22,20 +22,20 @@ namespace Arcadia
         static auto CreateCapsule(
             float radius,
             float half_height_of_sylinder,
-            size_t half_sphere_stack_count = 18,
-            size_t sector_count = 36
+            std::size_t half_sphere_stack_count = 18,
+            std::size_t sector_count = 36
         ) -> Mesh;
 
         static auto CreateCylinder(
             float half_height,
             float radius,
-            size_t sector_count = 36
+            std::size_t sector_count = 36
         ) -> Mesh;
 
         static auto CreateSphere(
             float radius,
-            size_t stack_count  = 36, // Along latitude
-            size_t sector_count = 36  // Alone longitude
+            std::size_t stack_count  = 36, // Along latitude
+            std::size_t sector_count = 36  // Alone longitude
         ) -> Mesh;
 
         std::vector<Vertex> Vertices{};

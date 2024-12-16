@@ -23,12 +23,12 @@ namespace Arcadia
         [[nodiscard]]
         ACDA_API static inline auto FromJson(const nlohmann::json& json) -> glm::quat
         {
-            return glm::quat{
+            return glm::quat(
                 json.at("w"),
                 json.at("x"),
                 json.at("y"),
                 json.at("z")
-            };
+            );
         }
 
         [[nodiscard]]
@@ -39,14 +39,14 @@ namespace Arcadia
         [[nodiscard]]
         ACDA_API constexpr auto CreateIdentity() -> glm::quat
         {
-            return glm::quat{ 1.f,.0f,.0f,.0f };
+            return glm::quat(1.f, .0f, .0f, .0f);
         }
 
         /// @brief Normalize quaternion with one axis fixed
         /// @tparam Index Index of fixed axis, must be 0, 1, 2 or 3
         /// @param vec Quaternion to normalize
         /// @return Normalized quaternion
-        template<size_t Index>
+        template<std::size_t Index>
         [[nodiscard]]
         ACDA_API static inline auto NormalizeFixedly(const glm::quat& quat) -> glm::quat
         {

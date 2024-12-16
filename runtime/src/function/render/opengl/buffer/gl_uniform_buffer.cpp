@@ -43,7 +43,7 @@ void Arcadia::GlUniformBuffer::Bind() const
 {
     if(_GlId == 0)
     {
-        throw GlInvalid{ "Cannot bind null OpenGL uniform buffer" };
+        throw GlInvalid("Cannot bind null OpenGL uniform buffer");
     }
 
     ACDA_GL_CALL(glBindBuffer(GL_UNIFORM_BUFFER, _GlId));

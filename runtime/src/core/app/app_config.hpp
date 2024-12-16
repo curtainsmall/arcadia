@@ -24,12 +24,12 @@ namespace Arcadia
         GraphicApi::Type GraphicApi{};
 
         // Window
-        glm::ivec2 WindowPosition{ -1,-1 }; // Use negative value for `don't care`
-        glm::ivec2 WindowSize{ 1280,768 };
-        glm::ivec2 WindowSizeMin{ 800,600 };
-        glm::ivec2 WindowSizeMax{ -1,-1 }; // Use negative value for `don't care`
+        glm::i32vec2 WindowPosition{ -1,-1 }; // Use negative value for `don't care`
+        glm::i32vec2 WindowSize{ 1280,768 };
+        glm::i32vec2 WindowSizeMin{ 800,600 };
+        glm::i32vec2 WindowSizeMax{ -1,-1 }; // Use negative value for `don't care`
         std::string WindowTitle{ "Arcadia" };
-        int32_t WindowMultisampleCount{ 0 };
+        std::int32_t WindowMultisampleCount{ 0 };
         bool WindowMaxmized{ true };
 
         // ImGui

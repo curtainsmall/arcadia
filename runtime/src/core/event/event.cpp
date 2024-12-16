@@ -14,7 +14,7 @@ auto Arcadia::EventQueue::SwapQueue() -> bool
     return GetSize();
 }
 
-auto Arcadia::EventQueue::GetSize() const -> size_t
+auto Arcadia::EventQueue::GetSize() const -> std::size_t
 {
     return _ProcessingQueue->size();
 }
@@ -23,7 +23,7 @@ auto Arcadia::EventQueue::GetFront() -> EventBase&
 {
     if(!GetSize())
     {
-        throw EmptyQueue{};
+        throw EmptyQueue();
     }
 
     return *_ProcessingQueue->front();

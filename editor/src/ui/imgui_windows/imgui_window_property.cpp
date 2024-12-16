@@ -145,7 +145,7 @@ auto Arcadia::ImguiWindowPropertyLightComponent::operator()(LightComponent& ligh
     },
         [&](SpotLight& light)
     {
-        bool edited{ false };
+        bool edited = false;
 
         if(ImGui::BeginCombo("Light Type", "Spot Light"))
         {
@@ -229,7 +229,7 @@ auto Arcadia::ImguiWindowPropertyLightComponent::operator()(LightComponent& ligh
     },
         [&](DirectLight& light)
     {
-        bool edited{ false };
+        bool edited = false;
 
         if(ImGui::BeginCombo("Light Type", "Direct Light"))
         {
@@ -300,7 +300,7 @@ auto Arcadia::ImguiWindowPropertyLightComponent::operator()(LightComponent& ligh
     },
         [&](AreaLight& light)
     {
-        bool edited{ false };
+        bool edited = false;
 
         if(ImGui::BeginCombo("Light Type", "Area Light"))
         {
@@ -373,7 +373,7 @@ auto Arcadia::ImguiWindowPropertyLightComponent::operator()(LightComponent& ligh
     },
         [&](PointLight& light)
     {
-        bool edited{ false };
+        bool edited = false;
 
         if(ImGui::BeginCombo("Light Type", "Point Light"))
         {
@@ -849,7 +849,7 @@ auto Arcadia::ImguiWindowPropertyTransformComponent::operator()(TransformCompone
 
     if(ToBool(transform_comp.Flags & TransformComponentFlags::UseRotation))
     {
-        float rotation_drag_speed{ .05f };
+        float rotation_drag_speed = .05f;
         glm::quat temp = transform_comp.Rotation;
         ImGui::DragFloat3("Rotation", glm::value_ptr(temp), rotation_drag_speed, min, max, format, flags);
         transform_comp.Rotation = GlmQuat::NormalizeFixedly(transform_comp.Rotation, temp);
@@ -860,7 +860,7 @@ auto Arcadia::ImguiWindowPropertyTransformComponent::operator()(TransformCompone
     }
     if(ToBool(transform_comp.Flags & TransformComponentFlags::UseDirection))
     {
-        float direction_drag_speed{ .05f };
+        float direction_drag_speed = .05f;
         glm::vec3 temp = transform_comp.Direction;
         ImGui::DragFloat3("Direction", glm::value_ptr(temp), direction_drag_speed, min, max, format, flags);
         transform_comp.Direction = GlmVec3::NormalizeFixedly(transform_comp.Direction, temp);

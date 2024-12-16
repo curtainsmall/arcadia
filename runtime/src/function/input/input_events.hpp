@@ -140,7 +140,7 @@ namespace Arcadia
         Super     = GLFW_MOD_SUPER,
         CapsLock  = GLFW_MOD_CAPS_LOCK,
         NumLock   = GLFW_MOD_NUM_LOCK,
-        _EnumBitmap
+        _EnumBitfield
     };
 
     namespace Events
@@ -148,10 +148,10 @@ namespace Arcadia
         ACDA_EVENT(
             InputKey,
             WindowLayer*, // Input window
-            int32_t, // Key code
-            int32_t, // Key scancode
-            int32_t, // Input action
-            int32_t  // Input modifiers
+            std::int32_t, // Key code
+            std::int32_t, // Key scancode
+            std::int32_t, // Input action
+            std::int32_t  // Input modifiers
         );
         ACDA_EVENT(
             InputCursorPos,
@@ -171,9 +171,9 @@ namespace Arcadia
         ACDA_EVENT(
             InputMouseButton,
             WindowLayer*, // Input window
-            int32_t, // Mouse code
-            int32_t, // Input action
-            int32_t  // Input modifiers
+            std::int32_t, // Mouse code
+            std::int32_t, // Input action
+            std::int32_t  // Input modifiers
         );
         ACDA_EVENT(
             InputCursorEnter,
@@ -183,7 +183,7 @@ namespace Arcadia
         ACDA_EVENT(
             InputChar,
             WindowLayer*,
-            UnicodeCodepoint // Unicode code points
+            std::uint32_t // Unicode code points
         );
     }
 }

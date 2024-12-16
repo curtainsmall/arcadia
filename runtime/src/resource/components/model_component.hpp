@@ -59,7 +59,7 @@ namespace Arcadia
             std::vector<Mesh>& meshes,
             const aiScene* const ai_scene,
             const aiNode* const ai_node,
-            size_t& next_mesh_index
+            std::size_t& next_mesh_index
         );
 
         void _LoadTexture(

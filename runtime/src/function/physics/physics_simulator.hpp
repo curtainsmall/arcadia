@@ -89,8 +89,8 @@ namespace Arcadia
         void SetJphTempAllocatorSize(JPH::uint get_jph_temp_allocator_size);
 
         [[nodiscard]]
-        auto GetJphPhysicsSystemUpdatesPerSecond() const->int32_t;
-        void SetJphPhysicsSystemUpdatesPerSecond(int32_t jph_physics_system_updates_per_second);
+        auto GetJphPhysicsSystemUpdatesPerSecond() const->std::int32_t;
+        void SetJphPhysicsSystemUpdatesPerSecond(std::int32_t jph_physics_system_updates_per_second);
 
         [[nodiscard]]
         auto GetJphBodyIdStorage() const -> const JphBodyIdStorageType&;
@@ -106,7 +106,7 @@ namespace Arcadia
 
         JPH::uint _JphTempAllocatorSize{ 10 * 1024 * 1024 };
 
-        int32_t _JphPhysicsSystemUpdatesPerSecond{ 60 };
+        std::int32_t _JphPhysicsSystemUpdatesPerSecond{ 60 };
 
         JphBodyIdStorageType _JphBodyIdStorage{};
         std::set<Uuid> _SubmittedBodyInfos{};

@@ -21,12 +21,12 @@ namespace Arcadia
         [[nodiscard]]
         ACDA_API static inline auto FromJson(const nlohmann::json& json) -> glm::vec4
         {
-            return glm::vec4{
+            return glm::vec4(
                 json.at("x"),
                 json.at("y"),
                 json.at("z"),
                 json.at("w")
-            };
+            );
         }
 
         [[nodiscard]]
@@ -39,7 +39,7 @@ namespace Arcadia
         /// @tparam Index Index of fixed axis, must be 0, 1, 2 or 3
         /// @param vec Vector to normalize
         /// @return Normalized vector
-        template<size_t Index>
+        template<std::size_t Index>
         [[nodiscard]]
         ACDA_API auto NormalizeFixedly(const glm::vec4& vec) -> glm::vec4
         {

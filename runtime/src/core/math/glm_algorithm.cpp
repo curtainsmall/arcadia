@@ -1,6 +1,6 @@
 #include"pch.hpp"
 
-#include "algorithm.hpp"
+#include "glm_algorithm.hpp"
 
 auto Arcadia::Decompose(const glm::mat4& transform) -> std::optional<std::tuple<glm::vec3, glm::vec3, glm::vec3>>
 {
@@ -13,33 +13,33 @@ auto Arcadia::Decompose(const glm::mat4& transform) -> std::optional<std::tuple<
 
     using T = float;
 
-    glm::mat4 LocalMatrix(transform);
+    glm::mat4 local_matrix(transform);
 
     // Normalize the matrix.
-    if(glm::epsilonEqual(LocalMatrix[3][3], static_cast<T>(0), glm::epsilon<T>()))
+    if(glm::epsilonEqual(local_matrix[3][3], static_cast<T>(0), glm::epsilon<T>()))
         return {};
 
     // First, isolate perspective.  This is the messiest.
     if(
-        glm::epsilonNotEqual(LocalMatrix[0][3], static_cast<T>(0), glm::epsilon<T>()) ||
-        glm::epsilonNotEqual(LocalMatrix[1][3], static_cast<T>(0), glm::epsilon<T>()) ||
-        glm::epsilonNotEqual(LocalMatrix[2][3], static_cast<T>(0), glm::epsilon<T>()))
+        glm::epsilonNotEqual(local_matrix[0][3], static_cast<T>(0), glm::epsilon<T>()) ||
+        glm::epsilonNotEqual(local_matrix[1][3], static_cast<T>(0), glm::epsilon<T>()) ||
+        glm::epsilonNotEqual(local_matrix[2][3], static_cast<T>(0), glm::epsilon<T>()))
     {
         // Clear the perspective partition
-        LocalMatrix[0][3] = LocalMatrix[1][3] = LocalMatrix[2][3] = static_cast<T>(0);
-        LocalMatrix[3][3] = static_cast<T>(1);
+        local_matrix[0][3] = local_matrix[1][3] = local_matrix[2][3] = static_cast<T>(0);
+        local_matrix[3][3] = static_cast<T>(1);
     }
 
     // Next take care of translation (easy).
-    translation = glm::vec3(LocalMatrix[3]);
-    LocalMatrix[3] = glm::vec4(0, 0, 0, LocalMatrix[3].w);
+    translation = glm::vec3(local_matrix[3]);
+    local_matrix[3] = glm::vec4(0, 0, 0, local_matrix[3].w);
 
     glm::vec3 Row[3], Pdum3;
 
     // Now get scale and shear.
     for(glm::length_t i = 0; i < 3; ++i)
         for(glm::length_t j = 0; j < 3; ++j)
-            Row[i][j] = LocalMatrix[i][j];
+            Row[i][j] = local_matrix[i][j];
 
     // Compute X scale factor and normalize first row.
     scale.x = glm::length(Row[0]);

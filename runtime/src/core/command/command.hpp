@@ -65,13 +65,13 @@ namespace Arcadia
         auto Redo() -> bool;
 
         [[nodiscard]]
-        auto GetCapacity() const->size_t;
-        void SetCapacity(size_t capacity);
+        auto GetCapacity() const->std::size_t;
+        void SetCapacity(std::size_t capacity);
 
         /// @brief Get size of command list
         /// @return Size
         [[nodiscard]]
-        auto GetSize() const->size_t;
+        auto GetSize() const->std::size_t;
 
         /// @brief Clear command list (when you saved the project and no longer needs previous commands)
         void Clear();
@@ -92,7 +92,7 @@ namespace Arcadia
         auto cend() const noexcept->ContainerType::const_iterator;
 
     private:
-        size_t _Capacity{ 40 };
+        std::size_t _Capacity{ 40 };
         ContainerType _List{};
         ContainerType::const_iterator _CurrentIterator{};
     };
