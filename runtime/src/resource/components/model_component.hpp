@@ -6,11 +6,11 @@
 #include"assimp/Importer.hpp"
 #include"assimp/scene.h"
 
-#include"platform/api_def.hpp"
+#include"core/identifiable.hpp"
 #include"core/math.hpp"
 #include"core/memento/memento.hpp"
 #include"core/nlohmann_json_header.hpp"
-#include"core/uuid.hpp"
+#include"platform/api_def.hpp"
 #include"resource/components/component_interface.hpp"
 #include"resource/mesh/mesh.hpp"
 
@@ -21,7 +21,7 @@ namespace Arcadia
         public iMementoOriginator
     {
     public:
-        using IdentifiableMeshesType = BasicIdentifiable<std::vector<Mesh>>;
+        using IdentifiableMeshesType = Identifiable<std::vector<Mesh>>;
 
         using SelfType = ModelComponent;
     public:

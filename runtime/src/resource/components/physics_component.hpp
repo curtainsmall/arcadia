@@ -3,11 +3,11 @@
 #include<memory>
 #include<variant>
 
-#include"platform/api_def.hpp"
+#include"core/identifiable.hpp"
 #include"core/math.hpp"
 #include"core/memento/memento.hpp"
 #include"core/nlohmann_json_header.hpp"
-#include"core/uuid.hpp"
+#include"platform/api_def.hpp"
 #include"platform/jolt/jolt_header.hpp"
 #include"resource/components/component_interface.hpp"
 
@@ -83,7 +83,7 @@ namespace Arcadia
         public iMementoOriginator
     {
     public:
-        using IdentifiableJphBodyInfoType = BasicIdentifiable<JphBodyInfo>;
+        using IdentifiableJphBodyInfoType = Identifiable<JphBodyInfo>;
         using SelfType = PhysicsComponent;
     public:
         ACDA_COMPONENT_TYPE_STR_GETTERS("physics");
