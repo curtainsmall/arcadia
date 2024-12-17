@@ -2,12 +2,13 @@
 
 #include"GLFW/glfw3.h"
 
-#include"core/base.hpp"
 #include"core/exception.hpp"
+#include"core/noncopyable.hpp"
+#include"platform/api_def.hpp"
 
 namespace Arcadia
 {
-    ACDA_EXCEPTION(GlfwError);
+    ACDA_DEFINE_EXCEPTION(GlfwError);
 
     class GlfwContext: public Noncopyable
     {

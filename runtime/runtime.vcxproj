@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|x64">
@@ -147,8 +147,10 @@
     <ClInclude Include="src\core\app\app_config.hpp" />
     <ClInclude Include="src\core\app\app_context.hpp" />
     <ClInclude Include="src\core\app\app_layer.hpp" />
-    <ClInclude Include="src\core\base.hpp" />
+    <ClInclude Include="src\core\assert.hpp" />
     <ClInclude Include="src\core\command\command.hpp" />
+    <ClInclude Include="src\core\enum.hpp" />
+    <ClInclude Include="src\core\function.hpp" />
     <ClInclude Include="src\core\main.hpp" />
     <ClInclude Include="src\core\event\event.hpp" />
     <ClInclude Include="src\core\exception.hpp" />
@@ -157,6 +159,7 @@
     <ClInclude Include="src\core\hash.hpp" />
     <ClInclude Include="src\core\layer\layer.hpp" />
     <ClInclude Include="src\core\log\log.hpp" />
+    <ClInclude Include="src\core\match.hpp" />
     <ClInclude Include="src\core\math.hpp" />
     <ClInclude Include="src\core\math\glm_algorithm.hpp" />
     <ClInclude Include="src\core\math\glm_header.hpp" />
@@ -170,6 +173,8 @@
     <ClInclude Include="src\core\math\glm_vec4.hpp" />
     <ClInclude Include="src\core\memento\memento.hpp" />
     <ClInclude Include="src\core\nlohmann_json_header.hpp" />
+    <ClInclude Include="src\core\noncopyable.hpp" />
+    <ClInclude Include="src\core\parameter_pack.hpp" />
     <ClInclude Include="src\core\serialization.hpp" />
     <ClInclude Include="src\core\string.hpp" />
     <ClInclude Include="src\core\time\time.hpp" />
@@ -192,8 +197,9 @@
     <ClInclude Include="src\function\window\window_events.hpp" />
     <ClInclude Include="src\function\window\window_layer.hpp" />
     <ClInclude Include="src\pch.hpp" />
-    <ClInclude Include="src\platform\base.hpp" />
+    <ClInclude Include="src\platform\api_def.hpp" />
     <ClInclude Include="src\platform\cuda\cuda_header.hpp" />
+    <ClInclude Include="src\platform\debug_def.hpp" />
     <ClInclude Include="src\platform\glfw\glfw_header.hpp" />
     <ClInclude Include="src\platform\graphic_api\graphic_api.hpp" />
     <ClInclude Include="src\platform\jolt\jolt_header.hpp" />

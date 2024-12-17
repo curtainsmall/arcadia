@@ -3,7 +3,7 @@
 #include<memory>
 #include<string>
 
-#include"core/base.hpp"
+#include"platform/api_def.hpp"
 #include"resource/scene.hpp"
 #include"ui/imgui_header.hpp"
 #include"ui/imgui_window.hpp"
@@ -54,16 +54,16 @@ namespace Arcadia
     template<cComponent Component>
     inline void ImguiWindowOutliner::_MenuItemAddComponent(int& item_count)
     {
-        std::string type_str = Component::GetTypeStringStatic();
+        std::string type_string = Component::GetTypeStringStatic();
         bool exists = _Scene.lock()->ContainsAllComponents<Component>(_SelectedEntityName);
 
         if(!exists)
         {
             ++item_count;
-            if(ImGui::MenuItem(type_str.c_str()))
+            if(ImGui::MenuItem(type_string.c_str()))
             {
                 EventQueue::Instance()
-                    .Signal<Events::AddComponent>(_SelectedEntityName, type_str);
+                    .Signal<Events::AddComponent>(_SelectedEntityName, type_string);
             }
         }
     }
@@ -71,16 +71,16 @@ namespace Arcadia
     template<cComponent Component>
     inline void ImguiWindowOutliner::_MenuItemRemoveComponent(int& item_count)
     {
-        std::string type_str = Component::GetTypeStringStatic();
+        std::string type_string = Component::GetTypeStringStatic();
         bool exists = _Scene.lock()->ContainsAllComponents<Component>(_SelectedEntityName);
 
         if(exists)
         {
             ++item_count;
-            if(exists && ImGui::MenuItem(type_str.c_str()))
+            if(exists && ImGui::MenuItem(type_string.c_str()))
             {
                 EventQueue::Instance()
-                    .Signal<Events::RemoveComponent>(_SelectedEntityName, type_str);
+                    .Signal<Events::RemoveComponent>(_SelectedEntityName, type_string);
             }
         }
     }

@@ -4,25 +4,29 @@
 #include<memory>
 #include<queue>
 #include<tuple>
+#include<typeindex>
 #include<typeinfo>
+#include<unordered_set>
 #include<vector>
 
-#include"core/base.hpp"
 #include"core/exception.hpp"
 #include"core/log/log.hpp"
+#include"core/noncopyable.hpp"
+#include"platform/api_def.hpp"
+#include"platform/debug_def.hpp"
 
 #ifdef ACDA_DEBUG_MODE
 #   include<unordered_set>
 #   include<typeindex>
 #endif // ACDA_DEBUG_MODE
 
-#define ACDA_EVENT(event_name,...) \
-class event_name: public Arcadia::BasicEvent<__VA_ARGS__>\
+#define ACDA_DEFINE_EVENT(event_name,...) \
+class event_name: public ::Arcadia::BasicEvent<__VA_ARGS__>\
 {\
 public:\
     using SelfType = event_name;\
 public:\
-    using Arcadia::BasicEvent<__VA_ARGS__>::BasicEvent;\
+    using ::Arcadia::BasicEvent<__VA_ARGS__>::BasicEvent;\
 }
 
 namespace Arcadia
@@ -108,7 +112,7 @@ namespace Arcadia
     class EventQueue
     {
     public:
-        ACDA_EXCEPTION(EmptyQueue);
+        ACDA_DEFINE_EXCEPTION(EmptyQueue);
 
         using SelfType = EventQueue;
         using DebugExcludedEventTypeSetType = std::unordered_set<std::type_index>;

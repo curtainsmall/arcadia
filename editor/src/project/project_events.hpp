@@ -15,55 +15,55 @@ namespace Arcadia
     {
         //==== Event for project ====//
 
-        ACDA_EVENT(
+        ACDA_DEFINE_EVENT(
             ProjectBuilt,
             std::shared_ptr<Project>
         );
-        ACDA_EVENT(
+        ACDA_DEFINE_EVENT(
             ProjectUnbuilt
         );
-        ACDA_EVENT(
+        ACDA_DEFINE_EVENT(
             ProjectLoaded
         );
-        ACDA_EVENT(
+        ACDA_DEFINE_EVENT(
             ProjectSaved
         );
 
         //==== Event for renderer ====//
 
-        ACDA_EVENT(
+        ACDA_DEFINE_EVENT(
             RendererBuilt,
             std::shared_ptr<iRenderer>
         );
-        ACDA_EVENT(
+        ACDA_DEFINE_EVENT(
             RendererUnbuilt
         );
 
         //==== Event for physics simulator ====//
 
-        ACDA_EVENT(
+        ACDA_DEFINE_EVENT(
             PhysicsSimulatorBuilt,
             std::shared_ptr<PhysicsSimulator>
         );
 
-        ACDA_EVENT(
+        ACDA_DEFINE_EVENT(
             PhysicsSimulatorUnbuilt
         );
 
         //==== Event for scene ====//
 
-        ACDA_EVENT(
+        ACDA_DEFINE_EVENT(
             SceneBuilt,
             std::shared_ptr<Scene>
         );
-        ACDA_EVENT(
+        ACDA_DEFINE_EVENT(
             SceneActivated,
             std::shared_ptr<Scene>
         );
-        ACDA_EVENT(
+        ACDA_DEFINE_EVENT(
             SceneDeactivated
         );
-        ACDA_EVENT(
+        ACDA_DEFINE_EVENT(
             SceneUnbuilt
         );
     }

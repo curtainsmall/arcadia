@@ -2,6 +2,8 @@
 
 #include "scene.hpp"
 
+#include"core/assert.hpp"
+#include"core/match.hpp"
 #include"resource/components/camera_component.hpp"
 #include"resource/components/light_component.hpp"
 #include"resource/components/model_component.hpp"
@@ -15,7 +17,7 @@ Arcadia::Scene::Scene(const nlohmann::json& json) :
 
     for(const auto& [entity_index_str, json_entity] : json_entities.items())
     {
-        auto& entity_info = CreateEntity(json_entity.at("name"), json_entity.value("type", ""s));
+        auto& entity_info = CreateEntity(json_entity.at("name"), json_entity.value("type", std::string{}));
         entity_info.Display = json_entity.value("display", true);
         entity_info.Internal = json_entity.value("internal", false);
 

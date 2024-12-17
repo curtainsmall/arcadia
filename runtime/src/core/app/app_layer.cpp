@@ -4,6 +4,7 @@
 
 #include"core/app/app_config.hpp"
 #include"core/file/file.hpp"
+#include"core/match.hpp"
 #include"core/math.hpp"
 #include"core/nlohmann_json_header.hpp"
 #include"core/version/version.hpp"
@@ -27,24 +28,24 @@ Arcadia::iAppLayer::iAppLayer() :
         {
             const auto& json_graphic_api = json.at("graphic_api");
             Version graphic_api_version(json_graphic_api.at("version"));
-            std::string graphic_api_type_str = json_graphic_api.at("type");
+            std::string graphic_api_type_string = json_graphic_api.at("type");
             app_config.GraphicApi = Match<GraphicApi::Type>(
-                graphic_api_type_str,
+                graphic_api_type_string,
                 []()
             {
                 return GraphicApi::Type();
             },
-                "opengl"s,
+                "opengl",
                 [&]()
             {
                 return GraphicApi::Opengl(graphic_api_version);
             },
-                "directx"s,
+                "directx",
                 [&]()
             {
                 return GraphicApi::Directx(graphic_api_version);
             },
-                "vulkan"s,
+                "vulkan",
                 [&]()
             {
                 return GraphicApi::Vulkan(graphic_api_version);
@@ -108,15 +109,15 @@ Arcadia::iAppLayer::~iAppLayer()
         app_config.GraphicApi,
         [&](const GraphicApi::Opengl& gl)
     {
-        return std::make_tuple("opengl"s, gl.Version.ToJson());
+        return std::make_tuple(std::string("opengl"), gl.Version.ToJson());
     },
         [&](const GraphicApi::Directx& dx)
     {
-        return std::make_tuple("directx"s, dx.Version.ToJson());
+        return std::make_tuple(std::string("directx"), dx.Version.ToJson());
     },
         [&](const GraphicApi::Vulkan& vk)
     {
-        return std::make_tuple("vulkan"s, vk.Version.ToJson());
+        return std::make_tuple(std::string("vulkan"), vk.Version.ToJson());
     }
     );
     json.push_back(
@@ -149,11 +150,11 @@ Arcadia::iAppLayer::~iAppLayer()
             }
         }
     );
-    for(const auto& id_str : app_config.ImguiOpenedWindowIdStrings)
+    for(const auto& id_string : app_config.ImguiOpenedWindowIdStrings)
     {
         json.at("imgui")
             .at("opened_window_id_strs")
-            .push_back(id_str);
+            .push_back(id_string);
     }
 
     auto ofs = File::CreateOfstream(AppConfig::Filepath);

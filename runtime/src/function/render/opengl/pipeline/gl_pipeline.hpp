@@ -5,12 +5,13 @@
 #include<unordered_map>
 #include<vector>
 
-#include"core/base.hpp"
 #include"core/exception.hpp"
 #include"core/file/file.hpp"
 #include"core/log/log.hpp"
 #include"core/math.hpp"
+#include"core/noncopyable.hpp"
 #include"function/render/opengl/pipeline/gl_shader.hpp"
+#include"platform/api_def.hpp"
 #include"platform/opengl/opengl_header.hpp"
 
 namespace Arcadia
@@ -18,8 +19,8 @@ namespace Arcadia
     class GlPipeline: public Noncopyable
     {
     public:
-        ACDA_EXCEPTION(LinkFail);
-        ACDA_EXCEPTION(ValidationFail);
+        ACDA_DEFINE_EXCEPTION(LinkFail);
+        ACDA_DEFINE_EXCEPTION(ValidationFail);
 
         using GlShadersBuilderType = std::function<void(const std::filesystem::path&, std::vector<GlShader>&)>;
 

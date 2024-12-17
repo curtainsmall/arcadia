@@ -28,37 +28,37 @@ namespace Arcadia
     {
         //==== Notifications ====//
 
-        ACDA_EVENT(
+        ACDA_DEFINE_EVENT(
             WindowShouldClose,
             WindowLayer* // Window to close
         );
-        ACDA_EVENT(
+        ACDA_DEFINE_EVENT(
             WindowCloseCanceled,
             WindowLayer* // Window to cancel close
         );
 
-        ACDA_EVENT(
+        ACDA_DEFINE_EVENT(
             WindowSetSize,
             WindowLayer*,
             glm::i32vec2 // New size
         );
-        ACDA_EVENT(
+        ACDA_DEFINE_EVENT(
             WindowSetPosition,
             WindowLayer*,
             glm::i32vec2 // New position
         );
-        ACDA_EVENT(
+        ACDA_DEFINE_EVENT(
             WindowSizeStateChanged,
             WindowLayer*,
             WindowSizeState // New state
         );
-        ACDA_EVENT(
+        ACDA_DEFINE_EVENT(
             WindowFocused,
             WindowLayer*,
             bool
         );
 
-        ACDA_EVENT(
+        ACDA_DEFINE_EVENT(
             MonitorConnect,
             ::GLFWmonitor*, // TODO: Use custom monitor type
             bool // Whether the monitor is connected or not
@@ -66,7 +66,7 @@ namespace Arcadia
 
         //==== Adjustments ====//
 
-        ACDA_EVENT(
+        ACDA_DEFINE_EVENT(
             WindowSetCursorInputMode,
             WindowCursorInputMode
         );

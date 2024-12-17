@@ -3,6 +3,8 @@
 #include "window_layer.hpp"
 
 #include"core/app/app_config.hpp"
+#include"core/function.hpp"
+#include"core/match.hpp"
 #include"function/input/input_events.hpp"
 
 Arcadia::WindowLayer::WindowLayer(

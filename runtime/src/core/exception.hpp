@@ -3,14 +3,14 @@
 #include<exception>
 #include<string>
 
-#include"core/base.hpp"
+#include"platform/api_def.hpp"
 
-#define ACDA_EXCEPTION(exception_name) \
-class exception_name: public Exception{\
+#define ACDA_DEFINE_EXCEPTION(exception_name) \
+class exception_name: public ::Arcadia::Exception{\
 public:\
-inline exception_name(const std::string& msg = #exception_name ):\
-Exception(msg){\
-}\
+    inline exception_name(const std::string& msg = #exception_name ):\
+        ::Arcadia::Exception(msg){\
+    }\
 }
 
 namespace Arcadia

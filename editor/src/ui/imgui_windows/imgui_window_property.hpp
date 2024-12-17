@@ -4,9 +4,10 @@
 #include<memory>
 #include<string>
 
-#include"core/base.hpp"
+#include"core/assert.hpp"
 #include"core/event/event.hpp"
 #include"function/physics/physics_simulator.hpp"
+#include"platform/api_def.hpp"
 #include"platform/jolt/jolt_header.hpp"
 #include"resource/components/camera_component.hpp"
 #include"resource/components/light_component.hpp"

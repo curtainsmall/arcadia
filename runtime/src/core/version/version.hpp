@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include"core/base.hpp"
+#include"platform/api_def.hpp"
 #include"core/nlohmann_json_header.hpp"
 
 namespace Arcadia

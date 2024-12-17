@@ -1,10 +1,14 @@
 #include "project_layer.hpp"
 
 #include"core/app/app_config.hpp"
+#include"core/assert.hpp"
+#include"core/enum.hpp"
 #include"core/file/file.hpp"
 #include"core/file/pfd_header.hpp"
+#include"core/function.hpp"
 #include"core/hash.hpp"
 #include"core/log/log.hpp"
+#include"core/match.hpp"
 #include"core/memento/memento.hpp"
 #include"function/render/opengl/gl_renderer.hpp"
 #include"function/window/window_events.hpp"
@@ -416,7 +420,7 @@ void Arcadia::ProjectLayer::_OnNewEntity(Events::NewEntity& e)
 
     Match<void>(
         type,
-        "actor"s,
+        std::string("actor"),
         [&]()
     {
         scene.EmplaceComponent<ModelComponent>(name).Snapshot();
@@ -427,7 +431,7 @@ void Arcadia::ProjectLayer::_OnNewEntity(Events::NewEntity& e)
         transform_comp.Snapshot();
         transform_comp.Flags |= TransformComponentFlags::UseRotation;
     },
-        "camera"s,
+        std::string("camera"),
         [&]()
     {
         scene.EmplaceComponent<CameraComponent>(name).Snapshot();
@@ -436,7 +440,7 @@ void Arcadia::ProjectLayer::_OnNewEntity(Events::NewEntity& e)
         transform_comp.Snapshot();
         transform_comp.Flags |= TransformComponentFlags::UseDirection;
     },
-        "light"s,
+        std::string("light"),
         [&]()
     {
         scene.EmplaceComponent<LightComponent>(name).Snapshot();

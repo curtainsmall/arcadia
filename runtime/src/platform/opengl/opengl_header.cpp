@@ -73,7 +73,7 @@ ACDA_API auto Arcadia::GlGetTypeSize(GLenum Type) -> std::size_t
     }
 }
 
-ACDA_API auto Arcadia::SetGlVersion() -> Version
+ACDA_API auto Arcadia::GetGlVersion() -> Version
 {
     int major = 0;
     int minor = 0;
@@ -126,56 +126,56 @@ void GLAPIENTRY Arcadia::GlDebugCallback(
             break;
     }
 
-    std::string type_str{};
+    std::string type_string{};
     switch(Type)
     {
         case GL_DEBUG_TYPE_ERROR:
-            type_str = "Error";
+            type_string= "Error";
             break;
         case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR:
-            type_str = "Deprecated Behaviour";
+            type_string= "Deprecated Behaviour";
             break;
         case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:
-            type_str = "Undefined Behaviour";
+            type_string= "Undefined Behaviour";
             break;
         case GL_DEBUG_TYPE_PORTABILITY:
-            type_str = "Portability";
+            type_string= "Portability";
             break;
         case GL_DEBUG_TYPE_PERFORMANCE:
-            type_str = "Performance";
+            type_string= "Performance";
             break;
         case GL_DEBUG_TYPE_MARKER:
-            type_str = "Marker";
+            type_string= "Marker";
             break;
         case GL_DEBUG_TYPE_PUSH_GROUP:
-            type_str = "Push Group";
+            type_string= "Push Group";
             break;
         case GL_DEBUG_TYPE_POP_GROUP:
-            type_str = "Pop Group";
+            type_string= "Pop Group";
             break;
         case GL_DEBUG_TYPE_OTHER:
-            type_str = "Other";
+            type_string= "Other";
             break;
     }
 
-    std::string severity_str{};
+    std::string severity_string{};
     switch(severity)
     {
         case GL_DEBUG_SEVERITY_HIGH:
-            severity_str = "high";
+            severity_string= "high";
             break;
         case GL_DEBUG_SEVERITY_MEDIUM:
-            severity_str = "medium";
+            severity_string= "medium";
             break;
         case GL_DEBUG_SEVERITY_LOW:
-            severity_str = "low";
+            severity_string= "low";
             break;
         case GL_DEBUG_SEVERITY_NOTIFICATION:
-            severity_str = "notification";
+            severity_string= "notification";
             break;
     }
 
-    ACDA_LOG_ERROR(std::format("GL callback\nSource: {0}\nType: {1}\nSeverity: {2}\nMessage: {3}", source_string, type_str, severity_str, message));
+    ACDA_LOG_ERROR(std::format("GL callback\nSource: {0}\nType: {1}\nSeverity: {2}\nMessage: {3}", source_string, type_string, severity_string, message));
     ACDA_LOG_FLUSH();
 }
 
@@ -200,14 +200,14 @@ Arcadia::OpenglContext::OpenglContext()
     {
         throw GlError(reinterpret_cast<const char*>(glewGetErrorString(error)));
     }
-    ACDA_GL_CALL(auto gl_version_str = glGetString(GL_VERSION));
-    ACDA_LOG_INFO(std::format("OpenGL Version: {}", reinterpret_cast<const char*>(gl_version_str)));
+    ACDA_GL_CALL(std::string gl_version_string(reinterpret_cast<const char*>(glGetString(GL_VERSION))));
+    ACDA_LOG_INFO(std::format("OpenGL Version: {}", gl_version_string));
 
 #if ACDA_GL_USE_DEBUG_CALLBACK
-    if(arcadia::get_gl_version() >= arcadia::version{ 4,6,0 })
+    if(GetGlVersion() >= Version(4, 6, 0))
     {
         ACDA_GL_CALL(glEnable(GL_DEBUG_OUTPUT));
-        ACDA_GL_CALL(glDebugMessageCallback(arcadia::GlDebugCallback, nullptr));
+        ACDA_GL_CALL(glDebugMessageCallback(GlDebugCallback, nullptr));
     }
 #endif
 

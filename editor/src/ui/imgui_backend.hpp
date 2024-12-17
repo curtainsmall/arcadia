@@ -1,6 +1,6 @@
 #pragma once
 
-#include"core/base.hpp"
+#include"platform/api_def.hpp"
 #include"function/input/input_events.hpp"
 #include"function/window/window_events.hpp"
 #include"function/window/window_layer.hpp"

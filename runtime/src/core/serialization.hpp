@@ -3,7 +3,7 @@
 #include<memory>
 #include<vector>
 
-#include"core/base.hpp"
+#include"platform/api_def.hpp"
 
 namespace Arcadia
 {

@@ -2,7 +2,7 @@
 
 #include<memory>
 
-#include"core/base.hpp"
+#include"platform/api_def.hpp"
 #include"core/event/event.hpp"
 #include"function/physics/physics_simulator.hpp"
 #include"function/render/renderer.hpp"

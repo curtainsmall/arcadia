@@ -3,6 +3,7 @@
 #include"core/command/command.hpp"
 #include"core/event/event.hpp"
 #include"core/file/pfd_header.hpp"
+#include"core/function.hpp"
 #include"resource/components/camera_component.hpp"
 #include"resource/components/light_component.hpp"
 #include"resource/components/model_component.hpp"
@@ -184,8 +185,8 @@ void Arcadia::ImguiWindowOutliner::OnUpdate()
 
 void Arcadia::ImguiWindowOutliner::_OnOpenImguiWindow(Events::OpenImguiWindow& e)
 {
-    const auto& [id_str] = e.DataTuple;
-    if(id_str == GetIdString())
+    const auto& [id_string] = e.DataTuple;
+    if(id_string == GetIdString())
     {
         _Opened = true;
     }

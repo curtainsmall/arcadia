@@ -6,6 +6,8 @@
 #include<fstream>
 #include<sstream>
 
+#include"core/assert.hpp"
+
 ACDA_API auto Arcadia::ToFilepath(const std::string& string) -> std::filesystem::path
 {
     std::filesystem::path path(string);

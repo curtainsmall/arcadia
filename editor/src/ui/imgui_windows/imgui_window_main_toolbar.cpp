@@ -1,6 +1,7 @@
 #include "imgui_window_main_toolbar.hpp"
 
 #include"core/event/event.hpp"
+#include"core/function.hpp"
 #include"core/memento/memento.hpp"
 #include"resource/fonts/icon_header.hpp"
 

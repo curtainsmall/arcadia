@@ -5,7 +5,8 @@
 
 #include"spdlog/spdlog.h"
 
-#include"core/base.hpp"
+#include"platform/api_def.hpp"
+#include"platform/debug_def.hpp"
 
 namespace Arcadia
 {
@@ -60,13 +61,13 @@ namespace Arcadia
 }
 
 #ifdef ACDA_DEBUG_MODE
-#   define ACDA_LOG_DEBUG(msg)     Arcadia::Logger::Instance().LogAsDebug(msg)
-#   define ACDA_LOG_INFO(msg)      Arcadia::Logger::Instance().LogAsInfo(msg)
-#   define ACDA_LOG_WARNING(msg)   Arcadia::Logger::Instance().LogAsWarning(msg)
-#   define ACDA_LOG_ERROR(msg)     Arcadia::Logger::Instance().LogAsError(msg)
-#   define ACDA_LOG_FATAL(msg)     Arcadia::Logger::Instance().LogAsFatal(msg)
+#   define ACDA_LOG_DEBUG(msg)     (::Arcadia::Logger::Instance().LogAsDebug(msg))
+#   define ACDA_LOG_INFO(msg)      (::Arcadia::Logger::Instance().LogAsInfo(msg))
+#   define ACDA_LOG_WARNING(msg)   (::Arcadia::Logger::Instance().LogAsWarning(msg))
+#   define ACDA_LOG_ERROR(msg)     (::Arcadia::Logger::Instance().LogAsError(msg))
+#   define ACDA_LOG_FATAL(msg)     (::Arcadia::Logger::Instance().LogAsFatal(msg))
 #   define ACDA_LOG_DEMARCATE(msg) ACDA_LOG_DEBUG(std::format("//==== {} ====//", msg))
-#   define ACDA_LOG_FLUSH()        Arcadia::Logger::Instance().Flush()
+#   define ACDA_LOG_FLUSH()        (::Arcadia::Logger::Instance().Flush())
 #else
 #   define ACDA_LOG_DEBUG(msg)
 #   define ACDA_LOG_INFO(msg)

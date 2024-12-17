@@ -2,6 +2,8 @@
 
 #include "app_context.hpp"
 
+#include"platform/debug_def.hpp"
+
 #ifdef ACDA_DEBUG_MODE
 #   include"core/event/event.hpp"
 #endif

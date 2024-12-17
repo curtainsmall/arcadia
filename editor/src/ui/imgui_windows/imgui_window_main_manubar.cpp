@@ -1,6 +1,8 @@
 #include "imgui_window_main_manubar.hpp"
 
+#include"core/assert.hpp"
 #include"core/file/pfd_header.hpp"
+#include"core/function.hpp"
 #include"platform/graphic_api/graphic_api.hpp"
 #include"resource/fonts/icon_header.hpp"
 #include"ui/imgui_header.hpp"
@@ -14,7 +16,7 @@ void Arcadia::ImguiWindowPopupCreateProject::operator()()
         return;
     }
 
-    auto imgui_window_title = "Create Project"s;
+    std::string imgui_window_title("Create Project");
 
     auto popup_flags =
         ImGuiPopupFlags_NoOpenOverExistingPopup;
@@ -78,7 +80,7 @@ void Arcadia::ImguiWindowPopupCreateScene::operator()(const std::shared_ptr<cons
         return;
     }
 
-    auto imgui_window_title = "Create Scene"s;
+    std::string imgui_window_title("Create Scene");
 
     auto popup_flags =
         ImGuiPopupFlags_NoOpenOverExistingPopup;

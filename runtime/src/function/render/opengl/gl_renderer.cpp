@@ -4,6 +4,7 @@
 
 #include<vector>
 
+#include"core/match.hpp"
 #include"resource/components/camera_component.hpp"
 #include"resource/components/light_component.hpp"
 #include"resource/components/model_component.hpp"
@@ -84,7 +85,7 @@ void Arcadia::GlRenderer::Submit(const Scene& scene, const std::string& name)
     {
         ACDA_ASSERT(false && "Entity type not supported");
     },
-        "camera"s,
+        std::string("camera"),
         [&]()
     {
         const auto& [camera_comp, transform_comp] = scene.GetComponent<CameraComponent, TransformComponent>(name);
@@ -104,13 +105,13 @@ void Arcadia::GlRenderer::Submit(const Scene& scene, const std::string& name)
             camera_comp.FarPlane
         );
     },
-        "light"s,
+        std::string("light"),
         [&]()
     {
         const auto& [light_comp, transform_comp] = scene.GetComponent<LightComponent, TransformComponent>(name);
         _GlRenderUnitLights.emplace_back(transform_comp.Position, transform_comp.Direction, light_comp.Light);
     },
-        "actor"s,
+        std::string("actor"),
         [&]()
     {
         const auto [model_comp, transform_comp, physics_comp] = scene.GetComponent<ModelComponent, TransformComponent, PhysicsComponent>(name);
@@ -175,7 +176,7 @@ void Arcadia::GlRenderer::Submit(const Scene& scene, const std::string& name)
                 );
 
                 _GlRenderUnitPhysicsBodyShapeStorage.try_emplace(
-                    uuid, GlVertexArray{ shape_mesh.Vertices,shape_mesh.Indices },
+                    uuid, GlVertexArray(shape_mesh.Vertices, shape_mesh.Indices),
                     glm::mat4{},
                     glm::vec3{}
                 );

@@ -1,5 +1,6 @@
 #include "project.hpp"
 
+#include"core/assert.hpp"
 #include"resource/components/camera_component.hpp"
 #include"resource/components/light_component.hpp"
 #include"resource/components/model_component.hpp"
@@ -22,7 +23,7 @@ auto Arcadia::Project::ToJson() const -> nlohmann::json
     nlohmann::json json{
         {"name",GetName()},
         {"scenes",nlohmann::json::array()},
-        {"active_scene_name",HasActiveScene() ? GetActiveScene().Name : ""s}
+        {"active_scene_name",HasActiveScene() ? GetActiveScene().Name : ""}
     };
 
     for(const auto& [name, scene] : Scenes)

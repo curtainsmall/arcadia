@@ -2,18 +2,20 @@
 
 #include "light_component.hpp"
 
+#include"core/match.hpp"
+
 Arcadia::LightComponent::LightComponent(const nlohmann::json& json)
 {
     std::string type_string = json.at("type");
     auto& json_light = json.at("light");
     Light = Match<LightType>(
         type_string,
-        "null"s,
+        "null",
         [&]()
     {
         return LightType(NullLight{});
     },
-        "spot"s,
+        "spot",
         [&]()
     {
         SpotLight light{};
@@ -25,7 +27,7 @@ Arcadia::LightComponent::LightComponent(const nlohmann::json& json)
         light.SepcularStrength = GlmVec3::FromJson(json_light.at("specular_strength"));
         return LightType(light);
     },
-        "direct"s,
+        "direct",
         [&]()
     {
         DirectLight light{};
@@ -35,7 +37,7 @@ Arcadia::LightComponent::LightComponent(const nlohmann::json& json)
         light.SepcularStrength = GlmVec3::FromJson(json_light.at("specular_strength"));
         return LightType(light);
     },
-        "area"s,
+        "area",
         [&]()
     {
         AreaLight light{};
@@ -46,7 +48,7 @@ Arcadia::LightComponent::LightComponent(const nlohmann::json& json)
         light.SepcularStrength = GlmVec3::FromJson(json_light.at("specular_strength"));
         return LightType(light);
     },
-        "point"s,
+        "point",
         [&]()
     {
         PointLight light{};

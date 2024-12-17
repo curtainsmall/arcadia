@@ -4,7 +4,9 @@
 
 #include"core/app/app_config.hpp"
 #include"core/app/app_context.hpp"
+#include"core/enum.hpp"
 #include"core/event/event.hpp"
+#include"core/function.hpp"
 #include"core/layer/layer.hpp"
 #include"core/main.hpp"
 
@@ -78,10 +80,10 @@ void Arcadia::EditorAppLayer::_InstallImguiWindow(ImguiLayer& imgui_layer)
     const auto& id_strs = app_config.ImguiOpenedWindowIdStrings;
 
     std::initializer_list<std::tuple<std::string, std::string>> imgui_window_ids{
-        std::make_tuple("Outliner"s,ImguiWindowOutliner::GetIdStringStatic()),
-        std::make_tuple("Viewport"s,ImguiWindowViewport::GetIdStringStatic()),
-        std::make_tuple("Property"s,ImguiWindowProperty::GetIdStringStatic()),
-        std::make_tuple("State"s,ImguiWindowState::GetIdStringStatic())
+        std::make_tuple(std::string("Outliner"),ImguiWindowOutliner::GetIdStringStatic()),
+        std::make_tuple(std::string("Viewport"),ImguiWindowViewport::GetIdStringStatic()),
+        std::make_tuple(std::string("Property"),ImguiWindowProperty::GetIdStringStatic()),
+        std::make_tuple(std::string("State"),ImguiWindowState::GetIdStringStatic())
     };
     imgui_layer
         .EmplaceImguiWindow<ImguiWindowMainMenubar>(imgui_window_ids)
@@ -156,7 +158,7 @@ void Arcadia::EditorAppLayer::_OnInputKey(Events::InputKey& e)
 {
     const auto& [wnd, key, scancode, action, mods] = e.DataTuple;
 
-    if(key == InputKey::Escape && ToBool(mods & InputModifier::Shift))
+    if(key == InputKey::Escape && !!(mods & InputModifier::Shift))
     {
         EditorContext::Instance().InPlayMode = false;
     }

@@ -3,7 +3,7 @@
 #include<memory>
 #include<variant>
 
-#include"core/base.hpp"
+#include"platform/api_def.hpp"
 #include"core/math.hpp"
 #include"core/memento/memento.hpp"
 #include"core/nlohmann_json_header.hpp"

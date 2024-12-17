@@ -4,7 +4,7 @@
 #include<set>
 #include<unordered_map>
 
-#include"core/base.hpp"
+#include"platform/api_def.hpp"
 #include"platform/jolt/jolt_header.hpp"
 #include"resource/scene.hpp"
 

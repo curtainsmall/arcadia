@@ -3,7 +3,7 @@
 #include<functional>
 #include<vector>
 
-#include"core/base.hpp"
+#include"platform/api_def.hpp"
 #include"core/exception.hpp"
 #include"core/math.hpp"
 
@@ -12,7 +12,7 @@ namespace Arcadia
     class Texture2d
     {
     public:
-        ACDA_EXCEPTION(IncompatibleTextureSize);
+        ACDA_DEFINE_EXCEPTION(IncompatibleTextureSize);
 
         using SelfType = Texture2d;
     public:

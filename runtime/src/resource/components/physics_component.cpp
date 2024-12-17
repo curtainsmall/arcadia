@@ -4,6 +4,8 @@
 
 #include<string>
 
+#include"core/assert.hpp"
+#include"core/match.hpp"
 #include"core/math.hpp"
 
 Arcadia::PhysicsComponent::PhysicsComponent(const nlohmann::json& json) :
@@ -17,7 +19,7 @@ Arcadia::PhysicsComponent::PhysicsComponent(const nlohmann::json& json) :
         const auto& json_shape_info_info = json_shape_info.at("info");
         auto shape_info = Match<JphShapeInfo>(
             json_shape_info_type_string,
-            "box_shape"s,
+            "box_shape",
             [&]() -> JphShapeInfo
         {
             return JphBoxShapeInfo(
@@ -25,7 +27,7 @@ Arcadia::PhysicsComponent::PhysicsComponent(const nlohmann::json& json) :
                 json_shape_info_info.at("convex_radius")
             );
         },
-            "capsule_shape"s,
+            "capsule_shape",
             [&]() -> JphShapeInfo
         {
             return JphCapsuleShapeInfo(
@@ -33,7 +35,7 @@ Arcadia::PhysicsComponent::PhysicsComponent(const nlohmann::json& json) :
                 json_shape_info_info.at("half_height_of_cylinder")
             );
         },
-            "cylinder"s,
+            "cylinder",
             [&]() -> JphShapeInfo
         {
             return JphCylinderShapeInfo(
@@ -42,7 +44,7 @@ Arcadia::PhysicsComponent::PhysicsComponent(const nlohmann::json& json) :
                 json_shape_info_info.at("convex_radius")
             );
         },
-            "sphere"s,
+            "sphere",
             [&]() -> JphShapeInfo
         {
             return JphSphereShapeInfo(

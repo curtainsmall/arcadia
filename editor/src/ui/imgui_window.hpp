@@ -3,7 +3,7 @@
 #include<functional>
 #include<string>
 
-#include"core/base.hpp"
+#include"platform/api_def.hpp"
 #include"core/event/event.hpp"
 
 // ImGui window ID should follow: Title###id so that we can change the title for a curtain window

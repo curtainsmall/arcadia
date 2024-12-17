@@ -42,7 +42,7 @@ ACDA_API auto Arcadia::ImguiWrappers::DragInt32Vec2(const std::string& name, glm
     {
         deactivated = true;
     }
-    ImGui::Text(std::format("{:>{}} Y", ""s, name.size()).c_str()); ImGui::SameLine(); ImGui::DragInt(std::format("##{}_y", name).c_str(), &vec.y, speed, min, max, format, flags);
+    ImGui::Text(std::format("{:>{}} Y", "", name.size()).c_str()); ImGui::SameLine(); ImGui::DragInt(std::format("##{}_y", name).c_str(), &vec.y, speed, min, max, format, flags);
     if(ImGui::IsItemDeactivatedAfterEdit())
     {
         deactivated = true;
@@ -66,12 +66,12 @@ ACDA_API auto Arcadia::ImguiWrappers::DragInt32Vec3(const std::string& name, glm
     {
         deactivated = true;
     }
-    ImGui::Text(std::format("{:>{}} Y", ""s, name.size()).c_str()); ImGui::SameLine(); ImGui::DragInt(std::format("##{}_y", name).c_str(), &vec.y, speed, min, max, format, flags);
+    ImGui::Text(std::format("{:>{}} Y", "", name.size()).c_str()); ImGui::SameLine(); ImGui::DragInt(std::format("##{}_y", name).c_str(), &vec.y, speed, min, max, format, flags);
     if(ImGui::IsItemDeactivatedAfterEdit())
     {
         deactivated = true;
     }
-    ImGui::Text(std::format("{:>{}} Z", ""s, name.size()).c_str()); ImGui::SameLine(); ImGui::DragInt(std::format("##{}_z", name).c_str(), &vec.z, speed, min, max, format, flags);
+    ImGui::Text(std::format("{:>{}} Z", "", name.size()).c_str()); ImGui::SameLine(); ImGui::DragInt(std::format("##{}_z", name).c_str(), &vec.z, speed, min, max, format, flags);
     if(ImGui::IsItemDeactivatedAfterEdit())
     {
         deactivated = true;
@@ -95,17 +95,17 @@ ACDA_API auto Arcadia::ImguiWrappers::DragInt32Vec4(const std::string& name, glm
     {
         deactivated = true;
     }
-    ImGui::Text(std::format("{:>{}} Y", ""s, name.size()).c_str()); ImGui::SameLine(); ImGui::DragInt(std::format("##{}_y", name).c_str(), &vec.y, speed, min, max, format, flags);
+    ImGui::Text(std::format("{:>{}} Y", "", name.size()).c_str()); ImGui::SameLine(); ImGui::DragInt(std::format("##{}_y", name).c_str(), &vec.y, speed, min, max, format, flags);
     if(ImGui::IsItemDeactivatedAfterEdit())
     {
         deactivated = true;
     }
-    ImGui::Text(std::format("{:>{}} Z", ""s, name.size()).c_str()); ImGui::SameLine(); ImGui::DragInt(std::format("##{}_z", name).c_str(), &vec.z, speed, min, max, format, flags);
+    ImGui::Text(std::format("{:>{}} Z", "", name.size()).c_str()); ImGui::SameLine(); ImGui::DragInt(std::format("##{}_z", name).c_str(), &vec.z, speed, min, max, format, flags);
     if(ImGui::IsItemDeactivatedAfterEdit())
     {
         deactivated = true;
     }
-    ImGui::Text(std::format("{:>{}} W", ""s, name.size()).c_str()); ImGui::SameLine(); ImGui::DragInt(std::format("##{}_w", name).c_str(), &vec.w, speed, min, max, format, flags);
+    ImGui::Text(std::format("{:>{}} W", "", name.size()).c_str()); ImGui::SameLine(); ImGui::DragInt(std::format("##{}_w", name).c_str(), &vec.w, speed, min, max, format, flags);
     if(ImGui::IsItemDeactivatedAfterEdit())
     {
         deactivated = true;
@@ -161,7 +161,7 @@ ACDA_API auto Arcadia::ImguiWrappers::DragVec2(const std::string& name, glm::vec
     {
         deactivated = true;
     }
-    ImGui::Text(std::format("{:>{}} Y", ""s, name.size()).c_str()); ImGui::SameLine(); ImGui::DragFloat(std::format("##{}_y", name).c_str(), &vec.y, speed, min, max, format, flags);
+    ImGui::Text(std::format("{:>{}} Y", "", name.size()).c_str()); ImGui::SameLine(); ImGui::DragFloat(std::format("##{}_y", name).c_str(), &vec.y, speed, min, max, format, flags);
     if(ImGui::IsItemDeactivatedAfterEdit())
     {
         deactivated = true;
@@ -185,12 +185,12 @@ ACDA_API auto Arcadia::ImguiWrappers::DragVec3(const std::string& name, glm::vec
     {
         deactivated = true;
     }
-    ImGui::Text(std::format("{:>{}} Y", ""s, name.size()).c_str()); ImGui::SameLine(); ImGui::DragFloat(std::format("##{}_y", name).c_str(), &vec.y, speed, min, max, format, flags);
+    ImGui::Text(std::format("{:>{}} Y", "", name.size()).c_str()); ImGui::SameLine(); ImGui::DragFloat(std::format("##{}_y", name).c_str(), &vec.y, speed, min, max, format, flags);
     if(ImGui::IsItemDeactivatedAfterEdit())
     {
         deactivated = true;
     }
-    ImGui::Text(std::format("{:>{}} Z", ""s, name.size()).c_str()); ImGui::SameLine(); ImGui::DragFloat(std::format("##{}_z", name).c_str(), &vec.z, speed, min, max, format, flags);
+    ImGui::Text(std::format("{:>{}} Z", "", name.size()).c_str()); ImGui::SameLine(); ImGui::DragFloat(std::format("##{}_z", name).c_str(), &vec.z, speed, min, max, format, flags);
     if(ImGui::IsItemDeactivatedAfterEdit())
     {
         deactivated = true;
@@ -241,12 +241,12 @@ ACDA_API auto Arcadia::ImguiWrappers::DragVec3Color(const std::string& name, glm
     {
         deactivated = true;
     }
-    ImGui::Text(std::format("{:>{}} G", ""s, name.size()).c_str()); ImGui::SameLine(); ImGui::DragFloat(std::format("##{}_g", name).c_str(), &vec.y, speed, min, max, format, flags);
+    ImGui::Text(std::format("{:>{}} G", "", name.size()).c_str()); ImGui::SameLine(); ImGui::DragFloat(std::format("##{}_g", name).c_str(), &vec.y, speed, min, max, format, flags);
     if(ImGui::IsItemDeactivatedAfterEdit())
     {
         deactivated = true;
     }
-    ImGui::Text(std::format("{:>{}} B", ""s, name.size()).c_str()); ImGui::SameLine(); ImGui::DragFloat(std::format("##{}_b", name).c_str(), &vec.z, speed, min, max, format, flags);
+    ImGui::Text(std::format("{:>{}} B", "", name.size()).c_str()); ImGui::SameLine(); ImGui::DragFloat(std::format("##{}_b", name).c_str(), &vec.z, speed, min, max, format, flags);
     if(ImGui::IsItemDeactivatedAfterEdit())
     {
         deactivated = true;
@@ -270,17 +270,17 @@ ACDA_API auto Arcadia::ImguiWrappers::DragVec4(const std::string& name, glm::vec
     {
         deactivated = true;
     }
-    ImGui::Text(std::format("{:>{}} Y", ""s, name.size()).c_str()); ImGui::SameLine(); ImGui::DragFloat(std::format("##{}_y", name).c_str(), &vec.y, speed, min, max, format, flags);
+    ImGui::Text(std::format("{:>{}} Y", "", name.size()).c_str()); ImGui::SameLine(); ImGui::DragFloat(std::format("##{}_y", name).c_str(), &vec.y, speed, min, max, format, flags);
     if(ImGui::IsItemDeactivatedAfterEdit())
     {
         deactivated = true;
     }
-    ImGui::Text(std::format("{:>{}} Z", ""s, name.size()).c_str()); ImGui::SameLine(); ImGui::DragFloat(std::format("##{}_z", name).c_str(), &vec.z, speed, min, max, format, flags);
+    ImGui::Text(std::format("{:>{}} Z", "", name.size()).c_str()); ImGui::SameLine(); ImGui::DragFloat(std::format("##{}_z", name).c_str(), &vec.z, speed, min, max, format, flags);
     if(ImGui::IsItemDeactivatedAfterEdit())
     {
         deactivated = true;
     }
-    ImGui::Text(std::format("{:>{}} W", ""s, name.size()).c_str()); ImGui::SameLine(); ImGui::DragFloat(std::format("##{}_w", name).c_str(), &vec.w, speed, min, max, format, flags);
+    ImGui::Text(std::format("{:>{}} W", "", name.size()).c_str()); ImGui::SameLine(); ImGui::DragFloat(std::format("##{}_w", name).c_str(), &vec.w, speed, min, max, format, flags);
     if(ImGui::IsItemDeactivatedAfterEdit())
     {
         deactivated = true;
@@ -304,17 +304,17 @@ ACDA_API auto Arcadia::ImguiWrappers::DragQuat(const std::string& name, glm::qua
     {
         deactivated = true;
     }
-    ImGui::Text(std::format("{:>{}} X", ""s, name.size()).c_str()); ImGui::SameLine(); ImGui::DragFloat(std::format("##{}_x", name).c_str(), &quat.x, speed, min, max, format, flags);
+    ImGui::Text(std::format("{:>{}} X", "", name.size()).c_str()); ImGui::SameLine(); ImGui::DragFloat(std::format("##{}_x", name).c_str(), &quat.x, speed, min, max, format, flags);
     if(ImGui::IsItemDeactivatedAfterEdit())
     {
         deactivated = true;
     }
-    ImGui::Text(std::format("{:>{}} y", ""s, name.size()).c_str()); ImGui::SameLine(); ImGui::DragFloat(std::format("##{}_y", name).c_str(), &quat.y, speed, min, max, format, flags);
+    ImGui::Text(std::format("{:>{}} y", "", name.size()).c_str()); ImGui::SameLine(); ImGui::DragFloat(std::format("##{}_y", name).c_str(), &quat.y, speed, min, max, format, flags);
     if(ImGui::IsItemDeactivatedAfterEdit())
     {
         deactivated = true;
     }
-    ImGui::Text(std::format("{:>{}} Z", ""s, name.size()).c_str()); ImGui::SameLine(); ImGui::DragFloat(std::format("##{}_z", name).c_str(), &quat.z, speed, min, max, format, flags);
+    ImGui::Text(std::format("{:>{}} Z", "", name.size()).c_str()); ImGui::SameLine(); ImGui::DragFloat(std::format("##{}_z", name).c_str(), &quat.z, speed, min, max, format, flags);
     if(ImGui::IsItemDeactivatedAfterEdit())
     {
         deactivated = true;
@@ -392,24 +392,24 @@ ACDA_API auto Arcadia::ImguiWrappers::ColorEditVec4(const std::string& name, std
 ACDA_API void Arcadia::ImguiWrappers::TextVec3(const std::string& name, const glm::vec3& vec)
 {
     ImGui::Text(std::format("{:>{}} X: {:.2f}", name, name.size(), vec.x).c_str());
-    ImGui::Text(std::format("{:>{}} Y: {:.2f}", ""s, name.size(), vec.y).c_str());
-    ImGui::Text(std::format("{:>{}} Z: {:.2f}", ""s, name.size(), vec.z).c_str());
+    ImGui::Text(std::format("{:>{}} Y: {:.2f}", "", name.size(), vec.y).c_str());
+    ImGui::Text(std::format("{:>{}} Z: {:.2f}", "", name.size(), vec.z).c_str());
 }
 
 ACDA_API void Arcadia::ImguiWrappers::TextVec4(const std::string& name, const glm::vec4& vec)
 {
     ImGui::Text(std::format("{:>{}} X: {:.2f}", name, name.size(), vec.x).c_str());
-    ImGui::Text(std::format("{:>{}} Y: {:.2f}", ""s, name.size(), vec.y).c_str());
-    ImGui::Text(std::format("{:>{}} Z: {:.2f}", ""s, name.size(), vec.z).c_str());
-    ImGui::Text(std::format("{:>{}} W: {:.2f}", ""s, name.size(), vec.w).c_str());
+    ImGui::Text(std::format("{:>{}} Y: {:.2f}", "", name.size(), vec.y).c_str());
+    ImGui::Text(std::format("{:>{}} Z: {:.2f}", "", name.size(), vec.z).c_str());
+    ImGui::Text(std::format("{:>{}} W: {:.2f}", "", name.size(), vec.w).c_str());
 }
 
 ACDA_API void Arcadia::ImguiWrappers::TextQuat(const std::string& name, const glm::quat& quat)
 {
     ImGui::Text(std::format("{:>{}} W: {:.2f}", name, name.size(), quat.w).c_str());
-    ImGui::Text(std::format("{:>{}} X: {:.2f}", ""s, name.size(), quat.x).c_str());
-    ImGui::Text(std::format("{:>{}} Y: {:.2f}", ""s, name.size(), quat.y).c_str());
-    ImGui::Text(std::format("{:>{}} Z: {:.2f}", ""s, name.size(), quat.z).c_str());
+    ImGui::Text(std::format("{:>{}} X: {:.2f}", "", name.size(), quat.x).c_str());
+    ImGui::Text(std::format("{:>{}} Y: {:.2f}", "", name.size(), quat.y).c_str());
+    ImGui::Text(std::format("{:>{}} Z: {:.2f}", "", name.size(), quat.z).c_str());
 }
 
 ACDA_API void Arcadia::ImguiWrappers::NewLine(float height)

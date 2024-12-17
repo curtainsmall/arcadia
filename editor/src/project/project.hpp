@@ -5,6 +5,7 @@
 #include<unordered_map>
 
 #include"core/nlohmann_json_header.hpp"
+#include"core/noncopyable.hpp"
 #include"project/project_events.hpp"
 #include"resource/components/camera_component.hpp"
 #include"resource/scene.hpp"

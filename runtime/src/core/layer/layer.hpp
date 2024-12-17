@@ -7,9 +7,10 @@
 #include<string>
 #include<vector>
 
-#include"core/base.hpp"
 #include"core/event/event.hpp"
 #include"core/exception.hpp"
+#include"core/noncopyable.hpp"
+#include"platform/api_def.hpp"
 
 namespace Arcadia
 {
@@ -43,8 +44,8 @@ namespace Arcadia
     class LayerStack
     {
     public:
-        ACDA_EXCEPTION(OutOfRange);
-        ACDA_EXCEPTION(EmptyStack);
+        ACDA_DEFINE_EXCEPTION(OutOfRange);
+        ACDA_DEFINE_EXCEPTION(EmptyStack);
 
         using LayerVectorType = std::vector<std::shared_ptr<iLayer>>;
 

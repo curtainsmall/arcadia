@@ -2,7 +2,7 @@
 
 #include<variant>
 
-#include"core/base.hpp"
+#include"platform/api_def.hpp"
 #include"core/version/version.hpp"
 
 namespace Arcadia

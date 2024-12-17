@@ -2,6 +2,7 @@
 
 #include"model_component.hpp"
 
+#include"core/assert.hpp"
 #include"core/file/file.hpp"
 #include"core/file/pfd_header.hpp"
 #include"core/log/log.hpp"

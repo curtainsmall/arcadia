@@ -2,7 +2,8 @@
 
 #include<string>
 
-#include"core/base.hpp"
+#include"core/noncopyable.hpp"
+#include"platform/api_def.hpp"
 #include"platform/opengl/opengl_header.hpp"
 
 namespace Arcadia
@@ -21,7 +22,7 @@ namespace Arcadia
     class GlShader: public Noncopyable
     {
     public:
-        ACDA_EXCEPTION(CompileFail);
+        ACDA_DEFINE_EXCEPTION(CompileFail);
 
         using SelfType = GlShader;
     public:

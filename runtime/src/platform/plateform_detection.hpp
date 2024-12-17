@@ -18,7 +18,7 @@
 #   elif TARGET_OS_MAC == 1
 #       define ACDA_PLATFORM_MACOS
 #       error "MacOS is not supported"
-#   else 
+#   else
 #       error "Unknown Apple platform"
 #   endif
 #elif defined(__ANDROID__) // Android
@@ -30,4 +30,3 @@
 #else
 #   error "Unknown platform"
 #endif
-

@@ -2,9 +2,10 @@
 
 #include<memory>
 
-#include"core/base.hpp"
 #include"core/exception.hpp"
 #include"core/math.hpp"
+#include"core/noncopyable.hpp"
+#include"platform/api_def.hpp"
 #include"platform/graphic_api/graphic_api.hpp"
 #include"resource/scene.hpp"
 
@@ -20,7 +21,7 @@ namespace Arcadia
     class iRenderer: public Noncopyable
     {
     public:
-        ACDA_EXCEPTION(DrawFail);
+        ACDA_DEFINE_EXCEPTION(DrawFail);
 
         using SelfType = iRenderer;
     public:

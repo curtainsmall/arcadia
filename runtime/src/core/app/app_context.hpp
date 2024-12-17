@@ -1,7 +1,9 @@
 #pragma once
 
-#include"core/base.hpp"
 #include"core/time/time.hpp"
+#include"platform/api_def.hpp"
+#include"platform/debug_def.hpp"
+
 #ifdef ACDA_DEBUG_MODE
 #   include"function/input/input_events.hpp"
 #endif

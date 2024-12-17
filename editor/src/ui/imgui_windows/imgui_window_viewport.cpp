@@ -1,6 +1,8 @@
 #include "imgui_window_viewport.hpp"
 
 #include"core/app/app_context.hpp"
+#include"core/assert.hpp"
+#include"core/function.hpp"
 #include"function/window/window_events.hpp"
 #include"resource/components/camera_component.hpp"
 #include"resource/components/model_component.hpp"
@@ -146,7 +148,7 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
                 "Camera - Pos: {} | Direction: {} {}",
                 viewport_transform_comp.Position,
                 viewport_transform_comp.Direction,
-                _InViewportFreecamMode ? "(Free Cam) "s : ""s
+                _InViewportFreecamMode ? std::string("(Free Cam) ") : std::string{}
             ).c_str());
             ImGui::SameLine(ImGui::GetWindowWidth() - 300.f);
             const auto gizmo_options_cursor_pos = ImGui::GetCursorPos();
@@ -311,7 +313,7 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
                         {
                             MementoList::Instance()
                                 .Snapshot<TransformComponent>(
-                                    std::format("{} - {}", "Transform"s, description),
+                                    std::format("{} - {}", "Transform", description),
                                     [scene, this]() -> TransformComponent&
                             {
                                 return scene->GetComponent<TransformComponent>(_SelectedEntityName);
@@ -334,8 +336,8 @@ void Arcadia::ImguiWindowViewport::_OnInputCursorMove(Events::InputCursorMove& e
 
 void Arcadia::ImguiWindowViewport::_OnOpenImguiWindow(Events::OpenImguiWindow& e)
 {
-    const auto& [id_str] = e.DataTuple;
-    if(id_str == GetIdString())
+    const auto& [id_string] = e.DataTuple;
+    if(id_string == GetIdString())
     {
         _Opened = true;
     }

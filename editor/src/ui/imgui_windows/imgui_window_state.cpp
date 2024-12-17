@@ -1,6 +1,8 @@
 #include "imgui_window_state.hpp"
 
 #include"core/file/pfd_header.hpp"
+#include"core/function.hpp"
+#include"core/match.hpp"
 #include"resource/components/camera_component.hpp"
 #include"resource/components/light_component.hpp"
 #include"resource/components/model_component.hpp"
@@ -18,7 +20,7 @@ void Arcadia::ImguiWindowStateScene::operator()(const Scene& scene)
 
 void Arcadia::ImguiWindowStateRenderer::operator()(const iRenderer& renderer)
 {
-    auto graphic_api_type_str = Match<std::string>(
+    auto graphic_api_type_string = Match<std::string>(
         renderer.GetGraphicApiType(),
         [&](const GraphicApi::Opengl& api)
     {
@@ -34,9 +36,9 @@ void Arcadia::ImguiWindowStateRenderer::operator()(const iRenderer& renderer)
     }
     );
 
-    if(ImGui::BeginCombo("Graphic API", graphic_api_type_str.c_str()))
+    if(ImGui::BeginCombo("Graphic API", graphic_api_type_string.c_str()))
     {
-        ImGui::Selectable(graphic_api_type_str.c_str());
+        ImGui::Selectable(graphic_api_type_string.c_str());
         ImGui::EndCombo();
     }
 }

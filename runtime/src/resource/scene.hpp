@@ -4,22 +4,24 @@
 #include<string>
 #include<unordered_map>
 
-#include"core/base.hpp"
+#include"core/assert.hpp"
 #include"core/event/event.hpp"
 #include"core/exception.hpp"
 #include"core/memento/memento.hpp"
 #include"core/nlohmann_json_header.hpp"
+#include"core/noncopyable.hpp"
 #include"core/string.hpp"
 #include"core/uuid.hpp"
+#include"platform/api_def.hpp"
 #include"resource/components/component_interface.hpp"
 #include"resource/entt_header.hpp"
 
 namespace Arcadia
 {
     static inline std::array BuildinEntityTypes{
-         "actor"s,
-         "camera"s,
-         "light"s,
+         std::string("actor"),
+         std::string("camera"),
+         std::string("light"),
     };
 
     class EntityInfo

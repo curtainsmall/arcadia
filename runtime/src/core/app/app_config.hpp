@@ -4,7 +4,7 @@
 #include<functional>
 #include<set>
 
-#include"core/base.hpp"
+#include"platform/api_def.hpp"
 #include"core/file/file.hpp"
 #include"core/math.hpp"
 #include"platform/graphic_api/graphic_api.hpp"

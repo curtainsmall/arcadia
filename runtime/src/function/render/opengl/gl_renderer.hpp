@@ -7,7 +7,7 @@
 #include<unordered_map>
 #include<vector>
 
-#include"core/base.hpp"
+#include"platform/api_def.hpp"
 #include"core/exception.hpp"
 #include"core/math.hpp"
 #include"function/render/opengl/buffer/gl_cubemap.hpp"
@@ -60,7 +60,7 @@ namespace Arcadia
     class GlRenderer: public iRenderer
     {
     public:
-        ACDA_EXCEPTION(TooManyLights);
+        ACDA_DEFINE_EXCEPTION(TooManyLights);
         using SelfType = GlRenderer;
     public:
         GlRenderer(const std::filesystem::path& gl_shader_folder_path);

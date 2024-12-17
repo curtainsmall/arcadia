@@ -1,9 +1,10 @@
 #pragma once
 
-#include"core/base.hpp"
 #include"core/exception.hpp"
+#include"core/noncopyable.hpp"
 #include"function/render/opengl/buffer/gl_renderbuffer.hpp"
 #include"function/render/opengl/buffer/gl_texture2d.hpp"
+#include"platform/api_def.hpp"
 #include"platform/opengl/opengl_header.hpp"
 
 namespace Arcadia
@@ -11,7 +12,7 @@ namespace Arcadia
     class GlFramebuffer:Noncopyable
     {
     public:
-        ACDA_EXCEPTION(Imcomplete);
+        ACDA_DEFINE_EXCEPTION(Imcomplete);
 
         using SelfType = GlFramebuffer;
     public:

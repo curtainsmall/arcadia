@@ -197,9 +197,6 @@
     <ClInclude Include="src\core\version\version.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\base.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\core\exception.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -281,7 +278,7 @@
     <ClInclude Include="src\platform\opengl\opengl_header.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\platform\base.hpp">
+    <ClInclude Include="src\platform\api_def.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\platform\plateform_detection.hpp">
@@ -345,6 +342,27 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\core\main.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\enum.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\match.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\noncopyable.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\assert.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\function.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\platform\debug_def.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\parameter_pack.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

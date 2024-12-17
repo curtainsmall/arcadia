@@ -4,7 +4,7 @@
 #include<fstream>
 #include<unordered_map>
 
-#include"core/base.hpp"
+#include"platform/api_def.hpp"
 #include"core/exception.hpp"
 #include"core/serialization.hpp"
 
@@ -22,9 +22,9 @@ namespace Arcadia
     class File
     {
     public:
-        ACDA_EXCEPTION(LoadFailed);
-        ACDA_EXCEPTION(SaveFailed);
-        ACDA_EXCEPTION(SectionNotFound);
+        ACDA_DEFINE_EXCEPTION(LoadFailed);
+        ACDA_DEFINE_EXCEPTION(SaveFailed);
+        ACDA_DEFINE_EXCEPTION(SectionNotFound);
 
         using SectionType = Serialization::BufferType;
         using SectionStorageType = std::unordered_map<std::string, SectionType>;

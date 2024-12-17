@@ -2,7 +2,7 @@
 
 #include"GLFW/glfw3.h"
 
-#include"core/base.hpp"
+#include"platform/api_def.hpp"
 #include"core/event/event.hpp"
 #include"core/math.hpp"
 #include"function/window/window_layer.hpp"
@@ -145,7 +145,7 @@ namespace Arcadia
 
     namespace Events
     {
-        ACDA_EVENT(
+        ACDA_DEFINE_EVENT(
             InputKey,
             WindowLayer*, // Input window
             std::int32_t, // Key code
@@ -153,34 +153,34 @@ namespace Arcadia
             std::int32_t, // Input action
             std::int32_t  // Input modifiers
         );
-        ACDA_EVENT(
+        ACDA_DEFINE_EVENT(
             InputCursorPos,
             WindowLayer*, // Input window
             glm::vec2 // Cursor position
         );
-        ACDA_EVENT(
+        ACDA_DEFINE_EVENT(
             InputCursorMove,
             WindowLayer*, // Input window
             glm::vec2 // Cursor movement
         );
-        ACDA_EVENT(
+        ACDA_DEFINE_EVENT(
             InputScroll,
             WindowLayer*, // Input window
             glm::vec2 // Scroll offset (a vertical mouse wheel provides offset along the y-axis
         );
-        ACDA_EVENT(
+        ACDA_DEFINE_EVENT(
             InputMouseButton,
             WindowLayer*, // Input window
             std::int32_t, // Mouse code
             std::int32_t, // Input action
             std::int32_t  // Input modifiers
         );
-        ACDA_EVENT(
+        ACDA_DEFINE_EVENT(
             InputCursorEnter,
             WindowLayer*,
             bool // Whether the cursor entered or not
         );
-        ACDA_EVENT(
+        ACDA_DEFINE_EVENT(
             InputChar,
             WindowLayer*,
             std::uint32_t // Unicode code points

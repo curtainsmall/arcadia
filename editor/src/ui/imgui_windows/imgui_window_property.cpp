@@ -3,7 +3,10 @@
 #include<algorithm>
 #include<string>
 
+#include"core/enum.hpp"
 #include"core/file/pfd_header.hpp"
+#include"core/function.hpp"
+#include"core/match.hpp"
 #include"core/memento/memento.hpp"
 #include"resource/fonts/icon_header.hpp"
 #include"ui/imgui_header.hpp"
@@ -462,16 +465,16 @@ auto Arcadia::ImguiWindowPropertyModelComponent::operator()(ModelComponent& mode
     ImGui::BeginGroup();
 
     ImGui::SeparatorText("Filepath");
-    auto filepath_str = model_comp.GetFilepath().empty()
-        ? "(No filepath)"s
+    std::string filepath_string = model_comp.GetFilepath().empty()
+        ? "(No filepath)"
         : model_comp.GetFilepath().generic_string();
-    ImGui::TextWrapped(filepath_str.c_str());
+    ImGui::TextWrapped(filepath_string.c_str());
     if(ImGui::Button("..."))
     {
         auto res = pfd::open_file{
             "Import Model"
         }.result();
-        model_comp.Import(res.size() ? res.at(0) : ""s);
+        model_comp.Import(res.size() ? res.at(0) : "");
     }
 
     ImGui::EndGroup();
@@ -486,7 +489,7 @@ void Arcadia::ImguiWindowPopupPhysicsComponentCreateBody::operator()(PhysicsComp
         return;
     }
 
-    auto imgui_window_title = "Physics Component - Create Body"s;
+    std::string imgui_window_title("Physics Component - Create Body");
 
     auto popup_flags =
         ImGuiPopupFlags_NoOpenOverExistingPopup;
@@ -507,11 +510,11 @@ void Arcadia::ImguiWindowPopupPhysicsComponentCreateBody::operator()(PhysicsComp
         auto jph_motion_type_preview = Match<std::string>(
             _TempJphBodyInfo.JphMotionType,
             JPH::EMotionType::Static,
-            "Static"s,
+            "Static",
             JPH::EMotionType::Dynamic,
-            "Dynamic"s,
+            "Dynamic",
             JPH::EMotionType::Kinematic,
-            "Kinematic"s
+            "Kinematic"
         );
         if(ImGui::BeginCombo("Motion Type", jph_motion_type_preview.c_str()))
         {
@@ -847,7 +850,7 @@ auto Arcadia::ImguiWindowPropertyTransformComponent::operator()(TransformCompone
     }
     position_delta = transform_comp.Position - position_delta; // current - previous
 
-    if(ToBool(transform_comp.Flags & TransformComponentFlags::UseRotation))
+    if(!!(transform_comp.Flags & TransformComponentFlags::UseRotation))
     {
         float rotation_drag_speed = .05f;
         glm::quat temp = transform_comp.Rotation;
@@ -858,7 +861,7 @@ auto Arcadia::ImguiWindowPropertyTransformComponent::operator()(TransformCompone
             description = "Rotation";
         }
     }
-    if(ToBool(transform_comp.Flags & TransformComponentFlags::UseDirection))
+    if(!!(transform_comp.Flags & TransformComponentFlags::UseDirection))
     {
         float direction_drag_speed = .05f;
         glm::vec3 temp = transform_comp.Direction;
@@ -957,11 +960,11 @@ void Arcadia::ImguiWindowProperty::OnUpdate()
 
                 auto& memento_list = MementoList::Instance();
 
-                ACDA_IMGUI_WINDOW_PROPERTY_HELPER(CameraComponent, "Camera"s, _ImguiWindowPropertyCameraComponent);
-                ACDA_IMGUI_WINDOW_PROPERTY_HELPER(LightComponent, "Light"s, _ImguiWindowPropertyLightComponent);
-                ACDA_IMGUI_WINDOW_PROPERTY_HELPER(ModelComponent, "Model"s, _ImguiWindowPropertyModelComponent);
-                ACDA_IMGUI_WINDOW_PROPERTY_HELPER(PhysicsComponent, "Physics"s, _ImguiWindowPropertyPhysicsComponent);
-                ACDA_IMGUI_WINDOW_PROPERTY_HELPER(TransformComponent, "Transform"s, _ImguiWindowPropertyTransformComponent);
+                ACDA_IMGUI_WINDOW_PROPERTY_HELPER(CameraComponent, std::string("Camera"), _ImguiWindowPropertyCameraComponent);
+                ACDA_IMGUI_WINDOW_PROPERTY_HELPER(LightComponent, std::string("Light"), _ImguiWindowPropertyLightComponent);
+                ACDA_IMGUI_WINDOW_PROPERTY_HELPER(ModelComponent, std::string("Model"), _ImguiWindowPropertyModelComponent);
+                ACDA_IMGUI_WINDOW_PROPERTY_HELPER(PhysicsComponent, std::string("Physics"), _ImguiWindowPropertyPhysicsComponent);
+                ACDA_IMGUI_WINDOW_PROPERTY_HELPER(TransformComponent, std::string("Transform"), _ImguiWindowPropertyTransformComponent);
 
                 ImGui::PopItemWidth();
             }
@@ -972,8 +975,8 @@ void Arcadia::ImguiWindowProperty::OnUpdate()
 
 void Arcadia::ImguiWindowProperty::_OnOpenImguiWindow(Events::OpenImguiWindow& e)
 {
-    const auto& [id_str] = e.DataTuple;
-    if(id_str == GetIdString())
+    const auto& [id_string] = e.DataTuple;
+    if(id_string == GetIdString())
     {
         _Opened = true;
     }

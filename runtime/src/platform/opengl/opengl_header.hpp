@@ -2,9 +2,10 @@
 
 #include"GL/glew.h"
 
-#include"core/base.hpp"
 #include"core/exception.hpp"
+#include"core/noncopyable.hpp"
 #include"core/version/version.hpp"
+#include"platform/api_def.hpp"
 
 #ifndef NDEBUG
 #   define ACDA_GL_USE_DEBUG_CALLBACK 0
@@ -18,8 +19,8 @@
 
 namespace Arcadia
 {
-    ACDA_EXCEPTION(GlError);
-    ACDA_EXCEPTION(GlInvalid);
+    ACDA_DEFINE_EXCEPTION(GlError);
+    ACDA_DEFINE_EXCEPTION(GlInvalid);
 
     /// @brief Check OpenGL error and throw Arcadia exception if found
     /// @param fn_name Name of the API call that generated error
@@ -29,7 +30,7 @@ namespace Arcadia
 
     ACDA_API auto GlGetTypeSize(GLenum Type) -> std::size_t;
 
-    ACDA_API auto SetGlVersion() -> Version;
+    ACDA_API auto GetGlVersion() -> Version;
 
     /// @brief Opengl debug callback
     ///
