@@ -20,7 +20,7 @@ void Arcadia::ImguiWindowStateScene::operator()(const Scene& scene)
 
 void Arcadia::ImguiWindowStateRenderer::operator()(const iRenderer& renderer)
 {
-    auto graphic_api_type_string = Match<std::string>(
+    auto graphic_api_type_string = MatchVariant<std::string>(
         renderer.GetGraphicApiType(),
         [&](const GraphicApi::Opengl& api)
     {

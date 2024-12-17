@@ -112,7 +112,7 @@ auto Arcadia::ImguiWindowPropertyLightComponent::operator()(LightComponent& ligh
     const auto format = "%.3f";
     const auto flags =
         ImGuiSliderFlags_AlwaysClamp;
-    if(Match<bool>(
+    if(MatchVariant<bool>(
         light_comp.Light,
         [&](NullLight&)
     {
@@ -537,7 +537,7 @@ void Arcadia::ImguiWindowPopupPhysicsComponentCreateBody::operator()(PhysicsComp
         }
 
         //Shape
-        _TempJphBodyInfo.JphShapeInfo = Match<JphShapeInfo>(
+        _TempJphBodyInfo.JphShapeInfo = MatchVariant<JphShapeInfo>(
             _TempJphBodyInfo.JphShapeInfo,
             [&](JphBoxShapeInfo& info) -> JphShapeInfo
         {
@@ -746,7 +746,7 @@ auto Arcadia::ImguiWindowPropertyPhysicsComponent::operator()(PhysicsComponent& 
             ImGui::TreePop();
         }
 
-        bool tree_open = Match<bool>(
+        bool tree_open = MatchVariant<bool>(
             jph_body_info_initial.JphShapeInfo,
             [&](const JphBoxShapeInfo& info)
         {

@@ -105,7 +105,7 @@ Arcadia::iAppLayer::~iAppLayer()
     json.push_back({ "working_directory",app_config.WorkingDirectory.generic_string() });
 
     // Graphic api
-    const auto [graphic_api_type_str, json_version] = Match<std::tuple<std::string, nlohmann::json>>(
+    const auto [graphic_api_type_str, json_version] = MatchVariant<std::tuple<std::string, nlohmann::json>>(
         app_config.GraphicApi,
         [&](const GraphicApi::Opengl& gl)
     {

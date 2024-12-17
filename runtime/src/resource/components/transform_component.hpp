@@ -1,14 +1,14 @@
 #pragma once
 
-#include"platform/api_def.hpp"
 #include"core/math.hpp"
 #include"core/memento/memento.hpp"
 #include"core/nlohmann_json_header.hpp"
+#include"platform/api_def.hpp"
 #include"resource/components/component_interface.hpp"
 
 namespace Arcadia
 {
-    enum class TransformComponentFlags: uint8_t
+    enum class TransformComponentFlags: std::uint8_t
     {
         None = 0,
         UseRotation = 0x01,

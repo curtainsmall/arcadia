@@ -64,7 +64,7 @@ Arcadia::LightComponent::LightComponent(const nlohmann::json& json)
 
 auto Arcadia::LightComponent::ToJson() const -> nlohmann::json
 {
-    return Match<nlohmann::json>(
+    return MatchVariant<nlohmann::json>(
         Light,
         [&](const NullLight&)
     {

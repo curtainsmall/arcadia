@@ -17,44 +17,67 @@
 
 extern auto Arcadia::CreateApplication()->std::unique_ptr<Arcadia::iAppLayer>;
 
+#include"core/result.hpp"
+
 ACDA_MAIN_FN_DECL
 {
-    // Add app_layer
-    auto & layer_stack = Arcadia::LayerStack::Instance();
-    layer_stack.PushLayer<Arcadia::iAppLayer>(layer_stack.end(), std::shared_ptr<Arcadia::iAppLayer>(Arcadia::CreateApplication()));
+    //
+    Arcadia::Result<int,std::string,std::vector<float>> res{std::vector<float>{3.0f}};
+res.Match<void, std::string, std::vector<float>> (
+    [](int)
+{
+    ACDA_LOG_INFO("Success");
+},
+[]()
+{
+    ACDA_LOG_INFO("Null");
+},
+[](std::string&)
+{
+    ACDA_LOG_INFO("Error of string type");
+},
+[](std::vector<float>&)
+{
+    ACDA_LOG_INFO("Error of vector type");
+}
+);
 
-    // Main loop
-    auto& app_context = Arcadia::AppContext::Instance();
-    while(app_context.Running)
+// Add app_layer
+auto& layer_stack = Arcadia::LayerStack::Instance();
+layer_stack.PushLayer<Arcadia::iAppLayer>(layer_stack.end(), std::shared_ptr<Arcadia::iAppLayer>(Arcadia::CreateApplication()));
+
+// Main loop
+auto& app_context = Arcadia::AppContext::Instance();
+while(app_context.Running)
+{
+    app_context.DeltaTime = app_context.Timer.Segment();
+
+    // Process event
+    auto& event_queue = Arcadia::EventQueue::Instance();
+    event_queue.SwapQueue();
+    while(event_queue.GetSize())
     {
-        app_context.DeltaTime = app_context.Timer.Segment();
+        auto& event = event_queue.GetFront();
 
-        // Process event
-        auto& event_queue = Arcadia::EventQueue::Instance();
-        event_queue.SwapQueue();
-        while(event_queue.GetSize())
+        for(auto& layer : Arcadia::LayerStack::Instance())
         {
-            auto& event = event_queue.GetFront();
-
-            for(auto& layer : Arcadia::LayerStack::Instance())
+            layer->OnEvent(event);
+            if(event.Handled)
             {
-                layer->OnEvent(event);
-                if(event.Handled)
-                {
-                    break;
-                }
+                break;
             }
-            event_queue.PopFront();
         }
-
-        // Updates
-        for(auto& layer : std::ranges::reverse_view{ Arcadia::LayerStack::Instance() })
-        {
-            layer->OnUpdate();
-        }
+        event_queue.PopFront();
     }
 
-    // Clear layer_stack
-    layer_stack.PopAllLayers();
-    return 0;
+    // Updates
+    for(auto& layer : std::ranges::reverse_view{ Arcadia::LayerStack::Instance() })
+    {
+        layer->OnUpdate();
+    }
+}
+
+// Clear layer_stack
+layer_stack.PopAllLayers();
+return 0;
 }

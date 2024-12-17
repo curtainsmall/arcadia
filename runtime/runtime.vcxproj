@@ -176,6 +176,7 @@
     <ClInclude Include="src\core\nlohmann_json_header.hpp" />
     <ClInclude Include="src\core\noncopyable.hpp" />
     <ClInclude Include="src\core\parameter_pack.hpp" />
+    <ClInclude Include="src\core\result.hpp" />
     <ClInclude Include="src\core\serialization.hpp" />
     <ClInclude Include="src\core\string.hpp" />
     <ClInclude Include="src\core\time\time.hpp" />

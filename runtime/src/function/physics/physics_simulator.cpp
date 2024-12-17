@@ -82,7 +82,7 @@ void Arcadia::PhysicsSimulator::Submit(const Scene& scene, const std::string& na
         if(!_JphBodyIdStorage.contains(uuid))
         {
             auto& jph_body_interface = _JphPhysicsSystem->GetBodyInterface();
-            JPH::ShapeRefC jph_shape_refc = Match<JPH::Shape*>(
+            JPH::ShapeRefC jph_shape_refc = MatchVariant<JPH::Shape*>(
                 body_info.JphShapeInfo,
                 [&](const JphBoxShapeInfo& info)
             {

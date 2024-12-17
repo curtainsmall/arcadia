@@ -26,7 +26,7 @@ Arcadia::ProjectLayer::ProjectLayer() :
     const auto& app_config = AppConfig::Instance();
     auto& event_queue = EventQueue::Instance();
 
-    Match<void>(
+    MatchVariant<void>(
         app_config.GraphicApi,
         [&](const GraphicApi::Opengl&)
     {

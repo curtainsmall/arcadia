@@ -18,7 +18,7 @@ Arcadia::WindowLayer::WindowLayer(
 {
     const auto& app_config = AppConfig::Instance();
 
-    Match<void>(
+    MatchVariant<void>(
         app_config.GraphicApi,
         [&](const GraphicApi::Opengl& gl) -> void
     {
@@ -349,7 +349,7 @@ void Arcadia::WindowLayer::_SwapBuffers()
 {
     const auto& app_config = AppConfig::Instance();
 
-    Match<void>(
+    MatchVariant<void>(
         app_config.GraphicApi,
         [&](const GraphicApi::Opengl&) -> void
     {

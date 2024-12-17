@@ -12,7 +12,7 @@ ACDA_API void Arcadia::ImguiBackend::Initialize(const WindowLayer& window)
 {
     const auto& app_config = AppConfig::Instance();
 
-    Match<void>(
+    MatchVariant<void>(
         app_config.GraphicApi,
         [&](const GraphicApi::Opengl& opengl) -> void
     {
@@ -45,7 +45,7 @@ ACDA_API void Arcadia::ImguiBackend::NewFrame(const WindowLayer& window)
 {
     const auto& app_config = AppConfig::Instance();
 
-    Match<void>(
+    MatchVariant<void>(
         app_config.GraphicApi,
         [](const GraphicApi::Opengl&) -> void
     {
@@ -62,7 +62,7 @@ ACDA_API void Arcadia::ImguiBackend::RenderDrawData(const WindowLayer& window)
 {
     const auto& app_config = AppConfig::Instance();
 
-    Match<void>(
+    MatchVariant<void>(
         app_config.GraphicApi,
         [](const GraphicApi::Opengl&) -> void
     {
@@ -78,7 +78,7 @@ ACDA_API void Arcadia::ImguiBackend::Shutdown(const WindowLayer& window)
 {
     const auto& app_config = AppConfig::Instance();
 
-    Match<void>(
+    MatchVariant<void>(
         app_config.GraphicApi,
         [](const GraphicApi::Opengl&) -> void
     {

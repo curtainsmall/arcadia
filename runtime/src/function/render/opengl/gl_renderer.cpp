@@ -155,7 +155,7 @@ void Arcadia::GlRenderer::Submit(const Scene& scene, const std::string& name)
             if(!_GlRenderUnitPhysicsBodyShapeStorage.contains(uuid))
             {
                 const auto& shape_info = jph_body.JphShapeInfo;
-                const auto& shape_mesh = Match<Mesh>(
+                const auto& shape_mesh = MatchVariant<Mesh>(
                     shape_info,
                     [&](const JphBoxShapeInfo& info)
                 {
@@ -367,7 +367,7 @@ void Arcadia::GlRenderer::_DrawLights(
             throw TooManyLights(std::format("The max light count is {}", max_light_count));
         }
 
-        Match<void>(
+        MatchVariant<void>(
             light,
             [&](const NullLight& light)
         {},

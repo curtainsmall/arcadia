@@ -16,6 +16,7 @@ namespace Arcadia
 
     template<typename, template<typename ...> typename>
     constexpr bool IsSpecializationOf = false;
+
     template<template<typename...> typename T, typename ...Args>
     constexpr bool IsSpecializationOf<T<Args...>, T> = true;
 
@@ -27,7 +28,7 @@ namespace Arcadia
         cInstantiatedFrom<std::variant> Variant,
         typename ...BranchFns
     >
-    ACDA_API auto Match(Variant& variant, BranchFns&& ...fns) -> Ret
+    ACDA_API auto MatchVariant(Variant& variant, BranchFns&& ...fns) -> Ret
     {
         return std::visit<Ret>(
             OverloadedFunctionsWrapper{
@@ -42,7 +43,7 @@ namespace Arcadia
         cInstantiatedFrom<std::variant> Variant,
         typename ...BranchFns
     >
-    ACDA_API auto Match(const Variant& variant, BranchFns&& ...fns) -> Ret
+    ACDA_API auto MatchVariant(const Variant& variant, BranchFns&& ...fns) -> Ret
     {
         return std::visit<Ret>(
             OverloadedFunctionsWrapper{

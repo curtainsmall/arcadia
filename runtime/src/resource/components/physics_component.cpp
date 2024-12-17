@@ -67,7 +67,7 @@ auto Arcadia::PhysicsComponent::ToJson() const -> nlohmann::json
     if(HasBodyInfo())
     {
         const auto& [uuid, body_info] = GetIdentifiableJphBodyInfo();
-        auto json_shape_info = Match<nlohmann::json>(
+        auto json_shape_info = MatchVariant<nlohmann::json>(
             body_info.JphShapeInfo,
             [&](const JphBoxShapeInfo& info)
         {
