@@ -10,13 +10,13 @@
 
 namespace Arcadia
 {
-    class JphObjectLayerPairFilerImpl final: public JPH::ObjectLayerPairFilter
+    class JphObjectLayerPairFilerImpl: public JPH::ObjectLayerPairFilter
     {
     public:
         virtual auto ShouldCollide(JPH::ObjectLayer obj_1, JPH::ObjectLayer obj_2) const -> bool override;
     };
 
-    class JphBroadPhaseLayerImpl final: public JPH::BroadPhaseLayerInterface
+    class JphBroadPhaseLayerImpl: public JPH::BroadPhaseLayerInterface
     {
     public:
         JphBroadPhaseLayerImpl();
@@ -28,7 +28,7 @@ namespace Arcadia
         virtual auto GetBroadPhaseLayer(JPH::ObjectLayer layer) const->JPH::BroadPhaseLayer override;
 
         [[nodiscard]]
-        virtual auto GetBroadPhaseLayerName(JPH::BroadPhaseLayer layer) const -> const char*
+        virtual auto GetBroadPhaseLayerName(JPH::BroadPhaseLayer layer) const -> const char* override
         {
             return nullptr;
         }
@@ -37,7 +37,7 @@ namespace Arcadia
         JPH::BroadPhaseLayer _ObjectToBroadPhase[JphObjectLayers::NumLayers];
     };
 
-    class JphObjectVsBroadPhaseLayerFilterImpl final: public JPH::ObjectVsBroadPhaseLayerFilter
+    class JphObjectVsBroadPhaseLayerFilterImpl: public JPH::ObjectVsBroadPhaseLayerFilter
     {
     public:
         virtual auto ShouldCollide(JPH::ObjectLayer obj, JPH::BroadPhaseLayer bp) const -> bool override;

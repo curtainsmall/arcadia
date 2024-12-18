@@ -7,7 +7,6 @@
 #include<unordered_map>
 #include<vector>
 
-#include"platform/api_def.hpp"
 #include"core/exception.hpp"
 #include"core/math.hpp"
 #include"function/render/opengl/buffer/gl_cubemap.hpp"
@@ -16,6 +15,7 @@
 #include"function/render/opengl/buffer/gl_vertex_array.hpp"
 #include"function/render/opengl/pipeline/gl_pipeline.hpp"
 #include"function/render/renderer.hpp"
+#include"platform/api_def.hpp"
 #include"platform/opengl/opengl_header.hpp"
 #include"resource/components/light_component.hpp"
 
