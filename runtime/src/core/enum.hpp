@@ -14,10 +14,9 @@ namespace Arcadia
     }
 
     template<typename Enum>
-    concept cEnumBitfield = requires{
-        std::is_enum_v<Enum>;
-        Enum::_EnumBitfield;
-    };
+    concept cEnumBitfield =
+        std::is_enum_v<Enum>
+        && requires{ Enum::_EnumBitfield; };
 
     template<cEnumBitfield Enum>
     ACDA_API auto operator|(const Enum& a, const Enum& b) -> Enum

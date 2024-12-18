@@ -12,10 +12,9 @@ namespace Arcadia
     class MementoDataBase;
 
     template<typename MementoData>
-    concept cMementoData = requires{
-        std::derived_from<MementoData, MementoDataBase>;
-        std::equality_comparable<MementoData>;
-    };
+    concept cMementoData =
+        std::derived_from<MementoData, MementoDataBase>
+        && std::equality_comparable<MementoData>;
 
     class MementoDataBase
     {
@@ -50,9 +49,7 @@ namespace Arcadia
     };
 
     template<typename MementoOriginator>
-    concept cMementoOriginator = requires{
-        std::derived_from<MementoOriginator, iMementoOriginator>;
-    };
+    concept cMementoOriginator = std::derived_from<MementoOriginator, iMementoOriginator>;
 
     class Memento: public Noncopyable
     {

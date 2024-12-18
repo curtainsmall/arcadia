@@ -69,7 +69,5 @@ namespace Arcadia
     };
 
     template<typename Renderer>
-    concept cRenderer = requires{
-        std::derived_from<Renderer, iRenderer>;
-    };
+    concept cRenderer = std::derived_from<Renderer, iRenderer>;
 }

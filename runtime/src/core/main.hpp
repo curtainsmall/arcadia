@@ -17,8 +17,6 @@
 
 extern auto Arcadia::CreateApplication()->std::unique_ptr<Arcadia::iAppLayer>;
 
-#include"core/result.hpp"
-
 ACDA_MAIN_FN_DECL
 {
     // Add app_layer

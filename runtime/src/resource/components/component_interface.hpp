@@ -27,9 +27,10 @@ namespace Arcadia
     };
 
     template<typename Component>
-    concept cComponent = requires(const Component comp, const nlohmann::json json)
+    concept cComponent =
+        std::derived_from<Component, iComponent>
+        && requires(const Component comp, const nlohmann::json json)
     {
-        std::derived_from<Component, iComponent>;
         {
             Component::GetTypeStringStatic()
         }->std::same_as<std::string>;
@@ -38,8 +39,6 @@ namespace Arcadia
             comp.ToJson()
         }->std::same_as<nlohmann::json>;
 
-        {
-            Component(json)
-        };
+        Component(json);
     };
 }

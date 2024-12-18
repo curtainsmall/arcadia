@@ -1,6 +1,7 @@
 #pragma once
 
 #include<functional>
+#include<utility>
 #include<variant>
 
 #include"core/match.hpp"
@@ -9,6 +10,14 @@
 
 namespace Arcadia
 {
+    class ResultInPlaceSuccessType {};
+    constexpr ResultInPlaceSuccessType ResultInPlaceSuccess{};
+
+    template<typename Error>
+    class ResultInPlaceErrorType {};
+    template<typename Error>
+    constexpr ResultInPlaceErrorType<Error> ResultInPlaceError{};
+
     template<
         typename Success,
         typename ...Errors
@@ -30,6 +39,13 @@ namespace Arcadia
         Result(SuccessType&& ok) :
             _Value(std::move(ok))
         {}
+        template<typename ...Args>
+        Result(ResultInPlaceSuccessType, Args&& ...args) :
+            _Value(
+                std::in_place_type<SuccessType>,
+                std::forward<Args>(args)...
+            )
+        {}
 
         template<cTypeInParameterPack<ErrorTypePack> Error>
         Result(const Error& err) :
@@ -38,6 +54,10 @@ namespace Arcadia
         template<cTypeInParameterPack<ErrorTypePack> Error>
         Result(Error&& err) :
             _Value(std::move(err))
+        {}
+        template<cTypeInParameterPack<ErrorTypePack> Error, typename ...Args>
+        Result(ResultInPlaceErrorType<Error>, Args&& ...args) :
+            _Value(std::in_place_type<Error>, std::forward<Args>(args)...)
         {}
 
         Result(SelfType&&) noexcept = default;

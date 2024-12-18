@@ -37,9 +37,7 @@ namespace Arcadia
     };
 
     template<typename Layer>
-    concept cLayer = requires{
-        std::derived_from<Layer, iLayer>;
-    };
+    concept cLayer = std::derived_from<Layer, iLayer>;
 
     class LayerStack
     {

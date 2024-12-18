@@ -43,9 +43,7 @@ namespace Arcadia
     };
 
     template<typename Event>
-    concept cEvent = requires{
-        std::derived_from<Event, EventBase>;
-    };
+    concept cEvent = std::derived_from<Event, EventBase>;
 
     template<typename ...Args>
     class BasicEvent: public EventBase
