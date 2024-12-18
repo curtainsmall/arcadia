@@ -61,6 +61,7 @@ namespace Arcadia
     {
     public:
         ACDA_DEFINE_EXCEPTION(TooManyLights);
+
         using SelfType = GlRenderer;
     public:
         GlRenderer(const std::filesystem::path& gl_shader_folder_path);

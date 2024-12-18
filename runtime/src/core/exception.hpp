@@ -26,4 +26,6 @@ namespace Arcadia
             std::exception(msg.c_str())
         {}
     };
+
+    ACDA_DEFINE_EXCEPTION(NullReturn);
 }

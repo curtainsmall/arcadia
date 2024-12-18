@@ -12,9 +12,9 @@ namespace Arcadia
     /// @param transform Transform matrix
     /// @return Decomposed components, or nullopt if the transform matrix is zero
     auto Decompose(const glm::mat4& transform)
-        -> std::optional<std::tuple<
+        -> std::tuple<
         glm::vec3, // Translation
         glm::vec3, // Rotation
         glm::vec3  // Scale
-        >>;
+        >;
 }

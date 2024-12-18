@@ -2,7 +2,7 @@
 
 #include "glm_algorithm.hpp"
 
-auto Arcadia::Decompose(const glm::mat4& transform) -> std::optional<std::tuple<glm::vec3, glm::vec3, glm::vec3>>
+auto Arcadia::Decompose(const glm::mat4& transform) -> std::tuple<glm::vec3, glm::vec3, glm::vec3>
 {
     // From glm::decompose in matrix_decompose.inl
 
@@ -17,7 +17,9 @@ auto Arcadia::Decompose(const glm::mat4& transform) -> std::optional<std::tuple<
 
     // Normalize the matrix.
     if(glm::epsilonEqual(local_matrix[3][3], static_cast<T>(0), glm::epsilon<T>()))
-        return {};
+    {
+        throw NullReturn();
+    }
 
     // First, isolate perspective.  This is the messiest.
     if(

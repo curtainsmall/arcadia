@@ -176,15 +176,12 @@
     <ClInclude Include="src\core\memento\memento.hpp" />
     <ClInclude Include="src\core\nlohmann_json_header.hpp" />
     <ClInclude Include="src\core\noncopyable.hpp" />
-    <ClInclude Include="src\core\nullable.hpp" />
     <ClInclude Include="src\core\parameter_pack.hpp" />
-    <ClInclude Include="src\core\result.hpp" />
     <ClInclude Include="src\core\serialization.hpp" />
     <ClInclude Include="src\core\string.hpp" />
     <ClInclude Include="src\core\time\time.hpp" />
     <ClInclude Include="src\core\uuid.hpp" />
     <ClInclude Include="src\core\version\version.hpp" />
-    <ClInclude Include="src\core\zombieable.hpp" />
     <ClInclude Include="src\function\input\input_events.hpp" />
     <ClInclude Include="src\function\physics\physics_simulator.hpp" />
     <ClInclude Include="src\function\render\opengl\buffer\gl_cubemap.hpp" />
