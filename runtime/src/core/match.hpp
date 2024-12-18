@@ -3,6 +3,7 @@
 #include<functional>
 #include<variant>
 
+#include"core/concept.hpp"
 #include"platform/api_def.hpp"
 
 namespace Arcadia
@@ -13,15 +14,6 @@ namespace Arcadia
     public:
         using Fns::operator()...;
     };
-
-    template<typename, template<typename ...> typename>
-    constexpr bool IsSpecializationOf = false;
-
-    template<template<typename...> typename T, typename ...Args>
-    constexpr bool IsSpecializationOf<T<Args...>, T> = true;
-
-    template<typename Type, template<typename ...> typename Template>
-    concept cInstantiatedFrom = IsSpecializationOf<Type, Template>;
 
     template<
         typename Ret,

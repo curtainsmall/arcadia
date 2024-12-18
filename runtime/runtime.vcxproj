@@ -149,6 +149,7 @@
     <ClInclude Include="src\core\app\app_layer.hpp" />
     <ClInclude Include="src\core\assert.hpp" />
     <ClInclude Include="src\core\command\command.hpp" />
+    <ClInclude Include="src\core\concept.hpp" />
     <ClInclude Include="src\core\enum.hpp" />
     <ClInclude Include="src\core\function.hpp" />
     <ClInclude Include="src\core\identifiable.hpp" />
