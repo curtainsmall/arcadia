@@ -19,7 +19,7 @@ Arcadia::AppContext::AppContext()
 #ifdef ACDA_DEBUG_MODE
     EventQueue::DebugExcludedEventTypeSetType set =
         EventQueue::Instance().DebugExcludedEventTypeSet;
-    set.emplace(typeid(Events::InputCursorPos));
+    set.emplace(typeid(Events::InputCursorPosition));
     set.emplace(typeid(Events::InputCursorMove));
     set.emplace(typeid(Events::WindowSetPosition));
 

@@ -20,7 +20,7 @@
 
 #include"editor/editor_context.hpp"
 
-Arcadia::ProjectLayer::ProjectLayer() :
+Arcadia::ProjectLayer::ProjectLayer():
     iLayer("project")
 {
     const auto& app_config = AppConfig::Instance();
@@ -112,8 +112,7 @@ void Arcadia::ProjectLayer::_OnWindowShouldClose(Events::WindowShouldClose& e)
 
     auto main_window_layer = EditorContext::Instance().MainWindowLayer.lock();
 
-    const auto& [p_wnd] = e.DataTuple;
-    if(p_wnd == main_window_layer.get() && _Project)
+    if(e.Window == main_window_layer.get() && _Project)
     {
         auto& memento_list = MementoList::Instance();
         if(memento_list.GetSize())
@@ -129,7 +128,7 @@ void Arcadia::ProjectLayer::_OnWindowShouldClose(Events::WindowShouldClose& e)
             {
                 case pfd::button::cancel:
                 {
-                    event_queue.Signal<Events::WindowCloseCanceled>(p_wnd);
+                    event_queue.Signal<Events::WindowCloseCanceled>(e.Window);
                     return;
                 }
                 case pfd::button::yes:
@@ -193,9 +192,8 @@ void Arcadia::ProjectLayer::_OnCreateProject(Events::CreateProject& e)
         _Project.reset();
     }
 
-    const auto& [name, filepath_str] = e.DataTuple;
-    _Project = std::make_shared<Project>(name);
-    _ProjectFilepath = filepath_str.size() ? ToFilepath(filepath_str) : std::filesystem::path{};
+    _Project = std::make_shared<Project>(e.Name);
+    _ProjectFilepath = e.FilepathString.size() ? ToFilepath(e.FilepathString) : std::filesystem::path{};
 
     EventQueue::Instance()
         .Signal<Events::ProjectBuilt>(_Project);
@@ -347,15 +345,14 @@ void Arcadia::ProjectLayer::_OnCreateScene(Events::CreateScene& e)
 {
     ACDA_ASSERT(_Project);
 
-    const auto& [name, as_current] = e.DataTuple;
     auto& scene = _Project->Scenes.try_emplace(
-        name,
-        std::make_shared<Scene>(name)
+        e.Name,
+        std::make_shared<Scene>(e.Name)
     ).first->second;
 
-    if(as_current)
+    if(e.AsCurrent)
     {
-        _Project->SetActiveScene(name);
+        _Project->SetActiveScene(e.Name);
     }
 }
 
@@ -363,8 +360,7 @@ void Arcadia::ProjectLayer::_OnSelectScene(Events::SelectScene& e)
 {
     ACDA_ASSERT(_Project);
 
-    const auto& [name] = e.DataTuple;
-    _Project->SetActiveScene(name);
+    _Project->SetActiveScene(e.Name);
 }
 
 void Arcadia::ProjectLayer::_OnCloseScene(Events::CloseScene& e)
@@ -404,8 +400,6 @@ void Arcadia::ProjectLayer::_OnDeleteScene(Events::DeleteScene& e)
 
 void Arcadia::ProjectLayer::_OnNewEntity(Events::NewEntity& e)
 {
-    const auto& [type] = e.DataTuple;
-
     auto& scene = _AssertAndGetScene();
 
     std::string temp_name = "New Entity";
@@ -416,10 +410,10 @@ void Arcadia::ProjectLayer::_OnNewEntity(Events::NewEntity& e)
         name = std::format("{} {}", temp_name, ++postfix);
     }
 
-    scene.CreateEntity(name, type);
+    scene.CreateEntity(name, e.EntityTypeString);
 
     Match<void>(
-        type,
+        e.EntityTypeString,
         std::string("actor"),
         [&]()
     {
@@ -454,74 +448,69 @@ void Arcadia::ProjectLayer::_OnNewEntity(Events::NewEntity& e)
 
 void Arcadia::ProjectLayer::_OnRenameEntity(Events::RenameEntity& e)
 {
-    const auto& [old_name, new_name] = e.DataTuple;
 
-    _Project->GetActiveScene().RenameEntity(old_name, new_name);
+    _Project->GetActiveScene().RenameEntity(e.OldName, e.NewName);
 }
 
 void Arcadia::ProjectLayer::_OnDeleteEntity(Events::DeleteEntity& e)
 {
-    const auto& [entity] = e.DataTuple;
-    auto& scene = _AssertAndGetScene();
-    scene.DestroyEntity(entity);
+    _AssertAndGetScene().DestroyEntity(e.EntityName);
 }
 
 void Arcadia::ProjectLayer::_OnAddComponent(Events::AddComponent& e)
 {
-    const auto& [entity, type_str] = e.DataTuple;
     auto& scene = _AssertAndGetScene();
 
     Match<void>(
-        type_str,
+        e.ComponentTypeString,
         CameraComponent::GetTypeStringStatic(),
         [&]()
     {
-        scene.EmplaceComponent<CameraComponent>(entity);
+        scene.EmplaceComponent<CameraComponent>(e.EntityName);
     },
         LightComponent::GetTypeStringStatic(),
         [&]()
     {
-        scene.EmplaceComponent<LightComponent>(entity);
+        scene.EmplaceComponent<LightComponent>(e.EntityName);
     },
         ModelComponent::GetTypeStringStatic(),
         [&]()
     {
-        scene.EmplaceComponent<ModelComponent>(entity);
+        scene.EmplaceComponent<ModelComponent>(e.EntityName);
     },
         PhysicsComponent::GetTypeStringStatic(),
         [&]()
     {
-        scene.EmplaceComponent<PhysicsComponent>(entity);
+        scene.EmplaceComponent<PhysicsComponent>(e.EntityName);
     }
     );
 }
 
 void Arcadia::ProjectLayer::_OnRemoveComponent(Events::RemoveComponent& e)
 {
-    const auto& [entity, type_str] = e.DataTuple;
     auto& scene = _AssertAndGetScene();
 
     Match<void>(
-        type_str,
+        e.ComponentTypeString,
         CameraComponent::GetTypeStringStatic(),
         [&]()
     {
-        scene.RemoveComponent<CameraComponent>(entity);
+        scene.RemoveComponent<CameraComponent>(e.EntityName);
     },
         LightComponent::GetTypeStringStatic(),
         [&]()
     {
-        scene.RemoveComponent<LightComponent>(entity);
+        scene.RemoveComponent<LightComponent>(e.EntityName);
     },
         ModelComponent::GetTypeStringStatic(),
         [&]()
     {
-        scene.RemoveComponent<ModelComponent>(entity);
+        scene.RemoveComponent<ModelComponent>(e.EntityName);
     },
         PhysicsComponent::GetTypeStringStatic(),
         [&]()
     {
-        scene.RemoveComponent<PhysicsComponent>(entity);
+        scene.RemoveComponent<PhysicsComponent>(e.EntityName);
     }
     );
 }

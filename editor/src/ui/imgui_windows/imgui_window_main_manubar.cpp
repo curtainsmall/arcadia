@@ -267,8 +267,7 @@ void Arcadia::ImguiWindowMainMenubar::_ShowOptionMenu()
 
 void Arcadia::ImguiWindowMainMenubar::_OnProjectBuilt(Events::ProjectBuilt& e)
 {
-    const auto& [project] = e.DataTuple;
-    _Project = project;
+    _Project = e.Project;
 }
 
 void Arcadia::ImguiWindowMainMenubar::_OnProjectUnbuilt(Events::ProjectUnbuilt& e)

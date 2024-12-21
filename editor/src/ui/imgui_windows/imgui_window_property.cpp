@@ -975,8 +975,7 @@ void Arcadia::ImguiWindowProperty::OnUpdate()
 
 void Arcadia::ImguiWindowProperty::_OnOpenImguiWindow(Events::OpenImguiWindow& e)
 {
-    const auto& [id_string] = e.DataTuple;
-    if(id_string == GetIdString())
+    if(e.IdString == GetIdString())
     {
         _Opened = true;
     }
@@ -984,8 +983,7 @@ void Arcadia::ImguiWindowProperty::_OnOpenImguiWindow(Events::OpenImguiWindow& e
 
 void Arcadia::ImguiWindowProperty::_OnSceneActivated(Events::SceneActivated& e)
 {
-    const auto& [scene] = e.DataTuple;
-    _Scene = scene;
+    _Scene = e.Scene;
 }
 
 void Arcadia::ImguiWindowProperty::_OnSceneDeactivated(Events::SceneDeactivated& e)
@@ -996,23 +994,20 @@ void Arcadia::ImguiWindowProperty::_OnSceneDeactivated(Events::SceneDeactivated&
 
 void Arcadia::ImguiWindowProperty::_OnSelectEntity(Events::SelectEntity& e)
 {
-    const auto& [entity_name] = e.DataTuple;
-    _SelectedEntityName = entity_name;
+    _SelectedEntityName = e.EntityName;
 }
 
 void Arcadia::ImguiWindowProperty::_OnRenameEntity(Events::RenameEntity& e)
 {
-    const auto& [old_name, new_name] = e.DataTuple;
-    if(old_name == _SelectedEntityName)
+    if(e.OldName == _SelectedEntityName)
     {
-        _SelectedEntityName = new_name;
+        _SelectedEntityName = e.NewName;
     }
 }
 
 void Arcadia::ImguiWindowProperty::_OnDeleteEntity(Events::DeleteEntity& e)
 {
-    const auto& [entity] = e.DataTuple;
-    if(_SelectedEntityName == entity)
+    if(_SelectedEntityName == e.EntityName)
     {
         _SelectedEntityName.clear();
     }

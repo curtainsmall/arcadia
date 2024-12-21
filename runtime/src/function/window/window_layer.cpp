@@ -11,7 +11,7 @@ Arcadia::WindowLayer::WindowLayer(
     glm::i32vec2 size,
     std::string title,
     std::int32_t multisample_count
-) :
+):
     iLayer(std::format("window_{}", title)),
     _Title(title),
     _MultisampleCount(multisample_count)
@@ -26,9 +26,9 @@ Arcadia::WindowLayer::WindowLayer(
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, gl.Version.Major);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, gl.Version.Minor);
         glfwWindowHint(GLFW_SAMPLES, _MultisampleCount);
-#ifndef NDEBUG
+    #ifndef NDEBUG
         glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
-#endif // NDEBUG
+    #endif // NDEBUG
     },
         [&](auto&) -> void
     {
@@ -135,9 +135,8 @@ auto Arcadia::WindowLayer::GetPosition() const -> glm::i32vec2
 
 void Arcadia::WindowLayer::_OnWindowSetCursorInputMode(Events::WindowSetCursorInputMode& e)
 {
-    auto& [value] = e.DataTuple;
     std::int32_t val = Match<int>(
-        value,
+        e.Mode,
         WindowCursorInputMode::Normal,
         GLFW_CURSOR_NORMAL,
         WindowCursorInputMode::Hidden,
@@ -175,7 +174,7 @@ void Arcadia::WindowLayer::_SetupCallbacks()
         auto wnd_ptr = _GetWindowPointerFromGlfwUserPointer(glfw_wnd_ptr);
         auto& event_queue = EventQueue::Instance();
 
-        event_queue.Signal<Events::InputCursorPos>(
+        event_queue.Signal<Events::InputCursorPosition>(
             wnd_ptr,
             cursor_pos
         );
@@ -200,7 +199,8 @@ void Arcadia::WindowLayer::_SetupCallbacks()
         EventQueue::Instance()
             .Signal<Events::InputScroll>(
                 _GetWindowPointerFromGlfwUserPointer(glfw_wnd_ptr),
-                glm::vec2{ xoffset,yoffset }
+                xoffset,
+                yoffset
             );
     }
     );
@@ -286,7 +286,7 @@ void Arcadia::WindowLayer::_SetupCallbacks()
         [](GLFWwindow* glfw_wnd_ptr, int focused) -> void
     {
         EventQueue::Instance()
-            .Signal<Events::WindowFocused>(
+            .Signal<Events::WindowSetFocused>(
                 _GetWindowPointerFromGlfwUserPointer(glfw_wnd_ptr),
                 focused
             );
@@ -327,7 +327,7 @@ void Arcadia::WindowLayer::_SetupCallbacks()
             connection = false;
         }
         EventQueue::Instance()
-            .Signal<Events::MonitorConnect>(
+            .Signal<Events::MonitorSetConnected>(
                 glfw_monitor_ptr,
                 connection
             );
@@ -363,8 +363,7 @@ void Arcadia::WindowLayer::_SwapBuffers()
 
 void Arcadia::WindowLayer::_OnWindowCloseCanceled(Events::WindowCloseCanceled& e)
 {
-    const auto& [p_wnd] = e.DataTuple;
-    if(p_wnd == this)
+    if(e.Window == this)
     {
         glfwSetWindowShouldClose(_GlfwWindow, GLFW_FALSE);
     }

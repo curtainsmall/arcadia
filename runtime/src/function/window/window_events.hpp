@@ -28,47 +28,92 @@ namespace Arcadia
     {
         //==== Notifications ====//
 
-        ACDA_DEFINE_EVENT(
-            WindowShouldClose,
-            WindowLayer* // Window to close
-        );
-        ACDA_DEFINE_EVENT(
-            WindowCloseCanceled,
-            WindowLayer* // Window to cancel close
-        );
+        class WindowShouldClose: public EventBase
+        {
+        public:
+            WindowShouldClose(WindowLayer* const window):
+                Window(window)
+            {}
+        public:
+            WindowLayer* const Window;
+        };
 
-        ACDA_DEFINE_EVENT(
-            WindowSetSize,
-            WindowLayer*,
-            glm::i32vec2 // New size
-        );
-        ACDA_DEFINE_EVENT(
-            WindowSetPosition,
-            WindowLayer*,
-            glm::i32vec2 // New position
-        );
-        ACDA_DEFINE_EVENT(
-            WindowSizeStateChanged,
-            WindowLayer*,
-            WindowSizeState // New state
-        );
-        ACDA_DEFINE_EVENT(
-            WindowFocused,
-            WindowLayer*,
-            bool
-        );
+        class WindowCloseCanceled: public EventBase
+        {
+        public:
+            WindowCloseCanceled(WindowLayer* const window):
+                Window(window)
+            {}
+        public:
+            WindowLayer* const Window;
+        };
 
-        ACDA_DEFINE_EVENT(
-            MonitorConnect,
-            ::GLFWmonitor*, // TODO: Use custom monitor type
-            bool // Whether the monitor is connected or not
-        );
+        class WindowSetSize: public EventBase
+        {
+        public:
+            WindowSetSize(WindowLayer* const window, const glm::i32vec2& new_size):
+                Window(window), NewSize(new_size)
+            {}
+        public:
+            WindowLayer* const Window;
+            const glm::i32vec2 NewSize;
+        };
+
+        class WindowSetPosition: public EventBase
+        {
+        public:
+            WindowSetPosition(WindowLayer* const window, const glm::i32vec2& new_size):
+                Window(window), NewPosition(new_size)
+            {}
+        public:
+            WindowLayer* const Window;
+            const glm::i32vec2 NewPosition;
+        };
+
+        class WindowSizeStateChanged: public EventBase
+        {
+        public:
+            WindowSizeStateChanged(WindowLayer* const window, WindowSizeState state):
+                Window(window), State(state)
+            {}
+        public:
+            WindowLayer* const Window;
+            const WindowSizeState State;
+        };
+
+        class WindowSetFocused: public EventBase
+        {
+        public:
+            WindowSetFocused(WindowLayer* const window, bool focused):
+                Window(window), Focused(focused)
+            {}
+        public:
+            WindowLayer* const Window;
+            const bool Focused;
+        };
+
+        class MonitorSetConnected: public EventBase
+        {
+        public:
+            MonitorSetConnected(::GLFWmonitor* const glfw_monitor, bool connected):
+                GlfwMonitor(glfw_monitor), Connected(connected)
+            {}
+        public:
+            ::GLFWmonitor* const GlfwMonitor;
+            const bool Connected;
+        };
+
 
         //==== Adjustments ====//
 
-        ACDA_DEFINE_EVENT(
-            WindowSetCursorInputMode,
-            WindowCursorInputMode
-        );
+        class WindowSetCursorInputMode: public EventBase
+        {
+        public:
+            WindowSetCursorInputMode(WindowCursorInputMode mode):
+                Mode(mode)
+            {}
+        public:
+            const WindowCursorInputMode Mode;
+        };
     }
 }

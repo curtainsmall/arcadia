@@ -124,8 +124,7 @@ void Arcadia::EditorAppLayer::_OnWindowShouldClose(Events::WindowShouldClose& e)
     auto main_window_layer = editor_context.MainWindowLayer.lock();
     auto main_project_layer = editor_context.MainProjectLayer.lock();
 
-    const auto& [p_wnd] = e.DataTuple;
-    if(p_wnd == main_window_layer.get() && main_project_layer->HasProject())
+    if(e.Window == main_window_layer.get() && main_project_layer->HasProject())
     {
         _WaitingForProjectUnbuiltBeforeClosing = true;
     }
@@ -150,15 +149,13 @@ void Arcadia::EditorAppLayer::_OnWindowCloseCanceled(Events::WindowCloseCanceled
 
 void Arcadia::EditorAppLayer::_OnTogglePlayMode(Events::TogglePlayMode& e)
 {
-    const auto& [state] = e.DataTuple;
-    EditorContext::Instance().InPlayMode = state;
+    auto& instance = EditorContext::Instance();
+    instance.InPlayMode = !instance.InPlayMode;
 }
 
 void Arcadia::EditorAppLayer::_OnInputKey(Events::InputKey& e)
 {
-    const auto& [wnd, key, scancode, action, mods] = e.DataTuple;
-
-    if(key == InputKey::Escape && !!(mods & InputModifier::Shift))
+    if(e.KeyCode == InputKey::Escape && !!(e.Modifier & InputModifier::Shift))
     {
         EditorContext::Instance().InPlayMode = false;
     }

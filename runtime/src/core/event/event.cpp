@@ -34,3 +34,13 @@ auto Arcadia::EventQueue::PopFront() -> bool
     _ProcessingQueue->pop();
     return GetSize();
 }
+
+void Arcadia::EventBase::MarkHandled()
+{
+    _Handled = true;
+}
+
+auto Arcadia::EventBase::IsHandled() const -> bool
+{
+    return _Handled;
+}

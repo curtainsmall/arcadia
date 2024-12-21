@@ -170,8 +170,7 @@ void Arcadia::ImguiWindowState::_OnOpenImguiWindow(Events::OpenImguiWindow& e)
 
 void Arcadia::ImguiWindowState::_OnSceneActivated(Events::SceneActivated& e)
 {
-    const auto& [scene] = e.DataTuple;
-    _Scene = scene;
+    _Scene = e.Scene;
 }
 
 void Arcadia::ImguiWindowState::_OnSceneDeactivated(Events::SceneDeactivated& e)
@@ -181,8 +180,7 @@ void Arcadia::ImguiWindowState::_OnSceneDeactivated(Events::SceneDeactivated& e)
 
 void Arcadia::ImguiWindowState::_OnRendererBuilt(Events::RendererBuilt& e)
 {
-    const auto& [renderer] = e.DataTuple;
-    _Renderer = renderer;
+    _Renderer = e.Renderer;
 }
 
 void Arcadia::ImguiWindowState::_OnRendererUnbuilt(Events::RendererUnbuilt& e)
@@ -192,8 +190,7 @@ void Arcadia::ImguiWindowState::_OnRendererUnbuilt(Events::RendererUnbuilt& e)
 
 void Arcadia::ImguiWindowState::_OnPhysicsSimulatorBuilt(Events::PhysicsSimulatorBuilt& e)
 {
-    const auto& [physics_simulator] = e.DataTuple;
-    _PhysicsSimulator = physics_simulator;
+    _PhysicsSimulator = e.PhysicsSimulator;
 }
 
 void Arcadia::ImguiWindowState::_OnPhysicsSimulatorUnbuilt(Events::PhysicsSimulatorUnbuilt& e)

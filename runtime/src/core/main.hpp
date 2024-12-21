@@ -39,7 +39,7 @@ ACDA_MAIN_FN_DECL
             for(auto& layer : Arcadia::LayerStack::Instance())
             {
                 layer->OnEvent(event);
-                if(event.Handled)
+                if(event.IsHandled())
                 {
                     break;
                 }

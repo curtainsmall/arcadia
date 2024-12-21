@@ -145,45 +145,97 @@ namespace Arcadia
 
     namespace Events
     {
-        ACDA_DEFINE_EVENT(
-            InputKey,
-            WindowLayer*, // Input window
-            std::int32_t, // Key code
-            std::int32_t, // Key scancode
-            std::int32_t, // Input action
-            std::int32_t  // Input modifiers
-        );
-        ACDA_DEFINE_EVENT(
-            InputCursorPos,
-            WindowLayer*, // Input window
-            glm::vec2 // Cursor position
-        );
-        ACDA_DEFINE_EVENT(
-            InputCursorMove,
-            WindowLayer*, // Input window
-            glm::vec2 // Cursor movement
-        );
-        ACDA_DEFINE_EVENT(
-            InputScroll,
-            WindowLayer*, // Input window
-            glm::vec2 // Scroll offset (a vertical mouse wheel provides offset along the y-axis
-        );
-        ACDA_DEFINE_EVENT(
-            InputMouseButton,
-            WindowLayer*, // Input window
-            std::int32_t, // Mouse code
-            std::int32_t, // Input action
-            std::int32_t  // Input modifiers
-        );
-        ACDA_DEFINE_EVENT(
-            InputCursorEnter,
-            WindowLayer*,
-            bool // Whether the cursor entered or not
-        );
-        ACDA_DEFINE_EVENT(
-            InputChar,
-            WindowLayer*,
-            std::uint32_t // Unicode code points
-        );
+        class InputKey: public EventBase
+        {
+        public:
+            InputKey(
+                WindowLayer* const input_window,
+                std::int32_t key_code,
+                std::int32_t key_scancode,
+                std::int32_t action,
+                std::int32_t modifier
+            ):
+                Window(input_window),
+                KeyCode(key_code),
+                KeyScancode(key_scancode),
+                Action(action),
+                Modifier(modifier)
+            {}
+        public:
+            const WindowLayer* Window;
+            const std::int32_t KeyCode;
+            const std::int32_t KeyScancode;
+            const std::int32_t Action;
+            const std::int32_t Modifier;
+        };
+
+        class InputCursorPosition: public EventBase
+        {
+        public:
+            InputCursorPosition(WindowLayer* const input_window, const glm::vec2& cursor_position):
+                Window(input_window), CursorPosition(cursor_position)
+            {}
+        public:
+            WindowLayer* const Window;
+            const glm::vec2 CursorPosition;
+        };
+
+        class InputCursorMove: public EventBase
+        {
+        public:
+            InputCursorMove(WindowLayer* const input_window, const glm::vec2 cursor_move_distance):
+                Window(input_window), CursorMoveDistance(cursor_move_distance)
+            {}
+        public:
+            WindowLayer* const Window;
+            const glm::vec2 CursorMoveDistance;
+        };
+
+        class InputScroll: public EventBase
+        {
+        public:
+            InputScroll(WindowLayer* const input_window, float scroll_offet_vertical, float scroll_offset_horizontal):
+                Window(input_window), ScrollOffsetVertical(scroll_offet_vertical), ScrollOffsetHorizontal(scroll_offset_horizontal)
+            {}
+        public:
+            WindowLayer* const Window;
+            const float ScrollOffsetVertical;
+            const float ScrollOffsetHorizontal;
+        };
+
+        class InputMouseButton: public EventBase
+        {
+        public:
+            InputMouseButton(WindowLayer* const input_window, std::int32_t code, std::int32_t action, std::int32_t modifier):
+                Window(input_window), Code(code), Action(action), Modifier(modifier)
+            {}
+        public:
+            WindowLayer* const Window;
+            const std::int32_t Code;
+            const std::int32_t Action;
+            const std::int32_t Modifier;
+        };
+
+        class InputCursorEnter: public EventBase
+        {
+        public:
+            InputCursorEnter(WindowLayer* const input_window, bool entered):
+                Window(input_window), Entered(entered)
+            {}
+        public:
+            WindowLayer* const Window;
+            const bool Entered;
+        };
+
+        class InputChar: public EventBase
+        {
+        public:
+            InputChar(WindowLayer* const input_window, std::uint32_t unicode_codepoint):
+                Window(input_window), UnicodeCodepoint(unicode_codepoint)
+            {}
+        public:
+            WindowLayer* const Window;
+            const std::uint32_t UnicodeCodepoint;
+        };
     }
 }

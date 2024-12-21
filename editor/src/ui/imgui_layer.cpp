@@ -13,7 +13,7 @@ Arcadia::ImguiLayer::ImguiLayer(
     const std::shared_ptr<const WindowLayer>& window_layer,
     const std::function<void(ImguiLayer&)>& imgui_window_installer,
     const std::function<void()>& imgui_style_setter
-) :
+):
     iLayer("imgui"),
     _Window(window_layer)
 {
@@ -119,6 +119,5 @@ void Arcadia::ImguiLayer::ScaleUi(float factor)
 
 void Arcadia::ImguiLayer::_OnScaleImguiWindow(Events::ScaleImguiWindow& e)
 {
-    const auto& [scale] = e.DataTuple;
-    ScaleUi(scale);
+    ScaleUi(e.NewScale);
 }

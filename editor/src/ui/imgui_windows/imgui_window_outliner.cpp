@@ -137,7 +137,7 @@ void Arcadia::ImguiWindowOutliner::OnUpdate()
                             event_queue.Signal<Events::DeleteEntity>(name);
                         }
 
-#if 0 // We do not allow custom entity for now
+                    #if 0 // We do not allow custom entity for now
                         if(!_SelectedEntityName.empty())
                         {
                             ImGui::Separator();
@@ -172,7 +172,7 @@ void Arcadia::ImguiWindowOutliner::OnUpdate()
                                 ImGui::EndMenu();
                             }
                         }
-#endif
+                    #endif
 
                         ImGui::EndPopup();
                     }
@@ -185,8 +185,7 @@ void Arcadia::ImguiWindowOutliner::OnUpdate()
 
 void Arcadia::ImguiWindowOutliner::_OnOpenImguiWindow(Events::OpenImguiWindow& e)
 {
-    const auto& [id_string] = e.DataTuple;
-    if(id_string == GetIdString())
+    if(e.IdString == GetIdString())
     {
         _Opened = true;
     }
@@ -194,8 +193,7 @@ void Arcadia::ImguiWindowOutliner::_OnOpenImguiWindow(Events::OpenImguiWindow& e
 
 void Arcadia::ImguiWindowOutliner::_OnSceneActivated(Events::SceneActivated& e)
 {
-    const auto& [scene] = e.DataTuple;
-    _Scene = scene;
+    _Scene = e.Scene;
 }
 
 void Arcadia::ImguiWindowOutliner::_OnSceneDeactivated(Events::SceneDeactivated& e)
@@ -206,9 +204,8 @@ void Arcadia::ImguiWindowOutliner::_OnSceneDeactivated(Events::SceneDeactivated&
 
 void Arcadia::ImguiWindowOutliner::_OnRenameEntity(Events::RenameEntity& e)
 {
-    const auto& [old_name, new_name] = e.DataTuple;
-    if(old_name == _SelectedEntityName)
+    if(e.OldName == _SelectedEntityName)
     {
-        _SelectedEntityName = new_name;
+        _SelectedEntityName = e.NewName;
     }
 }

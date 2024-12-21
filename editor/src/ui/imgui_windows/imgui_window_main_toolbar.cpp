@@ -88,7 +88,7 @@ void Arcadia::ImguiWindowMainToolbar::OnUpdate()
             {
                 if(ImGui::Button("PLAY"))
                 {
-                    EventQueue::Instance().Signal<Events::TogglePlayMode>(true);
+                    EventQueue::Instance().Signal<Events::TogglePlayMode>();
                 }
             }
         }
@@ -100,8 +100,7 @@ void Arcadia::ImguiWindowMainToolbar::OnUpdate()
 
 void Arcadia::ImguiWindowMainToolbar::_OnSceneActivated(Events::SceneActivated& e)
 {
-    const auto& [scene] = e.DataTuple;
-    _Scene = scene;
+    _Scene = e.Scene;
 }
 
 void Arcadia::ImguiWindowMainToolbar::_OnSceneDeactivated(Events::SceneDeactivated& e)

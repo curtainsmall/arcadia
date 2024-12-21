@@ -94,72 +94,60 @@ ACDA_API void Arcadia::ImguiBackend::Shutdown(const WindowLayer& window)
 ACDA_API void Arcadia::ImguiBackend::OnEvent(EventBase& e)
 {
     if(EventDispatcher{ e }
-        .Dispatch<Events::WindowFocused>(ImguiBackend::OnWindowFocus)
-        .Dispatch<Events::InputCursorEnter>(ImguiBackend::OnInputCursorEnter)
-        .Dispatch<Events::InputCursorPos>(ImguiBackend::OnInputCursorPos)
-        .Dispatch<Events::InputMouseButton>(ImguiBackend::OnInputMouseButton)
-        .Dispatch<Events::InputScroll>(ImguiBackend::OnInputScroll)
-        .Dispatch<Events::InputKey>(ImguiBackend::OnInputKey)
-        .Dispatch<Events::InputChar>(ImguiBackend::OnInputChar)
-        //.dispatch<Events::MonitorConnect>(ImguiBackend::OnMonitorConnect) // We will manage monitors ourselves for now
-        .IsDispatched())
+       .Dispatch<Events::WindowSetFocused>(ImguiBackend::OnWindowSetFocused)
+       .Dispatch<Events::InputCursorEnter>(ImguiBackend::OnInputCursorEnter)
+       .Dispatch<Events::InputCursorPosition>(ImguiBackend::OnInputCursorPosition)
+       .Dispatch<Events::InputMouseButton>(ImguiBackend::OnInputMouseButton)
+       .Dispatch<Events::InputScroll>(ImguiBackend::OnInputScroll)
+       .Dispatch<Events::InputKey>(ImguiBackend::OnInputKey)
+       .Dispatch<Events::InputChar>(ImguiBackend::OnInputChar)
+       //.dispatch<Events::MonitorConnect>(ImguiBackend::OnMonitorConnect) // We will manage monitors ourselves for now
+       .IsDispatched())
     {
         auto& io = ImGui::GetIO();
         if(io.WantCaptureMouse || io.WantCaptureKeyboard)
         {
-            e.Handled = true;
-        }
-        else
-        {
-            e.Handled = false;
+            e.MarkHandled();
         }
     }
 }
 
-ACDA_API void Arcadia::ImguiBackend::OnWindowFocus(Events::WindowFocused& window_focused)
+ACDA_API void Arcadia::ImguiBackend::OnWindowSetFocused(Events::WindowSetFocused& e)
 {
-    const auto& [wnd_ptr, focused] = window_focused.DataTuple;
-    ImGui_ImplGlfw_WindowFocusCallback(wnd_ptr->GetGlfwWindow(), focused);
+    ImGui_ImplGlfw_WindowFocusCallback(e.Window->GetGlfwWindow(), e.Focused);
 }
 
-ACDA_API void Arcadia::ImguiBackend::OnInputCursorEnter(Events::InputCursorEnter& input_cursor_enter)
+ACDA_API void Arcadia::ImguiBackend::OnInputCursorEnter(Events::InputCursorEnter& e)
 {
-    const auto& [wnd_ptr, entered] = input_cursor_enter.DataTuple;
-    ImGui_ImplGlfw_CursorEnterCallback(wnd_ptr->GetGlfwWindow(), entered);
+    ImGui_ImplGlfw_CursorEnterCallback(e.Window->GetGlfwWindow(), e.Entered);
 }
 
-ACDA_API void Arcadia::ImguiBackend::OnInputCursorPos(Events::InputCursorPos& input_cursor_pos)
+ACDA_API void Arcadia::ImguiBackend::OnInputCursorPosition(Events::InputCursorPosition& e)
 {
-    const auto& [wnd_ptr, pos] = input_cursor_pos.DataTuple;
-    ImGui_ImplGlfw_CursorPosCallback(wnd_ptr->GetGlfwWindow(), pos.x, pos.y);
+    ImGui_ImplGlfw_CursorPosCallback(e.Window->GetGlfwWindow(), e.CursorPosition.x, e.CursorPosition.y);
 }
 
-ACDA_API void Arcadia::ImguiBackend::OnInputMouseButton(Events::InputMouseButton& input_mouse_button)
+ACDA_API void Arcadia::ImguiBackend::OnInputMouseButton(Events::InputMouseButton& e)
 {
-    const auto& [wnd_ptr, button, action, mods] = input_mouse_button.DataTuple;
-    ImGui_ImplGlfw_MouseButtonCallback(wnd_ptr->GetGlfwWindow(), button, action, mods);
+    ImGui_ImplGlfw_MouseButtonCallback(e.Window->GetGlfwWindow(), e.Code, e.Action, e.Modifier);
 }
 
-ACDA_API void Arcadia::ImguiBackend::OnInputScroll(Events::InputScroll& input_scroll)
+ACDA_API void Arcadia::ImguiBackend::OnInputScroll(Events::InputScroll& e)
 {
-    const auto& [wnd_ptr, Offset] = input_scroll.DataTuple;
-    ImGui_ImplGlfw_ScrollCallback(wnd_ptr->GetGlfwWindow(), Offset.x, Offset.y);
+    ImGui_ImplGlfw_ScrollCallback(e.Window->GetGlfwWindow(), e.ScrollOffsetHorizontal, e.ScrollOffsetVertical);
 }
 
-ACDA_API void Arcadia::ImguiBackend::OnInputKey(Events::InputKey& input_key)
+ACDA_API void Arcadia::ImguiBackend::OnInputKey(Events::InputKey& e)
 {
-    const auto& [wnd_ptr, key, scancode, action, mods] = input_key.DataTuple;
-    ImGui_ImplGlfw_KeyCallback(wnd_ptr->GetGlfwWindow(), key, scancode, action, mods);
+    ImGui_ImplGlfw_KeyCallback(e.Window->GetGlfwWindow(), e.KeyCode, e.KeyScancode, e.Action, e.Modifier);
 }
 
-ACDA_API void Arcadia::ImguiBackend::OnInputChar(Events::InputChar& input_char)
+ACDA_API void Arcadia::ImguiBackend::OnInputChar(Events::InputChar& e)
 {
-    const auto& [wnd_ptr, code] = input_char.DataTuple;
-    ImGui_ImplGlfw_CharCallback(wnd_ptr->GetGlfwWindow(), code);
+    ImGui_ImplGlfw_CharCallback(e.Window->GetGlfwWindow(), e.UnicodeCodepoint);
 }
 
-ACDA_API void Arcadia::ImguiBackend::OnMonitorConnect(Events::MonitorConnect& monitor_connection)
+ACDA_API void Arcadia::ImguiBackend::OnMonitorSetConnected(Events::MonitorSetConnected& e)
 {
-    const auto& [glfw_monitor_ptr, connection] = monitor_connection.DataTuple;
-    ImGui_ImplGlfw_MonitorCallback(glfw_monitor_ptr, connection);
+    ImGui_ImplGlfw_MonitorCallback(e.GlfwMonitor, e.Connected);
 }

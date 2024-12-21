@@ -330,14 +330,12 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
 
 void Arcadia::ImguiWindowViewport::_OnInputCursorMove(Events::InputCursorMove& e)
 {
-    const auto& [wnd_ptr, cursor_move] = e.DataTuple;
-    _CursorMoveDistance = cursor_move;
+    _CursorMoveDistance = e.CursorMoveDistance;
 }
 
 void Arcadia::ImguiWindowViewport::_OnOpenImguiWindow(Events::OpenImguiWindow& e)
 {
-    const auto& [id_string] = e.DataTuple;
-    if(id_string == GetIdString())
+    if(e.IdString == GetIdString())
     {
         _Opened = true;
     }
@@ -345,8 +343,7 @@ void Arcadia::ImguiWindowViewport::_OnOpenImguiWindow(Events::OpenImguiWindow& e
 
 void Arcadia::ImguiWindowViewport::_OnProjectBuilt(Events::ProjectBuilt& e)
 {
-    const auto& [project] = e.DataTuple;
-    _Project = project;
+    _Project = e.Project;
 }
 
 void Arcadia::ImguiWindowViewport::_OnProjectUnbuilt(Events::ProjectUnbuilt& e)
@@ -356,7 +353,7 @@ void Arcadia::ImguiWindowViewport::_OnProjectUnbuilt(Events::ProjectUnbuilt& e)
 
 void Arcadia::ImguiWindowViewport::_OnSceneActivated(Events::SceneActivated& e)
 {
-    const auto& [scene] = e.DataTuple;
+    const auto& scene = e.Scene;
     if(!scene->ContainsEntity(ViewportCameraEntityName))
     {
         auto& entity_info = scene->CreateEntity(ViewportCameraEntityName, "camera");
@@ -376,23 +373,20 @@ void Arcadia::ImguiWindowViewport::_OnSceneDeactivated(Events::SceneDeactivated&
 
 void Arcadia::ImguiWindowViewport::_OnSelectEntity(Events::SelectEntity& e)
 {
-    const auto& [entity_name] = e.DataTuple;
-    _SelectedEntityName = entity_name;
+    _SelectedEntityName = e.EntityName;
 }
 
 void Arcadia::ImguiWindowViewport::_OnRenameEntity(Events::RenameEntity& e)
 {
-    const auto& [old_name, new_name] = e.DataTuple;
-    if(old_name == _SelectedEntityName)
+    if(e.OldName == _SelectedEntityName)
     {
-        _SelectedEntityName = new_name;
+        _SelectedEntityName = e.NewName;
     }
 }
 
 void Arcadia::ImguiWindowViewport::_OnDeleteEntity(Events::DeleteEntity& e)
 {
-    const auto& [entity] = e.DataTuple;
-    if(_SelectedEntityName == entity)
+    if(_SelectedEntityName == e.EntityName)
     {
         _SelectedEntityName.clear();
     }
@@ -400,8 +394,7 @@ void Arcadia::ImguiWindowViewport::_OnDeleteEntity(Events::DeleteEntity& e)
 
 void Arcadia::ImguiWindowViewport::_OnRendererBuilt(Events::RendererBuilt& e)
 {
-    const auto& [renderer] = e.DataTuple;
-    _Renderer = renderer;
+    _Renderer = e.Renderer;
 }
 
 void Arcadia::ImguiWindowViewport::_OnRendererUnbuilt(Events::RendererUnbuilt& e)
@@ -411,8 +404,7 @@ void Arcadia::ImguiWindowViewport::_OnRendererUnbuilt(Events::RendererUnbuilt& e
 
 void Arcadia::ImguiWindowViewport::_OnPhysicsSimulatorBuilt(Events::PhysicsSimulatorBuilt& e)
 {
-    const auto& [physics_simulator] = e.DataTuple;
-    _PhysicsSimulator = physics_simulator;
+    _PhysicsSimulator = e.PhysicsSimulator;
 }
 
 void Arcadia::ImguiWindowViewport::_OnPhysicsSimulatorUnbuilt(Events::PhysicsSimulatorUnbuilt& e)
@@ -422,6 +414,5 @@ void Arcadia::ImguiWindowViewport::_OnPhysicsSimulatorUnbuilt(Events::PhysicsSim
 
 void Arcadia::ImguiWindowViewport::_OnShowGizmo(Events::ShowGizmo& e)
 {
-    const auto& [show_gizmo] = e.DataTuple;
-    _ShowGizmo = show_gizmo;
+    _ShowGizmo = e.ShouldShowGizmo;
 }

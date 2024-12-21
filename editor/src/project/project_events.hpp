@@ -15,56 +15,82 @@ namespace Arcadia
     {
         //==== Event for project ====//
 
-        ACDA_DEFINE_EVENT(
-            ProjectBuilt,
-            std::shared_ptr<Project>
-        );
-        ACDA_DEFINE_EVENT(
-            ProjectUnbuilt
-        );
-        ACDA_DEFINE_EVENT(
-            ProjectLoaded
-        );
-        ACDA_DEFINE_EVENT(
-            ProjectSaved
-        );
+        class ProjectBuilt: public EventBase
+        {
+        public:
+            ProjectBuilt(const std::shared_ptr<Project>& project):
+                Project(project)
+            {}
+
+        public:
+            const std::shared_ptr<Project> Project;
+        };
+
+        class ProjectUnbuilt: public EventBase
+        {};
+
+        class ProjectLoaded: public EventBase
+        {};
+
+        class ProjectSaved: public EventBase
+        {};
 
         //==== Event for renderer ====//
 
-        ACDA_DEFINE_EVENT(
-            RendererBuilt,
-            std::shared_ptr<iRenderer>
-        );
-        ACDA_DEFINE_EVENT(
-            RendererUnbuilt
-        );
+        class RendererBuilt: public EventBase
+        {
+        public:
+            RendererBuilt(std::shared_ptr<iRenderer> renderer):
+                Renderer(renderer)
+            {}
+        public:
+            const std::shared_ptr<iRenderer> Renderer;
+        };
+
+        class RendererUnbuilt: public EventBase
+        {};
 
         //==== Event for physics simulator ====//
 
-        ACDA_DEFINE_EVENT(
-            PhysicsSimulatorBuilt,
-            std::shared_ptr<PhysicsSimulator>
-        );
+        class PhysicsSimulatorBuilt: public EventBase
+        {
+        public:
+            PhysicsSimulatorBuilt(const std::shared_ptr<PhysicsSimulator>& physcis_simulator):
+                PhysicsSimulator(physcis_simulator)
+            {}
+        public:
+            const std::shared_ptr<PhysicsSimulator> PhysicsSimulator;
+        };
 
-        ACDA_DEFINE_EVENT(
-            PhysicsSimulatorUnbuilt
-        );
+        class PhysicsSimulatorUnbuilt: public EventBase
+        {};
 
         //==== Event for scene ====//
 
-        ACDA_DEFINE_EVENT(
-            SceneBuilt,
-            std::shared_ptr<Scene>
-        );
-        ACDA_DEFINE_EVENT(
-            SceneActivated,
-            std::shared_ptr<Scene>
-        );
-        ACDA_DEFINE_EVENT(
-            SceneDeactivated
-        );
-        ACDA_DEFINE_EVENT(
-            SceneUnbuilt
-        );
+        class SceneBuilt: public EventBase
+        {
+        public:
+            SceneBuilt(const std::shared_ptr<Scene>& scene):
+                Scene(scene)
+            {}
+        public:
+            const std::shared_ptr<Scene> Scene;
+        };
+
+        class SceneActivated: public EventBase
+        {
+        public:
+            SceneActivated(const std::shared_ptr<Scene>& scene):
+                Scene(scene)
+            {}
+        public:
+            const std::shared_ptr<Scene> Scene;
+        };
+
+        class SceneDeactivated: public EventBase
+        {};
+
+        class Sceneunbuilt: public EventBase
+        {};
     }
 }
