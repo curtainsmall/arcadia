@@ -81,7 +81,7 @@ namespace Arcadia
             ),
             _MementoData(memento_data),
             _OriginatorRestoreFunction(
-                [this]()
+                [&]()
         {
             MementoOriginator& originator = (*static_cast<std::function<MementoOriginator & ()>*>(_OriginatorRetriever.get()))();
             originator.Restore(_MementoData);

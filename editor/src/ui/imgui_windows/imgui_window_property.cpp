@@ -915,7 +915,7 @@ if(_ContainsComponent<component_type>(_SelectedEntityName) && ImGui::TreeNodeEx(
         memento_list\
             .Snapshot<component_type>(\
                 std::format("{} - {}", tab_name, description),\
-                [scene,this]() -> component_type&\
+                [&scene,this]() -> component_type&\
             {\
                 return scene->GetComponent<component_type>(_SelectedEntityName);\
             }\

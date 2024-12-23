@@ -314,7 +314,7 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
                             MementoList::Instance()
                                 .Snapshot<TransformComponent>(
                                     std::format("{} - {}", "Transform", description),
-                                    [scene, this]() -> TransformComponent&
+                                    [&]() -> TransformComponent&
                             {
                                 return scene->GetComponent<TransformComponent>(_SelectedEntityName);
                             }

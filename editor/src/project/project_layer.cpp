@@ -20,7 +20,7 @@
 
 #include"editor/editor_context.hpp"
 
-Arcadia::ProjectLayer::ProjectLayer():
+Arcadia::ProjectLayer::ProjectLayer() :
     iLayer("project")
 {
     const auto& app_config = AppConfig::Instance();
@@ -448,7 +448,6 @@ void Arcadia::ProjectLayer::_OnNewEntity(Events::NewEntity& e)
 
 void Arcadia::ProjectLayer::_OnRenameEntity(Events::RenameEntity& e)
 {
-
     _Project->GetActiveScene().RenameEntity(e.OldName, e.NewName);
 }
 
