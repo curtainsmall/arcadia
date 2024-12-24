@@ -198,7 +198,7 @@ Arcadia::OpenglContext::OpenglContext()
     auto error = glewInit();
     if(error != GLEW_OK)
     {
-        throw GlError(reinterpret_cast<const char*>(glewGetErrorString(error)));
+        throw Exceptions::GlError(reinterpret_cast<const char*>(glewGetErrorString(error)));
     }
     ACDA_GL_CALL(std::string gl_version_string(reinterpret_cast<const char*>(glGetString(GL_VERSION))));
     ACDA_LOG_INFO(std::format("OpenGL Version: {}", gl_version_string));

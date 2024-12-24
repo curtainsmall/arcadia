@@ -23,7 +23,7 @@ auto Arcadia::EventQueue::GetFront() -> EventBase&
 {
     if(!GetSize())
     {
-        throw EmptyQueue();
+        throw Exceptions::EmptyEventQueue();
     }
 
     return *_ProcessingQueue->front();

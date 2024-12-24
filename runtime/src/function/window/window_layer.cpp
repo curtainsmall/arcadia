@@ -11,7 +11,7 @@ Arcadia::WindowLayer::WindowLayer(
     glm::i32vec2 size,
     std::string title,
     std::int32_t multisample_count
-):
+) :
     iLayer(std::format("window_{}", title)),
     _Title(title),
     _MultisampleCount(multisample_count)
@@ -26,9 +26,9 @@ Arcadia::WindowLayer::WindowLayer(
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, gl.Version.Major);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, gl.Version.Minor);
         glfwWindowHint(GLFW_SAMPLES, _MultisampleCount);
-    #ifndef NDEBUG
+#ifndef NDEBUG
         glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
-    #endif // NDEBUG
+#endif // NDEBUG
     },
         [&](auto&) -> void
     {
@@ -42,7 +42,7 @@ Arcadia::WindowLayer::WindowLayer(
     {
         const char* desr = nullptr;
         auto err_code = glfwGetError(&desr);
-        throw GlfwError(std::format("Failed to create GLFW window, because {}", desr));
+        throw Exceptions::GlfwError(std::format("Failed to create GLFW window, because {}", desr));
     }
     glfwMakeContextCurrent(_GlfwWindow);
 

@@ -19,10 +19,14 @@ namespace Arcadia
         TessEvaluationShader = GL_TESS_EVALUATION_SHADER,
     };
 
+    namespace Exceptions
+    {
+        ACDA_DEFINE_EXCEPTION(GlShaderCompileFail);
+    }
+
     class GlShader: public Noncopyable
     {
     public:
-        ACDA_DEFINE_EXCEPTION(CompileFail);
 
         using SelfType = GlShader;
     public:

@@ -11,13 +11,13 @@ Arcadia::GlfwContext::GlfwContext()
     {
         const char* desr = nullptr;
         auto err_code = glfwGetError(&desr);
-        throw GlfwError(std::format("Failed to init GLFW, because {}", desr));
+        throw Exceptions::GlfwError(std::format("Failed to init GLFW, because {}", desr));
     }
 
     glfwSetErrorCallback(
         [](int err_type, const char* desr) -> void
     {
-        throw GlfwError(std::format("GLFW error[{0}]: {1}", err_type, desr));
+        throw Exceptions::GlfwError(std::format("GLFW error[{0}]: {1}", err_type, desr));
     }
     );
 }

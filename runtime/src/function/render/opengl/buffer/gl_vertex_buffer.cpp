@@ -50,7 +50,7 @@ void Arcadia::GlVertexBuffer::Bind() const
 {
     if(_GlId == 0)
     {
-        throw GlInvalid("Cannot bind null OpenGL vertex buffer");
+        throw Exceptions::GlInvalid("Cannot bind null OpenGL vertex buffer");
     }
 
     ACDA_GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, _GlId));

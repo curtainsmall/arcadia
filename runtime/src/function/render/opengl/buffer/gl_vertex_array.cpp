@@ -43,7 +43,7 @@ void Arcadia::GlVertexArray::Bind() const
 {
     if(_GlId == 0)
     {
-        throw GlInvalid("Cannot bind null OpenGL vertex array");
+        throw Exceptions::GlInvalid("Cannot bind null OpenGL vertex array");
     }
 
     ACDA_GL_CALL(glBindVertexArray(_GlId));

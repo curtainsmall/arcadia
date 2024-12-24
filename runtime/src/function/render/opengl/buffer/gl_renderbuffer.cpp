@@ -22,7 +22,7 @@ void Arcadia::GlRenderbuffer::Bind() const
 {
     if(_GlId == 0)
     {
-        throw GlInvalid("Cannot bind null OpenGL renderbuffer");
+        throw Exceptions::GlInvalid("Cannot bind null OpenGL renderbuffer");
     }
 
     ACDA_GL_CALL(glBindRenderbuffer(GL_RENDERBUFFER, _GlId));

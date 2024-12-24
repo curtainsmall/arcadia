@@ -3,16 +3,20 @@
 #include<functional>
 #include<vector>
 
-#include"platform/api_def.hpp"
 #include"core/exception.hpp"
 #include"core/math.hpp"
+#include"platform/api_def.hpp"
 
 namespace Arcadia
 {
+    namespace Exceptions
+    {
+        ACDA_DEFINE_EXCEPTION(Texture2dIncompatibleTextureSize);
+    }
+
     class Texture2d
     {
     public:
-        ACDA_DEFINE_EXCEPTION(IncompatibleTextureSize);
 
         using SelfType = Texture2d;
     public:

@@ -16,11 +16,14 @@
 
 namespace Arcadia
 {
+    namespace Exceptions
+    {
+        ACDA_DEFINE_EXCEPTION(GlPipelineLinkFailed);
+    }
+
     class GlPipeline: public Noncopyable
     {
     public:
-        ACDA_DEFINE_EXCEPTION(LinkFail);
-        ACDA_DEFINE_EXCEPTION(ValidationFail);
 
         using GlShadersBuilderType = std::function<void(const std::filesystem::path&, std::vector<GlShader>&)>;
 

@@ -75,7 +75,7 @@ auto Arcadia::File::Load() -> SelfType&
     std::ifstream ifs(_Filepath, std::ios_base::binary);
     if(ifs.fail())
     {
-        throw LoadFailed(std::format("Cannot open file at", _Filepath.generic_string()));
+        throw Exceptions::FileLoadFailed(std::format("Cannot open file at", _Filepath.generic_string()));
     }
     ifs.exceptions(std::ios_base::badbit);
 
@@ -109,7 +109,7 @@ auto Arcadia::File::Save() -> SelfType&
     std::ofstream ofs(_Filepath, std::ios_base::binary);
     if(ofs.fail())
     {
-        throw SaveFailed(std::format("Cannot open file at {}", _Filepath.generic_string()));
+        throw Exceptions::FileSaveFailed(std::format("Cannot open file at {}", _Filepath.generic_string()));
     }
     ofs.exceptions(std::ios_base::badbit);
 
@@ -151,7 +151,7 @@ auto Arcadia::File::GetSection(const std::string& section_name) -> SectionType&
     }
     catch(const std::out_of_range)
     {
-        throw SectionNotFound(std::format("Cannot find section named {}", section_name));
+        throw Exceptions::FileSectionNotFound(std::format("Cannot find section named {}", section_name));
     }
 }
 
@@ -163,7 +163,7 @@ auto Arcadia::File::GetSection(const std::string& section_name) const -> const S
     }
     catch(const std::out_of_range)
     {
-        throw SectionNotFound(std::format("Cannot find section named {}", section_name));
+        throw Exceptions::FileSectionNotFound(std::format("Cannot find section named {}", section_name));
     }
 }
 

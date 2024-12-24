@@ -5,12 +5,25 @@
 
 #include"platform/api_def.hpp"
 
-#define ACDA_DEFINE_EXCEPTION(exception_name) \
+#define _ACDA_GET_DEFINE_EXCEPTION_MACRO(_1, _2, name, ...) name
+
+#define ACDA_DEFINE_EXCEPTION(...) \
+_ACDA_GET_DEFINE_EXCEPTION_MACRO(__VA_ARGS__, _ACDA_DEFINE_EXCEPTION_WITH_MESSAGE, _ACDA_DEFINE_EXCEPTION)(__VA_ARGS__)
+
+#define _ACDA_DEFINE_EXCEPTION(exception_name) \
 class exception_name: public ::Arcadia::Exception{\
 public:\
-    inline exception_name(const std::string& msg = #exception_name ):\
-        ::Arcadia::Exception(msg){\
-    }\
+        inline exception_name(const std::string& msg = #exception_name) :\
+        ::Arcadia::Exception(msg)\
+    {}\
+}
+
+#define _ACDA_DEFINE_EXCEPTION_WITH_MESSAGE(exception_name, message) \
+class exception_name: public ::Arcadia::Exception{\
+public:\
+    inline exception_name(const std::string& msg = message ):\
+        ::Arcadia::Exception(msg)\
+    {}\
 }
 
 namespace Arcadia
@@ -27,5 +40,8 @@ namespace Arcadia
         {}
     };
 
-    ACDA_DEFINE_EXCEPTION(NullReturn);
+    namespace Exceptions
+    {
+        ACDA_DEFINE_EXCEPTION(NullReturn);
+    }
 }

@@ -49,7 +49,7 @@ namespace Arcadia
         using SelfType = BasicEvent<Args...>;
     public:
         /// @brief Conclass a signaled event
-        BasicEvent(Args ...args):
+        BasicEvent(Args ...args) :
             DataTuple(std::make_tuple<Args...>(std::forward<Args>(args)...))
         {}
         virtual ~BasicEvent() = default;
@@ -71,7 +71,7 @@ namespace Arcadia
     public:
         using SelfType = EventDispatcher;
     public:
-        EventDispatcher(EventBase& event):
+        EventDispatcher(EventBase& event) :
             _Event(&event)
         {}
         ~EventDispatcher() = default;
@@ -102,10 +102,14 @@ namespace Arcadia
         bool _Dispatched{ false };
     };
 
+    namespace Exceptions
+    {
+        ACDA_DEFINE_EXCEPTION(EmptyEventQueue);
+    }
+
     class EventQueue
     {
     public:
-        ACDA_DEFINE_EXCEPTION(EmptyQueue);
 
         using SelfType = EventQueue;
         using DebugExcludedEventTypeSetType = std::unordered_set<std::type_index>;
@@ -122,12 +126,12 @@ namespace Arcadia
         {
             _CurrentQueue->emplace(std::make_unique<Event>(std::forward<Args>(args)...));
 
-        #ifdef ACDA_DEBUG_MODE
+#ifdef ACDA_DEBUG_MODE
             if(!DebugExcludedEventTypeSet.contains(typeid(Event)))
             {
                 ACDA_LOG_DEBUG(std::format("Event signaled: {}", typeid(Event).name()));
             }
-        #endif
+#endif
             return *this;
         }
 
@@ -147,9 +151,9 @@ namespace Arcadia
         auto PopFront() -> bool;
 
     public:
-    #ifdef ACDA_DEBUG_MODE
+#ifdef ACDA_DEBUG_MODE
         DebugExcludedEventTypeSetType DebugExcludedEventTypeSet{};
-    #endif // ACDA_DEBUG_MODE
+#endif // ACDA_DEBUG_MODE
 
     private:
         _EventQueueType _QueueA{};

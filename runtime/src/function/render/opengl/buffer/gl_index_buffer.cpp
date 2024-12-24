@@ -40,7 +40,7 @@ void Arcadia::GlIndexBuffer::Bind() const
 {
     if(_GlId == 0)
     {
-        throw GlInvalid{ "Cannot bind null OpenGL index buffer" };
+        throw Exceptions::GlInvalid("Cannot bind null OpenGL index buffer");
     }
 
     ACDA_GL_CALL(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _GlId));

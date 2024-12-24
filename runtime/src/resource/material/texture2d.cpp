@@ -12,13 +12,13 @@ auto Arcadia::Texture2d::Cascade(
 {
     if(texture2d_1.Size != texture2d_2.Size)
     {
-        throw IncompatibleTextureSize{
+        throw Exceptions::Texture2dIncompatibleTextureSize(
             std::format("Size of texture2d 1 is {}x{}, while size of texture2d 2 is {}x{}",
                         texture2d_1.Size.x,
                         texture2d_1.Size.y,
                         texture2d_2.Size.x,
                         texture2d_2.Size.y)
-        };
+        );
     }
 
     Texture2d res{};

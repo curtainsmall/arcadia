@@ -18,7 +18,7 @@ auto Arcadia::Decompose(const glm::mat4& transform) -> std::tuple<glm::vec3, glm
     // Normalize the matrix.
     if(glm::epsilonEqual(local_matrix[3][3], static_cast<T>(0), glm::epsilon<T>()))
     {
-        throw NullReturn();
+        throw Exceptions::NullReturn();
     }
 
     // First, isolate perspective.  This is the messiest.

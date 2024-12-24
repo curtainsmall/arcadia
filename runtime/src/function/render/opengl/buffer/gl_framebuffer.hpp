@@ -9,10 +9,14 @@
 
 namespace Arcadia
 {
+    namespace Exceptions
+    {
+        ACDA_DEFINE_EXCEPTION(GlFramebufferIncomplete);
+    }
+
     class GlFramebuffer:Noncopyable
     {
     public:
-        ACDA_DEFINE_EXCEPTION(Imcomplete);
 
         using SelfType = GlFramebuffer;
     public:

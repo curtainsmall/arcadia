@@ -4,9 +4,9 @@
 #include<fstream>
 #include<unordered_map>
 
-#include"platform/api_def.hpp"
 #include"core/exception.hpp"
 #include"core/serialization.hpp"
+#include"platform/api_def.hpp"
 
 namespace Arcadia
 {
@@ -19,13 +19,16 @@ namespace Arcadia
     [[nodiscard]]
     ACDA_API auto LoadText(const std::filesystem::path& filepath) -> std::string;
 
+    namespace Exceptions
+    {
+        ACDA_DEFINE_EXCEPTION(FileLoadFailed);
+        ACDA_DEFINE_EXCEPTION(FileSaveFailed);
+        ACDA_DEFINE_EXCEPTION(FileSectionNotFound);
+    }
+
     class File
     {
     public:
-        ACDA_DEFINE_EXCEPTION(LoadFailed);
-        ACDA_DEFINE_EXCEPTION(SaveFailed);
-        ACDA_DEFINE_EXCEPTION(SectionNotFound);
-
         using SectionType = Serialization::BufferType;
         using SectionStorageType = std::unordered_map<std::string, SectionType>;
 

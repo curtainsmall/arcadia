@@ -19,8 +19,11 @@
 
 namespace Arcadia
 {
-    ACDA_DEFINE_EXCEPTION(GlError);
-    ACDA_DEFINE_EXCEPTION(GlInvalid);
+    namespace Exceptions
+    {
+        ACDA_DEFINE_EXCEPTION(GlError);
+        ACDA_DEFINE_EXCEPTION(GlInvalid);
+    }
 
     /// @brief Check OpenGL error and throw Arcadia exception if found
     /// @param fn_name Name of the API call that generated error

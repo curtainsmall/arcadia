@@ -57,10 +57,14 @@ namespace Arcadia
         glm::vec3 // color
     >;
 
+    namespace Exceptions
+    {
+        ACDA_DEFINE_EXCEPTION(GlRendererTooManyLights);
+    }
+
     class GlRenderer: public iRenderer
     {
     public:
-        ACDA_DEFINE_EXCEPTION(TooManyLights);
 
         using SelfType = GlRenderer;
     public:

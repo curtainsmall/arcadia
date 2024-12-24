@@ -23,7 +23,7 @@ Arcadia::GlShader::GlShader(const std::string& source_code, GlShaderType shader_
         ACDA_GL_CALL(glGetShaderInfoLog(_GlId, length, nullptr, msg.data()));
         ACDA_GL_CALL(glDeleteShader(_GlId));
         _GlId = 0;
-        throw CompileFail(msg);
+        throw Exceptions::GlShaderCompileFail(msg);
     }
 }
 

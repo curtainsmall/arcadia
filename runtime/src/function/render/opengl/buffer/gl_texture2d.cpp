@@ -59,7 +59,7 @@ void Arcadia::GlTexture2d::Bind(GLenum slot)
 {
     if(_GlId == 0)
     {
-        throw GlInvalid("Cannot bind null OpenGL texture2d");
+        throw Exceptions::GlInvalid("Cannot bind null OpenGL texture2d");
     }
     _Slot = slot;
     ACDA_GL_CALL(glActiveTexture(GL_TEXTURE0 + slot));
@@ -82,7 +82,7 @@ void Arcadia::GlTexture2d::SetTextureParameter(GLenum pname, GLint param) const
 {
     if(_GlId == 0 || _Slot == -1)
     {
-        throw GlInvalid("Cannot set texture parameter to an unbound OpenGL Texture");
+        throw Exceptions::GlInvalid("Cannot set texture parameter to an unbound OpenGL Texture");
     }
 
     ACDA_GL_CALL(glTexParameteri(GL_TEXTURE_2D, pname, param));
@@ -92,7 +92,7 @@ void Arcadia::GlTexture2d::SetTextureParameter(GLenum pname, GLfloat param) cons
 {
     if(_GlId == 0 || _Slot == -1)
     {
-        throw GlInvalid("Cannot set texture parameter to an unbound OpenGL Texture");
+        throw Exceptions::GlInvalid("Cannot set texture parameter to an unbound OpenGL Texture");
     }
 
     ACDA_GL_CALL(glTexParameterf(GL_TEXTURE_2D, pname, param));

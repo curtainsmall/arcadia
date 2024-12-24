@@ -13,7 +13,10 @@
 
 namespace Arcadia
 {
-    ACDA_DEFINE_EXCEPTION(ImguiError);
+    namespace Exceptions
+    {
+        ACDA_DEFINE_EXCEPTION(ImguiError);
+    }
 
     class ImguiLayer: public iLayer
     {

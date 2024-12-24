@@ -30,7 +30,7 @@ Arcadia::GlPipeline::GlPipeline(
         ACDA_GL_CALL(glGetProgramInfoLog(_GlId, length, nullptr, msg.data()));
         ACDA_GL_CALL(glDeleteProgram(_GlId));
         _GlId = 0;
-        throw LinkFail(msg);
+        throw Exceptions::GlPipelineLinkFailed(msg);
     }
 
     ACDA_GL_CALL(glValidateProgram(_GlId));
@@ -44,7 +44,7 @@ Arcadia::GlPipeline::GlPipeline(
         ACDA_GL_CALL(glGetProgramInfoLog(_GlId, length, nullptr, msg.data()));
         ACDA_GL_CALL(glDeleteProgram(_GlId));
         _GlId = 0;
-        throw LinkFail(msg);
+        throw Exceptions::GlPipelineLinkFailed(msg);
     }
 }
 
@@ -76,7 +76,7 @@ void Arcadia::GlPipeline::Use() const
 {
     if(_GlId == 0)
     {
-        throw GlInvalid("Cannot use null OpenGL pipeline");
+        throw Exceptions::GlInvalid("Cannot use null OpenGL pipeline");
     }
     ACDA_GL_CALL(glUseProgram(_GlId));
 }

@@ -39,11 +39,15 @@ namespace Arcadia
     template<typename Layer>
     concept cLayer = std::derived_from<Layer, iLayer>;
 
+    namespace Exceptions
+    {
+        ACDA_DEFINE_EXCEPTION(LayerStackOutOfRange);
+        ACDA_DEFINE_EXCEPTION(EmptyLayerStack);
+    }
+
     class LayerStack
     {
     public:
-        ACDA_DEFINE_EXCEPTION(OutOfRange);
-        ACDA_DEFINE_EXCEPTION(EmptyStack);
 
         using LayerVectorType = std::vector<std::shared_ptr<iLayer>>;
 
@@ -95,7 +99,7 @@ namespace Arcadia
         {
             if(idx >= GetSize())
             {
-                throw OutOfRange{ std::format("Index out of range: {}",idx) };
+                throw Exceptions::LayerStackOutOfRange(std::format("Index out of range: {}", idx));
             }
 
             return static_cast<Layer&>(*_Layers.at(GetSize() - idx - 1));
@@ -106,7 +110,7 @@ namespace Arcadia
         {
             if(!GetSize())
             {
-                throw EmptyStack{};
+                throw Exceptions::EmptyLayerStack();
             }
             return std::static_pointer_cast<Layer>(_Layers.front());
         }
@@ -116,7 +120,7 @@ namespace Arcadia
         {
             if(!GetSize())
             {
-                throw EmptyStack{};
+                throw Exceptions::EmptyLayerStack();
             }
             return std::static_pointer_cast<Layer>(_Layers.back());
         }
