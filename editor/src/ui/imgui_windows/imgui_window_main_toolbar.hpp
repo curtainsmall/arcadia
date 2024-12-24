@@ -10,7 +10,7 @@
 
 namespace Arcadia
 {
-    class ImguiWindowMainToolbar: public iImguiWindow
+    class ImguiWindowMainToolbar: public ImguiWindowInterface
     {
     public:
         using SelfType = ImguiWindowMainToolbar;
@@ -18,7 +18,7 @@ namespace Arcadia
         ACDA_IMGUI_WINDOW_ID_STR_GETTERS("###toolbar");
     public:
         ImguiWindowMainToolbar() :
-            iImguiWindow(true, "Toolbar")
+            ImguiWindowInterface(true, "Toolbar")
         {}
         virtual ~ImguiWindowMainToolbar() = default;
 

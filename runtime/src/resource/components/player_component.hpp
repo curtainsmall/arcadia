@@ -1,15 +1,15 @@
 #pragma once
 
-#include"platform/api_def.hpp"
 #include"core/memento/memento.hpp"
 #include"core/nlohmann_json_header.hpp"
+#include"platform/api_def.hpp"
 #include"resource/components/component_interface.hpp"
 
 namespace Arcadia
 {
     class PlayerComponent:
-        public iComponent,
-        public iMementoOriginator
+        public ComponentInterface,
+        public MementoOriginatorInterface
     {
     public:
         using SelfType = PlayerComponent;

@@ -21,7 +21,7 @@
 #include"editor/editor_context.hpp"
 
 Arcadia::ProjectLayer::ProjectLayer() :
-    iLayer("project")
+    LayerInterface("project")
 {
     const AppConfig& app_config = AppConfig::Instance();
     EventQueue& event_queue = EventQueue::Instance();
@@ -345,7 +345,7 @@ void Arcadia::ProjectLayer::_OnCreateScene(Events::CreateScene& e)
 {
     ACDA_ASSERT(_Project);
 
-    std::shared_ptr<Scene>& scene_sptr = _Project->Scenes.try_emplace(
+    std::shared_ptr<Scene>& scene_sptr = _Project->SceneStorage.try_emplace(
         e.Name,
         std::make_shared<Scene>(e.Name)
     ).first->second;
@@ -386,7 +386,7 @@ void Arcadia::ProjectLayer::_OnDeleteScene(Events::DeleteScene& e)
     {
         case pfd::button::ok:
         {
-            _Project->Scenes.erase(scene_name);
+            _Project->SceneStorage.erase(scene_name);
             _Project->SetActiveScene();
             break;
         }

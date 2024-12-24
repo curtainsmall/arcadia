@@ -12,7 +12,7 @@ Arcadia::WindowLayer::WindowLayer(
     std::string title,
     std::int32_t multisample_count
 ) :
-    iLayer(std::format("window_{}", title)),
+    LayerInterface(std::format("window_{}", title)),
     _Title(title),
     _MultisampleCount(multisample_count)
 {

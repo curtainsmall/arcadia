@@ -3,11 +3,11 @@
 #include<memory>
 #include<string>
 
-#include"platform/api_def.hpp"
 #include"core/event/event.hpp"
 #include"function/input/input_events.hpp"
 #include"function/physics/physics_simulator.hpp"
 #include"function/render/renderer.hpp"
+#include"platform/api_def.hpp"
 #include"resource/scene.hpp"
 #include"ui/imgui_header.hpp"
 
@@ -18,7 +18,7 @@
 
 namespace Arcadia
 {
-    class ImguiWindowViewport: public iImguiWindow
+    class ImguiWindowViewport: public ImguiWindowInterface
     {
     public:
         enum class GizmoOption
@@ -41,7 +41,7 @@ namespace Arcadia
             bool open,
             const std::string& title
         ) :
-            iImguiWindow(open, title)
+            ImguiWindowInterface(open, title)
         {}
         virtual ~ImguiWindowViewport() = default;
 
@@ -69,7 +69,7 @@ namespace Arcadia
     private:
         std::weak_ptr<Project> _Project{};
         std::weak_ptr<Scene> _SceneWeakPtr{};
-        std::weak_ptr<iRenderer> _Renderer{};
+        std::weak_ptr<RendererInterface> _Renderer{};
         std::weak_ptr<PhysicsSimulator> _PhysicsSimulator{};
 
         std::string _SelectedEntityName{};

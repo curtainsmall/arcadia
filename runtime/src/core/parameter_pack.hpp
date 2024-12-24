@@ -23,11 +23,14 @@ namespace Arcadia
         static constexpr std::size_t Size = std::tuple_size_v<TupleType>;
     };
 
-    template<
-        typename T,
-        typename Pack
-    >
-    concept cTypeInParameterPack =
-        cInstantiatedFrom<Pack, ParameterPack>
-        && Pack::template ContainsType<T>;
+    namespace Concepts
+    {
+        template<
+            typename T,
+            typename Pack
+        >
+        concept TypeInParameterPack =
+            Concepts::InstantiatedFrom<Pack, ParameterPack>
+            && Pack::template ContainsType<T>;
+    }
 }

@@ -119,7 +119,7 @@ namespace Arcadia
         /// @param name Name of the entity
         /// @param ...args Arguments for constructing component
         /// @return Emplaced component
-        template<cComponent Component, typename ...Args>
+        template<Concepts::Component Component, typename ...Args>
         auto EmplaceComponent(const std::string& name, Args&& ...args) -> Component&
         {
             return _Registry.emplace<Component>(_GetEntity(name), std::forward<Args>(args)...);
@@ -131,7 +131,7 @@ namespace Arcadia
         /// @param name Name of the entity
         /// @param ...args Arguments for constructing component
         /// @return Replaced component
-        template<cComponent Component, typename ...Args>
+        template<Concepts::Component Component, typename ...Args>
         auto ReplaceComponent(const std::string& name, Args&& ...args) -> Component&
         {
             ACDA_ASSERT(ContainsAllComponents<Component>(name));
@@ -145,7 +145,7 @@ namespace Arcadia
         /// @param name Name of the entity
         /// @param ...args Arguments for constructing component
         /// @return Emplaced/replaced component
-        template<cComponent Component, typename ...Args>
+        template<Concepts::Component Component, typename ...Args>
         auto EmplaceOrReplaceComponent(const std::string& name, Args&& ...args) -> Component&
         {
             return _Registry.emplace_or_replace<Component>(_GetEntity(name), std::forward<Args>(args)...);
@@ -155,7 +155,7 @@ namespace Arcadia
         /// @tparam ...Components Types of component
         /// @param name Name of the entity
         /// @return Got component(s)
-        template<cComponent ...Components>
+        template<Concepts::Component ...Components>
         [[nodiscard]]
         auto GetComponent(const std::string& name) const -> decltype(auto)
         {
@@ -165,7 +165,7 @@ namespace Arcadia
         }
 
         /// @copydoc Scene::Get
-        template<cComponent ...Components>
+        template<Concepts::Component ...Components>
         [[nodiscard]]
         auto GetComponent(const std::string& name) -> decltype(auto)
         {
@@ -174,14 +174,14 @@ namespace Arcadia
             return _Registry.get<Components...>(_GetEntity(name));
         }
 
-        template<cComponent ...Components>
+        template<Concepts::Component ...Components>
         [[nodiscard]]
         auto ContainsAllComponents(const std::string& name) const -> bool
         {
             return _Registry.all_of<Components...>(_GetEntity(name));
         }
 
-        template<cComponent ...Components>
+        template<Concepts::Component ...Components>
         [[nodiscard]]
         auto ContainsAnyComponent(const std::string& name) const -> bool
         {
@@ -191,7 +191,7 @@ namespace Arcadia
         /// @brief Remove component from entity
         /// @tparam ...Component Type of component
         /// @param name Name of the entity
-        template<cComponent ...Component>
+        template<Concepts::Component ...Component>
         auto RemoveComponent(const std::string& name) -> RegistryType::size_type
         {
             auto count = _Registry.remove<Component...>(_GetEntity(name));
@@ -203,7 +203,7 @@ namespace Arcadia
         /// @tparam ...ExcludeComponents Types of component used to filter the view
         /// @param exclude Helper class to specify @ref ...ExcludeComponents
         /// @return Created view
-        template<cComponent ...Components, cComponent ...ExcludeComponents>
+        template<Concepts::Component ...Components, Concepts::Component ...ExcludeComponents>
         [[nodiscard]]
         auto GetComponentView(entt::exclude_t<ExcludeComponents...> exclude = entt::exclude_t{}) -> decltype(auto)
         {
@@ -212,7 +212,7 @@ namespace Arcadia
         }
 
         /// @copydoc scene::view
-        template<cComponent ...Components, cComponent ...ExcludeComponents>
+        template<Concepts::Component ...Components, Concepts::Component ...ExcludeComponents>
         [[nodiscard]]
         auto GetComponentView(entt::exclude_t<ExcludeComponents...> exclude= entt::exclude_t{}) const -> decltype(auto)
         {
@@ -226,7 +226,7 @@ namespace Arcadia
         /// @param get Helper class to specify @ref ...GetComponents
         /// @param exclude Helper class to specify @ref ...ExcludeComponents
         /// @return
-        template<cComponent ...OwnedComponents, cComponent ...GetComponents, cComponent ...ExcludeComponents>
+        template<Concepts::Component ...OwnedComponents, Concepts::Component ...GetComponents, Concepts::Component ...ExcludeComponents>
         [[nodiscard]]
         auto GetComponetGroup(entt::get_t<GetComponents...> get = entt::get_t{}, entt::exclude_t<ExcludeComponents...> exclude= entt::exclude_t{}) -> decltype(auto)
         {

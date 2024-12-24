@@ -20,25 +20,28 @@ virtual auto GetTypeString() const -> std::string override\
 
 namespace Arcadia
 {
-    class iComponent: public Noncopyable
+    class ComponentInterface: public Noncopyable
     {
     public:
         virtual auto GetTypeString() const->std::string = 0;
     };
 
-    template<typename Component>
-    concept cComponent =
-        std::derived_from<Component, iComponent>
-        && requires(const Component comp, const nlohmann::json json)
+    namespace Concepts
     {
+        template<typename T>
+        concept Component =
+            std::derived_from<T, ComponentInterface>
+            && requires(const T comp, const nlohmann::json json)
         {
-            Component::GetTypeStringStatic()
-        }->std::same_as<std::string>;
+            {
+                T::GetTypeStringStatic()
+            }->std::same_as<std::string>;
 
-        {
-            comp.ToJson()
-        }->std::same_as<nlohmann::json>;
+            {
+                comp.ToJson()
+            }->std::same_as<nlohmann::json>;
 
-        Component(json);
-    };
+            T(json);
+        };
+    }
 }

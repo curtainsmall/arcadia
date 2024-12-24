@@ -72,7 +72,7 @@ namespace Arcadia
         ACDA_DEFINE_EXCEPTION(GlRendererTooManyLights);
     }
 
-    class GlRenderer: public iRenderer
+    class GlRenderer: public RendererInterface
     {
     public:
 
@@ -81,7 +81,7 @@ namespace Arcadia
         GlRenderer(const std::filesystem::path& gl_shader_folder_path);
         virtual ~GlRenderer() = default;
 
-        /// @copydoc iRenderer::IsInBuild
+        /// @copydoc RendererInterface::IsInBuild
         [[nodiscard]]
         virtual auto IsInBuild() const -> bool override
         {

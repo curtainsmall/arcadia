@@ -17,8 +17,8 @@
 namespace Arcadia
 {
     class ModelComponent:
-        public iComponent,
-        public iMementoOriginator
+        public ComponentInterface,
+        public MementoOriginatorInterface
     {
     public:
         using IdentifiableMeshesType = Identifiable<std::vector<Mesh>>;

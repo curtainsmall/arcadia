@@ -3,8 +3,8 @@
 #include<functional>
 #include<string>
 
-#include"platform/api_def.hpp"
 #include"core/event/event.hpp"
+#include"platform/api_def.hpp"
 
 // ImGui window ID should follow: Title###id so that we can change the title for a curtain window
 #define ACDA_IMGUI_WINDOW_ID_STR_GETTERS(id_str) \
@@ -21,19 +21,19 @@ virtual auto GetIdString() const -> std::string override\
 
 namespace Arcadia
 {
-    class iImguiWindow
+    class ImguiWindowInterface
     {
     public:
-        using SelfType = iImguiWindow;
+        using SelfType = ImguiWindowInterface;
     public:
-        iImguiWindow(
+        ImguiWindowInterface(
             bool open = false,
             const std::string& title={}
         ) :
             _Opened(open),
             _Title(title)
         {}
-        virtual ~iImguiWindow() = default;
+        virtual ~ImguiWindowInterface() = default;
 
         [[nodiscard]]
         auto Open() const -> bool
@@ -57,11 +57,14 @@ namespace Arcadia
         std::string _Title{};
     };
 
-    template<typename ImGuiWindow>
-    concept cImguiWindow = requires{
-        std::derived_from<ImGuiWindow, iImguiWindow>;
-        {
-            ImGuiWindow::GetIdStringStatic()
-        } -> std::same_as<std::string>;
-    };
+    namespace Concepts
+    {
+        template<typename T>
+        concept ImguiWindow = requires{
+            std::derived_from<T, ImguiWindowInterface>;
+            {
+                T::GetIdStringStatic()
+            } -> std::same_as<std::string>;
+        };
+    }
 }

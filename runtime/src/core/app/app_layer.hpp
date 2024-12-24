@@ -2,26 +2,26 @@
 
 #include<memory>
 
-#include"platform/api_def.hpp"
 #include"core/event/event.hpp"
 #include"core/layer/layer.hpp"
+#include"platform/api_def.hpp"
 
 auto main() -> int;
 
 namespace Arcadia
 {
-    class iAppLayer: public iLayer
+    class AppLayerInterface: public LayerInterface
     {
         friend auto ::main() -> int;
     public:
-        using SelfType = iAppLayer;
+        using SelfType = AppLayerInterface;
     public:
-        iAppLayer();
-        virtual ~iAppLayer();
+        AppLayerInterface();
+        virtual ~AppLayerInterface();
 
         virtual void OnEvent(EventBase&) override = 0;
         virtual void OnUpdate() override = 0;
     };
 
-    ACDA_API auto CreateApplication() -> std::unique_ptr<iAppLayer>;
+    ACDA_API auto CreateApplication() -> std::unique_ptr<AppLayerInterface>;
 }

@@ -23,14 +23,14 @@ namespace Arcadia
         ACDA_DEFINE_EXCEPTION(RendererDrawFail);
     }
 
-    class iRenderer: public Noncopyable
+    class RendererInterface: public Noncopyable
     {
     public:
 
-        using SelfType = iRenderer;
+        using SelfType = RendererInterface;
     public:
-        iRenderer() = default;
-        virtual ~iRenderer() = default;
+        RendererInterface() = default;
+        virtual ~RendererInterface() = default;
 
         /// @brief Check whether the physcis simulator is in build
         virtual auto IsInBuild() const -> bool = 0;
@@ -72,6 +72,9 @@ namespace Arcadia
         virtual auto GetGraphicApiType() const->GraphicApi::Type = 0;
     };
 
-    template<typename Renderer>
-    concept cRenderer = std::derived_from<Renderer, iRenderer>;
+    namespace Concepts
+    {
+        template<typename T>
+        concept Renderer = std::derived_from<T, RendererInterface>;
+    }
 }

@@ -31,8 +31,8 @@ namespace Arcadia
     };
 
     class TransformComponent:
-        public iComponent,
-        public iMementoOriginator
+        public ComponentInterface,
+        public MementoOriginatorInterface
     {
     public:
         using SelfType = TransformComponent;

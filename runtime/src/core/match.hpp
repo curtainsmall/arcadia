@@ -17,7 +17,7 @@ namespace Arcadia
 
     template<
         typename Ret,
-        cInstantiatedFrom<std::variant> Variant,
+        Concepts::InstantiatedFrom<std::variant> Variant,
         typename ...BranchFns
     >
     ACDA_API auto MatchVariant(Variant& variant, BranchFns&& ...fns) -> Ret
@@ -32,7 +32,7 @@ namespace Arcadia
 
     template<
         typename Ret,
-        cInstantiatedFrom<std::variant> Variant,
+        Concepts::InstantiatedFrom<std::variant> Variant,
         typename ...BranchFns
     >
     ACDA_API auto MatchVariant(const Variant& variant, BranchFns&& ...fns) -> Ret

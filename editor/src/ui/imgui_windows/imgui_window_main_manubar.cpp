@@ -97,7 +97,7 @@ void Arcadia::ImguiWindowPopupCreateScene::operator()(const std::shared_ptr<cons
         ImGui::Text("Scene name");
         if(ImGui::InputText("##scene_name", &_Name, input_text_flags))
         {
-            _NameAvailable = !project->Scenes.contains(_Name);
+            _NameAvailable = !project->SceneStorage.contains(_Name);
             if(_Name.empty())
             {
                 ImGui::TextColored({ 204,80,69,255 }, "Scene name cannot empty");
@@ -205,14 +205,14 @@ void Arcadia::ImguiWindowMainMenubar::_ShowEditMenu()
             _ImguiWindowPopupCreateProject.Opened = true;
         }
 
-        bool has_scene = project_uptr && project_uptr->Scenes.size();
+        bool has_scene = project_uptr && project_uptr->SceneStorage.size();
         bool has_active_scene = has_scene && project_uptr->HasActiveScene();
 
         if(ImGui::BeginMenu("Select Scene", has_scene))
         {
             ACDA_ASSERT(project_uptr);
 
-            for(const auto& [key, scene] : project_uptr->Scenes)
+            for(const auto& [key, scene] : project_uptr->SceneStorage)
             {
                 if(ImGui::MenuItem(key.c_str()))
                 {

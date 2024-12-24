@@ -7,7 +7,7 @@
 
 namespace Arcadia
 {
-    class ImguiWindowMainStatusbar: public iImguiWindow
+    class ImguiWindowMainStatusbar: public ImguiWindowInterface
     {
     public:
         using SelfType = ImguiWindowMainStatusbar;
@@ -15,7 +15,7 @@ namespace Arcadia
         ACDA_IMGUI_WINDOW_ID_STR_GETTERS("###statusbar");
 
         ImguiWindowMainStatusbar() :
-            iImguiWindow(true, "Statusbar")
+            ImguiWindowInterface(true, "Statusbar")
         {}
         virtual ~ImguiWindowMainStatusbar() = default;
 

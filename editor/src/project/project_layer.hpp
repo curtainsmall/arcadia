@@ -2,13 +2,13 @@
 
 #include<memory>
 
-#include"platform/api_def.hpp"
 #include"core/event/event.hpp"
 #include"core/file/file.hpp"
 #include"core/layer/layer.hpp"
 #include"function/physics/physics_simulator.hpp"
 #include"function/render/renderer.hpp"
 #include"function/window/window_events.hpp"
+#include"platform/api_def.hpp"
 
 #include"project/project.hpp"
 #include"project/project_events.hpp"
@@ -16,7 +16,7 @@
 
 namespace Arcadia
 {
-    class ProjectLayer: public iLayer
+    class ProjectLayer: public LayerInterface
     {
     public:
         ProjectLayer();
@@ -62,7 +62,7 @@ namespace Arcadia
         std::filesystem::path _ProjectFilepath{};
         std::shared_ptr<Project> _Project{};
 
-        std::shared_ptr<iRenderer> _Renderer{};
+        std::shared_ptr<RendererInterface> _Renderer{};
         std::shared_ptr<PhysicsSimulator> _PhysicsSimulator{};
     };
 }

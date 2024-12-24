@@ -2,10 +2,10 @@
 
 #include<memory>
 
-#include"platform/api_def.hpp"
 #include"core/event/event.hpp"
 #include"function/physics/physics_simulator.hpp"
 #include"function/render/renderer.hpp"
+#include"platform/api_def.hpp"
 #include"ui/imgui_window.hpp"
 
 #include"project/project.hpp"
@@ -27,7 +27,7 @@ namespace Arcadia
     public:
         using SelfType = ImguiWindowStateRenderer;
     public:
-        void operator()(const iRenderer& renderer);
+        void operator()(const RendererInterface& renderer);
     };
 
     class ImguiWindowStatePhysicsSimulator
@@ -41,7 +41,7 @@ namespace Arcadia
         bool _ShouldLinkUpsAndSpu{ true };
     };
 
-    class ImguiWindowState: public iImguiWindow
+    class ImguiWindowState: public ImguiWindowInterface
     {
     public:
         using SelfType = ImguiWindowState;
@@ -52,7 +52,7 @@ namespace Arcadia
             bool open,
             const std::string& title
         ) :
-            iImguiWindow(open, title)
+            ImguiWindowInterface(open, title)
         {}
         virtual ~ImguiWindowState() = default;
 
@@ -70,7 +70,7 @@ namespace Arcadia
 
     private:
         std::weak_ptr<Scene> _SceneWeakPtr{};
-        std::weak_ptr<iRenderer> _Renderer{};
+        std::weak_ptr<RendererInterface> _Renderer{};
         std::weak_ptr<PhysicsSimulator> _PhysicsSimulator{};
 
         ImguiWindowStateScene _ImguiWindowStateScene{};

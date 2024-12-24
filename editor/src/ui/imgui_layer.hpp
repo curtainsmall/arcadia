@@ -18,7 +18,7 @@ namespace Arcadia
         ACDA_DEFINE_EXCEPTION(ImguiError);
     }
 
-    class ImguiLayer: public iLayer
+    class ImguiLayer: public LayerInterface
     {
     public:
         using SelfType = ImguiLayer;
@@ -37,7 +37,7 @@ namespace Arcadia
         }
 
         [[nodiscard]]
-        auto GetImguiWindow() const -> const std::vector<std::unique_ptr<iImguiWindow>>&
+        auto GetImguiWindow() const -> const std::vector<std::unique_ptr<ImguiWindowInterface>>&
         {
             return _ImguiWindow;
         }
@@ -45,7 +45,7 @@ namespace Arcadia
         virtual void OnEvent(EventBase& e) override;
         virtual void OnUpdate() override;
 
-        template<cImguiWindow ImGuiWindow, typename ...Args>
+        template<Concepts::ImguiWindow ImGuiWindow, typename ...Args>
         auto EmplaceImguiWindow(Args&& ...args) -> SelfType&
         {
             _ImguiWindow.emplace_back(std::make_unique<ImGuiWindow>(std::forward<Args>(args)...));
@@ -63,6 +63,6 @@ namespace Arcadia
     private:
         std::weak_ptr<const WindowLayer> _Window;
         ImGuiContext* _ImguiContext{ nullptr };
-        std::vector<std::unique_ptr<iImguiWindow>> _ImguiWindow{};
+        std::vector<std::unique_ptr<ImguiWindowInterface>> _ImguiWindow{};
     };
 }

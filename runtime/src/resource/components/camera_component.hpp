@@ -27,8 +27,8 @@ namespace Arcadia
     };
 
     class CameraComponent:
-        public iComponent,
-        public iMementoOriginator
+        public ComponentInterface,
+        public MementoOriginatorInterface
     {
     public:
         using SelfType = CameraComponent;

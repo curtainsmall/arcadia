@@ -14,7 +14,7 @@ Arcadia::ImguiLayer::ImguiLayer(
     const std::function<void(ImguiLayer&)>& imgui_window_installer,
     const std::function<void()>& imgui_style_setter
 ) :
-    iLayer("imgui"),
+    LayerInterface("imgui"),
     _Window(window_layer)
 {
     _ImguiContext = ImGui::CreateContext();
@@ -63,7 +63,7 @@ void Arcadia::ImguiLayer::OnEvent(EventBase& e)
         .IsDispatched();
 
     ImguiBackend::OnEvent(e);
-    for(std::unique_ptr<iImguiWindow>& imgui_window_uptr : _ImguiWindow)
+    for(std::unique_ptr<ImguiWindowInterface>& imgui_window_uptr : _ImguiWindow)
     {
         imgui_window_uptr->OnEvent(e);
     }
@@ -93,7 +93,7 @@ void Arcadia::ImguiLayer::OnUpdate()
     }
     else
     {
-        for(std::unique_ptr<iImguiWindow>& imgui_window_uptr : _ImguiWindow)
+        for(std::unique_ptr<ImguiWindowInterface>& imgui_window_uptr : _ImguiWindow)
         {
             imgui_window_uptr->OnUpdate();
         }

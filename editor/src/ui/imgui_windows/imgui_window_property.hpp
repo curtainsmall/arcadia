@@ -78,7 +78,7 @@ namespace Arcadia
         auto operator()(TransformComponent& transform_comp)->std::string;
     };
 
-    class ImguiWindowProperty: public iImguiWindow
+    class ImguiWindowProperty: public ImguiWindowInterface
     {
     public:
         using SelfType = ImguiWindowProperty;
@@ -89,14 +89,14 @@ namespace Arcadia
             bool open,
             const std::string& title
         ) :
-            iImguiWindow(open, title)
+            ImguiWindowInterface(open, title)
         {}
         virtual ~ImguiWindowProperty() = default;
 
         virtual void OnEvent(EventBase& e) override;
         virtual void OnUpdate() override;
     private:
-        template<cComponent Component>
+        template<Concepts::Component Component>
         auto _ContainsComponent(const std::string& name) -> bool
         {
             std::shared_ptr<Scene> scene_sptr = _SceneWeakPtr.lock();
@@ -104,7 +104,7 @@ namespace Arcadia
 
             return scene_sptr->ContainsAllComponents<Component>(name);
         }
-        template<cComponent Component>
+        template<Concepts::Component Component>
         auto _GetComponent(const std::string& name) -> Component&
         {
             std::shared_ptr<Scene> scene_sptr = _SceneWeakPtr.lock();

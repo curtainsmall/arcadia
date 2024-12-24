@@ -13,7 +13,7 @@
 
 namespace Arcadia
 {
-    class EditorAppLayer: public iAppLayer
+    class EditorAppLayer: public AppLayerInterface
     {
     public:
         EditorAppLayer();
@@ -35,5 +35,5 @@ namespace Arcadia
         bool _WaitingForProjectUnbuiltBeforeClosing{ false };
     };
 
-    ACDA_API auto CreateApplication() -> std::unique_ptr<iAppLayer>;
+    ACDA_API auto CreateApplication() -> std::unique_ptr<AppLayerInterface>;
 }

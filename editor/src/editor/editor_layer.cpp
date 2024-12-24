@@ -106,7 +106,7 @@ void Arcadia::EditorAppLayer::_Stop()
     app_config.WindowPosition = main_window_layer_sptr->GetPosition();
     app_config.WindowMaxmized = main_window_layer_sptr->GetSizeState() == WindowSizeState::Maxmized;
 
-    for(const std::unique_ptr<iImguiWindow>& imgui_window : main_imgui_layer_sptr->GetImguiWindow())
+    for(const std::unique_ptr<ImguiWindowInterface>& imgui_window : main_imgui_layer_sptr->GetImguiWindow())
     {
         if(imgui_window->Open())
         {
@@ -161,7 +161,7 @@ void Arcadia::EditorAppLayer::_OnInputKey(Events::InputKey& e)
     }
 }
 
-auto Arcadia::CreateApplication() -> std::unique_ptr<iAppLayer>
+auto Arcadia::CreateApplication() -> std::unique_ptr<AppLayerInterface>
 {
     return std::make_unique<EditorAppLayer>();
 }

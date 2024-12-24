@@ -14,13 +14,13 @@
 
 namespace Arcadia
 {
-    class iLayer: public Noncopyable
+    class LayerInterface: public Noncopyable
     {
     public:
-        using SelfType = iLayer;
+        using SelfType = LayerInterface;
     public:
-        iLayer(const std::string& name = "layer");
-        virtual ~iLayer() = default;
+        LayerInterface(const std::string& name = "layer");
+        virtual ~LayerInterface() = default;
 
         [[nodiscard]]
         auto GetName() const -> const std::string&;
@@ -36,8 +36,11 @@ namespace Arcadia
         std::string _Name{};
     };
 
-    template<typename Layer>
-    concept cLayer = std::derived_from<Layer, iLayer>;
+    namespace Concepts
+    {
+        template<typename T>
+        concept Layer = std::derived_from<T, LayerInterface>;
+    }
 
     namespace Exceptions
     {
@@ -49,14 +52,14 @@ namespace Arcadia
     {
     public:
 
-        using LayerVectorType = std::vector<std::shared_ptr<iLayer>>;
+        using LayerVectorType = std::vector<std::shared_ptr<LayerInterface>>;
 
         using SelfType = LayerStack;
     public:
         static auto Instance() -> SelfType&;
 
         template<
-            cLayer Layer,
+            Concepts::Layer Layer,
             typename ...Args
         >
         auto PushLayer(Args&& ...args) -> SelfType&
@@ -64,7 +67,7 @@ namespace Arcadia
             return PushLayer(std::make_shared<Layer>(std::forward<Args>(args)...));
         }
         template<
-            cLayer Layer
+            Concepts::Layer Layer
         >
         auto PushLayer(std::shared_ptr<Layer>&& sptr) -> SelfType&
         {
@@ -72,7 +75,7 @@ namespace Arcadia
             return *this;
         }
         template<
-            cLayer Layer,
+            Concepts::Layer Layer,
             typename ...Args
         >
         auto PushLayer(LayerVectorType::const_iterator iter, Args&& ...args) -> SelfType&
@@ -80,7 +83,7 @@ namespace Arcadia
             return PushLayer(iter, std::make_shared<Layer>(std::forward<Args>(args)...));
         }
         template<
-            cLayer Layer
+            Concepts::Layer Layer
         >
         auto PushLayer(LayerVectorType::const_iterator iter, std::shared_ptr<Layer>&& sptr) -> SelfType&
         {
@@ -94,7 +97,7 @@ namespace Arcadia
         auto PopLayer(LayerVectorType::const_iterator iter) -> SelfType&;
         auto PopAllLayers() -> SelfType&;
 
-        template<cLayer Layer = iLayer>
+        template<Concepts::Layer Layer = LayerInterface>
         auto GetLayer(std::size_t idx) -> Layer&
         {
             if(idx >= GetSize())
@@ -105,7 +108,7 @@ namespace Arcadia
             return static_cast<Layer&>(*_Layers.at(GetSize() - idx - 1));
         }
 
-        template<cLayer Layer = iLayer>
+        template<Concepts::Layer Layer = LayerInterface>
         auto GetTopLayer() -> std::shared_ptr<Layer>
         {
             if(!GetSize())
@@ -115,7 +118,7 @@ namespace Arcadia
             return std::static_pointer_cast<Layer>(_Layers.front());
         }
 
-        template<cLayer Layer = iLayer>
+        template<Concepts::Layer Layer = LayerInterface>
         auto GetBottomLayer() -> std::shared_ptr<Layer>
         {
             if(!GetSize())

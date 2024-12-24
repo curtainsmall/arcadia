@@ -82,8 +82,8 @@ namespace Arcadia
     };
 
     class LightComponent:
-        public iComponent,
-        public iMementoOriginator
+        public ComponentInterface,
+        public MementoOriginatorInterface
     {
     public:
         using SelfType = LightComponent;

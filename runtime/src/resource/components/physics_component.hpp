@@ -79,8 +79,8 @@ namespace Arcadia
     };
 
     class PhysicsComponent:
-        public iComponent,
-        public iMementoOriginator
+        public ComponentInterface,
+        public MementoOriginatorInterface
     {
     public:
         using IdentifiableJphBodyInfoType = Identifiable<JphBodyInfo>;

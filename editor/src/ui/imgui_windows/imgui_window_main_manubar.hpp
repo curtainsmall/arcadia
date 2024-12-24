@@ -3,10 +3,10 @@
 #include<memory>
 #include<string>
 
-#include"platform/api_def.hpp"
 #include"core/event/event.hpp"
 #include"function/physics/physics_simulator.hpp"
 #include"function/render/renderer.hpp"
+#include"platform/api_def.hpp"
 #include"ui/imgui_window.hpp"
 
 #include"project/project.hpp"
@@ -42,7 +42,7 @@ namespace Arcadia
         bool _NameAvailable{ true };
     };
 
-    class ImguiWindowMainMenubar: public iImguiWindow
+    class ImguiWindowMainMenubar: public ImguiWindowInterface
     {
     public:
         using SelfType = ImguiWindowMainMenubar;
@@ -50,7 +50,7 @@ namespace Arcadia
         ACDA_IMGUI_WINDOW_ID_STR_GETTERS("###menubar");
 
         ImguiWindowMainMenubar(const std::initializer_list<std::tuple<std::string, std::string>>& imgui_window_title_id_pairs) :
-            iImguiWindow(true, "Main Menubar"),
+            ImguiWindowInterface(true, "Main Menubar"),
             _ImguiWindowTitleAndIdStringPairs(imgui_window_title_id_pairs)
         {}
         virtual ~ImguiWindowMainMenubar() = default;

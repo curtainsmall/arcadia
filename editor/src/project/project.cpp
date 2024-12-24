@@ -12,7 +12,7 @@ Arcadia::Project::Project(nlohmann::json& json) :
 {
     for(const nlohmann::json& json_scene : json.at("scenes"))
     {
-        Scenes.try_emplace(json_scene.at("name"), std::make_shared<Scene>(json_scene));
+        SceneStorage.try_emplace(json_scene.at("name"), std::make_shared<Scene>(json_scene));
     }
 
     SetActiveScene(json.at("active_scene_name"));
@@ -26,7 +26,7 @@ auto Arcadia::Project::ToJson() const -> nlohmann::json
         {"active_scene_name",HasActiveScene() ? GetActiveScene().GetName() : ""}
     };
 
-    for(const auto& [name, scene_sptr] : Scenes)
+    for(const auto& [name, scene_sptr] : SceneStorage)
     {
         json.at("scenes")
             .push_back(scene_sptr->ToJson());
@@ -78,9 +78,9 @@ void Arcadia::Project::SetActiveScene(const std::string& name)
                 .Signal<Events::SceneDeactivated>();
         }
 
-        if(!name.empty() && Scenes.find(name) != Scenes.end())
+        if(!name.empty() && SceneStorage.find(name) != SceneStorage.end())
         {
-            _ActiveScene = Scenes.at(name);
+            _ActiveScene = SceneStorage.at(name);
 
             // Snapshot the scene but not put it into memento list
             _SnapshotEntities();

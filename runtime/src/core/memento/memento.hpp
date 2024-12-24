@@ -11,10 +11,13 @@ namespace Arcadia
 {
     class MementoDataBase;
 
-    template<typename MementoData>
-    concept cMementoData =
-        std::derived_from<MementoData, MementoDataBase>
-        && std::equality_comparable<MementoData>;
+    namespace Concetps
+    {
+        template<typename T>
+        concept MementoData =
+            std::derived_from<T, MementoDataBase>
+            && std::equality_comparable<T>;
+    }
 
     class MementoDataBase
     {
@@ -26,10 +29,10 @@ namespace Arcadia
         }
     };
 
-    class iMementoOriginator
+    class MementoOriginatorInterface
     {
     public:
-        using SelfType = iMementoOriginator;
+        using SelfType = MementoOriginatorInterface;
     public:
         auto Snapshot() -> std::shared_ptr<MementoDataBase>;
         void Restore(const std::shared_ptr<MementoDataBase>& sp_memento_data);
@@ -48,8 +51,11 @@ namespace Arcadia
         std::shared_ptr<MementoDataBase> _PreviousMementoData{};
     };
 
-    template<typename MementoOriginator>
-    concept cMementoOriginator = std::derived_from<MementoOriginator, iMementoOriginator>;
+    namespace Concepts
+    {
+        template<typename T>
+        concept MementoOriginator = std::derived_from<T, MementoOriginatorInterface>;
+    }
 
     class Memento: public Noncopyable
     {
@@ -63,7 +69,7 @@ namespace Arcadia
         /// @param originator_retriever Originator retriever
         /// @param memento_data Memento data
         template<
-            cMementoOriginator MementoOriginator
+            Concepts::MementoOriginator MementoOriginator
         >
         Memento(
             const std::string& description,
@@ -114,7 +120,7 @@ namespace Arcadia
         /// @tparam MementoOriginator Type of memento originator
         /// @param description Description
         /// @param originator_retriever Originator to snapshot
-        template<cMementoOriginator MementoOriginator>
+        template<Concepts::MementoOriginator MementoOriginator>
         void Snapshot(
             const std::string& description,
             const std::function<MementoOriginator& ()>& originator_retriever

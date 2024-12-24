@@ -38,7 +38,7 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
 
     std::shared_ptr<Scene> scene_sptr = _SceneWeakPtr.lock();
     std::shared_ptr<PhysicsSimulator> physics_simulator_sptr = _PhysicsSimulator.lock();
-    std::shared_ptr<iRenderer> renderer_sptr = _Renderer.lock();
+    std::shared_ptr<RendererInterface> renderer_sptr = _Renderer.lock();
     std::shared_ptr<Project> project_sptr = _Project.lock();
 
     const AppContext& app_context = AppContext::Instance();

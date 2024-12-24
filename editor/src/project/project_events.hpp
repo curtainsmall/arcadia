@@ -7,7 +7,7 @@
 namespace Arcadia
 {
     class Project;
-    class iRenderer;
+    class RendererInterface;
     class PhysicsSimulator;
     class Scene;
 
@@ -18,7 +18,7 @@ namespace Arcadia
         class ProjectBuilt: public EventBase
         {
         public:
-            ProjectBuilt(const std::shared_ptr<Project>& project):
+            ProjectBuilt(const std::shared_ptr<Project>& project) :
                 Project(project)
             {}
 
@@ -40,11 +40,11 @@ namespace Arcadia
         class RendererBuilt: public EventBase
         {
         public:
-            RendererBuilt(std::shared_ptr<iRenderer> renderer):
+            RendererBuilt(std::shared_ptr<RendererInterface> renderer) :
                 Renderer(renderer)
             {}
         public:
-            const std::shared_ptr<iRenderer> Renderer;
+            const std::shared_ptr<RendererInterface> Renderer;
         };
 
         class RendererUnbuilt: public EventBase
@@ -55,7 +55,7 @@ namespace Arcadia
         class PhysicsSimulatorBuilt: public EventBase
         {
         public:
-            PhysicsSimulatorBuilt(const std::shared_ptr<PhysicsSimulator>& physcis_simulator):
+            PhysicsSimulatorBuilt(const std::shared_ptr<PhysicsSimulator>& physcis_simulator) :
                 PhysicsSimulator(physcis_simulator)
             {}
         public:
@@ -70,7 +70,7 @@ namespace Arcadia
         class SceneBuilt: public EventBase
         {
         public:
-            SceneBuilt(const std::shared_ptr<Scene>& scene):
+            SceneBuilt(const std::shared_ptr<Scene>& scene) :
                 Scene(scene)
             {}
         public:
@@ -80,7 +80,7 @@ namespace Arcadia
         class SceneActivated: public EventBase
         {
         public:
-            SceneActivated(const std::shared_ptr<Scene>& scene):
+            SceneActivated(const std::shared_ptr<Scene>& scene) :
                 Scene(scene)
             {}
         public:

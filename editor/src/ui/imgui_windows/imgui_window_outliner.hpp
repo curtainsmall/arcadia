@@ -13,7 +13,7 @@
 
 namespace Arcadia
 {
-    class ImguiWindowOutliner: public iImguiWindow
+    class ImguiWindowOutliner: public ImguiWindowInterface
     {
     public:
         using SelfType = ImguiWindowOutliner;
@@ -24,7 +24,7 @@ namespace Arcadia
             bool open,
             const std::string& title
         ) :
-            iImguiWindow(open, title)
+            ImguiWindowInterface(open, title)
         {}
         virtual ~ImguiWindowOutliner() = default;
 
@@ -32,9 +32,9 @@ namespace Arcadia
         virtual void OnUpdate();
 
     private:
-        template<cComponent Component>
+        template<Concepts::Component Component>
         void _MenuItemAddComponent(int& item_count);
-        template<cComponent Component>
+        template<Concepts::Component Component>
         void _MenuItemRemoveComponent(int& item_count);
 
         void _OnOpenImguiWindow(Events::OpenImguiWindow& e);
@@ -51,7 +51,7 @@ namespace Arcadia
         std::string _EntityNewName{};
     };
 
-    template<cComponent Component>
+    template<Concepts::Component Component>
     inline void ImguiWindowOutliner::_MenuItemAddComponent(int& item_count)
     {
         std::string type_string = Component::GetTypeStringStatic();
@@ -68,7 +68,7 @@ namespace Arcadia
         }
     }
 
-    template<cComponent Component>
+    template<Concepts::Component Component>
     inline void ImguiWindowOutliner::_MenuItemRemoveComponent(int& item_count)
     {
         std::string type_string = Component::GetTypeStringStatic();

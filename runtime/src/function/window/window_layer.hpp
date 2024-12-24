@@ -10,7 +10,7 @@
 
 namespace Arcadia
 {
-    class WindowLayer: public iLayer
+    class WindowLayer: public LayerInterface
     {
     public:
         using SelfType = WindowLayer;

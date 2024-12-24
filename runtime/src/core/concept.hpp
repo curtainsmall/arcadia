@@ -10,8 +10,11 @@ namespace Arcadia
     template<template<typename...> typename T, typename ...Args>
     constexpr bool IsSpecializationOf<T<Args...>, T> = true;
 
-    template<typename Type, template<typename ...> typename Template>
-    concept cInstantiatedFrom = IsSpecializationOf<Type, Template>;
+    namespace Concepts
+    {
+        template<typename Type, template<typename ...> typename Template>
+        concept InstantiatedFrom = IsSpecializationOf<Type, Template>;
+    }
 
     template<typename, typename ...>
     constexpr bool IsTypeInTuple = false;
@@ -19,6 +22,9 @@ namespace Arcadia
     template<typename T, typename ...Args>
     constexpr bool IsTypeInTuple<T, std::tuple<Args...>> = (std::is_same_v<T, Args> || ...);
 
-    template<typename T, typename Tuple>
-    concept cTupleContainsType = IsTypeInTuple<T, Tuple>;
+    namespace Concepts
+    {
+        template<typename T, typename Tuple>
+        concept TupleContainsType = IsTypeInTuple<T, Tuple>;
+    }
 }

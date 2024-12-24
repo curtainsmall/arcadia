@@ -2,11 +2,11 @@
 
 #include "layer.hpp"
 
-Arcadia::iLayer::iLayer(const std::string& name) :
+Arcadia::LayerInterface::LayerInterface(const std::string& name) :
     _Name(name)
 {}
 
-auto Arcadia::iLayer::GetName() const -> const std::string&
+auto Arcadia::LayerInterface::GetName() const -> const std::string&
 {
     return _Name;
 }

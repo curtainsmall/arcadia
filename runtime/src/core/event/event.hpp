@@ -37,8 +37,11 @@ namespace Arcadia
         bool _Handled{ false };
     };
 
-    template<typename Event>
-    concept cEvent = std::derived_from<Event, EventBase>;
+    namespace Concepts
+    {
+        template<typename T>
+        concept Event = std::derived_from<T, EventBase>;
+    }
 
     template<typename ...Args>
     class BasicEvent: public EventBase
@@ -63,7 +66,7 @@ namespace Arcadia
         const DataTupleType DataTuple;
     };
 
-    template<cEvent Event>
+    template<Concepts::Event Event>
     using EventHandler = std::function<void(Event&)>;
 
     class EventDispatcher: public Noncopyable
@@ -80,7 +83,7 @@ namespace Arcadia
         /// @tparam Event Event type to match
         /// @param handler Event handler
         /// @return Self
-        template<cEvent Event>
+        template<Concepts::Event Event>
         auto Dispatch(const EventHandler<Event>& handler) -> SelfType&
         {
             if(typeid(*_Event) == typeid(Event))
@@ -121,7 +124,7 @@ namespace Arcadia
 
         /// @brief Signal @a Event
         /// @param ...args Argument to construct @a Event
-        template<cEvent Event, typename ...Args>
+        template<Concepts::Event Event, typename ...Args>
         auto Signal(Args&& ...args) -> SelfType&
         {
             _CurrentQueue->emplace(std::make_unique<Event>(std::forward<Args>(args)...));

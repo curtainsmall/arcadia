@@ -6,7 +6,7 @@
 
 namespace Arcadia
 {
-    class SkyboxComponent: iComponent
+    class SkyboxComponent: ComponentInterface
     {
     public:
         using SelfType = SkyboxComponent;
