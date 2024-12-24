@@ -6,12 +6,12 @@ auto Arcadia::Mesh::CreateBox(
     const glm::vec3& half_extent
 ) -> Mesh
 {
-    auto x = half_extent.x;
-    auto y = half_extent.y;
-    auto z = half_extent.z;
+    float x = half_extent.x;
+    float y = half_extent.y;
+    float z = half_extent.z;
 
     Mesh mesh{};
-    auto& vertices = mesh.Vertices;
+    std::vector<Vertex>& vertices = mesh.Vertices;
     vertices.reserve(36);
 
     // pos-x
@@ -288,15 +288,15 @@ auto Arcadia::Mesh::CreateCapsule(
     std::size_t sector_count
 ) -> Mesh
 {
-    const auto pi = glm::pi<float>();
+    const float pi = glm::pi<float>();
     float sector_step = 2 * pi / sector_count;
     float half_sphere_stack_step = pi / 2 / half_sphere_stack_count;
 
     float radius_inv = 1.f / radius;
 
     Mesh mesh{};
-    auto& vertices = mesh.Vertices;
-    auto& indices = mesh.Indices;
+    std::vector<Vertex>& vertices = mesh.Vertices;
+    std::vector<unsigned int>& indices = mesh.Indices;
 
 #if 1
     // Sphere part
@@ -422,7 +422,7 @@ auto Arcadia::Mesh::CreateCylinder(
     }
 
     Mesh mesh{};
-    auto& vertices = mesh.Vertices;
+    std::vector<Vertex>& vertices = mesh.Vertices;
 
     for(std::size_t i = 0; i < 2; ++i)
     {
@@ -475,7 +475,7 @@ auto Arcadia::Mesh::CreateCylinder(
         }
     }
 
-    auto& indices = mesh.Indices;
+    std::vector<unsigned int>& indices = mesh.Indices;
     std::size_t k1 = 0;
     std::size_t k2 = sector_count + 1;
     for(std::size_t i = 0; i < sector_count; ++i, ++k1, ++k2)
@@ -528,7 +528,7 @@ auto Arcadia::Mesh::CreateSphere(
     std::size_t sector_count
 ) -> Mesh
 {
-    const auto pi = glm::pi<float>();
+    const float pi = glm::pi<float>();
     float sector_step = 2 * pi / sector_count;
     float stack_step = pi / stack_count;
 
@@ -536,7 +536,7 @@ auto Arcadia::Mesh::CreateSphere(
 
     Mesh mesh{};
 
-    auto& vertices = mesh.Vertices;
+    std::vector<Vertex>& vertices = mesh.Vertices;
     for(std::size_t i = 0; i <= stack_count; ++i)
     {
         float stack_angle = pi / 2 - i * stack_step;
@@ -567,7 +567,7 @@ auto Arcadia::Mesh::CreateSphere(
         }
     }
 
-    auto& indices = mesh.Indices;
+    std::vector<unsigned int>& indices = mesh.Indices;
     for(std::size_t i = 0; i < stack_count; ++i)
     {
         float k1 = i * (sector_count + 1);

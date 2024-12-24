@@ -21,41 +21,51 @@
 
 namespace Arcadia
 {
-    using GlRenderUnitCamera = std::tuple<
-        GlFramebuffer, // gl_framebuffer
-        glm::i32vec2, // viewport_size
-        glm::mat4, // camera_view_mat4
-        glm::mat4, // camera_proj_mat4
-        glm::vec3, // camera_position
-        bool, // should_display_grid
-        float, // near_plane
-        float // far_plane
-    >;
+    class GlRenderUnitCamera
+    {
+    public:
+        GlFramebuffer Framebuffer;
+        glm::i32vec2 ViewportSize;
+        glm::mat4 CameraViewMatrix;
+        glm::mat4 CameraProjectionMatrix;
+        glm::vec3 CameraPosition;
+        bool ShouldDisplayGrid;
+        float NearPlane;
+        float FarPlane;
+    };
 
-    using GlRenderUnitLight = std::tuple<
-        glm::vec3, // position
-        glm::vec3, // direction
-        LightType // light
-    >;
+    class GlRenderUnitLight
+    {
+    public:
+        glm::vec3 Position;
+        glm::vec3 Direction;
+        LightType Light;
+    };
 
-    using GlRenderUnitMesh = std::tuple<
-        GlVertexArray, // gl_vertex_array
-        glm::mat4, // transform_mat
-        GlTexture2d, // gl_texture2d_ambient
-        GlTexture2d, // gl_texture2d_diffuse
-        GlTexture2d  // gl_texture2d_specular
-    >;
+    class GlRenderUnitMesh
+    {
+    public:
+        GlVertexArray VertexArray;
+        glm::mat4 TransformMatrix;
+        GlTexture2d AmbientTexture;
+        GlTexture2d DiffuseTexture;
+        GlTexture2d SpecularTexture;
+    };
 
-    using GlRenderUnitSkybox = std::tuple<
-        GlVertexArray, // gl_vertex_array
-        GlCubemap // gl_cubemap
-    >;
+    class GlRenderUnitSkybox
+    {
+    public:
+        GlVertexArray VertexArray;
+        GlCubemap Cubemap;
+    };
 
-    using GlRenderUnitPhysicsBodyShape = std::tuple<
-        GlVertexArray, // gl_vertex_array
-        glm::mat4, // transform_mat
-        glm::vec3 // color
-    >;
+    class GlRenderUnitPhysicsBodyShape
+    {
+    public:
+        GlVertexArray VertexArray;
+        glm::mat4 TransformMatrix;
+        glm::vec3 Color;
+    };
 
     namespace Exceptions
     {

@@ -43,7 +43,7 @@ namespace Arcadia
         void _OnRenameEntity(Events::RenameEntity& e);
 
     private:
-        std::weak_ptr<Scene> _Scene{};
+        std::weak_ptr<Scene> _SceneWeakPtr{};
 
         std::string _SelectedEntityName{};
 
@@ -55,7 +55,7 @@ namespace Arcadia
     inline void ImguiWindowOutliner::_MenuItemAddComponent(int& item_count)
     {
         std::string type_string = Component::GetTypeStringStatic();
-        bool exists = _Scene.lock()->ContainsAllComponents<Component>(_SelectedEntityName);
+        bool exists = _SceneWeakPtr.lock()->ContainsAllComponents<Component>(_SelectedEntityName);
 
         if(!exists)
         {
@@ -72,7 +72,7 @@ namespace Arcadia
     inline void ImguiWindowOutliner::_MenuItemRemoveComponent(int& item_count)
     {
         std::string type_string = Component::GetTypeStringStatic();
-        bool exists = _Scene.lock()->ContainsAllComponents<Component>(_SelectedEntityName);
+        bool exists = _SceneWeakPtr.lock()->ContainsAllComponents<Component>(_SelectedEntityName);
 
         if(exists)
         {

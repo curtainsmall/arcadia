@@ -13,7 +13,7 @@ Arcadia::ImguiLayer::ImguiLayer(
     const std::shared_ptr<const WindowLayer>& window_layer,
     const std::function<void(ImguiLayer&)>& imgui_window_installer,
     const std::function<void()>& imgui_style_setter
-):
+) :
     iLayer("imgui"),
     _Window(window_layer)
 {
@@ -22,7 +22,7 @@ Arcadia::ImguiLayer::ImguiLayer(
 
     ScaleUi(EditorContext::Instance().UiScale);
 
-    auto& io = _ImguiContext->IO;
+    ImGuiIO& io = _ImguiContext->IO;
     io.ConfigWindowsMoveFromTitleBarOnly = true;
     io.ConfigFlags =
         ImGuiConfigFlags_DockingEnable
@@ -63,15 +63,15 @@ void Arcadia::ImguiLayer::OnEvent(EventBase& e)
         .IsDispatched();
 
     ImguiBackend::OnEvent(e);
-    for(auto& imgui_window : _ImguiWindow)
+    for(std::unique_ptr<iImguiWindow>& imgui_window_uptr : _ImguiWindow)
     {
-        imgui_window->OnEvent(e);
+        imgui_window_uptr->OnEvent(e);
     }
 }
 
 void Arcadia::ImguiLayer::OnUpdate()
 {
-    auto window = _Window.lock();
+    std::shared_ptr<const WindowLayer> window = _Window.lock();
 
     ImGui::SetCurrentContext(_ImguiContext);
 
@@ -93,9 +93,9 @@ void Arcadia::ImguiLayer::OnUpdate()
     }
     else
     {
-        for(auto& imgui_window : _ImguiWindow)
+        for(std::unique_ptr<iImguiWindow>& imgui_window_uptr : _ImguiWindow)
         {
-            imgui_window->OnUpdate();
+            imgui_window_uptr->OnUpdate();
         }
     }
 

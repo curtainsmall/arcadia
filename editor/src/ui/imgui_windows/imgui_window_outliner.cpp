@@ -28,20 +28,20 @@ void Arcadia::ImguiWindowOutliner::OnUpdate()
         return;
     }
 
-    auto scene = _Scene.lock();
+    std::shared_ptr<Scene> scene_sptr = _SceneWeakPtr.lock();
 
-    auto& event_queue = EventQueue::Instance();
+    EventQueue& event_queue = EventQueue::Instance();
 
-    auto imgui_window_title = scene
-        ? _Title + " - " + scene->Name + GetIdString()
+    std::string imgui_window_title = scene_sptr
+        ? _Title + " - " + scene_sptr->GetName() + GetIdString()
         : _Title + GetIdString();
 
     ImGui::SetNextWindowSize(glm::vec2{ 1024,768 }, ImGuiCond_Once);
-    auto window_flags =
+    ImGuiWindowFlags window_flags =
         ImGuiWindowFlags_NoCollapse;
     if(ImGui::Begin(imgui_window_title.c_str(), &_Opened, window_flags))
     {
-        if(scene && ImGui::BeginPopupContextWindow())
+        if(scene_sptr && ImGui::BeginPopupContextWindow())
         {
             ImGui::SeparatorText("New");
 
@@ -67,13 +67,13 @@ void Arcadia::ImguiWindowOutliner::OnUpdate()
             ImGui::EndPopup();
         }
 
-        if(!scene)
+        if(!scene_sptr)
         {
             ImGui::Text("(No scene)");
         }
         else
         {
-            for(auto& [name, entity_info] : *scene)
+            for(auto& [name, entity_info] : scene_sptr->GetEntityInfoStorage())
             {
                 // Display text input
                 if(_EntityOldName == name)
@@ -88,7 +88,7 @@ void Arcadia::ImguiWindowOutliner::OnUpdate()
                     {
                         if(_EntityOldName != _EntityNewName)
                         {
-                            if(scene->ContainsEntity(_EntityNewName))
+                            if(scene_sptr->ContainsEntity(_EntityNewName))
                             {
                                 pfd::message msg{
                                     "Rename Entity",
@@ -137,7 +137,7 @@ void Arcadia::ImguiWindowOutliner::OnUpdate()
                             event_queue.Signal<Events::DeleteEntity>(name);
                         }
 
-                    #if 0 // We do not allow custom entity for now
+#if 0 // We do not allow custom entity for now
                         if(!_SelectedEntityName.empty())
                         {
                             ImGui::Separator();
@@ -172,7 +172,7 @@ void Arcadia::ImguiWindowOutliner::OnUpdate()
                                 ImGui::EndMenu();
                             }
                         }
-                    #endif
+#endif
 
                         ImGui::EndPopup();
                     }
@@ -193,12 +193,12 @@ void Arcadia::ImguiWindowOutliner::_OnOpenImguiWindow(Events::OpenImguiWindow& e
 
 void Arcadia::ImguiWindowOutliner::_OnSceneActivated(Events::SceneActivated& e)
 {
-    _Scene = e.Scene;
+    _SceneWeakPtr = e.Scene;
 }
 
 void Arcadia::ImguiWindowOutliner::_OnSceneDeactivated(Events::SceneDeactivated& e)
 {
-    _Scene.reset();
+    _SceneWeakPtr.reset();
     _SelectedEntityName.clear();
 }
 

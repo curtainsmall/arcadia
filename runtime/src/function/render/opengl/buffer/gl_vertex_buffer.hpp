@@ -11,17 +11,18 @@
 
 namespace Arcadia
 {
+    class GlBufferLayoutAttribute
+    {
+    public:
+        GLuint Count;
+        GLenum Type;
+        GLboolean Normalized;
+        GLuint Divisor;
+    };
+
     class GlBufferLayout
     {
     public:
-        class Attribute
-        {
-        public:
-            GLuint Count;
-            GLenum Type;
-            GLboolean Normalized;
-            GLuint Divisor;
-        };
         using SelfType = GlBufferLayout;
     public:
         GlBufferLayout() = default;
@@ -118,7 +119,7 @@ namespace Arcadia
             return *this;
         }
     public:
-        std::vector<Attribute> LayoutAttributes{};
+        std::vector<GlBufferLayoutAttribute> LayoutAttributes{};
         GLsizei Stride{};
     };
 

@@ -10,7 +10,7 @@
 Arcadia::Project::Project(nlohmann::json& json) :
     _Name(json.at("name"))
 {
-    for(const auto& json_scene : json.at("scenes"))
+    for(const nlohmann::json& json_scene : json.at("scenes"))
     {
         Scenes.try_emplace(json_scene.at("name"), std::make_shared<Scene>(json_scene));
     }
@@ -23,13 +23,13 @@ auto Arcadia::Project::ToJson() const -> nlohmann::json
     nlohmann::json json{
         {"name",GetName()},
         {"scenes",nlohmann::json::array()},
-        {"active_scene_name",HasActiveScene() ? GetActiveScene().Name : ""}
+        {"active_scene_name",HasActiveScene() ? GetActiveScene().GetName() : ""}
     };
 
-    for(const auto& [name, scene] : Scenes)
+    for(const auto& [name, scene_sptr] : Scenes)
     {
         json.at("scenes")
-            .push_back(scene->ToJson());
+            .push_back(scene_sptr->ToJson());
     }
 
     return json;
@@ -65,7 +65,7 @@ auto Arcadia::Project::GetActiveScene() const -> const Scene&
 
 void Arcadia::Project::SetActiveScene(const std::string& name)
 {
-    auto is_same_scene = _ActiveScene && name == _ActiveScene->Name;
+    auto is_same_scene = _ActiveScene && name == _ActiveScene->GetName();
 
     if(!is_same_scene)
     {

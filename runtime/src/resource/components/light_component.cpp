@@ -7,7 +7,7 @@
 Arcadia::LightComponent::LightComponent(const nlohmann::json& json)
 {
     std::string type_string = json.at("type");
-    auto& json_light = json.at("light");
+    const nlohmann::json& json_light = json.at("light");
     Light = Match<LightType>(
         type_string,
         "null",
@@ -134,16 +134,16 @@ auto Arcadia::LightComponent::ToJson() const -> nlohmann::json
 
 auto Arcadia::LightComponent::OnSnapshot() const -> std::shared_ptr<MementoDataBase>
 {
-    auto sp_memento_data = std::make_shared<LightComponentMementoData>();
+    std::shared_ptr< LightComponentMementoData> memento_data_sptr = std::make_shared<LightComponentMementoData>();
 
-    sp_memento_data->Light = Light;
+    memento_data_sptr->Light = Light;
 
-    return sp_memento_data;
+    return memento_data_sptr;
 }
 
-void Arcadia::LightComponent::OnRestore(const std::shared_ptr<MementoDataBase>& sp_memento_data)
+void Arcadia::LightComponent::OnRestore(const std::shared_ptr<MementoDataBase>& memento_data_sptr)
 {
-    auto& memento_data = sp_memento_data->CastTo<LightComponentMementoData>();
+    LightComponentMementoData& memento_data = memento_data_sptr->CastTo<LightComponentMementoData>();
 
     Light = memento_data.Light;
 }

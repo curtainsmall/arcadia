@@ -18,7 +18,7 @@ auto Arcadia::ImguiWindowPropertyCameraComponent::operator()(CameraComponent& ca
     const float min = .0;
     const float max = .0f;
     const char* format = "%.3f";
-    const auto flags =
+    const ImGuiSliderFlags flags =
         ImGuiSliderFlags_AlwaysClamp;
 
     std::string description{};
@@ -36,7 +36,7 @@ auto Arcadia::ImguiWindowPropertyCameraComponent::operator()(CameraComponent& ca
         description = "Far Plane";
     }
 
-    auto fovy = glm::degrees(camera_comp.FovY);
+    float fovy = glm::degrees(camera_comp.FovY);
     ImGui::DragFloat("FOV-Y", &fovy, speed, camera_comp.FovYMin, camera_comp.FovYMax, format, flags);
     if(ImGui::IsItemDeactivatedAfterEdit())
     {
@@ -44,7 +44,7 @@ auto Arcadia::ImguiWindowPropertyCameraComponent::operator()(CameraComponent& ca
     }
     camera_comp.FovY = glm::radians(fovy);
 
-    auto fovy_min = glm::degrees(camera_comp.FovYMin);
+    float fovy_min = glm::degrees(camera_comp.FovYMin);
     ImGui::DragFloat("FOV-Y Min", &fovy_min, speed, 0.0f, 180.0f, format, flags);
     if(ImGui::IsItemDeactivatedAfterEdit())
     {
@@ -52,7 +52,7 @@ auto Arcadia::ImguiWindowPropertyCameraComponent::operator()(CameraComponent& ca
     }
     camera_comp.FovYMin = glm::radians(fovy_min);
 
-    auto fovy_max = glm::degrees(camera_comp.FovYMax);
+    float fovy_max = glm::degrees(camera_comp.FovYMax);
     ImGui::DragFloat("FOV-Y Max", &fovy_max, speed, 0.0f, 180.0f, format, flags);
     if(ImGui::IsItemDeactivatedAfterEdit())
     {
@@ -78,7 +78,7 @@ auto Arcadia::ImguiWindowPropertyCameraComponent::operator()(CameraComponent& ca
         description = "Fixed Up";
     }
 
-    auto up_epsilon = glm::degrees(camera_comp.UpEpsilon);
+    float up_epsilon = glm::degrees(camera_comp.UpEpsilon);
     ImGui::DragFloat("Up Epsilon", &up_epsilon, speed, min, max, format, flags);
     if(ImGui::IsItemDeactivatedAfterEdit())
     {
@@ -109,8 +109,8 @@ auto Arcadia::ImguiWindowPropertyLightComponent::operator()(LightComponent& ligh
     const float speed = 1.f;
     const float min = .0f;
     const float max = .0f;
-    const auto format = "%.3f";
-    const auto flags =
+    const char* format = "%.3f";
+    const ImGuiSliderFlags flags =
         ImGuiSliderFlags_AlwaysClamp;
     if(MatchVariant<bool>(
         light_comp.Light,
@@ -154,7 +154,7 @@ auto Arcadia::ImguiWindowPropertyLightComponent::operator()(LightComponent& ligh
         {
             if(ImGui::Selectable("Direct Light"))
             {
-                auto res = pfd::message{
+                pfd::button res = pfd::message{
                     "Arcadia - Changing Light Type",
                     "Do you want to change light type to Direct Light? All properties for current light will be lost",
                     pfd::choice::yes_no,
@@ -169,7 +169,7 @@ auto Arcadia::ImguiWindowPropertyLightComponent::operator()(LightComponent& ligh
             }
             if(ImGui::Selectable("Area Light"))
             {
-                auto res = pfd::message{
+                pfd::button res = pfd::message{
                     "Arcadia - Changing Light Type",
                     "Do you want to change light type to Area Light? All properties for current light will be lost",
                     pfd::choice::yes_no,
@@ -184,7 +184,7 @@ auto Arcadia::ImguiWindowPropertyLightComponent::operator()(LightComponent& ligh
             }
             if(ImGui::Selectable("Point Light"))
             {
-                auto res = pfd::message{
+                pfd::button res = pfd::message{
                     "Arcadia - Changing Light Type",
                     "Do you want to change light type to Point Light? All properties for current light will be lost",
                     pfd::choice::yes_no,
@@ -238,7 +238,7 @@ auto Arcadia::ImguiWindowPropertyLightComponent::operator()(LightComponent& ligh
         {
             if(ImGui::Selectable("Spot Light"))
             {
-                auto res = pfd::message{
+                pfd::button res = pfd::message{
                     "Arcadia - Changing Light Type",
                     "Do you want to change light type to Spot Light? All properties for current light will be lost",
                     pfd::choice::yes_no,
@@ -253,7 +253,7 @@ auto Arcadia::ImguiWindowPropertyLightComponent::operator()(LightComponent& ligh
             }
             if(ImGui::Selectable("Area Light"))
             {
-                auto res = pfd::message{
+                pfd::button res = pfd::message{
                     "Arcadia - Changing Light Type",
                     "Do you want to change light type to Area Light? All properties for current light will be lost",
                     pfd::choice::yes_no,
@@ -268,7 +268,7 @@ auto Arcadia::ImguiWindowPropertyLightComponent::operator()(LightComponent& ligh
             }
             if(ImGui::Selectable("Point Light"))
             {
-                auto res = pfd::message{
+                pfd::button res = pfd::message{
                     "Arcadia - Changing Light Type",
                     "Do you want to change light type to Point Light? All properties for current light will be lost",
                     pfd::choice::yes_no,
@@ -309,7 +309,7 @@ auto Arcadia::ImguiWindowPropertyLightComponent::operator()(LightComponent& ligh
         {
             if(ImGui::Selectable("Spot Light"))
             {
-                auto res = pfd::message{
+                pfd::button res = pfd::message{
                     "Arcadia - Changing Light Type",
                     "Do you want to change light type to Spot Light? All properties for current light will be lost",
                     pfd::choice::yes_no,
@@ -324,7 +324,7 @@ auto Arcadia::ImguiWindowPropertyLightComponent::operator()(LightComponent& ligh
             }
             if(ImGui::Selectable("Direct Light"))
             {
-                auto res = pfd::message{
+                pfd::button res = pfd::message{
                     "Arcadia - Changing Light Type",
                     "Do you want to change light type to Direct Light? All properties for current light will be lost",
                     pfd::choice::yes_no,
@@ -339,7 +339,7 @@ auto Arcadia::ImguiWindowPropertyLightComponent::operator()(LightComponent& ligh
             }
             if(ImGui::Selectable("Point Light"))
             {
-                auto res = pfd::message{
+                pfd::button res = pfd::message{
                     "Arcadia - Changing Light Type",
                     "Do you want to change light type to Point Light? All properties for current light will be lost",
                     pfd::choice::yes_no,
@@ -382,7 +382,7 @@ auto Arcadia::ImguiWindowPropertyLightComponent::operator()(LightComponent& ligh
         {
             if(ImGui::Selectable("Spot Light"))
             {
-                auto res = pfd::message{
+                pfd::button res = pfd::message{
                     "Arcadia - Changing Light Type",
                     "Do you want to change light type to Spot Light? All properties for current light will be lost",
                     pfd::choice::yes_no,
@@ -397,7 +397,7 @@ auto Arcadia::ImguiWindowPropertyLightComponent::operator()(LightComponent& ligh
             }
             if(ImGui::Selectable("Direct Light"))
             {
-                auto res = pfd::message{
+                pfd::button res = pfd::message{
                     "Arcadia - Changing Light Type",
                     "Do you want to change light type to Direct Light? All properties for current light will be lost",
                     pfd::choice::yes_no,
@@ -412,7 +412,7 @@ auto Arcadia::ImguiWindowPropertyLightComponent::operator()(LightComponent& ligh
             }
             if(ImGui::Selectable("Area Light"))
             {
-                auto res = pfd::message{
+                pfd::button res = pfd::message{
                     "Arcadia - Changing Light Type",
                     "Do you want to change light type to Area Light? All properties for current light will be lost",
                     pfd::choice::yes_no,
@@ -471,7 +471,7 @@ auto Arcadia::ImguiWindowPropertyModelComponent::operator()(ModelComponent& mode
     ImGui::TextWrapped(filepath_string.c_str());
     if(ImGui::Button("..."))
     {
-        auto res = pfd::open_file{
+        std::vector<std::string> res = pfd::open_file{
             "Import Model"
         }.result();
         model_comp.Import(res.size() ? res.at(0) : "");
@@ -491,11 +491,11 @@ void Arcadia::ImguiWindowPopupPhysicsComponentCreateBody::operator()(PhysicsComp
 
     std::string imgui_window_title("Physics Component - Create Body");
 
-    auto popup_flags =
+    ImGuiPopupFlags popup_flags =
         ImGuiPopupFlags_NoOpenOverExistingPopup;
     ImGui::OpenPopup(imgui_window_title.c_str(), popup_flags);
 
-    auto window_flags =
+    ImGuiWindowFlags window_flags =
         ImGuiWindowFlags_NoCollapse;
     if(ImGui::BeginPopupModal(imgui_window_title.c_str(), &Opened, window_flags))
     {
@@ -503,11 +503,11 @@ void Arcadia::ImguiWindowPopupPhysicsComponentCreateBody::operator()(PhysicsComp
         float min = .0f;
         float max = .0f;
         const char* format = "%.3f";
-        auto slider_flags =
+        ImGuiSliderFlags slider_flags =
             ImGuiSliderFlags_AlwaysClamp;
 
         // Motion type
-        auto jph_motion_type_preview = Match<std::string>(
+        std::string jph_motion_type_preview_string = Match<std::string>(
             _TempJphBodyInfo.JphMotionType,
             JPH::EMotionType::Static,
             "Static",
@@ -516,7 +516,7 @@ void Arcadia::ImguiWindowPopupPhysicsComponentCreateBody::operator()(PhysicsComp
             JPH::EMotionType::Kinematic,
             "Kinematic"
         );
-        if(ImGui::BeginCombo("Motion Type", jph_motion_type_preview.c_str()))
+        if(ImGui::BeginCombo("Motion Type", jph_motion_type_preview_string.c_str()))
         {
             if(ImGui::Selectable("Static"))
             {
@@ -564,13 +564,13 @@ void Arcadia::ImguiWindowPopupPhysicsComponentCreateBody::operator()(PhysicsComp
             ImGui::SeparatorText("Box Shape");
 
             // Half extent
-            auto half_extent_min = std::max({ .01f,info.ConvexRadius });
-            auto half_extent_max = FLT_MAX;
+            float half_extent_min = std::max({ .01f,info.ConvexRadius });
+            float half_extent_max = FLT_MAX;
             ImGui::DragFloat3("Half Extent", glm::value_ptr(info.HalfExtent), speed, half_extent_min, half_extent_max, format, slider_flags);
 
             // Convex radius
-            auto convex_radius_min = .0f;
-            auto convex_radius_max = std::min({ info.HalfExtent.x,info.HalfExtent.y,info.HalfExtent.z });
+            float convex_radius_min = .0f;
+            float convex_radius_max = std::min({ info.HalfExtent.x,info.HalfExtent.y,info.HalfExtent.z });
             ImGui::DragFloat("Convex Radius", &info.ConvexRadius, speed, convex_radius_min, convex_radius_max, format, slider_flags);
 
             return _TempJphBodyInfo.JphShapeInfo;
@@ -599,12 +599,12 @@ void Arcadia::ImguiWindowPopupPhysicsComponentCreateBody::operator()(PhysicsComp
             }
             ImGui::SeparatorText("Capsule Type");
 
-            auto radius_min = .0f;
-            auto radius_max = FLT_MAX;
+            float radius_min = .0f;
+            float radius_max = FLT_MAX;
             ImGui::DragFloat("Radius", &info.Radius, speed, radius_min, radius_max, format, slider_flags);
 
-            auto half_height_of_cylinder_min = .0f;
-            auto half_height_of_cylinder_max = FLT_MAX;
+            float half_height_of_cylinder_min = .0f;
+            float half_height_of_cylinder_max = FLT_MAX;
             ImGui::DragFloat("Half Height if Cylinder", &info.HalfHeightOfCylinder, speed, half_height_of_cylinder_min, half_height_of_cylinder_max, format, slider_flags);
 
             return _TempJphBodyInfo.JphShapeInfo;
@@ -633,16 +633,16 @@ void Arcadia::ImguiWindowPopupPhysicsComponentCreateBody::operator()(PhysicsComp
             }
             ImGui::SeparatorText("Cylinder Shape");
 
-            auto half_height_min = .0f;
-            auto half_height_max = FLT_MAX;
+            float half_height_min = .0f;
+            float half_height_max = FLT_MAX;
             ImGui::DragFloat("Half Height", &info.HalfHeight, speed, half_height_min, half_height_max, format, slider_flags);
 
-            auto radius_min = .0f;
-            auto radius_max = FLT_MAX;
+            float radius_min = .0f;
+            float radius_max = FLT_MAX;
             ImGui::DragFloat("Radius", &info.Radius, speed, radius_min, radius_max, format, slider_flags);
 
-            auto convex_radius_min = .0f;
-            auto convex_radius_max = FLT_MAX;
+            float convex_radius_min = .0f;
+            float convex_radius_max = FLT_MAX;
             ImGui::DragFloat("Convex Radius", &info.ConvexRadius, speed, convex_radius_min, convex_radius_max, format, slider_flags);
 
             return _TempJphBodyInfo.JphShapeInfo;
@@ -671,8 +671,8 @@ void Arcadia::ImguiWindowPopupPhysicsComponentCreateBody::operator()(PhysicsComp
             }
             ImGui::SeparatorText("Sphere Shape");
 
-            auto radius_min = .0f;
-            auto radius_max = FLT_MAX;
+            float radius_min = .0f;
+            float radius_max = FLT_MAX;
             ImGui::DragFloat("Radius", &info.Radius, speed, radius_min, radius_max, format, slider_flags);
 
             return _TempJphBodyInfo.JphShapeInfo;
@@ -680,7 +680,7 @@ void Arcadia::ImguiWindowPopupPhysicsComponentCreateBody::operator()(PhysicsComp
         );
 
         ImGui::NewLine();
-        auto confirmed = ImGui::Button("Confirm");
+        bool confirmed = ImGui::Button("Confirm");
         if(confirmed)
         {
             physics_comp.BuildIndentifiableJphBodyInfo(
@@ -839,10 +839,10 @@ auto Arcadia::ImguiWindowPropertyTransformComponent::operator()(TransformCompone
     const float min = .0f;
     const float max = .0f;
     const char* format = "%.3f";
-    const auto flags =
+    const ImGuiSliderFlags flags =
         ImGuiSliderFlags_AlwaysClamp;
 
-    auto position_delta = transform_comp.Position; // Previous position
+    glm::vec3 position_delta = transform_comp.Position; // Previous position
     ImGui::DragFloat3("Position", glm::value_ptr(transform_comp.Position), speed, min, max, format, flags);
     if(ImGui::IsItemDeactivatedAfterEdit())
     {
@@ -915,9 +915,9 @@ if(_ContainsComponent<component_type>(_SelectedEntityName) && ImGui::TreeNodeEx(
         memento_list\
             .Snapshot<component_type>(\
                 std::format("{} - {}", tab_name, description),\
-                [&scene,this]() -> component_type&\
+                [&]() -> component_type&\
             {\
-                return scene->GetComponent<component_type>(_SelectedEntityName);\
+                return scene_sptr->GetComponent<component_type>(_SelectedEntityName);\
             }\
         );\
     }\
@@ -931,24 +931,24 @@ void Arcadia::ImguiWindowProperty::OnUpdate()
         return;
     }
 
-    auto scene = _Scene.lock();
+    std::shared_ptr<Scene> scene_sptr = _SceneWeakPtr.lock();
 
-    auto imgui_title = scene && !_SelectedEntityName.empty()
+    std::string imgui_title = scene_sptr && !_SelectedEntityName.empty()
         ? _Title + " - " + _SelectedEntityName + GetIdString()
         : _Title + GetIdString();
 
     ImGui::SetNextWindowSize(glm::vec2{ 1024,768 }, ImGuiCond_Once);
-    auto window_flags =
+    ImGuiWindowFlags window_flags =
         ImGuiWindowFlags_NoCollapse;
     if(ImGui::Begin(imgui_title.c_str(), &_Opened, window_flags))
     {
-        if(!scene)
+        if(!scene_sptr)
         {
             ImGui::Text("(No scene)");
         }
         else
         {
-            auto tab_bar_flags =
+            ImGuiTabBarFlags tab_bar_flags =
                 ImGuiTabBarFlags_NoCloseWithMiddleMouseButton
                 | ImGuiTabBarFlags_TabListPopupButton
                 | ImGuiTabBarFlags_AutoSelectNewTabs
@@ -958,7 +958,7 @@ void Arcadia::ImguiWindowProperty::OnUpdate()
             {
                 ImGui::PushItemWidth(200.f);
 
-                auto& memento_list = MementoList::Instance();
+                MementoList& memento_list = MementoList::Instance();
 
                 ACDA_IMGUI_WINDOW_PROPERTY_HELPER(CameraComponent, std::string("Camera"), _ImguiWindowPropertyCameraComponent);
                 ACDA_IMGUI_WINDOW_PROPERTY_HELPER(LightComponent, std::string("Light"), _ImguiWindowPropertyLightComponent);
@@ -983,12 +983,12 @@ void Arcadia::ImguiWindowProperty::_OnOpenImguiWindow(Events::OpenImguiWindow& e
 
 void Arcadia::ImguiWindowProperty::_OnSceneActivated(Events::SceneActivated& e)
 {
-    _Scene = e.Scene;
+    _SceneWeakPtr = e.Scene;
 }
 
 void Arcadia::ImguiWindowProperty::_OnSceneDeactivated(Events::SceneDeactivated& e)
 {
-    _Scene.reset();
+    _SceneWeakPtr.reset();
     _SelectedEntityName.clear();
 }
 

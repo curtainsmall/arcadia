@@ -3,7 +3,7 @@
 
 #include"core/math.hpp"
 
-Arcadia::TransformComponent::TransformComponent(const nlohmann::json& json):
+Arcadia::TransformComponent::TransformComponent(const nlohmann::json& json) :
     Flags(json.at("flags")),
     Position(GlmVec3::FromJson(json.at("position"))),
     Rotation(GlmQuat::FromJson(json.at("rotation"))),
@@ -50,7 +50,8 @@ auto Arcadia::TransformComponent::GenerateTransformMat4() const -> glm::mat4
 
 auto Arcadia::TransformComponent::OnSnapshot() const -> std::shared_ptr<MementoDataBase>
 {
-    auto memento_data = std::make_shared<TransformComponentMementoData>();
+    std::shared_ptr< TransformComponentMementoData> memento_data
+        = std::make_shared<TransformComponentMementoData>();
 
     memento_data->Flags     = Flags;
     memento_data->Position  = Position;
@@ -62,14 +63,14 @@ auto Arcadia::TransformComponent::OnSnapshot() const -> std::shared_ptr<MementoD
     return memento_data;
 }
 
-void Arcadia::TransformComponent::OnRestore(const std::shared_ptr<MementoDataBase>& memento_data)
+void Arcadia::TransformComponent::OnRestore(const std::shared_ptr<MementoDataBase>& memento_data_sptr)
 {
-    auto& memento_data_ = memento_data->CastTo<TransformComponentMementoData>();
+    TransformComponentMementoData& memento_data = memento_data_sptr->CastTo<TransformComponentMementoData>();
 
-    Flags = memento_data_.Flags;
-    Position  = memento_data_.Position;
-    Rotation  = memento_data_.Rotation;
-    Direction = memento_data_.Direction;
-    Scale     = memento_data_.Scale;
-    Pivot     = memento_data_.Pivot;
+    Flags = memento_data.Flags;
+    Position  = memento_data.Position;
+    Rotation  = memento_data.Rotation;
+    Direction = memento_data.Direction;
+    Scale     = memento_data.Scale;
+    Pivot     = memento_data.Pivot;
 }

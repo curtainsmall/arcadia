@@ -67,7 +67,7 @@ void Arcadia::GlVertexBuffer::SetupVertexAttributeArray() const
     std::size_t Offset{ 0 };
 
     Bind();
-    for(const auto& attribute : _BufferLayout.LayoutAttributes)
+    for(const GlBufferLayoutAttribute& attribute : _BufferLayout.LayoutAttributes)
     {
         ACDA_GL_CALL(glEnableVertexAttribArray(attrib_slot));
         ACDA_GL_CALL(glVertexAttribPointer(attrib_slot, attribute.Count, attribute.Type, attribute.Normalized, _BufferLayout.Stride, reinterpret_cast<void*>(Offset)));

@@ -157,9 +157,9 @@ void Arcadia::ImguiWindowMainMenubar::OnUpdate()
 
 void Arcadia::ImguiWindowMainMenubar::_ShowFileMenu()
 {
-    auto project = _Project.lock();
+    std::shared_ptr<const Project> project_sptr = _Project.lock();
 
-    auto& event_queue = EventQueue::Instance();
+    EventQueue& event_queue = EventQueue::Instance();
 
     _ImguiWindowPopupCreateProject();
     if(ImGui::BeginMenu("File"))
@@ -172,15 +172,15 @@ void Arcadia::ImguiWindowMainMenubar::_ShowFileMenu()
         {
             event_queue.Signal<Events::OpenProject>();
         }
-        if(ImGui::MenuItem("Save Project", nullptr, nullptr, !!project))
+        if(ImGui::MenuItem("Save Project", nullptr, nullptr, !!project_sptr))
         {
             event_queue.Signal<Events::SaveProject>();
         }
-        if(ImGui::MenuItem("Save Project As...", nullptr, nullptr, !!project))
+        if(ImGui::MenuItem("Save Project As...", nullptr, nullptr, !!project_sptr))
         {
             event_queue.Signal<Events::SaveProjectAs>();
         }
-        if(ImGui::MenuItem("Close Project", nullptr, nullptr, !!project))
+        if(ImGui::MenuItem("Close Project", nullptr, nullptr, !!project_sptr))
         {
             event_queue.Signal<Events::CloseProject>();
         }
@@ -191,28 +191,28 @@ void Arcadia::ImguiWindowMainMenubar::_ShowFileMenu()
 
 void Arcadia::ImguiWindowMainMenubar::_ShowEditMenu()
 {
-    auto project = _Project.lock();
+    std::shared_ptr<const Project> project_uptr = _Project.lock();
 
-    if(project)
+    if(project_uptr)
     {
-        _ImguiWindowPopupCreateScene(project);
+        _ImguiWindowPopupCreateScene(project_uptr);
     }
-    auto& event_queue = EventQueue::Instance();
+    EventQueue& event_queue = EventQueue::Instance();
     if(ImGui::BeginMenu("Edit"))
     {
-        if(ImGui::MenuItem("New Scene ...", nullptr, nullptr, !!project))
+        if(ImGui::MenuItem("New Scene ...", nullptr, nullptr, !!project_uptr))
         {
             _ImguiWindowPopupCreateProject.Opened = true;
         }
 
-        bool has_scene = project && project->Scenes.size();
-        bool has_active_scene = has_scene && project->HasActiveScene();
+        bool has_scene = project_uptr && project_uptr->Scenes.size();
+        bool has_active_scene = has_scene && project_uptr->HasActiveScene();
 
         if(ImGui::BeginMenu("Select Scene", has_scene))
         {
-            ACDA_ASSERT(project);
+            ACDA_ASSERT(project_uptr);
 
-            for(const auto& [key, scene] : project->Scenes)
+            for(const auto& [key, scene] : project_uptr->Scenes)
             {
                 if(ImGui::MenuItem(key.c_str()))
                 {
@@ -236,15 +236,15 @@ void Arcadia::ImguiWindowMainMenubar::_ShowEditMenu()
 
 void Arcadia::ImguiWindowMainMenubar::_ShowViewMenu()
 {
-    auto& event_queue = EventQueue::Instance();
+    EventQueue& event_queue = EventQueue::Instance();
     if(ImGui::BeginMenu("View"))
     {
-        for(const auto& [title, id_str] : _ImguiWindowTitleAndIdStringPairs)
+        for(const auto& [title, id_string] : _ImguiWindowTitleAndIdStringPairs)
         {
             if(ImGui::MenuItem(title.c_str()))
             {
-                event_queue.Signal<Events::OpenImguiWindow>(id_str);
-                ImGui::SetWindowFocus(id_str.c_str());
+                event_queue.Signal<Events::OpenImguiWindow>(id_string);
+                ImGui::SetWindowFocus(id_string.c_str());
             }
         }
         ImGui::EndMenu();
@@ -253,7 +253,7 @@ void Arcadia::ImguiWindowMainMenubar::_ShowViewMenu()
 
 void Arcadia::ImguiWindowMainMenubar::_ShowOptionMenu()
 {
-    auto& event_queue = EventQueue::Instance();
+    EventQueue& event_queue = EventQueue::Instance();
     if(ImGui::BeginMenu("Option"))
     {
         if(ImGui::Checkbox("Show Gizmo", &_ShouldShowGizmo))

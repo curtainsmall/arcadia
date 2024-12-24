@@ -99,19 +99,19 @@ namespace Arcadia
         template<cComponent Component>
         auto _ContainsComponent(const std::string& name) -> bool
         {
-            auto scene = _Scene.lock();
-            ACDA_ASSERT(scene);
+            std::shared_ptr<Scene> scene_sptr = _SceneWeakPtr.lock();
+            ACDA_ASSERT(scene_sptr);
 
-            return scene->ContainsAllComponents<Component>(name);
+            return scene_sptr->ContainsAllComponents<Component>(name);
         }
         template<cComponent Component>
         auto _GetComponent(const std::string& name) -> Component&
         {
-            auto scene = _Scene.lock();
-            ACDA_ASSERT(scene);
+            std::shared_ptr<Scene> scene_sptr = _SceneWeakPtr.lock();
+            ACDA_ASSERT(scene_sptr);
             ACDA_ASSERT(_ContainsComponent<Component>(name));
 
-            return scene->GetComponent<Component>(name);
+            return scene_sptr->GetComponent<Component>(name);
         }
 
         void _OnOpenImguiWindow(Events::OpenImguiWindow& e);
@@ -123,7 +123,7 @@ namespace Arcadia
 
     private:
 
-        std::weak_ptr<Scene> _Scene{};
+        std::weak_ptr<Scene> _SceneWeakPtr{};
         std::string _SelectedEntityName{};
 
         ImguiWindowPropertyCameraComponent _ImguiWindowPropertyCameraComponent{};

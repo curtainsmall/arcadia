@@ -23,8 +23,8 @@
 Arcadia::ProjectLayer::ProjectLayer() :
     iLayer("project")
 {
-    const auto& app_config = AppConfig::Instance();
-    auto& event_queue = EventQueue::Instance();
+    const AppConfig& app_config = AppConfig::Instance();
+    EventQueue& event_queue = EventQueue::Instance();
 
     MatchVariant<void>(
         app_config.GraphicApi,
@@ -45,7 +45,7 @@ Arcadia::ProjectLayer::ProjectLayer() :
 
 Arcadia::ProjectLayer::~ProjectLayer()
 {
-    auto& event_queue = EventQueue::Instance();
+    EventQueue& event_queue = EventQueue::Instance();
     event_queue.Signal<Events::RendererUnbuilt>();
     event_queue.Signal<Events::PhysicsSimulatorUnbuilt>();
 }
@@ -87,9 +87,9 @@ void Arcadia::ProjectLayer::_SaveProject()
 {
     ACDA_ASSERT(_Project);
 
-    auto json = _Project->ToJson();
+    nlohmann::json json = _Project->ToJson();
 
-    auto ofs = File::CreateOfstream(_ProjectFilepath);
+    std::ofstream ofs = File::CreateOfstream(_ProjectFilepath);
     ofs << std::setw(4) << json;
 
     EventQueue::Instance().Signal<Events::ProjectSaved>();
@@ -99,8 +99,8 @@ void Arcadia::ProjectLayer::_LoadProject()
 {
     ACDA_ASSERT(!_Project);
 
-    auto ifs = File::CreateIfstream(_ProjectFilepath);
-    auto json = nlohmann::json::parse(ifs);
+    std::ifstream ifs = File::CreateIfstream(_ProjectFilepath);
+    nlohmann::json json = nlohmann::json::parse(ifs);
 
     _Project = std::make_shared<Project>(json);
     EventQueue::Instance().Signal<Events::ProjectLoaded>();
@@ -108,16 +108,16 @@ void Arcadia::ProjectLayer::_LoadProject()
 
 void Arcadia::ProjectLayer::_OnWindowShouldClose(Events::WindowShouldClose& e)
 {
-    auto& event_queue = EventQueue::Instance();
+    EventQueue& event_queue = EventQueue::Instance();
 
-    auto main_window_layer = EditorContext::Instance().MainWindowLayer.lock();
+    std::shared_ptr<WindowLayer> main_window_layer_sptr = EditorContext::Instance().MainWindowLayer.lock();
 
-    if(e.Window == main_window_layer.get() && _Project)
+    if(e.Window == main_window_layer_sptr.get() && _Project)
     {
-        auto& memento_list = MementoList::Instance();
+        MementoList& memento_list = MementoList::Instance();
         if(memento_list.GetSize())
         {
-            auto res = pfd::message{
+            pfd::button res = pfd::message{
                 "Unsaved",
                 "Do you want to save changes in project?",
                 pfd::choice::yes_no_cancel,
@@ -161,7 +161,7 @@ void Arcadia::ProjectLayer::_OnCreateProject(Events::CreateProject& e)
 {
     if(_Project)
     {
-        auto res = pfd::message{
+        pfd::button res = pfd::message{
             "Unsaved Project",
             "The current project is not saved, do you want to save it?",
             pfd::choice::yes_no_cancel
@@ -203,7 +203,7 @@ void Arcadia::ProjectLayer::_OnOpenProject(Events::OpenProject& e)
 {
     if(_Project)
     {
-        auto res = pfd::message{
+        pfd::button res = pfd::message{
             "Unsaved Project",
             "The current project is not saved, do you want to save it?",
             pfd::choice::yes_no_cancel
@@ -234,7 +234,7 @@ void Arcadia::ProjectLayer::_OnOpenProject(Events::OpenProject& e)
         _Project.reset();
     }
 
-    auto filepathes = pfd::open_file{
+    std::vector<std::string> filepathes = pfd::open_file{
         "Open",
         "",
         std::vector<std::string>{"Arcadia Project",std::format("*{}",Project::ProjectExtensionString)}
@@ -294,12 +294,12 @@ void Arcadia::ProjectLayer::_OnCloseProject(Events::CloseProject& e)
 {
     ACDA_ASSERT(_Project);
 
-    auto& event_queue = EventQueue::Instance();
+    EventQueue& event_queue = EventQueue::Instance();
 
-    auto& memento_list = MementoList::Instance();
+    MementoList& memento_list = MementoList::Instance();
     if(memento_list.GetSize())
     {
-        auto res = pfd::message{
+        pfd::button res = pfd::message{
                         "Unsaved",
                         "Do you want to save changes in project?",
                         pfd::choice::yes_no_cancel,
@@ -345,7 +345,7 @@ void Arcadia::ProjectLayer::_OnCreateScene(Events::CreateScene& e)
 {
     ACDA_ASSERT(_Project);
 
-    auto& scene = _Project->Scenes.try_emplace(
+    std::shared_ptr<Scene>& scene_sptr = _Project->Scenes.try_emplace(
         e.Name,
         std::make_shared<Scene>(e.Name)
     ).first->second;
@@ -375,9 +375,9 @@ void Arcadia::ProjectLayer::_OnDeleteScene(Events::DeleteScene& e)
     ACDA_ASSERT(_Project);
     ACDA_ASSERT(_Project->HasActiveScene());
 
-    const auto& scene_name = _Project->GetActiveScene().Name;
+    const std::string& scene_name = _Project->GetActiveScene().GetName();
 
-    auto res = pfd::message{
+    pfd::button res = pfd::message{
         "Delete Scene",
         std::format("Do you want to delete scene: {}", scene_name)
     }.result();
@@ -400,7 +400,7 @@ void Arcadia::ProjectLayer::_OnDeleteScene(Events::DeleteScene& e)
 
 void Arcadia::ProjectLayer::_OnNewEntity(Events::NewEntity& e)
 {
-    auto& scene = _AssertAndGetScene();
+    Scene& scene = _AssertAndGetScene();
 
     std::string temp_name = "New Entity";
     std::string name = temp_name;
@@ -421,7 +421,7 @@ void Arcadia::ProjectLayer::_OnNewEntity(Events::NewEntity& e)
 
         scene.EmplaceComponent<PhysicsComponent>(name).Snapshot();
 
-        auto& transform_comp =  scene.EmplaceComponent<TransformComponent>(name);
+        TransformComponent& transform_comp =  scene.EmplaceComponent<TransformComponent>(name);
         transform_comp.Snapshot();
         transform_comp.Flags |= TransformComponentFlags::UseRotation;
     },
@@ -430,7 +430,7 @@ void Arcadia::ProjectLayer::_OnNewEntity(Events::NewEntity& e)
     {
         scene.EmplaceComponent<CameraComponent>(name).Snapshot();
 
-        auto& transform_comp = scene.EmplaceComponent<TransformComponent>(name);
+        TransformComponent& transform_comp = scene.EmplaceComponent<TransformComponent>(name);
         transform_comp.Snapshot();
         transform_comp.Flags |= TransformComponentFlags::UseDirection;
     },
@@ -439,7 +439,7 @@ void Arcadia::ProjectLayer::_OnNewEntity(Events::NewEntity& e)
     {
         scene.EmplaceComponent<LightComponent>(name).Snapshot();
 
-        auto& transform_comp = scene.EmplaceComponent<TransformComponent>(name);
+        TransformComponent& transform_comp = scene.EmplaceComponent<TransformComponent>(name);
         transform_comp.Snapshot();
         transform_comp.Flags |= TransformComponentFlags::UseDirection;
     }
@@ -458,7 +458,7 @@ void Arcadia::ProjectLayer::_OnDeleteEntity(Events::DeleteEntity& e)
 
 void Arcadia::ProjectLayer::_OnAddComponent(Events::AddComponent& e)
 {
-    auto& scene = _AssertAndGetScene();
+    Scene& scene = _AssertAndGetScene();
 
     Match<void>(
         e.ComponentTypeString,
@@ -487,7 +487,7 @@ void Arcadia::ProjectLayer::_OnAddComponent(Events::AddComponent& e)
 
 void Arcadia::ProjectLayer::_OnRemoveComponent(Events::RemoveComponent& e)
 {
-    auto& scene = _AssertAndGetScene();
+    Scene& scene = _AssertAndGetScene();
 
     Match<void>(
         e.ComponentTypeString,

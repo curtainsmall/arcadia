@@ -105,7 +105,7 @@ void Arcadia::ImguiStyle::SetToEmbraceDarkness()
 
 void Arcadia::ImguiStyle::SetToDark()
 {
-    auto& colors = ImGui::GetStyle().Colors;
+    ImVec4 (&colors)[55] = ImGui::GetStyle().Colors;
     colors[ImGuiCol_WindowBg] = ImVec4(0.1f, 0.105f, 0.11f, 1.0f);
 
     // Headers

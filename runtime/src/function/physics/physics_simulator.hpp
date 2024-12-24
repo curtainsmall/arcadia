@@ -115,6 +115,6 @@ namespace Arcadia
         JphObjectVsBroadPhaseLayerFilterImpl _JphObjectVsBroadLayerFilter{};
         JphObjectLayerPairFilerImpl _JphObjectLayerPairFilter{};
 
-        std::unique_ptr<JPH::PhysicsSystem> _JphPhysicsSystem{};
+        std::unique_ptr<JPH::PhysicsSystem> _JphPhysicsSystemUniquePtr{};
     };
 }

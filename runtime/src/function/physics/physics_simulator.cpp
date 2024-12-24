@@ -19,8 +19,8 @@ Arcadia::PhysicsSimulator::PhysicsSimulator()
     const JPH::uint max_body_pair = 65535;
     const JPH::uint max_contact_constraints = 10240;
 
-    _JphPhysicsSystem = std::make_unique<JPH::PhysicsSystem>();
-    _JphPhysicsSystem->Init(max_bodies, num_body_mutexes, max_body_pair, max_contact_constraints, _JphBroadPhaseLayer, _JphObjectVsBroadLayerFilter, _JphObjectLayerPairFilter);
+    _JphPhysicsSystemUniquePtr = std::make_unique<JPH::PhysicsSystem>();
+    _JphPhysicsSystemUniquePtr->Init(max_bodies, num_body_mutexes, max_body_pair, max_contact_constraints, _JphBroadPhaseLayer, _JphObjectVsBroadLayerFilter, _JphObjectLayerPairFilter);
 }
 
 Arcadia::PhysicsSimulator::~PhysicsSimulator()
@@ -44,8 +44,8 @@ void Arcadia::PhysicsSimulator::Finalize()
     _AssertFrameInBuild();
     _InBuild = false;
 
-    auto& jph_body_interface = _JphPhysicsSystem->GetBodyInterface();
-    for(auto iter = _JphBodyIdStorage.begin(); iter != _JphBodyIdStorage.end();)
+    JPH::BodyInterface& jph_body_interface = _JphPhysicsSystemUniquePtr->GetBodyInterface();
+    for(JphBodyIdStorageType::iterator iter = _JphBodyIdStorage.begin(); iter != _JphBodyIdStorage.end();)
     {
         if(!_SubmittedBodyInfos.contains(iter->first))
         {
@@ -59,14 +59,14 @@ void Arcadia::PhysicsSimulator::Finalize()
         }
     }
 
-    _JphPhysicsSystem->OptimizeBroadPhase();
+    _JphPhysicsSystemUniquePtr->OptimizeBroadPhase();
 }
 
 void Arcadia::PhysicsSimulator::Submit(const Scene& scene, const std::string& name)
 {
     _AssertFrameInBuild();
 
-    const auto& entity_info = scene.GetEntityInfo(name);
+    const EntityInfo& entity_info = scene.GetEntityInfo(name);
 
     // For now, only actor entity has physics component
     if(entity_info.Type != "actor")
@@ -81,7 +81,7 @@ void Arcadia::PhysicsSimulator::Submit(const Scene& scene, const std::string& na
         const auto& [uuid, body_info] = physics_comp.GetIdentifiableJphBodyInfo();
         if(!_JphBodyIdStorage.contains(uuid))
         {
-            auto& jph_body_interface = _JphPhysicsSystem->GetBodyInterface();
+            JPH::BodyInterface& jph_body_interface = _JphPhysicsSystemUniquePtr->GetBodyInterface();
             JPH::ShapeRefC jph_shape_refc = MatchVariant<JPH::Shape*>(
                 body_info.JphShapeInfo,
                 [&](const JphBoxShapeInfo& info)
@@ -101,7 +101,7 @@ void Arcadia::PhysicsSimulator::Submit(const Scene& scene, const std::string& na
                 return new JPH::SphereShape(info.Radius);
             }
             );
-            const auto body_id = jph_body_interface.CreateAndAddBody(
+            const JPH::BodyID body_id = jph_body_interface.CreateAndAddBody(
                 JPH::BodyCreationSettings(
                     jph_shape_refc,
                     ToJphVec3(transform_comp.Position),
@@ -130,7 +130,7 @@ void Arcadia::PhysicsSimulator::Update()
 
     int collusion_step = 60 / _JphPhysicsSystemUpdatesPerSecond;
     collusion_step = collusion_step > 0 ? collusion_step : 1;
-    _JphPhysicsSystem->Update(1.f / _JphPhysicsSystemUpdatesPerSecond, collusion_step, &temp_allocator, &job_system_thread_pool);
+    _JphPhysicsSystemUniquePtr->Update(1.f / _JphPhysicsSystemUpdatesPerSecond, collusion_step, &temp_allocator, &job_system_thread_pool);
 }
 
 void Arcadia::PhysicsSimulator::Query(Scene& scene, const std::string& name)
@@ -142,7 +142,7 @@ void Arcadia::PhysicsSimulator::Query(Scene& scene, const std::string& name)
         return;
     }
 
-    const auto& entity_info = scene.GetEntityInfo(name);
+    const EntityInfo& entity_info = scene.GetEntityInfo(name);
 
     // For now, only actor entity has physics component
     if(entity_info.Type != "actor")
@@ -156,10 +156,10 @@ void Arcadia::PhysicsSimulator::Query(Scene& scene, const std::string& name)
     {
         const auto& [uuid, jph_body_info_initial] = physics_comp.GetIdentifiableJphBodyInfo();
         ACDA_ASSERT(_JphBodyIdStorage.contains(uuid));
-        const auto& jph_body_interface = _JphPhysicsSystem->GetBodyInterface();
-        const auto& body_id = _JphBodyIdStorage.at(uuid);
+        const JPH::BodyInterface& jph_body_interface = _JphPhysicsSystemUniquePtr->GetBodyInterface();
+        const JPH::BodyID& body_id = _JphBodyIdStorage.at(uuid);
 
-        auto& jph_body_state = physics_comp.JphBodyState;
+        JphBodyState& jph_body_state = physics_comp.JphBodyState;
         jph_body_state.Active = jph_body_interface.IsActive(body_id);
         jph_body_state.LinearVelocity = FromJphVec3(jph_body_interface.GetLinearVelocity(body_id));
         jph_body_state.AngularVelocity = FromJphVec3(jph_body_interface.GetAngularVelocity(body_id));
@@ -171,7 +171,7 @@ void Arcadia::PhysicsSimulator::Query(Scene& scene, const std::string& name)
 
 void Arcadia::PhysicsSimulator::Reset()
 {
-    auto& jph_body_interface = _JphPhysicsSystem->GetBodyInterface();
+    JPH::BodyInterface& jph_body_interface = _JphPhysicsSystemUniquePtr->GetBodyInterface();
     for(const auto& [uuid, body_id] : _JphBodyIdStorage)
     {
         jph_body_interface.RemoveBody(body_id);

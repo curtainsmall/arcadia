@@ -36,60 +36,60 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
         return;
     }
 
-    auto scene = _Scene.lock();
-    auto physics_simulator = _PhysicsSimulator.lock();
-    auto renderer = _Renderer.lock();
-    auto project = _Project.lock();
+    std::shared_ptr<Scene> scene_sptr = _SceneWeakPtr.lock();
+    std::shared_ptr<PhysicsSimulator> physics_simulator_sptr = _PhysicsSimulator.lock();
+    std::shared_ptr<iRenderer> renderer_sptr = _Renderer.lock();
+    std::shared_ptr<Project> project_sptr = _Project.lock();
 
-    const auto& app_context = AppContext::Instance();
+    const AppContext& app_context = AppContext::Instance();
 
-    auto imgui_title = _Title + GetIdString();
+    std::string imgui_title = _Title + GetIdString();
 
     ImGui::SetNextWindowSize(glm::vec2{ 1024,768 }, ImGuiCond_Once);
-    auto window_flags =
+    ImGuiWindowFlags window_flags =
         ImGuiWindowFlags_NoCollapse;
     if(ImGui::Begin(imgui_title.c_str(), &_Opened, window_flags))
     {
-        if(!scene)
+        if(!scene_sptr)
         {
             ImGui::Text("(No scene)");
         }
-        else if(!renderer)
+        else if(!renderer_sptr)
         {
             ImGui::Text("(No renderer)");
         }
         else
         {
-            ACDA_ASSERT(physics_simulator);
-            ACDA_ASSERT(renderer);
+            ACDA_ASSERT(physics_simulator_sptr);
+            ACDA_ASSERT(renderer_sptr);
 
-            physics_simulator->Prepare();
-            renderer->Prepare();
+            physics_simulator_sptr->Prepare();
+            renderer_sptr->Prepare();
 
-            auto [viewport_camera_comp, viewport_transform_comp] = scene->GetComponent<CameraComponent, TransformComponent>(ViewportCameraEntityName);
+            auto [viewport_camera_comp, viewport_transform_comp] = scene_sptr->GetComponent<CameraComponent, TransformComponent>(ViewportCameraEntityName);
             viewport_camera_comp.ViewportSize = ImGui::GetContentRegionAvail();
-            for(const auto& [name, entity_info] : *scene)
+            for(const auto& [name, entity_info] : scene_sptr->GetEntityInfoStorage())
             {
-                physics_simulator->Submit(*scene, name);
+                physics_simulator_sptr->Submit(*scene_sptr, name);
             }
-            physics_simulator->Finalize();
-            physics_simulator->Update();
-            for(const auto& [name, entity_info] : *scene)
+            physics_simulator_sptr->Finalize();
+            physics_simulator_sptr->Update();
+            for(const auto& [name, entity_info] : scene_sptr->GetEntityInfoStorage())
             {
-                physics_simulator->Query(*scene, name);
+                physics_simulator_sptr->Query(*scene_sptr, name);
 
                 // We submit entity to renderer after query
                 if(entity_info.Display)
                 {
-                    renderer->Submit(*scene, name);
+                    renderer_sptr->Submit(*scene_sptr, name);
                 }
             }
 
-            renderer->Finalize();
-            renderer->Draw();
+            renderer_sptr->Finalize();
+            renderer_sptr->Draw();
 
             glm::vec2 image_cursor_pos = ImGui::GetCursorPos();
-            ImGui::Image(renderer->GetRenderResultId(0), viewport_camera_comp.ViewportSize, { 0,1 }, { 1,0 });
+            ImGui::Image(renderer_sptr->GetRenderResultId(0), viewport_camera_comp.ViewportSize, { 0,1 }, { 1,0 });
 
             if(!_InViewportFreecamMode && ImGui::IsItemHovered() && ImGui::IsMouseDown(ImGuiMouseButton_Right))
             {
@@ -132,11 +132,11 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
                 }
 
                 // Rotate view
-                auto offset = _CursorMoveDistance * .005f;
-                auto x_angle_offset = -offset.x;
+                glm::vec2 offset = _CursorMoveDistance * .005f;
+                float x_angle_offset = -offset.x;
                 viewport_transform_comp.Direction = glm::normalize(glm::angleAxis(x_angle_offset, viewport_camera_comp.Up) * viewport_transform_comp.Direction);
-                auto pitch_angle = glm::half_pi<float>() - glm::angle(viewport_transform_comp.Direction, viewport_camera_comp.Up);
-                auto y_angle_offset = glm::clamp(-offset.y + pitch_angle, -glm::half_pi<float>() + viewport_camera_comp.UpEpsilon, glm::half_pi<float>() - viewport_camera_comp.UpEpsilon) - pitch_angle;
+                float pitch_angle = glm::half_pi<float>() - glm::angle(viewport_transform_comp.Direction, viewport_camera_comp.Up);
+                float y_angle_offset = glm::clamp(-offset.y + pitch_angle, -glm::half_pi<float>() + viewport_camera_comp.UpEpsilon, glm::half_pi<float>() - viewport_camera_comp.UpEpsilon) - pitch_angle;
                 viewport_transform_comp.Direction = glm::normalize(glm::angleAxis(y_angle_offset, glm::cross(viewport_transform_comp.Direction, viewport_camera_comp.Up)) * viewport_transform_comp.Direction);
 
                 _CursorMoveDistance = GlmVec2::CreateZero();
@@ -151,7 +151,7 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
                 _InViewportFreecamMode ? std::string("(Free Cam) ") : std::string{}
             ).c_str());
             ImGui::SameLine(ImGui::GetWindowWidth() - 300.f);
-            const auto gizmo_options_cursor_pos = ImGui::GetCursorPos();
+            const glm::vec2 gizmo_options_cursor_pos = ImGui::GetCursorPos();
             ImGui::Dummy({ 0,0 });
             float fps = 1.f / std::chrono::duration_cast<std::chrono::duration<float>>(app_context.DeltaTime).count();
             ImGui::Text(std::format("FPS: {:.2f}", fps).c_str());
@@ -161,9 +161,9 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
             if(_ShowGizmo)
             {
                 // Gizmo option
-                auto selected_color = IM_COL32(50, 50, 120, 255);
-                auto hovered_color = selected_color;
-                auto active_color = selected_color;
+                std::uint32_t selected_color = IM_COL32(50, 50, 120, 255);
+                std::uint32_t hovered_color = selected_color;
+                std::uint32_t active_color = selected_color;
 
                 ImGui::PushStyleColor(ImGuiCol_ButtonHovered, hovered_color);
                 ImGui::PushStyleColor(ImGuiCol_ButtonActive, active_color);
@@ -234,7 +234,7 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
                 ImGui::PopStyleColor(2);
 
                 // Gizmo
-                if(!_SelectedEntityName.empty() && scene->ContainsAllComponents<TransformComponent>(_SelectedEntityName))
+                if(!_SelectedEntityName.empty() && scene_sptr->ContainsAllComponents<TransformComponent>(_SelectedEntityName))
                 {
                     ImGuizmo::SetDrawlist();
 
@@ -242,7 +242,7 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
                     glm::mat4 view_mat = viewport_camera_comp.GenerateViewMat4(viewport_transform_comp.Position, viewport_transform_comp.Direction);
                     glm::mat4 proj_mat = viewport_camera_comp.GenerateProjectiveMat4();
 
-                    auto& transform_comp = scene->GetComponent<TransformComponent>(_SelectedEntityName);
+                    TransformComponent& transform_comp = scene_sptr->GetComponent<TransformComponent>(_SelectedEntityName);
                     glm::mat4 transform_mat = transform_comp.GenerateTransformMat4();
                     ImGuizmo::Manipulate(
                         glm::value_ptr(view_mat),
@@ -316,7 +316,7 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
                                     std::format("{} - {}", "Transform", description),
                                     [&]() -> TransformComponent&
                             {
-                                return scene->GetComponent<TransformComponent>(_SelectedEntityName);
+                                return scene_sptr->GetComponent<TransformComponent>(_SelectedEntityName);
                             }
                                 );
                         }
@@ -353,22 +353,22 @@ void Arcadia::ImguiWindowViewport::_OnProjectUnbuilt(Events::ProjectUnbuilt& e)
 
 void Arcadia::ImguiWindowViewport::_OnSceneActivated(Events::SceneActivated& e)
 {
-    const auto& scene = e.Scene;
-    if(!scene->ContainsEntity(ViewportCameraEntityName))
+    const std::shared_ptr<Scene>& scene_sptr = e.Scene;
+    if(!scene_sptr->ContainsEntity(ViewportCameraEntityName))
     {
-        auto& entity_info = scene->CreateEntity(ViewportCameraEntityName, "camera");
+        EntityInfo& entity_info = scene_sptr->CreateEntity(ViewportCameraEntityName, "camera");
         entity_info.Internal = true;
-        scene->EmplaceComponent<CameraComponent>(ViewportCameraEntityName);
-        auto& transform_comp = scene->EmplaceComponent<TransformComponent>(ViewportCameraEntityName);
+        scene_sptr->EmplaceComponent<CameraComponent>(ViewportCameraEntityName);
+        TransformComponent& transform_comp = scene_sptr->EmplaceComponent<TransformComponent>(ViewportCameraEntityName);
         transform_comp.Position = glm::vec3(1.f, 1.f, 1.f);
         transform_comp.Direction = -transform_comp.Position;
     }
-    _Scene = scene;
+    _SceneWeakPtr = scene_sptr;
 }
 
 void Arcadia::ImguiWindowViewport::_OnSceneDeactivated(Events::SceneDeactivated& e)
 {
-    _Scene.reset();
+    _SceneWeakPtr.reset();
 }
 
 void Arcadia::ImguiWindowViewport::_OnSelectEntity(Events::SelectEntity& e)

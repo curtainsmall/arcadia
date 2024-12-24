@@ -10,7 +10,7 @@
 
 ACDA_API void Arcadia::ImguiBackend::Initialize(const WindowLayer& window)
 {
-    const auto& app_config = AppConfig::Instance();
+    const AppConfig& app_config = AppConfig::Instance();
 
     MatchVariant<void>(
         app_config.GraphicApi,
@@ -43,7 +43,7 @@ ACDA_API void Arcadia::ImguiBackend::Initialize(const WindowLayer& window)
 
 ACDA_API void Arcadia::ImguiBackend::NewFrame(const WindowLayer& window)
 {
-    const auto& app_config = AppConfig::Instance();
+    const AppConfig& app_config = AppConfig::Instance();
 
     MatchVariant<void>(
         app_config.GraphicApi,
@@ -60,7 +60,7 @@ ACDA_API void Arcadia::ImguiBackend::NewFrame(const WindowLayer& window)
 
 ACDA_API void Arcadia::ImguiBackend::RenderDrawData(const WindowLayer& window)
 {
-    const auto& app_config = AppConfig::Instance();
+    const AppConfig& app_config = AppConfig::Instance();
 
     MatchVariant<void>(
         app_config.GraphicApi,
@@ -76,7 +76,7 @@ ACDA_API void Arcadia::ImguiBackend::RenderDrawData(const WindowLayer& window)
 
 ACDA_API void Arcadia::ImguiBackend::Shutdown(const WindowLayer& window)
 {
-    const auto& app_config = AppConfig::Instance();
+    const AppConfig& app_config = AppConfig::Instance();
 
     MatchVariant<void>(
         app_config.GraphicApi,
@@ -104,7 +104,7 @@ ACDA_API void Arcadia::ImguiBackend::OnEvent(EventBase& e)
        //.dispatch<Events::MonitorConnect>(ImguiBackend::OnMonitorConnect) // We will manage monitors ourselves for now
        .IsDispatched())
     {
-        auto& io = ImGui::GetIO();
+        ImGuiIO& io = ImGui::GetIO();
         if(io.WantCaptureMouse || io.WantCaptureKeyboard)
         {
             e.MarkHandled();

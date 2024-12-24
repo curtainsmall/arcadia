@@ -77,7 +77,7 @@ void Arcadia::GlRenderer::Submit(const Scene& scene, const std::string& name)
 {
     _AssertFrameInBuild();
 
-    const auto& entity_info = scene.GetEntityInfo(name);
+    const EntityInfo& entity_info = scene.GetEntityInfo(name);
 
     Match<void>(
         entity_info.Type,
@@ -120,12 +120,12 @@ void Arcadia::GlRenderer::Submit(const Scene& scene, const std::string& name)
         {
             const auto& [uuid, meshes] = model_comp.GetIdentifiableMeshes();
 
-            const auto transform_mat = transform_comp.GenerateTransformMat4();
+            const glm::mat4 transform_mat = transform_comp.GenerateTransformMat4();
 
             if(!_GlRenderUnitMeshStorage.contains(uuid))
             {
                 std::vector<GlRenderUnitMesh> gl_meshes{};
-                for(const auto& mesh : meshes)
+                for(const Mesh& mesh : meshes)
                 {
                     // For any uuid, its corresponding meshes must be the same
                     gl_meshes.emplace_back(
@@ -140,9 +140,9 @@ void Arcadia::GlRenderer::Submit(const Scene& scene, const std::string& name)
             }
             else
             {
-                for(auto& gl_render_unit_mesh : _GlRenderUnitMeshStorage.at(uuid))
+                for(GlRenderUnitMesh& gl_render_unit_mesh : _GlRenderUnitMeshStorage.at(uuid))
                 {
-                    std::get<1>(gl_render_unit_mesh) = transform_mat;
+                    gl_render_unit_mesh.TransformMatrix = transform_mat;
                 }
             }
 
@@ -154,8 +154,8 @@ void Arcadia::GlRenderer::Submit(const Scene& scene, const std::string& name)
             const auto& [uuid, jph_body] = physics_comp.GetIdentifiableJphBodyInfo();
             if(!_GlRenderUnitPhysicsBodyShapeStorage.contains(uuid))
             {
-                const auto& shape_info = jph_body.JphShapeInfo;
-                const auto& shape_mesh = MatchVariant<Mesh>(
+                const JphShapeInfo& shape_info = jph_body.JphShapeInfo;
+                const Mesh& shape_mesh = MatchVariant<Mesh>(
                     shape_info,
                     [&](const JphBoxShapeInfo& info)
                 {
@@ -182,12 +182,12 @@ void Arcadia::GlRenderer::Submit(const Scene& scene, const std::string& name)
                 );
             }
 
-            auto& [GlVertexBuffer, transform_mat, color] = _GlRenderUnitPhysicsBodyShapeStorage.at(uuid);
-            transform_mat = glm::translate(
+            GlRenderUnitPhysicsBodyShape& gl_render_unit_physics_body_shape = _GlRenderUnitPhysicsBodyShapeStorage.at(uuid);
+            gl_render_unit_physics_body_shape.TransformMatrix = glm::translate(
                 glm::mat4_cast(transform_comp.Rotation),
                 transform_comp.Position
             );
-            color = physics_comp.BodyShapeColor;
+            gl_render_unit_physics_body_shape.Color = physics_comp.BodyShapeColor;
 
             _SubmittedPhysicsBodyShapeUuids.emplace(uuid);
         }
@@ -207,28 +207,19 @@ void Arcadia::GlRenderer::Draw()
     ACDA_GL_CALL(glClearColor(41 / 255.0, 43 / 255.0, 44 / 255.0, 1.f));
 
     // For each framebuffer
-    for(const auto& [
-        gl_framebuffer,
-            viewport_size,
-            camera_view,
-            camera_proj,
-            camera_position,
-            should_display_grid,
-            near_plane,
-            far_plane
-    ] : _GlRenderUnitCameras)
+    for(const GlRenderUnitCamera& gl_render_unit_camera : _GlRenderUnitCameras)
     {
-        gl_framebuffer.Bind();
+        gl_render_unit_camera.Framebuffer.Bind();
 
         // Clear framebufers
         ACDA_GL_CALL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
-        ACDA_GL_CALL(glViewport(0, 0, viewport_size.x, viewport_size.y));
+        ACDA_GL_CALL(glViewport(0, 0, gl_render_unit_camera.ViewportSize.x, gl_render_unit_camera.ViewportSize.y));
 
         // Draw grid
-        if(should_display_grid)
+        if(gl_render_unit_camera.ShouldDisplayGrid)
         {
             std::vector<Vertex> grid_vertices{
-                   Vertex{ glm::vec3{-1,1,0} },
+                    Vertex{ glm::vec3{-1,1,0} },
                     Vertex{ glm::vec3{-1,-1,0} },
                     Vertex{ glm::vec3{1,-1,0} },
                     Vertex{ glm::vec3{1,1,0} }
@@ -241,10 +232,10 @@ void Arcadia::GlRenderer::Draw()
 
             _DrawGrid(
                 gl_grid_vertex_array,
-                camera_view,
-                camera_proj,
-                near_plane,
-                far_plane);
+                gl_render_unit_camera.CameraViewMatrix,
+                gl_render_unit_camera.CameraProjectionMatrix,
+                gl_render_unit_camera.NearPlane,
+                gl_render_unit_camera.FarPlane);
         }
 
         // Lights
@@ -253,7 +244,7 @@ void Arcadia::GlRenderer::Draw()
         const std::int32_t light_count_size_aligned = 16; // Sizeof `u_light_count` in fragment shader with alignment considered
         GlUniformBuffer GlUniformBuffer(light_count_size_aligned + light_t_size * max_light_count);
 
-        auto light_box_shape = Mesh::CreateBox(glm::vec3(1, 1, 1));
+        Mesh light_box_shape = Mesh::CreateBox(glm::vec3(1, 1, 1));
         GlVertexArray gl_light_box_shape_vertex_array(light_box_shape.Vertices, light_box_shape.Indices);
 
         _DrawLights(
@@ -262,32 +253,32 @@ void Arcadia::GlRenderer::Draw()
             light_count_size_aligned,
             GlUniformBuffer,
             gl_light_box_shape_vertex_array,
-            camera_view,
-            camera_proj
+            gl_render_unit_camera.CameraViewMatrix,
+            gl_render_unit_camera.CameraProjectionMatrix
         );
 
         // Draw with mesh pipeline
         _DrawModels(
-            camera_view,
-            camera_proj,
-            camera_position
+            gl_render_unit_camera.CameraViewMatrix,
+            gl_render_unit_camera.CameraProjectionMatrix,
+            gl_render_unit_camera.CameraPosition
         );
 
         _DrawPhysicsBodyShape(
-            camera_view,
-            camera_proj
+            gl_render_unit_camera.CameraViewMatrix,
+            gl_render_unit_camera.CameraProjectionMatrix
         );
 
         // Draw with skybox pipeline
         if(_GlRenderUnitSkybox)
         {
             _DrawSkybox(
-                camera_view,
-                camera_proj
+                gl_render_unit_camera.CameraViewMatrix,
+            gl_render_unit_camera.CameraProjectionMatrix
             );
         }
 
-        gl_framebuffer.Unbind();
+        gl_render_unit_camera.Framebuffer.Unbind();
     }
 }
 
@@ -302,7 +293,7 @@ void Arcadia::GlRenderer::Reset()
 
 auto Arcadia::GlRenderer::GetRenderResultId(std::size_t index) const -> void*
 {
-    return reinterpret_cast<void*>(std::get<0>(_GlRenderUnitCameras.at(index)).GetGlTexture2d().GetGlId());
+    return reinterpret_cast<void*>(_GlRenderUnitCameras.at(index).Framebuffer.GetGlTexture2d().GetGlId());
 }
 
 void Arcadia::GlRenderer::_AssertFrameInBuild() const
@@ -360,7 +351,7 @@ void Arcadia::GlRenderer::_DrawLights(
     gl_light_shape_vertex_array.Bind();
 
     GLsizeiptr light_count = 0;
-    for(const auto& [position, direction, light] : _GlRenderUnitLights)
+    for(const GlRenderUnitLight& gl_render_unit_light : _GlRenderUnitLights)
     {
         if(light_count > max_light_count)
         {
@@ -368,7 +359,7 @@ void Arcadia::GlRenderer::_DrawLights(
         }
 
         MatchVariant<void>(
-            light,
+            gl_render_unit_light.Light,
             [&](const NullLight& light)
         {},
             [&](const SpotLight& light)
@@ -380,8 +371,8 @@ void Arcadia::GlRenderer::_DrawLights(
             gl_light_uniform_buffer
                 .SetBufferSubData(base_offfset + 4, sizeof(float), &cosine_inner_cutoff_angle)
                 .SetBufferSubData(base_offfset + 8, sizeof(float), &cosine_outer_cutoff_angle)
-                .SetBufferSubData(base_offfset + 16, sizeof(glm::vec3), &position)
-                .SetBufferSubData(base_offfset + 32, sizeof(glm::vec3), &direction)
+                .SetBufferSubData(base_offfset + 16, sizeof(glm::vec3), &gl_render_unit_light.Position)
+                .SetBufferSubData(base_offfset + 32, sizeof(glm::vec3), &gl_render_unit_light.Direction)
                 .SetBufferSubData(base_offfset + 48, sizeof(glm::vec3), &light.AttenuationCoefficients)
                 .SetBufferSubData(base_offfset + 64, sizeof(glm::vec3), &light.Color)
                 .SetBufferSubData(base_offfset + 80, sizeof(glm::vec3), &light.AmbientStrength)
@@ -390,7 +381,7 @@ void Arcadia::GlRenderer::_DrawLights(
             ++light_count;
 
             _GlShapePipeline
-                .SetUniform("u_transform_mat", glm::translate(GlmMat4::CreateIdentity(), position))
+                .SetUniform("u_transform_mat", glm::translate(GlmMat4::CreateIdentity(), gl_render_unit_light.Position))
                 .SetUniform("u_color", light.Color);
         },
             [&](const DirectLight& light)
@@ -398,7 +389,7 @@ void Arcadia::GlRenderer::_DrawLights(
             GLintptr base_offfset = light_count_size_aligned + light_count * light_t_size;
             gl_light_uniform_buffer
                 .SetBufferSubData(base_offfset + 0, sizeof(int), &light_type_direct)
-                .SetBufferSubData(base_offfset + 32, sizeof(glm::vec3), &direction)
+                .SetBufferSubData(base_offfset + 32, sizeof(glm::vec3), &gl_render_unit_light.Direction)
                 .SetBufferSubData(base_offfset + 64, sizeof(glm::vec3), &light.Color)
                 .SetBufferSubData(base_offfset + 80, sizeof(glm::vec3), &light.AmbientStrength)
                 .SetBufferSubData(base_offfset + 96, sizeof(glm::vec3), &light.DiffuseStrength)
@@ -412,7 +403,7 @@ void Arcadia::GlRenderer::_DrawLights(
             GLintptr base_offfset = light_count_size_aligned + light_count * light_t_size;
             gl_light_uniform_buffer
                 .SetBufferSubData(base_offfset + 0, sizeof(int), &light_type_point)
-                .SetBufferSubData(base_offfset + 16, sizeof(glm::vec3), &position)
+                .SetBufferSubData(base_offfset + 16, sizeof(glm::vec3), &gl_render_unit_light.Position)
                 .SetBufferSubData(base_offfset + 48, sizeof(glm::vec3), &light.AttenuationCoefficients)
                 .SetBufferSubData(base_offfset + 64, sizeof(glm::vec3), &light.Color)
                 .SetBufferSubData(base_offfset + 80, sizeof(glm::vec3), &light.AmbientStrength)
@@ -421,7 +412,7 @@ void Arcadia::GlRenderer::_DrawLights(
             ++light_count;
 
             _GlShapePipeline
-                .SetUniform("u_transform_mat", glm::translate(GlmMat4::CreateIdentity(), position))
+                .SetUniform("u_transform_mat", glm::translate(GlmMat4::CreateIdentity(), gl_render_unit_light.Position))
                 .SetUniform("u_color", light.Color);
         }
         );
@@ -441,43 +432,37 @@ void Arcadia::GlRenderer::_DrawModels(
 )
 {
     _GlModelPipeline.Use();
-    auto tex_uniform_index = 0;
+    GLint tex_uniform_index = 0;
     _GlModelPipeline
         .SetUniform("u_view_mat", camera_view)
         .SetUniform("u_proj_mat", camera_proj)
         .SetUniform("u_view_pos", camera_pos);
     for(auto& [uuid, gl_meshes] : _GlRenderUnitMeshStorage)
     {
-        for(auto& [
-            gl_vertex_array,
-                transform_mat4,
-                gl_texture2d_ambient,
-                gl_texture2d_diffuse,
-                gl_texture2d_specular
-        ]: gl_meshes)
+        for(GlRenderUnitMesh& gl_render_unit_mesh : gl_meshes)
         {
             _GlModelPipeline
-                .SetUniform("u_transform_mat", transform_mat4)
-                .SetUniform("u_normal_mat", glm::mat3{ glm::transpose(glm::inverse(transform_mat4)) });
+                .SetUniform("u_transform_mat", gl_render_unit_mesh.TransformMatrix)
+                .SetUniform("u_normal_mat", glm::mat3(glm::transpose(glm::inverse(gl_render_unit_mesh.TransformMatrix))));
 
             _GlModelPipeline.SetUniform("u_material.ambient", tex_uniform_index);
-            gl_texture2d_ambient.Bind(tex_uniform_index++);
+            gl_render_unit_mesh.AmbientTexture.Bind(tex_uniform_index++);
 
             _GlModelPipeline.SetUniform("u_material.diffuse", tex_uniform_index);
-            gl_texture2d_diffuse.Bind(tex_uniform_index++);
+            gl_render_unit_mesh.DiffuseTexture.Bind(tex_uniform_index++);
 
             _GlModelPipeline.SetUniform("u_material.specular", tex_uniform_index);
-            gl_texture2d_specular.Bind(tex_uniform_index++);
+            gl_render_unit_mesh.SpecularTexture.Bind(tex_uniform_index++);
 
             _GlModelPipeline.SetUniform("u_material.shininess", 32.f);
 
-            gl_vertex_array.Bind();
-            gl_vertex_array.Draw(GL_TRIANGLES);
-            gl_vertex_array.Unbind();
+            gl_render_unit_mesh.VertexArray.Bind();
+            gl_render_unit_mesh.VertexArray.Draw(GL_TRIANGLES);
+            gl_render_unit_mesh.VertexArray.Unbind();
 
-            gl_texture2d_ambient.Unbind();
-            gl_texture2d_diffuse.Unbind();
-            gl_texture2d_specular.Unbind();
+            gl_render_unit_mesh.AmbientTexture.Unbind();
+            gl_render_unit_mesh.DiffuseTexture.Unbind();
+            gl_render_unit_mesh.SpecularTexture.Unbind();
         }
     }
     _GlModelPipeline.Unuse();
@@ -489,20 +474,19 @@ void Arcadia::GlRenderer::_DrawSkybox(
 )
 {
     _GlSkyboxPipeline.Use();
-    auto& [gl_vartex_array, gl_cubemap] = *_GlRenderUnitSkybox;
 
     _GlSkyboxPipeline.SetUniform("u_skybox", 0);
-    gl_cubemap.Bind(0);
+    _GlRenderUnitSkybox->Cubemap.Bind(0);
 
     _GlSkyboxPipeline
-        .SetUniform("u_view_mat", glm::mat4{ glm::mat3{camera_view} })
+        .SetUniform("u_view_mat", glm::mat4(glm::mat3(camera_view)))
         .SetUniform("u_proj_mat", camera_proj);
 
-    gl_vartex_array.Bind();
+    _GlRenderUnitSkybox->VertexArray.Bind();
     ACDA_GL_CALL(glDepthFunc(GL_LEQUAL));
-    gl_vartex_array.Draw(GL_TRIANGLES);
+    _GlRenderUnitSkybox->VertexArray.Draw(GL_TRIANGLES);
     ACDA_GL_CALL(glDepthFunc(GL_LESS));
-    gl_vartex_array.Unbind();
+    _GlRenderUnitSkybox->VertexArray.Unbind();
 
     _GlSkyboxPipeline.Unuse();
 }
@@ -513,17 +497,17 @@ void Arcadia::GlRenderer::_DrawPhysicsBodyShape(
 )
 {
     _GlShapePipeline.Use();
-    for(const auto& [gl_vertex_arrray, transform_mat, color] : _GlRenderUnitPhysicsBodyShapeStorage | std::views::values)
+    for(const GlRenderUnitPhysicsBodyShape& gl_physics_body_shape : _GlRenderUnitPhysicsBodyShapeStorage | std::views::values)
     {
         _GlShapePipeline
-            .SetUniform("u_transform_mat", transform_mat)
+            .SetUniform("u_transform_mat", gl_physics_body_shape.TransformMatrix)
             .SetUniform("u_view_mat", camera_view)
             .SetUniform("u_proj_mat", camera_proj)
-            .SetUniform("u_color", color);
+            .SetUniform("u_color", gl_physics_body_shape.Color);
 
-        gl_vertex_arrray.Bind();
-        gl_vertex_arrray.Draw(GL_LINE_LOOP);
-        gl_vertex_arrray.Unbind();
+        gl_physics_body_shape.VertexArray.Bind();
+        gl_physics_body_shape.VertexArray.Draw(GL_LINE_LOOP);
+        gl_physics_body_shape.VertexArray.Unbind();
     }
     _GlShapePipeline.Unuse();
 }

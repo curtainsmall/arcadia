@@ -61,7 +61,7 @@ namespace Arcadia
         using SelfType = Scene;
     public:
         Scene(const std::string& name) :
-            Name(name)
+            _Name(name)
         {}
         Scene(const nlohmann::json& json);
         ~Scene() = default;
@@ -69,6 +69,12 @@ namespace Arcadia
 
         Scene(SelfType&&) noexcept = default;
         auto operator=(SelfType&&) noexcept -> SelfType & = default;
+
+        [[nodiscard]]
+        auto GetName() const -> const std::string&
+        {
+            return _Name;
+        }
 
         [[nodiscard]]
         auto GetRegistry() const -> const RegistryType&
@@ -229,32 +235,16 @@ namespace Arcadia
         }
 
         [[nodiscard]]
-        auto begin() const noexcept -> EntityInfoStorageType::const_iterator
+        auto GetEntityInfoStorage() -> EntityInfoStorageType&
         {
-            return _EntityInfoStorage.begin();
-        }
-        [[nodiscard]]
-        auto end() const noexcept -> EntityInfoStorageType::const_iterator
-        {
-            return _EntityInfoStorage.end();
-        }
-        [[nodiscard]]
-        auto begin() noexcept -> EntityInfoStorageType::iterator
-        {
-            return _EntityInfoStorage.begin();
-        }
-        [[nodiscard]]
-        auto end() noexcept -> EntityInfoStorageType::iterator
-        {
-            return _EntityInfoStorage.end();
+            return _EntityInfoStorage;
         }
 
     private:
         auto _GetEntity(const std::string& name) const->entt::entity;
         auto _CreateJsonComponents(const std::string& name) const->nlohmann::json;
-    public:
-        std::string Name;
     private:
+        std::string _Name;
 
         entt::registry _Registry{};
 

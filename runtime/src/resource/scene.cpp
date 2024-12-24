@@ -11,22 +11,22 @@
 #include"resource/components/transform_component.hpp"
 
 Arcadia::Scene::Scene(const nlohmann::json& json) :
-    Name(json.at("name"))
+    _Name(json.at("name"))
 {
-    const auto& json_entities = json.at("entities");
+    const nlohmann::json& json_entities = json.at("entities");
 
     for(const auto& [entity_index_str, json_entity] : json_entities.items())
     {
-        auto& entity_info = CreateEntity(json_entity.at("name"), json_entity.value("type", std::string{}));
+        EntityInfo& entity_info = CreateEntity(json_entity.at("name"), json_entity.value("type", std::string{}));
         entity_info.Display = json_entity.value("display", true);
         entity_info.Internal = json_entity.value("internal", false);
 
-        const auto& json_comps = json_entity.at("components");
+        const nlohmann::json& json_comps = json_entity.at("components");
 
         // For components
         for(const auto& [json_comp_type_str, json_comp] : json_comps.items())
         {
-            const auto& name = entity_info.GetName();
+            const std::string& name = entity_info.GetName();
             Match<void>(
                 json_comp_type_str,
                 ModelComponent::GetTypeStringStatic(),
@@ -61,7 +61,7 @@ Arcadia::Scene::Scene(const nlohmann::json& json) :
 
 auto Arcadia::Scene::ToJson() const -> nlohmann::json
 {
-    auto json_entities = nlohmann::json::array();
+    nlohmann::json json_entities = nlohmann::json::array();
 
     for(const auto& [name, entity_info] : _EntityInfoStorage)
     {
@@ -77,7 +77,7 @@ auto Arcadia::Scene::ToJson() const -> nlohmann::json
     }
 
     nlohmann::json json{
-        {"name",Name},
+        {"name",_Name},
         {"entities",json_entities}
     };
 
@@ -89,7 +89,7 @@ void Arcadia::Scene::RenameEntity(const std::string& name, const std::string& ne
     ACDA_ASSERT(ContainsEntity(name));
     ACDA_ASSERT(!ContainsEntity(new_name));
 
-    auto node = _EntityInfoStorage.extract(name);
+    EntityInfoStorageType::node_type node = _EntityInfoStorage.extract(name);
     node.key() = new_name;
     _EntityInfoStorage.insert(std::move(node));
 }
@@ -131,7 +131,7 @@ auto Arcadia::Scene::GetEntityInfo(const std::string& name) -> EntityInfo&
 
 auto Arcadia::Scene::CreateEntity(const std::string& name, const std::string& type) -> EntityInfo&
 {
-    auto entity = _Registry.create();
+    entt::entity entity = _Registry.create();
 
     EntityInfo entity_info(name, entity);
     entity_info.Type = type;
@@ -160,7 +160,7 @@ auto Arcadia::Scene::_GetEntity(const std::string& name) const -> entt::entity
 
 auto Arcadia::Scene::_CreateJsonComponents(const std::string& name) const -> nlohmann::json
 {
-    auto json_comps = nlohmann::json::object();
+    nlohmann::json json_comps = nlohmann::json::object();
 
     if(ContainsAllComponents<CameraComponent>(name))
     {

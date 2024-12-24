@@ -51,32 +51,33 @@ auto Arcadia::CameraComponent::GenerateProjectiveMat4() const -> glm::mat4
 
 auto Arcadia::CameraComponent::OnSnapshot() const -> std::shared_ptr<MementoDataBase>
 {
-    auto sp_memento = std::make_shared<CameraComponentMementoData>();
+    std::shared_ptr<CameraComponentMementoData> memento_sptr
+        = std::make_shared<CameraComponentMementoData>();
 
-    sp_memento->NearPlane             = NearPlane;
-    sp_memento->FarPlane              = FarPlane;
-    sp_memento->FovY                   = FovY;
-    sp_memento->FovYMin                = FovYMin;
-    sp_memento->FovYMax                = FovYMax;
-    sp_memento->Speed                 = Speed;
-    sp_memento->ViewportSize          = ViewportSize;
-    sp_memento->FixedUp               = FixedUp;
-    sp_memento->UpEpsilon             = UpEpsilon;
-    sp_memento->CursorMoveOffsetRange = CursorMoveOffsetRange;
-    sp_memento->ShouldDisplayGrid     = ShouldDisplayGrid;
+    memento_sptr->NearPlane             = NearPlane;
+    memento_sptr->FarPlane              = FarPlane;
+    memento_sptr->FovY                   = FovY;
+    memento_sptr->FovYMin                = FovYMin;
+    memento_sptr->FovYMax                = FovYMax;
+    memento_sptr->Speed                 = Speed;
+    memento_sptr->ViewportSize          = ViewportSize;
+    memento_sptr->FixedUp               = FixedUp;
+    memento_sptr->UpEpsilon             = UpEpsilon;
+    memento_sptr->CursorMoveOffsetRange = CursorMoveOffsetRange;
+    memento_sptr->ShouldDisplayGrid     = ShouldDisplayGrid;
 
-    return sp_memento;
+    return memento_sptr;
 }
 
-void Arcadia::CameraComponent::OnRestore(const std::shared_ptr<MementoDataBase>& sp_memento_data)
+void Arcadia::CameraComponent::OnRestore(const std::shared_ptr<MementoDataBase>& memento_data_sptr)
 {
-    auto& memento_data = sp_memento_data->CastTo<CameraComponentMementoData>();
+    CameraComponentMementoData& memento_data = memento_data_sptr->CastTo<CameraComponentMementoData>();
 
     NearPlane             = memento_data.NearPlane;
     FarPlane              = memento_data.FarPlane;
-    FovY                   = memento_data.FovY;
-    FovYMin                = memento_data.FovYMin;
-    FovYMax                = memento_data.FovYMax;
+    FovY                  = memento_data.FovY;
+    FovYMin               = memento_data.FovYMin;
+    FovYMax               = memento_data.FovYMax;
     Speed                 = memento_data.Speed;
     ViewportSize          = memento_data.ViewportSize;
     FixedUp               = memento_data.FixedUp;

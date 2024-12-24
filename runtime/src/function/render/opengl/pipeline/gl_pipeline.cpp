@@ -13,7 +13,7 @@ Arcadia::GlPipeline::GlPipeline(
     gl_shaders_builder(gl_shader_folder_path, _GlShaders);
 
     // Build pipeline
-    for(const auto& shader : _GlShaders)
+    for(const GlShader& shader : _GlShaders)
     {
         ACDA_GL_CALL(glAttachShader(_GlId, shader.GetGlId()));
     }

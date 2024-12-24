@@ -11,13 +11,13 @@
 Arcadia::PhysicsComponent::PhysicsComponent(const nlohmann::json& json) :
     BodyShapeColor(GlmVec3::FromJson(json.at("body_shape_color")))
 {
-    const auto& json_body_info_initial = json.at("jph_body_info_initial");
+    const nlohmann::json& json_body_info_initial = json.at("jph_body_info_initial");
     if(!json_body_info_initial.is_null())
     {
-        const auto& json_shape_info = json_body_info_initial.at("jph_shape_info");
+        const nlohmann::json& json_shape_info = json_body_info_initial.at("jph_shape_info");
         const std::string& json_shape_info_type_string = json_shape_info.at("type");
-        const auto& json_shape_info_info = json_shape_info.at("info");
-        auto shape_info = Match<JphShapeInfo>(
+        const nlohmann::json& json_shape_info_info = json_shape_info.at("info");
+        JphShapeInfo shape_info = Match<JphShapeInfo>(
             json_shape_info_type_string,
             "box_shape",
             [&]() -> JphShapeInfo
@@ -67,7 +67,7 @@ auto Arcadia::PhysicsComponent::ToJson() const -> nlohmann::json
     if(HasBodyInfo())
     {
         const auto& [uuid, body_info] = GetIdentifiableJphBodyInfo();
-        auto json_shape_info = MatchVariant<nlohmann::json>(
+        nlohmann::json json_shape_info = MatchVariant<nlohmann::json>(
             body_info.JphShapeInfo,
             [&](const JphBoxShapeInfo& info)
         {
@@ -133,16 +133,17 @@ auto Arcadia::PhysicsComponent::ToJson() const -> nlohmann::json
 
 auto Arcadia::PhysicsComponent::OnSnapshot() const -> std::shared_ptr<MementoDataBase>
 {
-    auto sp_memento = std::make_shared<PhysicsComponentMementoData>();
+    std::shared_ptr< PhysicsComponentMementoData> memento_sptr
+        = std::make_shared<PhysicsComponentMementoData>();
 
-    sp_memento->BodyShapeColor = BodyShapeColor;
+    memento_sptr->BodyShapeColor = BodyShapeColor;
 
-    return sp_memento;
+    return memento_sptr;
 }
 
 void Arcadia::PhysicsComponent::OnRestore(const std::shared_ptr<MementoDataBase>& sp_memento_data)
 {
-    auto& memento_data = sp_memento_data->CastTo<PhysicsComponentMementoData>();
+    PhysicsComponentMementoData& memento_data = sp_memento_data->CastTo<PhysicsComponentMementoData>();
 
     BodyShapeColor = memento_data.BodyShapeColor;
 }

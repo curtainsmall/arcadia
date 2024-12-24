@@ -21,10 +21,10 @@
 
 Arcadia::EditorAppLayer::EditorAppLayer()
 {
-    auto& layer_stack = LayerStack::Instance();
-    const auto& app_config = AppConfig::Instance();
-    auto& app_context = AppContext::Instance();
-    auto& editor_context = EditorContext::Instance();
+    LayerStack& layer_stack = LayerStack::Instance();
+    AppConfig& app_config = AppConfig::Instance();
+    AppContext& app_context = AppContext::Instance();
+    EditorContext& editor_context = EditorContext::Instance();
 
     editor_context.UiScale = app_config.UiScale;
 
@@ -76,8 +76,8 @@ void Arcadia::EditorAppLayer::OnEvent(EventBase& e)
 
 void Arcadia::EditorAppLayer::_InstallImguiWindow(ImguiLayer& imgui_layer)
 {
-    const auto& app_config = AppConfig::Instance();
-    const auto& id_strs = app_config.ImguiOpenedWindowIdStrings;
+    const AppConfig& app_config = AppConfig::Instance();
+    const std::set<std::string>& id_strings = app_config.ImguiOpenedWindowIdStrings;
 
     std::initializer_list<std::tuple<std::string, std::string>> imgui_window_ids{
         std::make_tuple(std::string("Outliner"),ImguiWindowOutliner::GetIdStringStatic()),
@@ -89,24 +89,24 @@ void Arcadia::EditorAppLayer::_InstallImguiWindow(ImguiLayer& imgui_layer)
         .EmplaceImguiWindow<ImguiWindowMainMenubar>(imgui_window_ids)
         .EmplaceImguiWindow<ImguiWindowMainToolbar>()
         .EmplaceImguiWindow<ImguiWindowMainStatusbar>()
-        .EmplaceImguiWindow<ImguiWindowOutliner>(id_strs.contains(ImguiWindowOutliner::GetIdStringStatic()), "Outliner")
-        .EmplaceImguiWindow<ImguiWindowViewport>(id_strs.contains(ImguiWindowViewport::GetIdStringStatic()), "Viewport")
-        .EmplaceImguiWindow<ImguiWindowProperty>(id_strs.contains(ImguiWindowProperty::GetIdStringStatic()), "Property")
-        .EmplaceImguiWindow<ImguiWindowState>(id_strs.contains(ImguiWindowState::GetIdStringStatic()), "State");
+        .EmplaceImguiWindow<ImguiWindowOutliner>(id_strings.contains(ImguiWindowOutliner::GetIdStringStatic()), "Outliner")
+        .EmplaceImguiWindow<ImguiWindowViewport>(id_strings.contains(ImguiWindowViewport::GetIdStringStatic()), "Viewport")
+        .EmplaceImguiWindow<ImguiWindowProperty>(id_strings.contains(ImguiWindowProperty::GetIdStringStatic()), "Property")
+        .EmplaceImguiWindow<ImguiWindowState>(id_strings.contains(ImguiWindowState::GetIdStringStatic()), "State");
 }
 
 void Arcadia::EditorAppLayer::_Stop()
 {
-    auto& editor_context = EditorContext::Instance();
-    auto main_window_layer = editor_context.MainWindowLayer.lock();
-    auto main_imgui_layer = editor_context.MainImguiLayer.lock();
+    EditorContext& editor_context = EditorContext::Instance();
+    std::shared_ptr<WindowLayer> main_window_layer_sptr = editor_context.MainWindowLayer.lock();
+    std::shared_ptr<ImguiLayer> main_imgui_layer_sptr = editor_context.MainImguiLayer.lock();
 
-    auto& app_config = AppConfig::Instance();
-    app_config.WindowSize = main_window_layer->GetSize();
-    app_config.WindowPosition = main_window_layer->GetPosition();
-    app_config.WindowMaxmized = main_window_layer->GetSizeState() == WindowSizeState::Maxmized;
+    AppConfig& app_config = AppConfig::Instance();
+    app_config.WindowSize = main_window_layer_sptr->GetSize();
+    app_config.WindowPosition = main_window_layer_sptr->GetPosition();
+    app_config.WindowMaxmized = main_window_layer_sptr->GetSizeState() == WindowSizeState::Maxmized;
 
-    for(const auto& imgui_window : main_imgui_layer->GetImguiWindow())
+    for(const std::unique_ptr<iImguiWindow>& imgui_window : main_imgui_layer_sptr->GetImguiWindow())
     {
         if(imgui_window->Open())
         {
@@ -114,17 +114,17 @@ void Arcadia::EditorAppLayer::_Stop()
         }
     }
 
-    auto& app_context = AppContext::Instance();
+    AppContext& app_context = AppContext::Instance();
     app_context.Running = false;
 }
 
 void Arcadia::EditorAppLayer::_OnWindowShouldClose(Events::WindowShouldClose& e)
 {
-    auto& editor_context = EditorContext::Instance();
-    auto main_window_layer = editor_context.MainWindowLayer.lock();
-    auto main_project_layer = editor_context.MainProjectLayer.lock();
+    EditorContext& editor_context = EditorContext::Instance();
+    std::shared_ptr<WindowLayer> main_window_layer_sptr = editor_context.MainWindowLayer.lock();
+    std::shared_ptr<ProjectLayer> main_project_layer_sptr = editor_context.MainProjectLayer.lock();
 
-    if(e.Window == main_window_layer.get() && main_project_layer->HasProject())
+    if(e.Window == main_window_layer_sptr.get() && main_project_layer_sptr->HasProject())
     {
         _WaitingForProjectUnbuiltBeforeClosing = true;
     }
@@ -149,7 +149,7 @@ void Arcadia::EditorAppLayer::_OnWindowCloseCanceled(Events::WindowCloseCanceled
 
 void Arcadia::EditorAppLayer::_OnTogglePlayMode(Events::TogglePlayMode& e)
 {
-    auto& instance = EditorContext::Instance();
+    EditorContext& instance = EditorContext::Instance();
     instance.InPlayMode = !instance.InPlayMode;
 }
 

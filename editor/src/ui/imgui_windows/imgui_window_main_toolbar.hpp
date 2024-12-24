@@ -29,6 +29,6 @@ namespace Arcadia
         void _OnSceneActivated(Events::SceneActivated& e);
         void _OnSceneDeactivated(Events::SceneDeactivated& e);
     private:
-        std::weak_ptr<Scene> _Scene{};
+        std::weak_ptr<Scene> _SceneWeakPtr{};
     };
 }

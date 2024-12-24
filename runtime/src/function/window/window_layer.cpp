@@ -16,7 +16,7 @@ Arcadia::WindowLayer::WindowLayer(
     _Title(title),
     _MultisampleCount(multisample_count)
 {
-    const auto& app_config = AppConfig::Instance();
+    const AppConfig& app_config = AppConfig::Instance();
 
     MatchVariant<void>(
         app_config.GraphicApi,
@@ -41,18 +41,18 @@ Arcadia::WindowLayer::WindowLayer(
     if(!_GlfwWindow)
     {
         const char* desr = nullptr;
-        auto err_code = glfwGetError(&desr);
+        int err_code = glfwGetError(&desr);
         throw Exceptions::GlfwError(std::format("Failed to create GLFW window, because {}", desr));
     }
     glfwMakeContextCurrent(_GlfwWindow);
 
-    double x = _LastCursorPosition.x,
-        y = _LastCursorPosition.y;
+    double x = _LastCursorPosition.x;
+    double y = _LastCursorPosition.y;
     glfwGetCursorPos(_GlfwWindow, &x, &y);
     _LastCursorPosition.x = static_cast<float>(x);
     _LastCursorPosition.y = static_cast<float>(y);
-    auto& min = app_config.WindowSizeMin;
-    auto& max = app_config.WindowSizeMax;
+    const glm::i32vec2& min = app_config.WindowSizeMin;
+    const glm::i32vec2& max = app_config.WindowSizeMax;
     glfwSetWindowSizeLimits(
         _GlfwWindow,
         min.x < 0 ? GLFW_DONT_CARE : min.x,
@@ -66,7 +66,7 @@ Arcadia::WindowLayer::WindowLayer(
     }
     else
     {
-        auto& size = app_config.WindowSize;
+        const glm::i32vec2& size = app_config.WindowSize;
         glfwSetWindowSize(_GlfwWindow, size.x, size.y);
     }
 
@@ -135,7 +135,7 @@ auto Arcadia::WindowLayer::GetPosition() const -> glm::i32vec2
 
 void Arcadia::WindowLayer::_OnWindowSetCursorInputMode(Events::WindowSetCursorInputMode& e)
 {
-    std::int32_t val = Match<int>(
+    std::int32_t val = Match<std::int32_t>(
         e.Mode,
         WindowCursorInputMode::Normal,
         GLFW_CURSOR_NORMAL,
@@ -171,16 +171,16 @@ void Arcadia::WindowLayer::_SetupCallbacks()
         [](GLFWwindow* glfw_wnd_ptr, double xpos, double ypos) -> void
     {
         glm::vec2 cursor_pos(xpos, ypos);
-        auto wnd_ptr = _GetWindowPointerFromGlfwUserPointer(glfw_wnd_ptr);
-        auto& event_queue = EventQueue::Instance();
+        WindowLayer* wnd_ptr = _GetWindowPointerFromGlfwUserPointer(glfw_wnd_ptr);
+        EventQueue& event_queue = EventQueue::Instance();
 
         event_queue.Signal<Events::InputCursorPosition>(
             wnd_ptr,
             cursor_pos
         );
 
-        auto& last_pos = wnd_ptr->_LastCursorPosition;
-        auto offset = cursor_pos - last_pos;
+        glm::vec2& last_pos = wnd_ptr->_LastCursorPosition;
+        glm::vec2 offset = cursor_pos - last_pos;
         if(IsInRange(offset.x, _LegalCursorMoveRange.x, _LegalCursorMoveRange.y)
            && IsInRange(offset.y, _LegalCursorMoveRange.x, _LegalCursorMoveRange.y))
         {
@@ -243,7 +243,7 @@ void Arcadia::WindowLayer::_SetupCallbacks()
         _GlfwWindow,
         [](GLFWwindow* glfw_wnd_ptr, int iconified) -> void
     {
-        auto& event_queue = EventQueue::Instance();
+        EventQueue& event_queue = EventQueue::Instance();
         if(iconified)
         {
             event_queue.Signal<Events::WindowSizeStateChanged>(
@@ -264,7 +264,7 @@ void Arcadia::WindowLayer::_SetupCallbacks()
         _GlfwWindow,
         [](GLFWwindow* glfw_wnd_ptr, int maxmized) -> void
     {
-        auto& event_queue = EventQueue::Instance();
+        EventQueue& event_queue = EventQueue::Instance();
         if(maxmized)
         {
             event_queue.Signal<Events::WindowSizeStateChanged>(
@@ -347,7 +347,7 @@ void Arcadia::WindowLayer::_SetupCallbacks()
 
 void Arcadia::WindowLayer::_SwapBuffers()
 {
-    const auto& app_config = AppConfig::Instance();
+    const AppConfig& app_config = AppConfig::Instance();
 
     MatchVariant<void>(
         app_config.GraphicApi,

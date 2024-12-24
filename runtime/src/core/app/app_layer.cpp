@@ -15,10 +15,10 @@ Arcadia::iAppLayer::iAppLayer() :
     // Prepare AppConfig (either read from disk or use default value)
     try
     {
-        auto ifs = File::CreateIfstream(AppConfig::Filepath);
-        auto json = nlohmann::json::parse(ifs);
+        std::ifstream ifs = File::CreateIfstream(AppConfig::Filepath);
+        nlohmann::json json = nlohmann::json::parse(ifs);
 
-        auto& app_config = AppConfig::Instance();
+        AppConfig& app_config = AppConfig::Instance();
 
         // Working directory
         app_config.WorkingDirectory = ToFilepath(json.value("working_directory", app_config.WorkingDirectory.generic_string()));
@@ -26,7 +26,7 @@ Arcadia::iAppLayer::iAppLayer() :
         // Graphic api
         try
         {
-            const auto& json_graphic_api = json.at("graphic_api");
+            const nlohmann::json& json_graphic_api = json.at("graphic_api");
             Version graphic_api_version(json_graphic_api.at("version"));
             std::string graphic_api_type_string = json_graphic_api.at("type");
             app_config.GraphicApi = Match<GraphicApi::Type>(
@@ -60,7 +60,7 @@ Arcadia::iAppLayer::iAppLayer() :
         // Window
         try
         {
-            const auto& json_window           = json.at("window");
+            const nlohmann::json& json_window           = json.at("window");
             app_config.WindowPosition         = GlmInt32Vec2::FromJson(json_window.value("pos", GlmInt32Vec2::ToJson(app_config.WindowPosition)));
             app_config.WindowSize             = GlmInt32Vec2::FromJson(json_window.value("size", GlmInt32Vec2::ToJson(app_config.WindowSize)));
             app_config.WindowSizeMax          = GlmInt32Vec2::FromJson(json_window.value("max_size", GlmInt32Vec2::ToJson(app_config.WindowSizeMax)));
@@ -77,7 +77,7 @@ Arcadia::iAppLayer::iAppLayer() :
         // ImGui
         try
         {
-            const auto& json_imgui = json.at("imgui");
+            const nlohmann::json& json_imgui = json.at("imgui");
             for(const auto& id_strs : json_imgui.value("opened_window_id_strs", nlohmann::json::array()))
             {
                 app_config.ImguiOpenedWindowIdStrings.emplace(id_strs);
@@ -97,9 +97,9 @@ Arcadia::iAppLayer::iAppLayer() :
 
 Arcadia::iAppLayer::~iAppLayer()
 {
-    auto& app_config = AppConfig::Instance();
+    AppConfig& app_config = AppConfig::Instance();
 
-    auto json = nlohmann::json::object();
+    nlohmann::json json = nlohmann::json::object();
 
     // Working directory
     json.push_back({ "working_directory",app_config.WorkingDirectory.generic_string() });
@@ -150,13 +150,13 @@ Arcadia::iAppLayer::~iAppLayer()
             }
         }
     );
-    for(const auto& id_string : app_config.ImguiOpenedWindowIdStrings)
+    for(const std::string& id_string : app_config.ImguiOpenedWindowIdStrings)
     {
         json.at("imgui")
             .at("opened_window_id_strs")
             .push_back(id_string);
     }
 
-    auto ofs = File::CreateOfstream(AppConfig::Filepath);
+    std::ofstream ofs = File::CreateOfstream(AppConfig::Filepath);
     ofs << std::setw(4) << json;
 }

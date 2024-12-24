@@ -11,17 +11,17 @@ void Arcadia::ImguiWindowMainStatusbar::OnEvent(EventBase& e)
 void Arcadia::ImguiWindowMainStatusbar::OnUpdate()
 {
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, glm::vec2{ 0,0 });
-    auto window_flags =
+    ImGuiWindowFlags window_flags =
         ImGuiWindowFlags_NoDecoration
         | ImGuiWindowFlags_NoDocking
         | ImGuiWindowFlags_NoBringToFrontOnFocus
         | ImGuiWindowFlags_NoFocusOnAppearing;
     if(ImGui::BeginViewportSideBar("statusbar", ImGui::GetMainViewport(), ImGuiDir_Down, ImGui::GetFrameHeight(), window_flags))
     {
-        auto combo_flags =
+        ImGuiComboFlags combo_flags =
             ImGuiComboFlags_NoPreview;
-        auto& editor_context = EditorContext::Instance();
-        auto& app_config = AppConfig::Instance();
+        EditorContext& editor_context = EditorContext::Instance();
+        AppConfig& app_config = AppConfig::Instance();
 
         static const std::array<std::pair<std::string, float>, 3> scales{
             std::make_pair("70%",0.7f),
@@ -43,10 +43,10 @@ void Arcadia::ImguiWindowMainStatusbar::OnUpdate()
         if(ImGui::BeginCombo(std::format("{}##UiScale", scales[scale_idx].first).c_str(), nullptr, combo_flags))
         {
             std::int32_t new_idx = -1;
-            for(auto& [str, factor] : scales)
+            for(auto& [string, factor] : scales)
             {
                 new_idx++;
-                if(ImGui::MenuItem(str.c_str()))
+                if(ImGui::MenuItem(string.c_str()))
                 {
                     editor_context.UiScale = factor;
                     scale_idx = new_idx;

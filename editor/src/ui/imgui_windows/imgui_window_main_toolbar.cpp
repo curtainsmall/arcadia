@@ -19,17 +19,17 @@ void Arcadia::ImguiWindowMainToolbar::OnEvent(EventBase& e)
 
 void Arcadia::ImguiWindowMainToolbar::OnUpdate()
 {
-    auto scene = _Scene.lock();
+    std::shared_ptr<Scene> scene_sptr = _SceneWeakPtr.lock();
 
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, glm::vec2{ 0,0 });
-    auto window_flags =
+    ImGuiWindowFlags window_flags =
         ImGuiWindowFlags_NoDecoration
         | ImGuiWindowFlags_NoDocking
         | ImGuiWindowFlags_NoBringToFrontOnFocus
         | ImGuiWindowFlags_NoFocusOnAppearing;
     if(ImGui::BeginViewportSideBar("toolbar", ImGui::GetMainViewport(), ImGuiDir_Up, ImGui::GetFrameHeight(), window_flags))
     {
-        auto& memento_list = MementoList::Instance();
+        MementoList& memento_list = MementoList::Instance();
 
         ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, glm::vec2{ 0,4 });
         if(ImGui::Button(ICON_FA_ARROW_CIRCLE_LEFT))
@@ -75,7 +75,7 @@ void Arcadia::ImguiWindowMainToolbar::OnUpdate()
         }
         ImGui::SetItemTooltip(" Redo ");
 
-        if(scene)
+        if(scene_sptr)
         {
             ImGui::SameLine();
             if(EditorContext::Instance().InPlayMode)
@@ -100,10 +100,10 @@ void Arcadia::ImguiWindowMainToolbar::OnUpdate()
 
 void Arcadia::ImguiWindowMainToolbar::_OnSceneActivated(Events::SceneActivated& e)
 {
-    _Scene = e.Scene;
+    _SceneWeakPtr = e.Scene;
 }
 
 void Arcadia::ImguiWindowMainToolbar::_OnSceneDeactivated(Events::SceneDeactivated& e)
 {
-    _Scene.reset();
+    _SceneWeakPtr.reset();
 }

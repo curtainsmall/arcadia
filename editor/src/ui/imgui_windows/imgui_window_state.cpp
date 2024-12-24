@@ -106,7 +106,7 @@ void Arcadia::ImguiWindowState::OnUpdate()
         return;
     }
 
-    auto scene = _Scene.lock();
+    auto scene = _SceneWeakPtr.lock();
     auto renderer = _Renderer.lock();
     auto physics_simualtor = _PhysicsSimulator.lock();
 
@@ -170,12 +170,12 @@ void Arcadia::ImguiWindowState::_OnOpenImguiWindow(Events::OpenImguiWindow& e)
 
 void Arcadia::ImguiWindowState::_OnSceneActivated(Events::SceneActivated& e)
 {
-    _Scene = e.Scene;
+    _SceneWeakPtr = e.Scene;
 }
 
 void Arcadia::ImguiWindowState::_OnSceneDeactivated(Events::SceneDeactivated& e)
 {
-    _Scene.reset();
+    _SceneWeakPtr.reset();
 }
 
 void Arcadia::ImguiWindowState::_OnRendererBuilt(Events::RendererBuilt& e)
