@@ -901,15 +901,14 @@ void Arcadia::ImguiWindowProperty::OnEvent(EventBase& e)
         .Dispatch<Events::SceneActivated>(ACDA_BIND_MEMBER_FN(_OnSceneActivated))
         .Dispatch<Events::SceneDeactivated>(ACDA_BIND_MEMBER_FN(_OnSceneDeactivated))
         .Dispatch<Events::SelectEntity>(ACDA_BIND_MEMBER_FN(_OnSelectEntity))
-        .Dispatch<Events::RenameEntity>(ACDA_BIND_MEMBER_FN(_OnRenameEntity))
         .Dispatch<Events::DeleteEntity>(ACDA_BIND_MEMBER_FN(_OnDeleteEntity))
         .IsDispatched();
 }
 
 #define ACDA_IMGUI_WINDOW_PROPERTY_HELPER(component_type, tab_name, property_display_fn) \
-if(_ContainsComponent<component_type>(_SelectedEntityName) && ImGui::TreeNodeEx(tab_name.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_FramePadding))\
+if(_ContainsComponent<component_type>(_SelectedEntityId) && ImGui::TreeNodeEx(tab_name.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_FramePadding))\
 {\
-    auto description = property_display_fn(_GetComponent<component_type>(_SelectedEntityName));\
+    auto description = property_display_fn(_GetComponent<component_type>(_SelectedEntityId));\
     if(!description.empty())\
     {\
         memento_list\
@@ -917,7 +916,7 @@ if(_ContainsComponent<component_type>(_SelectedEntityName) && ImGui::TreeNodeEx(
                 std::format("{} - {}", tab_name, description),\
                 [&]() -> component_type&\
             {\
-                return scene_sptr->GetComponent<component_type>(_SelectedEntityName);\
+                return scene_sptr->GetComponent<component_type>(_SelectedEntityId);\
             }\
         );\
     }\
@@ -933,8 +932,8 @@ void Arcadia::ImguiWindowProperty::OnUpdate()
 
     std::shared_ptr<Scene> scene_sptr = _SceneWeakPtr.lock();
 
-    std::string imgui_title = scene_sptr && !_SelectedEntityName.empty()
-        ? _Title + " - " + _SelectedEntityName + GetIdString()
+    std::string imgui_title = scene_sptr && _SelectedEntityId
+        ? _Title + " - " + ToString(_SelectedEntityId) + GetIdString()
         : _Title + GetIdString();
 
     ImGui::SetNextWindowSize(glm::vec2{ 1024,768 }, ImGuiCond_Once);
@@ -954,7 +953,7 @@ void Arcadia::ImguiWindowProperty::OnUpdate()
                 | ImGuiTabBarFlags_AutoSelectNewTabs
                 | ImGuiTabBarFlags_FittingPolicyScroll
                 | ImGuiTabBarFlags_Reorderable;
-            if(!_SelectedEntityName.empty())
+            if(_SelectedEntityId)
             {
                 ImGui::PushItemWidth(200.f);
 
@@ -989,26 +988,18 @@ void Arcadia::ImguiWindowProperty::_OnSceneActivated(Events::SceneActivated& e)
 void Arcadia::ImguiWindowProperty::_OnSceneDeactivated(Events::SceneDeactivated& e)
 {
     _SceneWeakPtr.reset();
-    _SelectedEntityName.clear();
+    _SelectedEntityId.SetNull();
 }
 
 void Arcadia::ImguiWindowProperty::_OnSelectEntity(Events::SelectEntity& e)
 {
-    _SelectedEntityName = e.EntityName;
-}
-
-void Arcadia::ImguiWindowProperty::_OnRenameEntity(Events::RenameEntity& e)
-{
-    if(e.OldName == _SelectedEntityName)
-    {
-        _SelectedEntityName = e.NewName;
-    }
+    _SelectedEntityId = e.EntityId;
 }
 
 void Arcadia::ImguiWindowProperty::_OnDeleteEntity(Events::DeleteEntity& e)
 {
-    if(_SelectedEntityName == e.EntityName)
+    if(_SelectedEntityId == e.EntityId)
     {
-        _SelectedEntityName.clear();
+        _SelectedEntityId.SetNull();
     }
 }

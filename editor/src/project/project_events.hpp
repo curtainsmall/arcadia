@@ -90,7 +90,7 @@ namespace Arcadia
         class SceneDeactivated: public EventBase
         {};
 
-        class Sceneunbuilt: public EventBase
+        class SceneUnbuilt: public EventBase
         {};
     }
 }

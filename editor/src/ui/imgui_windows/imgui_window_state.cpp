@@ -12,7 +12,7 @@
 
 void Arcadia::ImguiWindowStateScene::operator()(const Scene& scene)
 {
-    ImGui::Text(std::format("Entity Count: {}", scene.CountEntity([&](const std::string&, const EntityInfo& info)->bool
+    ImGui::Text(std::format("Entity Count: {}", scene.CountEntity([&](EntityId, const EntityInfo& info)->bool
     {
         return !info.Internal;
     })).c_str());

@@ -4,6 +4,7 @@
 #include<string>
 
 #include"core/event/event.hpp"
+#include"resource/entity_id.hpp"
 
 namespace Arcadia
 {
@@ -13,7 +14,7 @@ namespace Arcadia
         class OpenImguiWindow: public EventBase
         {
         public:
-            OpenImguiWindow(const std::string& id_string):
+            OpenImguiWindow(const std::string& id_string) :
                 IdString(id_string)
             {}
         public:
@@ -23,7 +24,7 @@ namespace Arcadia
         class ScaleImguiWindow: public EventBase
         {
         public:
-            ScaleImguiWindow(float new_scale):
+            ScaleImguiWindow(float new_scale) :
                 NewScale(new_scale)
             {}
         public:
@@ -38,7 +39,7 @@ namespace Arcadia
         class CreateProject: public EventBase
         {
         public:
-            CreateProject(const std::string& name, const std::string& filepath_string):
+            CreateProject(const std::string& name, const std::string& filepath_string) :
                 Name(name), FilepathString(filepath_string)
             {}
         public:
@@ -63,7 +64,7 @@ namespace Arcadia
         class PhysicsSimulatorShouldUpdate: public EventBase
         {
         public:
-            PhysicsSimulatorShouldUpdate(bool should_update):
+            PhysicsSimulatorShouldUpdate(bool should_update) :
                 ShouldUpdate(should_update)
             {}
         public:
@@ -78,7 +79,7 @@ namespace Arcadia
         class CreateScene:public EventBase
         {
         public:
-            CreateScene(const std::string& name, bool as_current):
+            CreateScene(const std::string& name, bool as_current) :
                 Name(name), AsCurrent(as_current)
             {}
         public:
@@ -89,7 +90,7 @@ namespace Arcadia
         class SelectScene: public EventBase
         {
         public:
-            SelectScene(const std::string& name):
+            SelectScene(const std::string& name) :
                 Name(name)
             {}
         public:
@@ -107,7 +108,7 @@ namespace Arcadia
         class NewEntity: public EventBase
         {
         public:
-            NewEntity(const std::string& entity_type_string):
+            NewEntity(const std::string& entity_type_string) :
                 EntityTypeString(entity_type_string)
             {}
         public:
@@ -117,32 +118,32 @@ namespace Arcadia
         class SelectEntity: public EventBase
         {
         public:
-            SelectEntity(const std::string& entity_name):
-                EntityName(entity_name)
+            SelectEntity(EntityId entity_id) :
+                EntityId(entity_id)
             {}
         public:
-            const std::string EntityName;
+            const EntityId EntityId;
         };
 
         class RenameEntity: public EventBase
         {
         public:
-            RenameEntity(const std::string& old_name, const std::string& new_name):
-                OldName(old_name), NewName(new_name)
+            RenameEntity(EntityId entity_id, const std::string& new_name) :
+                EntityId(entity_id), NewName(new_name)
             {}
         public:
-            const std::string OldName;
+            const EntityId EntityId;
             const std::string NewName;
         };
 
         class DeleteEntity: public EventBase
         {
         public:
-            DeleteEntity(const std::string& entity_name):
-                EntityName(entity_name)
+            DeleteEntity(EntityId entity_id) :
+                EntityId(entity_id)
             {}
         public:
-            const std::string EntityName;
+            const EntityId EntityId;
         };
 
         //==== Events for component ====//
@@ -150,22 +151,22 @@ namespace Arcadia
         class AddComponent: public EventBase
         {
         public:
-            AddComponent(const std::string& entity_name, const std::string& component_type_string):
-                EntityName(entity_name), ComponentTypeString(component_type_string)
+            AddComponent(EntityId entity_id, const std::string& component_type_string) :
+                EntityId(entity_id), ComponentTypeString(component_type_string)
             {}
         public:
-            const std::string EntityName;
+            const EntityId EntityId;
             const std::string ComponentTypeString;
         };
 
         class RemoveComponent: public EventBase
         {
         public:
-            RemoveComponent(const std::string& entity_name, const std::string& component_type_string):
-                EntityName(entity_name), ComponentTypeString(component_type_string)
+            RemoveComponent(EntityId entity_id, const std::string& component_type_string) :
+                EntityId(entity_id), ComponentTypeString(component_type_string)
             {}
         public:
-            const std::string EntityName;
+            const EntityId EntityId;
             const std::string ComponentTypeString;
         };
 
@@ -176,17 +177,15 @@ namespace Arcadia
 
         //==== Events for modes ====//
 
-
         class TogglePlayMode: public EventBase
         {};
-
 
         //==== Events for viewport ====//
 
         class ShowGizmo: public EventBase
         {
         public:
-            ShowGizmo(bool should_show_gizmo):
+            ShowGizmo(bool should_show_gizmo) :
                 ShouldShowGizmo(should_show_gizmo)
             {}
         public:

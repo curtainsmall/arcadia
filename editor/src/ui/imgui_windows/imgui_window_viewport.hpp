@@ -56,7 +56,6 @@ namespace Arcadia
         void _OnSceneActivated(Events::SceneActivated& e);
         void _OnSceneDeactivated(Events::SceneDeactivated& e);
         void _OnSelectEntity(Events::SelectEntity& e);
-        void _OnRenameEntity(Events::RenameEntity& e);
         void _OnDeleteEntity(Events::DeleteEntity& e);
         void _OnRendererBuilt(Events::RendererBuilt& e);
         void _OnRendererUnbuilt(Events::RendererUnbuilt& e);
@@ -64,15 +63,15 @@ namespace Arcadia
         void _OnPhysicsSimulatorUnbuilt(Events::PhysicsSimulatorUnbuilt& e);
         void _OnShowGizmo(Events::ShowGizmo& e);
 
-    public:
-        static inline std::string ViewportCameraEntityName{ "viewport_camera" };
     private:
+        static inline std::string _ViewportCameraEntityName{ "viewport_camera" };
+
         std::weak_ptr<Project> _Project{};
         std::weak_ptr<Scene> _SceneWeakPtr{};
         std::weak_ptr<RendererInterface> _Renderer{};
         std::weak_ptr<PhysicsSimulator> _PhysicsSimulator{};
 
-        std::string _SelectedEntityName{};
+        EntityId _SelectedEntityId{};
 
         glm::vec2 _CursorMoveDistance{};
 

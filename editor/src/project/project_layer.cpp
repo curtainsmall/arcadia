@@ -75,19 +75,11 @@ void Arcadia::ProjectLayer::OnEvent(EventBase& e)
 void Arcadia::ProjectLayer::OnUpdate()
 {}
 
-auto Arcadia::ProjectLayer::_AssertAndGetScene() -> Scene&
-{
-    ACDA_ASSERT(_Project);
-    ACDA_ASSERT(_Project->HasActiveScene());
-
-    return _Project->GetActiveScene();
-}
-
 void Arcadia::ProjectLayer::_SaveProject()
 {
-    ACDA_ASSERT(_Project);
+    ACDA_ASSERT(_ProjectSharedPtr);
 
-    nlohmann::json json = _Project->ToJson();
+    nlohmann::json json = _ProjectSharedPtr->ToJson();
 
     std::ofstream ofs = File::CreateOfstream(_ProjectFilepath);
     ofs << std::setw(4) << json;
@@ -97,12 +89,12 @@ void Arcadia::ProjectLayer::_SaveProject()
 
 void Arcadia::ProjectLayer::_LoadProject()
 {
-    ACDA_ASSERT(!_Project);
+    ACDA_ASSERT(!_ProjectSharedPtr);
 
     std::ifstream ifs = File::CreateIfstream(_ProjectFilepath);
     nlohmann::json json = nlohmann::json::parse(ifs);
 
-    _Project = std::make_shared<Project>(json);
+    _ProjectSharedPtr = std::make_shared<Project>(json);
     EventQueue::Instance().Signal<Events::ProjectLoaded>();
 }
 
@@ -112,7 +104,7 @@ void Arcadia::ProjectLayer::_OnWindowShouldClose(Events::WindowShouldClose& e)
 
     std::shared_ptr<WindowLayer> main_window_layer_sptr = EditorContext::Instance().MainWindowLayer.lock();
 
-    if(e.Window == main_window_layer_sptr.get() && _Project)
+    if(e.Window == main_window_layer_sptr.get() && _ProjectSharedPtr)
     {
         MementoList& memento_list = MementoList::Instance();
         if(memento_list.GetSize())
@@ -136,7 +128,7 @@ void Arcadia::ProjectLayer::_OnWindowShouldClose(Events::WindowShouldClose& e)
                     if(_ProjectFilepath.empty())
                     {
                         _ProjectFilepath = pfd::save_file{
-                            "Save as"
+                            "Arcadia - Save as"
                         }.result();
                         if(_ProjectFilepath.empty())
                         {
@@ -151,7 +143,7 @@ void Arcadia::ProjectLayer::_OnWindowShouldClose(Events::WindowShouldClose& e)
                     break;
             }
         }
-        _Project.reset();
+        _ProjectSharedPtr.reset();
         EventQueue::Instance()
             .Signal<Events::ProjectUnbuilt>();
     }
@@ -159,10 +151,10 @@ void Arcadia::ProjectLayer::_OnWindowShouldClose(Events::WindowShouldClose& e)
 
 void Arcadia::ProjectLayer::_OnCreateProject(Events::CreateProject& e)
 {
-    if(_Project)
+    if(_ProjectSharedPtr)
     {
         pfd::button res = pfd::message{
-            "Unsaved Project",
+            "Arcadia - Unsaved Project",
             "The current project is not saved, do you want to save it?",
             pfd::choice::yes_no_cancel
         }.result();
@@ -176,7 +168,7 @@ void Arcadia::ProjectLayer::_OnCreateProject(Events::CreateProject& e)
                 if(_ProjectFilepath.empty())
                 {
                     _ProjectFilepath = pfd::save_file{
-                                        "Save as"
+                                        "Arcadia - Save as"
                     }.result();
                     if(_ProjectFilepath.empty())
                     {
@@ -189,22 +181,22 @@ void Arcadia::ProjectLayer::_OnCreateProject(Events::CreateProject& e)
             default:
                 break;
         }
-        _Project.reset();
+        _ProjectSharedPtr.reset();
     }
 
-    _Project = std::make_shared<Project>(e.Name);
+    _ProjectSharedPtr = std::make_shared<Project>(e.Name);
     _ProjectFilepath = e.FilepathString.size() ? ToFilepath(e.FilepathString) : std::filesystem::path{};
 
     EventQueue::Instance()
-        .Signal<Events::ProjectBuilt>(_Project);
+        .Signal<Events::ProjectBuilt>(_ProjectSharedPtr);
 }
 
 void Arcadia::ProjectLayer::_OnOpenProject(Events::OpenProject& e)
 {
-    if(_Project)
+    if(_ProjectSharedPtr)
     {
         pfd::button res = pfd::message{
-            "Unsaved Project",
+            "Arcadia - Unsaved Project",
             "The current project is not saved, do you want to save it?",
             pfd::choice::yes_no_cancel
         }.result();
@@ -218,7 +210,7 @@ void Arcadia::ProjectLayer::_OnOpenProject(Events::OpenProject& e)
                 if(_ProjectFilepath.empty())
                 {
                     _ProjectFilepath = pfd::save_file{
-                                        "Save as"
+                                        "Arcadia - Save as"
                     }.result();
                     if(_ProjectFilepath.empty())
                     {
@@ -231,11 +223,11 @@ void Arcadia::ProjectLayer::_OnOpenProject(Events::OpenProject& e)
             default:
                 break;
         }
-        _Project.reset();
+        _ProjectSharedPtr.reset();
     }
 
     std::vector<std::string> filepathes = pfd::open_file{
-        "Open",
+        "Arcadia - Open",
         "",
         std::vector<std::string>{"Arcadia Project",std::format("*{}",Project::ProjectExtensionString)}
     }.result();
@@ -247,7 +239,7 @@ void Arcadia::ProjectLayer::_OnOpenProject(Events::OpenProject& e)
     if(_ProjectFilepath.extension() != Project::ProjectExtensionString)
     {
         pfd::message msg{
-            "Open Project",
+            "Arcadia - Open Project",
             std::format("Arcadia project must ends with extension \"{}\" while {} does not",Project::ProjectExtensionString,_ProjectFilepath.generic_string()),
             pfd::choice::ok,
             pfd::icon::info
@@ -256,17 +248,17 @@ void Arcadia::ProjectLayer::_OnOpenProject(Events::OpenProject& e)
     }
     _LoadProject();
     EventQueue::Instance()
-        .Signal<Events::ProjectBuilt>(_Project);
+        .Signal<Events::ProjectBuilt>(_ProjectSharedPtr);
 }
 
 void Arcadia::ProjectLayer::_OnSaveProject(Events::SaveProject& e)
 {
-    ACDA_ASSERT(_Project);
+    ACDA_ASSERT(_ProjectSharedPtr);
 
     if(_ProjectFilepath.empty())
     {
         _ProjectFilepath = pfd::save_file{
-            "Save as"
+            "Arcadia - Save as"
         }.result();
         if(_ProjectFilepath.empty())
         {
@@ -278,7 +270,7 @@ void Arcadia::ProjectLayer::_OnSaveProject(Events::SaveProject& e)
 
 void Arcadia::ProjectLayer::_OnSaveProjectAs(Events::SaveProjectAs& e)
 {
-    ACDA_ASSERT(_Project);
+    ACDA_ASSERT(_ProjectSharedPtr);
 
     _ProjectFilepath = pfd::save_file{
         "Save as"
@@ -292,7 +284,7 @@ void Arcadia::ProjectLayer::_OnSaveProjectAs(Events::SaveProjectAs& e)
 
 void Arcadia::ProjectLayer::_OnCloseProject(Events::CloseProject& e)
 {
-    ACDA_ASSERT(_Project);
+    ACDA_ASSERT(_ProjectSharedPtr);
 
     EventQueue& event_queue = EventQueue::Instance();
 
@@ -331,7 +323,7 @@ void Arcadia::ProjectLayer::_OnCloseProject(Events::CloseProject& e)
                 break;
         }
     }
-    _Project.reset();
+    _ProjectSharedPtr.reset();
     EventQueue::Instance()
         .Signal<Events::ProjectUnbuilt>();
 }
@@ -343,39 +335,39 @@ void Arcadia::ProjectLayer::_OnProjectSaved(Events::ProjectSaved& e)
 
 void Arcadia::ProjectLayer::_OnCreateScene(Events::CreateScene& e)
 {
-    ACDA_ASSERT(_Project);
+    ACDA_ASSERT(_ProjectSharedPtr);
 
-    std::shared_ptr<Scene>& scene_sptr = _Project->SceneStorage.try_emplace(
+    std::shared_ptr<Scene>& scene_sptr = _ProjectSharedPtr->SceneStorage.try_emplace(
         e.Name,
         std::make_shared<Scene>(e.Name)
     ).first->second;
 
     if(e.AsCurrent)
     {
-        _Project->SetActiveScene(e.Name);
+        _ProjectSharedPtr->SetActiveScene(e.Name);
     }
 }
 
 void Arcadia::ProjectLayer::_OnSelectScene(Events::SelectScene& e)
 {
-    ACDA_ASSERT(_Project);
+    ACDA_ASSERT(_ProjectSharedPtr);
 
-    _Project->SetActiveScene(e.Name);
+    _ProjectSharedPtr->SetActiveScene(e.Name);
 }
 
 void Arcadia::ProjectLayer::_OnCloseScene(Events::CloseScene& e)
 {
-    ACDA_ASSERT(_Project);
+    ACDA_ASSERT(_ProjectSharedPtr);
 
-    _Project->SetActiveScene();
+    _ProjectSharedPtr->SetActiveScene();
 }
 
 void Arcadia::ProjectLayer::_OnDeleteScene(Events::DeleteScene& e)
 {
-    ACDA_ASSERT(_Project);
-    ACDA_ASSERT(_Project->HasActiveScene());
+    ACDA_ASSERT(_ProjectSharedPtr);
+    ACDA_ASSERT(_ProjectSharedPtr->HasActiveScene());
 
-    const std::string& scene_name = _Project->GetActiveScene().GetName();
+    const std::string& scene_name = _ProjectSharedPtr->GetActiveScene().GetName();
 
     pfd::button res = pfd::message{
         "Delete Scene",
@@ -386,8 +378,8 @@ void Arcadia::ProjectLayer::_OnDeleteScene(Events::DeleteScene& e)
     {
         case pfd::button::ok:
         {
-            _Project->SceneStorage.erase(scene_name);
-            _Project->SetActiveScene();
+            _ProjectSharedPtr->SceneStorage.erase(scene_name);
+            _ProjectSharedPtr->SetActiveScene();
             break;
         }
         case pfd::button::cancel:
@@ -400,7 +392,7 @@ void Arcadia::ProjectLayer::_OnDeleteScene(Events::DeleteScene& e)
 
 void Arcadia::ProjectLayer::_OnNewEntity(Events::NewEntity& e)
 {
-    Scene& scene = _AssertAndGetScene();
+    Scene& scene = _ProjectSharedPtr->GetActiveScene();
 
     std::string temp_name = "New Entity";
     std::string name = temp_name;
@@ -410,36 +402,36 @@ void Arcadia::ProjectLayer::_OnNewEntity(Events::NewEntity& e)
         name = std::format("{} {}", temp_name, ++postfix);
     }
 
-    scene.CreateEntity(name, e.EntityTypeString);
+    EntityId entit_id = scene.CreateEntity(name, e.EntityTypeString);
 
     Match<void>(
         e.EntityTypeString,
         std::string("actor"),
         [&]()
     {
-        scene.EmplaceComponent<ModelComponent>(name).Snapshot();
+        scene.EmplaceComponent<ModelComponent>(entit_id).Snapshot();
 
-        scene.EmplaceComponent<PhysicsComponent>(name).Snapshot();
+        scene.EmplaceComponent<PhysicsComponent>(entit_id).Snapshot();
 
-        TransformComponent& transform_comp =  scene.EmplaceComponent<TransformComponent>(name);
+        TransformComponent& transform_comp =  scene.EmplaceComponent<TransformComponent>(entit_id);
         transform_comp.Snapshot();
         transform_comp.Flags |= TransformComponentFlags::UseRotation;
     },
         std::string("camera"),
         [&]()
     {
-        scene.EmplaceComponent<CameraComponent>(name).Snapshot();
+        scene.EmplaceComponent<CameraComponent>(entit_id).Snapshot();
 
-        TransformComponent& transform_comp = scene.EmplaceComponent<TransformComponent>(name);
+        TransformComponent& transform_comp = scene.EmplaceComponent<TransformComponent>(entit_id);
         transform_comp.Snapshot();
         transform_comp.Flags |= TransformComponentFlags::UseDirection;
     },
         std::string("light"),
         [&]()
     {
-        scene.EmplaceComponent<LightComponent>(name).Snapshot();
+        scene.EmplaceComponent<LightComponent>(entit_id).Snapshot();
 
-        TransformComponent& transform_comp = scene.EmplaceComponent<TransformComponent>(name);
+        TransformComponent& transform_comp = scene.EmplaceComponent<TransformComponent>(entit_id);
         transform_comp.Snapshot();
         transform_comp.Flags |= TransformComponentFlags::UseDirection;
     }
@@ -448,68 +440,68 @@ void Arcadia::ProjectLayer::_OnNewEntity(Events::NewEntity& e)
 
 void Arcadia::ProjectLayer::_OnRenameEntity(Events::RenameEntity& e)
 {
-    _Project->GetActiveScene().RenameEntity(e.OldName, e.NewName);
+    _ProjectSharedPtr->GetActiveScene().RenameEntity(e.EntityId, e.NewName);
 }
 
 void Arcadia::ProjectLayer::_OnDeleteEntity(Events::DeleteEntity& e)
 {
-    _AssertAndGetScene().DestroyEntity(e.EntityName);
+    _ProjectSharedPtr->GetActiveScene().DestroyEntity(e.EntityId);
 }
 
 void Arcadia::ProjectLayer::_OnAddComponent(Events::AddComponent& e)
 {
-    Scene& scene = _AssertAndGetScene();
+    Scene& scene = _ProjectSharedPtr->GetActiveScene();
 
     Match<void>(
         e.ComponentTypeString,
         CameraComponent::GetTypeStringStatic(),
         [&]()
     {
-        scene.EmplaceComponent<CameraComponent>(e.EntityName);
+        scene.EmplaceComponent<CameraComponent>(e.EntityId);
     },
         LightComponent::GetTypeStringStatic(),
         [&]()
     {
-        scene.EmplaceComponent<LightComponent>(e.EntityName);
+        scene.EmplaceComponent<LightComponent>(e.EntityId);
     },
         ModelComponent::GetTypeStringStatic(),
         [&]()
     {
-        scene.EmplaceComponent<ModelComponent>(e.EntityName);
+        scene.EmplaceComponent<ModelComponent>(e.EntityId);
     },
         PhysicsComponent::GetTypeStringStatic(),
         [&]()
     {
-        scene.EmplaceComponent<PhysicsComponent>(e.EntityName);
+        scene.EmplaceComponent<PhysicsComponent>(e.EntityId);
     }
     );
 }
 
 void Arcadia::ProjectLayer::_OnRemoveComponent(Events::RemoveComponent& e)
 {
-    Scene& scene = _AssertAndGetScene();
+    Scene& scene = _ProjectSharedPtr->GetActiveScene();
 
     Match<void>(
         e.ComponentTypeString,
         CameraComponent::GetTypeStringStatic(),
         [&]()
     {
-        scene.RemoveComponent<CameraComponent>(e.EntityName);
+        scene.RemoveComponent<CameraComponent>(e.EntityId);
     },
         LightComponent::GetTypeStringStatic(),
         [&]()
     {
-        scene.RemoveComponent<LightComponent>(e.EntityName);
+        scene.RemoveComponent<LightComponent>(e.EntityId);
     },
         ModelComponent::GetTypeStringStatic(),
         [&]()
     {
-        scene.RemoveComponent<ModelComponent>(e.EntityName);
+        scene.RemoveComponent<ModelComponent>(e.EntityId);
     },
         PhysicsComponent::GetTypeStringStatic(),
         [&]()
     {
-        scene.RemoveComponent<PhysicsComponent>(e.EntityName);
+        scene.RemoveComponent<PhysicsComponent>(e.EntityId);
     }
     );
 }

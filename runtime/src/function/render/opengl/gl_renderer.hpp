@@ -90,7 +90,7 @@ namespace Arcadia
 
         virtual void Prepare() override;
         virtual void Finalize() override;
-        virtual void Submit(const Scene& scene, const std::string& name) override;
+        virtual void Submit(const Scene& scene, EntityId entity_id) override;
         virtual void Draw() override;
 
         virtual void Reset() override;

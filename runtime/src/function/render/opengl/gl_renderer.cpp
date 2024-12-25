@@ -73,14 +73,14 @@ void Arcadia::GlRenderer::Finalize()
     }
 }
 
-void Arcadia::GlRenderer::Submit(const Scene& scene, const std::string& name)
+void Arcadia::GlRenderer::Submit(const Scene& scene, EntityId entity_id)
 {
     _AssertFrameInBuild();
 
-    const EntityInfo& entity_info = scene.GetEntityInfo(name);
+    const EntityInfo& entity = scene.GetEntityInfo(entity_id);
 
     Match<void>(
-        entity_info.Type,
+        entity.TypeString,
         [&]()
     {
         ACDA_ASSERT(false && "Entity type not supported");
@@ -88,7 +88,7 @@ void Arcadia::GlRenderer::Submit(const Scene& scene, const std::string& name)
         "camera",
         [&]()
     {
-        const auto& [camera_comp, transform_comp] = scene.GetComponent<CameraComponent, TransformComponent>(name);
+        const auto& [camera_comp, transform_comp] = scene.GetComponent<CameraComponent, TransformComponent>(entity_id);
 
         _GlRenderUnitCameras.emplace_back(
             GlFramebuffer{
@@ -108,13 +108,13 @@ void Arcadia::GlRenderer::Submit(const Scene& scene, const std::string& name)
         "light",
         [&]()
     {
-        const auto& [light_comp, transform_comp] = scene.GetComponent<LightComponent, TransformComponent>(name);
+        const auto& [light_comp, transform_comp] = scene.GetComponent<LightComponent, TransformComponent>(entity_id);
         _GlRenderUnitLights.emplace_back(transform_comp.Position, transform_comp.Direction, light_comp.Light);
     },
         "actor",
         [&]()
     {
-        const auto [model_comp, transform_comp, physics_comp] = scene.GetComponent<ModelComponent, TransformComponent, PhysicsComponent>(name);
+        const auto [model_comp, transform_comp, physics_comp] = scene.GetComponent<ModelComponent, TransformComponent, PhysicsComponent>(entity_id);
 
         if(model_comp.HasIdentifiableMeshes())
         {

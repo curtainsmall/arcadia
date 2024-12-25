@@ -52,32 +52,16 @@ namespace Arcadia
         PhysicsSimulator();
         ~PhysicsSimulator();
 
-        /// @brief Start building the physics simulator
-        /// @details This function signs that the physics simulator is in build
-        /// @note This function can only be called when the physics simulator is not in build
         void Prepare();
 
-        /// @brief Finish building the physcis simulator
-        /// @note This function can only be called when the physics simulator is in build
         void Finalize();
 
-        /// @brief Submit a entity to the physics simulator
-        /// @param name Entity to submit
-        /// @note Entity that does not have physics component will be ignored
-        /// @note This function can only be called when the physics simulator is in build
-        void Submit(const Scene& scene, const std::string& name);
+        void Submit(const Scene& scene, EntityId entity_id);
 
-        /// @brief Update physcis simulator for one step
-        /// @note This function can only be called when the physics simulator is not in build
         void Update();
 
-        /// @brief Query the updated data of the physics component from the physcis simulator
-        /// @param name Entity to quary
-        /// @note Entity that does not have physics component will be ignored
-        /// @note This function can only be called when the physics simulator is not in build
-        void Query(Scene& scene, const std::string& name);
+        void Query(Scene& scene, EntityId entity_id);
 
-        /// @brief Reset the physics simulator, all caches will be cleared
         void Reset();
 
         [[nodiscard]]

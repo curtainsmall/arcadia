@@ -97,34 +97,33 @@ namespace Arcadia
         virtual void OnUpdate() override;
     private:
         template<Concepts::Component Component>
-        auto _ContainsComponent(const std::string& name) -> bool
+        auto _ContainsComponent(EntityId entity_id) -> bool
         {
             std::shared_ptr<Scene> scene_sptr = _SceneWeakPtr.lock();
             ACDA_ASSERT(scene_sptr);
 
-            return scene_sptr->ContainsAllComponents<Component>(name);
+            return scene_sptr->ContainsAllComponents<Component>(entity_id);
         }
         template<Concepts::Component Component>
-        auto _GetComponent(const std::string& name) -> Component&
+        auto _GetComponent(EntityId entity_id) -> Component&
         {
             std::shared_ptr<Scene> scene_sptr = _SceneWeakPtr.lock();
             ACDA_ASSERT(scene_sptr);
-            ACDA_ASSERT(_ContainsComponent<Component>(name));
+            ACDA_ASSERT(_ContainsComponent<Component>(entity_id));
 
-            return scene_sptr->GetComponent<Component>(name);
+            return scene_sptr->GetComponent<Component>(entity_id);
         }
 
         void _OnOpenImguiWindow(Events::OpenImguiWindow& e);
         void _OnSceneActivated(Events::SceneActivated& e);
         void _OnSceneDeactivated(Events::SceneDeactivated& e);
         void _OnSelectEntity(Events::SelectEntity& e);
-        void _OnRenameEntity(Events::RenameEntity& e);
         void _OnDeleteEntity(Events::DeleteEntity& e);
 
     private:
 
         std::weak_ptr<Scene> _SceneWeakPtr{};
-        std::string _SelectedEntityName{};
+        EntityId _SelectedEntityId{};
 
         ImguiWindowPropertyCameraComponent _ImguiWindowPropertyCameraComponent{};
         ImguiWindowPropertyLightComponent _ImguiWindowPropertyLightComponent{};

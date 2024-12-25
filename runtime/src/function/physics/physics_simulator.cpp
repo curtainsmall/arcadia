@@ -62,19 +62,19 @@ void Arcadia::PhysicsSimulator::Finalize()
     _JphPhysicsSystemUniquePtr->OptimizeBroadPhase();
 }
 
-void Arcadia::PhysicsSimulator::Submit(const Scene& scene, const std::string& name)
+void Arcadia::PhysicsSimulator::Submit(const Scene& scene, EntityId entity_id)
 {
     _AssertFrameInBuild();
 
-    const EntityInfo& entity_info = scene.GetEntityInfo(name);
+    const EntityInfo& entity = scene.GetEntityInfo(entity_id);
 
     // For now, only actor entity has physics component
-    if(entity_info.Type != "actor")
+    if(entity.TypeString != "actor")
     {
         return;
     }
 
-    const auto [physics_comp, transform_comp] = scene.GetComponent<PhysicsComponent, TransformComponent>(name);
+    const auto [physics_comp, transform_comp] = scene.GetComponent<PhysicsComponent, TransformComponent>(entity_id);
 
     if(physics_comp.HasBodyInfo())
     {
@@ -133,7 +133,7 @@ void Arcadia::PhysicsSimulator::Update()
     _JphPhysicsSystemUniquePtr->Update(1.f / _JphPhysicsSystemUpdatesPerSecond, collusion_step, &temp_allocator, &job_system_thread_pool);
 }
 
-void Arcadia::PhysicsSimulator::Query(Scene& scene, const std::string& name)
+void Arcadia::PhysicsSimulator::Query(Scene& scene, EntityId entity_id)
 {
     _AssertFrameNotInBuild();
 
@@ -142,15 +142,15 @@ void Arcadia::PhysicsSimulator::Query(Scene& scene, const std::string& name)
         return;
     }
 
-    const EntityInfo& entity_info = scene.GetEntityInfo(name);
+    const EntityInfo& entity_info = scene.GetEntityInfo(entity_id);
 
     // For now, only actor entity has physics component
-    if(entity_info.Type != "actor")
+    if(entity_info.TypeString != "actor")
     {
         return;
     }
 
-    auto [physics_comp, transform_comp] = scene.GetComponent<PhysicsComponent, TransformComponent>(name);
+    auto [physics_comp, transform_comp] = scene.GetComponent<PhysicsComponent, TransformComponent>(entity_id);
 
     if(physics_comp.HasBodyInfo())
     {

@@ -40,12 +40,11 @@ namespace Arcadia
         void _OnOpenImguiWindow(Events::OpenImguiWindow& e);
         void _OnSceneActivated(Events::SceneActivated& e);
         void _OnSceneDeactivated(Events::SceneDeactivated& e);
-        void _OnRenameEntity(Events::RenameEntity& e);
 
     private:
         std::weak_ptr<Scene> _SceneWeakPtr{};
 
-        std::string _SelectedEntityName{};
+        EntityId _SelectedEntityId{};
 
         std::string _EntityOldName{};
         std::string _EntityNewName{};
@@ -55,7 +54,7 @@ namespace Arcadia
     inline void ImguiWindowOutliner::_MenuItemAddComponent(int& item_count)
     {
         std::string type_string = Component::GetTypeStringStatic();
-        bool exists = _SceneWeakPtr.lock()->ContainsAllComponents<Component>(_SelectedEntityName);
+        bool exists = _SceneWeakPtr.lock()->ContainsAllComponents<Component>(_SelectedEntityId);
 
         if(!exists)
         {
@@ -63,7 +62,7 @@ namespace Arcadia
             if(ImGui::MenuItem(type_string.c_str()))
             {
                 EventQueue::Instance()
-                    .Signal<Events::AddComponent>(_SelectedEntityName, type_string);
+                    .Signal<Events::AddComponent>(_SelectedEntityId, type_string);
             }
         }
     }
@@ -72,7 +71,7 @@ namespace Arcadia
     inline void ImguiWindowOutliner::_MenuItemRemoveComponent(int& item_count)
     {
         std::string type_string = Component::GetTypeStringStatic();
-        bool exists = _SceneWeakPtr.lock()->ContainsAllComponents<Component>(_SelectedEntityName);
+        bool exists = _SceneWeakPtr.lock()->ContainsAllComponents<Component>(_SelectedEntityId);
 
         if(exists)
         {
@@ -80,7 +79,7 @@ namespace Arcadia
             if(exists && ImGui::MenuItem(type_string.c_str()))
             {
                 EventQueue::Instance()
-                    .Signal<Events::RemoveComponent>(_SelectedEntityName, type_string);
+                    .Signal<Events::RemoveComponent>(_SelectedEntityId, type_string);
             }
         }
     }

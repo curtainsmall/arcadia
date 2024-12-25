@@ -13,11 +13,10 @@
 
 void Arcadia::ImguiWindowOutliner::OnEvent(EventBase& e)
 {
-    EventDispatcher{ e }
+    EventDispatcher(e)
         .Dispatch<Events::OpenImguiWindow>(ACDA_BIND_MEMBER_FN(_OnOpenImguiWindow))
         .Dispatch<Events::SceneActivated>(ACDA_BIND_MEMBER_FN(_OnSceneActivated))
         .Dispatch<Events::SceneDeactivated>(ACDA_BIND_MEMBER_FN(_OnSceneDeactivated))
-        .Dispatch<Events::RenameEntity>(ACDA_BIND_MEMBER_FN(_OnRenameEntity))
         .IsDispatched();
 }
 
@@ -73,14 +72,14 @@ void Arcadia::ImguiWindowOutliner::OnUpdate()
         }
         else
         {
-            for(auto& [name, entity_info] : scene_sptr->GetEntityInfoStorage())
+            for(auto& [entity_id, entity_info] : scene_sptr->GetEntityInfoStorage())
             {
                 // Display text input
-                if(_EntityOldName == name)
+                if(_EntityOldName == entity_info.GetName())
                 {
                     _EntityNewName = _EntityOldName;
 
-                    auto input_text_flags =
+                    ImGuiInputFlags input_text_flags =
                         ImGuiInputTextFlags_AutoSelectAll;
                     ImGui::InputText("##rename_entity", &_EntityNewName, input_text_flags);
                     ImGui::SetItemDefaultFocus();
@@ -91,7 +90,7 @@ void Arcadia::ImguiWindowOutliner::OnUpdate()
                             if(scene_sptr->ContainsEntity(_EntityNewName))
                             {
                                 pfd::message msg{
-                                    "Rename Entity",
+                                    "Arcadia - Rename Entity",
                                     std::format("Failed to rename {} to {}, because the new name is already used",_EntityOldName,_EntityNewName),
                                     pfd::choice::ok,
                                     pfd::icon::info
@@ -99,7 +98,7 @@ void Arcadia::ImguiWindowOutliner::OnUpdate()
                             }
                             else
                             {
-                                event_queue.Signal<Events::RenameEntity>(_EntityOldName, _EntityNewName);
+                                event_queue.Signal<Events::RenameEntity>(entity_id, _EntityNewName);
                             }
                         }
                         _EntityOldName.clear();
@@ -114,31 +113,31 @@ void Arcadia::ImguiWindowOutliner::OnUpdate()
                         continue;
                     }
 
-                    ImGui::Checkbox(std::format("##render_in_viewport_{}", name).c_str(), &entity_info.Display);
+                    ImGui::Checkbox(std::format("##render_in_viewport_{}", entity_id).c_str(), &entity_info.Displayed);
                     ImGui::SameLine();
-                    if(ImGui::Selectable(name.c_str(), _SelectedEntityName == name))
+                    if(ImGui::Selectable(entity_info.GetName().c_str(), _SelectedEntityId == entity_id))
                     {
-                        _SelectedEntityName = name;
-                        event_queue.Signal<Events::SelectEntity>(name);
+                        _SelectedEntityId = entity_id;
+                        event_queue.Signal<Events::SelectEntity>(entity_id);
                     }
                     if(ImGui::IsItemHovered())
                     {
-                        ImGui::SetTooltip(entity_info.Type.c_str());
+                        ImGui::SetTooltip(entity_info.TypeString.c_str());
                     }
 
                     if(ImGui::BeginPopupContextItem())
                     {
                         if(ImGui::Selectable("Rename Entity"))
                         {
-                            _EntityOldName = name;
+                            _EntityOldName = entity_info.GetName();
                         }
                         if(ImGui::Selectable("Delete Entity"))
                         {
-                            event_queue.Signal<Events::DeleteEntity>(name);
+                            event_queue.Signal<Events::DeleteEntity>(entity_id);
                         }
 
 #if 0 // We do not allow custom entity for now
-                        if(!_SelectedEntityName.empty())
+                        if(!_SelectedEntityId.empty())
                         {
                             ImGui::Separator();
                             if(ImGui::BeginMenu("Add Component"))
@@ -199,13 +198,5 @@ void Arcadia::ImguiWindowOutliner::_OnSceneActivated(Events::SceneActivated& e)
 void Arcadia::ImguiWindowOutliner::_OnSceneDeactivated(Events::SceneDeactivated& e)
 {
     _SceneWeakPtr.reset();
-    _SelectedEntityName.clear();
-}
-
-void Arcadia::ImguiWindowOutliner::_OnRenameEntity(Events::RenameEntity& e)
-{
-    if(e.OldName == _SelectedEntityName)
-    {
-        _SelectedEntityName = e.NewName;
-    }
+    _SelectedEntityId.SetNull();
 }

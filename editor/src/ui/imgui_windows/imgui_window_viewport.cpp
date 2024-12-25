@@ -19,7 +19,6 @@ void Arcadia::ImguiWindowViewport::OnEvent(EventBase& e)
         .Dispatch<Events::SceneActivated>(ACDA_BIND_MEMBER_FN(_OnSceneActivated))
         .Dispatch<Events::SceneDeactivated>(ACDA_BIND_MEMBER_FN(_OnSceneDeactivated))
         .Dispatch<Events::SelectEntity>(ACDA_BIND_MEMBER_FN(_OnSelectEntity))
-        .Dispatch<Events::RenameEntity>(ACDA_BIND_MEMBER_FN(_OnRenameEntity))
         .Dispatch<Events::DeleteEntity>(ACDA_BIND_MEMBER_FN(_OnDeleteEntity))
         .Dispatch<Events::RendererBuilt>(ACDA_BIND_MEMBER_FN(_OnRendererBuilt))
         .Dispatch<Events::RendererUnbuilt>(ACDA_BIND_MEMBER_FN(_OnRendererUnbuilt))
@@ -66,22 +65,22 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
             physics_simulator_sptr->Prepare();
             renderer_sptr->Prepare();
 
-            auto [viewport_camera_comp, viewport_transform_comp] = scene_sptr->GetComponent<CameraComponent, TransformComponent>(ViewportCameraEntityName);
+            auto [viewport_camera_comp, viewport_transform_comp] = scene_sptr->GetComponent<CameraComponent, TransformComponent>(scene_sptr->GetEntitIdByName(_ViewportCameraEntityName));
             viewport_camera_comp.ViewportSize = ImGui::GetContentRegionAvail();
-            for(const auto& [name, entity_info] : scene_sptr->GetEntityInfoStorage())
+            for(const auto& [entity_id, entity] : scene_sptr->GetEntityInfoStorage())
             {
-                physics_simulator_sptr->Submit(*scene_sptr, name);
+                physics_simulator_sptr->Submit(*scene_sptr, entity_id);
             }
             physics_simulator_sptr->Finalize();
             physics_simulator_sptr->Update();
-            for(const auto& [name, entity_info] : scene_sptr->GetEntityInfoStorage())
+            for(const auto& [entity_id, entity] : scene_sptr->GetEntityInfoStorage())
             {
-                physics_simulator_sptr->Query(*scene_sptr, name);
+                physics_simulator_sptr->Query(*scene_sptr, entity_id);
 
                 // We submit entity to renderer after query
-                if(entity_info.Display)
+                if(entity.Displayed)
                 {
-                    renderer_sptr->Submit(*scene_sptr, name);
+                    renderer_sptr->Submit(*scene_sptr, entity_id);
                 }
             }
 
@@ -234,7 +233,7 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
                 ImGui::PopStyleColor(2);
 
                 // Gizmo
-                if(!_SelectedEntityName.empty() && scene_sptr->ContainsAllComponents<TransformComponent>(_SelectedEntityName))
+                if(scene_sptr->ContainsEntity(_SelectedEntityId) && scene_sptr->ContainsAllComponents<TransformComponent>(_SelectedEntityId))
                 {
                     ImGuizmo::SetDrawlist();
 
@@ -242,7 +241,7 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
                     glm::mat4 view_mat = viewport_camera_comp.GenerateViewMat4(viewport_transform_comp.Position, viewport_transform_comp.Direction);
                     glm::mat4 proj_mat = viewport_camera_comp.GenerateProjectiveMat4();
 
-                    TransformComponent& transform_comp = scene_sptr->GetComponent<TransformComponent>(_SelectedEntityName);
+                    TransformComponent& transform_comp = scene_sptr->GetComponent<TransformComponent>(_SelectedEntityId);
                     glm::mat4 transform_mat = transform_comp.GenerateTransformMat4();
                     ImGuizmo::Manipulate(
                         glm::value_ptr(view_mat),
@@ -316,7 +315,7 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
                                     std::format("{} - {}", "Transform", description),
                                     [&]() -> TransformComponent&
                             {
-                                return scene_sptr->GetComponent<TransformComponent>(_SelectedEntityName);
+                                return scene_sptr->GetComponent<TransformComponent>(_SelectedEntityId);
                             }
                                 );
                         }
@@ -354,12 +353,13 @@ void Arcadia::ImguiWindowViewport::_OnProjectUnbuilt(Events::ProjectUnbuilt& e)
 void Arcadia::ImguiWindowViewport::_OnSceneActivated(Events::SceneActivated& e)
 {
     const std::shared_ptr<Scene>& scene_sptr = e.Scene;
-    if(!scene_sptr->ContainsEntity(ViewportCameraEntityName))
+    if(!scene_sptr->ContainsEntity(_ViewportCameraEntityName))
     {
-        EntityInfo& entity_info = scene_sptr->CreateEntity(ViewportCameraEntityName, "camera");
-        entity_info.Internal = true;
-        scene_sptr->EmplaceComponent<CameraComponent>(ViewportCameraEntityName);
-        TransformComponent& transform_comp = scene_sptr->EmplaceComponent<TransformComponent>(ViewportCameraEntityName);
+        EntityId entity_id = scene_sptr->CreateEntity(_ViewportCameraEntityName, "camera");
+        EntityInfo& entity = scene_sptr->GetEntityInfo(entity_id);
+        entity.Internal = true;
+        scene_sptr->EmplaceComponent<CameraComponent>(entity_id);
+        TransformComponent& transform_comp = scene_sptr->EmplaceComponent<TransformComponent>(entity_id);
         transform_comp.Position = glm::vec3(1.f, 1.f, 1.f);
         transform_comp.Direction = -transform_comp.Position;
     }
@@ -373,22 +373,14 @@ void Arcadia::ImguiWindowViewport::_OnSceneDeactivated(Events::SceneDeactivated&
 
 void Arcadia::ImguiWindowViewport::_OnSelectEntity(Events::SelectEntity& e)
 {
-    _SelectedEntityName = e.EntityName;
-}
-
-void Arcadia::ImguiWindowViewport::_OnRenameEntity(Events::RenameEntity& e)
-{
-    if(e.OldName == _SelectedEntityName)
-    {
-        _SelectedEntityName = e.NewName;
-    }
+    _SelectedEntityId = e.EntityId;
 }
 
 void Arcadia::ImguiWindowViewport::_OnDeleteEntity(Events::DeleteEntity& e)
 {
-    if(_SelectedEntityName == e.EntityName)
+    if(_SelectedEntityId == e.EntityId)
     {
-        _SelectedEntityName.clear();
+        _SelectedEntityId.SetNull();
     }
 }
 

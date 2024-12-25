@@ -216,6 +216,7 @@
     <ClInclude Include="src\resource\components\skybox_component.hpp" />
     <ClInclude Include="src\resource\components\transform_component.hpp" />
     <ClInclude Include="src\resource\cubemap.hpp" />
+    <ClInclude Include="src\resource\entity_id.hpp" />
     <ClInclude Include="src\resource\entt_header.hpp" />
     <ClInclude Include="src\resource\fonts\IconsFontAwesome5.h" />
     <ClInclude Include="src\resource\fonts\icon_header.hpp" />
