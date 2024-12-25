@@ -60,8 +60,10 @@ namespace Arcadia
     namespace Concepts
     {
         template<typename T>
-        concept ImguiWindow = requires{
-            std::derived_from<T, ImguiWindowInterface>;
+        concept ImguiWindow =
+            std::derived_from<T, ImguiWindowInterface>
+            && requires
+        {
             {
                 T::GetIdStringStatic()
             } -> std::same_as<std::string>;

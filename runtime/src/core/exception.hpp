@@ -43,5 +43,7 @@ namespace Arcadia
     namespace Exceptions
     {
         ACDA_DEFINE_EXCEPTION(NullReturn);
+
+        ACDA_DEFINE_EXCEPTION(Placeholder);
     }
 }
