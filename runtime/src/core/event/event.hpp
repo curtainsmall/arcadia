@@ -14,11 +14,6 @@
 #include"platform/api_def.hpp"
 #include"platform/debug_def.hpp"
 
-#ifdef ACDA_DEBUG_MODE
-#   include<unordered_set>
-#   include<typeindex>
-#endif // ACDA_DEBUG_MODE
-
 namespace Arcadia
 {
     class EventBase: public Noncopyable
@@ -115,12 +110,6 @@ namespace Arcadia
         {
             _CurrentQueue->emplace(std::make_unique<Event>(std::forward<Args>(args)...));
 
-#ifdef ACDA_DEBUG_MODE
-            if(!DebugExcludedEventTypeSet.contains(typeid(Event)))
-            {
-                ACDA_LOG_DEBUG(std::format("Event signaled: {}", typeid(Event).name()));
-            }
-#endif
             return *this;
         }
 
@@ -131,11 +120,6 @@ namespace Arcadia
         auto GetFront() -> EventBase&;
 
         auto PopFront() -> bool;
-
-    public:
-#ifdef ACDA_DEBUG_MODE
-        DebugExcludedEventTypeSetType DebugExcludedEventTypeSet{};
-#endif // ACDA_DEBUG_MODE
 
     private:
         _EventQueueType _QueueA{};

@@ -17,8 +17,6 @@ namespace Arcadia
     public:
         static auto Instance() -> SelfType&;
 
-        AppContext();
-
     public:
         bool Running{ false };
         Timer Timer{};
