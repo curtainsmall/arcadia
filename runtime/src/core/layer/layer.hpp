@@ -91,21 +91,21 @@ namespace Arcadia
         template<Concepts::Layer Layer = LayerInterface>
         auto GetLayer(std::size_t idx) -> Layer&
         {
-            ACDA_ASSERT(idx >= GetSize() && "Index out of range");
+            ACDA_ASSERT(idx >= GetSize(), "Index out of range");
             return static_cast<Layer&>(*_Layers.at(GetSize() - idx - 1));
         }
 
         template<Concepts::Layer Layer = LayerInterface>
         auto GetTopLayer() -> std::shared_ptr<Layer>
         {
-            ACDA_ASSERT(GetSize() && "Empty layer stack");
+            ACDA_ASSERT(GetSize(), "Empty layer stack");
             return std::static_pointer_cast<Layer>(_Layers.front());
         }
 
         template<Concepts::Layer Layer = LayerInterface>
         auto GetBottomLayer() -> std::shared_ptr<Layer>
         {
-            ACDA_ASSERT(GetSize() && "Empty layer stack");
+            ACDA_ASSERT(GetSize(), "Empty layer stack");
             return std::static_pointer_cast<Layer>(_Layers.back());
         }
 

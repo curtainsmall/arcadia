@@ -111,7 +111,7 @@ void Arcadia::PhysicsSimulator::Submit(const Scene& scene, EntityId entity_id)
                 ),
                 JPH::EActivation::Activate
             );
-            ACDA_ASSERT(!body_id.IsInvalid() && "Failed to create body");
+            ACDA_ASSERT(!body_id.IsInvalid(), "Failed to create body");
             _JphBodyIdStorage.try_emplace(uuid, body_id);
         }
         _SubmittedBodyInfos.emplace(uuid);
@@ -218,12 +218,12 @@ auto Arcadia::PhysicsSimulator::GetJphBodyIdStorage() const -> const JphBodyIdSt
 
 void Arcadia::PhysicsSimulator::_AssertFrameInBuild() const
 {
-    ACDA_ASSERT(_InBuild && "Frame is not in build, did you call `prepare()`?");
+    ACDA_ASSERT(_InBuild, "Frame is not in build, did you call `prepare()`?");
 }
 
 void Arcadia::PhysicsSimulator::_AssertFrameNotInBuild() const
 {
-    ACDA_ASSERT(!_InBuild && "Frame is in build, did you call `finalize()`?");
+    ACDA_ASSERT(!_InBuild, "Frame is in build, did you call `finalize()`?");
 }
 
 auto Arcadia::JphObjectLayerPairFilerImpl::ShouldCollide(JPH::ObjectLayer obj_1, JPH::ObjectLayer obj_2) const -> bool

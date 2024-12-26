@@ -23,7 +23,7 @@ auto Arcadia::EventQueue::GetSize() const -> std::size_t
 
 auto Arcadia::EventQueue::GetFront() -> EventBase&
 {
-    ACDA_ASSERT(GetSize() && "Empty event queue");
+    ACDA_ASSERT(GetSize(), "Empty event queue");
     return *_ProcessingQueue->front();
 }
 

@@ -88,7 +88,7 @@ void Arcadia::GlRenderer::Submit(const Scene& scene, EntityId entity_id)
         entity.TypeString,
         [&]()
     {
-        ACDA_ASSERT(false && "Entity type not supported");
+        ACDA_UNREACHABLE("Entity type not supported");
     },
         "camera",
         [&]()
@@ -204,7 +204,7 @@ void Arcadia::GlRenderer::Draw()
 {
     _AssertFrameNotInBuild();
 
-    ACDA_ASSERT(_GlRenderUnitCameras.size() && "No framebuffer to draw to");
+    ACDA_ASSERT(_GlRenderUnitCameras.size(), "No framebuffer to draw to");
 
     ACDA_GL_CALL(glClearColor(41 / 255.0, 43 / 255.0, 44 / 255.0, 1.f));
 
@@ -305,12 +305,12 @@ auto Arcadia::GlRenderer::GetGraphicApiType() const -> GraphicApi::Type
 
 void Arcadia::GlRenderer::_AssertFrameInBuild() const
 {
-    ACDA_ASSERT(_InBuild && "Frame is not in build, did you call `prepare()`?");
+    ACDA_ASSERT(_InBuild, "Frame is not in build, did you call `prepare()`?");
 }
 
 void Arcadia::GlRenderer::_AssertFrameNotInBuild() const
 {
-    ACDA_ASSERT(!_InBuild && "Frame is in build, did you call `finalize()`?");
+    ACDA_ASSERT(!_InBuild, "Frame is in build, did you call `finalize()`?");
 }
 
 void Arcadia::GlRenderer::_DrawGrid(
@@ -360,7 +360,7 @@ void Arcadia::GlRenderer::_DrawLights(
     GLsizeiptr light_count = 0;
     for(const GlRenderUnitLight& gl_render_unit_light : _GlRenderUnitLights)
     {
-        ACDA_ASSERT(light_count <= max_light_count && std::format("The max light count is {}", max_light_count).c_str());
+        ACDA_ASSERT(light_count <= max_light_count, std::format("The max light count is {}", max_light_count).c_str());
 
         MatchVariant<void>(
             gl_render_unit_light.Light,

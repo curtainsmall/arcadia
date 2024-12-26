@@ -153,10 +153,3 @@ vec3 calc_point_light(light_t light, vec3 normal, vec3 view_dir)
     
     return (ambient + diffuse + specular) * light.color;
 }
-
-
-
-
-
-
-

@@ -234,7 +234,7 @@ auto Arcadia::CameraComponent::_PitchAngle() const -> float
 
 auto Arcadia::CameraComponent::_YawAngle() const -> float
 {
-    ACDA_ASSERT(false && "This function is not working");
+    ACDA_UNREACHABLE("This function is not working");
 
     const auto& forward = GetForwardDir();
     auto yaw_vec = forward - glm::dot(forward, vec3::CreateUnitPositiveY());
@@ -247,7 +247,7 @@ auto Arcadia::CameraComponent::_YawAngle() const -> float
 
 auto Arcadia::CameraComponent::_RollAngle() const -> float
 {
-    ACDA_ASSERT(false && "This function is not working");
+    ACDA_UNREACHABLE("This function is not working");
 
     const auto& forward = GetForwardDir();
     auto normal_of_forward_and_Up = glm::cross(forward, Up);
