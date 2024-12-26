@@ -2,6 +2,8 @@
 
 #include "glm_algorithm.hpp"
 
+#include"core/assert.hpp"
+
 auto Arcadia::Decompose(const glm::mat4& transform) -> std::tuple<glm::vec3, glm::vec3, glm::vec3>
 {
     // From glm::decompose in matrix_decompose.inl
@@ -16,10 +18,7 @@ auto Arcadia::Decompose(const glm::mat4& transform) -> std::tuple<glm::vec3, glm
     glm::mat4 local_matrix(transform);
 
     // Normalize the matrix.
-    if(glm::epsilonEqual(local_matrix[3][3], static_cast<T>(0), glm::epsilon<T>()))
-    {
-        throw Exceptions::NullReturn();
-    }
+    ACDA_ASSERT(!glm::epsilonEqual(local_matrix[3][3], static_cast<T>(0), glm::epsilon<T>()));
 
     // First, isolate perspective.  This is the messiest.
     if(

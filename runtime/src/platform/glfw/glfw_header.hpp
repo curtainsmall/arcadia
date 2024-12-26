@@ -10,7 +10,7 @@ namespace Arcadia
 {
     namespace Exceptions
     {
-        ACDA_DEFINE_EXCEPTION(GlfwError);
+        ACDA_DEFINE_RUNTIME_ERROR_EXCEPTION(GlfwError);
     }
 
     class GlfwContext: public Noncopyable

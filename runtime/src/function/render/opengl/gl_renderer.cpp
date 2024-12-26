@@ -204,10 +204,7 @@ void Arcadia::GlRenderer::Draw()
 {
     _AssertFrameNotInBuild();
 
-    if(_GlRenderUnitCameras.empty())
-    {
-        throw Exceptions::RendererDrawFail("No framebuffer to draw to");
-    }
+    ACDA_ASSERT(_GlRenderUnitCameras.size() && "No framebuffer to draw to");
 
     ACDA_GL_CALL(glClearColor(41 / 255.0, 43 / 255.0, 44 / 255.0, 1.f));
 
@@ -363,10 +360,7 @@ void Arcadia::GlRenderer::_DrawLights(
     GLsizeiptr light_count = 0;
     for(const GlRenderUnitLight& gl_render_unit_light : _GlRenderUnitLights)
     {
-        if(light_count > max_light_count)
-        {
-            throw Exceptions::GlRendererTooManyLights(std::format("The max light count is {}", max_light_count));
-        }
+        ACDA_ASSERT(light_count <= max_light_count && std::format("The max light count is {}", max_light_count).c_str());
 
         MatchVariant<void>(
             gl_render_unit_light.Light,

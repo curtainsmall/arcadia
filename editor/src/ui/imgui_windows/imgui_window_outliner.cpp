@@ -87,7 +87,7 @@ void Arcadia::ImguiWindowOutliner::OnUpdate()
                     {
                         if(_EntityOldName != _EntityNewName)
                         {
-                            if(scene_sptr->ContainsEntity(_EntityNewName))
+                            if(scene_sptr->IsEntityNameUsed(_EntityNewName))
                             {
                                 pfd::message msg{
                                     "Arcadia - Rename Entity",

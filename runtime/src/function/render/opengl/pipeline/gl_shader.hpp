@@ -21,7 +21,7 @@ namespace Arcadia
 
     namespace Exceptions
     {
-        ACDA_DEFINE_EXCEPTION(GlShaderCompileFail);
+        ACDA_DEFINE_RUNTIME_ERROR_EXCEPTION(GlShaderCompileFail);
     }
 
     class GlShader: public Noncopyable

@@ -67,11 +67,6 @@ namespace Arcadia
         glm::vec3 Color;
     };
 
-    namespace Exceptions
-    {
-        ACDA_DEFINE_EXCEPTION(GlRendererTooManyLights);
-    }
-
     class GlRenderer: public RendererInterface
     {
     public:

@@ -89,11 +89,6 @@ auto Arcadia::Scene::ContainsEntity(EntityId entity_id) const -> bool
     return _EntityInfoStorage.contains(entity_id);
 }
 
-auto Arcadia::Scene::ContainsEntity(const std::string& entity_name) const -> bool
-{
-    return _EntityNameToEntityIdLookupMap.contains(entity_name);
-}
-
 auto Arcadia::Scene::GetSize() const -> std::size_t
 {
     return _EntityInfoStorage.size();
@@ -114,34 +109,19 @@ auto Arcadia::Scene::CountEntity(const std::function<bool(EntityId, const Entity
 
 auto Arcadia::Scene::GetEntityInfo(EntityId entity_id) const -> const EntityInfo&
 {
-    try
-    {
-        return _EntityInfoStorage.at(entity_id);
-    }
-    catch(const std::out_of_range&)
-    {
-        throw Exceptions::EntityNotFound();
-    }
+    ACDA_ASSERT(ContainsEntity(entity_id) && "Entity not found");
+    return _EntityInfoStorage.at(entity_id);
 }
 
 auto Arcadia::Scene::GetEntityInfo(EntityId entity_id) -> EntityInfo&
 {
-    try
-    {
-        return _EntityInfoStorage.at(entity_id);
-    }
-    catch(const std::out_of_range&)
-    {
-        throw Exceptions::EntityNotFound();
-    }
+    ACDA_ASSERT(ContainsEntity(entity_id) && "Entity not found");
+    return _EntityInfoStorage.at(entity_id);
 }
 
 auto Arcadia::Scene::CreateEntity(const std::string& entity_name, const std::string& type_string) -> EntityId
 {
-    if(ContainsEntity(entity_name))
-    {
-        return EntityId{};
-    }
+    ACDA_ASSERT(!IsEntityNameUsed(entity_name) && "Entity name is already used");
 
     EntityId entity_id = _Registry.create();
 
@@ -172,15 +152,8 @@ void Arcadia::Scene::DestroyEntity(EntityId entity_id)
 
 void Arcadia::Scene::RenameEntity(EntityId entity_id, const std::string& new_entity_name)
 {
-    if(!ContainsEntity(entity_id))
-    {
-        throw Exceptions::EntityNotFound();
-    }
-
-    if(ContainsEntity(new_entity_name))
-    {
-        throw Exceptions::DuplicateEntityName();
-    }
+    ACDA_ASSERT(ContainsEntity(entity_id) && "Entity not found");
+    ACDA_ASSERT(!IsEntityNameUsed(new_entity_name) && "Entity name is alread used");
 
     EntityInfo& entity_info = GetEntityInfo(entity_id);
     const std::string old_name = entity_info._Name;

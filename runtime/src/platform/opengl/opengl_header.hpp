@@ -21,8 +21,8 @@ namespace Arcadia
 {
     namespace Exceptions
     {
-        ACDA_DEFINE_EXCEPTION(GlError);
-        ACDA_DEFINE_EXCEPTION(GlInvalid);
+        ACDA_DEFINE_RUNTIME_ERROR_EXCEPTION(GlError);
+        ACDA_DEFINE_RUNTIME_ERROR_EXCEPTION(GlInvalid);
     }
 
     ACDA_API void GlCheckError(const char* fn_name, const char* file_name, int line);

@@ -353,7 +353,7 @@ void Arcadia::ImguiWindowViewport::_OnProjectUnbuilt(Events::ProjectUnbuilt& e)
 void Arcadia::ImguiWindowViewport::_OnSceneActivated(Events::SceneActivated& e)
 {
     const std::shared_ptr<Scene>& scene_sptr = e.Scene;
-    if(!scene_sptr->ContainsEntity(_ViewportCameraEntityName))
+    if(!scene_sptr->IsEntityNameUsed(_ViewportCameraEntityName))
     {
         EntityId entity_id = scene_sptr->CreateEntity(_ViewportCameraEntityName, "camera");
         EntityInfo& entity = scene_sptr->GetEntityInfo(entity_id);

@@ -45,12 +45,6 @@ namespace Arcadia
         std::string _Name;
     };
 
-    namespace Exceptions
-    {
-        ACDA_DEFINE_EXCEPTION(EntityNotFound);
-        ACDA_DEFINE_EXCEPTION(DuplicateEntityName);
-    }
-
     class Scene: public Noncopyable
     {
     public:
@@ -77,9 +71,6 @@ namespace Arcadia
 
         [[nodiscard]]
         auto ContainsEntity(EntityId entity_id) const -> bool;
-
-        [[nodiscard]]
-        auto ContainsEntity(const std::string& entity_name) const -> bool;
 
         [[nodiscard]]
         auto GetSize() const->std::size_t;

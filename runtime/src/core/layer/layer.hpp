@@ -7,8 +7,8 @@
 #include<string>
 #include<vector>
 
+#include"core/assert.hpp"
 #include"core/event/event.hpp"
-#include"core/exception.hpp"
 #include"core/noncopyable.hpp"
 #include"platform/api_def.hpp"
 
@@ -37,12 +37,6 @@ namespace Arcadia
     {
         template<typename T>
         concept Layer = std::derived_from<T, LayerInterface>;
-    }
-
-    namespace Exceptions
-    {
-        ACDA_DEFINE_EXCEPTION(LayerStackOutOfRange);
-        ACDA_DEFINE_EXCEPTION(EmptyLayerStack);
     }
 
     class LayerStack
@@ -97,31 +91,21 @@ namespace Arcadia
         template<Concepts::Layer Layer = LayerInterface>
         auto GetLayer(std::size_t idx) -> Layer&
         {
-            if(idx >= GetSize())
-            {
-                throw Exceptions::LayerStackOutOfRange(std::format("Index out of range: {}", idx));
-            }
-
+            ACDA_ASSERT(idx >= GetSize() && "Index out of range");
             return static_cast<Layer&>(*_Layers.at(GetSize() - idx - 1));
         }
 
         template<Concepts::Layer Layer = LayerInterface>
         auto GetTopLayer() -> std::shared_ptr<Layer>
         {
-            if(!GetSize())
-            {
-                throw Exceptions::EmptyLayerStack();
-            }
+            ACDA_ASSERT(GetSize() && "Empty layer stack");
             return std::static_pointer_cast<Layer>(_Layers.front());
         }
 
         template<Concepts::Layer Layer = LayerInterface>
         auto GetBottomLayer() -> std::shared_ptr<Layer>
         {
-            if(!GetSize())
-            {
-                throw Exceptions::EmptyLayerStack();
-            }
+            ACDA_ASSERT(GetSize() && "Empty layer stack");
             return std::static_pointer_cast<Layer>(_Layers.back());
         }
 

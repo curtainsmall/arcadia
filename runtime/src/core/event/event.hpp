@@ -9,7 +9,6 @@
 #include<unordered_set>
 #include<vector>
 
-#include"core/exception.hpp"
 #include"core/log/log.hpp"
 #include"core/noncopyable.hpp"
 #include"platform/api_def.hpp"
@@ -98,11 +97,6 @@ namespace Arcadia
         EventBase* _Event;
         bool _Dispatched{ false };
     };
-
-    namespace Exceptions
-    {
-        ACDA_DEFINE_EXCEPTION(EmptyEventQueue);
-    }
 
     class EventQueue
     {

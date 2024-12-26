@@ -5,45 +5,48 @@
 
 #include"platform/api_def.hpp"
 
-#define _ACDA_GET_DEFINE_EXCEPTION_MACRO(_1, _2, name, ...) name
+//==== Logic error exception ====
 
-#define ACDA_DEFINE_EXCEPTION(...) \
-_ACDA_GET_DEFINE_EXCEPTION_MACRO(__VA_ARGS__, _ACDA_DEFINE_EXCEPTION_WITH_MESSAGE, _ACDA_DEFINE_EXCEPTION)(__VA_ARGS__)
-
-#define _ACDA_DEFINE_EXCEPTION(exception_name) \
-class exception_name: public ::Arcadia::Exception{\
+#define _ACDA_DEFINE_LOGIC_ERROR_EXCEPTION(exception_name) \
+class exception_name: public ::std::logic_error{\
 public:\
         inline exception_name(const std::string& msg = #exception_name) :\
-        ::Arcadia::Exception(msg)\
+        ::std::logic_error(msg)\
     {}\
 }
 
-#define _ACDA_DEFINE_EXCEPTION_WITH_MESSAGE(exception_name, message) \
-class exception_name: public ::Arcadia::Exception{\
+#define _ACDA_DEFINE_LOGIC_ERROR_EXCEPTION_WITH_MESSAGE(exception_name, message) \
+class exception_name: public ::std::logic_error{\
 public:\
     inline exception_name(const std::string& msg = message ):\
-        ::Arcadia::Exception(msg)\
+        ::std::logic_error(msg)\
     {}\
 }
 
-namespace Arcadia
-{
-    class Exception: public std::exception
-    {
-    public:
-        Exception() :
-            std::exception()
-        {}
+#define _ACDA_GET_DEFINE_LOGIC_ERROR_EXCEPTION_MACRO(_1, _2, name, ...) name
 
-        explicit Exception(const std::string& msg) :
-            std::exception(msg.c_str())
-        {}
-    };
+#define ACDA_DEFINE_LOGIC_ERROR_EXCEPTION(...) \
+_ACDA_GET_DEFINE_LOGIC_ERROR_EXCEPTION_MACRO(__VA_ARGS__, _ACDA_DEFINE_LOGIC_ERROR_EXCEPTION_WITH_MESSAGE, _ACDA_DEFINE_LOGIC_ERROR_EXCEPTION)(__VA_ARGS__)
 
-    namespace Exceptions
-    {
-        ACDA_DEFINE_EXCEPTION(NullReturn);
+//==== Runtime error exception ====
 
-        ACDA_DEFINE_EXCEPTION(Placeholder);
-    }
+#define _ACDA_DEFINE_RUNTIME_ERROR_EXCEPTION(exception_name) \
+class exception_name: public ::std::runtime_error{\
+public:\
+        inline exception_name(const std::string& msg = #exception_name) :\
+        ::std::runtime_error(msg)\
+    {}\
 }
+
+#define _ACDA_DEFINE_RUNTIME_ERROR_EXCEPTION_WITH_MESSAGE(exception_name, message) \
+class exception_name: public ::std::runtime_error{\
+public:\
+    inline exception_name(const std::string& msg = message ):\
+        ::std::runtime_error(msg)\
+    {}\
+}
+
+#define _ACDA_GET_DEFINE_RUNTIME_ERROR_EXCEPTION_MACRO(_1, _2, name, ...) name
+
+#define ACDA_DEFINE_RUNTIME_ERROR_EXCEPTION(...) \
+_ACDA_GET_DEFINE_RUNTIME_ERROR_EXCEPTION_MACRO(__VA_ARGS__, _ACDA_DEFINE_RUNTIME_ERROR_EXCEPTION_WITH_MESSAGE, _ACDA_DEFINE_RUNTIME_ERROR_EXCEPTION)(__VA_ARGS__)

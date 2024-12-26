@@ -145,29 +145,17 @@ auto Arcadia::File::GetSectionOrCreate(const std::string& section_name) -> Secti
 
 auto Arcadia::File::GetSection(const std::string& section_name) -> SectionType&
 {
-    try
-    {
-        return _SectionStorage.at(section_name);
-    }
-    catch(const std::out_of_range)
-    {
-        throw Exceptions::FileSectionNotFound(std::format("Cannot find section named {}", section_name));
-    }
+    ACDA_ASSERT(ContainsSection(section_name));
+    return _SectionStorage.at(section_name);
 }
 
 auto Arcadia::File::GetSection(const std::string& section_name) const -> const SectionType&
 {
-    try
-    {
-        return _SectionStorage.at(section_name);
-    }
-    catch(const std::out_of_range)
-    {
-        throw Exceptions::FileSectionNotFound(std::format("Cannot find section named {}", section_name));
-    }
+    ACDA_ASSERT(ContainsSection(section_name));
+    return _SectionStorage.at(section_name);
 }
 
-auto Arcadia::File::HasSection(const std::string& section_name) const -> bool
+auto Arcadia::File::ContainsSection(const std::string& section_name) const -> bool
 {
     return _SectionStorage.contains(section_name);
 }

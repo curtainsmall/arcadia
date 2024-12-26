@@ -3,6 +3,7 @@
 #include "texture2d.hpp"
 
 #include"boost/range/combine.hpp"
+#include"core/assert.hpp"
 
 auto Arcadia::Texture2d::Cascade(
     const Texture2d& texture2d_1,
@@ -10,16 +11,15 @@ auto Arcadia::Texture2d::Cascade(
     const std::function<glm::vec4(const glm::vec4&, const glm::vec4&)>& method
 ) -> Texture2d
 {
-    if(texture2d_1.Size != texture2d_2.Size)
-    {
-        throw Exceptions::Texture2dIncompatibleTextureSize(
-            std::format("Size of texture2d 1 is {}x{}, while size of texture2d 2 is {}x{}",
-                        texture2d_1.Size.x,
-                        texture2d_1.Size.y,
-                        texture2d_2.Size.x,
-                        texture2d_2.Size.y)
-        );
-    }
+    ACDA_ASSERT(texture2d_1.Size == texture2d_2.Size
+                && std::format(
+                    "Size of texture2d 1 is {}x{}, while size of texture2d 2 is {}x{}",
+                    texture2d_1.Size.x,
+                    texture2d_1.Size.y,
+                    texture2d_2.Size.x,
+                    texture2d_2.Size.y
+                ).c_str()
+    );
 
     Texture2d res{};
     res.Size = texture2d_1.Size;

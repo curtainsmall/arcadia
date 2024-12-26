@@ -18,11 +18,6 @@ namespace Arcadia
         glm::i32vec2 size;
     };
 
-    namespace Exceptions
-    {
-        ACDA_DEFINE_EXCEPTION(RendererDrawFail);
-    }
-
     class RendererInterface: public Noncopyable
     {
     public:

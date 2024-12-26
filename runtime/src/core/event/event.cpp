@@ -2,6 +2,8 @@
 
 #include "event.hpp"
 
+#include"core/assert.hpp"
+
 auto Arcadia::EventQueue::Instance() -> SelfType&
 {
     static SelfType event_queue{};
@@ -21,11 +23,7 @@ auto Arcadia::EventQueue::GetSize() const -> std::size_t
 
 auto Arcadia::EventQueue::GetFront() -> EventBase&
 {
-    if(!GetSize())
-    {
-        throw Exceptions::EmptyEventQueue();
-    }
-
+    ACDA_ASSERT(GetSize() && "Empty event queue");
     return *_ProcessingQueue->front();
 }
 

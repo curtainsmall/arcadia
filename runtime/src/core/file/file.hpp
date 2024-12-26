@@ -21,9 +21,8 @@ namespace Arcadia
 
     namespace Exceptions
     {
-        ACDA_DEFINE_EXCEPTION(FileLoadFailed);
-        ACDA_DEFINE_EXCEPTION(FileSaveFailed);
-        ACDA_DEFINE_EXCEPTION(FileSectionNotFound);
+        ACDA_DEFINE_RUNTIME_ERROR_EXCEPTION(FileLoadFailed);
+        ACDA_DEFINE_RUNTIME_ERROR_EXCEPTION(FileSaveFailed);
     }
 
     class File
@@ -60,7 +59,7 @@ namespace Arcadia
         [[nodiscard]]
         auto GetSection(const std::string& section_name) const -> const SectionType&;
 
-        auto HasSection(const std::string& section_name) const -> bool;
+        auto ContainsSection(const std::string& section_name) const -> bool;
 
         auto EraseSection(const std::string& section_name) -> SelfType&;
 

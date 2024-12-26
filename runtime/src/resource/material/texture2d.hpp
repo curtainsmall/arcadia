@@ -9,11 +9,6 @@
 
 namespace Arcadia
 {
-    namespace Exceptions
-    {
-        ACDA_DEFINE_EXCEPTION(Texture2dIncompatibleTextureSize);
-    }
-
     class Texture2d
     {
     public:
