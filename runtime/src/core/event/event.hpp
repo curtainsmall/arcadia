@@ -51,7 +51,6 @@ namespace Arcadia
 
         using SelfType = BasicEvent<Args...>;
     public:
-        /// @brief Conclass a signaled event
         BasicEvent(Args ...args) :
             DataTuple(std::make_tuple<Args...>(std::forward<Args>(args)...))
         {}
@@ -79,10 +78,6 @@ namespace Arcadia
         {}
         ~EventDispatcher() = default;
 
-        /// @brief Dispatch stored event to given handler. If their types match, the handler will be excuted at once
-        /// @tparam Event Event type to match
-        /// @param handler Event handler
-        /// @return Self
         template<Concepts::Event Event>
         auto Dispatch(const EventHandler<Event>& handler) -> SelfType&
         {
@@ -94,7 +89,6 @@ namespace Arcadia
             return *this;
         }
 
-        /// @brief Whether any dispatch succedded
         auto IsDispatched() const -> bool
         {
             return _Dispatched;
@@ -122,8 +116,6 @@ namespace Arcadia
     public:
         static auto Instance() -> SelfType&;
 
-        /// @brief Signal @a Event
-        /// @param ...args Argument to construct @a Event
         template<Concepts::Event Event, typename ...Args>
         auto Signal(Args&& ...args) -> SelfType&
         {
@@ -138,19 +130,12 @@ namespace Arcadia
             return *this;
         }
 
-        /// @brief Swap current queue and processing queue
-        /// @return whether the processing queue contains event after swap
         auto SwapQueue() -> bool;
 
-        /// @brief Check whther the proceessing queue contains event
         auto GetSize() const->std::size_t;
 
-        /// @brief Read the front event in event queue
-        /// @return Event at front
         auto GetFront() -> EventBase&;
 
-        /// @brief Pop front event
-        /// @return whether the processing queue contains event after pop;
         auto PopFront() -> bool;
 
     public:

@@ -2,9 +2,9 @@
 
 #include"boost/math/special_functions.hpp"
 
-#include"platform/api_def.hpp"
 #include"core/math/glm_header.hpp"
 #include"core/nlohmann_json_header.hpp"
+#include"platform/api_def.hpp"
 
 namespace Arcadia
 {
@@ -53,11 +53,8 @@ namespace Arcadia
             return -CreateUnitPositiveY();
         }
 
-        /// @brief Normalize vector with one axis fixed
-        /// @tparam Index Index of fixed axis, must be 0 or 1
-        /// @param vec Vector to normalize
-        /// @return Normalized vector
         template<std::size_t Index>
+            requires (Index >= 0) && (Index <= 1)
         [[nodiscard]]
         ACDA_API static inline auto NormalizeFixedly(const glm::vec2& vec) -> glm::vec2
         {

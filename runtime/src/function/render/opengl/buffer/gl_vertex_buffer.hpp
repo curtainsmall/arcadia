@@ -149,7 +149,6 @@ namespace Arcadia
         void Bind() const;
         void Unbind() const;
 
-        /// @note Call this function @b after the OpenGL vertex array you want to use has been bound
         void SetupVertexAttributeArray() const;
     private:
         GLuint _GlId{ 0 };

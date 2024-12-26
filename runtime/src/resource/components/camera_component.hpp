@@ -102,37 +102,16 @@ namespace Arcadia
     public:
         static inline glm::vec3 Up{ GlmVec3::CreateUnitPositiveY() };
 
-        /// @brief Near plane of clip space
         float NearPlane{ .1f };
-
-        /// @brief Far plane of clip space
         float FarPlane{ 100.f };
-
-        /// @brief FOV angle in vertical direction
         float FovY{ glm::radians(75.f) };
-
-        /// @brief Minimun value fo @ref Camera::Fovy
         float FovYMin{ glm::radians(1.f) };
-
-        /// @brief Maximun value of @ref Camera::Fovy
         float FovYMax{ glm::radians(120.f) };
-
-        /// @brief Move speed of free-camera
         float Speed{ .25f };
-
-        /// @brief Size of the viewport of this camera
         glm::i32vec2 ViewportSize{ 800,600 };
-
-        /// @brief Whether @ref camera::up should be fixed
         bool FixedUp{ true };
-
-        /// @brief How small angle between @ref camera::up and @ref camera::target can be
         float UpEpsilon{ glm::degrees(0.1f) };
-
-        /// @brief Cursor move offset that is out of this range will be silently ignored
         glm::vec2 CursorMoveOffsetRange{ -100.f,100.f };
-
-        /// @brief Display a grid a X-Z plane
         bool ShouldDisplayGrid{ false };
     };
 }

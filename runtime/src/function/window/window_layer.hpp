@@ -59,14 +59,14 @@ namespace Arcadia
 
         void _SetupCallbacks();
 
-        /// @brief Call [glfwSwapBuffers](https://www.glfw.org/docs/3.3/group__window.html#ga15a5a1ee5b3c2ca6b15ca209a12efd14)
         void _SwapBuffers();
 
         void _OnWindowCloseCanceled(Events::WindowCloseCanceled& e);
 
     private:
         static inline GlfwContext _GlfwContext{};
-        /// @brief Cursor move offset that is out of this range will be silently ignored
+
+        // Cursor move offset that is out of this range will be silently ignored
         static constexpr glm::vec2 _LegalCursorMoveRange{ -20.f,20.f };
 
         std::string _Title;

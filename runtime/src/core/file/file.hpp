@@ -48,14 +48,8 @@ namespace Arcadia
         auto operator=(const SelfType&)->SelfType & = default;
         auto operator=(SelfType&&)->SelfType & = default;
 
-        /// @brief Load file from disk
-        ///
-        /// @throw File::LoadFailed if failed to load
         auto Load() -> SelfType&;
 
-        /// @brief Save file to disk
-        ///
-        /// @throw File::LoadFailed if failed to load
         auto Save() -> SelfType&;
 
         [[nodiscard]]

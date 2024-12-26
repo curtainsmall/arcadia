@@ -30,9 +30,6 @@ namespace Arcadia
 
         using SelfType = GlShader;
     public:
-        /// @brief Create an OpenGL shader object
-        /// @param source_code Source code of the shader
-        /// @param shader_type Type of shader
         GlShader(
             const std::string& source_code,
             GlShaderType shader_type

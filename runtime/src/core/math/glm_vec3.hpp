@@ -1,8 +1,8 @@
 #pragma once
 
-#include"platform/api_def.hpp"
 #include"core/math/glm_header.hpp"
 #include"core/nlohmann_json_header.hpp"
+#include"platform/api_def.hpp"
 
 namespace Arcadia
 {
@@ -63,11 +63,8 @@ namespace Arcadia
             return -CreateUnitPositiveZ();
         }
 
-        /// @brief Normalize vector with one axis fixed
-        /// @tparam Index Index of fixed axis, must be 0, 1 or 2
-        /// @param vec Vector to normalize
-        /// @return Normalized vector
         template<std::size_t Index>
+            requires (Index >= 0) && (Index <= 2)
         [[nodiscard]]
         ACDA_API static inline auto NormalizeFixedly(const glm::vec3& vec) -> glm::vec3
         {

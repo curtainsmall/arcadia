@@ -22,6 +22,11 @@ Arcadia::GlRenderer::GlRenderer(const std::filesystem::path& gl_shader_folder_pa
     ACDA_GL_CALL(glEnable(GL_CULL_FACE));
 }
 
+auto Arcadia::GlRenderer::IsInBuild() const -> bool
+{
+    return _InBuild;
+}
+
 void Arcadia::GlRenderer::Prepare()
 {
     _AssertFrameNotInBuild();
@@ -294,6 +299,11 @@ void Arcadia::GlRenderer::Reset()
 auto Arcadia::GlRenderer::GetRenderResultId(std::size_t index) const -> void*
 {
     return reinterpret_cast<void*>(_GlRenderUnitCameras.at(index).Framebuffer.GetGlTexture2d().GetGlId());
+}
+
+auto Arcadia::GlRenderer::GetGraphicApiType() const -> GraphicApi::Type
+{
+    return GraphicApi::Opengl(Version(4, 6, 0));
 }
 
 void Arcadia::GlRenderer::_AssertFrameInBuild() const

@@ -47,34 +47,23 @@ namespace Arcadia
         [[nodiscard]]
         static auto Instance() -> SelfType&;
 
-        /// @brief Create a command
-        /// @param execute_fn Function to execute
-        /// @param unexecute_fn Function to unexecute
-        /// @note The command will be executed once when it is contructed
-        void emplace(
+        void Emplace(
             const std::string& description,
             const FunctionType& execute_fn,
             const FunctionType& unexecute_fn
         );
 
-        /// @brief Call unexecute() and move to the previous command
-        /// @return Whether succeed
         auto Undo() -> bool;
 
-        /// @brief Call execute() and move to the next command
-        /// @return Whether succeed
         auto Redo() -> bool;
 
         [[nodiscard]]
         auto GetCapacity() const->std::size_t;
         void SetCapacity(std::size_t capacity);
 
-        /// @brief Get size of command list
-        /// @return Size
         [[nodiscard]]
         auto GetSize() const->std::size_t;
 
-        /// @brief Clear command list (when you saved the project and no longer needs previous commands)
         void Clear();
 
         [[nodiscard]]

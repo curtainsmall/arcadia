@@ -81,12 +81,8 @@ namespace Arcadia
         GlRenderer(const std::filesystem::path& gl_shader_folder_path);
         virtual ~GlRenderer() = default;
 
-        /// @copydoc RendererInterface::IsInBuild
         [[nodiscard]]
-        virtual auto IsInBuild() const -> bool override
-        {
-            return _InBuild;
-        }
+        virtual auto IsInBuild() const -> bool override;
 
         virtual void Prepare() override;
         virtual void Finalize() override;
@@ -99,10 +95,7 @@ namespace Arcadia
         virtual auto GetRenderResultId(std::size_t index) const->void* override;
 
         [[nodiscard]]
-        virtual auto GetGraphicApiType() const->GraphicApi::Type override
-        {
-            return GraphicApi::Opengl(Version(4, 6, 0));
-        }
+        virtual auto GetGraphicApiType() const->GraphicApi::Type override;
 
     public:
         void _AssertFrameInBuild() const;

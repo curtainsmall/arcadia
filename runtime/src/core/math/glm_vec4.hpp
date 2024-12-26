@@ -1,8 +1,8 @@
 #pragma once
 
-#include"platform/api_def.hpp"
 #include"core/math/glm_header.hpp"
 #include"core/nlohmann_json_header.hpp"
+#include"platform/api_def.hpp"
 
 namespace Arcadia
 {
@@ -35,11 +35,8 @@ namespace Arcadia
             return glm::vec4{};
         }
 
-        /// @brief Normalize vector with one axis fixed
-        /// @tparam Index Index of fixed axis, must be 0, 1, 2 or 3
-        /// @param vec Vector to normalize
-        /// @return Normalized vector
         template<std::size_t Index>
+            requires (Index >= 0) && (Index <= 3)
         [[nodiscard]]
         ACDA_API auto NormalizeFixedly(const glm::vec4& vec) -> glm::vec4
         {

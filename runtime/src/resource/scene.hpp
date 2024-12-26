@@ -166,7 +166,6 @@ namespace Arcadia
             return view;
         }
 
-        /// @copydoc scene::view
         template<Concepts::Component ...Components, Concepts::Component ...ExcludeComponents>
         [[nodiscard]]
         auto GetComponentView(entt::exclude_t<ExcludeComponents...> exclude= entt::exclude_t{}) const -> decltype(auto)

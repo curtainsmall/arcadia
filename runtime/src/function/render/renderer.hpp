@@ -44,10 +44,11 @@ namespace Arcadia
 
         virtual void Reset() = 0;
 
-        /// - OpenGL: GLuint
-        /// - DirectX11: ID3D11ShaderResourceView*
-        /// - DirectX12: D3D12_GPU_DESCRIPTOR_HANDLE
-        /// - Vulkan: VkDescriptorSet
+        // Render result id type:
+        // - OpenGL: GLuint
+        // - Direct11: ID3D11ShaderResourceView*
+        // - Direct12: D3D12_GPU_DESCRIPTOR_HANDLE
+        // - Vulkan: VkDescriptorSet
         virtual auto GetRenderResultId(std::size_t index) const->void* = 0;
 
         virtual auto GetGraphicApiType() const->GraphicApi::Type = 0;

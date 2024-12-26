@@ -38,13 +38,9 @@ namespace Arcadia
         void Restore(const std::shared_ptr<MementoDataBase>& sp_memento_data);
 
     protected:
-        /// @brief Generate a memento data
-        /// @return Memento data
         [[nodiscard]]
         virtual auto OnSnapshot() const->std::shared_ptr<MementoDataBase> = 0;
 
-        /// @brief Restore self with memento data
-        /// @param memento_data Memento data to restore with
         virtual void OnRestore(const std::shared_ptr<MementoDataBase>& memento_data) = 0;
 
     private:
@@ -62,12 +58,6 @@ namespace Arcadia
     public:
         using SelfType = Memento;
     public:
-        /// @brief Create a memento
-        /// @tparam MementoOriginator Type of memento originator
-        /// @param description Description
-        /// @param in_place_type_originator Type deduction helper for @a MementoOriginator
-        /// @param originator_retriever Originator retriever
-        /// @param memento_data Memento data
         template<
             Concepts::MementoOriginator MementoOriginator
         >
@@ -95,7 +85,6 @@ namespace Arcadia
             )
         {}
 
-        /// @brief Restore originator with memento data
         void Restore() const;
 
         [[nodiscard]]
@@ -116,10 +105,6 @@ namespace Arcadia
     public:
         static auto Instance() -> SelfType&;
 
-        /// @brief Snapshot @a MementoOriginator
-        /// @tparam MementoOriginator Type of memento originator
-        /// @param description Description
-        /// @param originator_retriever Originator to snapshot
         template<Concepts::MementoOriginator MementoOriginator>
         void Snapshot(
             const std::string& description,
@@ -136,12 +121,7 @@ namespace Arcadia
             _CurrentIterator = _List.begin();
         }
 
-        /// @brief Restore prev memento
-        /// @return True, if succeed; False, if there is no prev memento to restore
         auto Undo() -> bool;
-
-        /// @brief Restore next memento
-        /// @return True, if succeed; False, if there is no next memento to restore
         auto Redo() -> bool;
 
         [[nodiscard]]
@@ -153,12 +133,9 @@ namespace Arcadia
 
         void Clear();
 
-        /// @brief Check whether the memento refered by @a iter is current memento
-        /// @param iter Iterator referring to a memento
-        /// @note @a Current @a memento is the next memento to use when undo:
-        ///                                                   current
-        ///     memento#1 <--- memento#2 <--- memento#3 <--- memento#4 <---   ---> memento#5
-        ///               undo           undo           undo           undo   redo
+        //                                                   current
+        //     memento#1 <--- memento#2 <--- memento#3 <--- memento#4 <---   ---> memento#5
+        //               undo           undo           undo           undo   redo
         [[nodiscard]]
         auto IsCurrent(const ContainerType::const_iterator& iter) const -> bool;
 

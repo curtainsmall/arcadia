@@ -25,11 +25,8 @@ namespace Arcadia
         [[nodiscard]]
         auto GetName() const -> const std::string&;
 
-        /// @brief Process event
-        /// @param event Event to be processed
         virtual void OnEvent(EventBase& event) = 0;
 
-        /// @brief Update layer
         virtual void OnUpdate() = 0;
 
     private:

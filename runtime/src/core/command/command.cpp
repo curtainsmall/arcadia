@@ -35,7 +35,7 @@ auto Arcadia::CommandList::Instance() -> SelfType&
     return command_list;
 }
 
-void Arcadia::CommandList::emplace(
+void Arcadia::CommandList::Emplace(
     const std::string& description,
     const FunctionType& execute_fn,
     const FunctionType& unexecute_fn

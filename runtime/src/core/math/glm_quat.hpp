@@ -2,9 +2,9 @@
 
 #include"boost/math/special_functions/sign.hpp"
 
-#include"platform/api_def.hpp"
 #include"core/math/glm_header.hpp"
 #include"core/nlohmann_json_header.hpp"
+#include"platform/api_def.hpp"
 
 namespace Arcadia
 {
@@ -42,11 +42,8 @@ namespace Arcadia
             return glm::quat(1.f, .0f, .0f, .0f);
         }
 
-        /// @brief Normalize quaternion with one axis fixed
-        /// @tparam Index Index of fixed axis, must be 0, 1, 2 or 3
-        /// @param vec Quaternion to normalize
-        /// @return Normalized quaternion
         template<std::size_t Index>
+            requires (Index >= 0) && (Index <= 3)
         [[nodiscard]]
         ACDA_API static inline auto NormalizeFixedly(const glm::quat& quat) -> glm::quat
         {
