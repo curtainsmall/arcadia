@@ -467,16 +467,37 @@ auto Arcadia::ImguiWindowPropertyModelComponent::operator()(ModelComponent& mode
 
     ImGui::SeparatorText("Filepath");
     std::string filepath_string = model_comp.GetFilepath().empty()
-        ? "(No filepath)"
+        ? "(No Filepath)"
         : model_comp.GetFilepath().generic_string();
     ImGui::TextWrapped(filepath_string.c_str());
     if(ImGui::Button("..."))
     {
-        std::vector<std::string> res = pfd::open_file{
+        std::vector<std::string> res = pfd::open_file(
             "Import Model"
-        }.result();
-        model_comp.Import(res.size() ? res.at(0) : "");
+        ).result();
+        if(res.size())
+        {
+            try
+            {
+                model_comp.LoadModel(res.at(0));
+            }
+            catch(Exceptions::ModelComponent_ModelLoadInvalidFormat&)
+            {
+                pfd::message(
+                    "Arcadia",
+                    std::format("Cannot load model from {} because it has invalid format", res.at(0)),
+                    pfd::choice::ok,
+                    pfd::icon::error
+                );
+            }
+        }
     }
+    ImGui::SameLine();
+    if(model_comp.IsModelLoaded() && ImGui::Button("Unload Model"))
+    {
+        model_comp.UnloadModel();
+    }
+
 
     ImGui::EndGroup();
 

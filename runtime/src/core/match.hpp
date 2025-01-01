@@ -20,6 +20,7 @@ namespace Arcadia
         Concepts::InstantiatedFrom<std::variant> Variant,
         typename ...BranchFns
     >
+    [[nodiscard]]
     ACDA_API auto MatchVariant(Variant& variant, BranchFns&& ...fns) -> Ret
     {
         return std::visit<Ret>(
@@ -35,6 +36,7 @@ namespace Arcadia
         Concepts::InstantiatedFrom<std::variant> Variant,
         typename ...BranchFns
     >
+    [[nodiscard]]
     ACDA_API auto MatchVariant(const Variant& variant, BranchFns&& ...fns) -> Ret
     {
         return std::visit<Ret>(
@@ -52,6 +54,7 @@ namespace Arcadia
         typename ...Cases
     >
         requires (sizeof...(Cases) % 2 == 0)
+    [[nodiscard]]
     ACDA_API auto Match(const Cond& cond, const Case& case_expr, const std::function<Ret()>& case_fn, Cases&& ...cases) -> Ret
     {
         if constexpr(sizeof...(Cases) == 0)
@@ -71,6 +74,7 @@ namespace Arcadia
         typename ...Cases
     >
         requires (sizeof...(Cases) % 2 == 0)
+    [[nodiscard]]
     ACDA_API auto Match(const Cond& cond, const std::function<Ret()>& default_fn, const Case& case_expr, const std::function<Ret()>& case_fn, Cases&& ...cases) -> Ret
     {
         if constexpr(sizeof...(Cases) == 0)
@@ -90,6 +94,7 @@ namespace Arcadia
         typename ...Cases
     >
         requires (sizeof...(Cases) % 2 == 0)
+    [[nodiscard]]
     ACDA_API auto Match(const Cond& cond, const Case& case_expr, const Ret& case_res, Cases&& ...cases) -> Ret
     {
         if constexpr(sizeof...(Cases) == 0)
@@ -109,6 +114,7 @@ namespace Arcadia
         typename ...Cases
     >
         requires (sizeof...(Cases) % 2 == 0)
+    [[nodiscard]]
     ACDA_API auto Match(const Cond& cond, const Ret& default_res, const Case& case_expr, const Ret& case_res, Cases&& ...cases) -> Ret
     {
         if constexpr(sizeof...(Cases) == 0)

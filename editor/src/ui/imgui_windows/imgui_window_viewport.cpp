@@ -67,18 +67,18 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
 
             auto [viewport_camera_comp, viewport_transform_comp] = scene_sptr->GetComponent<CameraComponent, TransformComponent>(scene_sptr->GetEntitIdByName(_ViewportCameraEntityName));
             viewport_camera_comp.ViewportSize = ImGui::GetContentRegionAvail();
-            for(const auto& [entity_id, entity] : scene_sptr->GetEntityInfoStorage())
+            for(const auto& [entity_id, entity_info] : scene_sptr->GetEntityInfoStorage())
             {
                 physics_simulator_sptr->Submit(*scene_sptr, entity_id);
             }
             physics_simulator_sptr->Finalize();
             physics_simulator_sptr->Update();
-            for(const auto& [entity_id, entity] : scene_sptr->GetEntityInfoStorage())
+            for(const auto& [entity_id, entity_info] : scene_sptr->GetEntityInfoStorage())
             {
                 physics_simulator_sptr->Query(*scene_sptr, entity_id);
 
                 // We submit entity to renderer after query
-                if(entity.Displayed)
+                if(entity_info.Displayed)
                 {
                     renderer_sptr->Submit(*scene_sptr, entity_id);
                 }

@@ -20,7 +20,7 @@
 
 #include"editor/editor_context.hpp"
 
-Arcadia::ProjectLayer::ProjectLayer() :
+Arcadia::ProjectLayer::ProjectLayer():
     LayerInterface("project")
 {
     const AppConfig& app_config = AppConfig::Instance();
@@ -402,36 +402,36 @@ void Arcadia::ProjectLayer::_OnNewEntity(Events::NewEntity& e)
         name = std::format("{} {}", temp_name, ++postfix);
     }
 
-    EntityId entit_id = scene.CreateEntity(name, e.EntityTypeString);
+    EntityId entity_id = scene.CreateEntity(name, e.EntityTypeString);
 
     Match<void>(
         e.EntityTypeString,
         std::string("actor"),
         [&]()
     {
-        scene.EmplaceComponent<ModelComponent>(entit_id).Snapshot();
+        scene.EmplaceComponent<ModelComponent>(entity_id).Snapshot();
 
-        scene.EmplaceComponent<PhysicsComponent>(entit_id).Snapshot();
+        scene.EmplaceComponent<PhysicsComponent>(entity_id).Snapshot();
 
-        TransformComponent& transform_comp =  scene.EmplaceComponent<TransformComponent>(entit_id);
+        TransformComponent& transform_comp =  scene.EmplaceComponent<TransformComponent>(entity_id);
         transform_comp.Snapshot();
         transform_comp.Flags |= TransformComponentFlags::UseRotation;
     },
         std::string("camera"),
         [&]()
     {
-        scene.EmplaceComponent<CameraComponent>(entit_id).Snapshot();
+        scene.EmplaceComponent<CameraComponent>(entity_id).Snapshot();
 
-        TransformComponent& transform_comp = scene.EmplaceComponent<TransformComponent>(entit_id);
+        TransformComponent& transform_comp = scene.EmplaceComponent<TransformComponent>(entity_id);
         transform_comp.Snapshot();
         transform_comp.Flags |= TransformComponentFlags::UseDirection;
     },
         std::string("light"),
         [&]()
     {
-        scene.EmplaceComponent<LightComponent>(entit_id).Snapshot();
+        scene.EmplaceComponent<LightComponent>(entity_id).Snapshot();
 
-        TransformComponent& transform_comp = scene.EmplaceComponent<TransformComponent>(entit_id);
+        TransformComponent& transform_comp = scene.EmplaceComponent<TransformComponent>(entity_id);
         transform_comp.Snapshot();
         transform_comp.Flags |= TransformComponentFlags::UseDirection;
     }

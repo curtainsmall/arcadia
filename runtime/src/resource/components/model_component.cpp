@@ -12,23 +12,19 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include"stb/stb_image.h"
 
-Arcadia::ModelComponent::ModelComponent(const std::filesystem::path& filepath) :
+Arcadia::ModelComponent::ModelComponent(const std::filesystem::path& filepath):
     _Filepath(filepath)
 {
-    if(!_Filepath.empty())
+    if(!_LoadModel())
     {
-        _Load();
+        _Filepath.clear();
+        throw Exceptions::ModelComponent_ModelLoadInvalidFormat();
     }
 }
 
-Arcadia::ModelComponent::ModelComponent(const nlohmann::json& json) :
-    _Filepath(ToFilepath(json.at("filepath")))
-{
-    if(!_Filepath.empty())
-    {
-        _Load();
-    }
-}
+Arcadia::ModelComponent::ModelComponent(const nlohmann::json& json):
+    ModelComponent(ToFilepath(json.at("filepath")))
+{}
 
 auto Arcadia::ModelComponent::ToJson() const -> nlohmann::json
 {
@@ -62,9 +58,11 @@ auto Arcadia::ModelComponent::GetIdentifiableMeshes() const -> const Identifiabl
     return *_IdentifiableMeshes;
 }
 
-void Arcadia::ModelComponent::Import(const std::filesystem::path& filepath)
+void Arcadia::ModelComponent::LoadModel(const std::filesystem::path& filepath)
 {
-    if(!_Filepath.empty() && !filepath.empty())
+    ACDA_ASSERT(!filepath.empty());
+
+    if(!_Filepath.empty())
     {
         pfd::button res = pfd::message{
              "Replacing Model",
@@ -77,9 +75,13 @@ void Arcadia::ModelComponent::Import(const std::filesystem::path& filepath)
         {
             case pfd::button::yes:
             {
-                _Unload();
+                _UnloadModel();
                 _Filepath = filepath;
-                _Load();
+                if(!_LoadModel())
+                {
+                    _Filepath.clear();
+                    throw Exceptions::ModelComponent_ModelLoadInvalidFormat();
+                }
                 break;
             }
             case pfd::button::no:
@@ -89,37 +91,29 @@ void Arcadia::ModelComponent::Import(const std::filesystem::path& filepath)
             }
         }
     }
-    else if(!_Filepath.empty() && filepath.empty())
-    {
-        pfd::button res = pfd::message{
-            "Unloading Model",
-            std::format("Do you want to unload model from {}",_Filepath.generic_string()),
-            pfd::choice::yes_no,
-            pfd::icon::info
-        }.result();
-        switch(res)
-        {
-            case pfd::button::yes:
-            {
-                _Unload();
-                _Filepath = filepath;
-                break;
-            }
-            case pfd::button::no:
-            default:
-            {
-                break;
-            }
-        }
-    }
-    else if(!filepath.empty())
+    else
     {
         _Filepath = filepath;
-        _Load();
+        if(!_LoadModel())
+        {
+            _Filepath.clear();
+            throw Exceptions::ModelComponent_ModelLoadInvalidFormat();
+        }
     }
 }
 
-void Arcadia::ModelComponent::_Load()
+void Arcadia::ModelComponent::UnloadModel()
+{
+    _UnloadModel();
+    _Filepath.clear();
+}
+
+auto Arcadia::ModelComponent::IsModelLoaded() const -> bool
+{
+    return HasIdentifiableMeshes();
+}
+
+auto Arcadia::ModelComponent::_LoadModel() -> bool
 {
     Assimp::Importer importer{};
     const aiScene* ai_scene = importer.ReadFile(
@@ -137,7 +131,7 @@ void Arcadia::ModelComponent::_Load()
         )
     {
         ACDA_LOG_ERROR(importer.GetErrorString());
-        return;
+        return false;
     }
 
     std::vector<Mesh> meshes{};
@@ -151,9 +145,10 @@ void Arcadia::ModelComponent::_Load()
     );
 
     _IdentifiableMeshes = std::make_unique<IdentifiableMeshesType>(std::move(meshes));
+    return true;
 }
 
-void Arcadia::ModelComponent::_Unload()
+void Arcadia::ModelComponent::_UnloadModel()
 {
     _IdentifiableMeshes.reset();
 }
