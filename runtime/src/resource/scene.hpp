@@ -53,7 +53,7 @@ namespace Arcadia
         using RegistryType = entt::registry;
         using SelfType = Scene;
     public:
-        Scene(const std::string& name) :
+        Scene(const std::string& name):
             _Name(name)
         {}
         Scene(const nlohmann::json& json);
@@ -84,6 +84,7 @@ namespace Arcadia
         [[nodiscard]]
         auto GetEntityInfo(EntityId entity_id) -> EntityInfo&;
 
+        [[nodiscard]]
         auto CreateEntity(const std::string& entity_name, const std::string& type) -> EntityId;
 
         void DestroyEntity(EntityId entity_id);

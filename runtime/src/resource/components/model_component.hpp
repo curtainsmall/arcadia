@@ -6,6 +6,7 @@
 #include"assimp/Importer.hpp"
 #include"assimp/scene.h"
 
+#include"core/exception.hpp"
 #include"core/identifiable.hpp"
 #include"core/math.hpp"
 #include"core/memento/memento.hpp"
@@ -16,6 +17,11 @@
 
 namespace Arcadia
 {
+    namespace Exceptions
+    {
+        ACDA_DEFINE_RUNTIME_ERROR_EXCEPTION(ModelComponent_ModelLoadInvalidFormat);
+    }
+
     class ModelComponent:
         public ComponentInterface,
         public MementoOriginatorInterface
@@ -44,7 +50,10 @@ namespace Arcadia
         [[nodiscard]]
         auto GetIdentifiableMeshes() const -> const IdentifiableMeshesType&;
 
-        void Import(const std::filesystem::path& filepath);
+        void LoadModel(const std::filesystem::path& filepath);
+        void UnloadModel();
+        [[nodiscard]]
+        auto IsModelLoaded() const -> bool;
 
     protected:
         [[nodiscard]]
@@ -52,8 +61,8 @@ namespace Arcadia
         virtual void OnRestore(const std::shared_ptr<MementoDataBase>& memento_data) override;
 
     private:
-        void _Load();
-        void _Unload();
+        auto _LoadModel() -> bool;
+        void _UnloadModel();
 
         void _ProcessAssimpNode(
             std::vector<Mesh>& meshes,
