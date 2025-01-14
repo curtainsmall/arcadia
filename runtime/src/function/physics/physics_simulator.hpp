@@ -80,10 +80,6 @@ namespace Arcadia
         auto GetJphBodyIdStorage() const -> const JphBodyIdStorageType&;
 
     private:
-        void _AssertFrameInBuild() const;
-        void _AssertFrameNotInBuild() const;
-    public:
-    private:
         bool _InBuild{ false };
 
         bool _Active{ false };

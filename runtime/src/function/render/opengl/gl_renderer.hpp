@@ -93,9 +93,6 @@ namespace Arcadia
         virtual auto GetGraphicApiType() const->GraphicApi::Type override;
 
     public:
-        void _AssertFrameInBuild() const;
-        void _AssertFrameNotInBuild() const;
-
         void _DrawGrid(
             const GlVertexArray& gl_grid_vertex_array,
             const glm::mat4& camera_view,

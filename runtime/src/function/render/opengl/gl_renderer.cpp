@@ -29,7 +29,7 @@ auto Arcadia::GlRenderer::IsInBuild() const -> bool
 
 void Arcadia::GlRenderer::Prepare()
 {
-    _AssertFrameNotInBuild();
+    ACDA_ASSERT(!_InBuild, "Frame is in build, did you call `finalize()`?");
     _InBuild = true;
 
     // Clear submitted meshes uuids
@@ -50,7 +50,7 @@ void Arcadia::GlRenderer::Prepare()
 
 void Arcadia::GlRenderer::Finalize()
 {
-    _AssertFrameInBuild();
+    ACDA_ASSERT(_InBuild, "Frame is not in build, did you call `prepare()`?");
     _InBuild = false;
 
     for(auto iter = _GlRenderUnitMeshStorage.begin(); iter != _GlRenderUnitMeshStorage.end();)
@@ -80,7 +80,7 @@ void Arcadia::GlRenderer::Finalize()
 
 void Arcadia::GlRenderer::Submit(const Scene& scene, EntityId entity_id)
 {
-    _AssertFrameInBuild();
+    ACDA_ASSERT(_InBuild, "Frame is not in build, did you call `prepare()`?");
 
     const EntityInfo& entity = scene.GetEntityInfo(entity_id);
 
@@ -202,8 +202,7 @@ void Arcadia::GlRenderer::Submit(const Scene& scene, EntityId entity_id)
 
 void Arcadia::GlRenderer::Draw()
 {
-    _AssertFrameNotInBuild();
-
+    ACDA_ASSERT(!_InBuild, "Frame is in build, did you call `finalize()`?");
     ACDA_ASSERT(_GlRenderUnitCameras.size(), "No framebuffer to draw to");
 
     ACDA_GL_CALL(glClearColor(41 / 255.0, 43 / 255.0, 44 / 255.0, 1.f));
@@ -301,16 +300,6 @@ auto Arcadia::GlRenderer::GetRenderResultId(std::size_t index) const -> void*
 auto Arcadia::GlRenderer::GetGraphicApiType() const -> GraphicApi::Type
 {
     return GraphicApi::Opengl(Version(4, 6, 0));
-}
-
-void Arcadia::GlRenderer::_AssertFrameInBuild() const
-{
-    ACDA_ASSERT(_InBuild, "Frame is not in build, did you call `prepare()`?");
-}
-
-void Arcadia::GlRenderer::_AssertFrameNotInBuild() const
-{
-    ACDA_ASSERT(!_InBuild, "Frame is in build, did you call `finalize()`?");
 }
 
 void Arcadia::GlRenderer::_DrawGrid(
