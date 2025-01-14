@@ -13,21 +13,23 @@ namespace Arcadia
         [[nodiscard]]
         ACDA_API static inline auto ToJson(const glm::quat& quat) -> nlohmann::json
         {
-            return nlohmann::json{
-                { "w",quat.w },
-                { "x",quat.x },
-                { "y",quat.y },
-                { "z",quat.z },
-            };
+            return nlohmann::json::array(
+                {
+                    quat.w,
+                    quat.x,
+                    quat.y,
+                    quat.z
+                }
+            );
         }
         [[nodiscard]]
         ACDA_API static inline auto FromJson(const nlohmann::json& json) -> glm::quat
         {
             return glm::quat(
-                json.at("w"),
-                json.at("x"),
-                json.at("y"),
-                json.at("z")
+                json[0],
+                json[1],
+                json[2],
+                json[3]
             );
         }
 

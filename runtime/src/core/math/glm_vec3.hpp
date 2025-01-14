@@ -11,19 +11,21 @@ namespace Arcadia
         [[nodiscard]]
         ACDA_API static inline auto ToJson(const glm::vec3& vec) -> nlohmann::json
         {
-            return nlohmann::json{
-                    { "x",vec.x },
-                    { "y",vec.y },
-                    { "z",vec.z }
-            };
+            return nlohmann::json::array(
+                {
+                    vec.x,
+                    vec.y,
+                    vec.z
+                }
+            );
         }
         [[nodiscard]]
         ACDA_API static inline auto FromJson(const nlohmann::json& json) -> glm::vec3
         {
             return glm::vec3(
-                json.at("x"),
-                json.at("y"),
-                json.at("z")
+                json[0],
+                json[1],
+                json[2]
             );
         }
 
@@ -118,19 +120,21 @@ namespace Arcadia
         [[nodiscard]]
         ACDA_API static inline auto ToJson(const glm::i32vec3& vec) -> nlohmann::json
         {
-            return nlohmann::json{
-                     { "x",vec.x },
-                     { "y",vec.y },
-                     { "z",vec.z }
-            };
+            return nlohmann::json::array(
+                {
+                     vec.x,
+                     vec.y,
+                     vec.z
+                }
+            );
         }
         [[nodiscard]]
         ACDA_API static inline auto FromJson(const nlohmann::json& json) -> glm::i32vec3
         {
             return glm::i32vec3(
-                json.at("x"),
-                json.at("y"),
-                json.at("z")
+                json[0],
+                json[1],
+                json[2]
             );
         }
     }

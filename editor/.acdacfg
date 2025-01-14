@@ -20,24 +20,24 @@
         "ui_scale": 1.0
     },
     "window": {
-        "max_size": {
-            "x": -1,
-            "y": -1
-        },
+        "max_size": [
+            -1,
+            -1
+        ],
         "maxmized": true,
-        "min_size": {
-            "x": 800,
-            "y": 600
-        },
+        "min_size": [
+            800,
+            600
+        ],
         "multisample_count": 0,
-        "pos": {
-            "x": 0,
-            "y": 23
-        },
-        "size": {
-            "x": 2482,
-            "y": 1417
-        },
+        "pos": [
+            0,
+            23
+        ],
+        "size": [
+            2482,
+            1417
+        ],
         "title": "Arcadia"
     },
     "working_directory": "./"
