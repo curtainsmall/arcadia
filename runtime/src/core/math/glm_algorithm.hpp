@@ -8,10 +8,10 @@
 
 namespace Arcadia
 {
-    auto Decompose(const glm::mat4& transform)
-        -> std::tuple<
-        glm::vec3, // Translation
-        glm::vec3, // Rotation
-        glm::vec3  // Scale
-        >;
+    void Decompose(
+        const glm::mat4& transform,
+        glm::vec3& translation,
+        glm::quat& rotation,
+        glm::vec3& scale
+    );
 }

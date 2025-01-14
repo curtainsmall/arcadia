@@ -254,16 +254,11 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
                     // On use gizmo
                     if(ImGuizmo::IsUsing())
                     {
-                        //_GizmoEdited = true;
-
-                        glm::vec3
-                            scale{},
-                            translation{},
-                            skew{};
-                        glm::vec4 perspective{};
+                        glm::vec3 scale{};
                         glm::quat rotation{};
+                        glm::vec3 translation{};
 
-                        glm::decompose(transform_mat, scale, rotation, translation, skew, perspective);
+                        Decompose(transform_mat, translation, rotation, scale);
 
                         if(transform_comp.Position != translation
                            || transform_comp.Rotation != rotation
@@ -272,14 +267,10 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
                             _GizmoEdited = true;
                         }
 
-                        if(transform_comp.Position != translation)
-                        {
-                            //transform_comp.pivot += translation - transform_comp.position;
-                        }
-
                         transform_comp.Position = translation;
                         transform_comp.Rotation = rotation;
                         transform_comp.Scale = scale;
+                        transform_comp.Pivot += translation - transform_comp.Position;
                     }
 
                     // On release gizmo

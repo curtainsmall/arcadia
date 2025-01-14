@@ -4,14 +4,14 @@
 
 #include"core/assert.hpp"
 
-auto Arcadia::Decompose(const glm::mat4& transform) -> std::tuple<glm::vec3, glm::vec3, glm::vec3>
+void Arcadia::Decompose(
+    const glm::mat4& transform,
+    glm::vec3& translation,
+    glm::quat& rotation,
+    glm::vec3& scale
+)
 {
     // From glm::decompose in matrix_decompose.inl
-
-    glm::vec3
-        translation{},
-        rotation{},
-        scale{};
 
     using T = float;
 
@@ -76,6 +76,4 @@ auto Arcadia::Decompose(const glm::mat4& transform) -> std::tuple<glm::vec3, glm
         rotation.x = atan2(-Row[2][0], Row[1][1]);
         rotation.z = 0;
     }
-
-    return std::make_tuple(translation, rotation, scale);
 }

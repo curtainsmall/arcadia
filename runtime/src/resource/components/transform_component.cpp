@@ -3,7 +3,7 @@
 
 #include"core/math.hpp"
 
-Arcadia::TransformComponent::TransformComponent(const nlohmann::json& json) :
+Arcadia::TransformComponent::TransformComponent(const nlohmann::json& json):
     Flags(json.at("flags")),
     Position(GlmVec3::FromJson(json.at("position"))),
     Rotation(GlmQuat::FromJson(json.at("rotation"))),
@@ -30,22 +30,12 @@ auto Arcadia::TransformComponent::GenerateTransformMat4() const -> glm::mat4
 {
     glm::mat4 mat = GlmMat4::CreateIdentity();
 
-    // Move pivot to origin
-    //mat = glm::translate(mat, -Pivot);
-
-    // Scale about origin (which is pivot now)
+    mat = glm::translate(mat, Position);
+    mat = mat * glm::mat4_cast(Rotation);
     mat = glm::scale(mat, Scale);
 
-    // Rotate
-    mat = glm::mat4_cast(Rotation) * mat;
-
-    // Move pivot back from origin
-    //mat = glm::translate(mat, Pivot);
-
-    // Translate
-    mat = glm::translate(mat, Position);
-
     return mat;
+
 }
 
 auto Arcadia::TransformComponent::OnSnapshot() const -> std::shared_ptr<MementoDataBase>
