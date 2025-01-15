@@ -32,7 +32,7 @@ Arcadia::PhysicsSimulator::~PhysicsSimulator()
 
 void Arcadia::PhysicsSimulator::Prepare()
 {
-    _AssertFrameNotInBuild();
+    ACDA_ASSERT(!_InBuild, "Frame is in build, did you call `finalize()`?");
     _InBuild = true;
 
     // Clear submitted body uuids
@@ -41,7 +41,7 @@ void Arcadia::PhysicsSimulator::Prepare()
 
 void Arcadia::PhysicsSimulator::Finalize()
 {
-    _AssertFrameInBuild();
+    ACDA_ASSERT(_InBuild, "Frame is not in build, did you call `prepare()`?");
     _InBuild = false;
 
     JPH::BodyInterface& jph_body_interface = _JphPhysicsSystemUniquePtr->GetBodyInterface();
@@ -64,7 +64,7 @@ void Arcadia::PhysicsSimulator::Finalize()
 
 void Arcadia::PhysicsSimulator::Submit(const Scene& scene, EntityId entity_id)
 {
-    _AssertFrameInBuild();
+    ACDA_ASSERT(_InBuild, "Frame is not in build, did you call `prepare()`?");
 
     const EntityInfo& entity = scene.GetEntityInfo(entity_id);
 
@@ -135,7 +135,7 @@ void Arcadia::PhysicsSimulator::Update()
 
 void Arcadia::PhysicsSimulator::Query(Scene& scene, EntityId entity_id)
 {
-    _AssertFrameNotInBuild();
+    ACDA_ASSERT(!_InBuild, "Frame is in build, did you call `finalize()`?");
 
     if(!_Active)
     {
@@ -214,16 +214,6 @@ void Arcadia::PhysicsSimulator::SetJphPhysicsSystemUpdatesPerSecond(std::int32_t
 auto Arcadia::PhysicsSimulator::GetJphBodyIdStorage() const -> const JphBodyIdStorageType&
 {
     return _JphBodyIdStorage;
-}
-
-void Arcadia::PhysicsSimulator::_AssertFrameInBuild() const
-{
-    ACDA_ASSERT(_InBuild, "Frame is not in build, did you call `prepare()`?");
-}
-
-void Arcadia::PhysicsSimulator::_AssertFrameNotInBuild() const
-{
-    ACDA_ASSERT(!_InBuild, "Frame is in build, did you call `finalize()`?");
 }
 
 auto Arcadia::JphObjectLayerPairFilerImpl::ShouldCollide(JPH::ObjectLayer obj_1, JPH::ObjectLayer obj_2) const -> bool

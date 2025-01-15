@@ -3,6 +3,7 @@
 #include<algorithm>
 #include<string>
 
+#include"core/assert.hpp"
 #include"core/enum.hpp"
 #include"core/file/pfd_header.hpp"
 #include"core/function.hpp"
@@ -860,11 +861,11 @@ auto Arcadia::ImguiWindowPropertyTransformComponent::operator()(TransformCompone
     const float min = .0f;
     const float max = .0f;
     const char* format = "%.3f";
-    const ImGuiSliderFlags flags =
+    const ImGuiSliderFlags slider_flags =
         ImGuiSliderFlags_AlwaysClamp;
 
     glm::vec3 position_delta = transform_comp.Position; // Previous position
-    ImGui::DragFloat3("Position", glm::value_ptr(transform_comp.Position), speed, min, max, format, flags);
+    ImGui::DragFloat3("Position", glm::value_ptr(transform_comp.Position), speed, min, max, format, slider_flags);
     if(ImGui::IsItemDeactivatedAfterEdit())
     {
         description = "Position";
@@ -873,28 +874,32 @@ auto Arcadia::ImguiWindowPropertyTransformComponent::operator()(TransformCompone
 
     if(!!(transform_comp.Flags & TransformComponentFlags::UseRotation))
     {
-        float rotation_drag_speed = .05f;
-        glm::quat temp = transform_comp.Rotation;
-        ImGui::DragFloat3("Rotation", glm::value_ptr(temp), rotation_drag_speed, min, max, format, flags);
-        transform_comp.Rotation = GlmQuat::NormalizeFixedly(transform_comp.Rotation, temp);
+        float rotation_drag_speed = .5f;
+        glm::vec3 eular_angle = glm::degrees(glm::eulerAngles(transform_comp.Rotation));
+        ImGui::DragFloat3("Rotation", glm::value_ptr(eular_angle), rotation_drag_speed, -90.f, 90.f, format, slider_flags);
+        transform_comp.Rotation = glm::radians(eular_angle);
         if(ImGui::IsItemDeactivatedAfterEdit())
         {
             description = "Rotation";
         }
     }
-    if(!!(transform_comp.Flags & TransformComponentFlags::UseDirection))
+    else if(!!(transform_comp.Flags & TransformComponentFlags::UseDirection))
     {
-        float direction_drag_speed = .05f;
-        glm::vec3 temp = transform_comp.Direction;
-        ImGui::DragFloat3("Direction", glm::value_ptr(temp), direction_drag_speed, min, max, format, flags);
-        transform_comp.Direction = GlmVec3::NormalizeFixedly(transform_comp.Direction, temp);
+        float rotation_drag_speed = .5f;
+        glm::vec3 eular_angle = glm::degrees(glm::eulerAngles(transform_comp.Rotation));
+        ImGui::DragFloat3("Direction", glm::value_ptr(eular_angle), rotation_drag_speed, min, max, format, slider_flags);
+        transform_comp.Rotation = glm::radians(eular_angle);
         if(ImGui::IsItemDeactivatedAfterEdit())
         {
             description = "Direction";
         }
     }
+    else
+    {
+        ACDA_UNREACHABLE("");
+    }
 
-    ImGui::DragFloat3("Scale", glm::value_ptr(transform_comp.Scale), speed, min, max, format, flags);
+    ImGui::DragFloat3("Scale", glm::value_ptr(transform_comp.Scale), speed, min, max, format, slider_flags);
     if(ImGui::IsItemDeactivatedAfterEdit())
     {
         description = "Scale";
@@ -904,7 +909,7 @@ auto Arcadia::ImguiWindowPropertyTransformComponent::operator()(TransformCompone
     {
         transform_comp.Pivot += position_delta; // Make pivot move with translation
     }
-    ImGui::DragFloat3("Pivot", glm::value_ptr(transform_comp.Pivot), speed, min, max, format, flags);
+    ImGui::DragFloat3("Pivot", glm::value_ptr(transform_comp.Pivot), speed, min, max, format, slider_flags);
     if(ImGui::IsItemDeactivatedAfterEdit())
     {
         description = "Pivot";

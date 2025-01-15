@@ -49,7 +49,7 @@ namespace Arcadia
     public:
         ACDA_IMGUI_WINDOW_ID_STR_GETTERS("###menubar");
 
-        ImguiWindowMainMenubar(const std::initializer_list<std::tuple<std::string, std::string>>& imgui_window_title_id_pairs) :
+        ImguiWindowMainMenubar(const std::initializer_list<std::tuple<std::string, std::string>>& imgui_window_title_id_pairs):
             ImguiWindowInterface(true, "Main Menubar"),
             _ImguiWindowTitleAndIdStringPairs(imgui_window_title_id_pairs)
         {}
@@ -74,6 +74,6 @@ namespace Arcadia
 
         std::vector<std::tuple<std::string, std::string>> _ImguiWindowTitleAndIdStringPairs{};
 
-        bool _ShouldShowGizmo{ false };
+        bool _ShouldShowGizmo{ true };
     };
 }

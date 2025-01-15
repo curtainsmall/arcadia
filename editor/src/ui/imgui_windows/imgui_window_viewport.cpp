@@ -149,7 +149,8 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
                 viewport_transform_comp.Direction,
                 _InViewportFreecamMode ? std::string("(Free Cam) ") : std::string{}
             ).c_str());
-            ImGui::SameLine(ImGui::GetWindowWidth() - 300.f);
+            float gizmo_option_position_offset_to_right = 350.f;
+            ImGui::SameLine(ImGui::GetWindowWidth() - gizmo_option_position_offset_to_right);
             const glm::vec2 gizmo_options_cursor_pos = ImGui::GetCursorPos();
             ImGui::Dummy({ 0,0 });
             float fps = 1.f / std::chrono::duration_cast<std::chrono::duration<float>>(app_context.DeltaTime).count();
@@ -167,6 +168,27 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
                 ImGui::PushStyleColor(ImGuiCol_ButtonHovered, hovered_color);
                 ImGui::PushStyleColor(ImGuiCol_ButtonActive, active_color);
 
+                if(_GizmoMode == GizmoMode::Local)
+                {
+                    if(ImGui::Button("Local"))
+                    {
+                        _GizmoMode = GizmoMode::World;
+                    }
+                }
+                else if(_GizmoMode == GizmoMode::World)
+                {
+                    if(ImGui::Button("World"))
+                    {
+                        _GizmoMode = GizmoMode::Local;
+                    }
+                }
+                else
+                {
+                    ACDA_UNREACHABLE("Invalid gizmo mode");
+                }
+                ImGui::SetItemTooltip("Toggle world/local mode");
+
+                ImGui::SameLine();
                 if(_GizmoOption == GizmoOption::None)
                 {
                     ImGui::PushStyleColor(ImGuiCol_Button, selected_color);
@@ -254,11 +276,14 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
                     // On use gizmo
                     if(ImGuizmo::IsUsing())
                     {
-                        glm::vec3 scale{};
+                        glm::vec3
+                            scale{},
+                            translation{},
+                            skew{};
+                        glm::vec4 perspective{};
                         glm::quat rotation{};
-                        glm::vec3 translation{};
 
-                        Decompose(transform_mat, translation, rotation, scale);
+                        Glm::Decompose(transform_mat, translation, rotation, scale);
 
                         if(transform_comp.Position != translation
                            || transform_comp.Rotation != rotation
@@ -267,10 +292,15 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
                             _GizmoEdited = true;
                         }
 
+                        if(transform_comp.Position != translation)
+                        {
+                            //transform_comp.pivot += translation - transform_comp.position;
+                        }
+
                         transform_comp.Position = translation;
                         transform_comp.Rotation = rotation;
                         transform_comp.Scale = scale;
-                        transform_comp.Pivot += translation - transform_comp.Position;
+
                     }
 
                     // On release gizmo

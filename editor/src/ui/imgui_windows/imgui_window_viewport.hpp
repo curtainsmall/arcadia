@@ -40,7 +40,7 @@ namespace Arcadia
         inline ImguiWindowViewport(
             bool open,
             const std::string& title
-        ) :
+        ):
             ImguiWindowInterface(open, title)
         {}
         virtual ~ImguiWindowViewport() = default;
@@ -76,7 +76,7 @@ namespace Arcadia
         glm::vec2 _CursorMoveDistance{};
 
         bool _InViewportFreecamMode{ false };
-        bool _ShowGizmo{ false };
+        bool _ShowGizmo{ true };
 
         GizmoOption _GizmoOption{ GizmoOption::None };
         GizmoMode _GizmoMode{ GizmoMode::Local };
