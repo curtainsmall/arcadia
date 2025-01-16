@@ -13,7 +13,7 @@ namespace Arcadia
         void Decompose(
             const glm::mat4& transform,
             glm::vec3& translation,
-            glm::quat& rotation,
+            glm::vec3& rotation,
             glm::vec3& scale
         );
     }

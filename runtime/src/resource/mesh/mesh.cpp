@@ -16,266 +16,266 @@ auto Arcadia::Mesh::CreateBox(
 
     // pos-x
     vertices.emplace_back(
-        Vertex{
-            glm::vec3{x, y, z},
+        Vertex(
+            glm::vec3(x, y, z),
             GlmVec3::CreateUnitPositiveX(),
-            glm::vec2{.5f,.67f}
-        }
+            glm::vec2(.5f, .67f)
+        )
     );
     vertices.emplace_back(
-        Vertex{
-            glm::vec3{x, -y,z},
+        Vertex(
+            glm::vec3(x, -y, z),
             GlmVec3::CreateUnitPositiveX(),
-            glm::vec2{.5f,.33f}
-        }
+            glm::vec2(.5f, .33f)
+        )
     );
     vertices.emplace_back(
-        Vertex{
-            glm::vec3{x,y,-z},
+        Vertex(
+            glm::vec3(x, y, -z),
             GlmVec3::CreateUnitPositiveX(),
-            glm::vec2{.75f,.67f}
-        }
+            glm::vec2(.75f, .67f)
+        )
     );
     vertices.emplace_back(
-        Vertex{
-            glm::vec3{x,y,-z},
+        Vertex(
+            glm::vec3(x, y, -z),
             GlmVec3::CreateUnitPositiveX(),
-            glm::vec2{.75f,.67f}
-        }
+            glm::vec2(.75f, .67f)
+        )
     );
     vertices.emplace_back(
-        Vertex{
-            glm::vec3{x,-y,z},
+        Vertex(
+            glm::vec3(x, -y, z),
             GlmVec3::CreateUnitPositiveX(),
-            glm::vec2{.5f,.33f}
-        }
+            glm::vec2(.5f, .33f)
+        )
     );
     vertices.emplace_back(
-        Vertex{
-            glm::vec3{x,-y,-z},
+        Vertex(
+            glm::vec3(x, -y, -z),
             GlmVec3::CreateUnitPositiveX(),
-            glm::vec2{.75f,.33f}
-        }
+            glm::vec2(.75f, .33f)
+        )
     );
 
     // neg-x
     vertices.emplace_back(
-        Vertex{
-            glm::vec3{-x, y, -z},
+        Vertex(
+            glm::vec3(-x, y, -z),
             GlmVec3::CreateUnitNegativeX(),
-            glm::vec2{.0f,.67f}
-        }
+            glm::vec2(.0f, .67f)
+        )
     );
     vertices.emplace_back(
-        Vertex{
-            glm::vec3{-x, -y,-z},
+        Vertex(
+            glm::vec3(-x, -y, -z),
             GlmVec3::CreateUnitNegativeX(),
-            glm::vec2{.0f,.33f}
-        }
+            glm::vec2(.0f, .33f)
+        )
     );
     vertices.emplace_back(
-        Vertex{
-            glm::vec3{-x,y,z},
+        Vertex(
+            glm::vec3(-x, y, z),
             GlmVec3::CreateUnitNegativeX(),
-            glm::vec2{.25f,.67f}
-        }
+            glm::vec2(.25f, .67f)
+        )
     );
     vertices.emplace_back(
-        Vertex{
-            glm::vec3{-x,y,z},
+        Vertex(
+            glm::vec3(-x, y, z),
             GlmVec3::CreateUnitNegativeX(),
-            glm::vec2{.25f,.67f}
-        }
+            glm::vec2(.25f, .67f)
+        )
     );
     vertices.emplace_back(
-        Vertex{
-            glm::vec3{-x,-y,-z},
+        Vertex(
+            glm::vec3(-x, -y, -z),
             GlmVec3::CreateUnitNegativeX(),
-            glm::vec2{.0f,.33f}
-        }
+            glm::vec2(.0f, .33f)
+        )
     );
     vertices.emplace_back(
-        Vertex{
-            glm::vec3{-x,-y,z},
+        Vertex(
+            glm::vec3(-x, -y, z),
             GlmVec3::CreateUnitPositiveY(),
-            glm::vec2{.25f,.33f}
-        }
+            glm::vec2(.25f, .33f)
+        )
     );
 
     // pos-y
     vertices.emplace_back(
-        Vertex{
-            glm::vec3{-x, y, -z},
+        Vertex(
+            glm::vec3(-x, y, -z),
             GlmVec3::CreateUnitPositiveY(),
-            glm::vec2{.25f,1.f}
-        }
+            glm::vec2(.25f, 1.f)
+        )
     );
     vertices.emplace_back(
-        Vertex{
-            glm::vec3{-x, y,z},
+        Vertex(
+            glm::vec3(-x, y, z),
             GlmVec3::CreateUnitPositiveY(),
-            glm::vec2{.25f,.67f}
-        }
+            glm::vec2(.25f, .67f)
+        )
     );
     vertices.emplace_back(
-        Vertex{
-            glm::vec3{x,y,-z},
+        Vertex(
+            glm::vec3(x, y, -z),
             GlmVec3::CreateUnitPositiveY(),
-            glm::vec2{.5f,1.f}
-        }
+            glm::vec2(.5f, 1.f)
+        )
     );
     vertices.emplace_back(
-        Vertex{
-            glm::vec3{x,y,-z},
+        Vertex(
+            glm::vec3(x, y, -z),
             GlmVec3::CreateUnitPositiveY(),
-            glm::vec2{.5f,1.f}
-        }
+            glm::vec2(.5f, 1.f)
+        )
     );
     vertices.emplace_back(
-        Vertex{
-            glm::vec3{-x,y,z},
+        Vertex(
+            glm::vec3(-x, y, z),
             GlmVec3::CreateUnitPositiveY(),
-            glm::vec2{.25f,.67f}
-        }
+            glm::vec2(.25f, .67f)
+        )
     );
     vertices.emplace_back(
-        Vertex{
-            glm::vec3{x,y,z},
+        Vertex(
+            glm::vec3(x, y, z),
             GlmVec3::CreateUnitPositiveY(),
-            glm::vec2{.5f,.67f}
-        }
+            glm::vec2(.5f, .67f)
+        )
     );
 
     // neg-y
     vertices.emplace_back(
-        Vertex{
-            glm::vec3{-x, -y, z},
+        Vertex(
+            glm::vec3(-x, -y, z),
             GlmVec3::CreateUnitNegativeY(),
-            glm::vec2{.25f,.33f}
-        }
+            glm::vec2(.25f, .33f)
+        )
     );
     vertices.emplace_back(
-        Vertex{
-            glm::vec3{-x, -y,-z},
+        Vertex(
+            glm::vec3(-x, -y, -z),
             GlmVec3::CreateUnitNegativeY(),
-            glm::vec2{.25f,.0f}
-        }
+            glm::vec2(.25f, .0f)
+        )
     );
     vertices.emplace_back(
-        Vertex{
-            glm::vec3{x,-y,z},
+        Vertex(
+            glm::vec3(x, -y, z),
             GlmVec3::CreateUnitNegativeY(),
-            glm::vec2{.25f,.5f}
-        }
+            glm::vec2(.25f, .5f)
+        )
     );
     vertices.emplace_back(
-        Vertex{
-            glm::vec3{x,-y,z},
+        Vertex(
+            glm::vec3(x, -y, z),
             GlmVec3::CreateUnitNegativeY(),
-            glm::vec2{.25f,.5f}
-        }
+            glm::vec2(.25f, .5f)
+        )
     );
     vertices.emplace_back(
-        Vertex{
-            glm::vec3{-x,-y,-z},
+        Vertex(
+            glm::vec3(-x, -y, -z),
             GlmVec3::CreateUnitNegativeY(),
-            glm::vec2{.25f,.0f}
-        }
+            glm::vec2(.25f, .0f)
+        )
     );
     vertices.emplace_back(
-        Vertex{
-            glm::vec3{x,-y,-z},
+        Vertex(
+            glm::vec3(x, -y, -z),
             GlmVec3::CreateUnitNegativeY(),
-            glm::vec2{.5f,.0f}
-        }
+            glm::vec2(.5f, .0f)
+        )
     );
 
     // pos-z
     vertices.emplace_back(
-        Vertex{
-            glm::vec3{-x, y, z},
+        Vertex(
+            glm::vec3(-x, y, z),
             GlmVec3::CreateUnitPositiveZ(),
-            glm::vec2{.25f,.67f}
-        }
+            glm::vec2(.25f, .67f)
+        )
     );
     vertices.emplace_back(
-        Vertex{
-            glm::vec3{-x, -y,z},
+        Vertex(
+            glm::vec3(-x, -y, z),
             GlmVec3::CreateUnitPositiveZ(),
-            glm::vec2{.25f,.33f}
-        }
+            glm::vec2(.25f, .33f)
+        )
     );
     vertices.emplace_back(
-        Vertex{
-            glm::vec3{x,y,z},
+        Vertex(
+            glm::vec3(x, y, z),
             GlmVec3::CreateUnitPositiveZ(),
-            glm::vec2{.5f,.67f}
-        }
+            glm::vec2(.5f, .67f)
+        )
     );
     vertices.emplace_back(
-        Vertex{
-            glm::vec3{x,y,z},
+        Vertex(
+            glm::vec3(x, y, z),
             GlmVec3::CreateUnitPositiveZ(),
-            glm::vec2{.5f,.67f}
-        }
+            glm::vec2(.5f, .67f)
+        )
     );
     vertices.emplace_back(
-        Vertex{
-            glm::vec3{-x, -y,z},
+        Vertex(
+            glm::vec3(-x, -y, z),
             GlmVec3::CreateUnitPositiveZ(),
-            glm::vec2{.25f,.33f}
-        }
+            glm::vec2(.25f, .33f)
+        )
     );
     vertices.emplace_back(
-        Vertex{
-            glm::vec3{x,-y,z},
+        Vertex(
+            glm::vec3(x, -y, z),
             GlmVec3::CreateUnitPositiveZ(),
-            glm::vec2{.5f,.33f}
-        }
+            glm::vec2(.5f, .33f)
+        )
     );
 
     // neg-z
     vertices.emplace_back(
-        Vertex{
-            glm::vec3{x, y, -z},
+        Vertex(
+            glm::vec3(x, y, -z),
             GlmVec3::CreateUnitNegativeZ(),
-            glm::vec2{.75f,.67f}
-        }
+            glm::vec2(.75f, .67f)
+        )
     );
     vertices.emplace_back(
-        Vertex{
-            glm::vec3{x, -y,-z},
+        Vertex(
+            glm::vec3(x, -y, -z),
             GlmVec3::CreateUnitNegativeZ(),
-            glm::vec2{.75f,.33f}
-        }
+            glm::vec2(.75f, .33f)
+        )
     );
     vertices.emplace_back(
-        Vertex{
-            glm::vec3{-x,y,-z},
+        Vertex(
+            glm::vec3(-x, y, -z),
             GlmVec3::CreateUnitNegativeZ(),
-            glm::vec2{1.f,.67f}
-        }
+            glm::vec2(1.f, .67f)
+        )
     );
     vertices.emplace_back(
-        Vertex{
-            glm::vec3{-x,y,-z},
+        Vertex(
+            glm::vec3(-x, y, -z),
             GlmVec3::CreateUnitNegativeZ(),
-            glm::vec2{1.f,.67f}
-        }
+            glm::vec2(1.f, .67f)
+        )
     );
     vertices.emplace_back(
-        Vertex{
-            glm::vec3{x, -y,-z},
+        Vertex(
+            glm::vec3(x, -y, -z),
             GlmVec3::CreateUnitNegativeZ(),
-            glm::vec2{.75f,.33f}
-        }
+            glm::vec2(.75f, .33f)
+        )
     );
     vertices.emplace_back(
-        Vertex{
-            glm::vec3{-x,-y,-z},
+        Vertex(
+            glm::vec3(-x, -y, -z),
             GlmVec3::CreateUnitNegativeZ(),
-            glm::vec2{1.f,.33f}
-        }
+            glm::vec2(1.f, .33f)
+        )
     );
 
     return mesh;
@@ -321,11 +321,11 @@ auto Arcadia::Mesh::CreateCapsule(
             float v = static_cast<float>(j / half_sphere_stack_count);
 
             vertices.emplace_back(
-                Vertex{
-                    glm::vec3{x,y,z},
-                    glm::vec3{nx,ny,nz},
-                    glm::vec2{u,v}
-                }
+                Vertex(
+                    glm::vec3(x, y, z),
+                    glm::vec3(nx, ny, nz),
+                    glm::vec2(u, v)
+                )
             );
         }
     }
@@ -379,11 +379,11 @@ auto Arcadia::Mesh::CreateCapsule(
             float uz = unit_circle_vertices.at(k + 2);
 
             vertices.emplace_back(
-                Vertex{
-                    glm::vec3{ux * radius,h, uz * radius},
-                    glm::vec3{ux,uy,uz},
-                    glm::vec2{static_cast<float>(j) / sector_count, tex_coord_y}
-                }
+                Vertex(
+                    glm::vec3(ux * radius, h, uz * radius),
+                    glm::vec3(ux, uy, uz),
+                    glm::vec2(static_cast<float>(j) / sector_count, tex_coord_y)
+                )
             );
         }
     }
@@ -436,11 +436,11 @@ auto Arcadia::Mesh::CreateCylinder(
             float uz = unit_circle_vertices.at(k + 2);
 
             vertices.emplace_back(
-                Vertex{
-                    glm::vec3{ux * radius,h, uz * radius},
-                    glm::vec3{ux,uy,uz},
-                    glm::vec2{static_cast<float>(j) / sector_count, tex_coord_y}
-                }
+                Vertex(
+                    glm::vec3(ux * radius, h, uz * radius),
+                    glm::vec3(ux, uy, uz),
+                    glm::vec2(static_cast<float>(j) / sector_count, tex_coord_y)
+                )
             );
         }
     }
@@ -453,11 +453,11 @@ auto Arcadia::Mesh::CreateCylinder(
 
         // Center point
         vertices.emplace_back(
-            Vertex{
-                glm::vec3{0,h,0},
-                glm::vec3{0,ny,0},
-                glm::vec2{0.5f,0.5f}
-            }
+            Vertex(
+                glm::vec3(0, h, 0),
+                glm::vec3(0, ny, 0),
+                glm::vec2(0.5f, 0.5f)
+            )
         );
 
         for(std::size_t j = 0, k = 0; j < sector_count; ++j, k += 3)
@@ -466,11 +466,11 @@ auto Arcadia::Mesh::CreateCylinder(
             float uz = unit_circle_vertices.at(k + 2);
 
             vertices.emplace_back(
-                Vertex{
-                    glm::vec3{ux * radius, h, uz * radius},
-                    glm::vec3{0, ny ,0},
-                    glm::vec2{-ux * 0.5f + 0.5f, -uz * 0.5f + 0.5f}
-                }
+                Vertex(
+                    glm::vec3(ux * radius, h, uz * radius),
+                    glm::vec3(0, ny, 0),
+                    glm::vec2(-ux * 0.5f + 0.5f, -uz * 0.5f + 0.5f)
+                )
             );
         }
     }
@@ -558,11 +558,11 @@ auto Arcadia::Mesh::CreateSphere(
             float v = static_cast<float>(j / stack_count);
 
             vertices.emplace_back(
-                Vertex{
-                    glm::vec3{x,y,z},
-                    glm::vec3{nx,ny,nz},
-                    glm::vec2{u,v}
-                }
+                Vertex(
+                    glm::vec3(x, y, z),
+                    glm::vec3(nx, ny, nz),
+                    glm::vec2(u, v)
+                )
             );
         }
     }

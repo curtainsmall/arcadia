@@ -415,7 +415,7 @@ void Arcadia::ProjectLayer::_OnNewEntity(Events::NewEntity& e)
 
         TransformComponent& transform_comp =  scene.EmplaceComponent<TransformComponent>(entity_id);
         transform_comp.Snapshot();
-        transform_comp.Flags |= TransformComponentFlags::UseRotation;
+        transform_comp.AddFlag(TransformComponentFlags::UseRotation);
     },
         std::string("camera"),
         [&]()
@@ -424,7 +424,7 @@ void Arcadia::ProjectLayer::_OnNewEntity(Events::NewEntity& e)
 
         TransformComponent& transform_comp = scene.EmplaceComponent<TransformComponent>(entity_id);
         transform_comp.Snapshot();
-        transform_comp.Flags |= TransformComponentFlags::UseDirection;
+        transform_comp.AddFlag(TransformComponentFlags::UseDirection);
     },
         std::string("light"),
         [&]()
@@ -433,7 +433,7 @@ void Arcadia::ProjectLayer::_OnNewEntity(Events::NewEntity& e)
 
         TransformComponent& transform_comp = scene.EmplaceComponent<TransformComponent>(entity_id);
         transform_comp.Snapshot();
-        transform_comp.Flags |= TransformComponentFlags::UseDirection;
+        transform_comp.AddFlag(TransformComponentFlags::UseDirection);
     }
     );
 }

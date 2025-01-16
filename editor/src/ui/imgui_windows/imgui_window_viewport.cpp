@@ -107,36 +107,36 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
                 // Scroll to zoom (move viewport_camera_comp forwards or backwards along direction)
                 if(ImGui::IsKeyDown(ImGuiKey_W))
                 {
-                    viewport_transform_comp.Position += viewport_transform_comp.Direction * viewport_camera_comp.Speed;
+                    viewport_transform_comp.IncreasePosition(viewport_transform_comp.GetDirection() * viewport_camera_comp.Speed);
                 }
                 else if(ImGui::IsKeyDown(ImGuiKey_S))
                 {
-                    viewport_transform_comp.Position -= viewport_transform_comp.Direction * viewport_camera_comp.Speed;
+                    viewport_transform_comp.IncreasePosition(-viewport_transform_comp.GetDirection() * viewport_camera_comp.Speed);
                 }
                 else if(ImGui::IsKeyDown(ImGuiKey_A))
                 {
-                    viewport_transform_comp.Position += glm::cross(CameraComponent::Up, viewport_transform_comp.Direction) * viewport_camera_comp.Speed;
+                    viewport_transform_comp.IncreasePosition(glm::cross(CameraComponent::Up, viewport_transform_comp.GetDirection()) * viewport_camera_comp.Speed);
                 }
                 else if(ImGui::IsKeyDown(ImGuiKey_D))
                 {
-                    viewport_transform_comp.Position -= glm::cross(CameraComponent::Up, viewport_transform_comp.Direction) * viewport_camera_comp.Speed;
+                    viewport_transform_comp.IncreasePosition(-glm::cross(CameraComponent::Up, viewport_transform_comp.GetDirection()) * viewport_camera_comp.Speed);
                 }
                 else if(ImGui::IsKeyDown(ImGuiKey_E))
                 {
-                    viewport_transform_comp.Position += glm::cross(viewport_transform_comp.Direction, glm::cross(CameraComponent::Up, viewport_transform_comp.Direction)) * viewport_camera_comp.Speed;
+                    viewport_transform_comp.IncreasePosition(glm::cross(viewport_transform_comp.GetDirection(), glm::cross(CameraComponent::Up, viewport_transform_comp.GetDirection())) * viewport_camera_comp.Speed);
                 }
                 else if(ImGui::IsKeyDown(ImGuiKey_Q))
                 {
-                    viewport_transform_comp.Position -= glm::cross(viewport_transform_comp.Direction, glm::cross(CameraComponent::Up, viewport_transform_comp.Direction)) * viewport_camera_comp.Speed;
+                    viewport_transform_comp.IncreasePosition(-glm::cross(viewport_transform_comp.GetDirection(), glm::cross(CameraComponent::Up, viewport_transform_comp.GetDirection())) * viewport_camera_comp.Speed);
                 }
 
                 // Rotate view
                 glm::vec2 offset = _CursorMoveDistance * .005f;
                 float x_angle_offset = -offset.x;
-                viewport_transform_comp.Direction = glm::normalize(glm::angleAxis(x_angle_offset, viewport_camera_comp.Up) * viewport_transform_comp.Direction);
-                float pitch_angle = glm::half_pi<float>() - glm::angle(viewport_transform_comp.Direction, viewport_camera_comp.Up);
+                viewport_transform_comp.SetDirection(glm::normalize(glm::angleAxis(x_angle_offset, viewport_camera_comp.Up) * viewport_transform_comp.GetDirection()));
+                float pitch_angle = glm::half_pi<float>() - glm::angle(viewport_transform_comp.GetDirection(), viewport_camera_comp.Up);
                 float y_angle_offset = glm::clamp(-offset.y + pitch_angle, -glm::half_pi<float>() + viewport_camera_comp.UpEpsilon, glm::half_pi<float>() - viewport_camera_comp.UpEpsilon) - pitch_angle;
-                viewport_transform_comp.Direction = glm::normalize(glm::angleAxis(y_angle_offset, glm::cross(viewport_transform_comp.Direction, viewport_camera_comp.Up)) * viewport_transform_comp.Direction);
+                viewport_transform_comp.SetDirection(glm::normalize(glm::angleAxis(y_angle_offset, glm::cross(viewport_transform_comp.GetDirection(), viewport_camera_comp.Up)) * viewport_transform_comp.GetDirection()));
 
                 _CursorMoveDistance = GlmVec2::CreateZero();
             }
@@ -145,8 +145,8 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
             ImGui::SetCursorPos(image_cursor_pos);
             ImGui::Text(std::format(
                 "Camera - Pos: {} | Direction: {} {}",
-                viewport_transform_comp.Position,
-                viewport_transform_comp.Direction,
+                viewport_transform_comp.GetPosition(),
+                viewport_transform_comp.GetDirection(),
                 _InViewportFreecamMode ? std::string("(Free Cam) ") : std::string{}
             ).c_str());
             float gizmo_option_position_offset_to_right = 350.f;
@@ -260,11 +260,11 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
                     ImGuizmo::SetDrawlist();
 
                     ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, viewport_camera_comp.ViewportSize.x, viewport_camera_comp.ViewportSize.y);
-                    glm::mat4 view_mat = viewport_camera_comp.GenerateViewMat4(viewport_transform_comp.Position, viewport_transform_comp.Direction);
+                    glm::mat4 view_mat = viewport_camera_comp.GenerateViewMat4(viewport_transform_comp.GetPosition(), viewport_transform_comp.GetDirection());
                     glm::mat4 proj_mat = viewport_camera_comp.GenerateProjectiveMat4();
 
                     TransformComponent& transform_comp = scene_sptr->GetComponent<TransformComponent>(_SelectedEntityId);
-                    glm::mat4 transform_mat = transform_comp.GenerateTransformMat4();
+                    glm::mat4 transform_mat = transform_comp.GetTransformMatrix();
                     ImGuizmo::Manipulate(
                         glm::value_ptr(view_mat),
                         glm::value_ptr(proj_mat),
@@ -279,27 +279,22 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
                         glm::vec3
                             scale{},
                             translation{},
-                            skew{};
-                        glm::vec4 perspective{};
-                        glm::quat rotation{};
+                            rotation{};
 
                         Glm::Decompose(transform_mat, translation, rotation, scale);
 
-                        if(transform_comp.Position != translation
-                           || transform_comp.Rotation != rotation
-                           || transform_comp.Scale != scale)
+                        if(transform_comp.GetPosition() != translation
+                           || transform_comp.GetRotationEularAngle() != rotation
+                           || transform_comp.GetScale() != scale)
                         {
                             _GizmoEdited = true;
                         }
 
-                        if(transform_comp.Position != translation)
-                        {
-                            //transform_comp.pivot += translation - transform_comp.position;
-                        }
-
-                        transform_comp.Position = translation;
-                        transform_comp.Rotation = rotation;
-                        transform_comp.Scale = scale;
+                        glm::vec3 delta_rotation = rotation - transform_comp.GetRotationEularAngle();
+                        transform_comp.IncreasePivot(translation - transform_comp.GetPosition());
+                        transform_comp.SetPosition(translation);
+                        transform_comp.IncreaseRotationEularAngle(delta_rotation);
+                        transform_comp.SetScale(scale);
 
                     }
 
@@ -381,8 +376,8 @@ void Arcadia::ImguiWindowViewport::_OnSceneActivated(Events::SceneActivated& e)
         entity.Internal = true;
         scene_sptr->EmplaceComponent<CameraComponent>(entity_id);
         TransformComponent& transform_comp = scene_sptr->EmplaceComponent<TransformComponent>(entity_id);
-        transform_comp.Position = glm::vec3(1.f, 1.f, 1.f);
-        transform_comp.Direction = -transform_comp.Position;
+        transform_comp.SetPosition(glm::vec3(1.f));
+        transform_comp.IncreaseDirection(glm::vec3(-1.f));
     }
     _SceneWeakPtr = scene_sptr;
 }

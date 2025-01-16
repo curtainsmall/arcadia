@@ -104,8 +104,8 @@ void Arcadia::PhysicsSimulator::Submit(const Scene& scene, EntityId entity_id)
             const JPH::BodyID body_id = jph_body_interface.CreateAndAddBody(
                 JPH::BodyCreationSettings(
                     jph_shape_refc,
-                    ToJphVec3(transform_comp.Position),
-                    ToJphQuat(transform_comp.Rotation),
+                    ToJphVec3(transform_comp.GetPosition()),
+                    ToJphQuat(transform_comp.GetRotationQuaternion()),
                     body_info.JphMotionType,
                     body_info.JphObjectLayer
                 ),
@@ -164,8 +164,8 @@ void Arcadia::PhysicsSimulator::Query(Scene& scene, EntityId entity_id)
         jph_body_state.LinearVelocity = FromJphVec3(jph_body_interface.GetLinearVelocity(body_id));
         jph_body_state.AngularVelocity = FromJphVec3(jph_body_interface.GetAngularVelocity(body_id));
 
-        transform_comp.Position = FromJphVec3(jph_body_interface.GetPosition(body_id));
-        transform_comp.Rotation = FromJphQuat(jph_body_interface.GetRotation(body_id));
+        transform_comp.SetPosition(FromJphVec3(jph_body_interface.GetPosition(body_id)));
+        transform_comp.SetRotationQuaternion(FromJphQuat(jph_body_interface.GetRotation(body_id)));
     }
 }
 

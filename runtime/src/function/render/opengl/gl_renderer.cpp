@@ -12,7 +12,7 @@
 #include"resource/components/skybox_component.hpp"
 #include"resource/components/transform_component.hpp"
 
-Arcadia::GlRenderer::GlRenderer(const std::filesystem::path& gl_shader_folder_path) :
+Arcadia::GlRenderer::GlRenderer(const std::filesystem::path& gl_shader_folder_path):
     _GlModelPipeline(gl_shader_folder_path, GenerateModelShadersBuilder()),
     _GlSkyboxPipeline(gl_shader_folder_path, GenerateSkyboxShadersBuilder()),
     _GlGridPipeline(gl_shader_folder_path, GenerateGridShadersBuilder()),
@@ -102,9 +102,9 @@ void Arcadia::GlRenderer::Submit(const Scene& scene, EntityId entity_id)
                 camera_comp.FarPlane
             },
             camera_comp.ViewportSize,
-            camera_comp.GenerateViewMat4(transform_comp.Position, transform_comp.Direction),
+            camera_comp.GenerateViewMat4(transform_comp.GetPosition(), transform_comp.GetDirection()),
             camera_comp.GenerateProjectiveMat4(),
-            transform_comp.Position,
+            transform_comp.GetPosition(),
             camera_comp.ShouldDisplayGrid,
             camera_comp.NearPlane,
             camera_comp.FarPlane
@@ -114,7 +114,7 @@ void Arcadia::GlRenderer::Submit(const Scene& scene, EntityId entity_id)
         [&]()
     {
         const auto& [light_comp, transform_comp] = scene.GetComponent<LightComponent, TransformComponent>(entity_id);
-        _GlRenderUnitLights.emplace_back(transform_comp.Position, transform_comp.Direction, light_comp.Light);
+        _GlRenderUnitLights.emplace_back(transform_comp.GetPosition(), transform_comp.GetPosition(), light_comp.Light);
     },
         "actor",
         [&]()
@@ -125,7 +125,7 @@ void Arcadia::GlRenderer::Submit(const Scene& scene, EntityId entity_id)
         {
             const auto& [uuid, meshes] = model_comp.GetIdentifiableMeshes();
 
-            const glm::mat4 transform_mat = transform_comp.GenerateTransformMat4();
+            const glm::mat4 transform_mat = transform_comp.GetTransformMatrix();
 
             if(!_GlRenderUnitMeshStorage.contains(uuid))
             {
@@ -181,17 +181,17 @@ void Arcadia::GlRenderer::Submit(const Scene& scene, EntityId entity_id)
                 );
 
                 _GlRenderUnitPhysicsBodyShapeStorage.try_emplace(
-                    uuid, GlVertexArray(shape_mesh.Vertices, shape_mesh.Indices),
+                    uuid,
+                    GlVertexArray(shape_mesh.Vertices, shape_mesh.Indices),
                     glm::mat4{},
                     glm::vec3{}
                 );
             }
 
             GlRenderUnitPhysicsBodyShape& gl_render_unit_physics_body_shape = _GlRenderUnitPhysicsBodyShapeStorage.at(uuid);
-            gl_render_unit_physics_body_shape.TransformMatrix = glm::translate(
-                glm::mat4_cast(transform_comp.Rotation),
-                transform_comp.Position
-            );
+            gl_render_unit_physics_body_shape.TransformMatrix =
+                glm::translate(GlmMat4::CreateIdentity(), transform_comp.GetPosition())
+                * glm::mat4_cast(transform_comp.GetRotationQuaternion());
             gl_render_unit_physics_body_shape.Color = physics_comp.BodyShapeColor;
 
             _SubmittedPhysicsBodyShapeUuids.emplace(uuid);
@@ -275,7 +275,7 @@ void Arcadia::GlRenderer::Draw()
         {
             _DrawSkybox(
                 gl_render_unit_camera.CameraViewMatrix,
-            gl_render_unit_camera.CameraProjectionMatrix
+                gl_render_unit_camera.CameraProjectionMatrix
             );
         }
 
