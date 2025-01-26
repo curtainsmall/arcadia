@@ -499,7 +499,9 @@ void Arcadia::GlRenderer::_DrawPhysicsBodyShape(
             .SetUniform("u_color", gl_physics_body_shape.Color);
 
         gl_physics_body_shape.VertexArray.Bind();
-        gl_physics_body_shape.VertexArray.Draw(GL_LINE_LOOP);
+        ACDA_GL_CALL(glPolygonMode(GL_FRONT_AND_BACK, GL_LINE));
+        gl_physics_body_shape.VertexArray.Draw(GL_TRIANGLES);
+        ACDA_GL_CALL(glPolygonMode(GL_FRONT_AND_BACK, GL_FILL));
         gl_physics_body_shape.VertexArray.Unbind();
     }
     _GlShapePipeline.Unuse();
