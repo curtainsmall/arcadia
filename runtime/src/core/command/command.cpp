@@ -2,11 +2,13 @@
 
 #include "command.hpp"
 
+#include"core/assert.hpp"
+
 Arcadia::Command::Command(
     const std::string& description,
     const FunctionType& execute_fn,
     const FunctionType& unexecute_fn
-) :
+):
     _Description(description),
     _ExecuteFunction(execute_fn),
     _UnexecuteFunction(unexecute_fn)
@@ -42,83 +44,87 @@ void Arcadia::CommandList::Emplace(
 )
 {
     // Erase restored command since a new command should be on a new branch from current position
-    _List.erase(_List.begin(), _CurrentIterator);
+    _Container.erase(_Container.begin(), _CurrentIterator);
 
     // Emplace new command
-    _List.emplace_front(description, execute_fn, unexecute_fn);
+    _Container.emplace_front(description, execute_fn, unexecute_fn);
+
+    if(_Container.size() > _MaxSize)
+    {
+        _Container.pop_back();
+    }
 
     // Relocate current position
-    _CurrentIterator = _List.begin();
+    _CurrentIterator = _Container.begin();
 }
 
 auto Arcadia::CommandList::Undo() -> bool
 {
-    if(_CurrentIterator == _List.begin())
+    if(_CurrentIterator == _Container.end())
     {
         return false;
     }
 
-    (_CurrentIterator--)->Unexecute();
+    _CurrentIterator->Unexecute();
+    _CurrentIterator--;
     return true;
 }
 
 auto Arcadia::CommandList::Redo() -> bool
 {
-    if((++_CurrentIterator)-- == _List.end())
+    if(_CurrentIterator == _Container.begin())
     {
         return false;
     }
 
-    (_CurrentIterator++)->Execute();
+    _CurrentIterator++;
+    _CurrentIterator->Execute();
     return true;
 }
 
-auto Arcadia::CommandList::GetCapacity() const -> std::size_t
+auto Arcadia::CommandList::GetMaxSize() const -> std::size_t
 {
-    return _Capacity;
+    return _MaxSize;
 }
 
-void Arcadia::CommandList::SetCapacity(std::size_t capacity)
+void Arcadia::CommandList::SetMaxSize(std::size_t max_size)
 {
-    _Capacity = capacity;
+    ACDA_ASSERT(max_size > 0);
+
+    _MaxSize = max_size;
+
+    std::ptrdiff_t redundant = _Container.size() - _MaxSize;
+    if(redundant <= 0)
+    {
+        return;
+    }
+
+    std::ptrdiff_t offset_to_begin = _CurrentIterator - _Container.begin();
+    std::ptrdiff_t available_after = _Container.end() - _CurrentIterator - 1;
+    if(available_after < redundant)
+    {
+        std::ptrdiff_t removed_before = redundant - available_after;
+        _Container.erase(
+            _Container.begin(),
+            _Container.begin() + removed_before
+        );
+        redundant = available_after;
+        offset_to_begin -= removed_before;
+    }
+
+    _Container.erase(
+        _Container.end() - redundant,
+        _Container.end()
+    );
+    _CurrentIterator = _Container.begin() + offset_to_begin;
 }
 
 auto Arcadia::CommandList::GetSize() const -> std::size_t
 {
-    return _List.size();
+    return _Container.size();
 }
 
 void Arcadia::CommandList::Clear()
 {
-    _List.clear();
-}
-
-auto Arcadia::CommandList::begin() noexcept -> ContainerType::iterator
-{
-    return _List.begin();
-}
-
-auto Arcadia::CommandList::end() noexcept -> ContainerType::iterator
-{
-    return _List.end();
-}
-
-auto Arcadia::CommandList::begin() const noexcept -> ContainerType::const_iterator
-{
-    return _List.begin();
-}
-
-auto Arcadia::CommandList::end() const noexcept -> ContainerType::const_iterator
-{
-    return _List.end();
-}
-
-auto Arcadia::CommandList::cbegin() const noexcept -> ContainerType::const_iterator
-{
-    return _List.cbegin();
-}
-
-auto Arcadia::CommandList::cend() const noexcept -> ContainerType::const_iterator
-{
-    return _List.cend();
+    _Container.clear();
 }

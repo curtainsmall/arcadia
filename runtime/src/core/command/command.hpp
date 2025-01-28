@@ -1,7 +1,7 @@
 #pragma once
 
 #include<functional>
-#include<list>
+#include<deque>
 #include<memory>
 #include<string>
 
@@ -10,7 +10,7 @@
 
 namespace Arcadia
 {
-    class Command: public Noncopyable
+    class Command
     {
     public:
         using FunctionType = std::function<void()>;
@@ -41,7 +41,7 @@ namespace Arcadia
     {
     public:
         using FunctionType = Command::FunctionType;
-        using ContainerType = std::list<Command>;
+        using ContainerType = std::deque<Command>;
         using SelfType = CommandList;
     public:
         [[nodiscard]]
@@ -58,32 +58,17 @@ namespace Arcadia
         auto Redo() -> bool;
 
         [[nodiscard]]
-        auto GetCapacity() const->std::size_t;
-        void SetCapacity(std::size_t capacity);
+        auto GetMaxSize() const->std::size_t;
+        void SetMaxSize(std::size_t capacity);
 
         [[nodiscard]]
         auto GetSize() const->std::size_t;
 
         void Clear();
 
-        [[nodiscard]]
-        auto begin() noexcept -> ContainerType::iterator;
-        [[nodiscard]]
-        auto end() noexcept -> ContainerType::iterator;
-
-        [[nodiscard]]
-        auto begin() const noexcept->ContainerType::const_iterator;
-        [[nodiscard]]
-        auto end() const noexcept->ContainerType::const_iterator;
-
-        [[nodiscard]]
-        auto cbegin() const noexcept->ContainerType::const_iterator;
-        [[nodiscard]]
-        auto cend() const noexcept->ContainerType::const_iterator;
-
     private:
-        std::size_t _Capacity{ 40 };
-        ContainerType _List{};
-        ContainerType::const_iterator _CurrentIterator{};
+        std::size_t _MaxSize{ 40 };
+        ContainerType _Container{};
+        ContainerType::iterator _CurrentIterator{};
     };
 }
