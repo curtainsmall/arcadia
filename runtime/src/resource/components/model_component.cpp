@@ -12,9 +12,14 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include"stb/stb_image.h"
 
-Arcadia::ModelComponent::ModelComponent(const std::filesystem::path& filepath):
+Arcadia::ModelComponent::ModelComponent(const std::filesystem::path& filepath) :
     _Filepath(filepath)
 {
+    if(filepath.empty())
+    {
+        return;
+    }
+
     if(!_LoadModel())
     {
         _Filepath.clear();
@@ -22,7 +27,7 @@ Arcadia::ModelComponent::ModelComponent(const std::filesystem::path& filepath):
     }
 }
 
-Arcadia::ModelComponent::ModelComponent(const nlohmann::json& json):
+Arcadia::ModelComponent::ModelComponent(const nlohmann::json& json) :
     ModelComponent(ToFilepath(json.at("filepath")))
 {}
 

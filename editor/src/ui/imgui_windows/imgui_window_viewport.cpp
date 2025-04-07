@@ -295,7 +295,6 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
                         transform_comp.SetPosition(translation);
                         transform_comp.IncreaseRotationEularAngle(delta_rotation);
                         transform_comp.SetScale(scale);
-
                     }
 
                     // On release gizmo

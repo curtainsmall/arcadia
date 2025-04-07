@@ -1,6 +1,7 @@
 bin/
 bin-int/
-
+**/lib/
+**/lib-int/
 
 
 # Visual Studio files and folder

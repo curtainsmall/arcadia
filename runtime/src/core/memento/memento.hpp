@@ -11,7 +11,7 @@ namespace Arcadia
 {
     class MementoDataBase;
 
-    namespace Concetps
+    namespace Concepts
     {
         template<typename T>
         concept MementoData =
