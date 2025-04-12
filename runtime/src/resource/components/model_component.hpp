@@ -61,7 +61,7 @@ namespace Arcadia
         virtual void OnRestore(const std::shared_ptr<MementoDataBase>& memento_data) override;
 
     private:
-        auto _LoadModel() -> bool;
+        void _LoadModel();
         void _UnloadModel();
 
         void _ProcessAssimpNode(

@@ -53,7 +53,7 @@ Arcadia::GlPipeline::~GlPipeline()
     ACDA_GL_CALL(glDeleteProgram(_GlId));
 }
 
-Arcadia::GlPipeline::GlPipeline(SelfType&& rhs) noexcept :
+Arcadia::GlPipeline::GlPipeline(SelfType&& rhs) noexcept:
     _GlUniformLocationCache(std::move(rhs._GlUniformLocationCache)),
     _GlShaders(std::move(rhs._GlShaders))
 {
@@ -201,7 +201,7 @@ auto Arcadia::GlPipeline::SetUniformBlockBinding(const std::string& name, GLuint
     return *this;
 }
 
-auto Arcadia::GlPipeline::_GetUniformLocation(const std::string& name) -> GLuint
+auto Arcadia::GlPipeline::_GetUniformLocation(const std::string& name) -> GLint
 {
     try
     {
@@ -209,10 +209,10 @@ auto Arcadia::GlPipeline::_GetUniformLocation(const std::string& name) -> GLuint
     }
     catch(const std::out_of_range&)
     {
-        ACDA_GL_CALL(auto location = glGetUniformLocation(_GlId, name.c_str()));
+        ACDA_GL_CALL(GLint location = glGetUniformLocation(_GlId, name.c_str()));
         if(location == -1)
         {
-            ACDA_LOG_ERROR(std::format("Failed to get OpenGL uniform location of {}, because it does not exist", name));
+            throw Exceptions::GlPipelineInvalidUniformLocation(std::format("Failed to get OpenGL uniform location of {}, because it does not exist", name));
         }
         _GlUniformLocationCache.insert_or_assign(name, location);
         return location;

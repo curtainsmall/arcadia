@@ -10,7 +10,7 @@ Arcadia::Logger::Logger()
 {
     auto console_sink = std::make_shared<spdlog::sinks::stderr_color_sink_mt>();
     console_sink->set_level(spdlog::level::trace);
-    console_sink->set_pattern("%^[%x %X]%$ %v");
+    console_sink->set_pattern("%^[%c]%$ %v");
 
     const spdlog::sinks_init_list sink_list{ console_sink };
 
@@ -25,8 +25,10 @@ Arcadia::Logger::Logger()
     );
 
     _Logger->set_level(spdlog::level::trace);
-    _Logger->flush_on(spdlog::level::debug);
+    _Logger->flush_on(spdlog::level::err);
     spdlog::register_logger(_Logger);
+
+    _Logger->enable_backtrace(32);
 }
 
 Arcadia::Logger::~Logger()

@@ -19,6 +19,7 @@ namespace Arcadia
     namespace Exceptions
     {
         ACDA_DEFINE_RUNTIME_ERROR_EXCEPTION(GlPipelineLinkFailed);
+        ACDA_DEFINE_RUNTIME_ERROR_EXCEPTION(GlPipelineInvalidUniformLocation);
     }
 
     class GlPipeline: public Noncopyable
@@ -69,7 +70,7 @@ namespace Arcadia
         auto SetUniformBlockBinding(const std::string& name, GLuint index) -> SelfType&;
 
     private:
-        auto _GetUniformLocation(const std::string& name) -> GLuint;
+        auto _GetUniformLocation(const std::string& name) -> GLint;
 
     private:
         GLuint _GlId{ 0 };

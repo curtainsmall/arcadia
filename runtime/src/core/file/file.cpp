@@ -58,7 +58,7 @@ auto Arcadia::File::CreateOfstream(const std::filesystem::path& filepath) -> std
     return ofs;
 }
 
-Arcadia::File::File(const std::filesystem::path& filepath) :
+Arcadia::File::File(const std::filesystem::path& filepath):
     _Filepath(filepath)
 {}
 

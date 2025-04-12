@@ -54,7 +54,6 @@ ACDA_API void Arcadia::GlCheckError(const char* fn_name, const char* file_name, 
         }
         ACDA_LOG_ERROR(std::format("OpenGL ERROR CODE: {0} in {1} at {2}: {3}", err_des, std::string(fn_name), std::string(file_name), std::to_string(line)));
         ACDA_LOG_FLUSH();
-        //ASSERT_STATIC(false);
     }
 }
 

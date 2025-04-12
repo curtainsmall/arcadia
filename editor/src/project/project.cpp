@@ -7,7 +7,7 @@
 #include"resource/components/physics_component.hpp"
 #include"resource/components/transform_component.hpp"
 
-Arcadia::Project::Project(nlohmann::json& json) :
+Arcadia::Project::Project(nlohmann::json& json):
     _Name(json.at("name"))
 {
     for(const nlohmann::json& json_scene : json.at("scenes"))

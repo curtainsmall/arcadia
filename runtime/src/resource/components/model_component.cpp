@@ -12,7 +12,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include"stb/stb_image.h"
 
-Arcadia::ModelComponent::ModelComponent(const std::filesystem::path& filepath) :
+Arcadia::ModelComponent::ModelComponent(const std::filesystem::path& filepath):
     _Filepath(filepath)
 {
     if(filepath.empty())
@@ -20,14 +20,18 @@ Arcadia::ModelComponent::ModelComponent(const std::filesystem::path& filepath) :
         return;
     }
 
-    if(!_LoadModel())
+    try
+    {
+        _LoadModel();
+    }
+    catch(Exceptions::ModelComponent_ModelLoadInvalidFormat& e)
     {
         _Filepath.clear();
-        throw Exceptions::ModelComponent_ModelLoadInvalidFormat();
+        throw;
     }
 }
 
-Arcadia::ModelComponent::ModelComponent(const nlohmann::json& json) :
+Arcadia::ModelComponent::ModelComponent(const nlohmann::json& json):
     ModelComponent(ToFilepath(json.at("filepath")))
 {}
 
@@ -82,10 +86,14 @@ void Arcadia::ModelComponent::LoadModel(const std::filesystem::path& filepath)
             {
                 _UnloadModel();
                 _Filepath = filepath;
-                if(!_LoadModel())
+                try
+                {
+                    _LoadModel();
+                }
+                catch(Exceptions::ModelComponent_ModelLoadInvalidFormat& e)
                 {
                     _Filepath.clear();
-                    throw Exceptions::ModelComponent_ModelLoadInvalidFormat();
+                    throw;
                 }
                 break;
             }
@@ -99,10 +107,14 @@ void Arcadia::ModelComponent::LoadModel(const std::filesystem::path& filepath)
     else
     {
         _Filepath = filepath;
-        if(!_LoadModel())
+        try
+        {
+            _LoadModel();
+        }
+        catch(Exceptions::ModelComponent_ModelLoadInvalidFormat& e)
         {
             _Filepath.clear();
-            throw Exceptions::ModelComponent_ModelLoadInvalidFormat();
+            throw;
         }
     }
 }
@@ -118,7 +130,7 @@ auto Arcadia::ModelComponent::IsModelLoaded() const -> bool
     return HasIdentifiableMeshes();
 }
 
-auto Arcadia::ModelComponent::_LoadModel() -> bool
+void Arcadia::ModelComponent::_LoadModel()
 {
     Assimp::Importer importer{};
     const aiScene* ai_scene = importer.ReadFile(
@@ -135,8 +147,9 @@ auto Arcadia::ModelComponent::_LoadModel() -> bool
         || !ai_scene->mRootNode
         )
     {
-        ACDA_LOG_ERROR(importer.GetErrorString());
-        return false;
+        const char* err_msg = importer.GetErrorString();
+        ACDA_LOG_ERROR(err_msg);
+        throw Exceptions::ModelComponent_ModelLoadInvalidFormat(err_msg);
     }
 
     std::vector<Mesh> meshes{};
@@ -150,7 +163,6 @@ auto Arcadia::ModelComponent::_LoadModel() -> bool
     );
 
     _IdentifiableMeshes = std::make_unique<IdentifiableMeshesType>(std::move(meshes));
-    return true;
 }
 
 void Arcadia::ModelComponent::_UnloadModel()

@@ -481,9 +481,9 @@ auto Arcadia::ImguiWindowPropertyModelComponent::operator()(ModelComponent& mode
             {
                 model_comp.LoadModel(res.at(0));
             }
-            catch(Exceptions::ModelComponent_ModelLoadInvalidFormat&)
+            catch(const Exceptions::ModelComponent_ModelLoadInvalidFormat&)
             {
-                pfd::message(
+                (void) pfd::message(
                     "Arcadia",
                     std::format("Cannot load model from {} because it has invalid format", res.at(0)),
                     pfd::choice::ok,
