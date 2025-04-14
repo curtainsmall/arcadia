@@ -5,7 +5,6 @@
 
 #include"core/identifiable.hpp"
 #include"core/math.hpp"
-#include"core/memento/memento.hpp"
 #include"core/nlohmann_json_header.hpp"
 #include"platform/api_def.hpp"
 #include"platform/jolt/jolt_header.hpp"
@@ -70,17 +69,8 @@ namespace Arcadia
         glm::vec3 AngularVelocity{ GlmVec3::CreateZero() };
     };
 
-    class PhysicsComponentMementoData: public MementoDataBase
-    {
-    public:
-        auto operator==(const PhysicsComponentMementoData&) const -> bool = default;
-    public:
-        glm::vec3 BodyShapeColor{};
-    };
-
     class PhysicsComponent:
-        public ComponentInterface,
-        public MementoOriginatorInterface
+        public ComponentInterface
     {
     public:
         using IdentifiableJphBodyInfoType = Identifiable<JphBodyInfo>;
@@ -112,16 +102,17 @@ namespace Arcadia
 
         void DestroyJphBodyInfo();
 
-    protected:
         [[nodiscard]]
-        virtual auto OnSnapshot() const->std::shared_ptr<MementoDataBase> override;
-        virtual void OnRestore(const std::shared_ptr<MementoDataBase>& memento_data) override;
+        auto GetBodyShapeColor() const -> const glm::vec3&;
+        void SetBodyShapeColor(const glm::vec3& color);
 
-    public:
-        glm::vec3 BodyShapeColor{ .2f,.2f,.2f };
+        [[nodiscard]]
+        auto GetBodyState() const -> const JphBodyState&;
+        void SetBodyState(const JphBodyState& state);
 
-        JphBodyState JphBodyState{};
     private:
+        glm::vec3 _BodyShapeColor{ .2f,.2f,.2f };
+        JphBodyState _BodyState{};
         std::unique_ptr<IdentifiableJphBodyInfoType> _IdentifiableJphBodyInfo{};
     };
 }

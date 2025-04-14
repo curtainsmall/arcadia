@@ -14,26 +14,26 @@
 
 namespace Arcadia
 {
-    class ImguiWindowStateScene
+    class ImguiWindowStateFunctor_Scene
     {
     public:
-        using SelfType = ImguiWindowStateScene;
+        using SelfType = ImguiWindowStateFunctor_Scene;
     public:
         void operator()(const Scene& scene);
     };
 
-    class ImguiWindowStateRenderer
+    class ImguiWindowStateFunctor_Renderer
     {
     public:
-        using SelfType = ImguiWindowStateRenderer;
+        using SelfType = ImguiWindowStateFunctor_Renderer;
     public:
         void operator()(const RendererInterface& renderer);
     };
 
-    class ImguiWindowStatePhysicsSimulator
+    class ImguiWindowStateFunctor_PhysicsSimulator
     {
     public:
-        using SelfType = ImguiWindowStatePhysicsSimulator;
+        using SelfType = ImguiWindowStateFunctor_PhysicsSimulator;
     public:
         void operator()(PhysicsSimulator& physics_simulator);
     private:
@@ -51,7 +51,7 @@ namespace Arcadia
         inline ImguiWindowState(
             bool open,
             const std::string& title
-        ) :
+        ):
             ImguiWindowInterface(open, title)
         {}
         virtual ~ImguiWindowState() = default;
@@ -73,8 +73,8 @@ namespace Arcadia
         std::weak_ptr<RendererInterface> _Renderer{};
         std::weak_ptr<PhysicsSimulator> _PhysicsSimulator{};
 
-        ImguiWindowStateScene _ImguiWindowStateScene{};
-        ImguiWindowStateRenderer _ImguiWindowStateRenderer{};
-        ImguiWindowStatePhysicsSimulator _ImguiWindowStatePhysicsSimulator{};
+        ImguiWindowStateFunctor_Scene _ImguiWindowStateFunctor_Scene{};
+        ImguiWindowStateFunctor_Renderer _ImguiWindowStateFunctor_Renderer{};
+        ImguiWindowStateFunctor_PhysicsSimulator _ImguiWindowStateFunctor_PhysicsSimulator{};
     };
 }

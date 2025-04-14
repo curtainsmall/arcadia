@@ -7,7 +7,6 @@
 #include"core/assert.hpp"
 #include"core/event/event.hpp"
 #include"core/exception.hpp"
-#include"core/memento/memento.hpp"
 #include"core/nlohmann_json_header.hpp"
 #include"core/noncopyable.hpp"
 #include"core/string.hpp"
@@ -85,7 +84,7 @@ namespace Arcadia
         auto GetEntityInfo(EntityId entity_id) -> EntityInfo&;
 
         [[nodiscard]]
-        auto CreateEntity(const std::string& entity_name, const std::string& type) -> EntityId;
+        auto CreateEntity(const std::string& entity_name, const std::string& type_string) -> EntityId;
 
         void DestroyEntity(EntityId entity_id);
 
@@ -183,7 +182,7 @@ namespace Arcadia
         auto IsEntityNameUsed(const std::string& entity_name) const -> bool;
 
         [[nodiscard]]
-        auto GetEntitIdByName(const std::string& entity_name) const->EntityId;
+        auto GetEntityIdByName(const std::string& entity_name) const->EntityId;
 
     private:
         auto _CreateJsonComponents(EntityId entity_id) const->nlohmann::json;

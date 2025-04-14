@@ -172,29 +172,3 @@ auto Arcadia::TransformComponent::GetTransformMatrix() const -> const glm::mat4&
     return _TransformMatrix;
 }
 
-auto Arcadia::TransformComponent::OnSnapshot() const -> std::shared_ptr<MementoDataBase>
-{
-    std::shared_ptr< TransformComponentMementoData> memento_data
-        = std::make_shared<TransformComponentMementoData>();
-
-    memento_data->Flags               = GetFlags();
-    memento_data->Position            = GetPosition();
-    memento_data->RotationEularAngle  = GetRotationEularAngle();
-    memento_data->Direction           = GetDirection();
-    memento_data->Scale               = GetScale();
-    memento_data->Pivot               = GetPivot();
-
-    return memento_data;
-}
-
-void Arcadia::TransformComponent::OnRestore(const std::shared_ptr<MementoDataBase>& memento_data_sptr)
-{
-    TransformComponentMementoData& memento_data = memento_data_sptr->CastTo<TransformComponentMementoData>();
-
-    SetFlags(memento_data.Flags);
-    SetPosition(memento_data.Position);
-    SetRotationEularAngle(memento_data.RotationEularAngle);
-    SetDirection(memento_data.Direction);
-    SetScale(memento_data.Scale);
-    SetPivot(memento_data.Pivot);
-}

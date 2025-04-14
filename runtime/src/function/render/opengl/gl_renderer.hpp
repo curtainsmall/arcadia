@@ -25,13 +25,13 @@ namespace Arcadia
     {
     public:
         GlFramebuffer Framebuffer;
-        glm::i32vec2 ViewportSize;
+        glm::i32vec2 _ViewportSize;
         glm::mat4 CameraViewMatrix;
         glm::mat4 CameraProjectionMatrix;
         glm::vec3 CameraPosition;
-        bool ShouldDisplayGrid;
-        float NearPlane;
-        float FarPlane;
+        bool _GridDisplaying;
+        float _NearPlane;
+        float _FarPlane;
     };
 
     class GlRenderUnitLight

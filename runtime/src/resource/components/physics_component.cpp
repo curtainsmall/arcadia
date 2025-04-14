@@ -8,8 +8,8 @@
 #include"core/match.hpp"
 #include"core/math.hpp"
 
-Arcadia::PhysicsComponent::PhysicsComponent(const nlohmann::json& json) :
-    BodyShapeColor(GlmVec3::FromJson(json.at("body_shape_color")))
+Arcadia::PhysicsComponent::PhysicsComponent(const nlohmann::json& json):
+    _BodyShapeColor(GlmVec3::FromJson(json.at("body_shape_color")))
 {
     const nlohmann::json& json_body_info_initial = json.at("jph_body_info_initial");
     if(!json_body_info_initial.is_null())
@@ -127,25 +127,8 @@ auto Arcadia::PhysicsComponent::ToJson() const -> nlohmann::json
 
     return nlohmann::json{
         {"jph_body_info_initial",json_body_info_initial},
-        {"body_shape_color",GlmVec3::ToJson(BodyShapeColor)}
+        {"body_shape_color",GlmVec3::ToJson(_BodyShapeColor)}
     };
-}
-
-auto Arcadia::PhysicsComponent::OnSnapshot() const -> std::shared_ptr<MementoDataBase>
-{
-    std::shared_ptr< PhysicsComponentMementoData> memento_sptr
-        = std::make_shared<PhysicsComponentMementoData>();
-
-    memento_sptr->BodyShapeColor = BodyShapeColor;
-
-    return memento_sptr;
-}
-
-void Arcadia::PhysicsComponent::OnRestore(const std::shared_ptr<MementoDataBase>& sp_memento_data)
-{
-    PhysicsComponentMementoData& memento_data = sp_memento_data->CastTo<PhysicsComponentMementoData>();
-
-    BodyShapeColor = memento_data.BodyShapeColor;
 }
 
 auto Arcadia::PhysicsComponent::HasBodyInfo() const -> bool
@@ -178,4 +161,24 @@ void Arcadia::PhysicsComponent::BuildIndentifiableJphBodyInfo(const JphBodyInfo&
 void Arcadia::PhysicsComponent::DestroyJphBodyInfo()
 {
     _IdentifiableJphBodyInfo.reset();
+}
+
+auto Arcadia::PhysicsComponent::GetBodyShapeColor() const -> const glm::vec3&
+{
+    return _BodyShapeColor;
+}
+
+void Arcadia::PhysicsComponent::SetBodyShapeColor(const glm::vec3& color)
+{
+    _BodyShapeColor = color;
+}
+
+auto Arcadia::PhysicsComponent::GetBodyState() const -> const JphBodyState&
+{
+    return _BodyState;
+}
+
+void Arcadia::PhysicsComponent::SetBodyState(const JphBodyState& state)
+{
+    _BodyState = state;
 }

@@ -1,7 +1,6 @@
 #pragma once
 
 #include"core/math.hpp"
-#include"core/memento/memento.hpp"
 #include"core/nlohmann_json_header.hpp"
 #include"platform/api_def.hpp"
 #include"resource/components/component_interface.hpp"
@@ -16,23 +15,8 @@ namespace Arcadia
         _EnumBitfield
     };
 
-    class TransformComponentMementoData: public MementoDataBase
-    {
-    public:
-        auto operator==(const TransformComponentMementoData&) const -> bool = default;
-    public:
-        TransformComponentFlags Flags{ TransformComponentFlags::None };
-
-        glm::vec3 Position{ GlmVec3::CreateZero() };
-        glm::vec3 RotationEularAngle{ GlmVec3::CreateZero() };
-        glm::vec3 Direction{ GlmVec3::CreateUnitPositiveZ() };
-        glm::vec3 Scale{ 1,1,1 };
-        glm::vec3 Pivot{ GlmVec3::CreateZero() };
-    };
-
     class TransformComponent:
-        public ComponentInterface,
-        public MementoOriginatorInterface
+        public ComponentInterface
     {
     public:
         using SelfType = TransformComponent;
@@ -87,11 +71,6 @@ namespace Arcadia
 
         [[nodiscarc]]
         auto GetTransformMatrix() const -> const glm::mat4&;
-
-    protected:
-        [[nodiscard]]
-        virtual auto OnSnapshot() const->std::shared_ptr<MementoDataBase> override;
-        virtual void OnRestore(const std::shared_ptr<MementoDataBase>& memento_data) override;
 
     private:
         TransformComponentFlags _Flags{ TransformComponentFlags::None };

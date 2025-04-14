@@ -12,9 +12,7 @@ Arcadia::Command::Command(
     _Description(description),
     _ExecuteFunction(execute_fn),
     _UnexecuteFunction(unexecute_fn)
-{
-    Execute();
-}
+{}
 
 void Arcadia::Command::Execute() const
 {
@@ -58,6 +56,16 @@ void Arcadia::CommandList::Emplace(
     _CurrentIterator = _Container.begin();
 }
 
+void Arcadia::CommandList::EmplaceAndExecute(
+    const std::string& description,
+    const FunctionType& execute_fn,
+    const FunctionType& unexecute_fn
+)
+{
+    Emplace(description, execute_fn, unexecute_fn);
+    begin()->Execute();
+}
+
 auto Arcadia::CommandList::Undo() -> bool
 {
     if(_CurrentIterator == _Container.end())
@@ -66,7 +74,7 @@ auto Arcadia::CommandList::Undo() -> bool
     }
 
     _CurrentIterator->Unexecute();
-    _CurrentIterator--;
+    _CurrentIterator++;
     return true;
 }
 
@@ -77,7 +85,7 @@ auto Arcadia::CommandList::Redo() -> bool
         return false;
     }
 
-    _CurrentIterator++;
+    _CurrentIterator--;
     _CurrentIterator->Execute();
     return true;
 }
@@ -127,4 +135,40 @@ auto Arcadia::CommandList::GetSize() const -> std::size_t
 void Arcadia::CommandList::Clear()
 {
     _Container.clear();
+    _CurrentIterator = _Container.begin();
+}
+
+auto Arcadia::CommandList::IsCurrent(const ContainerType::const_iterator& iter) const -> bool
+{
+    return iter == _CurrentIterator;
+}
+
+auto Arcadia::CommandList::begin() noexcept -> ContainerType::iterator
+{
+    return _Container.begin();
+}
+
+auto Arcadia::CommandList::end() noexcept -> ContainerType::iterator
+{
+    return _Container.end();
+}
+
+auto Arcadia::CommandList::begin() const noexcept -> ContainerType::const_iterator
+{
+    return _Container.begin();
+}
+
+auto Arcadia::CommandList::end() const noexcept -> ContainerType::const_iterator
+{
+    return _Container.end();
+}
+
+auto Arcadia::CommandList::cbegin() const noexcept -> ContainerType::const_iterator
+{
+    return _Container.cbegin();
+}
+
+auto Arcadia::CommandList::cend() const noexcept -> ContainerType::const_iterator
+{
+    return _Container.cend();
 }

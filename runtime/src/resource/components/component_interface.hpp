@@ -20,7 +20,8 @@ virtual auto GetTypeString() const -> std::string override\
 
 namespace Arcadia
 {
-    class ComponentInterface: public Noncopyable
+    class ComponentInterface:
+        public Noncopyable
     {
     public:
         virtual auto GetTypeString() const->std::string = 0;

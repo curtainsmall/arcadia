@@ -8,93 +8,103 @@
 #include"core/file/pfd_header.hpp"
 #include"core/function.hpp"
 #include"core/match.hpp"
-#include"core/memento/memento.hpp"
+#include"core/command/command.hpp"
 #include"resource/fonts/icon_header.hpp"
+
 #include"ui/imgui_header.hpp"
 #include"ui/imgui_wrapper.hpp"
 
-auto Arcadia::ImguiWindowPropertyCameraComponent::operator()(CameraComponent& camera_comp) -> std::string
+#define _ACDA_COMMAND_HELPER(msg, comp_name, getter_name, setter_name, value_name, origin_name) \
+if(ImGui::IsItemDeactivatedAfterEdit())\
+{\
+    CommandList::Instance().Emplace(\
+        msg,\
+        [&comp = comp_name, value = value_name]() -> void\
+    {\
+        comp.setter_name(value);\
+    },\
+        [&comp = comp_name, origin = origin_name]() -> void\
+    {\
+        comp.setter_name(origin);\
+    }\
+    );\
+    origin_name = comp_name.getter_name();\
+}
+
+void Arcadia::ImguiWindowPropertyFunctor_CameraComponent::operator()(CameraComponent& camera_comp)
 {
-    const float speed = 1.f;
+    const float drag_speed = 1.f;
     const float min = .0;
     const float max = .0f;
     const char* format = "%.3f";
     const ImGuiSliderFlags flags =
         ImGuiSliderFlags_AlwaysClamp;
 
-    std::string description{};
     ImGui::BeginGroup();
 
-    ImGui::DragFloat("Near Plane", &camera_comp.NearPlane, speed, min, max, format, flags);
-    if(ImGui::IsItemDeactivatedAfterEdit())
-    {
-        description = "Near Plane";
-    }
+    float near_plane = camera_comp.GetNearPlane();
+    ImGui::DragFloat("Near Plane", &near_plane, drag_speed, min, max, format, flags);
+    camera_comp.SetNearPlane(near_plane);
+    _ACDA_COMMAND_HELPER("[Camera] Near Plane", camera_comp, GetNearPlane, SetNearPlane, near_plane, _TempNearPlane);
 
-    ImGui::DragFloat("Far Plane", &camera_comp.FarPlane, speed, min, max, format, flags);
-    if(ImGui::IsItemDeactivatedAfterEdit())
-    {
-        description = "Far Plane";
-    }
+    float far_plane = camera_comp.GetFarPlane();
+    ImGui::DragFloat("Far Plane", &far_plane, drag_speed, min, max, format, flags);
+    camera_comp.SetFarPlane(far_plane);
+    _ACDA_COMMAND_HELPER("[Camera] Far Plane", camera_comp, GetFarPlane, SetFarPlane, far_plane, _TempFarPlane);
 
-    float fovy = glm::degrees(camera_comp.FovY);
-    ImGui::DragFloat("FOV-Y", &fovy, speed, camera_comp.FovYMin, camera_comp.FovYMax, format, flags);
-    if(ImGui::IsItemDeactivatedAfterEdit())
-    {
-        description = "FOV";
-    }
-    camera_comp.FovY = glm::radians(fovy);
+    float fovy = glm::degrees(camera_comp.GetFovY());
+    ImGui::DragFloat("FOV-Y", &fovy, drag_speed, camera_comp.GetFovYMin(), camera_comp.GetFovYMax(), format, flags);
+    camera_comp.SetFovY(glm::radians(fovy));
+    _ACDA_COMMAND_HELPER("[Camera] FOV-Y", camera_comp, GetFovY, SetFovY, fovy, _TempFovY);
 
-    float fovy_min = glm::degrees(camera_comp.FovYMin);
-    ImGui::DragFloat("FOV-Y Min", &fovy_min, speed, 0.0f, 180.0f, format, flags);
-    if(ImGui::IsItemDeactivatedAfterEdit())
-    {
-        description = "FOV Min";
-    }
-    camera_comp.FovYMin = glm::radians(fovy_min);
+    float fovy_min = glm::degrees(camera_comp.GetFovYMin());
+    ImGui::DragFloat("FOV-Y Min", &fovy_min, drag_speed, 0.0f, 180.0f, format, flags);
+    camera_comp.SetFovYMin(glm::radians(fovy_min));
+    _ACDA_COMMAND_HELPER("[Camera] FOV-Y Min", camera_comp, GetFovYMin, SetFovYMin, fovy_min, _TempFovYMin);
 
-    float fovy_max = glm::degrees(camera_comp.FovYMax);
-    ImGui::DragFloat("FOV-Y Max", &fovy_max, speed, 0.0f, 180.0f, format, flags);
-    if(ImGui::IsItemDeactivatedAfterEdit())
-    {
-        description = "FOV Max";
-    }
-    camera_comp.FovYMax = glm::radians(fovy_max);
+    float fovy_max = glm::degrees(camera_comp.GetFovYMax());
+    ImGui::DragFloat("FOV-Y Max", &fovy_max, drag_speed, 0.0f, 180.0f, format, flags);
+    camera_comp.SetFovYMax(glm::radians(fovy_max));
+    _ACDA_COMMAND_HELPER("[Camera] FOV-Y Max", camera_comp, GetFovYMax, SetFovYMax, fovy_max, _TempFovYMax);
 
-    ImGui::DragFloat("Speed", &camera_comp.Speed, speed, min, max, format, flags);
-    if(ImGui::IsItemDeactivatedAfterEdit())
-    {
-        description = "Speed";
-    }
+    float speed = camera_comp.GetSpeed();
+    ImGui::DragFloat("Speed", &speed, drag_speed, min, max, format, flags);
+    camera_comp.SetSpeed(speed);
+    _ACDA_COMMAND_HELPER("[Camera] Speed", camera_comp, GetSpeed, SetSpeed, speed, _TempSpeed);
 
-    ImGui::DragInt2("Viewport Size", glm::value_ptr(camera_comp.ViewportSize), speed, 1.0f, INT_MAX, format, flags);
-    if(ImGui::IsItemDeactivatedAfterEdit())
-    {
-        description = "Viewport Size";
-    }
+    glm::i32vec2 viewport_size = camera_comp.GetViewportSize();
+    ImGui::DragInt2("Viewport Size", glm::value_ptr(viewport_size), drag_speed, 1.0f, INT_MAX, format, flags);
+    camera_comp.SetViewportSize(viewport_size);
+    _ACDA_COMMAND_HELPER("[Camera] Viewport Size", camera_comp, GetViewportSize, SetViewportSize, viewport_size, _TempViewportSize);
 
-    ImGui::Checkbox("Fixed Up", &camera_comp.FixedUp);
-    if(ImGui::IsItemDeactivatedAfterEdit())
-    {
-        description = "Fixed Up";
-    }
+    bool up_axis_fixed = camera_comp.IsUpAxisFixed();
+    ImGui::Checkbox("Up Axis Fixed", &up_axis_fixed);
+    camera_comp.SetUpAxisFixed(up_axis_fixed);
+    _ACDA_COMMAND_HELPER("[Camera] Up Axis Fixed", camera_comp, IsUpAxisFixed, SetUpAxisFixed, up_axis_fixed, _TempUpAxisFixed);
 
-    float up_epsilon = glm::degrees(camera_comp.UpEpsilon);
-    ImGui::DragFloat("Up Epsilon", &up_epsilon, speed, min, max, format, flags);
-    if(ImGui::IsItemDeactivatedAfterEdit())
-    {
-        description = "Up Epsilon";
-    }
-    camera_comp.UpEpsilon = glm::radians(up_epsilon);
+    float up_epsilon = glm::degrees(camera_comp.GetUpAxisAngleEpsilon());
+    ImGui::DragFloat("Up Axis Angle Epsilon", &up_epsilon, drag_speed, min, max, format, flags);
+    camera_comp.SetUpAxisAngleEpsilon(glm::radians(up_epsilon));
+    _ACDA_COMMAND_HELPER("[Camera] Up Axis Angle Epsilon", camera_comp, GetUpAxisAngleEpsilon, SetUpAxisAngleEpsilon, up_epsilon, _TempUpAxisAngleEpsilon);
 
     ImGui::EndGroup();
-
-    return description;
 }
 
-auto Arcadia::ImguiWindowPropertyLightComponent::operator()(LightComponent& light_comp) -> std::string
+void Arcadia::ImguiWindowPropertyFunctor_CameraComponent::Refresh(const CameraComponent& comp)
 {
-    std::string description{};
+    _TempNearPlane = comp.GetNearPlane();
+    _TempFarPlane = comp.GetFarPlane();
+    _TempFovY = comp.GetFovY();
+    _TempFovYMin = comp.GetFovYMin();
+    _TempFovYMax = comp.GetFovYMax();
+    _TempSpeed = comp.GetSpeed();
+    _TempViewportSize = comp.GetViewportSize();
+    _TempUpAxisFixed = comp.IsUpAxisFixed();
+    _TempUpAxisAngleEpsilon = comp.GetUpAxisAngleEpsilon();
+}
+
+void Arcadia::ImguiWindowPropertyFunctor_LightComponent::operator()(LightComponent& light_comp)
+{
     ImGui::BeginGroup();
 
     const float light_direction_drag_speed = .01f;
@@ -113,356 +123,571 @@ auto Arcadia::ImguiWindowPropertyLightComponent::operator()(LightComponent& ligh
     const char* format = "%.3f";
     const ImGuiSliderFlags flags =
         ImGuiSliderFlags_AlwaysClamp;
-    if(MatchVariant<bool>(
-        light_comp.Light,
+    MatchVariant<void>(
+        light_comp.GetLight(),
         [&](NullLight&)
     {
-        if(ImGui::BeginCombo("Light Typee", "(No light)"))
+        if(ImGui::BeginCombo("Light Type", "(No light)"))
         {
             if(ImGui::Selectable("Spot Light"))
             {
-                light_comp.Light = SpotLight{};
+                light_comp.SetLight<SpotLight>();
+                Refresh(light_comp);
                 ImGui::EndCombo();
-                return true;
             }
             if(ImGui::Selectable("Direct Light"))
             {
-                light_comp.Light = DirectLight{};
+                light_comp.SetLight<DirectLight>();
+                Refresh(light_comp);
                 ImGui::EndCombo();
-                return true;
             }
             if(ImGui::Selectable("Area Light"))
             {
-                light_comp.Light = AreaLight{};
+                light_comp.SetLight<AreaLight>();
+                Refresh(light_comp);
                 ImGui::EndCombo();
-                return true;
             }
             if(ImGui::Selectable("Point Light"))
             {
-                light_comp.Light = PointLight{};
+                light_comp.SetLight<PointLight>();
+                Refresh(light_comp);
                 ImGui::EndCombo();
-                return true;
             }
             ImGui::EndCombo();
         }
-        return false;
     },
         [&](SpotLight& light)
     {
-        bool edited = false;
-
         if(ImGui::BeginCombo("Light Type", "Spot Light"))
         {
-            if(ImGui::Selectable("Direct Light"))
+            if(_ChangeLightTypeSelectable<DirectLight>(light_comp, "Direct Light"))
             {
-                pfd::button res = pfd::message{
-                    "Arcadia - Changing Light Type",
-                    "Do you want to change light type to Direct Light? All properties for current light will be lost",
-                    pfd::choice::yes_no,
-                    pfd::icon::info
-                }.result();
-                if(res == pfd::button::yes)
-                {
-                    light_comp.Light = DirectLight{};
-                    ImGui::EndCombo();
-                    return true;
-                }
+                ImGui::EndCombo();
             }
-            if(ImGui::Selectable("Area Light"))
+            if(_ChangeLightTypeSelectable<AreaLight>(light_comp, "Area Light"))
             {
-                pfd::button res = pfd::message{
-                    "Arcadia - Changing Light Type",
-                    "Do you want to change light type to Area Light? All properties for current light will be lost",
-                    pfd::choice::yes_no,
-                    pfd::icon::info
-                }.result();
-                if(res == pfd::button::yes)
-                {
-                    light_comp.Light = AreaLight{};
-                    ImGui::EndCombo();
-                    return true;
-                }
+                ImGui::EndCombo();
             }
-            if(ImGui::Selectable("Point Light"))
+            if(_ChangeLightTypeSelectable<PointLight>(light_comp, "Point Light"))
             {
-                pfd::button res = pfd::message{
-                    "Arcadia - Changing Light Type",
-                    "Do you want to change light type to Point Light? All properties for current light will be lost",
-                    pfd::choice::yes_no,
-                    pfd::icon::info
-                }.result();
-                if(res == pfd::button::yes)
-                {
-                    light_comp.Light = PointLight{};
-                    ImGui::EndCombo();
-                    return true;
-                }
+                ImGui::EndCombo();
             }
             ImGui::EndCombo();
         }
         ImGui::NewLine();
 
-        ImGui::DragFloat3("Attenuation", glm::value_ptr(light.AttenuationCoefficients), speed, min, max, format, flags);
-        edited |= ImGui::IsItemDeactivatedAfterEdit();
+        glm::vec3 coeffs = light.GetAttenuationCoefficients();
+        ImGui::DragFloat3("Attenuation Coefficients", glm::value_ptr(coeffs), speed, min, max, format, flags);
+        if(ImGui::IsItemDeactivatedAfterEdit())
+        {
+            glm::vec3 origin = light.GetAttenuationCoefficients();
+            CommandList::Instance().Emplace(
+                "[Spot Light] Attenuation Coefficients",
+                [&]() -> void
+            {
+                light.SetAttenuationCoefficients(coeffs);
+            },
+                [&]() -> void
+            {
+                light.SetAttenuationCoefficients(origin);
+            }
+            );
+        }
+        light.SetAttenuationCoefficients(coeffs);
         ImGui::SameLine();
         ImguiWrappers::HelpMark(ICON_FA_QUESTION, "In order of constant, linear and quadratic terms");
 
         const float cutoff_angle_drag_speend = .1f;
         const float cutoff_angle_min = 0.f;
         const float cutoff_angle_max = 180.f;
-        ImGui::DragFloat2("Cutoff Angle", glm::value_ptr(light.CutoffAngles), cutoff_angle_drag_speend, cutoff_angle_min, cutoff_angle_max, format, flags);
-        edited |= ImGui::IsItemDeactivatedAfterEdit();
+        glm::vec2 cutoff = light.GetCutoffAngles();
+        ImGui::DragFloat2("Cutoff Angle", glm::value_ptr(cutoff), cutoff_angle_drag_speend, cutoff_angle_min, cutoff_angle_max, format, flags);
+        if(ImGui::IsItemDeactivatedAfterEdit())
+        {
+            glm::vec2 origin = light.GetCutoffAngles();
+            CommandList::Instance().Emplace(
+                "[Spot Light] Cutoff Angle",
+                [&]() -> void
+            {
+                light.SetCutoffAngles(cutoff);
+            },
+                [&]() -> void
+            {
+                light.SetCutoffAngles(origin);
+            }
+            );
+        }
+        light.SetCutoffAngles(cutoff);
         ImGui::SameLine();
         ImguiWrappers::HelpMark(ICON_FA_QUESTION, "Inner and outter");
 
-        ImGui::ColorEdit3("Color", glm::value_ptr(light.Color));
-        edited |= ImGui::IsItemDeactivatedAfterEdit();
+        glm::vec3 color = light.GetColor();
+        ImGui::ColorEdit3("Color", glm::value_ptr(color));
+        if(ImGui::IsItemDeactivatedAfterEdit())
+        {
+            glm::vec3 origin = light.GetColor();
+            CommandList::Instance().Emplace(
+                "[Spot Light] Color",
+                [&]() -> void
+            {
+                light.SetColor(color);
+            },
+                [&]() -> void
+            {
+                light.SetColor(origin);
+            }
+            );
+        }
+        light.SetColor(color);
 
         ImGui::NewLine();
 
-        ImGui::DragFloat3("Ambient Strenght", glm::value_ptr(light.AmbientStrength), speed, min, max, format, flags);
-        edited |= ImGui::IsItemDeactivatedAfterEdit();
+        glm::vec3 ambient = light.GetAmbientStrength();
+        ImGui::DragFloat3("Ambient Strength", glm::value_ptr(ambient), speed, min, max, format, flags);
+        if(ImGui::IsItemDeactivatedAfterEdit())
+        {
+            glm::vec3 origin = light.GetAmbientStrength();
+            CommandList::Instance().Emplace(
+                "[Spot Light] Ambient Strength",
+                [&]() -> void
+            {
+                light.SetAmbientStrength(ambient);
+            },
+                [&]() -> void
+            {
+                light.SetAmbientStrength(origin);
+            }
+            );
+        }
+        light.SetAmbientStrength(ambient);
 
-        ImGui::DragFloat3("Diffuse Strenght", glm::value_ptr(light.AmbientStrength), speed, min, max, format, flags);
-        edited |= ImGui::IsItemDeactivatedAfterEdit();
+        glm::vec3 diffuse = light.GetDiffuseStrength();
+        ImGui::DragFloat3("Diffuse Strength", glm::value_ptr(diffuse), speed, min, max, format, flags);
+        glm::vec3 origin = light.GetDiffuseStrength();
+        CommandList::Instance().Emplace(
+            "[Spot Light] Diffuse Strength",
+            [&]() -> void
+        {
+            light.SetDiffuseStrength(diffuse);
+        },
+            [&]() -> void
+        {
+            light.SetDiffuseStrength(origin);
+        }
+        );
+        light.SetDiffuseStrength(diffuse);
 
-        ImGui::DragFloat3("Specular Strenght", glm::value_ptr(light.AmbientStrength), speed, min, max, format, flags);
-        edited |= ImGui::IsItemDeactivatedAfterEdit();
-
-        return edited;
+        glm::vec3 specular = light.GetSpecularStrength();
+        ImGui::DragFloat3("Specular Strength", glm::value_ptr(specular), speed, min, max, format, flags);
+        if(ImGui::IsItemDeactivatedAfterEdit())
+        {
+            glm::vec3 origin = light.GetSpecularStrength();
+            CommandList::Instance().Emplace(
+                "[Spot Light] Specular Strength",
+                [&]() -> void
+            {
+                light.SetSpecularStrength(specular);
+            },
+                [&]() -> void
+            {
+                light.SetSpecularStrength(origin);
+            }
+            );
+        }
+        light.SetSpecularStrength(specular);
     },
         [&](DirectLight& light)
     {
-        bool edited = false;
-
         if(ImGui::BeginCombo("Light Type", "Direct Light"))
         {
-            if(ImGui::Selectable("Spot Light"))
+            if(_ChangeLightTypeSelectable<SpotLight>(light_comp, "Spot Light"))
             {
-                pfd::button res = pfd::message{
-                    "Arcadia - Changing Light Type",
-                    "Do you want to change light type to Spot Light? All properties for current light will be lost",
-                    pfd::choice::yes_no,
-                    pfd::icon::info
-                }.result();
-                if(res == pfd::button::yes)
-                {
-                    light_comp.Light = SpotLight{};
-                    ImGui::EndCombo();
-                    return true;
-                }
+                ImGui::EndCombo();
             }
-            if(ImGui::Selectable("Area Light"))
+            if(_ChangeLightTypeSelectable<AreaLight>(light_comp, "Area Light"))
             {
-                pfd::button res = pfd::message{
-                    "Arcadia - Changing Light Type",
-                    "Do you want to change light type to Area Light? All properties for current light will be lost",
-                    pfd::choice::yes_no,
-                    pfd::icon::info
-                }.result();
-                if(res == pfd::button::yes)
-                {
-                    light_comp.Light = AreaLight{};
-                    ImGui::EndCombo();
-                    return true;
-                }
+                ImGui::EndCombo();
             }
-            if(ImGui::Selectable("Point Light"))
+            if(_ChangeLightTypeSelectable<PointLight>(light_comp, "Point Light"))
             {
-                pfd::button res = pfd::message{
-                    "Arcadia - Changing Light Type",
-                    "Do you want to change light type to Point Light? All properties for current light will be lost",
-                    pfd::choice::yes_no,
-                    pfd::icon::info
-                }.result();
-                if(res == pfd::button::yes)
-                {
-                    light_comp.Light = PointLight{};
-                    ImGui::EndCombo();
-                    return true;
-                }
+                ImGui::EndCombo();
             }
             ImGui::EndCombo();
         }
         ImGui::NewLine();
 
-        ImGui::ColorEdit3("Color", glm::value_ptr(light.Color));
-        edited |= ImGui::IsItemDeactivatedAfterEdit();
+        glm::vec3 color = light.GetColor();
+        ImGui::ColorEdit3("Color", glm::value_ptr(color));
+        if(ImGui::IsItemDeactivatedAfterEdit())
+        {
+            glm::vec3 origin = light.GetColor();
+            CommandList::Instance().Emplace(
+                "[Direct Light] Color",
+                [&]() -> void
+            {
+                light.SetColor(color);
+            },
+                [&]() -> void
+            {
+                light.SetColor(origin);
+            }
+            );
+        }
+        light.SetColor(color);
 
         ImGui::NewLine();
 
-        ImGui::DragFloat3("Ambient Strenght", glm::value_ptr(light.AmbientStrength), speed, min, max, format, flags);
-        edited |= ImGui::IsItemDeactivatedAfterEdit();
+        glm::vec3 ambient = light.GetAmbientStrength();
+        ImGui::DragFloat3("Ambient Strength", glm::value_ptr(ambient), speed, min, max, format, flags);
+        if(ImGui::IsItemDeactivatedAfterEdit())
+        {
+            glm::vec3 origin = light.GetAmbientStrength();
+            CommandList::Instance().Emplace(
+                "[Direct Light] Ambient Strength",
+                [&]() -> void
+            {
+                light.SetAmbientStrength(ambient);
+            },
+                [&]() -> void
+            {
+                light.SetAmbientStrength(origin);
+            }
+            );
+        }
+        light.SetAmbientStrength(ambient);
 
-        ImGui::DragFloat3("Diffuse Strenght", glm::value_ptr(light.AmbientStrength), speed, min, max, format, flags);
-        edited |= ImGui::IsItemDeactivatedAfterEdit();
+        glm::vec3 diffuse = light.GetDiffuseStrength();
+        ImGui::DragFloat3("Diffuse Strength", glm::value_ptr(diffuse), speed, min, max, format, flags);
+        if(ImGui::IsItemDeactivatedAfterEdit())
+        {
+            glm::vec3 origin = light.GetDiffuseStrength();
+            CommandList::Instance().Emplace(
+                "[Direct Light] Diffuse Strength",
+                [&]() -> void
+            {
+                light.SetDiffuseStrength(diffuse);
+            },
+                [&]() -> void
+            {
+                light.SetDiffuseStrength(origin);
+            }
+            );
+        }
+        light.SetDiffuseStrength(diffuse);
 
-        ImGui::DragFloat3("Specular Strenght", glm::value_ptr(light.AmbientStrength), speed, min, max, format, flags);
-        edited |= ImGui::IsItemDeactivatedAfterEdit();
-
-        return edited;
+        glm::vec3 specular = light.GetSpecularStrength();
+        ImGui::DragFloat3("Specular Strength", glm::value_ptr(specular), speed, min, max, format, flags);
+        if(ImGui::IsItemDeactivatedAfterEdit())
+        {
+            glm::vec3 origin = light.GetSpecularStrength();
+            CommandList::Instance().Emplace(
+                "[Direct Light] Specular Strength",
+                [&]() -> void
+            {
+                light.SetSpecularStrength(specular);
+            },
+                [&]() -> void
+            {
+                light.SetSpecularStrength(origin);
+            }
+            );
+        }
+        light.SetSpecularStrength(specular);
     },
         [&](AreaLight& light)
     {
-        bool edited = false;
-
         if(ImGui::BeginCombo("Light Type", "Area Light"))
         {
-            if(ImGui::Selectable("Spot Light"))
+            if(_ChangeLightTypeSelectable<SpotLight>(light_comp, "Spot Light"))
             {
-                pfd::button res = pfd::message{
-                    "Arcadia - Changing Light Type",
-                    "Do you want to change light type to Spot Light? All properties for current light will be lost",
-                    pfd::choice::yes_no,
-                    pfd::icon::info
-                }.result();
-                if(res == pfd::button::yes)
-                {
-                    light_comp.Light = SpotLight{};
-                    ImGui::EndCombo();
-                    return true;
-                }
+                ImGui::EndCombo();
             }
-            if(ImGui::Selectable("Direct Light"))
+            if(_ChangeLightTypeSelectable<DirectLight>(light_comp, "Direct Light"))
             {
-                pfd::button res = pfd::message{
-                    "Arcadia - Changing Light Type",
-                    "Do you want to change light type to Direct Light? All properties for current light will be lost",
-                    pfd::choice::yes_no,
-                    pfd::icon::info
-                }.result();
-                if(res == pfd::button::yes)
-                {
-                    light_comp.Light = DirectLight{};
-                    ImGui::EndCombo();
-                    return true;
-                }
+                ImGui::EndCombo();
             }
-            if(ImGui::Selectable("Point Light"))
+            if(_ChangeLightTypeSelectable<PointLight>(light_comp, "Point Light"))
             {
-                pfd::button res = pfd::message{
-                    "Arcadia - Changing Light Type",
-                    "Do you want to change light type to Point Light? All properties for current light will be lost",
-                    pfd::choice::yes_no,
-                    pfd::icon::info
-                }.result();
-                if(res == pfd::button::yes)
-                {
-                    light_comp.Light = PointLight{};
-                    ImGui::EndCombo();
-                    return true;
-                }
+                ImGui::EndCombo();
             }
             ImGui::EndCombo();
         }
         ImGui::NewLine();
 
-        ImGui::DragFloat2("Size", glm::value_ptr(light.Size), speed, min, max, format, flags);
+        glm::vec2 size = light.GetSize();
+        ImGui::DragFloat2("Size", glm::value_ptr(size), speed, min, max, format, flags);
+        if(ImGui::IsItemDeactivatedAfterEdit())
+        {
+            glm::vec2 origin = light.GetSize();
+            CommandList::Instance().Emplace(
+                "[Area Light] Size",
+                [&]() -> void
+            {
+                light.SetSize(size);
+            },
+                [&]() -> void
+            {
+                light.SetSize(origin);
+            }
+            );
+        }
+        light.SetSize(size);
 
-        ImGui::ColorEdit3("Color", glm::value_ptr(light.Color));
-        edited |= ImGui::IsItemDeactivatedAfterEdit();
+        glm::vec3 color = light.GetColor();
+        ImGui::ColorEdit3("Color", glm::value_ptr(color));
+        if(ImGui::IsItemDeactivatedAfterEdit())
+        {
+            glm::vec3 origin = light.GetColor();
+            CommandList::Instance().Emplace(
+                "[Area Light] Color",
+                [&]() -> void
+            {
+                light.SetColor(color);
+            },
+                [&]() -> void
+            {
+                light.SetColor(origin);
+            }
+            );
+        }
+        light.SetColor(color);
 
         ImGui::NewLine();
 
-        ImGui::DragFloat3("Ambient Strenght", glm::value_ptr(light.AmbientStrength), speed, min, max, format, flags);
-        edited |= ImGui::IsItemDeactivatedAfterEdit();
+        glm::vec3 ambient = light.GetAmbientStrength();
+        ImGui::DragFloat3("Ambient Strength", glm::value_ptr(ambient), speed, min, max, format, flags);
+        if(ImGui::IsItemDeactivatedAfterEdit())
+        {
+            glm::vec3 origin = light.GetAmbientStrength();
+            CommandList::Instance().Emplace(
+                "[Area Light] Ambient Strength",
+                [&]() -> void
+            {
+                light.SetAmbientStrength(ambient);
+            },
+                [&]() -> void
+            {
+                light.SetAmbientStrength(origin);
+            }
+            );
+        }
+        light.SetAmbientStrength(ambient);
 
-        ImGui::DragFloat3("Diffuse Strenght", glm::value_ptr(light.AmbientStrength), speed, min, max, format, flags);
-        edited |= ImGui::IsItemDeactivatedAfterEdit();
+        glm::vec3 diffuse = light.GetDiffuseStrength();
+        ImGui::DragFloat3("Diffuse Strength", glm::value_ptr(diffuse), speed, min, max, format, flags);
+        if(ImGui::IsItemDeactivatedAfterEdit())
+        {
+            glm::vec3 origin = light.GetDiffuseStrength();
+            CommandList::Instance().Emplace(
+                "[Area Light] Diffuse Strength",
+                [&]() -> void
+            {
+                light.SetDiffuseStrength(diffuse);
+            },
+                [&]() -> void
+            {
+                light.SetDiffuseStrength(origin);
+            }
+            );
+        }
+        light.SetDiffuseStrength(diffuse);
 
-        ImGui::DragFloat3("Specular Strenght", glm::value_ptr(light.AmbientStrength), speed, min, max, format, flags);
-        edited |= ImGui::IsItemDeactivatedAfterEdit();
-
-        return edited;
+        glm::vec3 specular = light.GetSpecularStrength();
+        ImGui::DragFloat3("Specular Strength", glm::value_ptr(specular), speed, min, max, format, flags);
+        if(ImGui::IsItemDeactivatedAfterEdit())
+        {
+            glm::vec3 origin = light.GetSpecularStrength();
+            CommandList::Instance().Emplace(
+                "[Area Light] Specular Strength",
+                [&]() -> void
+            {
+                light.SetSpecularStrength(specular);
+            },
+                [&]() -> void
+            {
+                light.SetSpecularStrength(origin);
+            }
+            );
+        }
+        light.SetSpecularStrength(specular);
     },
         [&](PointLight& light)
     {
-        bool edited = false;
-
         if(ImGui::BeginCombo("Light Type", "Point Light"))
         {
-            if(ImGui::Selectable("Spot Light"))
+            if(_ChangeLightTypeSelectable<SpotLight>(light_comp, "Spot Light"))
             {
-                pfd::button res = pfd::message{
-                    "Arcadia - Changing Light Type",
-                    "Do you want to change light type to Spot Light? All properties for current light will be lost",
-                    pfd::choice::yes_no,
-                    pfd::icon::info
-                }.result();
-                if(res == pfd::button::yes)
-                {
-                    light_comp.Light = SpotLight{};
-                    ImGui::EndCombo();
-                    return true;
-                }
+                ImGui::EndCombo();
             }
-            if(ImGui::Selectable("Direct Light"))
+            if(_ChangeLightTypeSelectable<DirectLight>(light_comp, "Direct Light"))
             {
-                pfd::button res = pfd::message{
-                    "Arcadia - Changing Light Type",
-                    "Do you want to change light type to Direct Light? All properties for current light will be lost",
-                    pfd::choice::yes_no,
-                    pfd::icon::info
-                }.result();
-                if(res == pfd::button::yes)
-                {
-                    light_comp.Light = DirectLight{};
-                    ImGui::EndCombo();
-                    return true;
-                }
+                ImGui::EndCombo();
             }
-            if(ImGui::Selectable("Area Light"))
+            if(_ChangeLightTypeSelectable<AreaLight>(light_comp, "Area Light"))
             {
-                pfd::button res = pfd::message{
-                    "Arcadia - Changing Light Type",
-                    "Do you want to change light type to Area Light? All properties for current light will be lost",
-                    pfd::choice::yes_no,
-                    pfd::icon::info
-                }.result();
-                if(res == pfd::button::yes)
-                {
-                    light_comp.Light = AreaLight{};
-                    ImGui::EndCombo();
-                    return true;
-                }
+                ImGui::EndCombo();
             }
             ImGui::EndCombo();
         }
         ImGui::NewLine();
 
-        ImGui::DragFloat3("Attenuation", glm::value_ptr(light.AttenuationCoefficients), speed, min, max, format, flags);
-        edited |= ImGui::IsItemDeactivatedAfterEdit();
+        glm::vec3 coeffs = light.GetAttenuationCoefficients();
+        ImGui::DragFloat3("Attenuation", glm::value_ptr(coeffs), speed, min, max, format, flags);
+        if(ImGui::IsItemDeactivatedAfterEdit())
+        {
+            glm::vec3 origin = light.GetAttenuationCoefficients();
+            CommandList::Instance().Emplace(
+                "[Point Light] Attenuation",
+                [&]() -> void
+            {
+                light.SetAttenuationCoefficients(coeffs);
+            },
+                [&]() -> void
+            {
+                light.SetAttenuationCoefficients(origin);
+            }
+            );
+        }
+        light.SetAttenuationCoefficients(coeffs);
         ImGui::SameLine();
         ImguiWrappers::HelpMark(ICON_FA_QUESTION, "In order of constant, linear and quadratic terms");
 
-        ImGui::ColorEdit3("Color", glm::value_ptr(light.Color));
-        edited |= ImGui::IsItemDeactivatedAfterEdit();
+        glm::vec3 color = light.GetColor();
+        ImGui::ColorEdit3("Color", glm::value_ptr(color));
+        if(ImGui::IsItemDeactivatedAfterEdit())
+        {
+            glm::vec3 origin = light.GetColor();
+            CommandList::Instance().Emplace(
+                "[Point Light] Color",
+                [&]() -> void
+            {
+                light.SetColor(color);
+            },
+                [&]() -> void
+            {
+                light.SetColor(origin);
+            }
+            );
+        }
+        light.SetColor(color);
 
         ImGui::NewLine();
 
-        ImGui::DragFloat3("Ambient Strenght", glm::value_ptr(light.AmbientStrength), speed, min, max, format, flags);
-        edited |= ImGui::IsItemDeactivatedAfterEdit();
+        glm::vec3 ambient = light.GetAmbientStrength();
+        ImGui::DragFloat3("Ambient Strength", glm::value_ptr(ambient), speed, min, max, format, flags);
+        if(ImGui::IsItemDeactivatedAfterEdit())
+        {
+            glm::vec3 origin = light.GetAmbientStrength();
+            CommandList::Instance().Emplace(
+                "[Point Light] Ambient Strength",
+                [&]() -> void
+            {
+                light.SetAmbientStrength(ambient);
+            },
+                [&]() -> void
+            {
+                light.SetAmbientStrength(origin);
+            }
+            );
+        }
+        light.SetAmbientStrength(ambient);
 
-        ImGui::DragFloat3("Diffuse Strenght", glm::value_ptr(light.AmbientStrength), speed, min, max, format, flags);
-        edited |= ImGui::IsItemDeactivatedAfterEdit();
+        glm::vec3 diffuse = light.GetDiffuseStrength();
+        ImGui::DragFloat3("Diffuse Strength", glm::value_ptr(diffuse), speed, min, max, format, flags);
+        if(ImGui::IsItemDeactivatedAfterEdit())
+        {
+            glm::vec3 origin = light.GetDiffuseStrength();
+            CommandList::Instance().Emplace(
+                "[Point Light] Diffuse Strength",
+                [&]() -> void
+            {
+                light.SetDiffuseStrength(diffuse);
+            },
+                [&]() -> void
+            {
+                light.SetDiffuseStrength(origin);
+            }
+            );
+        }
+        light.SetDiffuseStrength(diffuse);
 
-        ImGui::DragFloat3("Specular Strenght", glm::value_ptr(light.AmbientStrength), speed, min, max, format, flags);
-        edited |= ImGui::IsItemDeactivatedAfterEdit();
-
-        return edited;
+        glm::vec3 specular = light.GetSpecularStrength();
+        ImGui::DragFloat3("Specular Strength", glm::value_ptr(specular), speed, min, max, format, flags);
+        if(ImGui::IsItemDeactivatedAfterEdit())
+        {
+            glm::vec3 origin = light.GetSpecularStrength();
+            CommandList::Instance().Emplace(
+                "[Point Light] Specular Strength",
+                [&]() -> void
+            {
+                light.SetSpecularStrength(specular);
+            },
+                [&]() -> void
+            {
+                light.SetSpecularStrength(origin);
+            }
+            );
+        }
+        light.SetSpecularStrength(specular);
     }
-    )){
-        description = "Light";
-    }
-
+    );
     ImGui::EndGroup();
-
-    return description;
 }
 
-auto Arcadia::ImguiWindowPropertyModelComponent::operator()(ModelComponent& model_comp) -> std::string
+void Arcadia::ImguiWindowPropertyFunctor_LightComponent::Refresh(const LightComponent& comp)
 {
-    std::string description{};
+    MatchVariant<void>(
+        comp.GetLight(),
+        [&](const NullLight&)
+    {
+        _TempAttenuationCoefficients = {};
+        _TempCutoffAngle = {};
+        _TempColor = {};
+        _TempAmbientStrength = {};
+        _TempDiffuseStrength = {};
+        _TempSpecularStrength = {};
+    },
+        [&](const SpotLight& light)
+    {
+        _TempAttenuationCoefficients = light.GetAttenuationCoefficients();
+        _TempCutoffAngle = light.GetCutoffAngles();
+        _TempColor = light.GetColor();
+        _TempAmbientStrength = light.GetAmbientStrength();
+        _TempDiffuseStrength = light.GetDiffuseStrength();
+        _TempSpecularStrength = light.GetSpecularStrength();
+    },
+        [&](const DirectLight& light)
+    {
+        _TempAttenuationCoefficients = {};
+        _TempCutoffAngle = {};
+        _TempColor = light.GetColor();
+        _TempAmbientStrength = light.GetAmbientStrength();
+        _TempDiffuseStrength = light.GetDiffuseStrength();
+        _TempSpecularStrength = light.GetSpecularStrength();
+    },
+        [&](const AreaLight& light)
+    {
+        _TempAttenuationCoefficients = {};
+        _TempCutoffAngle = {};
+        _TempColor = light.GetColor();
+        _TempAmbientStrength = light.GetAmbientStrength();
+        _TempDiffuseStrength = light.GetDiffuseStrength();
+        _TempSpecularStrength = light.GetSpecularStrength();
+    },
+        [&](const PointLight& light)
+    {
+        _TempAttenuationCoefficients = light.GetAttenuationCoefficients();
+        _TempCutoffAngle = {};
+        _TempColor = light.GetColor();
+        _TempAmbientStrength = light.GetAmbientStrength();
+        _TempDiffuseStrength = light.GetDiffuseStrength();
+        _TempSpecularStrength = light.GetSpecularStrength();
+    }
+    );
+}
+
+void Arcadia::ImguiWindowPropertyFunctor_ModelComponent::operator()(ModelComponent& model_comp)
+{
     ImGui::BeginGroup();
 
     ImGui::SeparatorText("Filepath");
@@ -498,13 +723,10 @@ auto Arcadia::ImguiWindowPropertyModelComponent::operator()(ModelComponent& mode
         model_comp.UnloadModel();
     }
 
-
     ImGui::EndGroup();
-
-    return description;
 }
 
-void Arcadia::ImguiWindowPopupPhysicsComponentCreateBody::operator()(PhysicsComponent& physics_comp)
+void Arcadia::ImguiWindowPopupFunctor_PhysicsComponentCreateBody::operator()(PhysicsComponent& physics_comp)
 {
     if(!Opened)
     {
@@ -721,11 +943,10 @@ void Arcadia::ImguiWindowPopupPhysicsComponentCreateBody::operator()(PhysicsComp
     }
 }
 
-auto Arcadia::ImguiWindowPropertyPhysicsComponent::operator()(PhysicsComponent& physics_comp) -> std::string
+void Arcadia::ImguiWindowPropertyFunctor_PhysicsComponent::operator()(PhysicsComponent& physics_comp)
 {
     _ImguiWindowPopupPhysicsComponentCreateBody(physics_comp);
 
-    std::string description{};
     ImGui::BeginGroup();
 
     if(physics_comp.HasBodyInfo())
@@ -761,7 +982,7 @@ auto Arcadia::ImguiWindowPropertyPhysicsComponent::operator()(PhysicsComponent& 
 
         if(ImGui::TreeNodeEx("Current", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_FramePadding))
         {
-            const auto& jph_body_state = physics_comp.JphBodyState;
+            const JphBodyState& jph_body_state = physics_comp.GetBodyState();
             ImGui::Text(std::format("Active: {}", jph_body_state.Active).c_str());
             ImGui::Text(std::format("Linear Velocity - {}", jph_body_state.LinearVelocity).c_str());
             ImGui::Text(std::format("Angular Velocity - {}", jph_body_state.AngularVelocity).c_str());
@@ -823,10 +1044,23 @@ auto Arcadia::ImguiWindowPropertyPhysicsComponent::operator()(PhysicsComponent& 
 
     if(physics_comp.HasBodyInfo())
     {
-        ImGui::ColorEdit3("Body Shape Color", glm::value_ptr(physics_comp.BodyShapeColor));
+        glm::vec3 color = physics_comp.GetBodyShapeColor();
+        ImGui::ColorEdit3("Body Shape Color", glm::value_ptr(color));
+        physics_comp.SetBodyShapeColor(color);
         if(ImGui::IsItemDeactivatedAfterEdit())
         {
-            description = "Body Shape Color";
+            glm::vec3 origin = physics_comp.GetBodyShapeColor();
+            CommandList::Instance().Emplace(
+                "[Physics] Body Shape Color",
+                [&]() -> void
+            {
+                physics_comp.SetBodyShapeColor(color);
+            },
+                [&]() -> void
+            {
+                physics_comp.SetBodyShapeColor(origin);
+            }
+            );
         }
 
         if(ImGui::Button("Recreate Body"))
@@ -848,13 +1082,19 @@ auto Arcadia::ImguiWindowPropertyPhysicsComponent::operator()(PhysicsComponent& 
     }
 
     ImGui::EndGroup();
-
-    return description;
 }
 
-auto Arcadia::ImguiWindowPropertyTransformComponent::operator()(TransformComponent& transform_comp) -> std::string
+void Arcadia::ImguiWindowPropertyFunctor_TransformComponent::Refresh(const TransformComponent& comp)
 {
-    std::string description{};
+    _TempPosition = comp.GetPosition();
+    _TempDirection = comp.GetDirection();
+    _TempRotationEularAngle = comp.GetRotationEularAngle();
+    _TempScale = comp.GetScale();
+    _TempPivot = comp.GetPivot();
+}
+
+void Arcadia::ImguiWindowPropertyFunctor_TransformComponent::operator()(TransformComponent& transform_comp)
+{
     ImGui::BeginGroup();
 
     const float speed = 1.f;
@@ -868,10 +1108,7 @@ auto Arcadia::ImguiWindowPropertyTransformComponent::operator()(TransformCompone
     glm::vec3 position_delta = position; // Previous position
     ImGui::DragFloat3("Position", glm::value_ptr(position), speed, min, max, format, slider_flags);
     transform_comp.SetPosition(position);
-    if(ImGui::IsItemDeactivatedAfterEdit())
-    {
-        description = "Position";
-    }
+    _ACDA_COMMAND_HELPER("[Transform] Position", transform_comp, GetPosition, SetPosition, position, _TempPosition);
     position_delta = transform_comp.GetPosition() - position_delta; // current - previous
 
     if(transform_comp.CheckFlag(TransformComponentFlags::UseRotation))
@@ -880,10 +1117,7 @@ auto Arcadia::ImguiWindowPropertyTransformComponent::operator()(TransformCompone
         glm::vec3 eular_angle = glm::degrees(transform_comp.GetRotationEularAngle());
         ImGui::DragFloat3("Rotation", glm::value_ptr(eular_angle), rotation_drag_speed, min, max, format, slider_flags);
         transform_comp.SetRotationEularAngle(glm::radians(eular_angle));
-        if(ImGui::IsItemDeactivatedAfterEdit())
-        {
-            description = "Rotation";
-        }
+        _ACDA_COMMAND_HELPER("[Transform] Rotation", transform_comp, GetRotationEularAngle, SetRotationEularAngle, eular_angle, _TempRotationEularAngle);
     }
     else if(transform_comp.CheckFlag(TransformComponentFlags::UseDirection))
     {
@@ -891,10 +1125,7 @@ auto Arcadia::ImguiWindowPropertyTransformComponent::operator()(TransformCompone
         glm::vec3 direction = transform_comp.GetDirection();
         ImGui::DragFloat3("Direction", glm::value_ptr(direction), rotation_drag_speed, min, max, format, slider_flags);
         transform_comp.SetDirection(direction);
-        if(ImGui::IsItemDeactivatedAfterEdit())
-        {
-            description = "Direction";
-        }
+        _ACDA_COMMAND_HELPER("[Transform] Direction", transform_comp, GetDirection, SetDirection, direction, _TempDirection);
     }
     else
     {
@@ -904,10 +1135,7 @@ auto Arcadia::ImguiWindowPropertyTransformComponent::operator()(TransformCompone
     glm::vec3 scale = transform_comp.GetScale();
     ImGui::DragFloat3("Scale", glm::value_ptr(scale), speed, min, max, format, slider_flags);
     transform_comp.SetScale(scale);
-    if(ImGui::IsItemDeactivatedAfterEdit())
-    {
-        description = "Scale";
-    }
+    _ACDA_COMMAND_HELPER("[Transform] Scale", transform_comp, GetScale, SetScale, scale, _TempScale);
 
     if(position_delta != GlmVec3::CreateZero())
     {
@@ -916,14 +1144,9 @@ auto Arcadia::ImguiWindowPropertyTransformComponent::operator()(TransformCompone
     glm::vec3 pivot = transform_comp.GetPivot();
     ImGui::DragFloat3("Pivot", glm::value_ptr(pivot), speed, min, max, format, slider_flags);
     transform_comp.SetPivot(pivot);
-    if(ImGui::IsItemDeactivatedAfterEdit())
-    {
-        description = "Pivot";
-    }
+    _ACDA_COMMAND_HELPER("[Transform] ivott", transform_comp, GetPivot, SetPivot, pivot, _TempPivot);
 
     ImGui::EndGroup();
-
-    return description;
 }
 
 void Arcadia::ImguiWindowProperty::OnEvent(EventBase& e)
@@ -935,24 +1158,6 @@ void Arcadia::ImguiWindowProperty::OnEvent(EventBase& e)
         .Dispatch<Events::SelectEntity>(ACDA_BIND_MEMBER_FN(_OnSelectEntity))
         .Dispatch<Events::DeleteEntity>(ACDA_BIND_MEMBER_FN(_OnDeleteEntity))
         .IsDispatched();
-}
-
-#define ACDA_IMGUI_WINDOW_PROPERTY_HELPER(component_type, tab_name, property_display_fn) \
-if(_ContainsComponent<component_type>(_SelectedEntityId) && ImGui::TreeNodeEx(tab_name.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_FramePadding))\
-{\
-    auto description = property_display_fn(_GetComponent<component_type>(_SelectedEntityId));\
-    if(!description.empty())\
-    {\
-        memento_list\
-            .Snapshot<component_type>(\
-                std::format("{} - {}", tab_name, description),\
-                [&]() -> component_type&\
-            {\
-                return scene_sptr->GetComponent<component_type>(_SelectedEntityId);\
-            }\
-        );\
-    }\
-    ImGui::TreePop();\
 }
 
 void Arcadia::ImguiWindowProperty::OnUpdate()
@@ -989,13 +1194,11 @@ void Arcadia::ImguiWindowProperty::OnUpdate()
             {
                 ImGui::PushItemWidth(200.f);
 
-                MementoList& memento_list = MementoList::Instance();
-
-                ACDA_IMGUI_WINDOW_PROPERTY_HELPER(CameraComponent, std::string("Camera"), _ImguiWindowPropertyCameraComponent);
-                ACDA_IMGUI_WINDOW_PROPERTY_HELPER(LightComponent, std::string("Light"), _ImguiWindowPropertyLightComponent);
-                ACDA_IMGUI_WINDOW_PROPERTY_HELPER(ModelComponent, std::string("Model"), _ImguiWindowPropertyModelComponent);
-                ACDA_IMGUI_WINDOW_PROPERTY_HELPER(PhysicsComponent, std::string("Physics"), _ImguiWindowPropertyPhysicsComponent);
-                ACDA_IMGUI_WINDOW_PROPERTY_HELPER(TransformComponent, std::string("Transform"), _ImguiWindowPropertyTransformComponent);
+                _DisplayProperty<CameraComponent>("Camera", _ImguiWindowPropertyFunctor_CameraComponent);
+                _DisplayProperty<LightComponent>("Light", _ImguiWindowPropertyFunctor_LightComponent);
+                _DisplayProperty<ModelComponent>("Model", _ImguiWindowPropertyFunctor_ModelComponent);
+                _DisplayProperty<PhysicsComponent>("Physics", _ImguiWindowPropertyFunctor_PhysicsComponent);
+                _DisplayProperty<TransformComponent>("Transform", _ImguiWindowPropertyFunctor_TransformComponent);
 
                 ImGui::PopItemWidth();
             }
@@ -1014,7 +1217,20 @@ void Arcadia::ImguiWindowProperty::_OnOpenImguiWindow(Events::OpenImguiWindow& e
 
 void Arcadia::ImguiWindowProperty::_OnSceneActivated(Events::SceneActivated& e)
 {
-    _SceneWeakPtr = e.Scene;
+    _SceneWeakPtr = e.spScene;
+    Scene& scene = *e.spScene;
+    for(auto& [entity_id, entity_info] : scene.GetEntityInfoStorage())
+    {
+        if(scene.ContainsAllComponents<TransformComponent>(entity_id))
+        {
+            _ImguiWindowPropertyFunctor_TransformComponent.Refresh(scene.GetComponent<TransformComponent>(entity_id));
+        }
+
+        if(scene.ContainsAllComponents<CameraComponent>(entity_id))
+        {
+            _ImguiWindowPropertyFunctor_CameraComponent.Refresh(scene.GetComponent<CameraComponent>(entity_id));
+        }
+    }
 }
 
 void Arcadia::ImguiWindowProperty::_OnSceneDeactivated(Events::SceneDeactivated& e)

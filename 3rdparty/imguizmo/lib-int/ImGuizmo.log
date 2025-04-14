@@ -1,8 +1,0 @@
-﻿D:\Softwares\Visual Studio\VS 2022\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(517,5): warning MSB8004: Output Directory does not end with a trailing slash.  This build instance will add the slash as it is required to allow proper evaluation of the Output Directory.
-  GraphEditor.cpp
-  ImCurveEdit.cpp
-  ImGradient.cpp
-  ImGuizmo.cpp
-  ImSequencer.cpp
-  Generating Code...
-  imguizmo.vcxproj -> D:\CppProject\arcadia\3rdparty\imguizmo\lib\ImGuizmo.lib

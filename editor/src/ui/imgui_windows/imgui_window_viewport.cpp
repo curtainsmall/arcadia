@@ -65,8 +65,8 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
             physics_simulator_sptr->Prepare();
             renderer_sptr->Prepare();
 
-            auto [viewport_camera_comp, viewport_transform_comp] = scene_sptr->GetComponent<CameraComponent, TransformComponent>(scene_sptr->GetEntitIdByName(_ViewportCameraEntityName));
-            viewport_camera_comp.ViewportSize = ImGui::GetContentRegionAvail();
+            auto [viewport_camera_comp, viewport_transform_comp] = scene_sptr->GetComponent<CameraComponent, TransformComponent>(scene_sptr->GetEntityIdByName(_ViewportCameraEntityName));
+            viewport_camera_comp.SetViewportSize(ImGui::GetContentRegionAvail());
             for(const auto& [entity_id, entity_info] : scene_sptr->GetEntityInfoStorage())
             {
                 physics_simulator_sptr->Submit(*scene_sptr, entity_id);
@@ -88,7 +88,7 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
             renderer_sptr->Draw();
 
             glm::vec2 image_cursor_pos = ImGui::GetCursorPos();
-            ImGui::Image(renderer_sptr->GetRenderResultId(0), viewport_camera_comp.ViewportSize, { 0,1 }, { 1,0 });
+            ImGui::Image(renderer_sptr->GetRenderResultId(0), viewport_camera_comp.GetViewportSize(), { 0,1 }, { 1,0 });
 
             if(!_InViewportFreecamMode && ImGui::IsItemHovered() && ImGui::IsMouseDown(ImGuiMouseButton_Right))
             {
@@ -107,36 +107,36 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
                 // Scroll to zoom (move viewport_camera_comp forwards or backwards along direction)
                 if(ImGui::IsKeyDown(ImGuiKey_W))
                 {
-                    viewport_transform_comp.IncreasePosition(viewport_transform_comp.GetDirection() * viewport_camera_comp.Speed);
+                    viewport_transform_comp.IncreasePosition(viewport_transform_comp.GetDirection() * viewport_camera_comp.GetSpeed());
                 }
                 else if(ImGui::IsKeyDown(ImGuiKey_S))
                 {
-                    viewport_transform_comp.IncreasePosition(-viewport_transform_comp.GetDirection() * viewport_camera_comp.Speed);
+                    viewport_transform_comp.IncreasePosition(-viewport_transform_comp.GetDirection() * viewport_camera_comp.GetSpeed());
                 }
                 else if(ImGui::IsKeyDown(ImGuiKey_A))
                 {
-                    viewport_transform_comp.IncreasePosition(glm::cross(CameraComponent::Up, viewport_transform_comp.GetDirection()) * viewport_camera_comp.Speed);
+                    viewport_transform_comp.IncreasePosition(glm::cross(CameraComponent::GetUpAxis(), viewport_transform_comp.GetDirection()) * viewport_camera_comp.GetSpeed());
                 }
                 else if(ImGui::IsKeyDown(ImGuiKey_D))
                 {
-                    viewport_transform_comp.IncreasePosition(-glm::cross(CameraComponent::Up, viewport_transform_comp.GetDirection()) * viewport_camera_comp.Speed);
+                    viewport_transform_comp.IncreasePosition(-glm::cross(CameraComponent::GetUpAxis(), viewport_transform_comp.GetDirection()) * viewport_camera_comp.GetSpeed());
                 }
                 else if(ImGui::IsKeyDown(ImGuiKey_E))
                 {
-                    viewport_transform_comp.IncreasePosition(glm::cross(viewport_transform_comp.GetDirection(), glm::cross(CameraComponent::Up, viewport_transform_comp.GetDirection())) * viewport_camera_comp.Speed);
+                    viewport_transform_comp.IncreasePosition(glm::cross(viewport_transform_comp.GetDirection(), glm::cross(CameraComponent::GetUpAxis(), viewport_transform_comp.GetDirection())) * viewport_camera_comp.GetSpeed());
                 }
                 else if(ImGui::IsKeyDown(ImGuiKey_Q))
                 {
-                    viewport_transform_comp.IncreasePosition(-glm::cross(viewport_transform_comp.GetDirection(), glm::cross(CameraComponent::Up, viewport_transform_comp.GetDirection())) * viewport_camera_comp.Speed);
+                    viewport_transform_comp.IncreasePosition(-glm::cross(viewport_transform_comp.GetDirection(), glm::cross(CameraComponent::GetUpAxis(), viewport_transform_comp.GetDirection())) * viewport_camera_comp.GetSpeed());
                 }
 
                 // Rotate view
                 glm::vec2 offset = _CursorMoveDistance * .005f;
                 float x_angle_offset = -offset.x;
-                viewport_transform_comp.SetDirection(glm::normalize(glm::angleAxis(x_angle_offset, viewport_camera_comp.Up) * viewport_transform_comp.GetDirection()));
-                float pitch_angle = glm::half_pi<float>() - glm::angle(viewport_transform_comp.GetDirection(), viewport_camera_comp.Up);
-                float y_angle_offset = glm::clamp(-offset.y + pitch_angle, -glm::half_pi<float>() + viewport_camera_comp.UpEpsilon, glm::half_pi<float>() - viewport_camera_comp.UpEpsilon) - pitch_angle;
-                viewport_transform_comp.SetDirection(glm::normalize(glm::angleAxis(y_angle_offset, glm::cross(viewport_transform_comp.GetDirection(), viewport_camera_comp.Up)) * viewport_transform_comp.GetDirection()));
+                viewport_transform_comp.SetDirection(glm::normalize(glm::angleAxis(x_angle_offset, viewport_camera_comp.GetUpAxis()) * viewport_transform_comp.GetDirection()));
+                float pitch_angle = glm::half_pi<float>() - glm::angle(viewport_transform_comp.GetDirection(), viewport_camera_comp.GetUpAxis());
+                float y_angle_offset = glm::clamp(-offset.y + pitch_angle, -glm::half_pi<float>() + viewport_camera_comp.GetUpAxisAngleEpsilon(), glm::half_pi<float>() - viewport_camera_comp.GetUpAxisAngleEpsilon()) - pitch_angle;
+                viewport_transform_comp.SetDirection(glm::normalize(glm::angleAxis(y_angle_offset, glm::cross(viewport_transform_comp.GetDirection(), viewport_camera_comp.GetUpAxis())) * viewport_transform_comp.GetDirection()));
 
                 _CursorMoveDistance = GlmVec2::CreateZero();
             }
@@ -259,7 +259,7 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
                 {
                     ImGuizmo::SetDrawlist();
 
-                    ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, viewport_camera_comp.ViewportSize.x, viewport_camera_comp.ViewportSize.y);
+                    ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, viewport_camera_comp.GetViewportSize().x, viewport_camera_comp.GetViewportSize().y);
                     glm::mat4 view_mat = viewport_camera_comp.GenerateViewMat4(viewport_transform_comp.GetPosition(), viewport_transform_comp.GetDirection());
                     glm::mat4 proj_mat = viewport_camera_comp.GenerateProjectiveMat4();
 
@@ -323,17 +323,7 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
                             default:
                                 break;
                         }
-                        if(!description.empty())
-                        {
-                            MementoList::Instance()
-                                .Snapshot<TransformComponent>(
-                                    std::format("{} - {}", "Transform", description),
-                                    [&]() -> TransformComponent&
-                            {
-                                return scene_sptr->GetComponent<TransformComponent>(_SelectedEntityId);
-                            }
-                                );
-                        }
+                        (void) description;
                     }
                 }
             }
@@ -367,7 +357,7 @@ void Arcadia::ImguiWindowViewport::_OnProjectUnbuilt(Events::ProjectUnbuilt& e)
 
 void Arcadia::ImguiWindowViewport::_OnSceneActivated(Events::SceneActivated& e)
 {
-    const std::shared_ptr<Scene>& scene_sptr = e.Scene;
+    const std::shared_ptr<Scene>& scene_sptr = e.spScene;
     if(!scene_sptr->IsEntityNameUsed(_ViewportCameraEntityName))
     {
         EntityId entity_id = scene_sptr->CreateEntity(_ViewportCameraEntityName, "camera");

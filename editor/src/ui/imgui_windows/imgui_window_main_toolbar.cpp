@@ -2,7 +2,7 @@
 
 #include"core/event/event.hpp"
 #include"core/function.hpp"
-#include"core/memento/memento.hpp"
+#include"core/command/command.hpp"
 #include"resource/fonts/icon_header.hpp"
 
 #include"editor/editor_context.hpp"
@@ -29,12 +29,12 @@ void Arcadia::ImguiWindowMainToolbar::OnUpdate()
         | ImGuiWindowFlags_NoFocusOnAppearing;
     if(ImGui::BeginViewportSideBar("toolbar", ImGui::GetMainViewport(), ImGuiDir_Up, ImGui::GetFrameHeight(), window_flags))
     {
-        MementoList& memento_list = MementoList::Instance();
+        CommandList& cmd_list = CommandList::Instance();
 
         ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, glm::vec2{ 0,4 });
         if(ImGui::Button(ICON_FA_ARROW_CIRCLE_LEFT))
         {
-            memento_list.Undo();
+            cmd_list.Undo();
         }
         ImGui::SetItemTooltip(" Undo ");
         ImGui::SameLine();
@@ -43,13 +43,13 @@ void Arcadia::ImguiWindowMainToolbar::OnUpdate()
         //ImGui::SetNextItemWidth(1.f);
         if(ImGui::BeginCombo("##undo_list", nullptr, combo_flags))
         {
-            if(memento_list.GetSize())
+            if(cmd_list.GetSize())
             {
-                auto iter = memento_list.begin();
-                auto end = memento_list.end();
+                auto iter = cmd_list.begin();
+                auto end = cmd_list.end();
                 for(; iter != end; ++iter)
                 {
-                    if(memento_list.IsCurrent(iter))
+                    if(cmd_list.IsCurrent(iter))
                     {
                         ImGui::MenuItem(std::format("{} {}", ICON_FA_CHECK, iter->GetDescription()).c_str());
                     }
@@ -71,7 +71,7 @@ void Arcadia::ImguiWindowMainToolbar::OnUpdate()
         ImGui::SameLine();
         if(ImGui::Button(ICON_FA_ARROW_CIRCLE_RIGHT))
         {
-            memento_list.Redo();
+            cmd_list.Redo();
         }
         ImGui::SetItemTooltip(" Redo ");
 
@@ -100,7 +100,7 @@ void Arcadia::ImguiWindowMainToolbar::OnUpdate()
 
 void Arcadia::ImguiWindowMainToolbar::_OnSceneActivated(Events::SceneActivated& e)
 {
-    _SceneWeakPtr = e.Scene;
+    _SceneWeakPtr = e.spScene;
 }
 
 void Arcadia::ImguiWindowMainToolbar::_OnSceneDeactivated(Events::SceneDeactivated& e)

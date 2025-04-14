@@ -1,6 +1,7 @@
 #include "project.hpp"
 
 #include"core/assert.hpp"
+#include"core/command/command.hpp"
 #include"resource/components/camera_component.hpp"
 #include"resource/components/light_component.hpp"
 #include"resource/components/model_component.hpp"
@@ -69,7 +70,7 @@ void Arcadia::Project::SetActiveScene(const std::string& name)
 
     if(!is_same_scene)
     {
-        MementoList::Instance().Clear();
+        CommandList::Instance().Clear();
 
         if(_ActiveScene)
         {
@@ -82,35 +83,8 @@ void Arcadia::Project::SetActiveScene(const std::string& name)
         {
             _ActiveScene = SceneStorage.at(name);
 
-            // Snapshot the scene but not put it into memento list
-            _SnapshotEntities();
-
             EventQueue::Instance()
                 .Signal<Events::SceneActivated>(_ActiveScene);
         }
-    }
-}
-
-void Arcadia::Project::_SnapshotEntities()
-{
-    for(auto [entity, comp] : _ActiveScene->GetComponentView<CameraComponent>().each())
-    {
-        comp.Snapshot();
-    }
-    for(auto [entity, comp] : _ActiveScene->GetComponentView<LightComponent>().each())
-    {
-        comp.Snapshot();
-    }
-    for(auto [entity, comp] : _ActiveScene->GetComponentView<ModelComponent>().each())
-    {
-        comp.Snapshot();
-    }
-    for(auto [entity, comp] : _ActiveScene->GetComponentView<PhysicsComponent>().each())
-    {
-        comp.Snapshot();
-    }
-    for(auto [entity, comp] : _ActiveScene->GetComponentView<TransformComponent>().each())
-    {
-        comp.Snapshot();
     }
 }

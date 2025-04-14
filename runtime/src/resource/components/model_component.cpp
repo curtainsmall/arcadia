@@ -43,14 +43,6 @@ auto Arcadia::ModelComponent::ToJson() const -> nlohmann::json
     return json;
 }
 
-auto Arcadia::ModelComponent::OnSnapshot() const -> std::shared_ptr<MementoDataBase>
-{
-    return nullptr;
-}
-
-void Arcadia::ModelComponent::OnRestore(const std::shared_ptr<MementoDataBase>& sp_memento_data)
-{}
-
 auto Arcadia::ModelComponent::GetFilepath() const -> const std::filesystem::path&
 {
     return _Filepath;

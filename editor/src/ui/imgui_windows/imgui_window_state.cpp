@@ -10,7 +10,7 @@
 #include"ui/imgui_header.hpp"
 #include"ui/imgui_wrapper.hpp"
 
-void Arcadia::ImguiWindowStateScene::operator()(const Scene& scene)
+void Arcadia::ImguiWindowStateFunctor_Scene::operator()(const Scene& scene)
 {
     ImGui::Text(std::format("Entity Count: {}", scene.CountEntity([&](EntityId, const EntityInfo& info)->bool
     {
@@ -18,7 +18,7 @@ void Arcadia::ImguiWindowStateScene::operator()(const Scene& scene)
     })).c_str());
 }
 
-void Arcadia::ImguiWindowStateRenderer::operator()(const RendererInterface& renderer)
+void Arcadia::ImguiWindowStateFunctor_Renderer::operator()(const RendererInterface& renderer)
 {
     auto graphic_api_type_string = MatchVariant<std::string>(
         renderer.GetGraphicApiType(),
@@ -43,7 +43,7 @@ void Arcadia::ImguiWindowStateRenderer::operator()(const RendererInterface& rend
     }
 }
 
-void Arcadia::ImguiWindowStatePhysicsSimulator::operator()(PhysicsSimulator& physics_simulator)
+void Arcadia::ImguiWindowStateFunctor_PhysicsSimulator::operator()(PhysicsSimulator& physics_simulator)
 {
     const auto& physics_simulator_jph_body_id_storage = physics_simulator.GetJphBodyIdStorage();
     ImGui::Text(std::format("Body Count: {}", physics_simulator_jph_body_id_storage.size()).c_str());
@@ -125,7 +125,7 @@ void Arcadia::ImguiWindowState::OnUpdate()
         {
             if(scene)
             {
-                _ImguiWindowStateScene(*scene);
+                _ImguiWindowStateFunctor_Scene(*scene);
             }
             else
             {
@@ -137,7 +137,7 @@ void Arcadia::ImguiWindowState::OnUpdate()
         {
             if(renderer)
             {
-                _ImguiWindowStateRenderer(*renderer);
+                _ImguiWindowStateFunctor_Renderer(*renderer);
             }
             else
             {
@@ -149,7 +149,7 @@ void Arcadia::ImguiWindowState::OnUpdate()
         {
             if(physics_simualtor)
             {
-                _ImguiWindowStatePhysicsSimulator(*physics_simualtor);
+                _ImguiWindowStateFunctor_PhysicsSimulator(*physics_simualtor);
             }
             else
             {
@@ -170,7 +170,7 @@ void Arcadia::ImguiWindowState::_OnOpenImguiWindow(Events::OpenImguiWindow& e)
 
 void Arcadia::ImguiWindowState::_OnSceneActivated(Events::SceneActivated& e)
 {
-    _SceneWeakPtr = e.Scene;
+    _SceneWeakPtr = e.spScene;
 }
 
 void Arcadia::ImguiWindowState::_OnSceneDeactivated(Events::SceneDeactivated& e)

@@ -4,7 +4,6 @@
 #include<variant>
 
 #include"core/math.hpp"
-#include"core/memento/memento.hpp"
 #include"core/nlohmann_json_header.hpp"
 #include"platform/api_def.hpp"
 #include"resource/components/component_interface.hpp"
@@ -21,48 +20,131 @@ namespace Arcadia
     {
     public:
         auto operator==(const SpotLight&) const -> bool = default;
-    public:
-        glm::vec3 AttenuationCoefficients{ 1.f,.045f,.0075f };
-        glm::vec2 CutoffAngles{ glm::radians(30.f),glm::radians(32.f) };
-        glm::vec3 Color{ 1.f,1.f,1.f };
-        glm::vec3 AmbientStrength{ GlmVec3::CreateZero() };
-        glm::vec3 DiffuseStrength{ 5.f,5.f,5.f };
-        glm::vec3 SepcularStrength{ GlmVec3::CreateZero() };
+
+        [[nodiscard]]
+        auto GetAttenuationCoefficients() const -> const glm::vec3&;
+        void SetAttenuationCoefficients(const glm::vec3& coeffs);
+
+        [[nodiscard]]
+        auto GetCutoffAngles() const -> const glm::vec2&;
+        void SetCutoffAngles(const glm::vec2& angles);
+
+        [[nodiscard]]
+        auto GetColor() const -> const glm::vec3&;
+        void SetColor(const glm::vec3& color);
+
+        [[nodiscard]]
+        auto GetAmbientStrength() const -> const glm::vec3&;
+        void SetAmbientStrength(const glm::vec3& strength);
+
+        [[nodiscard]]
+        auto GetDiffuseStrength() const -> const glm::vec3;
+        void SetDiffuseStrength(const glm::vec3& strength);
+
+        [[nodiscard]]
+        auto GetSpecularStrength() const -> const glm::vec3&;
+        void SetSpecularStrength(const glm::vec3& strength);
+
+
+    private:
+        glm::vec3 _AttenuationCoefficients{ 1.f,.045f,.0075f };
+        glm::vec2 _CutoffAngles{ glm::radians(30.f),glm::radians(32.f) };
+        glm::vec3 _Color{ 1.f,1.f,1.f };
+        glm::vec3 _AmbientStrength{ GlmVec3::CreateZero() };
+        glm::vec3 _DiffuseStrength{ 5.f,5.f,5.f };
+        glm::vec3 _SpecularStrength{ GlmVec3::CreateZero() };
     };
 
     class DirectLight
     {
     public:
         auto operator==(const DirectLight&) const -> bool = default;
-    public:
-        glm::vec3 Color{ 1.f,1.f,1.f };
-        glm::vec3 AmbientStrength{ GlmVec3::CreateZero() };
-        glm::vec3 DiffuseStrength{ 5.f,5.f,5.f };
-        glm::vec3 SepcularStrength{ GlmVec3::CreateZero() };
+
+        [[nodiscard]]
+        auto GetColor() const -> const glm::vec3&;
+        void SetColor(const glm::vec3& color);
+
+        [[nodiscard]]
+        auto GetAmbientStrength() const -> const glm::vec3&;
+        void SetAmbientStrength(const glm::vec3& strength);
+
+        [[nodiscard]]
+        auto GetDiffuseStrength() const -> const glm::vec3;
+        void SetDiffuseStrength(const glm::vec3& strength);
+
+        [[nodiscard]]
+        auto GetSpecularStrength() const -> const glm::vec3&;
+        void SetSpecularStrength(const glm::vec3& strength);
+    private:
+        glm::vec3 _Color{ 1.f,1.f,1.f };
+        glm::vec3 _AmbientStrength{ GlmVec3::CreateZero() };
+        glm::vec3 _DiffuseStrength{ 5.f,5.f,5.f };
+        glm::vec3 _SpecularStrength{ GlmVec3::CreateZero() };
     };
 
     class AreaLight
     {
     public:
         auto operator==(const AreaLight&) const -> bool = default;
-    public:
-        glm::vec2 Size{ GlmVec2::CreateZero() };
-        glm::vec3 Color{ 1.f,1.f,1.f };
-        glm::vec3 AmbientStrength{ GlmVec3::CreateZero() };
-        glm::vec3 DiffuseStrength{ 5.f,5.f,5.f };
-        glm::vec3 SepcularStrength{ GlmVec3::CreateZero() };
+
+        [[nodiscard]]
+        auto GetSize() const -> const glm::vec2&;
+        void SetSize(const glm::vec2& size);
+
+        [[nodiscard]]
+        auto GetColor() const -> const glm::vec3&;
+        void SetColor(const glm::vec3& color);
+
+        [[nodiscard]]
+        auto GetAmbientStrength() const -> const glm::vec3&;
+        void SetAmbientStrength(const glm::vec3& strength);
+
+        [[nodiscard]]
+        auto GetDiffuseStrength() const -> const glm::vec3;
+        void SetDiffuseStrength(const glm::vec3& strength);
+
+        [[nodiscard]]
+        auto GetSpecularStrength() const -> const glm::vec3&;
+        void SetSpecularStrength(const glm::vec3& strength);
+
+    private:
+        glm::vec2 _Size{ GlmVec2::CreateZero() };
+        glm::vec3 _Color{ 1.f,1.f,1.f };
+        glm::vec3 _AmbientStrength{ GlmVec3::CreateZero() };
+        glm::vec3 _DiffuseStrength{ 5.f,5.f,5.f };
+        glm::vec3 _SpecularStrength{ GlmVec3::CreateZero() };
     };
 
     class PointLight
     {
     public:
         auto operator==(const PointLight&) const -> bool = default;
-    public:
-        glm::vec3 AttenuationCoefficients{ 1.f,.045f,.0075f };
-        glm::vec3 Color{ 1.f,1.f,1.f };
-        glm::vec3 AmbientStrength{ GlmVec3::CreateZero() };
-        glm::vec3 DiffuseStrength{ 5.f,5.f,5.f };
-        glm::vec3 SepcularStrength{ GlmVec3::CreateZero() };
+
+        [[nodiscard]]
+        auto GetAttenuationCoefficients() const -> const glm::vec3&;
+        void SetAttenuationCoefficients(const glm::vec3& coeffs);
+
+        [[nodiscard]]
+        auto GetColor() const -> const glm::vec3&;
+        void SetColor(const glm::vec3& color);
+
+        [[nodiscard]]
+        auto GetAmbientStrength() const -> const glm::vec3&;
+        void SetAmbientStrength(const glm::vec3& strength);
+
+        [[nodiscard]]
+        auto GetDiffuseStrength() const -> const glm::vec3;
+        void SetDiffuseStrength(const glm::vec3& strength);
+
+        [[nodiscard]]
+        auto GetSpecularStrength() const -> const glm::vec3&;
+        void SetSpecularStrength(const glm::vec3& strength);
+    private:
+        glm::vec3 _AttenuationCoefficients{ 1.f,.045f,.0075f };
+        glm::vec3 _Color{ 1.f,1.f,1.f };
+        glm::vec3 _AmbientStrength{ GlmVec3::CreateZero() };
+        glm::vec3 _DiffuseStrength{ 5.f,5.f,5.f };
+        glm::vec3 _SpecularStrength{ GlmVec3::CreateZero() };
     };
 
     using LightType = std::variant<
@@ -73,17 +155,8 @@ namespace Arcadia
         PointLight
     >;
 
-    class LightComponentMementoData: public MementoDataBase
-    {
-    public:
-        auto operator==(const LightComponentMementoData&) const -> bool = default;
-    public:
-        LightType Light{};
-    };
-
     class LightComponent:
-        public ComponentInterface,
-        public MementoOriginatorInterface
+        public ComponentInterface
     {
     public:
         using SelfType = LightComponent;
@@ -96,12 +169,19 @@ namespace Arcadia
         [[nodiscard]]
         auto ToJson() const->nlohmann::json;
 
-    protected:
         [[nodiscard]]
-        virtual auto OnSnapshot() const->std::shared_ptr<MementoDataBase> override;
-        virtual void OnRestore(const std::shared_ptr<MementoDataBase>& sp_memento_data) override;
+        auto GetLight() const -> const LightType&;
+        [[nodiscard]]
+        auto GetLight() -> LightType&;
+        void SetLight(const LightType& light);
 
-    public:
-        LightType Light{ NullLight{} };
+        template<typename Light, typename ...Args>
+        void SetLight(Args&& ...args)
+        {
+            _Light = Light(std::forward<Args>(args)...);
+        }
+
+    private:
+        LightType _Light{ NullLight{} };
     };
 }

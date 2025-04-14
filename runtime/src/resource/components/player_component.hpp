@@ -1,15 +1,12 @@
 #pragma once
 
-#include"core/memento/memento.hpp"
 #include"core/nlohmann_json_header.hpp"
 #include"platform/api_def.hpp"
 #include"resource/components/component_interface.hpp"
 
 namespace Arcadia
 {
-    class PlayerComponent:
-        public ComponentInterface,
-        public MementoOriginatorInterface
+    class PlayerComponent: public ComponentInterface
     {
     public:
         using SelfType = PlayerComponent;
@@ -22,9 +19,5 @@ namespace Arcadia
         [[nodiscard]]
         auto ToJson() const->nlohmann::json;
 
-    protected:
-        [[nodiscard]]
-        virtual auto OnSnapshot() const->std::shared_ptr<MementoDataBase> override;
-        virtual void OnRestore(const std::shared_ptr<MementoDataBase>& memento_data) override;
     };
 }

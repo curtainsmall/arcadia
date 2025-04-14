@@ -9,7 +9,7 @@
 
 #include"ui/ui_events.hpp"
 
-void Arcadia::ImguiWindowPopupCreateProject::operator()()
+void Arcadia::ImguiWindowPopupFunctor_CreateProject::operator()()
 {
     if(!Opened)
     {
@@ -73,7 +73,7 @@ void Arcadia::ImguiWindowPopupCreateProject::operator()()
     }
 }
 
-void Arcadia::ImguiWindowPopupCreateScene::operator()(const std::shared_ptr<const Project>& project)
+void Arcadia::ImguiWindowPopupFunctor_CreateScene::operator()(const std::shared_ptr<const Project>& project)
 {
     if(!Opened)
     {
@@ -161,12 +161,12 @@ void Arcadia::ImguiWindowMainMenubar::_ShowFileMenu()
 
     EventQueue& event_queue = EventQueue::Instance();
 
-    _ImguiWindowPopupCreateProject();
+    _ImguiWindowPopupFunctor_CreateProject();
     if(ImGui::BeginMenu("File"))
     {
         if(ImGui::MenuItem("New Project..."))
         {
-            _ImguiWindowPopupCreateProject.Opened = true;
+            _ImguiWindowPopupFunctor_CreateProject.Opened = true;
         }
         if(ImGui::MenuItem("Open Project..."))
         {
@@ -195,14 +195,14 @@ void Arcadia::ImguiWindowMainMenubar::_ShowEditMenu()
 
     if(project_uptr)
     {
-        _ImguiWindowPopupCreateScene(project_uptr);
+        _ImguiWindowPopupFunctor_CreateScene(project_uptr);
     }
     EventQueue& event_queue = EventQueue::Instance();
     if(ImGui::BeginMenu("Edit"))
     {
         if(ImGui::MenuItem("New Scene ...", nullptr, nullptr, !!project_uptr))
         {
-            _ImguiWindowPopupCreateProject.Opened = true;
+            _ImguiWindowPopupFunctor_CreateProject.Opened = true;
         }
 
         bool has_scene = project_uptr && project_uptr->SceneStorage.size();

@@ -47,7 +47,14 @@ namespace Arcadia
         [[nodiscard]]
         static auto Instance() -> SelfType&;
 
+        // The latest command is emplaced at the begin of the deque
         void Emplace(
+            const std::string& description,
+            const FunctionType& execute_fn,
+            const FunctionType& unexecute_fn
+        );
+
+        void EmplaceAndExecute(
             const std::string& description,
             const FunctionType& execute_fn,
             const FunctionType& unexecute_fn
@@ -66,9 +73,29 @@ namespace Arcadia
 
         void Clear();
 
+        [[nodiscard]]
+        auto IsCurrent(const ContainerType::const_iterator& iter) const -> bool;
+
+        [[nodiscard]]
+        auto begin() noexcept -> ContainerType::iterator;
+        [[nodiscard]]
+        auto end() noexcept -> ContainerType::iterator;
+
+        [[nodiscard]]
+        auto begin() const noexcept->ContainerType::const_iterator;
+        [[nodiscard]]
+        auto end() const noexcept->ContainerType::const_iterator;
+
+        [[nodiscard]]
+        auto cbegin() const noexcept->ContainerType::const_iterator;
+        [[nodiscard]]
+        auto cend() const noexcept->ContainerType::const_iterator;
+
     private:
         std::size_t _MaxSize{ 40 };
         ContainerType _Container{};
-        ContainerType::iterator _CurrentIterator{};
+        ContainerType::iterator _CurrentIterator{ _Container.end() };
     };
+
+
 }

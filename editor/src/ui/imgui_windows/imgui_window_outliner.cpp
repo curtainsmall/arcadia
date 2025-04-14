@@ -108,6 +108,7 @@ void Arcadia::ImguiWindowOutliner::OnUpdate()
                 // Display selectable
                 else
                 {
+                    // Internal entity will not be displayed, and thus not be selectable
                     if(entity_info.Internal)
                     {
                         continue;
@@ -136,7 +137,7 @@ void Arcadia::ImguiWindowOutliner::OnUpdate()
                             event_queue.Signal<Events::DeleteEntity>(entity_id);
                         }
 
-#if 0 // We do not allow custom entity for now
+                    #if 0 // We do not allow custom entity for now
                         if(!_SelectedEntityId.empty())
                         {
                             ImGui::Separator();
@@ -171,7 +172,7 @@ void Arcadia::ImguiWindowOutliner::OnUpdate()
                                 ImGui::EndMenu();
                             }
                         }
-#endif
+                    #endif
 
                         ImGui::EndPopup();
                     }
@@ -192,7 +193,7 @@ void Arcadia::ImguiWindowOutliner::_OnOpenImguiWindow(Events::OpenImguiWindow& e
 
 void Arcadia::ImguiWindowOutliner::_OnSceneActivated(Events::SceneActivated& e)
 {
-    _SceneWeakPtr = e.Scene;
+    _SceneWeakPtr = e.spScene;
 }
 
 void Arcadia::ImguiWindowOutliner::_OnSceneDeactivated(Events::SceneDeactivated& e)

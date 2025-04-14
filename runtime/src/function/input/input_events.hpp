@@ -71,7 +71,7 @@ namespace Arcadia
         Right            = GLFW_KEY_RIGHT,
         Left             = GLFW_KEY_LEFT,
         Down             = GLFW_KEY_DOWN,
-        Up               = GLFW_KEY_UP,
+        _UpAxis               = GLFW_KEY_UP,
         PageUp           = GLFW_KEY_PAGE_UP,
         PageDown         = GLFW_KEY_PAGE_DOWN,
         Home             = GLFW_KEY_HOME,

@@ -10,7 +10,7 @@
 #include"resource/components/physics_component.hpp"
 #include"resource/components/transform_component.hpp"
 
-Arcadia::Scene::Scene(const nlohmann::json& json) :
+Arcadia::Scene::Scene(const nlohmann::json& json):
     _Name(json.at("name"))
 {
     const nlohmann::json& json_entities = json.at("entities");
@@ -32,27 +32,27 @@ Arcadia::Scene::Scene(const nlohmann::json& json) :
                 ModelComponent::GetTypeStringStatic(),
                 [&]()
             {
-                EmplaceComponent<ModelComponent>(entity_id, json_comp).Snapshot();
+                EmplaceComponent<ModelComponent>(entity_id, json_comp);
             },
                 LightComponent::GetTypeStringStatic(),
                 [&]()
             {
-                EmplaceComponent<LightComponent>(entity_id, json_comp).Snapshot();
+                EmplaceComponent<LightComponent>(entity_id, json_comp);
             },
                 CameraComponent::GetTypeStringStatic(),
                 [&]()
             {
-                EmplaceComponent<CameraComponent>(entity_id, json_comp).Snapshot();
+                EmplaceComponent<CameraComponent>(entity_id, json_comp);
             },
                 PhysicsComponent::GetTypeStringStatic(),
                 [&]()
             {
-                EmplaceComponent<PhysicsComponent>(entity_id, json_comp).Snapshot();
+                EmplaceComponent<PhysicsComponent>(entity_id, json_comp);
             },
                 TransformComponent::GetTypeStringStatic(),
                 [&]()
             {
-                EmplaceComponent<TransformComponent>(entity_id, json_comp).Snapshot();
+                EmplaceComponent<TransformComponent>(entity_id, json_comp);
             }
             );
         }
@@ -199,7 +199,7 @@ auto Arcadia::Scene::IsEntityNameUsed(const std::string& entity_name) const -> b
     return _EntityNameToEntityIdLookupMap.contains(entity_name);
 }
 
-auto Arcadia::Scene::GetEntitIdByName(const std::string& entity_name) const -> EntityId
+auto Arcadia::Scene::GetEntityIdByName(const std::string& entity_name) const -> EntityId
 {
     return _EntityNameToEntityIdLookupMap.at(entity_name);
 }

@@ -6,7 +6,8 @@
 
 namespace Arcadia
 {
-    class SkyboxComponent: ComponentInterface
+    class SkyboxComponent:
+        public ComponentInterface
     {
     public:
         using SelfType = SkyboxComponent;
@@ -15,7 +16,12 @@ namespace Arcadia
 
         SkyboxComponent() = default;
         ~SkyboxComponent() = default;
-    public:
-        Cubemap Cubemap{};
+
+        [[nodiscard]]
+        auto GetCubemap() const -> const Cubemap&;
+        void SetCubemap(const Cubemap& cubemap);
+
+    private:
+        Cubemap _Cubemap{};
     };
 }

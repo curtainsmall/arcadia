@@ -9,7 +9,6 @@
 #include"core/exception.hpp"
 #include"core/identifiable.hpp"
 #include"core/math.hpp"
-#include"core/memento/memento.hpp"
 #include"core/nlohmann_json_header.hpp"
 #include"platform/api_def.hpp"
 #include"resource/components/component_interface.hpp"
@@ -23,8 +22,7 @@ namespace Arcadia
     }
 
     class ModelComponent:
-        public ComponentInterface,
-        public MementoOriginatorInterface
+        public ComponentInterface
     {
     public:
         using IdentifiableMeshesType = Identifiable<std::vector<Mesh>>;
@@ -54,11 +52,6 @@ namespace Arcadia
         void UnloadModel();
         [[nodiscard]]
         auto IsModelLoaded() const -> bool;
-
-    protected:
-        [[nodiscard]]
-        virtual auto OnSnapshot() const->std::shared_ptr<MementoDataBase> override;
-        virtual void OnRestore(const std::shared_ptr<MementoDataBase>& memento_data) override;
 
     private:
         void _LoadModel();

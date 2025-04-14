@@ -3,7 +3,7 @@
 #include"core/event/event.hpp"
 #include"core/math.hpp"
 
-class GLFWmonitor;
+struct GLFWmonitor;
 
 namespace Arcadia
 {

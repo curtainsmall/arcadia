@@ -97,24 +97,24 @@ void Arcadia::GlRenderer::Submit(const Scene& scene, EntityId entity_id)
 
         _GlRenderUnitCameras.emplace_back(
             GlFramebuffer{
-                camera_comp.ViewportSize,
-                camera_comp.NearPlane,
-                camera_comp.FarPlane
+                camera_comp.GetViewportSize(),
+                camera_comp.GetNearPlane(),
+                camera_comp.GetFarPlane()
             },
-            camera_comp.ViewportSize,
+            camera_comp.GetViewportSize(),
             camera_comp.GenerateViewMat4(transform_comp.GetPosition(), transform_comp.GetDirection()),
             camera_comp.GenerateProjectiveMat4(),
             transform_comp.GetPosition(),
-            camera_comp.ShouldDisplayGrid,
-            camera_comp.NearPlane,
-            camera_comp.FarPlane
+            camera_comp.IsGridDisplaying(),
+            camera_comp.GetNearPlane(),
+            camera_comp.GetFarPlane()
         );
     },
         "light",
         [&]()
     {
         const auto& [light_comp, transform_comp] = scene.GetComponent<LightComponent, TransformComponent>(entity_id);
-        _GlRenderUnitLights.emplace_back(transform_comp.GetPosition(), transform_comp.GetPosition(), light_comp.Light);
+        _GlRenderUnitLights.emplace_back(transform_comp.GetPosition(), transform_comp.GetPosition(), light_comp.GetLight());
     },
         "actor",
         [&]()
@@ -192,7 +192,7 @@ void Arcadia::GlRenderer::Submit(const Scene& scene, EntityId entity_id)
             gl_render_unit_physics_body_shape.TransformMatrix =
                 glm::translate(GlmMat4::CreateIdentity(), transform_comp.GetPosition())
                 * glm::mat4_cast(transform_comp.GetRotationQuaternion());
-            gl_render_unit_physics_body_shape.Color = physics_comp.BodyShapeColor;
+            gl_render_unit_physics_body_shape.Color = physics_comp.GetBodyShapeColor();
 
             _SubmittedPhysicsBodyShapeUuids.emplace(uuid);
         }
@@ -214,10 +214,10 @@ void Arcadia::GlRenderer::Draw()
 
         // Clear framebufers
         ACDA_GL_CALL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
-        ACDA_GL_CALL(glViewport(0, 0, gl_render_unit_camera.ViewportSize.x, gl_render_unit_camera.ViewportSize.y));
+        ACDA_GL_CALL(glViewport(0, 0, gl_render_unit_camera._ViewportSize.x, gl_render_unit_camera._ViewportSize.y));
 
         // Draw grid
-        if(gl_render_unit_camera.ShouldDisplayGrid)
+        if(gl_render_unit_camera._GridDisplaying)
         {
             std::vector<Vertex> grid_vertices{
                     Vertex{ glm::vec3{-1,1,0} },
@@ -235,8 +235,8 @@ void Arcadia::GlRenderer::Draw()
                 gl_grid_vertex_array,
                 gl_render_unit_camera.CameraViewMatrix,
                 gl_render_unit_camera.CameraProjectionMatrix,
-                gl_render_unit_camera.NearPlane,
-                gl_render_unit_camera.FarPlane);
+                gl_render_unit_camera._NearPlane,
+                gl_render_unit_camera._FarPlane);
         }
 
         // Lights
@@ -359,34 +359,43 @@ void Arcadia::GlRenderer::_DrawLights(
         {
             GLintptr base_offfset = light_count_size_aligned + light_count * light_t_size;
             gl_light_uniform_buffer.SetBufferSubData(base_offfset + 0, sizeof(int), &light_type_spot);
-            float cosine_inner_cutoff_angle = glm::cos(light.CutoffAngles.x);
-            float cosine_outer_cutoff_angle = glm::cos(light.CutoffAngles.y);
+            float cosine_inner_cutoff_angle = glm::cos(light.GetCutoffAngles().x);
+            float cosine_outer_cutoff_angle = glm::cos(light.GetCutoffAngles().y);
+            glm::vec3 attenuation_coeffs = light.GetAttenuationCoefficients();
+            glm::vec3 color = light.GetColor();
+            glm::vec3 ambient = light.GetAmbientStrength();
+            glm::vec3 diffuse = light.GetDiffuseStrength();
+            glm::vec3 specular = light.GetSpecularStrength();
             gl_light_uniform_buffer
                 .SetBufferSubData(base_offfset + 4, sizeof(float), &cosine_inner_cutoff_angle)
                 .SetBufferSubData(base_offfset + 8, sizeof(float), &cosine_outer_cutoff_angle)
-                .SetBufferSubData(base_offfset + 16, sizeof(glm::vec3), &gl_render_unit_light.Position)
-                .SetBufferSubData(base_offfset + 32, sizeof(glm::vec3), &gl_render_unit_light.Direction)
-                .SetBufferSubData(base_offfset + 48, sizeof(glm::vec3), &light.AttenuationCoefficients)
-                .SetBufferSubData(base_offfset + 64, sizeof(glm::vec3), &light.Color)
-                .SetBufferSubData(base_offfset + 80, sizeof(glm::vec3), &light.AmbientStrength)
-                .SetBufferSubData(base_offfset + 96, sizeof(glm::vec3), &light.DiffuseStrength)
-                .SetBufferSubData(base_offfset + 112, sizeof(glm::vec3), &light.SepcularStrength);
+                .SetBufferSubData(base_offfset + 16, sizeof(glm::vec3), glm::value_ptr(gl_render_unit_light.Position))
+                .SetBufferSubData(base_offfset + 32, sizeof(glm::vec3), glm::value_ptr(gl_render_unit_light.Direction))
+                .SetBufferSubData(base_offfset + 48, sizeof(glm::vec3), glm::value_ptr(attenuation_coeffs))
+                .SetBufferSubData(base_offfset + 64, sizeof(glm::vec3), glm::value_ptr(color))
+                .SetBufferSubData(base_offfset + 80, sizeof(glm::vec3), glm::value_ptr(ambient))
+                .SetBufferSubData(base_offfset + 96, sizeof(glm::vec3), glm::value_ptr(diffuse))
+                .SetBufferSubData(base_offfset + 112, sizeof(glm::vec3), glm::value_ptr(specular));
             ++light_count;
 
             _GlShapePipeline
                 .SetUniform("u_transform_mat", glm::translate(GlmMat4::CreateIdentity(), gl_render_unit_light.Position))
-                .SetUniform("u_color", light.Color);
+                .SetUniform("u_color", light.GetColor());
         },
             [&](const DirectLight& light)
         {
             GLintptr base_offfset = light_count_size_aligned + light_count * light_t_size;
+            glm::vec3 color = light.GetColor();
+            glm::vec3 ambient = light.GetAmbientStrength();
+            glm::vec3 diffuse = light.GetDiffuseStrength();
+            glm::vec3 specular = light.GetSpecularStrength();
             gl_light_uniform_buffer
                 .SetBufferSubData(base_offfset + 0, sizeof(int), &light_type_direct)
-                .SetBufferSubData(base_offfset + 32, sizeof(glm::vec3), &gl_render_unit_light.Direction)
-                .SetBufferSubData(base_offfset + 64, sizeof(glm::vec3), &light.Color)
-                .SetBufferSubData(base_offfset + 80, sizeof(glm::vec3), &light.AmbientStrength)
-                .SetBufferSubData(base_offfset + 96, sizeof(glm::vec3), &light.DiffuseStrength)
-                .SetBufferSubData(base_offfset + 112, sizeof(glm::vec3), &light.SepcularStrength);
+                .SetBufferSubData(base_offfset + 32, sizeof(glm::vec3), glm::value_ptr(gl_render_unit_light.Direction))
+                .SetBufferSubData(base_offfset + 64, sizeof(glm::vec3), glm::value_ptr(color))
+                .SetBufferSubData(base_offfset + 80, sizeof(glm::vec3), glm::value_ptr(ambient))
+                .SetBufferSubData(base_offfset + 96, sizeof(glm::vec3), glm::value_ptr(diffuse))
+                .SetBufferSubData(base_offfset + 112, sizeof(glm::vec3), glm::value_ptr(specular));
             ++light_count;
         },
             [&](const AreaLight& light)
@@ -394,19 +403,24 @@ void Arcadia::GlRenderer::_DrawLights(
             [&](const PointLight& light)
         {
             GLintptr base_offfset = light_count_size_aligned + light_count * light_t_size;
+            glm::vec3 attenuation_coeffs = light.GetAttenuationCoefficients();
+            glm::vec3 color = light.GetColor();
+            glm::vec3 ambient = light.GetAmbientStrength();
+            glm::vec3 diffuse = light.GetDiffuseStrength();
+            glm::vec3 specular = light.GetSpecularStrength();
             gl_light_uniform_buffer
                 .SetBufferSubData(base_offfset + 0, sizeof(int), &light_type_point)
-                .SetBufferSubData(base_offfset + 16, sizeof(glm::vec3), &gl_render_unit_light.Position)
-                .SetBufferSubData(base_offfset + 48, sizeof(glm::vec3), &light.AttenuationCoefficients)
-                .SetBufferSubData(base_offfset + 64, sizeof(glm::vec3), &light.Color)
-                .SetBufferSubData(base_offfset + 80, sizeof(glm::vec3), &light.AmbientStrength)
-                .SetBufferSubData(base_offfset + 96, sizeof(glm::vec3), &light.DiffuseStrength)
-                .SetBufferSubData(base_offfset + 112, sizeof(glm::vec3), &light.SepcularStrength);
+                .SetBufferSubData(base_offfset + 16, sizeof(glm::vec3), glm::value_ptr(gl_render_unit_light.Position))
+                .SetBufferSubData(base_offfset + 48, sizeof(glm::vec3), glm::value_ptr(attenuation_coeffs))
+                .SetBufferSubData(base_offfset + 64, sizeof(glm::vec3), glm::value_ptr(color))
+                .SetBufferSubData(base_offfset + 80, sizeof(glm::vec3), glm::value_ptr(ambient))
+                .SetBufferSubData(base_offfset + 96, sizeof(glm::vec3), glm::value_ptr(diffuse))
+                .SetBufferSubData(base_offfset + 112, sizeof(glm::vec3), glm::value_ptr(specular));
             ++light_count;
 
             _GlShapePipeline
                 .SetUniform("u_transform_mat", glm::translate(GlmMat4::CreateIdentity(), gl_render_unit_light.Position))
-                .SetUniform("u_color", light.Color);
+                .SetUniform("u_color", light.GetColor());
         }
         );
 

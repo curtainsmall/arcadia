@@ -14,10 +14,10 @@
 
 namespace Arcadia
 {
-    class ImguiWindowPopupCreateProject
+    class ImguiWindowPopupFunctor_CreateProject
     {
     public:
-        using SelfType = ImguiWindowPopupCreateProject;
+        using SelfType = ImguiWindowPopupFunctor_CreateProject;
     public:
         void operator()();
     public:
@@ -28,10 +28,10 @@ namespace Arcadia
         bool _ShouldShowEmptyNameWarning{ true };
     };
 
-    class ImguiWindowPopupCreateScene
+    class ImguiWindowPopupFunctor_CreateScene
     {
     public:
-        using SelfType = ImguiWindowPopupCreateScene;
+        using SelfType = ImguiWindowPopupFunctor_CreateScene;
     public:
         void operator()(const std::shared_ptr<const Project>& project);
     public:
@@ -67,8 +67,8 @@ namespace Arcadia
         void _OnProjectUnbuilt(Events::ProjectUnbuilt& e);
 
     private:
-        ImguiWindowPopupCreateProject _ImguiWindowPopupCreateProject{};
-        ImguiWindowPopupCreateScene _ImguiWindowPopupCreateScene{};
+        ImguiWindowPopupFunctor_CreateProject _ImguiWindowPopupFunctor_CreateProject{};
+        ImguiWindowPopupFunctor_CreateScene _ImguiWindowPopupFunctor_CreateScene{};
 
         std::weak_ptr<const Project> _Project{};
 

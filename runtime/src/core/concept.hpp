@@ -1,6 +1,7 @@
 #pragma once
 
 #include<tuple>
+#include<variant>
 
 namespace Arcadia
 {
@@ -27,4 +28,16 @@ namespace Arcadia
         template<typename T, typename Tuple>
         concept TupleContainsType = IsTypeInTuple<T, Tuple>;
     }
+
+    template<typename, typename ...>
+    constexpr bool IsTypeInVariant = false;
+
+    template<typename T, typename ...Args>
+    constexpr bool IsTypeInVariant<T, std::variant<Args...>> = (std::is_same_v<T, Args> || ...);
+
+    namespace Concepts
+    {
+        template<typename T, typename Variant>
+        concept VariantContainsType = IsTypeInVariant<T, Variant>;
+    };
 }

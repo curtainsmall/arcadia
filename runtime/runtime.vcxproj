@@ -138,6 +138,7 @@
     <ClCompile Include="src\resource\components\model_component.cpp" />
     <ClCompile Include="src\resource\components\physics_component.cpp" />
     <ClCompile Include="src\resource\components\player_component.cpp" />
+    <ClCompile Include="src\resource\components\skybox_component.cpp" />
     <ClCompile Include="src\resource\components\transform_component.cpp" />
     <ClCompile Include="src\resource\material\texture2d.cpp" />
     <ClCompile Include="src\resource\mesh\mesh.cpp" />

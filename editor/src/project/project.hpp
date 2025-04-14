@@ -20,7 +20,7 @@ namespace Arcadia
     public:
         inline Project(
             std::string name
-        ) :
+        ):
             _Name(name)
         {}
         Project(nlohmann::json& json);
@@ -40,7 +40,6 @@ namespace Arcadia
         auto GetActiveScene() const -> const Scene&;
         void SetActiveScene(const std::string& name={});
 
-        void _SnapshotEntities();
     public:
         static inline std::string ProjectExtensionString{ ".arcadia" };
 

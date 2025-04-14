@@ -2,6 +2,7 @@
 
 #include"core/app/app_config.hpp"
 #include"core/assert.hpp"
+#include"core/command/command.hpp"
 #include"core/enum.hpp"
 #include"core/file/file.hpp"
 #include"core/file/pfd_header.hpp"
@@ -9,7 +10,6 @@
 #include"core/hash.hpp"
 #include"core/log/log.hpp"
 #include"core/match.hpp"
-#include"core/memento/memento.hpp"
 #include"function/render/opengl/gl_renderer.hpp"
 #include"function/window/window_events.hpp"
 #include"resource/components/camera_component.hpp"
@@ -106,8 +106,8 @@ void Arcadia::ProjectLayer::_OnWindowShouldClose(Events::WindowShouldClose& e)
 
     if(e.Window == main_window_layer_sptr.get() && _ProjectSharedPtr)
     {
-        MementoList& memento_list = MementoList::Instance();
-        if(memento_list.GetSize())
+        CommandList& cmd_list = CommandList::Instance();
+        if(cmd_list.GetSize())
         {
             pfd::button res = pfd::message{
                 "Unsaved",
@@ -288,8 +288,8 @@ void Arcadia::ProjectLayer::_OnCloseProject(Events::CloseProject& e)
 
     EventQueue& event_queue = EventQueue::Instance();
 
-    MementoList& memento_list = MementoList::Instance();
-    if(memento_list.GetSize())
+    CommandList& cmd_list = CommandList::Instance();
+    if(cmd_list.GetSize())
     {
         pfd::button res = pfd::message{
                         "Unsaved",
@@ -330,7 +330,7 @@ void Arcadia::ProjectLayer::_OnCloseProject(Events::CloseProject& e)
 
 void Arcadia::ProjectLayer::_OnProjectSaved(Events::ProjectSaved& e)
 {
-    MementoList::Instance().Clear();
+    CommandList::Instance().Clear();
 }
 
 void Arcadia::ProjectLayer::_OnCreateScene(Events::CreateScene& e)
@@ -409,30 +409,27 @@ void Arcadia::ProjectLayer::_OnNewEntity(Events::NewEntity& e)
         std::string("actor"),
         [&]()
     {
-        scene.EmplaceComponent<ModelComponent>(entity_id).Snapshot();
+        scene.EmplaceComponent<ModelComponent>(entity_id);
 
-        scene.EmplaceComponent<PhysicsComponent>(entity_id).Snapshot();
+        scene.EmplaceComponent<PhysicsComponent>(entity_id);
 
         TransformComponent& transform_comp =  scene.EmplaceComponent<TransformComponent>(entity_id);
-        transform_comp.Snapshot();
         transform_comp.AddFlag(TransformComponentFlags::UseRotation);
     },
         std::string("camera"),
         [&]()
     {
-        scene.EmplaceComponent<CameraComponent>(entity_id).Snapshot();
+        scene.EmplaceComponent<CameraComponent>(entity_id);
 
         TransformComponent& transform_comp = scene.EmplaceComponent<TransformComponent>(entity_id);
-        transform_comp.Snapshot();
         transform_comp.AddFlag(TransformComponentFlags::UseDirection);
     },
         std::string("light"),
         [&]()
     {
-        scene.EmplaceComponent<LightComponent>(entity_id).Snapshot();
+        scene.EmplaceComponent<LightComponent>(entity_id);
 
         TransformComponent& transform_comp = scene.EmplaceComponent<TransformComponent>(entity_id);
-        transform_comp.Snapshot();
         transform_comp.AddFlag(TransformComponentFlags::UseDirection);
     }
     );

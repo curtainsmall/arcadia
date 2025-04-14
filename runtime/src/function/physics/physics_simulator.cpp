@@ -159,10 +159,11 @@ void Arcadia::PhysicsSimulator::Query(Scene& scene, EntityId entity_id)
         const JPH::BodyInterface& jph_body_interface = _JphPhysicsSystemUniquePtr->GetBodyInterface();
         const JPH::BodyID& body_id = _JphBodyIdStorage.at(uuid);
 
-        JphBodyState& jph_body_state = physics_comp.JphBodyState;
+        JphBodyState jph_body_state = physics_comp.GetBodyState();
         jph_body_state.Active = jph_body_interface.IsActive(body_id);
         jph_body_state.LinearVelocity = FromJphVec3(jph_body_interface.GetLinearVelocity(body_id));
         jph_body_state.AngularVelocity = FromJphVec3(jph_body_interface.GetAngularVelocity(body_id));
+        physics_comp.SetBodyState(jph_body_state);
 
         transform_comp.SetPosition(FromJphVec3(jph_body_interface.GetPosition(body_id)));
         transform_comp.SetRotationQuaternion(FromJphQuat(jph_body_interface.GetRotation(body_id)));

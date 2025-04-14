@@ -9,11 +9,3 @@ auto Arcadia::PlayerComponent::ToJson() const -> nlohmann::json
 {
     return nlohmann::json();
 }
-
-auto Arcadia::PlayerComponent::OnSnapshot() const -> std::shared_ptr<MementoDataBase>
-{
-    return std::shared_ptr<MementoDataBase>();
-}
-
-void Arcadia::PlayerComponent::OnRestore(const std::shared_ptr<MementoDataBase>& memento_data)
-{}
