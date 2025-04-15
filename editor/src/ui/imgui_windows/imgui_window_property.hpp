@@ -19,9 +19,9 @@
 #include"resource/components/transform_component.hpp"
 #include"resource/scene.hpp"
 
+#include"project/project_events.hpp"
 #include"ui/imgui_header.hpp"
 #include"ui/imgui_window.hpp"
-#include"project/project_events.hpp"
 #include"ui/ui_events.hpp"
 
 namespace Arcadia
@@ -80,6 +80,7 @@ namespace Arcadia
     private:
         glm::vec3 _TempAttenuationCoefficients{};
         glm::vec2 _TempCutoffAngle{};
+        glm::vec2 _TempSize{};
         glm::vec3 _TempColor{};
         glm::vec3 _TempAmbientStrength{};
         glm::vec3 _TempDiffuseStrength{};
@@ -143,7 +144,7 @@ namespace Arcadia
         inline ImguiWindowProperty(
             bool open,
             const std::string& title
-        ):
+        ) :
             ImguiWindowInterface(open, title)
         {}
         virtual ~ImguiWindowProperty() = default;

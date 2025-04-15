@@ -4,11 +4,11 @@
 #include<string>
 
 #include"core/assert.hpp"
+#include"core/command/command.hpp"
 #include"core/enum.hpp"
 #include"core/file/pfd_header.hpp"
 #include"core/function.hpp"
 #include"core/match.hpp"
-#include"core/command/command.hpp"
 #include"resource/fonts/icon_header.hpp"
 
 #include"ui/imgui_header.hpp"
@@ -178,22 +178,9 @@ void Arcadia::ImguiWindowPropertyFunctor_LightComponent::operator()(LightCompone
 
         glm::vec3 coeffs = light.GetAttenuationCoefficients();
         ImGui::DragFloat3("Attenuation Coefficients", glm::value_ptr(coeffs), speed, min, max, format, flags);
-        if(ImGui::IsItemDeactivatedAfterEdit())
-        {
-            glm::vec3 origin = light.GetAttenuationCoefficients();
-            CommandList::Instance().Emplace(
-                "[Spot Light] Attenuation Coefficients",
-                [&]() -> void
-            {
-                light.SetAttenuationCoefficients(coeffs);
-            },
-                [&]() -> void
-            {
-                light.SetAttenuationCoefficients(origin);
-            }
-            );
-        }
         light.SetAttenuationCoefficients(coeffs);
+        _ACDA_COMMAND_HELPER("[Spot Light] Attenuation", light, GetAttenuationCoefficients, SetAttenuationCoefficients, coeffs, _TempAttenuationCoefficients);
+
         ImGui::SameLine();
         ImguiWrappers::HelpMark(ICON_FA_QUESTION, "In order of constant, linear and quadratic terms");
 
@@ -202,99 +189,32 @@ void Arcadia::ImguiWindowPropertyFunctor_LightComponent::operator()(LightCompone
         const float cutoff_angle_max = 180.f;
         glm::vec2 cutoff = light.GetCutoffAngles();
         ImGui::DragFloat2("Cutoff Angle", glm::value_ptr(cutoff), cutoff_angle_drag_speend, cutoff_angle_min, cutoff_angle_max, format, flags);
-        if(ImGui::IsItemDeactivatedAfterEdit())
-        {
-            glm::vec2 origin = light.GetCutoffAngles();
-            CommandList::Instance().Emplace(
-                "[Spot Light] Cutoff Angle",
-                [&]() -> void
-            {
-                light.SetCutoffAngles(cutoff);
-            },
-                [&]() -> void
-            {
-                light.SetCutoffAngles(origin);
-            }
-            );
-        }
         light.SetCutoffAngles(cutoff);
+        _ACDA_COMMAND_HELPER("[Spot Light] Cutoff Angle", light, GetCutoffAngles, SetCutoffAngles, cutoff, _TempCutoffAngle);
         ImGui::SameLine();
         ImguiWrappers::HelpMark(ICON_FA_QUESTION, "Inner and outter");
 
         glm::vec3 color = light.GetColor();
         ImGui::ColorEdit3("Color", glm::value_ptr(color));
-        if(ImGui::IsItemDeactivatedAfterEdit())
-        {
-            glm::vec3 origin = light.GetColor();
-            CommandList::Instance().Emplace(
-                "[Spot Light] Color",
-                [&]() -> void
-            {
-                light.SetColor(color);
-            },
-                [&]() -> void
-            {
-                light.SetColor(origin);
-            }
-            );
-        }
         light.SetColor(color);
+        _ACDA_COMMAND_HELPER("[Spot Light] Color", light, GetColor, SetColor, color, _TempColor);
 
         ImGui::NewLine();
 
         glm::vec3 ambient = light.GetAmbientStrength();
         ImGui::DragFloat3("Ambient Strength", glm::value_ptr(ambient), speed, min, max, format, flags);
-        if(ImGui::IsItemDeactivatedAfterEdit())
-        {
-            glm::vec3 origin = light.GetAmbientStrength();
-            CommandList::Instance().Emplace(
-                "[Spot Light] Ambient Strength",
-                [&]() -> void
-            {
-                light.SetAmbientStrength(ambient);
-            },
-                [&]() -> void
-            {
-                light.SetAmbientStrength(origin);
-            }
-            );
-        }
         light.SetAmbientStrength(ambient);
+        _ACDA_COMMAND_HELPER("[Spot Light] Ambient Strength", light, GetAmbientStrength, SetAmbientStrength, ambient, _TempAmbientStrength);
 
         glm::vec3 diffuse = light.GetDiffuseStrength();
         ImGui::DragFloat3("Diffuse Strength", glm::value_ptr(diffuse), speed, min, max, format, flags);
-        glm::vec3 origin = light.GetDiffuseStrength();
-        CommandList::Instance().Emplace(
-            "[Spot Light] Diffuse Strength",
-            [&]() -> void
-        {
-            light.SetDiffuseStrength(diffuse);
-        },
-            [&]() -> void
-        {
-            light.SetDiffuseStrength(origin);
-        }
-        );
         light.SetDiffuseStrength(diffuse);
+        _ACDA_COMMAND_HELPER("[Spot Light] Diffuse Strength", light, GetDiffuseStrength, SetDiffuseStrength, diffuse, _TempDiffuseStrength);
 
         glm::vec3 specular = light.GetSpecularStrength();
         ImGui::DragFloat3("Specular Strength", glm::value_ptr(specular), speed, min, max, format, flags);
-        if(ImGui::IsItemDeactivatedAfterEdit())
-        {
-            glm::vec3 origin = light.GetSpecularStrength();
-            CommandList::Instance().Emplace(
-                "[Spot Light] Specular Strength",
-                [&]() -> void
-            {
-                light.SetSpecularStrength(specular);
-            },
-                [&]() -> void
-            {
-                light.SetSpecularStrength(origin);
-            }
-            );
-        }
         light.SetSpecularStrength(specular);
+        _ACDA_COMMAND_HELPER("[Spot Light] Specular Strength", light, GetSpecularStrength, SetSpecularStrength, specular, _TempSpecularStrength);
     },
         [&](DirectLight& light)
     {
@@ -318,81 +238,25 @@ void Arcadia::ImguiWindowPropertyFunctor_LightComponent::operator()(LightCompone
 
         glm::vec3 color = light.GetColor();
         ImGui::ColorEdit3("Color", glm::value_ptr(color));
-        if(ImGui::IsItemDeactivatedAfterEdit())
-        {
-            glm::vec3 origin = light.GetColor();
-            CommandList::Instance().Emplace(
-                "[Direct Light] Color",
-                [&]() -> void
-            {
-                light.SetColor(color);
-            },
-                [&]() -> void
-            {
-                light.SetColor(origin);
-            }
-            );
-        }
         light.SetColor(color);
+        _ACDA_COMMAND_HELPER("[Direct Light] Color", light, GetColor, SetColor, color, _TempColor);
 
         ImGui::NewLine();
 
         glm::vec3 ambient = light.GetAmbientStrength();
         ImGui::DragFloat3("Ambient Strength", glm::value_ptr(ambient), speed, min, max, format, flags);
-        if(ImGui::IsItemDeactivatedAfterEdit())
-        {
-            glm::vec3 origin = light.GetAmbientStrength();
-            CommandList::Instance().Emplace(
-                "[Direct Light] Ambient Strength",
-                [&]() -> void
-            {
-                light.SetAmbientStrength(ambient);
-            },
-                [&]() -> void
-            {
-                light.SetAmbientStrength(origin);
-            }
-            );
-        }
         light.SetAmbientStrength(ambient);
+        _ACDA_COMMAND_HELPER("[Direct Light] Ambient Strength", light, GetAmbientStrength, SetAmbientStrength, ambient, _TempAmbientStrength);
 
         glm::vec3 diffuse = light.GetDiffuseStrength();
         ImGui::DragFloat3("Diffuse Strength", glm::value_ptr(diffuse), speed, min, max, format, flags);
-        if(ImGui::IsItemDeactivatedAfterEdit())
-        {
-            glm::vec3 origin = light.GetDiffuseStrength();
-            CommandList::Instance().Emplace(
-                "[Direct Light] Diffuse Strength",
-                [&]() -> void
-            {
-                light.SetDiffuseStrength(diffuse);
-            },
-                [&]() -> void
-            {
-                light.SetDiffuseStrength(origin);
-            }
-            );
-        }
         light.SetDiffuseStrength(diffuse);
+        _ACDA_COMMAND_HELPER("[Direct Light] Diffuse Strength", light, GetDiffuseStrength, SetDiffuseStrength, diffuse, _TempDiffuseStrength);
 
         glm::vec3 specular = light.GetSpecularStrength();
         ImGui::DragFloat3("Specular Strength", glm::value_ptr(specular), speed, min, max, format, flags);
-        if(ImGui::IsItemDeactivatedAfterEdit())
-        {
-            glm::vec3 origin = light.GetSpecularStrength();
-            CommandList::Instance().Emplace(
-                "[Direct Light] Specular Strength",
-                [&]() -> void
-            {
-                light.SetSpecularStrength(specular);
-            },
-                [&]() -> void
-            {
-                light.SetSpecularStrength(origin);
-            }
-            );
-        }
         light.SetSpecularStrength(specular);
+        _ACDA_COMMAND_HELPER("[Direct Light] Specular Strength", light, GetSpecularStrength, SetSpecularStrength, specular, _TempSpecularStrength);
     },
         [&](AreaLight& light)
     {
@@ -416,100 +280,30 @@ void Arcadia::ImguiWindowPropertyFunctor_LightComponent::operator()(LightCompone
 
         glm::vec2 size = light.GetSize();
         ImGui::DragFloat2("Size", glm::value_ptr(size), speed, min, max, format, flags);
-        if(ImGui::IsItemDeactivatedAfterEdit())
-        {
-            glm::vec2 origin = light.GetSize();
-            CommandList::Instance().Emplace(
-                "[Area Light] Size",
-                [&]() -> void
-            {
-                light.SetSize(size);
-            },
-                [&]() -> void
-            {
-                light.SetSize(origin);
-            }
-            );
-        }
         light.SetSize(size);
+        _ACDA_COMMAND_HELPER("[Area Light] Size", light, GetSize, SetSize, size, _TempSize);
 
         glm::vec3 color = light.GetColor();
         ImGui::ColorEdit3("Color", glm::value_ptr(color));
-        if(ImGui::IsItemDeactivatedAfterEdit())
-        {
-            glm::vec3 origin = light.GetColor();
-            CommandList::Instance().Emplace(
-                "[Area Light] Color",
-                [&]() -> void
-            {
-                light.SetColor(color);
-            },
-                [&]() -> void
-            {
-                light.SetColor(origin);
-            }
-            );
-        }
         light.SetColor(color);
+        _ACDA_COMMAND_HELPER("[Area Light] Color", light, GetColor, SetColor, color, _TempColor);
 
         ImGui::NewLine();
 
         glm::vec3 ambient = light.GetAmbientStrength();
         ImGui::DragFloat3("Ambient Strength", glm::value_ptr(ambient), speed, min, max, format, flags);
-        if(ImGui::IsItemDeactivatedAfterEdit())
-        {
-            glm::vec3 origin = light.GetAmbientStrength();
-            CommandList::Instance().Emplace(
-                "[Area Light] Ambient Strength",
-                [&]() -> void
-            {
-                light.SetAmbientStrength(ambient);
-            },
-                [&]() -> void
-            {
-                light.SetAmbientStrength(origin);
-            }
-            );
-        }
         light.SetAmbientStrength(ambient);
+        _ACDA_COMMAND_HELPER("[Area Light] Ambient Strength", light, GetAmbientStrength, SetAmbientStrength, ambient, _TempAmbientStrength);
 
         glm::vec3 diffuse = light.GetDiffuseStrength();
         ImGui::DragFloat3("Diffuse Strength", glm::value_ptr(diffuse), speed, min, max, format, flags);
-        if(ImGui::IsItemDeactivatedAfterEdit())
-        {
-            glm::vec3 origin = light.GetDiffuseStrength();
-            CommandList::Instance().Emplace(
-                "[Area Light] Diffuse Strength",
-                [&]() -> void
-            {
-                light.SetDiffuseStrength(diffuse);
-            },
-                [&]() -> void
-            {
-                light.SetDiffuseStrength(origin);
-            }
-            );
-        }
         light.SetDiffuseStrength(diffuse);
+        _ACDA_COMMAND_HELPER("[Area Light] Diffuse Strength", light, GetDiffuseStrength, SetDiffuseStrength, diffuse, _TempDiffuseStrength);
 
         glm::vec3 specular = light.GetSpecularStrength();
         ImGui::DragFloat3("Specular Strength", glm::value_ptr(specular), speed, min, max, format, flags);
-        if(ImGui::IsItemDeactivatedAfterEdit())
-        {
-            glm::vec3 origin = light.GetSpecularStrength();
-            CommandList::Instance().Emplace(
-                "[Area Light] Specular Strength",
-                [&]() -> void
-            {
-                light.SetSpecularStrength(specular);
-            },
-                [&]() -> void
-            {
-                light.SetSpecularStrength(origin);
-            }
-            );
-        }
         light.SetSpecularStrength(specular);
+        _ACDA_COMMAND_HELPER("[Area Light] Specular Strength", light, GetSpecularStrength, SetSpecularStrength, specular, _TempSpecularStrength);
     },
         [&](PointLight& light)
     {
@@ -533,102 +327,32 @@ void Arcadia::ImguiWindowPropertyFunctor_LightComponent::operator()(LightCompone
 
         glm::vec3 coeffs = light.GetAttenuationCoefficients();
         ImGui::DragFloat3("Attenuation", glm::value_ptr(coeffs), speed, min, max, format, flags);
-        if(ImGui::IsItemDeactivatedAfterEdit())
-        {
-            glm::vec3 origin = light.GetAttenuationCoefficients();
-            CommandList::Instance().Emplace(
-                "[Point Light] Attenuation",
-                [&]() -> void
-            {
-                light.SetAttenuationCoefficients(coeffs);
-            },
-                [&]() -> void
-            {
-                light.SetAttenuationCoefficients(origin);
-            }
-            );
-        }
         light.SetAttenuationCoefficients(coeffs);
+        _ACDA_COMMAND_HELPER("[Point Light] Attenuation", light, GetAttenuationCoefficients, SetAttenuationCoefficients, coeffs, _TempAttenuationCoefficients);
         ImGui::SameLine();
         ImguiWrappers::HelpMark(ICON_FA_QUESTION, "In order of constant, linear and quadratic terms");
 
         glm::vec3 color = light.GetColor();
         ImGui::ColorEdit3("Color", glm::value_ptr(color));
-        if(ImGui::IsItemDeactivatedAfterEdit())
-        {
-            glm::vec3 origin = light.GetColor();
-            CommandList::Instance().Emplace(
-                "[Point Light] Color",
-                [&]() -> void
-            {
-                light.SetColor(color);
-            },
-                [&]() -> void
-            {
-                light.SetColor(origin);
-            }
-            );
-        }
         light.SetColor(color);
+        _ACDA_COMMAND_HELPER("[Point Light] Color", light, GetColor, SetColor, color, _TempColor);
 
         ImGui::NewLine();
 
         glm::vec3 ambient = light.GetAmbientStrength();
         ImGui::DragFloat3("Ambient Strength", glm::value_ptr(ambient), speed, min, max, format, flags);
-        if(ImGui::IsItemDeactivatedAfterEdit())
-        {
-            glm::vec3 origin = light.GetAmbientStrength();
-            CommandList::Instance().Emplace(
-                "[Point Light] Ambient Strength",
-                [&]() -> void
-            {
-                light.SetAmbientStrength(ambient);
-            },
-                [&]() -> void
-            {
-                light.SetAmbientStrength(origin);
-            }
-            );
-        }
         light.SetAmbientStrength(ambient);
+        _ACDA_COMMAND_HELPER("[Point Light] Ambient Strength", light, GetAmbientStrength, SetAmbientStrength, ambient, _TempAmbientStrength);
 
         glm::vec3 diffuse = light.GetDiffuseStrength();
         ImGui::DragFloat3("Diffuse Strength", glm::value_ptr(diffuse), speed, min, max, format, flags);
-        if(ImGui::IsItemDeactivatedAfterEdit())
-        {
-            glm::vec3 origin = light.GetDiffuseStrength();
-            CommandList::Instance().Emplace(
-                "[Point Light] Diffuse Strength",
-                [&]() -> void
-            {
-                light.SetDiffuseStrength(diffuse);
-            },
-                [&]() -> void
-            {
-                light.SetDiffuseStrength(origin);
-            }
-            );
-        }
         light.SetDiffuseStrength(diffuse);
+        _ACDA_COMMAND_HELPER("[Point Light] Diffuse Strength", light, GetDiffuseStrength, SetDiffuseStrength, diffuse, _TempDiffuseStrength);
 
         glm::vec3 specular = light.GetSpecularStrength();
         ImGui::DragFloat3("Specular Strength", glm::value_ptr(specular), speed, min, max, format, flags);
-        if(ImGui::IsItemDeactivatedAfterEdit())
-        {
-            glm::vec3 origin = light.GetSpecularStrength();
-            CommandList::Instance().Emplace(
-                "[Point Light] Specular Strength",
-                [&]() -> void
-            {
-                light.SetSpecularStrength(specular);
-            },
-                [&]() -> void
-            {
-                light.SetSpecularStrength(origin);
-            }
-            );
-        }
         light.SetSpecularStrength(specular);
+        _ACDA_COMMAND_HELPER("[Point Light] Specular Strength", light, GetSpecularStrength, SetSpecularStrength, specular, _TempSpecularStrength);
     }
     );
     ImGui::EndGroup();
@@ -642,6 +366,7 @@ void Arcadia::ImguiWindowPropertyFunctor_LightComponent::Refresh(const LightComp
     {
         _TempAttenuationCoefficients = {};
         _TempCutoffAngle = {};
+        _TempSize = {};
         _TempColor = {};
         _TempAmbientStrength = {};
         _TempDiffuseStrength = {};
@@ -651,6 +376,7 @@ void Arcadia::ImguiWindowPropertyFunctor_LightComponent::Refresh(const LightComp
     {
         _TempAttenuationCoefficients = light.GetAttenuationCoefficients();
         _TempCutoffAngle = light.GetCutoffAngles();
+        _TempSize = {};
         _TempColor = light.GetColor();
         _TempAmbientStrength = light.GetAmbientStrength();
         _TempDiffuseStrength = light.GetDiffuseStrength();
@@ -660,6 +386,7 @@ void Arcadia::ImguiWindowPropertyFunctor_LightComponent::Refresh(const LightComp
     {
         _TempAttenuationCoefficients = {};
         _TempCutoffAngle = {};
+        _TempSize = {};
         _TempColor = light.GetColor();
         _TempAmbientStrength = light.GetAmbientStrength();
         _TempDiffuseStrength = light.GetDiffuseStrength();
@@ -669,6 +396,7 @@ void Arcadia::ImguiWindowPropertyFunctor_LightComponent::Refresh(const LightComp
     {
         _TempAttenuationCoefficients = {};
         _TempCutoffAngle = {};
+        _TempSize = light.GetSize();
         _TempColor = light.GetColor();
         _TempAmbientStrength = light.GetAmbientStrength();
         _TempDiffuseStrength = light.GetDiffuseStrength();
@@ -678,6 +406,7 @@ void Arcadia::ImguiWindowPropertyFunctor_LightComponent::Refresh(const LightComp
     {
         _TempAttenuationCoefficients = light.GetAttenuationCoefficients();
         _TempCutoffAngle = {};
+        _TempSize = {};
         _TempColor = light.GetColor();
         _TempAmbientStrength = light.GetAmbientStrength();
         _TempDiffuseStrength = light.GetDiffuseStrength();
@@ -1108,7 +837,10 @@ void Arcadia::ImguiWindowPropertyFunctor_TransformComponent::operator()(Transfor
     glm::vec3 position_delta = position; // Previous position
     ImGui::DragFloat3("Position", glm::value_ptr(position), speed, min, max, format, slider_flags);
     transform_comp.SetPosition(position);
-    _ACDA_COMMAND_HELPER("[Transform] Position", transform_comp, GetPosition, SetPosition, position, _TempPosition);
+    if(ImGui::IsItemDeactivatedAfterEdit())
+    {
+        CommandList::Instance().Emplace("[Transform] Position", [&comp = transform_comp, value = position]() -> void { comp.SetPosition(value); }, [&comp = transform_comp, origin = _TempPosition]() -> void { comp.SetPosition(origin); }); _TempPosition = transform_comp.GetPosition();
+    };
     position_delta = transform_comp.GetPosition() - position_delta; // current - previous
 
     if(transform_comp.CheckFlag(TransformComponentFlags::UseRotation))
@@ -1229,6 +961,11 @@ void Arcadia::ImguiWindowProperty::_OnSceneActivated(Events::SceneActivated& e)
         if(scene.ContainsAllComponents<CameraComponent>(entity_id))
         {
             _ImguiWindowPropertyFunctor_CameraComponent.Refresh(scene.GetComponent<CameraComponent>(entity_id));
+        }
+
+        if(scene.ContainsAllComponents<LightComponent>(entity_id))
+        {
+            _ImguiWindowPropertyFunctor_LightComponent.Refresh(scene.GetComponent<LightComponent>(entity_id));
         }
     }
 }
