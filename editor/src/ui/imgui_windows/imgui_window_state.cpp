@@ -180,7 +180,7 @@ void Arcadia::ImguiWindowState::_OnSceneDeactivated(Events::SceneDeactivated& e)
 
 void Arcadia::ImguiWindowState::_OnRendererBuilt(Events::RendererBuilt& e)
 {
-    _Renderer = e.Renderer;
+    _Renderer = e.spRenderer;
 }
 
 void Arcadia::ImguiWindowState::_OnRendererUnbuilt(Events::RendererUnbuilt& e)
@@ -190,7 +190,7 @@ void Arcadia::ImguiWindowState::_OnRendererUnbuilt(Events::RendererUnbuilt& e)
 
 void Arcadia::ImguiWindowState::_OnPhysicsSimulatorBuilt(Events::PhysicsSimulatorBuilt& e)
 {
-    _PhysicsSimulator = e.PhysicsSimulator;
+    _PhysicsSimulator = e.spPhysicsSimulator;
 }
 
 void Arcadia::ImguiWindowState::_OnPhysicsSimulatorUnbuilt(Events::PhysicsSimulatorUnbuilt& e)

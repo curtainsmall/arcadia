@@ -39,7 +39,7 @@ Arcadia::EditorAppLayer::EditorAppLayer()
             .GetTopLayer<WindowLayer>();
     }
 
-    // Project layer
+    // spProject layer
     {
         editor_context.MainProjectLayer = layer_stack
             .PushLayer<ProjectLayer>()

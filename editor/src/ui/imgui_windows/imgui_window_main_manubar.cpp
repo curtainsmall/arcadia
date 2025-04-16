@@ -267,7 +267,7 @@ void Arcadia::ImguiWindowMainMenubar::_ShowOptionMenu()
 
 void Arcadia::ImguiWindowMainMenubar::_OnProjectBuilt(Events::ProjectBuilt& e)
 {
-    _Project = e.Project;
+    _Project = e.spProject;
 }
 
 void Arcadia::ImguiWindowMainMenubar::_OnProjectUnbuilt(Events::ProjectUnbuilt& e)

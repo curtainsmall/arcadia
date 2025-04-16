@@ -347,7 +347,7 @@ void Arcadia::ImguiWindowViewport::_OnOpenImguiWindow(Events::OpenImguiWindow& e
 
 void Arcadia::ImguiWindowViewport::_OnProjectBuilt(Events::ProjectBuilt& e)
 {
-    _Project = e.Project;
+    _Project = e.spProject;
 }
 
 void Arcadia::ImguiWindowViewport::_OnProjectUnbuilt(Events::ProjectUnbuilt& e)
@@ -391,7 +391,7 @@ void Arcadia::ImguiWindowViewport::_OnDeleteEntity(Events::DeleteEntity& e)
 
 void Arcadia::ImguiWindowViewport::_OnRendererBuilt(Events::RendererBuilt& e)
 {
-    _Renderer = e.Renderer;
+    _Renderer = e.spRenderer;
 }
 
 void Arcadia::ImguiWindowViewport::_OnRendererUnbuilt(Events::RendererUnbuilt& e)
@@ -401,7 +401,7 @@ void Arcadia::ImguiWindowViewport::_OnRendererUnbuilt(Events::RendererUnbuilt& e
 
 void Arcadia::ImguiWindowViewport::_OnPhysicsSimulatorBuilt(Events::PhysicsSimulatorBuilt& e)
 {
-    _PhysicsSimulator = e.PhysicsSimulator;
+    _PhysicsSimulator = e.spPhysicsSimulator;
 }
 
 void Arcadia::ImguiWindowViewport::_OnPhysicsSimulatorUnbuilt(Events::PhysicsSimulatorUnbuilt& e)

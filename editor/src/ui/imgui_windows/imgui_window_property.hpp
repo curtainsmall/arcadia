@@ -36,15 +36,15 @@ namespace Arcadia
         void Refresh(const CameraComponent& comp);
 
     private:
-        float _TempNearPlane{};
-        float _TempFarPlane{};
-        float _TempFovY{};
-        float _TempFovYMin{};
-        float _TempFovYMax{};
-        float _TempSpeed{};
-        glm::i32vec2 _TempViewportSize{};
-        bool _TempUpAxisFixed{};
-        float _TempUpAxisAngleEpsilon{};
+        float _OriginNearPlane{};
+        float _OriginFarPlane{};
+        float _OriginFovY{};
+        float _OriginFovYMin{};
+        float _OriginFovYMax{};
+        float _OriginSpeed{};
+        glm::i32vec2 _OriginViewportSize{};
+        bool _OriginUpAxisFixed{};
+        float _OriginUpAxisAngleEpsilon{};
     };
 
     class ImguiWindowPropertyFunctor_LightComponent
@@ -78,13 +78,13 @@ namespace Arcadia
         }
 
     private:
-        glm::vec3 _TempAttenuationCoefficients{};
-        glm::vec2 _TempCutoffAngle{};
-        glm::vec2 _TempSize{};
-        glm::vec3 _TempColor{};
-        glm::vec3 _TempAmbientStrength{};
-        glm::vec3 _TempDiffuseStrength{};
-        glm::vec3 _TempSpecularStrength{};
+        glm::vec3 _OriginAttenuationCoefficients{};
+        glm::vec2 _OriginCutoffAngle{};
+        glm::vec2 _OriginSize{};
+        glm::vec3 _OriginColor{};
+        glm::vec3 _OriginAmbientStrength{};
+        glm::vec3 _OriginDiffuseStrength{};
+        glm::vec3 _OriginSpecularStrength{};
     };
 
     class ImguiWindowPropertyFunctor_ModelComponent
@@ -127,11 +127,11 @@ namespace Arcadia
         void operator()(TransformComponent& transform_comp);
 
     private:
-        glm::vec3 _TempPosition{};
-        glm::vec3 _TempRotationEularAngle{};
-        glm::vec3 _TempDirection{};
-        glm::vec3 _TempScale{};
-        glm::vec3 _TempPivot{};
+        glm::vec3 _OriginPosition{};
+        glm::vec3 _OriginRotationEularAngle{};
+        glm::vec3 _OriginDirection{};
+        glm::vec3 _OriginScale{};
+        glm::vec3 _OriginPivot{};
     };
 
     class ImguiWindowProperty: public ImguiWindowInterface
@@ -144,7 +144,7 @@ namespace Arcadia
         inline ImguiWindowProperty(
             bool open,
             const std::string& title
-        ) :
+        ):
             ImguiWindowInterface(open, title)
         {}
         virtual ~ImguiWindowProperty() = default;
@@ -155,7 +155,7 @@ namespace Arcadia
         template<Concepts::Component Component>
         auto _ContainsComponent(EntityId entity_id) const -> bool
         {
-            std::shared_ptr<Scene> scene_sptr = _SceneWeakPtr.lock();
+            std::shared_ptr<Scene> scene_sptr = _wpScene.lock();
             ACDA_ASSERT(scene_sptr);
 
             return scene_sptr->ContainsAllComponents<Component>(entity_id);
@@ -163,7 +163,7 @@ namespace Arcadia
         template<Concepts::Component Component>
         auto _GetComponent(EntityId entity_id) const -> Component&
         {
-            std::shared_ptr<Scene> scene_sptr = _SceneWeakPtr.lock();
+            std::shared_ptr<Scene> scene_sptr = _wpScene.lock();
             ACDA_ASSERT(scene_sptr);
             ACDA_ASSERT(_ContainsComponent<Component>(entity_id));
 
@@ -188,7 +188,7 @@ namespace Arcadia
 
     private:
 
-        std::weak_ptr<Scene> _SceneWeakPtr{};
+        std::weak_ptr<Scene> _wpScene{};
         EntityId _SelectedEntityId{};
 
         ImguiWindowPropertyFunctor_CameraComponent _ImguiWindowPropertyFunctor_CameraComponent{};
