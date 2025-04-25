@@ -30,7 +30,7 @@ Arcadia::EditorAppLayer::EditorAppLayer()
 
     // Window layer
     {
-        editor_context.MainWindowLayer = layer_stack
+        editor_context.wpMainWindowLayer = layer_stack
             .PushLayer<WindowLayer>(
                 app_config.WindowSize,
                 app_config.WindowTitle,
@@ -41,16 +41,16 @@ Arcadia::EditorAppLayer::EditorAppLayer()
 
     // spProject layer
     {
-        editor_context.MainProjectLayer = layer_stack
+        editor_context.wpMainProjectLayer = layer_stack
             .PushLayer<ProjectLayer>()
             .GetTopLayer<ProjectLayer>();
     }
 
     // Editor ImGui layer
     {
-        editor_context.MainImguiLayer = layer_stack
+        editor_context.wpMainImguiLayer = layer_stack
             .PushLayer<ImguiLayer>(
-                editor_context.MainWindowLayer.lock(),
+                editor_context.wpMainWindowLayer.lock(),
                 ACDA_BIND_MEMBER_FN(_InstallImguiWindow),
                 ImguiStyle::SetToDark
             )
@@ -98,8 +98,8 @@ void Arcadia::EditorAppLayer::_InstallImguiWindow(ImguiLayer& imgui_layer)
 void Arcadia::EditorAppLayer::_Stop()
 {
     EditorContext& editor_context = EditorContext::Instance();
-    std::shared_ptr<WindowLayer> main_window_layer_sptr = editor_context.MainWindowLayer.lock();
-    std::shared_ptr<ImguiLayer> main_imgui_layer_sptr = editor_context.MainImguiLayer.lock();
+    std::shared_ptr<WindowLayer> main_window_layer_sptr = editor_context.wpMainWindowLayer.lock();
+    std::shared_ptr<ImguiLayer> main_imgui_layer_sptr = editor_context.wpMainImguiLayer.lock();
 
     AppConfig& app_config = AppConfig::Instance();
     app_config.WindowSize = main_window_layer_sptr->GetSize();
@@ -121,8 +121,8 @@ void Arcadia::EditorAppLayer::_Stop()
 void Arcadia::EditorAppLayer::_OnWindowShouldClose(Events::WindowShouldClose& e)
 {
     EditorContext& editor_context = EditorContext::Instance();
-    std::shared_ptr<WindowLayer> main_window_layer_sptr = editor_context.MainWindowLayer.lock();
-    std::shared_ptr<ProjectLayer> main_project_layer_sptr = editor_context.MainProjectLayer.lock();
+    std::shared_ptr<WindowLayer> main_window_layer_sptr = editor_context.wpMainWindowLayer.lock();
+    std::shared_ptr<ProjectLayer> main_project_layer_sptr = editor_context.wpMainProjectLayer.lock();
 
     if(e.Window == main_window_layer_sptr.get() && main_project_layer_sptr->HasProject())
     {

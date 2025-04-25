@@ -113,6 +113,6 @@ namespace Arcadia
     private:
         glm::vec3 _BodyShapeColor{ .2f,.2f,.2f };
         JphBodyState _BodyState{};
-        std::unique_ptr<IdentifiableJphBodyInfoType> _IdentifiableJphBodyInfo{};
+        std::unique_ptr<IdentifiableJphBodyInfoType> _upIdentifiableJphBodyInfo{};
     };
 }

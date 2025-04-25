@@ -18,9 +18,9 @@ namespace Arcadia
         static auto Instance() -> SelfType&;
 
     public:
-        std::weak_ptr<WindowLayer> MainWindowLayer{};
-        std::weak_ptr<ImguiLayer> MainImguiLayer{};
-        std::weak_ptr<ProjectLayer> MainProjectLayer{};
+        std::weak_ptr<WindowLayer> wpMainWindowLayer{};
+        std::weak_ptr<ImguiLayer> wpMainImguiLayer{};
+        std::weak_ptr<ProjectLayer> wpMainProjectLayer{};
 
         bool InPlayMode{ false };
 

@@ -24,28 +24,28 @@ namespace Arcadia
 
         void LogAsDebug(const std::string& msg)
         {
-            _Logger->debug(msg);
+            _spLogger->debug(msg);
         }
 
         void LogAsInfo(const std::string& msg)
         {
-            _Logger->info(msg);
+            _spLogger->info(msg);
         }
 
         void LogAsWarning(const std::string& msg)
         {
-            _Logger->warn(msg);
+            _spLogger->warn(msg);
         }
 
         void LogAsError(const std::string& msg)
         {
-            _Logger->error(msg);
+            _spLogger->error(msg);
             DumpBacktrace();
         }
 
         void LogAsFatal(const std::string& msg)
         {
-            _Logger->critical(msg);
+            _spLogger->critical(msg);
             DumpBacktrace();
         }
 
@@ -56,26 +56,26 @@ namespace Arcadia
 
         void Flush()
         {
-            _Logger->flush();
+            _spLogger->flush();
         }
 
         void EnableBacktrace(std::size_t count)
         {
-            _Logger->enable_backtrace(count);
+            _spLogger->enable_backtrace(count);
         }
 
         void DisableBacktrace()
         {
-            _Logger->disable_backtrace();
+            _spLogger->disable_backtrace();
         }
 
         void DumpBacktrace()
         {
-            _Logger->dump_backtrace();
+            _spLogger->dump_backtrace();
         }
 
     private:
-        std::shared_ptr<spdlog::logger> _Logger{};
+        std::shared_ptr<spdlog::logger> _spLogger{};
     };
 }
 

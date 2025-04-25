@@ -69,9 +69,9 @@ namespace Arcadia
         void _OnPhysicsSimulatorUnbuilt(Events::PhysicsSimulatorUnbuilt& e);
 
     private:
-        std::weak_ptr<Scene> _SceneWeakPtr{};
-        std::weak_ptr<RendererInterface> _Renderer{};
-        std::weak_ptr<PhysicsSimulator> _PhysicsSimulator{};
+        std::weak_ptr<Scene> _wpScene{};
+        std::weak_ptr<RendererInterface> _wpRenderer{};
+        std::weak_ptr<PhysicsSimulator> _wpPhysicsSimulator{};
 
         ImguiWindowStateFunctor_Scene _ImguiWindowStateFunctor_Scene{};
         ImguiWindowStateFunctor_Renderer _ImguiWindowStateFunctor_Renderer{};

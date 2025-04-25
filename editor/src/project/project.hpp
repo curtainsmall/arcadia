@@ -46,6 +46,6 @@ namespace Arcadia
         SceneStorageType SceneStorage{};
     private:
         std::string _Name;
-        std::shared_ptr<Scene> _ActiveScene{};
+        std::shared_ptr<Scene> _spActiveScene{};
     };
 }

@@ -106,9 +106,9 @@ void Arcadia::ImguiWindowState::OnUpdate()
         return;
     }
 
-    auto scene = _SceneWeakPtr.lock();
-    auto renderer = _Renderer.lock();
-    auto physics_simualtor = _PhysicsSimulator.lock();
+    auto scene = _wpScene.lock();
+    auto renderer = _wpRenderer.lock();
+    auto physics_simualtor = _wpPhysicsSimulator.lock();
 
     auto imgui_window_title = _Title + GetIdString();
 
@@ -170,30 +170,30 @@ void Arcadia::ImguiWindowState::_OnOpenImguiWindow(Events::OpenImguiWindow& e)
 
 void Arcadia::ImguiWindowState::_OnSceneActivated(Events::SceneActivated& e)
 {
-    _SceneWeakPtr = e.spScene;
+    _wpScene = e.spScene;
 }
 
 void Arcadia::ImguiWindowState::_OnSceneDeactivated(Events::SceneDeactivated& e)
 {
-    _SceneWeakPtr.reset();
+    _wpScene.reset();
 }
 
 void Arcadia::ImguiWindowState::_OnRendererBuilt(Events::RendererBuilt& e)
 {
-    _Renderer = e.spRenderer;
+    _wpRenderer = e.spRenderer;
 }
 
 void Arcadia::ImguiWindowState::_OnRendererUnbuilt(Events::RendererUnbuilt& e)
 {
-    _Renderer.reset();
+    _wpRenderer.reset();
 }
 
 void Arcadia::ImguiWindowState::_OnPhysicsSimulatorBuilt(Events::PhysicsSimulatorBuilt& e)
 {
-    _PhysicsSimulator = e.spPhysicsSimulator;
+    _wpPhysicsSimulator = e.spPhysicsSimulator;
 }
 
 void Arcadia::ImguiWindowState::_OnPhysicsSimulatorUnbuilt(Events::PhysicsSimulatorUnbuilt& e)
 {
-    _PhysicsSimulator.reset();
+    _wpPhysicsSimulator.reset();
 }

@@ -157,7 +157,7 @@ void Arcadia::ImguiWindowMainMenubar::OnUpdate()
 
 void Arcadia::ImguiWindowMainMenubar::_ShowFileMenu()
 {
-    std::shared_ptr<const Project> project_sptr = _Project.lock();
+    std::shared_ptr<const Project> project_sptr = _wpProject.lock();
 
     EventQueue& event_queue = EventQueue::Instance();
 
@@ -191,7 +191,7 @@ void Arcadia::ImguiWindowMainMenubar::_ShowFileMenu()
 
 void Arcadia::ImguiWindowMainMenubar::_ShowEditMenu()
 {
-    std::shared_ptr<const Project> project_uptr = _Project.lock();
+    std::shared_ptr<const Project> project_uptr = _wpProject.lock();
 
     if(project_uptr)
     {
@@ -267,10 +267,10 @@ void Arcadia::ImguiWindowMainMenubar::_ShowOptionMenu()
 
 void Arcadia::ImguiWindowMainMenubar::_OnProjectBuilt(Events::ProjectBuilt& e)
 {
-    _Project = e.spProject;
+    _wpProject = e.spProject;
 }
 
 void Arcadia::ImguiWindowMainMenubar::_OnProjectUnbuilt(Events::ProjectUnbuilt& e)
 {
-    _Project.reset();
+    _wpProject.reset();
 }

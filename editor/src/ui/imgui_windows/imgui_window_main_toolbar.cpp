@@ -19,7 +19,7 @@ void Arcadia::ImguiWindowMainToolbar::OnEvent(EventBase& e)
 
 void Arcadia::ImguiWindowMainToolbar::OnUpdate()
 {
-    std::shared_ptr<Scene> scene_sptr = _SceneWeakPtr.lock();
+    std::shared_ptr<Scene> scene_sptr = _wpScene.lock();
 
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, glm::vec2{ 0,0 });
     ImGuiWindowFlags window_flags =
@@ -100,10 +100,10 @@ void Arcadia::ImguiWindowMainToolbar::OnUpdate()
 
 void Arcadia::ImguiWindowMainToolbar::_OnSceneActivated(Events::SceneActivated& e)
 {
-    _SceneWeakPtr = e.spScene;
+    _wpScene = e.spScene;
 }
 
 void Arcadia::ImguiWindowMainToolbar::_OnSceneDeactivated(Events::SceneDeactivated& e)
 {
-    _SceneWeakPtr.reset();
+    _wpScene.reset();
 }

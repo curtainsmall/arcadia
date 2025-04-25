@@ -23,7 +23,7 @@ namespace Arcadia
         inline ImguiWindowOutliner(
             bool open,
             const std::string& title
-        ) :
+        ):
             ImguiWindowInterface(open, title)
         {}
         virtual ~ImguiWindowOutliner() = default;
@@ -42,7 +42,7 @@ namespace Arcadia
         void _OnSceneDeactivated(Events::SceneDeactivated& e);
 
     private:
-        std::weak_ptr<Scene> _SceneWeakPtr{};
+        std::weak_ptr<Scene> _wpScene{};
 
         EntityId _SelectedEntityId{};
 
@@ -54,7 +54,7 @@ namespace Arcadia
     inline void ImguiWindowOutliner::_MenuItemAddComponent(int& item_count)
     {
         std::string type_string = Component::GetTypeStringStatic();
-        bool exists = _SceneWeakPtr.lock()->ContainsAllComponents<Component>(_SelectedEntityId);
+        bool exists = _wpScene.lock()->ContainsAllComponents<Component>(_SelectedEntityId);
 
         if(!exists)
         {
@@ -71,7 +71,7 @@ namespace Arcadia
     inline void ImguiWindowOutliner::_MenuItemRemoveComponent(int& item_count)
     {
         std::string type_string = Component::GetTypeStringStatic();
-        bool exists = _SceneWeakPtr.lock()->ContainsAllComponents<Component>(_SelectedEntityId);
+        bool exists = _wpScene.lock()->ContainsAllComponents<Component>(_SelectedEntityId);
 
         if(exists)
         {

@@ -70,7 +70,7 @@ namespace Arcadia
         ImguiWindowPopupFunctor_CreateProject _ImguiWindowPopupFunctor_CreateProject{};
         ImguiWindowPopupFunctor_CreateScene _ImguiWindowPopupFunctor_CreateScene{};
 
-        std::weak_ptr<const Project> _Project{};
+        std::weak_ptr<const Project> _wpProject{};
 
         std::vector<std::tuple<std::string, std::string>> _ImguiWindowTitleAndIdStringPairs{};
 

@@ -13,9 +13,9 @@ Arcadia::ImguiLayer::ImguiLayer(
     const std::shared_ptr<const WindowLayer>& window_layer,
     const std::function<void(ImguiLayer&)>& imgui_window_installer,
     const std::function<void()>& imgui_style_setter
-) :
+):
     LayerInterface("imgui"),
-    _Window(window_layer)
+    _wpWindow(window_layer)
 {
     _ImguiContext = ImGui::CreateContext();
     ImGui::SetCurrentContext(_ImguiContext);
@@ -35,7 +35,7 @@ Arcadia::ImguiLayer::ImguiLayer(
     static const std::array<ImWchar, 3> imgui_icon_ranges{ ICON_MIN_FA, ICON_MAX_FA,0 };
     io.Fonts->AddFontFromFileTTF(FontFilepathString.c_str(), FontSize, &imgui_font_config, imgui_icon_ranges.data());
 
-    ImguiBackend::Initialize(*_Window.lock());
+    ImguiBackend::Initialize(*_wpWindow.lock());
 
     imgui_style_setter();
     imgui_window_installer(*this);
@@ -45,7 +45,7 @@ Arcadia::ImguiLayer::~ImguiLayer()
 {
     if(_ImguiContext)
     {
-        ImguiBackend::Shutdown(*_Window.lock());
+        ImguiBackend::Shutdown(*_wpWindow.lock());
         ImGui::DestroyContext(_ImguiContext);
     }
 }
@@ -71,7 +71,7 @@ void Arcadia::ImguiLayer::OnEvent(EventBase& e)
 
 void Arcadia::ImguiLayer::OnUpdate()
 {
-    std::shared_ptr<const WindowLayer> window = _Window.lock();
+    std::shared_ptr<const WindowLayer> window = _wpWindow.lock();
 
     ImGui::SetCurrentContext(_ImguiContext);
 

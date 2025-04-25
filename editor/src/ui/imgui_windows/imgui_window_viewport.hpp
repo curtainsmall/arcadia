@@ -66,10 +66,10 @@ namespace Arcadia
     private:
         static inline std::string _ViewportCameraEntityName{ "viewport_camera" };
 
-        std::weak_ptr<Project> _Project{};
-        std::weak_ptr<Scene> _SceneWeakPtr{};
-        std::weak_ptr<RendererInterface> _Renderer{};
-        std::weak_ptr<PhysicsSimulator> _PhysicsSimulator{};
+        std::weak_ptr<Project> _wpProject{};
+        std::weak_ptr<Scene> _wpScene{};
+        std::weak_ptr<RendererInterface> _wpRenderer{};
+        std::weak_ptr<PhysicsSimulator> _wpPhysicsSimulator{};
 
         EntityId _SelectedEntityId{};
 

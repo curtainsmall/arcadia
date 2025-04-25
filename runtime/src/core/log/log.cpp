@@ -16,7 +16,7 @@ Arcadia::Logger::Logger()
 
     spdlog::init_thread_pool(8192, 1);
 
-    _Logger = std::make_shared<spdlog::async_logger>(
+    _spLogger = std::make_shared<spdlog::async_logger>(
         "main",
         sink_list.begin(),
         sink_list.end(),
@@ -24,16 +24,16 @@ Arcadia::Logger::Logger()
         spdlog::async_overflow_policy::block
     );
 
-    _Logger->set_level(spdlog::level::trace);
-    _Logger->flush_on(spdlog::level::err);
-    spdlog::register_logger(_Logger);
+    _spLogger->set_level(spdlog::level::trace);
+    _spLogger->flush_on(spdlog::level::err);
+    spdlog::register_logger(_spLogger);
 
-    _Logger->enable_backtrace(32);
+    _spLogger->enable_backtrace(32);
 }
 
 Arcadia::Logger::~Logger()
 {
-    _Logger->flush();
+    _spLogger->flush();
     spdlog::drop_all();
     spdlog::shutdown();
 }

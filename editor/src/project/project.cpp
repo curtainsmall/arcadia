@@ -48,43 +48,43 @@ void Arcadia::Project::SetName(const std::string& name)
 
 auto Arcadia::Project::HasActiveScene() const -> bool
 {
-    return !!_ActiveScene;
+    return !!_spActiveScene;
 }
 
 auto Arcadia::Project::GetActiveScene() -> Scene&
 {
     ACDA_ASSERT(HasActiveScene());
     // If scene is modified, it will record it internally so we does not need to change _modified here
-    return *_ActiveScene;
+    return *_spActiveScene;
 }
 
 auto Arcadia::Project::GetActiveScene() const -> const Scene&
 {
     ACDA_ASSERT(HasActiveScene());
-    return *_ActiveScene;
+    return *_spActiveScene;
 }
 
 void Arcadia::Project::SetActiveScene(const std::string& name)
 {
-    auto is_same_scene = _ActiveScene && name == _ActiveScene->GetName();
+    auto is_same_scene = _spActiveScene && name == _spActiveScene->GetName();
 
     if(!is_same_scene)
     {
         CommandList::Instance().Clear();
 
-        if(_ActiveScene)
+        if(_spActiveScene)
         {
-            _ActiveScene.reset();
+            _spActiveScene.reset();
             EventQueue::Instance()
                 .Signal<Events::SceneDeactivated>();
         }
 
         if(!name.empty() && SceneStorage.find(name) != SceneStorage.end())
         {
-            _ActiveScene = SceneStorage.at(name);
+            _spActiveScene = SceneStorage.at(name);
 
             EventQueue::Instance()
-                .Signal<Events::SceneActivated>(_ActiveScene);
+                .Signal<Events::SceneActivated>(_spActiveScene);
         }
     }
 }

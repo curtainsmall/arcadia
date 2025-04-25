@@ -133,13 +133,13 @@ auto Arcadia::PhysicsComponent::ToJson() const -> nlohmann::json
 
 auto Arcadia::PhysicsComponent::HasBodyInfo() const -> bool
 {
-    return !!_IdentifiableJphBodyInfo;
+    return !!_upIdentifiableJphBodyInfo;
 }
 
 auto Arcadia::PhysicsComponent::GetIdentifiableJphBodyInfo() const -> const IdentifiableJphBodyInfoType&
 {
     ACDA_ASSERT(HasBodyInfo());
-    return *_IdentifiableJphBodyInfo;
+    return *_upIdentifiableJphBodyInfo;
 }
 
 void Arcadia::PhysicsComponent::BuildIndentifiableJphBodyInfo(
@@ -153,14 +153,14 @@ void Arcadia::PhysicsComponent::BuildIndentifiableJphBodyInfo(
 
 void Arcadia::PhysicsComponent::BuildIndentifiableJphBodyInfo(const JphBodyInfo& jph_body_info_initial)
 {
-    _IdentifiableJphBodyInfo = std::make_unique<IdentifiableJphBodyInfoType>(
+    _upIdentifiableJphBodyInfo = std::make_unique<IdentifiableJphBodyInfoType>(
         jph_body_info_initial
     );
 }
 
 void Arcadia::PhysicsComponent::DestroyJphBodyInfo()
 {
-    _IdentifiableJphBodyInfo.reset();
+    _upIdentifiableJphBodyInfo.reset();
 }
 
 auto Arcadia::PhysicsComponent::GetBodyShapeColor() const -> const glm::vec3&

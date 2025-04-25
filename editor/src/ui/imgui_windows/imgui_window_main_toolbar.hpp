@@ -17,7 +17,7 @@ namespace Arcadia
     public:
         ACDA_IMGUI_WINDOW_ID_STR_GETTERS("###toolbar");
     public:
-        ImguiWindowMainToolbar() :
+        ImguiWindowMainToolbar():
             ImguiWindowInterface(true, "Toolbar")
         {}
         virtual ~ImguiWindowMainToolbar() = default;
@@ -29,6 +29,6 @@ namespace Arcadia
         void _OnSceneActivated(Events::SceneActivated& e);
         void _OnSceneDeactivated(Events::SceneDeactivated& e);
     private:
-        std::weak_ptr<Scene> _SceneWeakPtr{};
+        std::weak_ptr<Scene> _wpScene{};
     };
 }

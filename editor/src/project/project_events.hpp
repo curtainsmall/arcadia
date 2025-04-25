@@ -18,8 +18,8 @@ namespace Arcadia
         class ProjectBuilt: public EventBase
         {
         public:
-            ProjectBuilt(const std::shared_ptr<Project>& project):
-                spProject(project)
+            ProjectBuilt(const std::shared_ptr<Project>& project_sptr):
+                spProject(project_sptr)
             {}
 
         public:
@@ -40,8 +40,8 @@ namespace Arcadia
         class RendererBuilt: public EventBase
         {
         public:
-            RendererBuilt(std::shared_ptr<RendererInterface> renderer):
-                spRenderer(renderer)
+            RendererBuilt(std::shared_ptr<RendererInterface> renderer_sptr):
+                spRenderer(renderer_sptr)
             {}
         public:
             const std::shared_ptr<RendererInterface> spRenderer;
@@ -55,8 +55,8 @@ namespace Arcadia
         class PhysicsSimulatorBuilt: public EventBase
         {
         public:
-            PhysicsSimulatorBuilt(const std::shared_ptr<PhysicsSimulator>& physcis_simulator):
-                spPhysicsSimulator(physcis_simulator)
+            PhysicsSimulatorBuilt(const std::shared_ptr<PhysicsSimulator>& physcis_simulator_sptr):
+                spPhysicsSimulator(physcis_simulator_sptr)
             {}
         public:
             const std::shared_ptr<PhysicsSimulator> spPhysicsSimulator;
@@ -70,8 +70,8 @@ namespace Arcadia
         class SceneBuilt: public EventBase
         {
         public:
-            SceneBuilt(const std::shared_ptr<Scene>& scene):
-                spScene(scene)
+            SceneBuilt(const std::shared_ptr<Scene>& scene_sptr):
+                spScene(scene_sptr)
             {}
         public:
             const std::shared_ptr<Scene> spScene;
@@ -80,8 +80,8 @@ namespace Arcadia
         class SceneActivated: public EventBase
         {
         public:
-            SceneActivated(const std::shared_ptr<Scene>& scene):
-                spScene(scene)
+            SceneActivated(const std::shared_ptr<Scene>& scene_sptr):
+                spScene(scene_sptr)
             {}
         public:
             const std::shared_ptr<Scene> spScene;

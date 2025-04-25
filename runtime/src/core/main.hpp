@@ -48,9 +48,9 @@ ACDA_MAIN_FN_DECL
         }
 
         // Updates
-        for(const std::shared_ptr<Arcadia::LayerInterface>& layer : std::ranges::reverse_view{ Arcadia::LayerStack::Instance() })
+        for(const std::shared_ptr<Arcadia::LayerInterface>& layer_sptr : std::ranges::reverse_view{ Arcadia::LayerStack::Instance() })
         {
-            layer->OnUpdate();
+            layer_sptr->OnUpdate();
         }
     }
 

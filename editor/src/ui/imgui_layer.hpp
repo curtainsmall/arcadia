@@ -28,7 +28,7 @@ namespace Arcadia
         [[nodiscard]]
         auto GetWindow() const -> std::shared_ptr<const WindowLayer>
         {
-            return _Window.lock();
+            return _wpWindow.lock();
         }
 
         [[nodiscard]]
@@ -56,7 +56,7 @@ namespace Arcadia
         bool ShouldShowDemoWindow{ false };
         bool ShouldShowDebugInfo{ false };
     private:
-        std::weak_ptr<const WindowLayer> _Window;
+        std::weak_ptr<const WindowLayer> _wpWindow;
         ImGuiContext* _ImguiContext{ nullptr };
         std::vector<std::unique_ptr<ImguiWindowInterface>> _ImguiWindow{};
     };

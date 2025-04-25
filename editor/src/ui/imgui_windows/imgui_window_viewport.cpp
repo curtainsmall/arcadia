@@ -35,10 +35,10 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
         return;
     }
 
-    std::shared_ptr<Scene> scene_sptr = _SceneWeakPtr.lock();
-    std::shared_ptr<PhysicsSimulator> physics_simulator_sptr = _PhysicsSimulator.lock();
-    std::shared_ptr<RendererInterface> renderer_sptr = _Renderer.lock();
-    std::shared_ptr<Project> project_sptr = _Project.lock();
+    std::shared_ptr<Scene> scene_sptr = _wpScene.lock();
+    std::shared_ptr<PhysicsSimulator> physics_simulator_sptr = _wpPhysicsSimulator.lock();
+    std::shared_ptr<RendererInterface> renderer_sptr = _wpRenderer.lock();
+    std::shared_ptr<Project> project_sptr = _wpProject.lock();
 
     const AppContext& app_context = AppContext::Instance();
 
@@ -158,7 +158,7 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
 
             ImGui::SetCursorPos(gizmo_options_cursor_pos);
 
-            if(_ShowGizmo)
+            if(_ShowGizmo && !_SelectedEntityId.IsNull())
             {
                 // Gizmo option
                 std::uint32_t selected_color = IM_COL32(50, 50, 120, 255);
@@ -347,12 +347,12 @@ void Arcadia::ImguiWindowViewport::_OnOpenImguiWindow(Events::OpenImguiWindow& e
 
 void Arcadia::ImguiWindowViewport::_OnProjectBuilt(Events::ProjectBuilt& e)
 {
-    _Project = e.spProject;
+    _wpProject = e.spProject;
 }
 
 void Arcadia::ImguiWindowViewport::_OnProjectUnbuilt(Events::ProjectUnbuilt& e)
 {
-    _Project.reset();
+    _wpProject.reset();
 }
 
 void Arcadia::ImguiWindowViewport::_OnSceneActivated(Events::SceneActivated& e)
@@ -368,12 +368,12 @@ void Arcadia::ImguiWindowViewport::_OnSceneActivated(Events::SceneActivated& e)
         transform_comp.SetPosition(glm::vec3(1.f));
         transform_comp.IncreaseDirection(glm::vec3(-1.f));
     }
-    _SceneWeakPtr = scene_sptr;
+    _wpScene = scene_sptr;
 }
 
 void Arcadia::ImguiWindowViewport::_OnSceneDeactivated(Events::SceneDeactivated& e)
 {
-    _SceneWeakPtr.reset();
+    _wpScene.reset();
 }
 
 void Arcadia::ImguiWindowViewport::_OnSelectEntity(Events::SelectEntity& e)
@@ -391,22 +391,22 @@ void Arcadia::ImguiWindowViewport::_OnDeleteEntity(Events::DeleteEntity& e)
 
 void Arcadia::ImguiWindowViewport::_OnRendererBuilt(Events::RendererBuilt& e)
 {
-    _Renderer = e.spRenderer;
+    _wpRenderer = e.spRenderer;
 }
 
 void Arcadia::ImguiWindowViewport::_OnRendererUnbuilt(Events::RendererUnbuilt& e)
 {
-    _Renderer.reset();
+    _wpRenderer.reset();
 }
 
 void Arcadia::ImguiWindowViewport::_OnPhysicsSimulatorBuilt(Events::PhysicsSimulatorBuilt& e)
 {
-    _PhysicsSimulator = e.spPhysicsSimulator;
+    _wpPhysicsSimulator = e.spPhysicsSimulator;
 }
 
 void Arcadia::ImguiWindowViewport::_OnPhysicsSimulatorUnbuilt(Events::PhysicsSimulatorUnbuilt& e)
 {
-    _PhysicsSimulator.reset();
+    _wpPhysicsSimulator.reset();
 }
 
 void Arcadia::ImguiWindowViewport::_OnShowGizmo(Events::ShowGizmo& e)
