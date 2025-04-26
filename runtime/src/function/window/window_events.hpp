@@ -32,30 +32,30 @@ namespace Arcadia
         {
         public:
             WindowShouldClose(WindowLayer* const window):
-                Window(window)
+                pWindowLayer(window)
             {}
         public:
-            WindowLayer* const Window;
+            WindowLayer* const pWindowLayer;
         };
 
         class WindowCloseCanceled: public EventBase
         {
         public:
             WindowCloseCanceled(WindowLayer* const window):
-                Window(window)
+                pWindowLayer(window)
             {}
         public:
-            WindowLayer* const Window;
+            WindowLayer* const pWindowLayer;
         };
 
         class WindowSetSize: public EventBase
         {
         public:
             WindowSetSize(WindowLayer* const window, const glm::i32vec2& new_size):
-                Window(window), NewSize(new_size)
+                pWindowLayer(window), NewSize(new_size)
             {}
         public:
-            WindowLayer* const Window;
+            WindowLayer* const pWindowLayer;
             const glm::i32vec2 NewSize;
         };
 
@@ -63,10 +63,10 @@ namespace Arcadia
         {
         public:
             WindowSetPosition(WindowLayer* const window, const glm::i32vec2& new_size):
-                Window(window), NewPosition(new_size)
+                pWindowLayer(window), NewPosition(new_size)
             {}
         public:
-            WindowLayer* const Window;
+            WindowLayer* const pWindowLayer;
             const glm::i32vec2 NewPosition;
         };
 
@@ -74,10 +74,10 @@ namespace Arcadia
         {
         public:
             WindowSizeStateChanged(WindowLayer* const window, WindowSizeState state):
-                Window(window), State(state)
+                pWindowLayer(window), State(state)
             {}
         public:
-            WindowLayer* const Window;
+            WindowLayer* const pWindowLayer;
             const WindowSizeState State;
         };
 
@@ -85,10 +85,10 @@ namespace Arcadia
         {
         public:
             WindowSetFocused(WindowLayer* const window, bool focused):
-                Window(window), Focused(focused)
+                pWindowLayer(window), Focused(focused)
             {}
         public:
-            WindowLayer* const Window;
+            WindowLayer* const pWindowLayer;
             const bool Focused;
         };
 

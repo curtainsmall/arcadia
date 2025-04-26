@@ -104,7 +104,7 @@ void Arcadia::ProjectLayer::_OnWindowShouldClose(Events::WindowShouldClose& e)
 
     std::shared_ptr<WindowLayer> main_window_layer_sptr = EditorContext::Instance().wpMainWindowLayer.lock();
 
-    if(e.Window == main_window_layer_sptr.get() && _spProject)
+    if(e.pWindowLayer == main_window_layer_sptr.get() && _spProject)
     {
         CommandList& cmd_list = CommandList::Instance();
         if(cmd_list.GetSize())
@@ -120,7 +120,7 @@ void Arcadia::ProjectLayer::_OnWindowShouldClose(Events::WindowShouldClose& e)
             {
                 case pfd::button::cancel:
                 {
-                    event_queue.Signal<Events::WindowCloseCanceled>(e.Window);
+                    event_queue.Signal<Events::WindowCloseCanceled>(e.pWindowLayer);
                     return;
                 }
                 case pfd::button::yes:

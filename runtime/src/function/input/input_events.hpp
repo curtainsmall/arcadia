@@ -155,14 +155,14 @@ namespace Arcadia
                 std::int32_t action,
                 std::int32_t modifier
             ):
-                Window(input_window),
+                pWindowLayer(input_window),
                 KeyCode(key_code),
                 KeyScancode(key_scancode),
                 Action(action),
                 Modifier(modifier)
             {}
         public:
-            const WindowLayer* Window;
+            WindowLayer* const pWindowLayer;
             const std::int32_t KeyCode;
             const std::int32_t KeyScancode;
             const std::int32_t Action;
@@ -173,10 +173,10 @@ namespace Arcadia
         {
         public:
             InputCursorPosition(WindowLayer* const input_window, const glm::vec2& cursor_position):
-                Window(input_window), CursorPosition(cursor_position)
+                pWindowLayer(input_window), CursorPosition(cursor_position)
             {}
         public:
-            WindowLayer* const Window;
+            WindowLayer* const pWindowLayer;
             const glm::vec2 CursorPosition;
         };
 
@@ -184,10 +184,10 @@ namespace Arcadia
         {
         public:
             InputCursorMove(WindowLayer* const input_window, const glm::vec2 cursor_move_distance):
-                Window(input_window), CursorMoveDistance(cursor_move_distance)
+                pWindowLayer(input_window), CursorMoveDistance(cursor_move_distance)
             {}
         public:
-            WindowLayer* const Window;
+            WindowLayer* const pWindowLayer;
             const glm::vec2 CursorMoveDistance;
         };
 
@@ -195,10 +195,10 @@ namespace Arcadia
         {
         public:
             InputScroll(WindowLayer* const input_window, float scroll_offet_vertical, float scroll_offset_horizontal):
-                Window(input_window), ScrollOffsetVertical(scroll_offet_vertical), ScrollOffsetHorizontal(scroll_offset_horizontal)
+                pWindowLayer(input_window), ScrollOffsetVertical(scroll_offet_vertical), ScrollOffsetHorizontal(scroll_offset_horizontal)
             {}
         public:
-            WindowLayer* const Window;
+            WindowLayer* const pWindowLayer;
             const float ScrollOffsetVertical;
             const float ScrollOffsetHorizontal;
         };
@@ -207,10 +207,10 @@ namespace Arcadia
         {
         public:
             InputMouseButton(WindowLayer* const input_window, std::int32_t code, std::int32_t action, std::int32_t modifier):
-                Window(input_window), Code(code), Action(action), Modifier(modifier)
+                pWindowLayer(input_window), Code(code), Action(action), Modifier(modifier)
             {}
         public:
-            WindowLayer* const Window;
+            WindowLayer* const pWindowLayer;
             const std::int32_t Code;
             const std::int32_t Action;
             const std::int32_t Modifier;
@@ -220,10 +220,10 @@ namespace Arcadia
         {
         public:
             InputCursorEnter(WindowLayer* const input_window, bool entered):
-                Window(input_window), Entered(entered)
+                pWindowLayer(input_window), Entered(entered)
             {}
         public:
-            WindowLayer* const Window;
+            WindowLayer* const pWindowLayer;
             const bool Entered;
         };
 
@@ -231,10 +231,10 @@ namespace Arcadia
         {
         public:
             InputChar(WindowLayer* const input_window, std::uint32_t unicode_codepoint):
-                Window(input_window), UnicodeCodepoint(unicode_codepoint)
+                pWindowLayer(input_window), UnicodeCodepoint(unicode_codepoint)
             {}
         public:
-            WindowLayer* const Window;
+            WindowLayer* const pWindowLayer;
             const std::uint32_t UnicodeCodepoint;
         };
     }

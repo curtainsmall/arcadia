@@ -57,7 +57,7 @@ namespace Arcadia
         bool ShouldShowDebugInfo{ false };
     private:
         std::weak_ptr<const WindowLayer> _wpWindow;
-        ImGuiContext* _ImguiContext{ nullptr };
+        ImGuiContext* _pImguiContext{ nullptr };
         std::vector<std::unique_ptr<ImguiWindowInterface>> _ImguiWindow{};
     };
 }

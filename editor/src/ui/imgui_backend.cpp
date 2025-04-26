@@ -114,37 +114,37 @@ ACDA_API void Arcadia::ImguiBackend::OnEvent(EventBase& e)
 
 ACDA_API void Arcadia::ImguiBackend::OnWindowSetFocused(Events::WindowSetFocused& e)
 {
-    ImGui_ImplGlfw_WindowFocusCallback(e.Window->GetGlfwWindow(), e.Focused);
+    ImGui_ImplGlfw_WindowFocusCallback(e.pWindowLayer->GetGlfwWindow(), e.Focused);
 }
 
 ACDA_API void Arcadia::ImguiBackend::OnInputCursorEnter(Events::InputCursorEnter& e)
 {
-    ImGui_ImplGlfw_CursorEnterCallback(e.Window->GetGlfwWindow(), e.Entered);
+    ImGui_ImplGlfw_CursorEnterCallback(e.pWindowLayer->GetGlfwWindow(), e.Entered);
 }
 
 ACDA_API void Arcadia::ImguiBackend::OnInputCursorPosition(Events::InputCursorPosition& e)
 {
-    ImGui_ImplGlfw_CursorPosCallback(e.Window->GetGlfwWindow(), e.CursorPosition.x, e.CursorPosition.y);
+    ImGui_ImplGlfw_CursorPosCallback(e.pWindowLayer->GetGlfwWindow(), e.CursorPosition.x, e.CursorPosition.y);
 }
 
 ACDA_API void Arcadia::ImguiBackend::OnInputMouseButton(Events::InputMouseButton& e)
 {
-    ImGui_ImplGlfw_MouseButtonCallback(e.Window->GetGlfwWindow(), e.Code, e.Action, e.Modifier);
+    ImGui_ImplGlfw_MouseButtonCallback(e.pWindowLayer->GetGlfwWindow(), e.Code, e.Action, e.Modifier);
 }
 
 ACDA_API void Arcadia::ImguiBackend::OnInputScroll(Events::InputScroll& e)
 {
-    ImGui_ImplGlfw_ScrollCallback(e.Window->GetGlfwWindow(), e.ScrollOffsetHorizontal, e.ScrollOffsetVertical);
+    ImGui_ImplGlfw_ScrollCallback(e.pWindowLayer->GetGlfwWindow(), e.ScrollOffsetHorizontal, e.ScrollOffsetVertical);
 }
 
 ACDA_API void Arcadia::ImguiBackend::OnInputKey(Events::InputKey& e)
 {
-    ImGui_ImplGlfw_KeyCallback(e.Window->GetGlfwWindow(), e.KeyCode, e.KeyScancode, e.Action, e.Modifier);
+    ImGui_ImplGlfw_KeyCallback(e.pWindowLayer->GetGlfwWindow(), e.KeyCode, e.KeyScancode, e.Action, e.Modifier);
 }
 
 ACDA_API void Arcadia::ImguiBackend::OnInputChar(Events::InputChar& e)
 {
-    ImGui_ImplGlfw_CharCallback(e.Window->GetGlfwWindow(), e.UnicodeCodepoint);
+    ImGui_ImplGlfw_CharCallback(e.pWindowLayer->GetGlfwWindow(), e.UnicodeCodepoint);
 }
 
 ACDA_API void Arcadia::ImguiBackend::OnMonitorSetConnected(Events::MonitorSetConnected& e)

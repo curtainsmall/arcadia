@@ -12,24 +12,24 @@ auto Arcadia::EventQueue::Instance() -> SelfType&
 
 auto Arcadia::EventQueue::SwapQueue() -> bool
 {
-    std::swap(_CurrentQueue, _ProcessingQueue);
+    std::swap(_pCurrentQueue, _pProcessingQueue);
     return GetSize();
 }
 
 auto Arcadia::EventQueue::GetSize() const -> std::size_t
 {
-    return _ProcessingQueue->size();
+    return _pProcessingQueue->size();
 }
 
 auto Arcadia::EventQueue::GetFront() -> EventBase&
 {
     ACDA_ASSERT(GetSize(), "Empty event queue");
-    return *_ProcessingQueue->front();
+    return *_pProcessingQueue->front();
 }
 
 auto Arcadia::EventQueue::PopFront() -> bool
 {
-    _ProcessingQueue->pop();
+    _pProcessingQueue->pop();
     return GetSize();
 }
 

@@ -45,7 +45,7 @@ namespace Arcadia
 
         using SelfType = BasicEvent<Args...>;
     public:
-        BasicEvent(Args ...args) :
+        BasicEvent(Args ...args):
             DataTuple(std::make_tuple<Args...>(std::forward<Args>(args)...))
         {}
         virtual ~BasicEvent() = default;
@@ -67,17 +67,17 @@ namespace Arcadia
     public:
         using SelfType = EventDispatcher;
     public:
-        EventDispatcher(EventBase& event) :
-            _Event(&event)
+        EventDispatcher(EventBase& event):
+            _pEvent(&event)
         {}
         ~EventDispatcher() = default;
 
         template<Concepts::Event Event>
         auto Dispatch(const EventHandler<Event>& handler) -> SelfType&
         {
-            if(typeid(*_Event) == typeid(Event))
+            if(typeid(*_pEvent) == typeid(Event))
             {
-                handler(static_cast<Event&>(*_Event));
+                handler(static_cast<Event&>(*_pEvent));
                 _Dispatched = true;
             }
             return *this;
@@ -89,7 +89,7 @@ namespace Arcadia
         }
 
     private:
-        EventBase* _Event;
+        EventBase* _pEvent;
         bool _Dispatched{ false };
     };
 
@@ -108,7 +108,7 @@ namespace Arcadia
         template<Concepts::Event Event, typename ...Args>
         auto Signal(Args&& ...args) -> SelfType&
         {
-            _CurrentQueue->emplace(std::make_unique<Event>(std::forward<Args>(args)...));
+            _pCurrentQueue->emplace(std::make_unique<Event>(std::forward<Args>(args)...));
 
             return *this;
         }
@@ -124,7 +124,7 @@ namespace Arcadia
     private:
         _EventQueueType _QueueA{};
         _EventQueueType _QueueB{};
-        _EventQueueType* _ProcessingQueue{ &_QueueA };
-        _EventQueueType* _CurrentQueue{ &_QueueB };
+        _EventQueueType* _pProcessingQueue{ &_QueueA };
+        _EventQueueType* _pCurrentQueue{ &_QueueB };
     };
 }

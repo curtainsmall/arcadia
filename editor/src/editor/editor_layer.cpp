@@ -124,7 +124,7 @@ void Arcadia::EditorAppLayer::_OnWindowShouldClose(Events::WindowShouldClose& e)
     std::shared_ptr<WindowLayer> main_window_layer_sptr = editor_context.wpMainWindowLayer.lock();
     std::shared_ptr<ProjectLayer> main_project_layer_sptr = editor_context.wpMainProjectLayer.lock();
 
-    if(e.Window == main_window_layer_sptr.get() && main_project_layer_sptr->HasProject())
+    if(e.pWindowLayer == main_window_layer_sptr.get() && main_project_layer_sptr->HasProject())
     {
         _WaitingForProjectUnbuiltBeforeClosing = true;
     }

@@ -14,8 +14,8 @@ namespace Arcadia
     class RenderResultInfo
     {
     public:
-        void* id;
-        glm::i32vec2 size;
+        void* Id;
+        glm::i32vec2 Size;
     };
 
     class RendererInterface: public Noncopyable

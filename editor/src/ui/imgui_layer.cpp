@@ -17,12 +17,12 @@ Arcadia::ImguiLayer::ImguiLayer(
     LayerInterface("imgui"),
     _wpWindow(window_layer)
 {
-    _ImguiContext = ImGui::CreateContext();
-    ImGui::SetCurrentContext(_ImguiContext);
+    _pImguiContext = ImGui::CreateContext();
+    ImGui::SetCurrentContext(_pImguiContext);
 
     ScaleUi(EditorContext::Instance().UiScale);
 
-    ImGuiIO& io = _ImguiContext->IO;
+    ImGuiIO& io = _pImguiContext->IO;
     io.ConfigWindowsMoveFromTitleBarOnly = true;
     io.ConfigFlags =
         ImGuiConfigFlags_DockingEnable
@@ -43,10 +43,10 @@ Arcadia::ImguiLayer::ImguiLayer(
 
 Arcadia::ImguiLayer::~ImguiLayer()
 {
-    if(_ImguiContext)
+    if(_pImguiContext)
     {
         ImguiBackend::Shutdown(*_wpWindow.lock());
-        ImGui::DestroyContext(_ImguiContext);
+        ImGui::DestroyContext(_pImguiContext);
     }
 }
 
@@ -73,7 +73,7 @@ void Arcadia::ImguiLayer::OnUpdate()
 {
     std::shared_ptr<const WindowLayer> window = _wpWindow.lock();
 
-    ImGui::SetCurrentContext(_ImguiContext);
+    ImGui::SetCurrentContext(_pImguiContext);
 
     ImguiBackend::NewFrame(*window);
     ImGui::NewFrame();
