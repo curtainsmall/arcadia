@@ -17,7 +17,7 @@ namespace Arcadia::Exceptions
 
         virtual ~BasicException() = default;
 
-        auto GetMessage() const -> const char*
+        auto GetErrorMessage() const -> const char*
         {
             return what();
         }

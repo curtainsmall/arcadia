@@ -6,12 +6,18 @@
 
 #include"core/nlohmann_json_header.hpp"
 #include"core/noncopyable.hpp"
+#include"core/exception.hpp"
 #include"project/project_events.hpp"
 #include"resource/components/camera_component.hpp"
 #include"resource/scene.hpp"
 
 namespace Arcadia
 {
+    namespace Exceptions
+    {
+        ACDA_DEFINE_RUNTIME_ERROR_EXCEPTION(ProjectConstructionFailed);
+    }
+
     class Project: public Noncopyable
     {
     public:

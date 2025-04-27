@@ -246,7 +246,20 @@ void Arcadia::ProjectLayer::_OnOpenProject(Events::OpenProject& e)
         };
         return;
     }
-    _LoadProject();
+    try
+    {
+        _LoadProject();
+    }
+    catch(const Exceptions::ProjectConstructionFailed& e)
+    {
+        (void) pfd::notify{
+            "Arcadia - Open Project",
+            std::format("Failed to open project due to invalid project file"),
+            pfd::icon::error
+        };
+        ACDA_LOG_ERROR(std::format("Failed to open project because its construction failed: {}", e.GetErrorMessage()));
+        return;
+    }
     EventQueue::Instance()
         .Signal<Events::ProjectBuilt>(_spProject);
 }

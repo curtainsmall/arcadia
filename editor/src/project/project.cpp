@@ -11,12 +11,20 @@
 Arcadia::Project::Project(nlohmann::json& json):
     _Name(json.at("name"))
 {
-    for(const nlohmann::json& json_scene : json.at("scenes"))
+    try
     {
-        SceneStorage.try_emplace(json_scene.at("name"), std::make_shared<Scene>(json_scene));
-    }
 
-    SetActiveScene(json.at("active_scene_name"));
+        for(const nlohmann::json& json_scene : json.at("scenes"))
+        {
+            SceneStorage.try_emplace(json_scene.at("name"), std::make_shared<Scene>(json_scene));
+        }
+
+        SetActiveScene(json.at("active_scene_name"));
+    }
+    catch(const nlohmann::json::exception& e)
+    {
+        throw Exceptions::ProjectConstructionFailed(std::format("Json failure: {}", e.what()));
+    }
 }
 
 auto Arcadia::Project::ToJson() const -> nlohmann::json
