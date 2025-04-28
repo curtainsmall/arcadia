@@ -76,7 +76,7 @@ namespace Arcadia
         class NewScene: public EventBase
         {};
 
-        class CreateScene:public EventBase
+        class CreateScene: public EventBase
         {
         public:
             CreateScene(const std::string& name, bool as_current) :
@@ -85,6 +85,16 @@ namespace Arcadia
         public:
             const std::string Name;
             const bool AsCurrent;
+        };
+
+        class RenameScene: public EventBase
+        {
+        public:
+            RenameScene(const std::string& new_name) :
+                NewName(new_name)
+            {}
+        public:
+            const std::string NewName;
         };
 
         class SelectScene: public EventBase

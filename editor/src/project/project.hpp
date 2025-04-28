@@ -4,11 +4,9 @@
 #include<string>
 #include<unordered_map>
 
+#include"core/exception.hpp"
 #include"core/nlohmann_json_header.hpp"
 #include"core/noncopyable.hpp"
-#include"core/exception.hpp"
-#include"project/project_events.hpp"
-#include"resource/components/camera_component.hpp"
 #include"resource/scene.hpp"
 
 namespace Arcadia
@@ -46,12 +44,27 @@ namespace Arcadia
         auto GetActiveScene() const -> const Scene&;
         void SetActiveScene(const std::string& name={});
 
+        [[nodiscard]]
+        auto HasScene() const -> bool;
+        [[nodiscard]]
+        auto HasScene(const std::string& name) const -> bool;
+        [[nodiscard]]
+        auto GetScene(const std::string& name) -> Scene&;
+        [[nodiscard]]
+        auto GetScene(const std::string& name) const -> const Scene&;
+        void CreateScene(const std::string& name);
+        void DestroyScene(const std::string& name);
+        void RenameScene(const std::string& name, const std::string& new_name);
+
+        [[nodiscard]]
+        auto GetSceneStorage() const -> const SceneStorageType&;
+
     public:
         static inline std::string ProjectExtensionString{ ".arcadia" };
 
-        SceneStorageType SceneStorage{};
     private:
         std::string _Name;
         std::shared_ptr<Scene> _spActiveScene{};
+        SceneStorageType _SceneStorage{};
     };
 }

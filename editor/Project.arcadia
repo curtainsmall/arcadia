@@ -1,5 +1,5 @@
 {
-    "active_scene_name": "1",
+    "active_scene_name": "Test Scene",
     "name": "1",
     "scenes": [
         {
@@ -20,8 +20,8 @@
                             "speed": 0.25,
                             "up_epsilon": 0.001745329238474369,
                             "viewport_size": [
-                                1160,
-                                728
+                                1216,
+                                797
                             ]
                         },
                         "transform": {
@@ -247,7 +247,7 @@
                     "type": "actor"
                 }
             ],
-            "name": "1"
+            "name": "Test Scene"
         }
     ]
 }

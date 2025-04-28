@@ -25,7 +25,6 @@ namespace Arcadia
     private:
         std::string _Name{};
         std::string _FilepathString{};
-        bool _ShouldShowEmptyNameWarning{ true };
     };
 
     class ImguiWindowPopupFunctor_CreateScene
@@ -33,13 +32,28 @@ namespace Arcadia
     public:
         using SelfType = ImguiWindowPopupFunctor_CreateScene;
     public:
-        void operator()(const std::shared_ptr<const Project>& project);
+        void operator()(const std::shared_ptr<const Project>& project_sptr);
     public:
         bool Opened{ false };
     private:
         std::string _Name{};
         bool _AsCurrent{ true };
         bool _NameAvailable{ true };
+    };
+
+    class ImguiWindowPopupFunctor_RenameScene
+    {
+    public:
+        using SelfType = ImguiWindowPopupFunctor_RenameScene;
+    public:
+        void operator()(const std::shared_ptr<const Project>& project_sptr);
+    public:
+        bool Opened{ false };
+    private:
+        std::string _PrevName{};
+        std::string _NewName{};
+        bool _Initailized{ false };
+        bool _NameAvailable{ false };
     };
 
     class ImguiWindowMainMenubar: public ImguiWindowInterface
@@ -69,6 +83,7 @@ namespace Arcadia
     private:
         ImguiWindowPopupFunctor_CreateProject _ImguiWindowPopupFunctor_CreateProject{};
         ImguiWindowPopupFunctor_CreateScene _ImguiWindowPopupFunctor_CreateScene{};
+        ImguiWindowPopupFunctor_RenameScene _ImguiWindowPopupFunctor_RenameScene{};
 
         std::weak_ptr<const Project> _wpProject{};
 

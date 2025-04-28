@@ -61,6 +61,7 @@ void Arcadia::ProjectLayer::OnEvent(EventBase& e)
         .Dispatch<Events::CloseProject>(ACDA_BIND_MEMBER_FN(_OnCloseProject))
         .Dispatch<Events::ProjectSaved>(ACDA_BIND_MEMBER_FN(_OnProjectSaved))
         .Dispatch<Events::CreateScene>(ACDA_BIND_MEMBER_FN(_OnCreateScene))
+        .Dispatch<Events::RenameScene>(ACDA_BIND_MEMBER_FN(_OnRenameScene))
         .Dispatch<Events::SelectScene>(ACDA_BIND_MEMBER_FN(_OnSelectScene))
         .Dispatch<Events::CloseScene>(ACDA_BIND_MEMBER_FN(_OnCloseScene))
         .Dispatch<Events::DeleteScene>(ACDA_BIND_MEMBER_FN(_OnDeleteScene))
@@ -107,45 +108,11 @@ void Arcadia::ProjectLayer::_OnWindowShouldClose(Events::WindowShouldClose& e)
     if(e.pWindowLayer == main_window_layer_sptr.get() && _spProject)
     {
         CommandList& cmd_list = CommandList::Instance();
-        if(cmd_list.GetSize())
+        if(cmd_list.GetSize() || _ProjectModified)
         {
-            pfd::button res = pfd::message{
-                "Unsaved",
-                "Do you want to save changes in project?",
-                pfd::choice::yes_no_cancel,
-                pfd::icon::question
-            }.result();
-
-            switch(res)
-            {
-                case pfd::button::cancel:
-                {
-                    event_queue.Signal<Events::WindowCloseCanceled>(e.pWindowLayer);
-                    return;
-                }
-                case pfd::button::yes:
-                {
-                    if(_ProjectFilepath.empty())
-                    {
-                        _ProjectFilepath = pfd::save_file{
-                            "Arcadia - Save as"
-                        }.result();
-                        if(_ProjectFilepath.empty())
-                        {
-                            return;
-                        }
-                    }
-                    _SaveProject();
-
-                    break;
-                }
-                case pfd::button::no:
-                    break;
-            }
+            EventQueue::Instance()
+                .Signal<Events::CloseProject>();
         }
-        _spProject.reset();
-        EventQueue::Instance()
-            .Signal<Events::ProjectUnbuilt>();
     }
 }
 
@@ -302,7 +269,7 @@ void Arcadia::ProjectLayer::_OnCloseProject(Events::CloseProject& e)
     EventQueue& event_queue = EventQueue::Instance();
 
     CommandList& cmd_list = CommandList::Instance();
-    if(cmd_list.GetSize())
+    if(cmd_list.GetSize() || _ProjectModified)
     {
         pfd::button res = pfd::message{
                         "Unsaved",
@@ -350,15 +317,18 @@ void Arcadia::ProjectLayer::_OnCreateScene(Events::CreateScene& e)
 {
     ACDA_ASSERT(_spProject);
 
-    std::shared_ptr<Scene>& scene_sptr = _spProject->SceneStorage.try_emplace(
-        e.Name,
-        std::make_shared<Scene>(e.Name)
-    ).first->second;
-
+    _spProject->CreateScene(e.Name);
     if(e.AsCurrent)
     {
         _spProject->SetActiveScene(e.Name);
     }
+    _ProjectModified = true;
+}
+
+void Arcadia::ProjectLayer::_OnRenameScene(Events::RenameScene& e)
+{
+    _spProject->RenameScene(_spProject->GetActiveScene().GetName(), e.NewName);
+    _ProjectModified = true;
 }
 
 void Arcadia::ProjectLayer::_OnSelectScene(Events::SelectScene& e)
@@ -366,6 +336,7 @@ void Arcadia::ProjectLayer::_OnSelectScene(Events::SelectScene& e)
     ACDA_ASSERT(_spProject);
 
     _spProject->SetActiveScene(e.Name);
+    _ProjectModified = true;
 }
 
 void Arcadia::ProjectLayer::_OnCloseScene(Events::CloseScene& e)
@@ -373,6 +344,7 @@ void Arcadia::ProjectLayer::_OnCloseScene(Events::CloseScene& e)
     ACDA_ASSERT(_spProject);
 
     _spProject->SetActiveScene();
+    _ProjectModified = true;
 }
 
 void Arcadia::ProjectLayer::_OnDeleteScene(Events::DeleteScene& e)
@@ -391,7 +363,7 @@ void Arcadia::ProjectLayer::_OnDeleteScene(Events::DeleteScene& e)
     {
         case pfd::button::ok:
         {
-            _spProject->SceneStorage.erase(scene_name);
+            _spProject->DestroyScene(scene_name);
             _spProject->SetActiveScene();
             break;
         }
@@ -401,6 +373,7 @@ void Arcadia::ProjectLayer::_OnDeleteScene(Events::DeleteScene& e)
             break;
         }
     }
+    _ProjectModified = true;
 }
 
 void Arcadia::ProjectLayer::_OnNewEntity(Events::NewEntity& e)
@@ -446,16 +419,19 @@ void Arcadia::ProjectLayer::_OnNewEntity(Events::NewEntity& e)
         transform_comp.AddFlag(TransformComponentFlags::UseDirection);
     }
     );
+    _ProjectModified = true;
 }
 
 void Arcadia::ProjectLayer::_OnRenameEntity(Events::RenameEntity& e)
 {
     _spProject->GetActiveScene().RenameEntity(e.EntityId, e.NewName);
+    _ProjectModified = true;
 }
 
 void Arcadia::ProjectLayer::_OnDeleteEntity(Events::DeleteEntity& e)
 {
     _spProject->GetActiveScene().DestroyEntity(e.EntityId);
+    _ProjectModified = true;
 }
 
 void Arcadia::ProjectLayer::_OnAddComponent(Events::AddComponent& e)
@@ -485,6 +461,7 @@ void Arcadia::ProjectLayer::_OnAddComponent(Events::AddComponent& e)
         scene.EmplaceComponent<PhysicsComponent>(e.EntityId);
     }
     );
+    _ProjectModified = true;
 }
 
 void Arcadia::ProjectLayer::_OnRemoveComponent(Events::RemoveComponent& e)
@@ -514,4 +491,5 @@ void Arcadia::ProjectLayer::_OnRemoveComponent(Events::RemoveComponent& e)
         scene.RemoveComponent<PhysicsComponent>(e.EntityId);
     }
     );
+    _ProjectModified = true;
 }

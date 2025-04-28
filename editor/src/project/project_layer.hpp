@@ -44,6 +44,7 @@ namespace Arcadia
         void _OnProjectSaved(Events::ProjectSaved& e);
 
         void _OnCreateScene(Events::CreateScene& e);
+        void _OnRenameScene(Events::RenameScene& e);
         void _OnSelectScene(Events::SelectScene& e);
         void _OnCloseScene(Events::CloseScene& e);
         void _OnDeleteScene(Events::DeleteScene& e);
@@ -58,6 +59,7 @@ namespace Arcadia
     private:
         std::filesystem::path _ProjectFilepath{};
         std::shared_ptr<Project> _spProject{};
+        bool _ProjectModified{ false };
 
         std::shared_ptr<RendererInterface> _spRenderer{};
         std::shared_ptr<PhysicsSimulator> _spPhysicsSimulator{};

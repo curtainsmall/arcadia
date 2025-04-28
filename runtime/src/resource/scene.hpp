@@ -52,7 +52,7 @@ namespace Arcadia
         using RegistryType = entt::registry;
         using SelfType = Scene;
     public:
-        Scene(const std::string& name):
+        Scene(const std::string& name) :
             _Name(name)
         {}
         Scene(const nlohmann::json& json);
@@ -63,10 +63,8 @@ namespace Arcadia
         auto operator=(SelfType&&) noexcept -> SelfType & = default;
 
         [[nodiscard]]
-        inline auto GetName() const -> const std::string&
-        {
-            return _Name;
-        }
+        auto GetName() const -> const std::string&;
+        void SetName(const std::string& name);
 
         [[nodiscard]]
         auto ContainsEntity(EntityId entity_id) const -> bool;

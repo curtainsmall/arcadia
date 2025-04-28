@@ -2,21 +2,17 @@
 
 #include"core/assert.hpp"
 #include"core/command/command.hpp"
-#include"resource/components/camera_component.hpp"
-#include"resource/components/light_component.hpp"
-#include"resource/components/model_component.hpp"
-#include"resource/components/physics_component.hpp"
-#include"resource/components/transform_component.hpp"
+
+#include"project/project_events.hpp"
 
 Arcadia::Project::Project(nlohmann::json& json):
     _Name(json.at("name"))
 {
     try
     {
-
         for(const nlohmann::json& json_scene : json.at("scenes"))
         {
-            SceneStorage.try_emplace(json_scene.at("name"), std::make_shared<Scene>(json_scene));
+            _SceneStorage.try_emplace(json_scene.at("name"), std::make_shared<Scene>(json_scene));
         }
 
         SetActiveScene(json.at("active_scene_name"));
@@ -35,7 +31,7 @@ auto Arcadia::Project::ToJson() const -> nlohmann::json
         {"active_scene_name",HasActiveScene() ? GetActiveScene().GetName() : ""}
     };
 
-    for(const auto& [name, scene_sptr] : SceneStorage)
+    for(const auto& [name, scene_sptr] : _SceneStorage)
     {
         json.at("scenes")
             .push_back(scene_sptr->ToJson());
@@ -62,7 +58,6 @@ auto Arcadia::Project::HasActiveScene() const -> bool
 auto Arcadia::Project::GetActiveScene() -> Scene&
 {
     ACDA_ASSERT(HasActiveScene());
-    // If scene is modified, it will record it internally so we does not need to change _modified here
     return *_spActiveScene;
 }
 
@@ -74,7 +69,7 @@ auto Arcadia::Project::GetActiveScene() const -> const Scene&
 
 void Arcadia::Project::SetActiveScene(const std::string& name)
 {
-    auto is_same_scene = _spActiveScene && name == _spActiveScene->GetName();
+    bool is_same_scene = _spActiveScene && name == _spActiveScene->GetName();
 
     if(!is_same_scene)
     {
@@ -87,12 +82,67 @@ void Arcadia::Project::SetActiveScene(const std::string& name)
                 .Signal<Events::SceneDeactivated>();
         }
 
-        if(!name.empty() && SceneStorage.find(name) != SceneStorage.end())
+        if(!name.empty() && _SceneStorage.find(name) != _SceneStorage.end())
         {
-            _spActiveScene = SceneStorage.at(name);
+            _spActiveScene = _SceneStorage.at(name);
 
             EventQueue::Instance()
                 .Signal<Events::SceneActivated>(_spActiveScene);
         }
     }
+}
+
+auto Arcadia::Project::HasScene() const -> bool
+{
+    return !_SceneStorage.empty();
+}
+
+auto Arcadia::Project::HasScene(const std::string& name) const -> bool
+{
+    return _SceneStorage.contains(name);
+}
+
+auto Arcadia::Project::GetScene(const std::string& name) -> Scene&
+{
+    ACDA_ASSERT(HasScene(name));
+    return *_SceneStorage.at(name);
+}
+
+auto Arcadia::Project::GetScene(const std::string& name) const -> const Scene&
+{
+    ACDA_ASSERT(HasScene(name));
+    return *_SceneStorage.at(name);
+}
+
+void Arcadia::Project::CreateScene(const std::string& name)
+{
+    ACDA_ASSERT(!HasScene(name));
+
+    _SceneStorage.try_emplace(
+        name,
+        std::make_shared<Scene>(name)
+    );
+}
+
+void Arcadia::Project::DestroyScene(const std::string& name)
+{
+    ACDA_ASSERT(HasScene(name));
+
+    _SceneStorage.erase(name);
+}
+
+void Arcadia::Project::RenameScene(const std::string& name, const std::string& new_name)
+{
+    ACDA_ASSERT(HasScene(name));
+    ACDA_ASSERT(!HasScene(new_name));
+
+    SceneStorageType::node_type node = _SceneStorage.extract(name);
+    node.key() = new_name;
+    node.mapped()->SetName(new_name);
+    _SceneStorage.insert(std::move(node));
+}
+
+auto Arcadia::Project::GetSceneStorage() const -> const SceneStorageType&
+{
+    return _SceneStorage;
 }

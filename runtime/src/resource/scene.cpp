@@ -10,7 +10,7 @@
 #include"resource/components/physics_component.hpp"
 #include"resource/components/transform_component.hpp"
 
-Arcadia::Scene::Scene(const nlohmann::json& json):
+Arcadia::Scene::Scene(const nlohmann::json& json) :
     _Name(json.at("name"))
 {
     const nlohmann::json& json_entities = json.at("entities");
@@ -82,6 +82,16 @@ auto Arcadia::Scene::ToJson() const -> nlohmann::json
     };
 
     return json;
+}
+
+auto Arcadia::Scene::GetName() const -> const std::string&
+{
+    return _Name;
+}
+
+void Arcadia::Scene::SetName(const std::string& name)
+{
+    _Name = name;
 }
 
 auto Arcadia::Scene::ContainsEntity(EntityId entity_id) const -> bool
