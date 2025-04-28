@@ -2,7 +2,7 @@
 
 #include "gl_uniform_buffer.hpp"
 
-#include"core/log/log.hpp"
+#include "core/log/log.hpp"
 
 Arcadia::GlUniformBuffer::GlUniformBuffer(
     GLsizeiptr size
@@ -15,7 +15,7 @@ Arcadia::GlUniformBuffer::GlUniformBuffer(
     Unbind();
 }
 
-Arcadia::GlUniformBuffer::GlUniformBuffer(GLsizeiptr size, const GLvoid* data) :
+Arcadia::GlUniformBuffer::GlUniformBuffer(GLsizeiptr size, const GLvoid* data):
     GlUniformBuffer(size)
 {
     SetBufferSubData(0, size, data);
@@ -26,7 +26,7 @@ Arcadia::GlUniformBuffer::~GlUniformBuffer()
     ACDA_GL_CALL(glDeleteBuffers(1, &_GlId));
 }
 
-Arcadia::GlUniformBuffer::GlUniformBuffer(SelfType&& rhs) noexcept :
+Arcadia::GlUniformBuffer::GlUniformBuffer(SelfType&& rhs) noexcept:
     _GlId(rhs._GlId)
 {
     rhs._GlId = 0;

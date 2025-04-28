@@ -1,16 +1,16 @@
 #pragma once
 
-#include<chrono>
-#include<format>
-#include<memory>
-#include<ranges>
-#include<string>
-#include<vector>
+#include <chrono>
+#include <format>
+#include <memory>
+#include <ranges>
+#include <string>
+#include <vector>
 
-#include"core/assert.hpp"
-#include"core/event/event.hpp"
-#include"core/noncopyable.hpp"
-#include"platform/api_def.hpp"
+#include "core/assert.hpp"
+#include "core/event/event.hpp"
+#include "core/noncopyable.hpp"
+#include "platform/api_def.hpp"
 
 namespace Arcadia
 {

@@ -2,7 +2,7 @@
 
 #include "event.hpp"
 
-#include"core/assert.hpp"
+#include "core/assert.hpp"
 
 auto Arcadia::EventQueue::Instance() -> SelfType&
 {

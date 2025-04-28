@@ -7,7 +7,7 @@ Arcadia::GlRenderbuffer::GlRenderbuffer()
     ACDA_GL_CALL(glGenRenderbuffers(1, &_GlId));
 }
 
-Arcadia::GlRenderbuffer::GlRenderbuffer(GLenum format, const glm::i32vec2& size) :
+Arcadia::GlRenderbuffer::GlRenderbuffer(GLenum format, const glm::i32vec2& size):
     GlRenderbuffer()
 {
     SetStorage(format, size);

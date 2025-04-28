@@ -1,11 +1,11 @@
 #pragma once
 
-#include<functional>
-#include<vector>
+#include <functional>
+#include <vector>
 
-#include"core/exception.hpp"
-#include"core/math.hpp"
-#include"platform/api_def.hpp"
+#include "core/exception.hpp"
+#include "core/math.hpp"
+#include "platform/api_def.hpp"
 
 namespace Arcadia
 {

@@ -1,13 +1,13 @@
 #include "imgui_window_main_toolbar.hpp"
 
-#include"core/event/event.hpp"
-#include"core/function.hpp"
-#include"core/command/command.hpp"
-#include"resource/fonts/icon_header.hpp"
+#include "core/command/command.hpp"
+#include "core/event/event.hpp"
+#include "core/function.hpp"
+#include "resource/fonts/icon_header.hpp"
 
-#include"editor/editor_context.hpp"
-#include"ui/imgui_header.hpp"
-#include"ui/ui_events.hpp"
+#include "editor/editor_context.hpp"
+#include "ui/imgui_header.hpp"
+#include "ui/ui_events.hpp"
 
 void Arcadia::ImguiWindowMainToolbar::OnEvent(EventBase& e)
 {

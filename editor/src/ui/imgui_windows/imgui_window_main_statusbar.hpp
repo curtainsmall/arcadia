@@ -1,9 +1,9 @@
 #pragma once
 
-#include"platform/api_def.hpp"
-#include"core/event/event.hpp"
+#include "core/event/event.hpp"
+#include "platform/api_def.hpp"
 
-#include"ui/imgui_window.hpp"
+#include "ui/imgui_window.hpp"
 
 namespace Arcadia
 {
@@ -14,7 +14,7 @@ namespace Arcadia
 
         ACDA_IMGUI_WINDOW_ID_STR_GETTERS("###statusbar");
 
-        ImguiWindowMainStatusbar() :
+        ImguiWindowMainStatusbar():
             ImguiWindowInterface(true, "Statusbar")
         {}
         virtual ~ImguiWindowMainStatusbar() = default;

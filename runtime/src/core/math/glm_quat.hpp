@@ -1,10 +1,10 @@
 #pragma once
 
-#include"boost/math/special_functions/sign.hpp"
+#include "boost/math/special_functions/sign.hpp"
 
-#include"core/math/glm_header.hpp"
-#include"core/nlohmann_json_header.hpp"
-#include"platform/api_def.hpp"
+#include "core/math/glm_header.hpp"
+#include "core/nlohmann_json_header.hpp"
+#include "platform/api_def.hpp"
 
 namespace Arcadia
 {

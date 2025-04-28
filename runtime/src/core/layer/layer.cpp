@@ -2,7 +2,7 @@
 
 #include "layer.hpp"
 
-Arcadia::LayerInterface::LayerInterface(const std::string& name) :
+Arcadia::LayerInterface::LayerInterface(const std::string& name):
     _Name(name)
 {}
 

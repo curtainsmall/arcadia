@@ -1,10 +1,10 @@
 #pragma once
 
-#include<functional>
-#include<string>
+#include <functional>
+#include <string>
 
-#include"core/event/event.hpp"
-#include"platform/api_def.hpp"
+#include "core/event/event.hpp"
+#include "platform/api_def.hpp"
 
 // ImGui window ID should follow: Title###id so that we can change the title for a curtain window
 #define ACDA_IMGUI_WINDOW_ID_STR_GETTERS(id_str) \
@@ -29,7 +29,7 @@ namespace Arcadia
         ImguiWindowInterface(
             bool open = false,
             const std::string& title={}
-        ) :
+        ):
             _Opened(open),
             _Title(title)
         {}

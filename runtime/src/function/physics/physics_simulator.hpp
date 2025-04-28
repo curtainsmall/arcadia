@@ -1,12 +1,12 @@
 #pragma once
 
-#include<memory>
-#include<set>
-#include<unordered_map>
+#include <memory>
+#include <set>
+#include <unordered_map>
 
-#include"platform/api_def.hpp"
-#include"platform/jolt/jolt_header.hpp"
-#include"resource/scene.hpp"
+#include "platform/api_def.hpp"
+#include "platform/jolt/jolt_header.hpp"
+#include "resource/scene.hpp"
 
 namespace Arcadia
 {

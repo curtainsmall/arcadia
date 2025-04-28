@@ -1,15 +1,15 @@
-#include"pch.hpp"
+#include "pch.hpp"
 
-#include"app_layer.hpp"
+#include "app_layer.hpp"
 
-#include"core/app/app_config.hpp"
-#include"core/file/file.hpp"
-#include"core/match.hpp"
-#include"core/math.hpp"
-#include"core/nlohmann_json_header.hpp"
-#include"core/version/version.hpp"
+#include "core/app/app_config.hpp"
+#include "core/file/file.hpp"
+#include "core/match.hpp"
+#include "core/math.hpp"
+#include "core/nlohmann_json_header.hpp"
+#include "core/version/version.hpp"
 
-Arcadia::AppLayerInterface::AppLayerInterface() :
+Arcadia::AppLayerInterface::AppLayerInterface():
     LayerInterface("app")
 {
     // Prepare AppConfig (either read from disk or use default value)

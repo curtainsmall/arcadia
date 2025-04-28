@@ -1,16 +1,16 @@
 #pragma once
 
-#include<memory>
+#include <memory>
 
-#include"core/event/event.hpp"
-#include"function/physics/physics_simulator.hpp"
-#include"function/render/renderer.hpp"
-#include"platform/api_def.hpp"
-#include"ui/imgui_window.hpp"
+#include "core/event/event.hpp"
+#include "function/physics/physics_simulator.hpp"
+#include "function/render/renderer.hpp"
+#include "platform/api_def.hpp"
+#include "ui/imgui_window.hpp"
 
-#include"project/project.hpp"
-#include"project/project_events.hpp"
-#include"ui/ui_events.hpp"
+#include "project/project.hpp"
+#include "project/project_events.hpp"
+#include "ui/ui_events.hpp"
 
 namespace Arcadia
 {

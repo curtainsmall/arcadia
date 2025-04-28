@@ -1,8 +1,8 @@
 #pragma once
 
-#include"platform/api_def.hpp"
-#include"resource/components/component_interface.hpp"
-#include"resource/cubemap.hpp"
+#include "platform/api_def.hpp"
+#include "resource/components/component_interface.hpp"
+#include "resource/cubemap.hpp"
 
 namespace Arcadia
 {

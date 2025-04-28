@@ -1,9 +1,9 @@
 #pragma once
 
-#include<utility>
+#include <utility>
 
-#include"core/noncopyable.hpp"
-#include"core/uuid.hpp"
+#include "core/noncopyable.hpp"
+#include "core/uuid.hpp"
 
 namespace Arcadia
 {
@@ -15,10 +15,10 @@ namespace Arcadia
         using SelfType = Identifiable<ValueType>;
     public:
         Identifiable() = default;
-        Identifiable(const ValueType& val) :
+        Identifiable(const ValueType& val):
             _Value(val)
         {}
-        Identifiable(ValueType&& val) :
+        Identifiable(ValueType&& val):
             _Value(val)
         {}
         template<typename ...Args>

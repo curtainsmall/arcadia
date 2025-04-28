@@ -1,6 +1,6 @@
 #pragma once
 
-#include<cassert>
+#include <cassert>
 
 #define _ACDA_ASSERT(condition) assert(condition)
 #define _ACDA_ASSERT_WITH_MESSAGE(condition, message) _ACDA_ASSERT(condition && message)

@@ -1,10 +1,10 @@
 #pragma once
 
-#include<string>
+#include <string>
 
-#include"platform/api_def.hpp"
-#include"core/math.hpp"
-#include"ui/imgui_header.hpp"
+#include "platform/api_def.hpp"
+#include "core/math.hpp"
+#include "ui/imgui_header.hpp"
 
 namespace Arcadia
 {

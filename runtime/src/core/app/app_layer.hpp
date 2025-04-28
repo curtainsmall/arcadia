@@ -1,10 +1,10 @@
 #pragma once
 
-#include<memory>
+#include <memory>
 
-#include"core/event/event.hpp"
-#include"core/layer/layer.hpp"
-#include"platform/api_def.hpp"
+#include "core/event/event.hpp"
+#include "core/layer/layer.hpp"
+#include "platform/api_def.hpp"
 
 auto main() -> int;
 

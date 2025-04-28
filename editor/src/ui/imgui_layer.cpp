@@ -1,13 +1,13 @@
-#include"pch.hpp"
+#include "pch.hpp"
 
 #include "imgui_layer.hpp"
 
-#include"core/function.hpp"
-#include"function/input/input_events.hpp"
-#include"resource/fonts/icon_header.hpp"
+#include "core/function.hpp"
+#include "function/input/input_events.hpp"
+#include "resource/fonts/icon_header.hpp"
 
-#include"editor/editor_context.hpp"
-#include"ui/imgui_backend.hpp"
+#include "editor/editor_context.hpp"
+#include "ui/imgui_backend.hpp"
 
 Arcadia::ImguiLayer::ImguiLayer(
     const std::shared_ptr<const WindowLayer>& window_layer,

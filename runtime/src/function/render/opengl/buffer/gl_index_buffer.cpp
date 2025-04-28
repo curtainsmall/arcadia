@@ -2,7 +2,7 @@
 
 #include "gl_index_buffer.hpp"
 
-Arcadia::GlIndexBuffer::GlIndexBuffer(const std::vector<Mesh::IndexType>& indices) :
+Arcadia::GlIndexBuffer::GlIndexBuffer(const std::vector<Mesh::IndexType>& indices):
     _IndexCount(indices.size())
 {
     ACDA_GL_CALL(glGenBuffers(1, &_GlId));

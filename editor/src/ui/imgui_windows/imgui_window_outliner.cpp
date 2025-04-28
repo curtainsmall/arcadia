@@ -1,15 +1,15 @@
 #include "imgui_window_outliner.hpp"
 
-#include"core/command/command.hpp"
-#include"core/event/event.hpp"
-#include"core/file/pfd_header.hpp"
-#include"core/function.hpp"
-#include"resource/components/camera_component.hpp"
-#include"resource/components/light_component.hpp"
-#include"resource/components/model_component.hpp"
-#include"resource/components/physics_component.hpp"
-#include"resource/components/skybox_component.hpp"
-#include"ui/imgui_header.hpp"
+#include "core/command/command.hpp"
+#include "core/event/event.hpp"
+#include "core/file/pfd_header.hpp"
+#include "core/function.hpp"
+#include "resource/components/camera_component.hpp"
+#include "resource/components/light_component.hpp"
+#include "resource/components/model_component.hpp"
+#include "resource/components/physics_component.hpp"
+#include "resource/components/skybox_component.hpp"
+#include "ui/imgui_header.hpp"
 
 void Arcadia::ImguiWindowOutliner::OnEvent(EventBase& e)
 {
@@ -137,7 +137,7 @@ void Arcadia::ImguiWindowOutliner::OnUpdate()
                             event_queue.Signal<Events::DeleteEntity>(entity_id);
                         }
 
-                    #if 0 // We do not allow custom entity for now
+#if 0 // We do not allow custom entity for now
                         if(!_SelectedEntityId.empty())
                         {
                             ImGui::Separator();
@@ -172,7 +172,7 @@ void Arcadia::ImguiWindowOutliner::OnUpdate()
                                 ImGui::EndMenu();
                             }
                         }
-                    #endif
+#endif
 
                         ImGui::EndPopup();
                     }

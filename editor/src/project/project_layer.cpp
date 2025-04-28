@@ -1,24 +1,24 @@
 #include "project_layer.hpp"
 
-#include"core/app/app_config.hpp"
-#include"core/assert.hpp"
-#include"core/command/command.hpp"
-#include"core/enum.hpp"
-#include"core/file/file.hpp"
-#include"core/file/pfd_header.hpp"
-#include"core/function.hpp"
-#include"core/hash.hpp"
-#include"core/log/log.hpp"
-#include"core/match.hpp"
-#include"function/render/opengl/gl_renderer.hpp"
-#include"function/window/window_events.hpp"
-#include"resource/components/camera_component.hpp"
-#include"resource/components/light_component.hpp"
-#include"resource/components/model_component.hpp"
-#include"resource/components/physics_component.hpp"
-#include"resource/components/transform_component.hpp"
+#include "core/app/app_config.hpp"
+#include "core/assert.hpp"
+#include "core/command/command.hpp"
+#include "core/enum.hpp"
+#include "core/file/file.hpp"
+#include "core/file/pfd_header.hpp"
+#include "core/function.hpp"
+#include "core/hash.hpp"
+#include "core/log/log.hpp"
+#include "core/match.hpp"
+#include "function/render/opengl/gl_renderer.hpp"
+#include "function/window/window_events.hpp"
+#include "resource/components/camera_component.hpp"
+#include "resource/components/light_component.hpp"
+#include "resource/components/model_component.hpp"
+#include "resource/components/physics_component.hpp"
+#include "resource/components/transform_component.hpp"
 
-#include"editor/editor_context.hpp"
+#include "editor/editor_context.hpp"
 
 Arcadia::ProjectLayer::ProjectLayer():
     LayerInterface("project")
@@ -107,12 +107,8 @@ void Arcadia::ProjectLayer::_OnWindowShouldClose(Events::WindowShouldClose& e)
 
     if(e.pWindowLayer == main_window_layer_sptr.get() && _spProject)
     {
-        CommandList& cmd_list = CommandList::Instance();
-        if(cmd_list.GetSize() || _ProjectModified)
-        {
-            EventQueue::Instance()
-                .Signal<Events::CloseProject>();
-        }
+        EventQueue::Instance()
+            .Signal<Events::CloseProject>();
     }
 }
 

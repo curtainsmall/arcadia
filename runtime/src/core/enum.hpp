@@ -1,8 +1,8 @@
 #pragma once
 
-#include<type_traits>
+#include <type_traits>
 
-#include"platform/api_def.hpp"
+#include "platform/api_def.hpp"
 
 namespace Arcadia
 {

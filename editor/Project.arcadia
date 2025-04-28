@@ -1,5 +1,5 @@
 {
-    "active_scene_name": "Test Scene",
+    "active_scene_name": "Test Scene 1",
     "name": "1",
     "scenes": [
         {
@@ -94,7 +94,7 @@
                             "flags": 1,
                             "pivot": [
                                 0.0,
-                                177.53713989257813,
+                                172.53713989257813,
                                 0.0
                             ],
                             "position": [
@@ -247,7 +247,7 @@
                     "type": "actor"
                 }
             ],
-            "name": "Test Scene"
+            "name": "Test Scene 1"
         }
     ]
 }

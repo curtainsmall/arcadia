@@ -36,7 +36,7 @@ Arcadia::GlTexture2d::~GlTexture2d()
     ACDA_GL_CALL(glDeleteTextures(1, &_GlId));
 }
 
-Arcadia::GlTexture2d::GlTexture2d(SelfType&& rhs) noexcept :
+Arcadia::GlTexture2d::GlTexture2d(SelfType&& rhs) noexcept:
     _GlId(rhs._GlId),
     _Slot(rhs._Slot)
 {

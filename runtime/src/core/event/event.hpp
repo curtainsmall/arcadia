@@ -1,18 +1,18 @@
 #pragma once
 
-#include<functional>
-#include<memory>
-#include<queue>
-#include<tuple>
-#include<typeindex>
-#include<typeinfo>
-#include<unordered_set>
-#include<vector>
+#include <functional>
+#include <memory>
+#include <queue>
+#include <tuple>
+#include <typeindex>
+#include <typeinfo>
+#include <unordered_set>
+#include <vector>
 
-#include"core/log/log.hpp"
-#include"core/noncopyable.hpp"
-#include"platform/api_def.hpp"
-#include"platform/debug_def.hpp"
+#include "core/log/log.hpp"
+#include "core/noncopyable.hpp"
+#include "platform/api_def.hpp"
+#include "platform/debug_def.hpp"
 
 namespace Arcadia
 {

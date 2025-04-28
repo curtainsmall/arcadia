@@ -1,8 +1,8 @@
 #pragma once
 
-#include<memory>
+#include <memory>
 
-#include"core/event/event.hpp"
+#include "core/event/event.hpp"
 
 namespace Arcadia
 {

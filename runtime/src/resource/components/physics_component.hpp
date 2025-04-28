@@ -1,14 +1,14 @@
 #pragma once
 
-#include<memory>
-#include<variant>
+#include <memory>
+#include <variant>
 
-#include"core/identifiable.hpp"
-#include"core/math.hpp"
-#include"core/nlohmann_json_header.hpp"
-#include"platform/api_def.hpp"
-#include"platform/jolt/jolt_header.hpp"
-#include"resource/components/component_interface.hpp"
+#include "core/identifiable.hpp"
+#include "core/math.hpp"
+#include "core/nlohmann_json_header.hpp"
+#include "platform/api_def.hpp"
+#include "platform/jolt/jolt_header.hpp"
+#include "resource/components/component_interface.hpp"
 
 namespace Arcadia
 {

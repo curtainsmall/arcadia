@@ -1,11 +1,11 @@
 #pragma once
 
-#include<string>
+#include <string>
 
-#include"entt/entt.hpp"
+#include "entt/entt.hpp"
 
-#include"core/enum.hpp"
-#include"platform/api_def.hpp"
+#include "core/enum.hpp"
+#include "platform/api_def.hpp"
 
 namespace Arcadia
 {

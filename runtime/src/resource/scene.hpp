@@ -1,20 +1,20 @@
 #pragma once
 
-#include<filesystem>
-#include<string>
-#include<unordered_map>
+#include <filesystem>
+#include <string>
+#include <unordered_map>
 
-#include"core/assert.hpp"
-#include"core/event/event.hpp"
-#include"core/exception.hpp"
-#include"core/nlohmann_json_header.hpp"
-#include"core/noncopyable.hpp"
-#include"core/string.hpp"
-#include"core/uuid.hpp"
-#include"platform/api_def.hpp"
-#include"resource/components/component_interface.hpp"
-#include"resource/entity_id.hpp"
-#include"resource/entt_header.hpp"
+#include "core/assert.hpp"
+#include "core/event/event.hpp"
+#include "core/exception.hpp"
+#include "core/nlohmann_json_header.hpp"
+#include "core/noncopyable.hpp"
+#include "core/string.hpp"
+#include "core/uuid.hpp"
+#include "platform/api_def.hpp"
+#include "resource/components/component_interface.hpp"
+#include "resource/entity_id.hpp"
+#include "resource/entt_header.hpp"
 
 namespace Arcadia
 {
@@ -52,7 +52,7 @@ namespace Arcadia
         using RegistryType = entt::registry;
         using SelfType = Scene;
     public:
-        Scene(const std::string& name) :
+        Scene(const std::string& name):
             _Name(name)
         {}
         Scene(const nlohmann::json& json);

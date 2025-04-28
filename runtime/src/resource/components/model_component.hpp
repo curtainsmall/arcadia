@@ -1,18 +1,18 @@
 #pragma once
 
-#include<memory>
-#include<vector>
+#include <memory>
+#include <vector>
 
-#include"assimp/Importer.hpp"
-#include"assimp/scene.h"
+#include "assimp/Importer.hpp"
+#include "assimp/scene.h"
 
-#include"core/exception.hpp"
-#include"core/identifiable.hpp"
-#include"core/math.hpp"
-#include"core/nlohmann_json_header.hpp"
-#include"platform/api_def.hpp"
-#include"resource/components/component_interface.hpp"
-#include"resource/mesh/mesh.hpp"
+#include "core/exception.hpp"
+#include "core/identifiable.hpp"
+#include "core/math.hpp"
+#include "core/nlohmann_json_header.hpp"
+#include "platform/api_def.hpp"
+#include "resource/components/component_interface.hpp"
+#include "resource/mesh/mesh.hpp"
 
 namespace Arcadia
 {

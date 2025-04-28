@@ -2,8 +2,8 @@
 
 #include <string>
 
-#include"platform/api_def.hpp"
-#include"core/nlohmann_json_header.hpp"
+#include "core/nlohmann_json_header.hpp"
+#include "platform/api_def.hpp"
 
 namespace Arcadia
 {
@@ -14,7 +14,7 @@ namespace Arcadia
         using SelfType = Version;
     public:
         Version() = default;
-        Version(NumType major, NumType minor, NumType patch) :
+        Version(NumType major, NumType minor, NumType patch):
             Major(major),
             Minor(minor),
             Patch(patch)

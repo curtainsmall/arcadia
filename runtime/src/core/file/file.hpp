@@ -1,12 +1,12 @@
 #pragma once
 
-#include<filesystem>
-#include<fstream>
-#include<unordered_map>
+#include <filesystem>
+#include <fstream>
+#include <unordered_map>
 
-#include"core/exception.hpp"
-#include"core/serialization.hpp"
-#include"platform/api_def.hpp"
+#include "core/exception.hpp"
+#include "core/serialization.hpp"
+#include "platform/api_def.hpp"
 
 namespace Arcadia
 {

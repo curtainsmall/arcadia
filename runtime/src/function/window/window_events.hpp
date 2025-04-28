@@ -1,7 +1,7 @@
 #pragma once
 
-#include"core/event/event.hpp"
-#include"core/math.hpp"
+#include "core/event/event.hpp"
+#include "core/math.hpp"
 
 struct GLFWmonitor;
 
@@ -102,7 +102,6 @@ namespace Arcadia
             ::GLFWmonitor* const GlfwMonitor;
             const bool Connected;
         };
-
 
         //==== Adjustments ====//
 

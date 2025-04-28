@@ -5,7 +5,7 @@
 Arcadia::GlVertexArray::GlVertexArray(
     const std::vector<Vertex>& vertices,
     const std::vector<Mesh::IndexType>& indices
-) :
+):
     _GlVertexBuffer(vertices),
     _GlIndexBuffer(indices)
 {
@@ -20,7 +20,7 @@ Arcadia::GlVertexArray::~GlVertexArray()
     ACDA_GL_CALL(glDeleteVertexArrays(1, &_GlId));
 }
 
-Arcadia::GlVertexArray::GlVertexArray(SelfType&& rhs) noexcept :
+Arcadia::GlVertexArray::GlVertexArray(SelfType&& rhs) noexcept:
     _GlVertexBuffer(std::move(rhs._GlVertexBuffer)),
     _GlIndexBuffer(std::move(rhs._GlIndexBuffer))
 {

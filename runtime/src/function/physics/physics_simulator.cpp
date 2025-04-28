@@ -2,11 +2,11 @@
 
 #include "physics_simulator.hpp"
 
-#include<thread>
+#include <thread>
 
-#include"core/match.hpp"
-#include"resource/components/physics_component.hpp"
-#include"resource/components/transform_component.hpp"
+#include "core/match.hpp"
+#include "resource/components/physics_component.hpp"
+#include "resource/components/transform_component.hpp"
 
 Arcadia::PhysicsSimulator::PhysicsSimulator()
 {

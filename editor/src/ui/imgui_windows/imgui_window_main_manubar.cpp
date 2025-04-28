@@ -1,13 +1,13 @@
 #include "imgui_window_main_manubar.hpp"
 
-#include"core/assert.hpp"
-#include"core/file/pfd_header.hpp"
-#include"core/function.hpp"
-#include"platform/graphic_api/graphic_api.hpp"
-#include"resource/fonts/icon_header.hpp"
-#include"ui/imgui_header.hpp"
+#include "core/assert.hpp"
+#include "core/file/pfd_header.hpp"
+#include "core/function.hpp"
+#include "platform/graphic_api/graphic_api.hpp"
+#include "resource/fonts/icon_header.hpp"
+#include "ui/imgui_header.hpp"
 
-#include"ui/ui_events.hpp"
+#include "ui/ui_events.hpp"
 
 void Arcadia::ImguiWindowPopupFunctor_CreateProject::operator()()
 {

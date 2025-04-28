@@ -1,12 +1,12 @@
-#include"pch.hpp"
+#include "pch.hpp"
 
 #include "imgui_backend.hpp"
 
-#include"imgui/backends/imgui_impl_glfw.h"
-#include"imgui/backends/imgui_impl_opengl3.h"
+#include "imgui/backends/imgui_impl_glfw.h"
+#include "imgui/backends/imgui_impl_opengl3.h"
 
-#include"core/app/app_config.hpp"
-#include"core/match.hpp"
+#include "core/app/app_config.hpp"
+#include "core/match.hpp"
 
 ACDA_API void Arcadia::ImguiBackend::Initialize(const WindowLayer& window)
 {

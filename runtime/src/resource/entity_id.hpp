@@ -1,6 +1,6 @@
 #pragma once
 
-#include"resource/entt_header.hpp"
+#include "resource/entt_header.hpp"
 
 namespace Arcadia
 {
@@ -8,7 +8,7 @@ namespace Arcadia
     {
     public:
         EntityId() = default;
-        EntityId(entt::entity id) :
+        EntityId(entt::entity id):
             _Id(id)
         {}
 

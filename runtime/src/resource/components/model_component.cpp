@@ -1,16 +1,16 @@
-#include"pch.hpp"
+#include "pch.hpp"
 
-#include"model_component.hpp"
+#include "model_component.hpp"
 
-#include"core/assert.hpp"
-#include"core/file/file.hpp"
-#include"core/file/pfd_header.hpp"
-#include"core/log/log.hpp"
+#include "core/assert.hpp"
+#include "core/file/file.hpp"
+#include "core/file/pfd_header.hpp"
+#include "core/log/log.hpp"
 
-#include"assimp/postprocess.h"
+#include "assimp/postprocess.h"
 #define STBI_FAILURE_USERMSG
 #define STB_IMAGE_IMPLEMENTATION
-#include"stb/stb_image.h"
+#include "stb/stb_image.h"
 
 Arcadia::ModelComponent::ModelComponent(const std::filesystem::path& filepath):
     _Filepath(filepath)

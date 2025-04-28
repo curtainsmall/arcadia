@@ -1,23 +1,23 @@
 #include "editor_layer.hpp"
 
-#include<memory>
+#include <memory>
 
-#include"core/app/app_config.hpp"
-#include"core/app/app_context.hpp"
-#include"core/enum.hpp"
-#include"core/event/event.hpp"
-#include"core/function.hpp"
-#include"core/layer/layer.hpp"
-#include"core/main.hpp"
+#include "core/app/app_config.hpp"
+#include "core/app/app_context.hpp"
+#include "core/enum.hpp"
+#include "core/event/event.hpp"
+#include "core/function.hpp"
+#include "core/layer/layer.hpp"
+#include "core/main.hpp"
 
-#include"editor/editor_context.hpp"
-#include"ui/imgui_windows/imgui_window_main_manubar.hpp"
-#include"ui/imgui_windows/imgui_window_main_statusbar.hpp"
-#include"ui/imgui_windows/imgui_window_main_toolbar.hpp"
-#include"ui/imgui_windows/imgui_window_outliner.hpp"
-#include"ui/imgui_windows/imgui_window_property.hpp"
-#include"ui/imgui_windows/imgui_window_state.hpp"
-#include"ui/imgui_windows/imgui_window_viewport.hpp"
+#include "editor/editor_context.hpp"
+#include "ui/imgui_windows/imgui_window_main_manubar.hpp"
+#include "ui/imgui_windows/imgui_window_main_statusbar.hpp"
+#include "ui/imgui_windows/imgui_window_main_toolbar.hpp"
+#include "ui/imgui_windows/imgui_window_outliner.hpp"
+#include "ui/imgui_windows/imgui_window_property.hpp"
+#include "ui/imgui_windows/imgui_window_state.hpp"
+#include "ui/imgui_windows/imgui_window_viewport.hpp"
 
 Arcadia::EditorAppLayer::EditorAppLayer()
 {
@@ -55,8 +55,6 @@ Arcadia::EditorAppLayer::EditorAppLayer()
                 ImguiStyle::SetToDark
             )
             .GetTopLayer<ImguiLayer>();
-
-        //editor_context._wpmain_imgui_layer.lock()->ShowDemoWindow = true;
     }
     app_context.Running = true;
 }

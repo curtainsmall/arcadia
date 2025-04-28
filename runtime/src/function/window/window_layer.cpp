@@ -2,10 +2,10 @@
 
 #include "window_layer.hpp"
 
-#include"core/app/app_config.hpp"
-#include"core/function.hpp"
-#include"core/match.hpp"
-#include"function/input/input_events.hpp"
+#include "core/app/app_config.hpp"
+#include "core/function.hpp"
+#include "core/match.hpp"
+#include "function/input/input_events.hpp"
 
 Arcadia::WindowLayer::WindowLayer(
     glm::i32vec2 size,
@@ -26,9 +26,9 @@ Arcadia::WindowLayer::WindowLayer(
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, gl.Version.Major);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, gl.Version.Minor);
         glfwWindowHint(GLFW_SAMPLES, _MultisampleCount);
-    #ifndef NDEBUG
+#ifndef NDEBUG
         glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
-    #endif // NDEBUG
+#endif // NDEBUG
     },
         [&](auto&) -> void
     {

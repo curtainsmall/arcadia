@@ -1,14 +1,13 @@
 #pragma once
 
-#include<memory>
-#include<string>
-
+#include <memory>
+#include <string>
 
 #define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_TRACE
-#include"spdlog/spdlog.h"
+#include "spdlog/spdlog.h"
 
-#include"platform/api_def.hpp"
-#include"platform/debug_def.hpp"
+#include "platform/api_def.hpp"
+#include "platform/debug_def.hpp"
 
 namespace Arcadia
 {

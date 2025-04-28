@@ -1,9 +1,9 @@
 #pragma once
 
-#include<utility>
+#include <utility>
 
-#include"core/noncopyable.hpp"
-#include"platform/api_def.hpp"
+#include "core/noncopyable.hpp"
+#include "platform/api_def.hpp"
 
 namespace Arcadia
 {
@@ -18,10 +18,10 @@ namespace Arcadia
             return Uuid{ 0 };
         }
 
-        Uuid() :
+        Uuid():
             _Value(_NextValue++)
         {}
-        Uuid(ValueType val) :
+        Uuid(ValueType val):
             _Value(val)
         {}
 

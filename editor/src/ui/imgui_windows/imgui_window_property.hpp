@@ -1,28 +1,26 @@
 #pragma once
 
-#include<functional>
-#include<memory>
-#include<string>
+#include <functional>
+#include <memory>
+#include <string>
 
-#include"core/assert.hpp"
-#include"core/concept.hpp"
-#include"core/event/event.hpp"
-#include"core/file/pfd_header.hpp"
-#include"function/physics/physics_simulator.hpp"
-#include"platform/api_def.hpp"
-#include"platform/jolt/jolt_header.hpp"
-#include"resource/components/camera_component.hpp"
-#include"resource/components/light_component.hpp"
-#include"resource/components/model_component.hpp"
-#include"resource/components/physics_component.hpp"
-#include"resource/components/skybox_component.hpp"
-#include"resource/components/transform_component.hpp"
-#include"resource/scene.hpp"
+#include "core/assert.hpp"
+#include "core/concept.hpp"
+#include "core/event/event.hpp"
+#include "core/file/pfd_header.hpp"
+#include "function/physics/physics_simulator.hpp"
+#include "platform/jolt/jolt_header.hpp"
+#include "resource/components/camera_component.hpp"
+#include "resource/components/light_component.hpp"
+#include "resource/components/model_component.hpp"
+#include "resource/components/physics_component.hpp"
+#include "resource/components/transform_component.hpp"
+#include "resource/scene.hpp"
 
-#include"project/project_events.hpp"
-#include"ui/imgui_header.hpp"
-#include"ui/imgui_window.hpp"
-#include"ui/ui_events.hpp"
+#include "project/project_events.hpp"
+#include "ui/imgui_header.hpp"
+#include "ui/imgui_window.hpp"
+#include "ui/ui_events.hpp"
 
 namespace Arcadia
 {

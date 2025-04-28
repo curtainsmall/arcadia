@@ -1,14 +1,14 @@
 #include "imgui_window_state.hpp"
 
-#include"core/file/pfd_header.hpp"
-#include"core/function.hpp"
-#include"core/match.hpp"
-#include"resource/components/camera_component.hpp"
-#include"resource/components/light_component.hpp"
-#include"resource/components/model_component.hpp"
-#include"resource/components/physics_component.hpp"
-#include"ui/imgui_header.hpp"
-#include"ui/imgui_wrapper.hpp"
+#include "core/file/pfd_header.hpp"
+#include "core/function.hpp"
+#include "core/match.hpp"
+#include "resource/components/camera_component.hpp"
+#include "resource/components/light_component.hpp"
+#include "resource/components/model_component.hpp"
+#include "resource/components/physics_component.hpp"
+#include "ui/imgui_header.hpp"
+#include "ui/imgui_wrapper.hpp"
 
 void Arcadia::ImguiWindowStateFunctor_Scene::operator()(const Scene& scene)
 {

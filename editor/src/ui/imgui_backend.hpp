@@ -1,10 +1,10 @@
 #pragma once
 
-#include"platform/api_def.hpp"
-#include"function/input/input_events.hpp"
-#include"function/window/window_events.hpp"
-#include"function/window/window_layer.hpp"
-#include"ui/imgui_header.hpp"
+#include "platform/api_def.hpp"
+#include "function/input/input_events.hpp"
+#include "function/window/window_events.hpp"
+#include "function/window/window_layer.hpp"
+#include "ui/imgui_header.hpp"
 
 namespace Arcadia
 {

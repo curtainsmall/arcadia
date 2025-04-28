@@ -1,10 +1,10 @@
 #pragma once
 
-#include<string>
+#include <string>
 
-#include"core/noncopyable.hpp"
-#include"platform/api_def.hpp"
-#include"platform/opengl/opengl_header.hpp"
+#include "core/noncopyable.hpp"
+#include "platform/api_def.hpp"
+#include "platform/opengl/opengl_header.hpp"
 
 namespace Arcadia
 {

@@ -1,15 +1,15 @@
 #pragma once
 
-#include<memory>
+#include <memory>
 
-#include"core/app/app_layer.hpp"
-#include"function/input/input_events.hpp"
-#include"function/window/window_events.hpp"
-#include"function/window/window_layer.hpp"
+#include "core/app/app_layer.hpp"
+#include "function/input/input_events.hpp"
+#include "function/window/window_events.hpp"
+#include "function/window/window_layer.hpp"
 
-#include"project/project_events.hpp"
-#include"project/project_layer.hpp"
-#include"ui/imgui_layer.hpp"
+#include "project/project_events.hpp"
+#include "project/project_layer.hpp"
+#include "ui/imgui_layer.hpp"
 
 namespace Arcadia
 {

@@ -1,15 +1,15 @@
 #pragma once
 
-#include<memory>
-#include<string>
+#include <memory>
+#include <string>
 
-#include"platform/api_def.hpp"
-#include"resource/scene.hpp"
-#include"ui/imgui_header.hpp"
-#include"ui/imgui_window.hpp"
+#include "platform/api_def.hpp"
+#include "resource/scene.hpp"
+#include "ui/imgui_header.hpp"
+#include "ui/imgui_window.hpp"
 
-#include"project/project_events.hpp"
-#include"ui/ui_events.hpp"
+#include "project/project_events.hpp"
+#include "ui/ui_events.hpp"
 
 namespace Arcadia
 {

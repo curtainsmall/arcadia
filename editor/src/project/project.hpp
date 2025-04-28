@@ -1,13 +1,13 @@
 #pragma once
 
-#include<filesystem>
-#include<string>
-#include<unordered_map>
+#include <filesystem>
+#include <string>
+#include <unordered_map>
 
-#include"core/exception.hpp"
-#include"core/nlohmann_json_header.hpp"
-#include"core/noncopyable.hpp"
-#include"resource/scene.hpp"
+#include "core/exception.hpp"
+#include "core/nlohmann_json_header.hpp"
+#include "core/noncopyable.hpp"
+#include "resource/scene.hpp"
 
 namespace Arcadia
 {

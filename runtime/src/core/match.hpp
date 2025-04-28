@@ -1,10 +1,10 @@
 #pragma once
 
-#include<functional>
-#include<variant>
+#include <functional>
+#include <variant>
 
-#include"core/concept.hpp"
-#include"platform/api_def.hpp"
+#include "core/concept.hpp"
+#include "platform/api_def.hpp"
 
 namespace Arcadia
 {

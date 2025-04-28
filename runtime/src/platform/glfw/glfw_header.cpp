@@ -2,8 +2,8 @@
 
 #include "glfw_header.hpp"
 
-#include<format>
-#include<string>
+#include <format>
+#include <string>
 
 Arcadia::GlfwContext::GlfwContext()
 {

@@ -1,12 +1,12 @@
 #pragma once
 
-#include<memory>
-#include<variant>
+#include <memory>
+#include <variant>
 
-#include"core/math.hpp"
-#include"core/nlohmann_json_header.hpp"
-#include"platform/api_def.hpp"
-#include"resource/components/component_interface.hpp"
+#include "core/math.hpp"
+#include "core/nlohmann_json_header.hpp"
+#include "platform/api_def.hpp"
+#include "resource/components/component_interface.hpp"
 
 namespace Arcadia
 {
@@ -44,7 +44,6 @@ namespace Arcadia
         [[nodiscard]]
         auto GetSpecularStrength() const -> const glm::vec3&;
         void SetSpecularStrength(const glm::vec3& strength);
-
 
     private:
         glm::vec3 _AttenuationCoefficients{ 1.f,.045f,.0075f };

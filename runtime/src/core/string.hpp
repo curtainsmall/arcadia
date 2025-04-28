@@ -1,8 +1,8 @@
 #pragma once
 
-#include<string>
+#include <string>
 
-#include"platform/api_def.hpp"
+#include "platform/api_def.hpp"
 
 namespace Arcadia
 {

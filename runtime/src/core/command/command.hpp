@@ -1,12 +1,12 @@
 #pragma once
 
-#include<functional>
-#include<deque>
-#include<memory>
-#include<string>
+#include <deque>
+#include <functional>
+#include <memory>
+#include <string>
 
-#include"core/noncopyable.hpp"
-#include"platform/api_def.hpp"
+#include "core/noncopyable.hpp"
+#include "platform/api_def.hpp"
 
 namespace Arcadia
 {
@@ -96,6 +96,4 @@ namespace Arcadia
         ContainerType _Container{};
         ContainerType::iterator _CurrentIterator{ _Container.end() };
     };
-
-
 }

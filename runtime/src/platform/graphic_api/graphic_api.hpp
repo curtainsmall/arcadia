@@ -1,9 +1,9 @@
 #pragma once
 
-#include<variant>
+#include <variant>
 
-#include"platform/api_def.hpp"
-#include"core/version/version.hpp"
+#include "platform/api_def.hpp"
+#include "core/version/version.hpp"
 
 namespace Arcadia
 {

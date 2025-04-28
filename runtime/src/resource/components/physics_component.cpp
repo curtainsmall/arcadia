@@ -2,11 +2,11 @@
 
 #include "physics_component.hpp"
 
-#include<string>
+#include <string>
 
-#include"core/assert.hpp"
-#include"core/match.hpp"
-#include"core/math.hpp"
+#include "core/assert.hpp"
+#include "core/match.hpp"
+#include "core/math.hpp"
 
 Arcadia::PhysicsComponent::PhysicsComponent(const nlohmann::json& json):
     _BodyShapeColor(GlmVec3::FromJson(json.at("body_shape_color")))

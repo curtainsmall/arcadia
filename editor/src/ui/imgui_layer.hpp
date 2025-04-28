@@ -1,15 +1,15 @@
 #pragma once
 
-#include<functional>
-#include<memory>
-#include<vector>
+#include <functional>
+#include <memory>
+#include <vector>
 
-#include"core/exception.hpp"
-#include"function/window/window_layer.hpp"
-#include"ui/imgui_header.hpp"
-#include"ui/imgui_style.hpp"
-#include"ui/imgui_window.hpp"
-#include"ui/ui_events.hpp"
+#include "core/exception.hpp"
+#include "function/window/window_layer.hpp"
+#include "ui/imgui_header.hpp"
+#include "ui/imgui_style.hpp"
+#include "ui/imgui_window.hpp"
+#include "ui/ui_events.hpp"
 
 namespace Arcadia
 {

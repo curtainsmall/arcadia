@@ -1,9 +1,9 @@
 #pragma once
 
-#include<memory>
-#include<vector>
+#include <memory>
+#include <vector>
 
-#include"platform/api_def.hpp"
+#include "platform/api_def.hpp"
 
 namespace Arcadia
 {

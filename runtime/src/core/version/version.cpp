@@ -2,7 +2,7 @@
 
 #include "version.hpp"
 
-Arcadia::Version::Version(const nlohmann::json& json) :
+Arcadia::Version::Version(const nlohmann::json& json):
     Major(json.at("major")),
     Minor(json.at("minor")),
     Patch(json.at("patch"))

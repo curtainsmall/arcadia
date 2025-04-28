@@ -1,10 +1,10 @@
 #pragma once
 
-#include<exception>
-#include<string>
+#include <exception>
+#include <string>
 
-#include"platform/api_def.hpp"
-#include"core/log/log.hpp"
+#include "core/log/log.hpp"
+#include "platform/api_def.hpp"
 
 namespace Arcadia::Exceptions
 {
@@ -95,4 +95,3 @@ _ACDA_GET_DEFINE_RUNTIME_ERROR_EXCEPTION_MACRO(__VA_ARGS__, _ACDA_DEFINE_RUNTIME
 #define _ACDA_THROW_WITH_MESSAGE(exception_name, msg) throw exception_name(_ACDA_EXCPETION_MESSAGE_WRAPPER(msg))
 #define _ACDA_GET_THROW_MACRO(_1,_2, name, ...) name
 #define ACDA_THROW(...) _ACDA_GET_THROW_MACRO(__VA_ARGS__, _ACDA_THROW_WITH_MESSAGE,_ACDA_THROW)(__VA_ARGS__)
-

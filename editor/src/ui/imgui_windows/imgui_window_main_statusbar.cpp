@@ -1,9 +1,9 @@
 #include "imgui_window_main_statusbar.hpp"
 
-#include"core/app/app_config.hpp"
+#include "core/app/app_config.hpp"
 
-#include"editor/editor_context.hpp"
-#include"ui/imgui_header.hpp"
+#include "editor/editor_context.hpp"
+#include "ui/imgui_header.hpp"
 
 void Arcadia::ImguiWindowMainStatusbar::OnEvent(EventBase& e)
 {}

@@ -1,9 +1,9 @@
 #pragma once
 
-#include"core/math.hpp"
-#include"core/nlohmann_json_header.hpp"
-#include"platform/api_def.hpp"
-#include"resource/components/component_interface.hpp"
+#include "core/math.hpp"
+#include "core/nlohmann_json_header.hpp"
+#include "platform/api_def.hpp"
+#include "resource/components/component_interface.hpp"
 
 namespace Arcadia
 {
@@ -84,6 +84,5 @@ namespace Arcadia
 
         mutable bool _TransformMatrixDirty{ true };
         mutable glm::mat4 _TransformMatrix{ GlmMat4::CreateIdentity() };
-
     };
 }

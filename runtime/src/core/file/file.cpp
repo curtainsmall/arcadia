@@ -2,11 +2,11 @@
 
 #include "file.hpp"
 
-#include<format>
-#include<fstream>
-#include<sstream>
+#include <format>
+#include <fstream>
+#include <sstream>
 
-#include"core/assert.hpp"
+#include "core/assert.hpp"
 
 ACDA_API auto Arcadia::ToFilepath(const std::string& string) -> std::filesystem::path
 {

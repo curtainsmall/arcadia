@@ -1,11 +1,11 @@
 #pragma once
 
-#include<vector>
+#include <vector>
 
-#include"platform/api_def.hpp"
-#include"resource/components/component_interface.hpp"
-#include"resource/material/material.hpp"
-#include"resource/mesh/vertex.hpp"
+#include "platform/api_def.hpp"
+#include "resource/components/component_interface.hpp"
+#include "resource/material/material.hpp"
+#include "resource/mesh/vertex.hpp"
 
 namespace Arcadia
 {

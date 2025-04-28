@@ -1,13 +1,13 @@
 #pragma once
 
-#include<memory>
+#include <memory>
 
-#include"core/exception.hpp"
-#include"core/math.hpp"
-#include"core/noncopyable.hpp"
-#include"platform/api_def.hpp"
-#include"platform/graphic_api/graphic_api.hpp"
-#include"resource/scene.hpp"
+#include "core/exception.hpp"
+#include "core/math.hpp"
+#include "core/noncopyable.hpp"
+#include "platform/api_def.hpp"
+#include "platform/graphic_api/graphic_api.hpp"
+#include "resource/scene.hpp"
 
 namespace Arcadia
 {

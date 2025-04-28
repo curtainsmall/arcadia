@@ -1,13 +1,13 @@
 #pragma once
 
-#include<memory>
-#include<string>
+#include <memory>
+#include <ranges>
 
-#include"core/app/app_context.hpp"
-#include"core/app/app_layer.hpp"
-#include"core/layer/layer.hpp"
-#include"platform/api_def.hpp"
-#include"platform/debug_def.hpp"
+#include "core/app/app_context.hpp"
+#include "core/app/app_layer.hpp"
+#include "core/layer/layer.hpp"
+#include "event/event.hpp"
+#include "platform/debug_def.hpp"
 
 #if defined(_WIN32) && !defined(ACDA_DEBUG_MODE)
 #define ACDA_MAIN_FN_DECL int WinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)

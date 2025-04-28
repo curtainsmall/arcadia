@@ -1,10 +1,10 @@
 #pragma once
 
-#include"core/math.hpp"
-#include"core/noncopyable.hpp"
-#include"platform/api_def.hpp"
-#include"platform/opengl/opengl_header.hpp"
-#include"resource/material/texture2d.hpp"
+#include "core/math.hpp"
+#include "core/noncopyable.hpp"
+#include "platform/api_def.hpp"
+#include "platform/opengl/opengl_header.hpp"
+#include "resource/material/texture2d.hpp"
 
 namespace Arcadia
 {

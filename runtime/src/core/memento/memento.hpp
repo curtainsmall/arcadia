@@ -1,11 +1,11 @@
 #pragma once
 
-#include<functional>
-#include<list>
-#include<memory>
+#include <functional>
+#include <list>
+#include <memory>
 
-#include"core/noncopyable.hpp"
-#include"platform/api_def.hpp"
+#include "core/noncopyable.hpp"
+#include "platform/api_def.hpp"
 
 namespace Arcadia
 {

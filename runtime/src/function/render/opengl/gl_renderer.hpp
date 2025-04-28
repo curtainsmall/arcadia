@@ -1,23 +1,23 @@
 #pragma once
 
-#include<filesystem>
-#include<optional>
-#include<set>
-#include<tuple>
-#include<unordered_map>
-#include<vector>
+#include <filesystem>
+#include <optional>
+#include <set>
+#include <tuple>
+#include <unordered_map>
+#include <vector>
 
-#include"core/exception.hpp"
-#include"core/math.hpp"
-#include"function/render/opengl/buffer/gl_cubemap.hpp"
-#include"function/render/opengl/buffer/gl_framebuffer.hpp"
-#include"function/render/opengl/buffer/gl_uniform_buffer.hpp"
-#include"function/render/opengl/buffer/gl_vertex_array.hpp"
-#include"function/render/opengl/pipeline/gl_pipeline.hpp"
-#include"function/render/renderer.hpp"
-#include"platform/api_def.hpp"
-#include"platform/opengl/opengl_header.hpp"
-#include"resource/components/light_component.hpp"
+#include "core/exception.hpp"
+#include "core/math.hpp"
+#include "function/render/opengl/buffer/gl_cubemap.hpp"
+#include "function/render/opengl/buffer/gl_framebuffer.hpp"
+#include "function/render/opengl/buffer/gl_uniform_buffer.hpp"
+#include "function/render/opengl/buffer/gl_vertex_array.hpp"
+#include "function/render/opengl/pipeline/gl_pipeline.hpp"
+#include "function/render/renderer.hpp"
+#include "platform/api_def.hpp"
+#include "platform/opengl/opengl_header.hpp"
+#include "resource/components/light_component.hpp"
 
 namespace Arcadia
 {

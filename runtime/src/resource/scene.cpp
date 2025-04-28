@@ -2,15 +2,15 @@
 
 #include "scene.hpp"
 
-#include"core/assert.hpp"
-#include"core/match.hpp"
-#include"resource/components/camera_component.hpp"
-#include"resource/components/light_component.hpp"
-#include"resource/components/model_component.hpp"
-#include"resource/components/physics_component.hpp"
-#include"resource/components/transform_component.hpp"
+#include "core/assert.hpp"
+#include "core/match.hpp"
+#include "resource/components/camera_component.hpp"
+#include "resource/components/light_component.hpp"
+#include "resource/components/model_component.hpp"
+#include "resource/components/physics_component.hpp"
+#include "resource/components/transform_component.hpp"
 
-Arcadia::Scene::Scene(const nlohmann::json& json) :
+Arcadia::Scene::Scene(const nlohmann::json& json):
     _Name(json.at("name"))
 {
     const nlohmann::json& json_entities = json.at("entities");

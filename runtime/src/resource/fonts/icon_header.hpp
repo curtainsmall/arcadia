@@ -1,9 +1,9 @@
 #pragma once
 
-#include<string>
+#include <string>
 
-#include"platform/api_def.hpp"
-#include"resource/fonts/IconsFontAwesome5.h"
+#include "platform/api_def.hpp"
+#include "resource/fonts/IconsFontAwesome5.h"
 
 namespace Arcadia
 {

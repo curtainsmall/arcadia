@@ -2,8 +2,8 @@
 
 #include "texture2d.hpp"
 
-#include"boost/range/combine.hpp"
-#include"core/assert.hpp"
+#include "boost/range/combine.hpp"
+#include "core/assert.hpp"
 
 auto Arcadia::Texture2d::Cascade(
     const Texture2d& texture2d_1,

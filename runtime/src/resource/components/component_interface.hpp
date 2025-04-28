@@ -1,10 +1,10 @@
 #pragma once
 
-#include<string>
+#include <string>
 
-#include"core/nlohmann_json_header.hpp"
-#include"core/noncopyable.hpp"
-#include"platform/api_def.hpp"
+#include "core/nlohmann_json_header.hpp"
+#include "core/noncopyable.hpp"
+#include "platform/api_def.hpp"
 
 #define ACDA_COMPONENT_TYPE_STR_GETTERS(type_str) \
 [[nodiscard]]\

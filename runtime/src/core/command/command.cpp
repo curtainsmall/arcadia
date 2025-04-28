@@ -2,7 +2,7 @@
 
 #include "command.hpp"
 
-#include"core/assert.hpp"
+#include "core/assert.hpp"
 
 Arcadia::Command::Command(
     const std::string& description,

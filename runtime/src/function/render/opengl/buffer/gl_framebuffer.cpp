@@ -6,7 +6,7 @@ Arcadia::GlFramebuffer::GlFramebuffer(
     const glm::i32vec2& viewport_size,
     float near_plane,
     float far_plane
-) :
+):
     _GlTexture2d(viewport_size),
     _GlDepthStencilRenderbuffer(GL_DEPTH24_STENCIL8, viewport_size)
 {
@@ -28,7 +28,7 @@ Arcadia::GlFramebuffer::~GlFramebuffer()
     ACDA_GL_CALL(glDeleteFramebuffers(1, &_GlId));
 }
 
-Arcadia::GlFramebuffer::GlFramebuffer(SelfType&& rhs) noexcept :
+Arcadia::GlFramebuffer::GlFramebuffer(SelfType&& rhs) noexcept:
     _GlTexture2d(std::move(rhs._GlTexture2d))
 {
     _GlId = rhs._GlId;

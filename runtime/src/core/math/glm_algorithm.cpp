@@ -1,8 +1,8 @@
-#include"pch.hpp"
+#include "pch.hpp"
 
 #include "glm_algorithm.hpp"
 
-#include"core/assert.hpp"
+#include "core/assert.hpp"
 
 void Arcadia::Glm::Decompose(
     const glm::mat4& transform,
@@ -66,5 +66,4 @@ void Arcadia::Glm::Decompose(
         rotation.x = atan2(-row[2][0], row[1][1]);
         rotation.z = 0;
     }
-
 }

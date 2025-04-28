@@ -1,8 +1,8 @@
 #include "pch.hpp"
 #include "transform_component.hpp"
 
-#include"core/math.hpp"
-#include"core/assert.hpp"
+#include "core/assert.hpp"
+#include "core/math.hpp"
 
 Arcadia::TransformComponent::TransformComponent(const nlohmann::json& json):
     _Flags(json.at("flags")),
@@ -171,4 +171,3 @@ auto Arcadia::TransformComponent::GetTransformMatrix() const -> const glm::mat4&
     }
     return _TransformMatrix;
 }
-

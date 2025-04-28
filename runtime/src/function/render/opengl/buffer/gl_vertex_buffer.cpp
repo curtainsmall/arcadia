@@ -2,7 +2,7 @@
 
 #include "gl_vertex_buffer.hpp"
 
-Arcadia::GlVertexBuffer::GlVertexBuffer(const std::vector<Vertex>& vertices) :
+Arcadia::GlVertexBuffer::GlVertexBuffer(const std::vector<Vertex>& vertices):
     _VertexCount(vertices.size())
 {
     ACDA_GL_CALL(glGenBuffers(1, &_GlId));

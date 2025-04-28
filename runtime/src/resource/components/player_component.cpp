@@ -1,6 +1,6 @@
-#include"pch.hpp"
+#include "pch.hpp"
 
-#include"resource/components/player_component.hpp"
+#include "resource/components/player_component.hpp"
 
 Arcadia::PlayerComponent::PlayerComponent(const nlohmann::json& json)
 {}

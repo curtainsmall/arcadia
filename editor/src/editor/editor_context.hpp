@@ -1,12 +1,12 @@
 #pragma once
 
-#include<memory>
+#include <memory>
 
-#include"platform/api_def.hpp"
-#include"function/window/window_layer.hpp"
-#include"ui/imgui_layer.hpp"
+#include "platform/api_def.hpp"
+#include "function/window/window_layer.hpp"
+#include "ui/imgui_layer.hpp"
 
-#include"project/project_layer.hpp"
+#include "project/project_layer.hpp"
 
 namespace Arcadia
 {

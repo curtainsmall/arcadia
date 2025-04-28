@@ -1,8 +1,8 @@
 #pragma once
 
-#include"core/nlohmann_json_header.hpp"
-#include"platform/api_def.hpp"
-#include"resource/components/component_interface.hpp"
+#include "core/nlohmann_json_header.hpp"
+#include "platform/api_def.hpp"
+#include "resource/components/component_interface.hpp"
 
 namespace Arcadia
 {
@@ -18,6 +18,5 @@ namespace Arcadia
         ~PlayerComponent() = default;
         [[nodiscard]]
         auto ToJson() const->nlohmann::json;
-
     };
 }

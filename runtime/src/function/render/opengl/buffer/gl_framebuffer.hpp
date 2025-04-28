@@ -1,11 +1,11 @@
 #pragma once
 
-#include"core/exception.hpp"
-#include"core/noncopyable.hpp"
-#include"function/render/opengl/buffer/gl_renderbuffer.hpp"
-#include"function/render/opengl/buffer/gl_texture2d.hpp"
-#include"platform/api_def.hpp"
-#include"platform/opengl/opengl_header.hpp"
+#include "core/exception.hpp"
+#include "core/noncopyable.hpp"
+#include "function/render/opengl/buffer/gl_renderbuffer.hpp"
+#include "function/render/opengl/buffer/gl_texture2d.hpp"
+#include "platform/api_def.hpp"
+#include "platform/opengl/opengl_header.hpp"
 
 namespace Arcadia
 {

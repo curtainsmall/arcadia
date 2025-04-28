@@ -1,13 +1,13 @@
 #pragma once
 
-#include<filesystem>
-#include<functional>
-#include<set>
+#include <filesystem>
+#include <functional>
+#include <set>
 
-#include"platform/api_def.hpp"
-#include"core/file/file.hpp"
-#include"core/math.hpp"
-#include"platform/graphic_api/graphic_api.hpp"
+#include "platform/api_def.hpp"
+#include "core/file/file.hpp"
+#include "core/math.hpp"
+#include "platform/graphic_api/graphic_api.hpp"
 
 namespace Arcadia
 {
