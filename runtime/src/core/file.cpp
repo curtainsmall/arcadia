@@ -30,34 +30,6 @@ ACDA_API auto Arcadia::LoadText(const std::filesystem::path& filepath) -> std::s
     return sstream.str();
 }
 
-auto Arcadia::File::CreateIfstream() -> std::ifstream
-{
-    std::ifstream ifs{};
-    ifs.exceptions(std::ios::failbit);
-    return ifs;
-}
-
-auto Arcadia::File::CreateIfstream(const std::filesystem::path& filepath) -> std::ifstream
-{
-    auto ifs = CreateIfstream();
-    ifs.open(filepath);
-    return ifs;
-}
-
-auto Arcadia::File::CreateOfstream() -> std::ofstream
-{
-    std::ofstream ofs{};
-    ofs.exceptions(std::ios::failbit);
-    return ofs;
-}
-
-auto Arcadia::File::CreateOfstream(const std::filesystem::path& filepath) -> std::ofstream
-{
-    auto ofs = CreateOfstream();
-    ofs.open(filepath);
-    return ofs;
-}
-
 Arcadia::File::File(const std::filesystem::path& filepath):
     _Filepath(filepath)
 {}

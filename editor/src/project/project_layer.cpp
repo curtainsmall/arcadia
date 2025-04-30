@@ -76,7 +76,7 @@ void Arcadia::ProjectLayer::OnEvent(EventBase& e)
 void Arcadia::ProjectLayer::OnUpdate()
 {}
 
-auto Arcadia::ProjectLayer::HasProject() const noexcept -> bool
+auto Arcadia::ProjectLayer::HasProject() const -> bool
 {
     return !!_spProject;
 }
@@ -87,7 +87,7 @@ void Arcadia::ProjectLayer::_SaveProject()
 
     nlohmann::json json = _spProject->ToJson();
 
-    std::ofstream ofs = File::CreateOfstream(_ProjectFilepath);
+    std::ofstream ofs(_ProjectFilepath);
     ofs << std::setw(4) << json;
 
     EventQueue::Instance().Signal<Events::ProjectSaved>();
@@ -97,10 +97,15 @@ void Arcadia::ProjectLayer::_LoadProject()
 {
     ACDA_ASSERT(!_spProject);
 
-    std::ifstream ifs = File::CreateIfstream(_ProjectFilepath);
-    nlohmann::json json = nlohmann::json::parse(ifs);
+    std::ifstream ifs(_ProjectFilepath);
+    if(!ifs.is_open())
+    {
+        throw Exceptions::FileOpenFailed(std::format("Failed to open {}", _ProjectFilepath.generic_string()));
+    }
 
+    nlohmann::json json = nlohmann::json::parse(ifs);
     _spProject = std::make_shared<Project>(json);
+
     EventQueue::Instance().Signal<Events::ProjectLoaded>();
 }
 
@@ -206,28 +211,40 @@ void Arcadia::ProjectLayer::_OnOpenProject(Events::OpenProject& e)
     }
     if(_ProjectFilepath.extension() != Project::ProjectExtensionString)
     {
-        pfd::message msg{
+        (void) pfd::message(
             "Arcadia - Open Project",
-            std::format("Arcadia project must ends with extension \"{}\" while {} does not",Project::ProjectExtensionString,_ProjectFilepath.generic_string()),
+            std::format("Arcadia project must ends with extension \"{}\" while {} does not", Project::ProjectExtensionString, _ProjectFilepath.generic_string()),
             pfd::choice::ok,
             pfd::icon::info
-        };
+        );
         return;
     }
+
     try
     {
         _LoadProject();
     }
+    catch(const Exceptions::FileOpenFailed& e)
+    {
+        (void) pfd::notify(
+            "Arcadia - Open Project",
+            std::format("Failed to open project file at {}", _ProjectFilepath.generic_string()),
+            pfd::icon::error
+        );
+        ACDA_LOG_ERROR(std::format("Failed to open project because failed to open the file at: {}", _ProjectFilepath.generic_string()));
+        return;
+    }
     catch(const Exceptions::ProjectConstructionFailed& e)
     {
-        (void) pfd::notify{
+        (void) pfd::notify(
             "Arcadia - Open Project",
             std::format("Failed to open project due to invalid project file"),
             pfd::icon::error
-        };
+        );
         ACDA_LOG_ERROR(std::format("Failed to open project because its construction failed: {}", e.GetErrorMessage()));
         return;
     }
+
     EventQueue::Instance()
         .Signal<Events::ProjectBuilt>(_spProject);
 }

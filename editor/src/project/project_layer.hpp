@@ -26,7 +26,7 @@ namespace Arcadia
         virtual void OnUpdate() override;
 
         [[nodiscard]]
-        auto HasProject() const noexcept -> bool;
+        auto HasProject() const -> bool;
 
     private:
         void _SaveProject();

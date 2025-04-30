@@ -15,7 +15,7 @@ Arcadia::AppLayerInterface::AppLayerInterface():
     // Prepare AppConfig (either read from disk or use default value)
     try
     {
-        std::ifstream ifs = File::CreateIfstream(AppConfig::Filepath);
+        std::ifstream ifs(AppConfig::Filepath);
         nlohmann::json json = nlohmann::json::parse(ifs);
 
         AppConfig& app_config = AppConfig::Instance();
@@ -60,7 +60,7 @@ Arcadia::AppLayerInterface::AppLayerInterface():
         // Window
         try
         {
-            const nlohmann::json& json_window           = json.at("window");
+            const nlohmann::json& json_window = json.at("window");
             app_config.WindowPosition         = GlmInt32Vec2::FromJson(json_window.value("pos", GlmInt32Vec2::ToJson(app_config.WindowPosition)));
             app_config.WindowSize             = GlmInt32Vec2::FromJson(json_window.value("size", GlmInt32Vec2::ToJson(app_config.WindowSize)));
             app_config.WindowSizeMax          = GlmInt32Vec2::FromJson(json_window.value("max_size", GlmInt32Vec2::ToJson(app_config.WindowSizeMax)));
@@ -157,6 +157,6 @@ Arcadia::AppLayerInterface::~AppLayerInterface()
             .push_back(id_string);
     }
 
-    std::ofstream ofs = File::CreateOfstream(AppConfig::Filepath);
+    std::ofstream ofs(AppConfig::Filepath);
     ofs << std::setw(4) << json;
 }

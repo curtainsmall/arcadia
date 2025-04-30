@@ -21,6 +21,7 @@ namespace Arcadia
 
     namespace Exceptions
     {
+        ACDA_DEFINE_RUNTIME_ERROR_EXCEPTION(FileOpenFailed);
         ACDA_DEFINE_RUNTIME_ERROR_EXCEPTION(FileLoadFailed);
         ACDA_DEFINE_RUNTIME_ERROR_EXCEPTION(FileSaveFailed);
     }
@@ -33,11 +34,6 @@ namespace Arcadia
 
         using SelfType = File;
     public:
-
-        static auto CreateIfstream() -> std::ifstream;
-        static auto CreateIfstream(const std::filesystem::path& filepath) -> std::ifstream;
-        static auto CreateOfstream() -> std::ofstream;
-        static auto CreateOfstream(const std::filesystem::path& filepath) -> std::ofstream;
 
         File(const std::filesystem::path& filepath);
         File(const SelfType&) = default;
