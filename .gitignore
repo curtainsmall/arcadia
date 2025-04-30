@@ -6,3 +6,4 @@ bin-int/
 .vs/
 **/*.user
 **/*.filters
+3rdparty/**/exsampl/
