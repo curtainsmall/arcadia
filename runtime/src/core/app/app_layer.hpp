@@ -2,8 +2,8 @@
 
 #include <memory>
 
-#include "core/event/event.hpp"
-#include "core/layer/layer.hpp"
+#include "core/event.hpp"
+#include "core/layer.hpp"
 #include "platform/api_def.hpp"
 
 auto main() -> int;

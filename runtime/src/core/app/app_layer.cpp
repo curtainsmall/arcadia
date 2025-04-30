@@ -3,11 +3,11 @@
 #include "app_layer.hpp"
 
 #include "core/app/app_config.hpp"
-#include "core/file/file.hpp"
+#include "core/file.hpp"
 #include "core/match.hpp"
 #include "core/math.hpp"
 #include "core/nlohmann_json_header.hpp"
-#include "core/version/version.hpp"
+#include "core/version.hpp"
 
 Arcadia::AppLayerInterface::AppLayerInterface():
     LayerInterface("app")

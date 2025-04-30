@@ -1,6 +1,6 @@
 #include "imgui_window_state.hpp"
 
-#include "core/file/pfd_header.hpp"
+#include "core/pfd_header.hpp"
 #include "core/function.hpp"
 #include "core/match.hpp"
 #include "resource/components/camera_component.hpp"
@@ -85,6 +85,10 @@ void Arcadia::ImguiWindowStateFunctor_PhysicsSimulator::operator()(PhysicsSimula
     }
     ImGui::EndDisabled();
 }
+
+Arcadia::ImguiWindowState::ImguiWindowState(bool open, const std::string& title):
+    ImguiWindowInterface(open, title)
+{}
 
 void Arcadia::ImguiWindowState::OnEvent(EventBase& e)
 {

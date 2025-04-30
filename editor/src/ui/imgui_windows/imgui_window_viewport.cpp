@@ -9,6 +9,10 @@
 #include "resource/components/physics_component.hpp"
 #include "resource/components/transform_component.hpp"
 
+Arcadia::ImguiWindowViewport::ImguiWindowViewport(bool open, const std::string& title):
+    ImguiWindowInterface(open, title)
+{}
+
 void Arcadia::ImguiWindowViewport::OnEvent(EventBase& e)
 {
     EventDispatcher{ e }

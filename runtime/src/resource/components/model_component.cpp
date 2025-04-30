@@ -3,9 +3,9 @@
 #include "model_component.hpp"
 
 #include "core/assert.hpp"
-#include "core/file/file.hpp"
-#include "core/file/pfd_header.hpp"
-#include "core/log/log.hpp"
+#include "core/file.hpp"
+#include "core/pfd_header.hpp"
+#include "core/log.hpp"
 
 #include "assimp/postprocess.h"
 #define STBI_FAILURE_USERMSG

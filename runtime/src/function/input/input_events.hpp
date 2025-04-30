@@ -3,7 +3,7 @@
 #include "GLFW/glfw3.h"
 
 #include "platform/api_def.hpp"
-#include "core/event/event.hpp"
+#include "core/event.hpp"
 #include "core/math.hpp"
 #include "function/window/window_layer.hpp"
 

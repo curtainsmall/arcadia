@@ -1,9 +1,13 @@
 #include "project.hpp"
 
 #include "core/assert.hpp"
-#include "core/command/command.hpp"
+#include "core/command.hpp"
 
 #include "project/project_events.hpp"
+
+Arcadia::Project::Project(std::string name):
+    _Name(name)
+{}
 
 Arcadia::Project::Project(nlohmann::json& json):
     _Name(json.at("name"))

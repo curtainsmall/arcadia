@@ -1,7 +1,7 @@
 #include "imgui_window_main_toolbar.hpp"
 
-#include "core/command/command.hpp"
-#include "core/event/event.hpp"
+#include "core/command.hpp"
+#include "core/event.hpp"
 #include "core/function.hpp"
 #include "resource/fonts/icon_header.hpp"
 

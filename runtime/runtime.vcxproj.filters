@@ -27,31 +27,31 @@
     <ClCompile Include="src\core\app\app_layer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\command\command.cpp">
+    <ClCompile Include="src\core\command.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\event\event.cpp">
+    <ClCompile Include="src\core\event.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\file\file.cpp">
+    <ClCompile Include="src\core\file.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\layer\layer.cpp">
+    <ClCompile Include="src\core\layer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\log\log.cpp">
+    <ClCompile Include="src\core\log.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\core\math\glm_algorithm.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\memento\memento.cpp">
+    <ClCompile Include="src\core\memento.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\time\time.cpp">
+    <ClCompile Include="src\core\time.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\version\version.cpp">
+    <ClCompile Include="src\core\version.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\function\physics\physics_simulator.cpp">
@@ -93,10 +93,10 @@
     <ClCompile Include="src\function\window\window_layer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\platform\glfw\glfw_header.cpp">
+    <ClCompile Include="src\platform\glfw_header.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\platform\opengl\opengl_header.cpp">
+    <ClCompile Include="src\platform\opengl_header.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\resource\components\camera_component.cpp">
@@ -132,6 +132,12 @@
     <ClCompile Include="src\resource\components\skybox_component.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\core\uuid.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\resource\entity_id.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\core\app\app_config.hpp">
@@ -143,22 +149,22 @@
     <ClInclude Include="src\core\app\app_layer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\command\command.hpp">
+    <ClInclude Include="src\core\command.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\event\event.hpp">
+    <ClInclude Include="src\core\event.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\file\file.hpp">
+    <ClInclude Include="src\core\file.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\file\pfd_header.hpp">
+    <ClInclude Include="src\core\pfd_header.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\layer\layer.hpp">
+    <ClInclude Include="src\core\layer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\log\log.hpp">
+    <ClInclude Include="src\core\log.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\core\math\glm_algorithm.hpp">
@@ -191,13 +197,13 @@
     <ClInclude Include="src\core\math\glm_vec4.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\memento\memento.hpp">
+    <ClInclude Include="src\core\memento.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\time\time.hpp">
+    <ClInclude Include="src\core\time.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\version\version.hpp">
+    <ClInclude Include="src\core\version.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\core\exception.hpp">
@@ -269,16 +275,16 @@
     <ClInclude Include="src\function\window\window_layer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\platform\glfw\glfw_header.hpp">
+    <ClInclude Include="src\platform\glfw_header.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\platform\graphic_api\graphic_api.hpp">
+    <ClInclude Include="src\platform\graphic_api.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\platform\jolt\jolt_header.hpp">
+    <ClInclude Include="src\platform\jolt_header.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\platform\opengl\opengl_header.hpp">
+    <ClInclude Include="src\platform\opengl_header.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\platform\api_def.hpp">
@@ -341,7 +347,7 @@
     <ClInclude Include="src\pch.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\platform\cuda\cuda_header.hpp">
+    <ClInclude Include="src\platform\cuda_header.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\core\main.hpp">

@@ -1,12 +1,12 @@
 #pragma once
 
-#include "core/event/event.hpp"
-#include "core/layer/layer.hpp"
+#include "core/event.hpp"
+#include "core/layer.hpp"
 #include "core/math.hpp"
 #include "function/window/window_events.hpp"
 #include "platform/api_def.hpp"
-#include "platform/glfw/glfw_header.hpp"
-#include "platform/graphic_api/graphic_api.hpp"
+#include "platform/glfw_header.hpp"
+#include "platform/graphic_api.hpp"
 
 namespace Arcadia
 {
@@ -23,10 +23,7 @@ namespace Arcadia
         virtual ~WindowLayer();
 
         [[nodiscard]]
-        auto GetGlfwWindow() const -> GLFWwindow*
-        {
-            return _GlfwWindow;
-        }
+        auto GetGlfwWindow() const->GLFWwindow*;
 
         virtual void OnEvent(EventBase& event) override;
         virtual void OnUpdate() override;
@@ -50,10 +47,7 @@ namespace Arcadia
         auto GetCursorInputMode() const->WindowCursorInputMode;
 
     private:
-        static auto _GetWindowPointerFromGlfwUserPointer(GLFWwindow* glfw_window) -> SelfType*
-        {
-            return static_cast<SelfType*>(glfwGetWindowUserPointer(glfw_window));
-        }
+        static auto _GetWindowPointerFromGlfwUserPointer(GLFWwindow* glfw_window) -> SelfType*;
 
         void _OnWindowSetCursorInputMode(Events::WindowSetCursorInputMode& e);
 

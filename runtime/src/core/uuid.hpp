@@ -13,28 +13,16 @@ namespace Arcadia
         using ValueType = std::uint64_t;
         using SelfType = Uuid;
     public:
-        static auto CreateZero() -> Uuid
-        {
-            return Uuid{ 0 };
-        }
+        static auto CreateZero() -> Uuid;
 
-        Uuid():
-            _Value(_NextValue++)
-        {}
-        Uuid(ValueType val):
-            _Value(val)
-        {}
+        Uuid();
+        Uuid(ValueType val);
 
         [[nodiscard]]
-        auto GetValue() const -> ValueType
-        {
-            return _Value;
-        }
+        auto GetValue() const->ValueType;
 
-        operator ValueType() const
-        {
-            return GetValue();
-        }
+        operator ValueType() const;
+
     private:
         static inline ValueType _NextValue{ 1 };
         ValueType _Value;

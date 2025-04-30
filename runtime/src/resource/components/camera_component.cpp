@@ -2,7 +2,7 @@
 
 #include "camera_component.hpp"
 
-#include "core/command/command.hpp"
+#include "core/command.hpp"
 #include "core/math.hpp"
 
 auto Arcadia::CameraComponent::GetUpAxis() -> const glm::vec3&

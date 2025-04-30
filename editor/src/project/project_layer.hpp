@@ -2,9 +2,9 @@
 
 #include <memory>
 
-#include "core/event/event.hpp"
-#include "core/file/file.hpp"
-#include "core/layer/layer.hpp"
+#include "core/event.hpp"
+#include "core/file.hpp"
+#include "core/layer.hpp"
 #include "function/physics/physics_simulator.hpp"
 #include "function/render/renderer.hpp"
 #include "function/window/window_events.hpp"
@@ -26,10 +26,8 @@ namespace Arcadia
         virtual void OnUpdate() override;
 
         [[nodiscard]]
-        inline auto HasProject() const noexcept -> bool
-        {
-            return !!_spProject;
-        }
+        auto HasProject() const noexcept -> bool;
+
     private:
         void _SaveProject();
         void _LoadProject();

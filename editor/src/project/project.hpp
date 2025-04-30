@@ -22,11 +22,7 @@ namespace Arcadia
         using SceneStorageType = std::unordered_map<std::string, std::shared_ptr<Scene>>;
         using SelfType = Project;
     public:
-        inline Project(
-            std::string name
-        ):
-            _Name(name)
-        {}
+        Project(std::string name);
         Project(nlohmann::json& json);
         ~Project() = default;
         [[nodiscard]]

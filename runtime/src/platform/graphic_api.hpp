@@ -3,7 +3,7 @@
 #include <variant>
 
 #include "platform/api_def.hpp"
-#include "core/version/version.hpp"
+#include "core/version.hpp"
 
 namespace Arcadia
 {

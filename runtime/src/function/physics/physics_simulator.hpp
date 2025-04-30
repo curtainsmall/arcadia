@@ -5,7 +5,7 @@
 #include <unordered_map>
 
 #include "platform/api_def.hpp"
-#include "platform/jolt/jolt_header.hpp"
+#include "platform/jolt_header.hpp"
 #include "resource/scene.hpp"
 
 namespace Arcadia

@@ -3,9 +3,9 @@
 #include <string>
 
 #include "core/assert.hpp"
-#include "core/command/command.hpp"
+#include "core/command.hpp"
 #include "core/enum.hpp"
-#include "core/file/pfd_header.hpp"
+#include "core/pfd_header.hpp"
 #include "core/function.hpp"
 #include "core/match.hpp"
 #include "resource/fonts/icon_header.hpp"
@@ -878,6 +878,10 @@ void Arcadia::ImguiWindowPropertyFunctor_TransformComponent::operator()(Transfor
 
     ImGui::EndGroup();
 }
+
+Arcadia::ImguiWindowProperty::ImguiWindowProperty(bool open, const std::string& title):
+    ImguiWindowInterface(open, title)
+{}
 
 void Arcadia::ImguiWindowProperty::OnEvent(EventBase& e)
 {

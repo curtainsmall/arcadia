@@ -2,7 +2,7 @@
 
 #include "opengl_header.hpp"
 
-#include "core/log/log.hpp"
+#include "core/log.hpp"
 
 ACDA_API void Arcadia::GlCheckError(const char* fn_name, const char* file_name, int line)
 {

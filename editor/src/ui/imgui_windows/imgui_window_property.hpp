@@ -6,10 +6,10 @@
 
 #include "core/assert.hpp"
 #include "core/concept.hpp"
-#include "core/event/event.hpp"
-#include "core/file/pfd_header.hpp"
+#include "core/event.hpp"
+#include "core/pfd_header.hpp"
 #include "function/physics/physics_simulator.hpp"
-#include "platform/jolt/jolt_header.hpp"
+#include "platform/jolt_header.hpp"
 #include "resource/components/camera_component.hpp"
 #include "resource/components/light_component.hpp"
 #include "resource/components/model_component.hpp"
@@ -139,12 +139,10 @@ namespace Arcadia
     public:
         ACDA_IMGUI_WINDOW_ID_STR_GETTERS("###property");
 
-        inline ImguiWindowProperty(
+        ImguiWindowProperty(
             bool open,
             const std::string& title
-        ):
-            ImguiWindowInterface(open, title)
-        {}
+        );
         virtual ~ImguiWindowProperty() = default;
 
         virtual void OnEvent(EventBase& e) override;

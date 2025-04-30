@@ -8,7 +8,7 @@
 #include <vector>
 
 #include "core/assert.hpp"
-#include "core/event/event.hpp"
+#include "core/event.hpp"
 #include "core/noncopyable.hpp"
 #include "platform/api_def.hpp"
 

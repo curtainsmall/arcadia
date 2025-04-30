@@ -1,6 +1,6 @@
 #pragma once
 
-#include "core/time/time.hpp"
+#include "core/time.hpp"
 #include "platform/api_def.hpp"
 #include "platform/debug_def.hpp"
 

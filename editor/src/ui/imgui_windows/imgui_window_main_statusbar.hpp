@@ -1,6 +1,6 @@
 #pragma once
 
-#include "core/event/event.hpp"
+#include "core/event.hpp"
 #include "platform/api_def.hpp"
 
 #include "ui/imgui_window.hpp"

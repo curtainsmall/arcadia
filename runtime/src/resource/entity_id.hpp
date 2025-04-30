@@ -8,44 +8,17 @@ namespace Arcadia
     {
     public:
         EntityId() = default;
-        EntityId(entt::entity id):
-            _Id(id)
-        {}
+        EntityId(entt::entity id);
 
-        inline auto operator=(entt::entity id)
-        {
-            _Id = id;
-        }
+        auto operator=(entt::entity id);
+        auto operator==(const EntityId& rhs) const -> bool;
 
-        inline auto operator==(const EntityId& rhs) const -> bool
-        {
-            return _Id == rhs._Id;
-        }
+        operator bool() const;
+        operator entt::entity() const;
+        auto GetValue() const->entt::entity;
 
-        inline operator bool() const
-        {
-            return !IsNull();
-        }
-
-        inline operator entt::entity() const
-        {
-            return GetValue();
-        }
-
-        inline auto GetValue() const -> entt::entity
-        {
-            return _Id;
-        }
-
-        inline void SetNull()
-        {
-            _Id = entt::null;
-        }
-
-        inline auto IsNull() const -> bool
-        {
-            return _Id == entt::null;
-        }
+        void SetNull();
+        auto IsNull() const -> bool;
 
     private:
         entt::entity _Id{ entt::null };

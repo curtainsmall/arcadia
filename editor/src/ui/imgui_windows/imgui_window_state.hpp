@@ -2,7 +2,7 @@
 
 #include <memory>
 
-#include "core/event/event.hpp"
+#include "core/event.hpp"
 #include "function/physics/physics_simulator.hpp"
 #include "function/render/renderer.hpp"
 #include "platform/api_def.hpp"
@@ -48,12 +48,10 @@ namespace Arcadia
     public:
         ACDA_IMGUI_WINDOW_ID_STR_GETTERS("###state");
 
-        inline ImguiWindowState(
+        ImguiWindowState(
             bool open,
             const std::string& title
-        ):
-            ImguiWindowInterface(open, title)
-        {}
+        );
         virtual ~ImguiWindowState() = default;
 
         virtual void OnEvent(EventBase& e) override;

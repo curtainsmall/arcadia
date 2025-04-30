@@ -4,7 +4,7 @@
 
 #include "core/exception.hpp"
 #include "core/noncopyable.hpp"
-#include "core/version/version.hpp"
+#include "core/version.hpp"
 #include "platform/api_def.hpp"
 
 #ifndef NDEBUG
@@ -32,12 +32,12 @@ namespace Arcadia
     ACDA_API auto GetGlVersion() -> Version;
 
     ACDA_API void GLAPIENTRY GlDebugCallback(GLenum source,
-                                           GLenum Type,
-                                           GLuint id,
-                                           GLenum severity,
-                                           GLsizei length,
-                                           const GLchar* message,
-                                           const void* user_param);
+                                             GLenum Type,
+                                             GLuint id,
+                                             GLenum severity,
+                                             GLsizei length,
+                                             const GLchar* message,
+                                             const void* user_param);
 
     ACDA_API auto GetGlMaxCombineTextureImageUnitsCount() -> GLint;
 

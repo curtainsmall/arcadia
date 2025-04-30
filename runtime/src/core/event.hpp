@@ -9,7 +9,7 @@
 #include <unordered_set>
 #include <vector>
 
-#include "core/log/log.hpp"
+#include "core/log.hpp"
 #include "core/noncopyable.hpp"
 #include "platform/api_def.hpp"
 #include "platform/debug_def.hpp"

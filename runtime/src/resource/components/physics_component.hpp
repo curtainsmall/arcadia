@@ -7,7 +7,7 @@
 #include "core/math.hpp"
 #include "core/nlohmann_json_header.hpp"
 #include "platform/api_def.hpp"
-#include "platform/jolt/jolt_header.hpp"
+#include "platform/jolt_header.hpp"
 #include "resource/components/component_interface.hpp"
 
 namespace Arcadia

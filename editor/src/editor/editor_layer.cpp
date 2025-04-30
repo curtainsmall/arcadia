@@ -5,9 +5,9 @@
 #include "core/app/app_config.hpp"
 #include "core/app/app_context.hpp"
 #include "core/enum.hpp"
-#include "core/event/event.hpp"
+#include "core/event.hpp"
 #include "core/function.hpp"
-#include "core/layer/layer.hpp"
+#include "core/layer.hpp"
 #include "core/main.hpp"
 
 #include "editor/editor_context.hpp"

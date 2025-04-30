@@ -6,13 +6,13 @@
 #include <vector>
 
 #include "core/exception.hpp"
-#include "core/file/file.hpp"
-#include "core/log/log.hpp"
+#include "core/file.hpp"
+#include "core/log.hpp"
 #include "core/math.hpp"
 #include "core/noncopyable.hpp"
 #include "function/render/opengl/pipeline/gl_shader.hpp"
 #include "platform/api_def.hpp"
-#include "platform/opengl/opengl_header.hpp"
+#include "platform/opengl_header.hpp"
 
 namespace Arcadia
 {

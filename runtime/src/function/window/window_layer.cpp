@@ -26,9 +26,9 @@ Arcadia::WindowLayer::WindowLayer(
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, gl.Version.Major);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, gl.Version.Minor);
         glfwWindowHint(GLFW_SAMPLES, _MultisampleCount);
-#ifndef NDEBUG
+    #ifndef NDEBUG
         glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
-#endif // NDEBUG
+    #endif // NDEBUG
     },
         [&](auto&) -> void
     {
@@ -84,6 +84,11 @@ Arcadia::WindowLayer::~WindowLayer()
     }
 }
 
+auto Arcadia::WindowLayer::GetGlfwWindow() const -> GLFWwindow*
+{
+    return _GlfwWindow;
+}
+
 void Arcadia::WindowLayer::OnEvent(EventBase& event)
 {
     EventDispatcher{ event }
@@ -131,6 +136,11 @@ auto Arcadia::WindowLayer::GetPosition() const -> glm::i32vec2
     glm::i32vec2 vec{};
     glfwGetWindowPos(_GlfwWindow, &vec.x, &vec.y);
     return vec;
+}
+
+auto Arcadia::WindowLayer::_GetWindowPointerFromGlfwUserPointer(GLFWwindow* glfw_window) -> SelfType*
+{
+    return static_cast<SelfType*>(glfwGetWindowUserPointer(glfw_window));
 }
 
 void Arcadia::WindowLayer::_OnWindowSetCursorInputMode(Events::WindowSetCursorInputMode& e)

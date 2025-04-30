@@ -2,7 +2,7 @@
 
 #include "gl_uniform_buffer.hpp"
 
-#include "core/log/log.hpp"
+#include "core/log.hpp"
 
 Arcadia::GlUniformBuffer::GlUniformBuffer(
     GLsizeiptr size

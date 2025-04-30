@@ -1,6 +1,6 @@
 #pragma once
 
-#include "core/event/event.hpp"
+#include "core/event.hpp"
 #include "core/math.hpp"
 
 struct GLFWmonitor;

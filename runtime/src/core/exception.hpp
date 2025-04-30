@@ -3,7 +3,7 @@
 #include <exception>
 #include <string>
 
-#include "core/log/log.hpp"
+#include "core/log.hpp"
 #include "platform/api_def.hpp"
 
 namespace Arcadia::Exceptions

@@ -4,7 +4,7 @@
 
 #include "core/noncopyable.hpp"
 #include "platform/api_def.hpp"
-#include "platform/opengl/opengl_header.hpp"
+#include "platform/opengl_header.hpp"
 
 namespace Arcadia
 {

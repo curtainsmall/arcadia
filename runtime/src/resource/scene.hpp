@@ -5,7 +5,7 @@
 #include <unordered_map>
 
 #include "core/assert.hpp"
-#include "core/event/event.hpp"
+#include "core/event.hpp"
 #include "core/exception.hpp"
 #include "core/nlohmann_json_header.hpp"
 #include "core/noncopyable.hpp"

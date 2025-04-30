@@ -3,7 +3,7 @@
 #include <memory>
 #include <string>
 
-#include "core/event/event.hpp"
+#include "core/event.hpp"
 #include "function/input/input_events.hpp"
 #include "function/physics/physics_simulator.hpp"
 #include "function/render/renderer.hpp"
@@ -37,12 +37,10 @@ namespace Arcadia
     public:
         ACDA_IMGUI_WINDOW_ID_STR_GETTERS("###viewport");
 
-        inline ImguiWindowViewport(
+        ImguiWindowViewport(
             bool open,
             const std::string& title
-        ):
-            ImguiWindowInterface(open, title)
-        {}
+        );
         virtual ~ImguiWindowViewport() = default;
 
         virtual void OnEvent(EventBase& e) override;

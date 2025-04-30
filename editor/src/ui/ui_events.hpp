@@ -3,7 +3,7 @@
 #include <memory>
 #include <string>
 
-#include "core/event/event.hpp"
+#include "core/event.hpp"
 #include "resource/entity_id.hpp"
 
 namespace Arcadia

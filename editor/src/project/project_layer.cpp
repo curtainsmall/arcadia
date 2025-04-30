@@ -2,13 +2,13 @@
 
 #include "core/app/app_config.hpp"
 #include "core/assert.hpp"
-#include "core/command/command.hpp"
+#include "core/command.hpp"
 #include "core/enum.hpp"
-#include "core/file/file.hpp"
-#include "core/file/pfd_header.hpp"
+#include "core/file.hpp"
+#include "core/pfd_header.hpp"
 #include "core/function.hpp"
 #include "core/hash.hpp"
-#include "core/log/log.hpp"
+#include "core/log.hpp"
 #include "core/match.hpp"
 #include "function/render/opengl/gl_renderer.hpp"
 #include "function/window/window_events.hpp"
@@ -75,6 +75,11 @@ void Arcadia::ProjectLayer::OnEvent(EventBase& e)
 
 void Arcadia::ProjectLayer::OnUpdate()
 {}
+
+auto Arcadia::ProjectLayer::HasProject() const noexcept -> bool
+{
+    return !!_spProject;
+}
 
 void Arcadia::ProjectLayer::_SaveProject()
 {

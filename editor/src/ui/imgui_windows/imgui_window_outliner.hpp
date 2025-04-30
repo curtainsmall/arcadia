@@ -20,12 +20,10 @@ namespace Arcadia
     public:
         ACDA_IMGUI_WINDOW_ID_STR_GETTERS("###outliner");
 
-        inline ImguiWindowOutliner(
+        ImguiWindowOutliner(
             bool open,
             const std::string& title
-        ):
-            ImguiWindowInterface(open, title)
-        {}
+        );
         virtual ~ImguiWindowOutliner() = default;
 
         virtual void OnEvent(EventBase& e);
@@ -51,7 +49,7 @@ namespace Arcadia
     };
 
     template<Concepts::Component Component>
-    inline void ImguiWindowOutliner::_MenuItemAddComponent(int& item_count)
+    void ImguiWindowOutliner::_MenuItemAddComponent(int& item_count)
     {
         std::string type_string = Component::GetTypeStringStatic();
         bool exists = _wpScene.lock()->ContainsAllComponents<Component>(_SelectedEntityId);
@@ -68,7 +66,7 @@ namespace Arcadia
     }
 
     template<Concepts::Component Component>
-    inline void ImguiWindowOutliner::_MenuItemRemoveComponent(int& item_count)
+    void ImguiWindowOutliner::_MenuItemRemoveComponent(int& item_count)
     {
         std::string type_string = Component::GetTypeStringStatic();
         bool exists = _wpScene.lock()->ContainsAllComponents<Component>(_SelectedEntityId);

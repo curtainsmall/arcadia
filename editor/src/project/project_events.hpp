@@ -2,7 +2,7 @@
 
 #include <memory>
 
-#include "core/event/event.hpp"
+#include "core/event.hpp"
 
 namespace Arcadia
 {
