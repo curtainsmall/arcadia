@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include "core/nlohmann_json_header.hpp"
+#include "core/nlohmann_json.hpp"
 #include "core/noncopyable.hpp"
 #include "platform/api_def.hpp"
 

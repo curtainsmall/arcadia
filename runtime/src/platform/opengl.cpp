@@ -1,6 +1,6 @@
 #include "pch.hpp"
 
-#include "opengl_header.hpp"
+#include "opengl.hpp"
 
 #include "core/log.hpp"
 

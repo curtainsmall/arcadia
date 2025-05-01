@@ -98,7 +98,7 @@
     <ClInclude Include="src\ui\imgui_backend.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\ui\imgui_header.hpp">
+    <ClInclude Include="src\ui\imgui.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\ui\imgui_layer.hpp">

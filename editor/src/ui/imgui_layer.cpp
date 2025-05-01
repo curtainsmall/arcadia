@@ -4,7 +4,7 @@
 
 #include "core/function.hpp"
 #include "function/input/input_events.hpp"
-#include "resource/fonts/icon_header.hpp"
+#include "resource/fonts/icon.hpp"
 
 #include "editor/editor_context.hpp"
 #include "ui/imgui_backend.hpp"

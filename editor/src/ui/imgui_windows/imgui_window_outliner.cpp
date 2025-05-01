@@ -2,14 +2,14 @@
 
 #include "core/command.hpp"
 #include "core/event.hpp"
-#include "core/pfd_header.hpp"
+#include "core/pfd.hpp"
 #include "core/function.hpp"
 #include "resource/components/camera_component.hpp"
 #include "resource/components/light_component.hpp"
 #include "resource/components/model_component.hpp"
 #include "resource/components/physics_component.hpp"
 #include "resource/components/skybox_component.hpp"
-#include "ui/imgui_header.hpp"
+#include "ui/imgui.hpp"
 
 Arcadia::ImguiWindowOutliner::ImguiWindowOutliner(bool open, const std::string& title):
     ImguiWindowInterface(open, title)

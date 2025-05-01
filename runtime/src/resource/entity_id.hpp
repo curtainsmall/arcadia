@@ -1,6 +1,6 @@
 #pragma once
 
-#include "resource/entt_header.hpp"
+#include "resource/entt.hpp"
 
 namespace Arcadia
 {

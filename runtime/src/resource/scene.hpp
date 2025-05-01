@@ -7,14 +7,14 @@
 #include "core/assert.hpp"
 #include "core/event.hpp"
 #include "core/exception.hpp"
-#include "core/nlohmann_json_header.hpp"
+#include "core/nlohmann_json.hpp"
 #include "core/noncopyable.hpp"
 #include "core/string.hpp"
 #include "core/uuid.hpp"
 #include "platform/api_def.hpp"
 #include "resource/components/component_interface.hpp"
 #include "resource/entity_id.hpp"
-#include "resource/entt_header.hpp"
+#include "resource/entt.hpp"
 
 namespace Arcadia
 {

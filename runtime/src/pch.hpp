@@ -16,8 +16,8 @@
 #include <utility>
 #include <vector>
 
-#include "platform/opengl_header.hpp" // To prevent any other headers including `gl.h` before this one
+#include "platform/opengl.hpp" // To prevent any other headers including `gl.h` before this one
 
-#include "platform/glfw_header.hpp"
-#include "platform/jolt_header.hpp"
-#include "resource/entt_header.hpp"
+#include "platform/glfw.hpp"
+#include "platform/jolt.hpp"
+#include "resource/entt.hpp"

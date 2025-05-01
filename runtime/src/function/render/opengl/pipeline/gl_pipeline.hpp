@@ -12,7 +12,7 @@
 #include "core/noncopyable.hpp"
 #include "function/render/opengl/pipeline/gl_shader.hpp"
 #include "platform/api_def.hpp"
-#include "platform/opengl_header.hpp"
+#include "platform/opengl.hpp"
 
 namespace Arcadia
 {

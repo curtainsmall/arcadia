@@ -5,9 +5,9 @@
 
 #include "core/identifiable.hpp"
 #include "core/math.hpp"
-#include "core/nlohmann_json_header.hpp"
+#include "core/nlohmann_json.hpp"
 #include "platform/api_def.hpp"
-#include "platform/jolt_header.hpp"
+#include "platform/jolt.hpp"
 #include "resource/components/component_interface.hpp"
 
 namespace Arcadia

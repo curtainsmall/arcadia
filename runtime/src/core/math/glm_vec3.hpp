@@ -1,7 +1,7 @@
 #pragma once
 
-#include "core/math/glm_header.hpp"
-#include "core/nlohmann_json_header.hpp"
+#include "core/math/glm.hpp"
+#include "core/nlohmann_json.hpp"
 #include "platform/api_def.hpp"
 
 namespace Arcadia

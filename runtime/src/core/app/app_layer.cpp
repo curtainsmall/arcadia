@@ -6,7 +6,7 @@
 #include "core/file.hpp"
 #include "core/match.hpp"
 #include "core/math.hpp"
-#include "core/nlohmann_json_header.hpp"
+#include "core/nlohmann_json.hpp"
 #include "core/version.hpp"
 
 Arcadia::AppLayerInterface::AppLayerInterface():

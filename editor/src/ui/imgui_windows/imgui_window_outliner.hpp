@@ -5,7 +5,7 @@
 
 #include "platform/api_def.hpp"
 #include "resource/scene.hpp"
-#include "ui/imgui_header.hpp"
+#include "ui/imgui.hpp"
 #include "ui/imgui_window.hpp"
 
 #include "project/project_events.hpp"

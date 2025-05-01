@@ -93,10 +93,10 @@
     <ClCompile Include="src\function\window\window_layer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\platform\glfw_header.cpp">
+    <ClCompile Include="src\platform\glfw.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\platform\opengl_header.cpp">
+    <ClCompile Include="src\platform\opengl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\resource\components\camera_component.cpp">
@@ -158,7 +158,7 @@
     <ClInclude Include="src\core\file.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\pfd_header.hpp">
+    <ClInclude Include="src\core\pfd.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\core\layer.hpp">
@@ -170,7 +170,7 @@
     <ClInclude Include="src\core\math\glm_algorithm.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\math\glm_header.hpp">
+    <ClInclude Include="src\core\math\glm.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\core\math\glm_mat2.hpp">
@@ -215,7 +215,7 @@
     <ClInclude Include="src\core\math.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\core\nlohmann_json_header.hpp">
+    <ClInclude Include="src\core\nlohmann_json.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\core\serialization.hpp">
@@ -275,16 +275,16 @@
     <ClInclude Include="src\function\window\window_layer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\platform\glfw_header.hpp">
+    <ClInclude Include="src\platform\glfw.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\platform\graphic_api.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\platform\jolt_header.hpp">
+    <ClInclude Include="src\platform\jolt.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\platform\opengl_header.hpp">
+    <ClInclude Include="src\platform\opengl.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\platform\api_def.hpp">
@@ -317,7 +317,7 @@
     <ClInclude Include="src\resource\components\transform_component.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\resource\fonts\icon_header.hpp">
+    <ClInclude Include="src\resource\fonts\icon.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\resource\fonts\IconsFontAwesome5.h">
@@ -338,7 +338,7 @@
     <ClInclude Include="src\resource\cubemap.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\resource\entt_header.hpp">
+    <ClInclude Include="src\resource\entt.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\resource\scene.hpp">
@@ -347,7 +347,7 @@
     <ClInclude Include="src\pch.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\platform\cuda_header.hpp">
+    <ClInclude Include="src\platform\cuda.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\core\main.hpp">

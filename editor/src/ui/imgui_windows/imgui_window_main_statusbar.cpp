@@ -3,7 +3,7 @@
 #include "core/app/app_config.hpp"
 
 #include "editor/editor_context.hpp"
-#include "ui/imgui_header.hpp"
+#include "ui/imgui.hpp"
 
 void Arcadia::ImguiWindowMainStatusbar::OnEvent(EventBase& e)
 {}

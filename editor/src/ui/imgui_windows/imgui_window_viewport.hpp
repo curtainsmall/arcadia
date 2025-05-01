@@ -9,7 +9,7 @@
 #include "function/render/renderer.hpp"
 #include "platform/api_def.hpp"
 #include "resource/scene.hpp"
-#include "ui/imgui_header.hpp"
+#include "ui/imgui.hpp"
 
 #include "project/project.hpp"
 #include "project/project_events.hpp"

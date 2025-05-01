@@ -34,7 +34,7 @@
     <ClInclude Include="src\project\project_events.hpp" />
     <ClInclude Include="src\project\project_layer.hpp" />
     <ClInclude Include="src\ui\imgui_backend.hpp" />
-    <ClInclude Include="src\ui\imgui_header.hpp" />
+    <ClInclude Include="src\ui\imgui.hpp" />
     <ClInclude Include="src\ui\imgui_layer.hpp" />
     <ClInclude Include="src\ui\imgui_style.hpp" />
     <ClInclude Include="src\ui\imgui_window.hpp" />

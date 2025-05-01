@@ -4,7 +4,7 @@
 
 #include "platform/api_def.hpp"
 #include "core/math.hpp"
-#include "ui/imgui_header.hpp"
+#include "ui/imgui.hpp"
 
 namespace Arcadia
 {

@@ -5,7 +5,7 @@
 #include "core/math.hpp"
 #include "function/window/window_events.hpp"
 #include "platform/api_def.hpp"
-#include "platform/glfw_header.hpp"
+#include "platform/glfw.hpp"
 #include "platform/graphic_api.hpp"
 
 namespace Arcadia

@@ -5,7 +5,7 @@
 #include "function/render/opengl/buffer/gl_renderbuffer.hpp"
 #include "function/render/opengl/buffer/gl_texture2d.hpp"
 #include "platform/api_def.hpp"
-#include "platform/opengl_header.hpp"
+#include "platform/opengl.hpp"
 
 namespace Arcadia
 {

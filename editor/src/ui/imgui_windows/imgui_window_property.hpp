@@ -7,9 +7,9 @@
 #include "core/assert.hpp"
 #include "core/concept.hpp"
 #include "core/event.hpp"
-#include "core/pfd_header.hpp"
+#include "core/pfd.hpp"
 #include "function/physics/physics_simulator.hpp"
-#include "platform/jolt_header.hpp"
+#include "platform/jolt.hpp"
 #include "resource/components/camera_component.hpp"
 #include "resource/components/light_component.hpp"
 #include "resource/components/model_component.hpp"
@@ -18,7 +18,7 @@
 #include "resource/scene.hpp"
 
 #include "project/project_events.hpp"
-#include "ui/imgui_header.hpp"
+#include "ui/imgui.hpp"
 #include "ui/imgui_window.hpp"
 #include "ui/ui_events.hpp"
 

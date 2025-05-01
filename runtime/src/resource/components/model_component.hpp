@@ -9,7 +9,7 @@
 #include "core/exception.hpp"
 #include "core/identifiable.hpp"
 #include "core/math.hpp"
-#include "core/nlohmann_json_header.hpp"
+#include "core/nlohmann_json.hpp"
 #include "platform/api_def.hpp"
 #include "resource/components/component_interface.hpp"
 #include "resource/mesh/mesh.hpp"

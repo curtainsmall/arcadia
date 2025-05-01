@@ -132,8 +132,8 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="src\platform\glfw_header.cpp" />
-    <ClCompile Include="src\platform\opengl_header.cpp" />
+    <ClCompile Include="src\platform\glfw.cpp" />
+    <ClCompile Include="src\platform\opengl.cpp" />
     <ClCompile Include="src\resource\components\camera_component.cpp" />
     <ClCompile Include="src\resource\components\light_component.cpp" />
     <ClCompile Include="src\resource\components\model_component.cpp" />
@@ -160,14 +160,14 @@
     <ClInclude Include="src\core\event.hpp" />
     <ClInclude Include="src\core\exception.hpp" />
     <ClInclude Include="src\core\file.hpp" />
-    <ClInclude Include="src\core\pfd_header.hpp" />
+    <ClInclude Include="src\core\pfd.hpp" />
     <ClInclude Include="src\core\hash.hpp" />
     <ClInclude Include="src\core\layer.hpp" />
     <ClInclude Include="src\core\log.hpp" />
     <ClInclude Include="src\core\match.hpp" />
     <ClInclude Include="src\core\math.hpp" />
     <ClInclude Include="src\core\math\glm_algorithm.hpp" />
-    <ClInclude Include="src\core\math\glm_header.hpp" />
+    <ClInclude Include="src\core\math\glm.hpp" />
     <ClInclude Include="src\core\math\glm_mat2.hpp" />
     <ClInclude Include="src\core\math\glm_mat3.hpp" />
     <ClInclude Include="src\core\math\glm_mat4.hpp" />
@@ -177,7 +177,7 @@
     <ClInclude Include="src\core\math\glm_vec3.hpp" />
     <ClInclude Include="src\core\math\glm_vec4.hpp" />
     <ClInclude Include="src\core\memento.hpp" />
-    <ClInclude Include="src\core\nlohmann_json_header.hpp" />
+    <ClInclude Include="src\core\nlohmann_json.hpp" />
     <ClInclude Include="src\core\noncopyable.hpp" />
     <ClInclude Include="src\core\parameter_pack.hpp" />
     <ClInclude Include="src\core\serialization.hpp" />
@@ -203,12 +203,12 @@
     <ClInclude Include="src\function\window\window_layer.hpp" />
     <ClInclude Include="src\pch.hpp" />
     <ClInclude Include="src\platform\api_def.hpp" />
-    <ClInclude Include="src\platform\cuda_header.hpp" />
+    <ClInclude Include="src\platform\cuda.hpp" />
     <ClInclude Include="src\platform\debug_def.hpp" />
-    <ClInclude Include="src\platform\glfw_header.hpp" />
+    <ClInclude Include="src\platform\glfw.hpp" />
     <ClInclude Include="src\platform\graphic_api.hpp" />
-    <ClInclude Include="src\platform\jolt_header.hpp" />
-    <ClInclude Include="src\platform\opengl_header.hpp" />
+    <ClInclude Include="src\platform\jolt.hpp" />
+    <ClInclude Include="src\platform\opengl.hpp" />
     <ClInclude Include="src\platform\plateform_detection.hpp" />
     <ClInclude Include="src\resource\components\camera_component.hpp" />
     <ClInclude Include="src\resource\components\component_interface.hpp" />
@@ -220,9 +220,9 @@
     <ClInclude Include="src\resource\components\transform_component.hpp" />
     <ClInclude Include="src\resource\cubemap.hpp" />
     <ClInclude Include="src\resource\entity_id.hpp" />
-    <ClInclude Include="src\resource\entt_header.hpp" />
+    <ClInclude Include="src\resource\entt.hpp" />
     <ClInclude Include="src\resource\fonts\IconsFontAwesome5.h" />
-    <ClInclude Include="src\resource\fonts\icon_header.hpp" />
+    <ClInclude Include="src\resource\fonts\icon.hpp" />
     <ClInclude Include="src\resource\material\material.hpp" />
     <ClInclude Include="src\resource\material\texture2d.hpp" />
     <ClInclude Include="src\resource\mesh\mesh.hpp" />

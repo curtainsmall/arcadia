@@ -16,7 +16,7 @@
 #include "function/render/opengl/pipeline/gl_pipeline.hpp"
 #include "function/render/renderer.hpp"
 #include "platform/api_def.hpp"
-#include "platform/opengl_header.hpp"
+#include "platform/opengl.hpp"
 #include "resource/components/light_component.hpp"
 
 namespace Arcadia

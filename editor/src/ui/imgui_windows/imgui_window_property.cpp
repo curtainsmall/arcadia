@@ -5,12 +5,12 @@
 #include "core/assert.hpp"
 #include "core/command.hpp"
 #include "core/enum.hpp"
-#include "core/pfd_header.hpp"
+#include "core/pfd.hpp"
 #include "core/function.hpp"
 #include "core/match.hpp"
-#include "resource/fonts/icon_header.hpp"
+#include "resource/fonts/icon.hpp"
 
-#include "ui/imgui_header.hpp"
+#include "ui/imgui.hpp"
 #include "ui/imgui_wrapper.hpp"
 
 #define _ACDA_COMMAND_HELPER(msg, comp_name, getter_name, setter_name, value_name, origin_name) \

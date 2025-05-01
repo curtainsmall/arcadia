@@ -5,7 +5,7 @@
 #include <unordered_map>
 
 #include "core/exception.hpp"
-#include "core/nlohmann_json_header.hpp"
+#include "core/nlohmann_json.hpp"
 #include "core/noncopyable.hpp"
 #include "resource/scene.hpp"
 

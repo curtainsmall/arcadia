@@ -3,10 +3,10 @@
 #include "core/command.hpp"
 #include "core/event.hpp"
 #include "core/function.hpp"
-#include "resource/fonts/icon_header.hpp"
+#include "resource/fonts/icon.hpp"
 
 #include "editor/editor_context.hpp"
-#include "ui/imgui_header.hpp"
+#include "ui/imgui.hpp"
 #include "ui/ui_events.hpp"
 
 void Arcadia::ImguiWindowMainToolbar::OnEvent(EventBase& e)

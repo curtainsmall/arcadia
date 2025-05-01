@@ -1,6 +1,6 @@
 #pragma once
 
-#include "core/nlohmann_json_header.hpp"
+#include "core/nlohmann_json.hpp"
 #include "platform/api_def.hpp"
 #include "resource/components/component_interface.hpp"
 
