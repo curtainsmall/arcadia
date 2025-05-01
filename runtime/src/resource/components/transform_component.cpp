@@ -6,22 +6,22 @@
 
 Arcadia::TransformComponent::TransformComponent(const nlohmann::json& json):
     _Flags(json.at("flags")),
-    _Position(GlmVec3::FromJson(json.at("position"))),
-    _RotationEularAngle(GlmVec3::FromJson(json.at("rotation"))),
-    _Direction(GlmVec3::FromJson(json.at("direction"))),
-    _Scale(GlmVec3::FromJson(json.at("scale"))),
-    _Pivot(GlmVec3::FromJson(json.at("pivot")))
+    _Position(Glm::Vec3_FromJson(json.at("position"))),
+    _RotationEularAngle(Glm::Vec3_FromJson(json.at("rotation"))),
+    _Direction(Glm::Vec3_FromJson(json.at("direction"))),
+    _Scale(Glm::Vec3_FromJson(json.at("scale"))),
+    _Pivot(Glm::Vec3_FromJson(json.at("pivot")))
 {}
 
 auto Arcadia::TransformComponent::ToJson() const -> nlohmann::json
 {
     nlohmann::json json{
         {"flags", _Flags},
-        {"position",GlmVec3::ToJson(_Position)},
-        {"rotation",GlmVec3::ToJson(_RotationEularAngle)},
-        {"direction",GlmVec3::ToJson(_Direction)},
-        {"scale"   ,GlmVec3::ToJson(_Scale)},
-        {"pivot"   ,GlmVec3::ToJson(_Pivot)}
+        {"position",Glm::Vec3_ToJson(_Position)},
+        {"rotation",Glm::Vec3_ToJson(_RotationEularAngle)},
+        {"direction",Glm::Vec3_ToJson(_Direction)},
+        {"scale"   ,Glm::Vec3_ToJson(_Scale)},
+        {"pivot"   ,Glm::Vec3_ToJson(_Pivot)}
     };
 
     return json;
@@ -162,7 +162,7 @@ auto Arcadia::TransformComponent::GetTransformMatrix() const -> const glm::mat4&
 {
     if(_TransformMatrixDirty)
     {
-        _TransformMatrix = GlmMat4::CreateIdentity();
+        _TransformMatrix = Glm::Mat4_CreateIdentity();
         _TransformMatrix = glm::translate(_TransformMatrix, _Position);
         _TransformMatrix = _TransformMatrix * glm::mat4_cast(_RotationQuaternion);
         _TransformMatrix = glm::scale(_TransformMatrix, _Scale);

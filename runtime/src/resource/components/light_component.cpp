@@ -19,44 +19,44 @@ Arcadia::LightComponent::LightComponent(const nlohmann::json& json)
         [&]()
     {
         SpotLight light{};
-        light.SetAttenuationCoefficients(GlmVec3::FromJson(json_light.at("attenuation_coefs")));
-        light.SetCutoffAngles(GlmVec2::FromJson(json_light.at("cutoff_angles")));
-        light.SetColor(GlmVec3::FromJson(json_light.at("color")));
-        light.SetAmbientStrength(GlmVec3::FromJson(json_light.at("ambient_strength")));
-        light.SetDiffuseStrength(GlmVec3::FromJson(json_light.at("diffuse_strength")));
-        light.SetSpecularStrength(GlmVec3::FromJson(json_light.at("specular_strength")));
+        light.SetAttenuationCoefficients(Glm::Vec3_FromJson(json_light.at("attenuation_coefs")));
+        light.SetCutoffAngles(Glm::Vec2_FromJson(json_light.at("cutoff_angles")));
+        light.SetColor(Glm::Vec3_FromJson(json_light.at("color")));
+        light.SetAmbientStrength(Glm::Vec3_FromJson(json_light.at("ambient_strength")));
+        light.SetDiffuseStrength(Glm::Vec3_FromJson(json_light.at("diffuse_strength")));
+        light.SetSpecularStrength(Glm::Vec3_FromJson(json_light.at("specular_strength")));
         return LightType(light);
     },
         "direct",
         [&]()
     {
         DirectLight light{};
-        light.SetColor(GlmVec3::FromJson(json_light.at("color")));
-        light.SetAmbientStrength(GlmVec3::FromJson(json_light.at("ambient_strength")));
-        light.SetDiffuseStrength(GlmVec3::FromJson(json_light.at("diffuse_strength")));
-        light.SetSpecularStrength(GlmVec3::FromJson(json_light.at("specular_strength")));
+        light.SetColor(Glm::Vec3_FromJson(json_light.at("color")));
+        light.SetAmbientStrength(Glm::Vec3_FromJson(json_light.at("ambient_strength")));
+        light.SetDiffuseStrength(Glm::Vec3_FromJson(json_light.at("diffuse_strength")));
+        light.SetSpecularStrength(Glm::Vec3_FromJson(json_light.at("specular_strength")));
         return LightType(light);
     },
         "area",
         [&]()
     {
         AreaLight light{};
-        light.SetSize(GlmVec2::FromJson(json_light.at("size")));
-        light.SetColor(GlmVec3::FromJson(json_light.at("color")));
-        light.SetAmbientStrength(GlmVec3::FromJson(json_light.at("ambient_strength")));
-        light.SetDiffuseStrength(GlmVec3::FromJson(json_light.at("diffuse_strength")));
-        light.SetSpecularStrength(GlmVec3::FromJson(json_light.at("specular_strength")));
+        light.SetSize(Glm::Vec2_FromJson(json_light.at("size")));
+        light.SetColor(Glm::Vec3_FromJson(json_light.at("color")));
+        light.SetAmbientStrength(Glm::Vec3_FromJson(json_light.at("ambient_strength")));
+        light.SetDiffuseStrength(Glm::Vec3_FromJson(json_light.at("diffuse_strength")));
+        light.SetSpecularStrength(Glm::Vec3_FromJson(json_light.at("specular_strength")));
         return LightType(light);
     },
         "point",
         [&]()
     {
         PointLight light{};
-        light.SetAttenuationCoefficients(GlmVec3::FromJson(json_light.at("attenuation_coefs")));
-        light.SetColor(GlmVec3::FromJson(json_light.at("color")));
-        light.SetAmbientStrength(GlmVec3::FromJson(json_light.at("ambient_strength")));
-        light.SetDiffuseStrength(GlmVec3::FromJson(json_light.at("diffuse_strength")));
-        light.SetSpecularStrength(GlmVec3::FromJson(json_light.at("specular_strength")));
+        light.SetAttenuationCoefficients(Glm::Vec3_FromJson(json_light.at("attenuation_coefs")));
+        light.SetColor(Glm::Vec3_FromJson(json_light.at("color")));
+        light.SetAmbientStrength(Glm::Vec3_FromJson(json_light.at("ambient_strength")));
+        light.SetDiffuseStrength(Glm::Vec3_FromJson(json_light.at("diffuse_strength")));
+        light.SetSpecularStrength(Glm::Vec3_FromJson(json_light.at("specular_strength")));
         return LightType(light);
     }
     );
@@ -78,12 +78,12 @@ auto Arcadia::LightComponent::ToJson() const -> nlohmann::json
         return nlohmann::json{
             {"type","spot"},
             {"light",{
-                    {"attenuation_coefs",GlmVec3::ToJson(light.GetAttenuationCoefficients())},
-                    {"cutoff_angles"    ,GlmVec2::ToJson(light.GetCutoffAngles())},
-                    {"color"            ,GlmVec3::ToJson(light.GetColor())},
-                    {"ambient_strength" ,GlmVec3::ToJson(light.GetAmbientStrength())},
-                    {"diffuse_strength" ,GlmVec3::ToJson(light.GetDiffuseStrength())},
-                    {"specular_strength",GlmVec3::ToJson(light.GetSpecularStrength())}
+                    {"attenuation_coefs",Glm::Vec3_ToJson(light.GetAttenuationCoefficients())},
+                    {"cutoff_angles"    ,Glm::Vec2_ToJson(light.GetCutoffAngles())},
+                    {"color"            ,Glm::Vec3_ToJson(light.GetColor())},
+                    {"ambient_strength" ,Glm::Vec3_ToJson(light.GetAmbientStrength())},
+                    {"diffuse_strength" ,Glm::Vec3_ToJson(light.GetDiffuseStrength())},
+                    {"specular_strength",Glm::Vec3_ToJson(light.GetSpecularStrength())}
                 }
             }
         };
@@ -93,11 +93,11 @@ auto Arcadia::LightComponent::ToJson() const -> nlohmann::json
         return nlohmann::json{
             {"type","area"},
             {"light",{
-                    {"size"             ,GlmVec2::ToJson(light.GetSize())},
-                    {"color"            ,GlmVec3::ToJson(light.GetColor())},
-                    {"ambient_strength" ,GlmVec3::ToJson(light.GetAmbientStrength())},
-                    {"diffuse_strength" ,GlmVec3::ToJson(light.GetDiffuseStrength())},
-                    {"specular_strength",GlmVec3::ToJson(light.GetSpecularStrength())}
+                    {"size"             ,Glm::Vec2_ToJson(light.GetSize())},
+                    {"color"            ,Glm::Vec3_ToJson(light.GetColor())},
+                    {"ambient_strength" ,Glm::Vec3_ToJson(light.GetAmbientStrength())},
+                    {"diffuse_strength" ,Glm::Vec3_ToJson(light.GetDiffuseStrength())},
+                    {"specular_strength",Glm::Vec3_ToJson(light.GetSpecularStrength())}
                 }
             }
         };
@@ -107,10 +107,10 @@ auto Arcadia::LightComponent::ToJson() const -> nlohmann::json
         return nlohmann::json{
             {"type","direct"},
             {"light",{
-                    {"color"            ,GlmVec3::ToJson(light.GetColor())},
-                    {"ambient_strength" ,GlmVec3::ToJson(light.GetAmbientStrength())},
-                    {"diffuse_strength" ,GlmVec3::ToJson(light.GetDiffuseStrength())},
-                    {"specular_strength",GlmVec3::ToJson(light.GetSpecularStrength())}
+                    {"color"            ,Glm::Vec3_ToJson(light.GetColor())},
+                    {"ambient_strength" ,Glm::Vec3_ToJson(light.GetAmbientStrength())},
+                    {"diffuse_strength" ,Glm::Vec3_ToJson(light.GetDiffuseStrength())},
+                    {"specular_strength",Glm::Vec3_ToJson(light.GetSpecularStrength())}
                 }
             }
         };
@@ -120,11 +120,11 @@ auto Arcadia::LightComponent::ToJson() const -> nlohmann::json
         return nlohmann::json{
             {"type","point"},
             {"light",{
-                    {"attenuation_coefs",GlmVec3::ToJson(light.GetAttenuationCoefficients())},
-                    {"color"            ,GlmVec3::ToJson(light.GetColor())},
-                    {"ambient_strength" ,GlmVec3::ToJson(light.GetAmbientStrength())},
-                    {"diffuse_strength" ,GlmVec3::ToJson(light.GetDiffuseStrength())},
-                    {"specular_strength",GlmVec3::ToJson(light.GetSpecularStrength())}
+                    {"attenuation_coefs",Glm::Vec3_ToJson(light.GetAttenuationCoefficients())},
+                    {"color"            ,Glm::Vec3_ToJson(light.GetColor())},
+                    {"ambient_strength" ,Glm::Vec3_ToJson(light.GetAmbientStrength())},
+                    {"diffuse_strength" ,Glm::Vec3_ToJson(light.GetDiffuseStrength())},
+                    {"specular_strength",Glm::Vec3_ToJson(light.GetSpecularStrength())}
                 }
             }
         };

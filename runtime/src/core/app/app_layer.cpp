@@ -61,10 +61,10 @@ Arcadia::AppLayerInterface::AppLayerInterface():
         try
         {
             const nlohmann::json& json_window = json.at("window");
-            app_config.WindowPosition         = GlmInt32Vec2::FromJson(json_window.value("pos", GlmInt32Vec2::ToJson(app_config.WindowPosition)));
-            app_config.WindowSize             = GlmInt32Vec2::FromJson(json_window.value("size", GlmInt32Vec2::ToJson(app_config.WindowSize)));
-            app_config.WindowSizeMax          = GlmInt32Vec2::FromJson(json_window.value("max_size", GlmInt32Vec2::ToJson(app_config.WindowSizeMax)));
-            app_config.WindowSizeMin          = GlmInt32Vec2::FromJson(json_window.value("min_size", GlmInt32Vec2::ToJson(app_config.WindowSizeMin)));
+            app_config.WindowPosition         = Glm::Int32Vec2_FromJson(json_window.value("pos", Glm::Int32Vec2_ToJson(app_config.WindowPosition)));
+            app_config.WindowSize             = Glm::Int32Vec2_FromJson(json_window.value("size", Glm::Int32Vec2_ToJson(app_config.WindowSize)));
+            app_config.WindowSizeMax          = Glm::Int32Vec2_FromJson(json_window.value("max_size", Glm::Int32Vec2_ToJson(app_config.WindowSizeMax)));
+            app_config.WindowSizeMin          = Glm::Int32Vec2_FromJson(json_window.value("min_size", Glm::Int32Vec2_ToJson(app_config.WindowSizeMin)));
             app_config.WindowMultisampleCount = json_window.value("multisample_count", app_config.WindowMultisampleCount);
             app_config.WindowTitle            = json_window.value("title", app_config.WindowTitle);
             app_config.WindowMaxmized         = json_window.value("maxmized", app_config.WindowMaxmized);
@@ -131,10 +131,10 @@ Arcadia::AppLayerInterface::~AppLayerInterface()
     // Window
     json.push_back(
         { "window",{
-            {"pos", GlmInt32Vec2::ToJson(app_config.WindowPosition)},
-            {"size",GlmInt32Vec2::ToJson(app_config.WindowSize)},
-            {"max_size",GlmInt32Vec2::ToJson(app_config.WindowSizeMax)},
-            {"min_size",GlmInt32Vec2::ToJson(app_config.WindowSizeMin)},
+            {"pos", Glm::Int32Vec2_ToJson(app_config.WindowPosition)},
+            {"size",Glm::Int32Vec2_ToJson(app_config.WindowSize)},
+            {"max_size",Glm::Int32Vec2_ToJson(app_config.WindowSizeMax)},
+            {"min_size",Glm::Int32Vec2_ToJson(app_config.WindowSizeMin)},
             {"multisample_count",app_config.WindowMultisampleCount},
             {"title",app_config.WindowTitle},
             {"maxmized",app_config.WindowMaxmized}

@@ -867,7 +867,7 @@ void Arcadia::ImguiWindowPropertyFunctor_TransformComponent::operator()(Transfor
     transform_comp.SetScale(scale);
     _ACDA_COMMAND_HELPER("[Transform] Scale", transform_comp, GetScale, SetScale, scale, _OriginScale);
 
-    if(position_delta != GlmVec3::CreateZero())
+    if(position_delta != Glm::Vec3_CreateZero())
     {
         transform_comp.IncreasePivot(position_delta); // Make pivot move with translation
     }

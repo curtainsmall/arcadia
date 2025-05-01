@@ -212,15 +212,15 @@ ACDA_API auto Arcadia::ImguiWrappers::DragVec3Normalized(const std::string& name
     auto deactivated = ImguiWrappers::DragVec3(name, temp_vec, speed, -1.f, 1.f, format, flags);
     if(temp_vec.x != vec.x)
     {
-        vec = GlmVec3::NormalizeFixedly<0>(temp_vec);
+        vec = Glm::Vec3_NormalizeFixedly(temp_vec, 0);
     }
     else if(temp_vec.y != vec.y)
     {
-        vec = GlmVec3::NormalizeFixedly<1>(temp_vec);
+        vec = Glm::Vec3_NormalizeFixedly(temp_vec, 1);
     }
     else if(temp_vec.z != vec.z)
     {
-        vec = GlmVec3::NormalizeFixedly<2>(temp_vec);
+        vec = Glm::Vec3_NormalizeFixedly(temp_vec, 2);
     }
     return deactivated;
 }
@@ -336,19 +336,19 @@ ACDA_API auto Arcadia::ImguiWrappers::DragQuatNormalized(const std::string& name
     auto deactivated = ImguiWrappers::DragQuat(name, temp_quat, speed, -1.f, 1.f, format, flags);
     if(temp_quat.w != quat.w)
     {
-        quat = GlmQuat::NormalizeFixedly<0>(temp_quat);
+        quat = Glm::Quat_NormalizeFixedly(temp_quat, 0);
     }
     else if(temp_quat.x != quat.x)
     {
-        quat = GlmQuat::NormalizeFixedly<1>(temp_quat);
+        quat = Glm::Quat_NormalizeFixedly(temp_quat, 1);
     }
     else if(temp_quat.y != quat.y)
     {
-        quat = GlmQuat::NormalizeFixedly<2>(temp_quat);
+        quat = Glm::Quat_NormalizeFixedly(temp_quat, 2);
     }
     else if(temp_quat.z != quat.x)
     {
-        quat = GlmQuat::NormalizeFixedly<3>(temp_quat);
+        quat = Glm::Quat_NormalizeFixedly(temp_quat, 3);
     }
     return deactivated;
 }

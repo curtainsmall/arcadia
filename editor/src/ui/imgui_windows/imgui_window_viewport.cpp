@@ -142,7 +142,7 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
                 float y_angle_offset = glm::clamp(-offset.y + pitch_angle, -glm::half_pi<float>() + viewport_camera_comp.GetUpAxisAngleEpsilon(), glm::half_pi<float>() - viewport_camera_comp.GetUpAxisAngleEpsilon()) - pitch_angle;
                 viewport_transform_comp.SetDirection(glm::normalize(glm::angleAxis(y_angle_offset, glm::cross(viewport_transform_comp.GetDirection(), viewport_camera_comp.GetUpAxis())) * viewport_transform_comp.GetDirection()));
 
-                _CursorMoveDistance = GlmVec2::CreateZero();
+                _CursorMoveDistance = Glm::Vec2_CreateZero();
             }
 
             // Display viewport viewport_camera_comp info

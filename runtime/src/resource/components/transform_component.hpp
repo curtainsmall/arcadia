@@ -75,14 +75,14 @@ namespace Arcadia
     private:
         TransformComponentFlags _Flags{ TransformComponentFlags::None };
 
-        glm::vec3 _Position{ GlmVec3::CreateZero() };
-        glm::vec3 _RotationEularAngle{ GlmVec3::CreateZero() };
-        glm::quat _RotationQuaternion{ GlmQuat::CreateIdentity() };
-        glm::vec3 _Direction{ GlmVec3::CreateUnitPositiveZ() };
+        glm::vec3 _Position{ Glm::Vec3_CreateZero() };
+        glm::vec3 _RotationEularAngle{ Glm::Vec3_CreateZero() };
+        glm::quat _RotationQuaternion{ Glm::Quat_CreateIdentity() };
+        glm::vec3 _Direction{ Glm::Vec3_CreateUnitPositiveZ() };
         glm::vec3 _Scale{ 1,1,1 };
-        glm::vec3 _Pivot{ GlmVec3::CreateZero() };
+        glm::vec3 _Pivot{ Glm::Vec3_CreateZero() };
 
         mutable bool _TransformMatrixDirty{ true };
-        mutable glm::mat4 _TransformMatrix{ GlmMat4::CreateIdentity() };
+        mutable glm::mat4 _TransformMatrix{ Glm::Mat4_CreateIdentity() };
     };
 }

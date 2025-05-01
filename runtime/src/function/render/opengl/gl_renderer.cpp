@@ -190,7 +190,7 @@ void Arcadia::GlRenderer::Submit(const Scene& scene, EntityId entity_id)
 
             GlRenderUnitPhysicsBodyShape& gl_render_unit_physics_body_shape = _GlRenderUnitPhysicsBodyShapeStorage.at(uuid);
             gl_render_unit_physics_body_shape.TransformMatrix =
-                glm::translate(GlmMat4::CreateIdentity(), transform_comp.GetPosition())
+                glm::translate(Glm::Mat4_CreateIdentity(), transform_comp.GetPosition())
                 * glm::mat4_cast(transform_comp.GetRotationQuaternion());
             gl_render_unit_physics_body_shape.Color = physics_comp.GetBodyShapeColor();
 
@@ -379,7 +379,7 @@ void Arcadia::GlRenderer::_DrawLights(
             ++light_count;
 
             _GlShapePipeline
-                .SetUniform("u_transform_mat", glm::translate(GlmMat4::CreateIdentity(), gl_render_unit_light.Position))
+                .SetUniform("u_transform_mat", glm::translate(Glm::Mat4_CreateIdentity(), gl_render_unit_light.Position))
                 .SetUniform("u_color", light.GetColor());
         },
             [&](const DirectLight& light)
@@ -419,7 +419,7 @@ void Arcadia::GlRenderer::_DrawLights(
             ++light_count;
 
             _GlShapePipeline
-                .SetUniform("u_transform_mat", glm::translate(GlmMat4::CreateIdentity(), gl_render_unit_light.Position))
+                .SetUniform("u_transform_mat", glm::translate(Glm::Mat4_CreateIdentity(), gl_render_unit_light.Position))
                 .SetUniform("u_color", light.GetColor());
         }
         );

@@ -110,7 +110,7 @@
     <ClCompile Include="src\core\file.cpp" />
     <ClCompile Include="src\core\layer.cpp" />
     <ClCompile Include="src\core\log.cpp" />
-    <ClCompile Include="src\core\math\glm_algorithm.cpp" />
+    <ClCompile Include="src\core\math\glm.cpp" />
     <ClCompile Include="src\core\memento.cpp" />
     <ClCompile Include="src\core\time.cpp" />
     <ClCompile Include="src\core\uuid.cpp" />
@@ -133,6 +133,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\platform\glfw.cpp" />
+    <ClCompile Include="src\platform\jolt.cpp" />
     <ClCompile Include="src\platform\opengl.cpp" />
     <ClCompile Include="src\resource\components\camera_component.cpp" />
     <ClCompile Include="src\resource\components\light_component.cpp" />
@@ -142,6 +143,7 @@
     <ClCompile Include="src\resource\components\skybox_component.cpp" />
     <ClCompile Include="src\resource\components\transform_component.cpp" />
     <ClCompile Include="src\resource\entity_id.cpp" />
+    <ClCompile Include="src\resource\entt.cpp" />
     <ClCompile Include="src\resource\material\texture2d.cpp" />
     <ClCompile Include="src\resource\mesh\mesh.cpp" />
     <ClCompile Include="src\resource\scene.cpp" />
@@ -166,16 +168,8 @@
     <ClInclude Include="src\core\log.hpp" />
     <ClInclude Include="src\core\match.hpp" />
     <ClInclude Include="src\core\math.hpp" />
-    <ClInclude Include="src\core\math\glm_algorithm.hpp" />
     <ClInclude Include="src\core\math\glm.hpp" />
-    <ClInclude Include="src\core\math\glm_mat2.hpp" />
-    <ClInclude Include="src\core\math\glm_mat3.hpp" />
-    <ClInclude Include="src\core\math\glm_mat4.hpp" />
     <ClInclude Include="src\core\math\numeric.hpp" />
-    <ClInclude Include="src\core\math\glm_quat.hpp" />
-    <ClInclude Include="src\core\math\glm_vec2.hpp" />
-    <ClInclude Include="src\core\math\glm_vec3.hpp" />
-    <ClInclude Include="src\core\math\glm_vec4.hpp" />
     <ClInclude Include="src\core\memento.hpp" />
     <ClInclude Include="src\core\nlohmann_json.hpp" />
     <ClInclude Include="src\core\noncopyable.hpp" />
@@ -203,7 +197,6 @@
     <ClInclude Include="src\function\window\window_layer.hpp" />
     <ClInclude Include="src\pch.hpp" />
     <ClInclude Include="src\platform\api_def.hpp" />
-    <ClInclude Include="src\platform\cuda.hpp" />
     <ClInclude Include="src\platform\debug_def.hpp" />
     <ClInclude Include="src\platform\glfw.hpp" />
     <ClInclude Include="src\platform\graphic_api.hpp" />

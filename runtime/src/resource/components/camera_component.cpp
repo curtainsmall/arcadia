@@ -23,10 +23,10 @@ Arcadia::CameraComponent::CameraComponent(const nlohmann::json& json)
     _FovYMin               = json.at("fovy_min");
     _FovYMax               = json.at("fovy_max");
     _Speed                 = json.at("speed");
-    _ViewportSize          = GlmInt32Vec2::FromJson(json.at("viewport_size"));
+    _ViewportSize          = Glm::Int32Vec2_FromJson(json.at("viewport_size"));
     _UpAxisFixed               = json.at("fixed_up");
     _UpAxisAngleEpsilon             = json.at("up_epsilon");
-    _CursorMoveOffsetRange = GlmVec2::FromJson(json.at("cursor_move_offset_range"));
+    _CursorMoveOffsetRange = Glm::Vec2_FromJson(json.at("cursor_move_offset_range"));
 }
 
 auto Arcadia::CameraComponent::ToJson() const -> nlohmann::json
@@ -38,10 +38,10 @@ auto Arcadia::CameraComponent::ToJson() const -> nlohmann::json
         { "fovy_min"                ,_FovYMin },
         { "fovy_max"                ,_FovYMax },
         { "speed"                   ,_Speed},
-        { "viewport_size"           ,GlmInt32Vec2::ToJson(_ViewportSize) },
+        { "viewport_size"           ,Glm::Int32Vec2_ToJson(_ViewportSize) },
         { "fixed_up"                ,_UpAxisFixed },
         { "up_epsilon"              ,_UpAxisAngleEpsilon },
-        { "cursor_move_offset_range",GlmVec2::ToJson(_CursorMoveOffsetRange) }
+        { "cursor_move_offset_range",Glm::Vec2_ToJson(_CursorMoveOffsetRange) }
     };
 }
 

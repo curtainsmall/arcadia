@@ -9,10 +9,7 @@
 
 namespace Arcadia
 {
-    static inline auto ToString(entt::entity entt_entity) -> std::string
-    {
-        return std::to_string(static_cast<entt::id_type>(entt_entity));
-    }
+    auto ToString(entt::entity entt_entity) -> std::string;
 }
 
 namespace std

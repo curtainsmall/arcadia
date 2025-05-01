@@ -49,9 +49,9 @@ namespace Arcadia
         glm::vec3 _AttenuationCoefficients{ 1.f,.045f,.0075f };
         glm::vec2 _CutoffAngles{ glm::radians(30.f),glm::radians(32.f) };
         glm::vec3 _Color{ 1.f,1.f,1.f };
-        glm::vec3 _AmbientStrength{ GlmVec3::CreateZero() };
+        glm::vec3 _AmbientStrength{ Glm::Vec3_CreateZero() };
         glm::vec3 _DiffuseStrength{ 5.f,5.f,5.f };
-        glm::vec3 _SpecularStrength{ GlmVec3::CreateZero() };
+        glm::vec3 _SpecularStrength{ Glm::Vec3_CreateZero() };
     };
 
     class DirectLight
@@ -76,9 +76,9 @@ namespace Arcadia
         void SetSpecularStrength(const glm::vec3& strength);
     private:
         glm::vec3 _Color{ 1.f,1.f,1.f };
-        glm::vec3 _AmbientStrength{ GlmVec3::CreateZero() };
+        glm::vec3 _AmbientStrength{ Glm::Vec3_CreateZero() };
         glm::vec3 _DiffuseStrength{ 5.f,5.f,5.f };
-        glm::vec3 _SpecularStrength{ GlmVec3::CreateZero() };
+        glm::vec3 _SpecularStrength{ Glm::Vec3_CreateZero() };
     };
 
     class AreaLight
@@ -107,11 +107,11 @@ namespace Arcadia
         void SetSpecularStrength(const glm::vec3& strength);
 
     private:
-        glm::vec2 _Size{ GlmVec2::CreateZero() };
+        glm::vec2 _Size{ Glm::Vec2_CreateZero() };
         glm::vec3 _Color{ 1.f,1.f,1.f };
-        glm::vec3 _AmbientStrength{ GlmVec3::CreateZero() };
+        glm::vec3 _AmbientStrength{ Glm::Vec3_CreateZero() };
         glm::vec3 _DiffuseStrength{ 5.f,5.f,5.f };
-        glm::vec3 _SpecularStrength{ GlmVec3::CreateZero() };
+        glm::vec3 _SpecularStrength{ Glm::Vec3_CreateZero() };
     };
 
     class PointLight
@@ -141,9 +141,9 @@ namespace Arcadia
     private:
         glm::vec3 _AttenuationCoefficients{ 1.f,.045f,.0075f };
         glm::vec3 _Color{ 1.f,1.f,1.f };
-        glm::vec3 _AmbientStrength{ GlmVec3::CreateZero() };
+        glm::vec3 _AmbientStrength{ Glm::Vec3_CreateZero() };
         glm::vec3 _DiffuseStrength{ 5.f,5.f,5.f };
-        glm::vec3 _SpecularStrength{ GlmVec3::CreateZero() };
+        glm::vec3 _SpecularStrength{ Glm::Vec3_CreateZero() };
     };
 
     using LightType = std::variant<

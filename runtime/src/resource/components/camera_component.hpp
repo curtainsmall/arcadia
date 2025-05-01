@@ -123,7 +123,7 @@ namespace Arcadia
 #endif
 
     private:
-        static inline glm::vec3 _UpAxis{ GlmVec3::CreateUnitPositiveY() };
+        static inline glm::vec3 _UpAxis{ Glm::Vec3_CreateUnitPositiveY() };
 
         float _NearPlane{ .1f };
         float _FarPlane{ 100.f };
