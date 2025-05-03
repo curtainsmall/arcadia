@@ -38,7 +38,7 @@ Arcadia::EditorAppLayer::EditorAppLayer()
                 app_config.WindowTitle,
                 app_config.WindowMultisampleCount
             )
-            .GetTopLayer<WindowLayer>();
+            .GetTopLayerShared<WindowLayer>();
     }
 
     // Renderer layer
@@ -48,21 +48,27 @@ Arcadia::EditorAppLayer::EditorAppLayer()
                 app_config.GraphicApi,
                 app_config.WorkingDirectory
             )
-            .GetTopLayer<RendererLayer>();
+            .GetTopLayerShared<RendererLayer>();
     }
 
     // Physics layer
     {
         editor_context.wpMainPhysicsLayer = layer_stack
             .PushLayer<PhysicsLayer>()
-            .GetTopLayer<PhysicsLayer>();
+            .GetTopLayerShared<PhysicsLayer>();
+    }
+
+    {
+        editor_context.wpMainSceneLayer = layer_stack
+            .PushLayer<SceneLayer>()
+            .GetTopLayerShared<SceneLayer>();
     }
 
     // Project layer
     {
         editor_context.wpMainProjectLayer = layer_stack
             .PushLayer<ProjectLayer>()
-            .GetTopLayer<ProjectLayer>();
+            .GetTopLayerShared<ProjectLayer>();
     }
 
     // Editor ImGui layer
@@ -73,7 +79,7 @@ Arcadia::EditorAppLayer::EditorAppLayer()
                 ACDA_BIND_MEMBER_FN(_InstallImguiWindow),
                 ImguiStyle::SetToDark
             )
-            .GetTopLayer<ImguiLayer>();
+            .GetTopLayerShared<ImguiLayer>();
     }
     app_context.Running = true;
 }

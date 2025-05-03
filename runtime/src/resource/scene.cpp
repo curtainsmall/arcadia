@@ -10,6 +10,10 @@
 #include "resource/components/physics_component.hpp"
 #include "resource/components/transform_component.hpp"
 
+Arcadia::Scene::Scene(const std::string& name):
+    _Name(name)
+{}
+
 Arcadia::Scene::Scene(const nlohmann::json& json):
     _Name(json.at("name"))
 {
@@ -156,6 +160,7 @@ void Arcadia::Scene::DestroyEntity(EntityId entity_id)
 {
     ACDA_ASSERT(ContainsEntity(entity_id));
 
+    _EntityNameToEntityIdLookupMap.erase(GetEntityInfo(entity_id).GetName());
     _Registry.destroy(entity_id);
     _EntityInfoStorage.erase(entity_id);
 }

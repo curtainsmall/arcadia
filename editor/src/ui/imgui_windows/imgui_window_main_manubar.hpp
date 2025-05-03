@@ -32,7 +32,7 @@ namespace Arcadia
     public:
         using SelfType = ImguiWindowPopupFunctor_CreateScene;
     public:
-        void operator()(const std::shared_ptr<const Project>& project_sptr);
+        void operator()();
     public:
         bool Opened{ false };
     private:
@@ -46,7 +46,7 @@ namespace Arcadia
     public:
         using SelfType = ImguiWindowPopupFunctor_RenameScene;
     public:
-        void operator()(const std::shared_ptr<const Project>& project_sptr);
+        void operator()();
     public:
         bool Opened{ false };
     private:

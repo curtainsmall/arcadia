@@ -34,35 +34,5 @@ namespace Arcadia
 
         class ProjectSaved: public EventBase
         {};
-
-
-
-        //==== Event for scene ====//
-
-        class SceneBuilt: public EventBase
-        {
-        public:
-            SceneBuilt(const std::shared_ptr<Scene>& scene_sptr):
-                spScene(scene_sptr)
-            {}
-        public:
-            const std::shared_ptr<Scene> spScene;
-        };
-
-        class SceneActivated: public EventBase
-        {
-        public:
-            SceneActivated(const std::shared_ptr<Scene>& scene_sptr):
-                spScene(scene_sptr)
-            {}
-        public:
-            const std::shared_ptr<Scene> spScene;
-        };
-
-        class SceneDeactivated: public EventBase
-        {};
-
-        class SceneUnbuilt: public EventBase
-        {};
     }
 }

@@ -95,14 +95,14 @@ namespace Arcadia
         }
 
         template<Concepts::Layer Layer = LayerInterface>
-        auto GetTopLayer() -> std::shared_ptr<Layer>
+        auto GetTopLayerShared() -> std::shared_ptr<Layer>
         {
             ACDA_ASSERT(GetSize(), "Empty layer stack");
             return std::static_pointer_cast<Layer>(_Layers.front());
         }
 
         template<Concepts::Layer Layer = LayerInterface>
-        auto GetBottomLayer() -> std::shared_ptr<Layer>
+        auto GetBottomLayerShared() -> std::shared_ptr<Layer>
         {
             ACDA_ASSERT(GetSize(), "Empty layer stack");
             return std::static_pointer_cast<Layer>(_Layers.back());

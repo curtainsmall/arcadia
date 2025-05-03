@@ -5,9 +5,10 @@
 #include "core/function.hpp"
 #include "platform/graphic_api.hpp"
 #include "resource/fonts/icon.hpp"
-#include "ui/imgui.hpp"
 
+#include "ui/imgui.hpp"
 #include "ui/ui_events.hpp"
+#include "editor/editor_context.hpp"
 
 void Arcadia::ImguiWindowPopupFunctor_CreateProject::operator()()
 {
@@ -78,12 +79,14 @@ void Arcadia::ImguiWindowPopupFunctor_CreateProject::operator()()
     }
 }
 
-void Arcadia::ImguiWindowPopupFunctor_CreateScene::operator()(const std::shared_ptr<const Project>& project_sptr)
+void Arcadia::ImguiWindowPopupFunctor_CreateScene::operator()()
 {
     if(!Opened)
     {
         return;
     }
+
+    SceneLayer& scene_layer = *EditorContext::Instance().wpMainSceneLayer.lock();
 
     std::string imgui_window_title("Create Scene");
 
@@ -102,7 +105,7 @@ void Arcadia::ImguiWindowPopupFunctor_CreateScene::operator()(const std::shared_
         ImGui::Text("Scene name");
         if(ImGui::InputText("##scene_name", &_Name, input_text_flags))
         {
-            _NameAvailable = !project_sptr->HasScene(_Name);
+            _NameAvailable = !scene_layer.HasScene(_Name);
         }
         if(!_NameAvailable)
         {
@@ -147,16 +150,18 @@ void Arcadia::ImguiWindowPopupFunctor_CreateScene::operator()(const std::shared_
     }
 }
 
-void Arcadia::ImguiWindowPopupFunctor_RenameScene::operator()(const std::shared_ptr<const Project>& project_sptr)
+void Arcadia::ImguiWindowPopupFunctor_RenameScene::operator()()
 {
     if(!Opened)
     {
         return;
     }
 
+    SceneLayer& scene_layer = *EditorContext::Instance().wpMainSceneLayer.lock();
+
     if(!_Initailized)
     {
-        _PrevName = project_sptr->GetActiveScene().GetName();
+        _PrevName = scene_layer.GetActiveSceneShared()->GetName();
         _NewName = _PrevName;
         _Initailized = true;
     }
@@ -178,7 +183,7 @@ void Arcadia::ImguiWindowPopupFunctor_RenameScene::operator()(const std::shared_
         ImGui::Text("New name");
         if(ImGui::InputText("##new_scene_name", &_NewName, input_text_flags))
         {
-            _NameAvailable = !project_sptr->HasScene(_NewName);
+            _NameAvailable = !scene_layer.HasScene(_NewName);
         }
 
         bool confirmed = false;
@@ -270,12 +275,13 @@ void Arcadia::ImguiWindowMainMenubar::_ShowFileMenu()
 
 void Arcadia::ImguiWindowMainMenubar::_ShowEditMenu()
 {
+    SceneLayer& scene_layer = *EditorContext::Instance().wpMainSceneLayer.lock();
     std::shared_ptr<const Project> project_uptr = _wpProject.lock();
 
     if(project_uptr)
     {
-        _ImguiWindowPopupFunctor_CreateScene(project_uptr);
-        _ImguiWindowPopupFunctor_RenameScene(project_uptr);
+        _ImguiWindowPopupFunctor_CreateScene();
+        _ImguiWindowPopupFunctor_RenameScene();
     }
     EventQueue& event_queue = EventQueue::Instance();
     if(ImGui::BeginMenu("Edit"))
@@ -285,14 +291,14 @@ void Arcadia::ImguiWindowMainMenubar::_ShowEditMenu()
             _ImguiWindowPopupFunctor_CreateScene.Opened = true;
         }
 
-        bool has_scene = project_uptr && project_uptr->HasScene();
-        bool has_active_scene = has_scene && project_uptr->HasActiveScene();
+        bool has_scene = project_uptr && scene_layer.HasScene();
+        bool has_active_scene = has_scene && scene_layer.HasActiveScene();
 
         if(ImGui::BeginMenu("Select Scene", has_scene))
         {
             ACDA_ASSERT(project_uptr);
 
-            for(const auto& [key, scene] : project_uptr->GetSceneStorage())
+            for(const auto& [key, scene] : scene_layer.GetSceneStorage())
             {
                 if(ImGui::MenuItem(key.c_str()))
                 {

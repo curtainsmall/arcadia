@@ -11,11 +11,12 @@
 #include "function/render/renderer_events.hpp"
 #include "platform/api_def.hpp"
 #include "resource/scene.hpp"
-#include "ui/imgui.hpp"
+#include "resource/scene_events.hpp"
 
 #include "project/project.hpp"
 #include "project/project_events.hpp"
 #include "ui/imgui_window.hpp"
+#include "ui/imgui.hpp"
 #include "ui/ui_events.hpp"
 
 namespace Arcadia

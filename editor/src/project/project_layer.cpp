@@ -37,16 +37,7 @@ void Arcadia::ProjectLayer::OnEvent(EventBase& e)
         .Dispatch<Events::SaveProjectAs>(ACDA_BIND_MEMBER_FN(_OnSaveProjectAs))
         .Dispatch<Events::CloseProject>(ACDA_BIND_MEMBER_FN(_OnCloseProject))
         .Dispatch<Events::ProjectSaved>(ACDA_BIND_MEMBER_FN(_OnProjectSaved))
-        .Dispatch<Events::CreateScene>(ACDA_BIND_MEMBER_FN(_OnCreateScene))
-        .Dispatch<Events::RenameScene>(ACDA_BIND_MEMBER_FN(_OnRenameScene))
-        .Dispatch<Events::SelectScene>(ACDA_BIND_MEMBER_FN(_OnSelectScene))
-        .Dispatch<Events::CloseScene>(ACDA_BIND_MEMBER_FN(_OnCloseScene))
-        .Dispatch<Events::DeleteScene>(ACDA_BIND_MEMBER_FN(_OnDeleteScene))
-        .Dispatch<Events::NewEntity>(ACDA_BIND_MEMBER_FN(_OnNewEntity))
-        .Dispatch<Events::RenameEntity>(ACDA_BIND_MEMBER_FN(_OnRenameEntity))
-        .Dispatch<Events::DeleteEntity>(ACDA_BIND_MEMBER_FN(_OnDeleteEntity))
-        .Dispatch<Events::AddComponent>(ACDA_BIND_MEMBER_FN(_OnAddComponent))
-        .Dispatch<Events::RemoveComponent>(ACDA_BIND_MEMBER_FN(_OnRemoveComponent))
+
         .IsDispatched();
 }
 
@@ -80,7 +71,8 @@ void Arcadia::ProjectLayer::_LoadProject()
         throw Exceptions::FileOpenFailed(std::format("Failed to open {}", _ProjectFilepath.generic_string()));
     }
 
-    nlohmann::json json = nlohmann::json::parse(ifs);
+    nlohmann::json json{};
+    ifs >> json;
     _spProject = std::make_shared<Project>(json);
 
     EventQueue::Instance().Signal<Events::ProjectLoaded>();
@@ -262,9 +254,10 @@ void Arcadia::ProjectLayer::_OnCloseProject(Events::CloseProject& e)
     ACDA_ASSERT(_spProject);
 
     EventQueue& event_queue = EventQueue::Instance();
+    SceneLayer& scene_layer = *EditorContext::Instance().wpMainSceneLayer.lock();
 
     CommandList& cmd_list = CommandList::Instance();
-    if(cmd_list.GetSize() || _ProjectModified)
+    if(cmd_list.GetSize() || _ProjectModified || scene_layer.IsSceneModified())
     {
         pfd::button res = pfd::message{
                         "Unsaved",
@@ -306,185 +299,4 @@ void Arcadia::ProjectLayer::_OnCloseProject(Events::CloseProject& e)
 void Arcadia::ProjectLayer::_OnProjectSaved(Events::ProjectSaved& e)
 {
     CommandList::Instance().Clear();
-}
-
-void Arcadia::ProjectLayer::_OnCreateScene(Events::CreateScene& e)
-{
-    ACDA_ASSERT(_spProject);
-
-    _spProject->CreateScene(e.Name);
-    if(e.AsCurrent)
-    {
-        _spProject->SetActiveScene(e.Name);
-    }
-    _ProjectModified = true;
-}
-
-void Arcadia::ProjectLayer::_OnRenameScene(Events::RenameScene& e)
-{
-    _spProject->RenameScene(_spProject->GetActiveScene().GetName(), e.NewName);
-    _ProjectModified = true;
-}
-
-void Arcadia::ProjectLayer::_OnSelectScene(Events::SelectScene& e)
-{
-    ACDA_ASSERT(_spProject);
-
-    _spProject->SetActiveScene(e.Name);
-    _ProjectModified = true;
-}
-
-void Arcadia::ProjectLayer::_OnCloseScene(Events::CloseScene& e)
-{
-    ACDA_ASSERT(_spProject);
-
-    _spProject->SetActiveScene();
-    _ProjectModified = true;
-}
-
-void Arcadia::ProjectLayer::_OnDeleteScene(Events::DeleteScene& e)
-{
-    ACDA_ASSERT(_spProject);
-    ACDA_ASSERT(_spProject->HasActiveScene());
-
-    const std::string& scene_name = _spProject->GetActiveScene().GetName();
-
-    pfd::button res = pfd::message{
-        "Delete Scene",
-        std::format("Do you want to delete scene: {}", scene_name)
-    }.result();
-
-    switch(res)
-    {
-        case pfd::button::ok:
-        {
-            _spProject->DestroyScene(scene_name);
-            _spProject->SetActiveScene();
-            break;
-        }
-        case pfd::button::cancel:
-        default:
-        {
-            break;
-        }
-    }
-    _ProjectModified = true;
-}
-
-void Arcadia::ProjectLayer::_OnNewEntity(Events::NewEntity& e)
-{
-    Scene& scene = _spProject->GetActiveScene();
-
-    std::string temp_name = "New Entity";
-    std::string name = temp_name;
-    std::int32_t postfix{ 1 };
-    while(scene.IsEntityNameUsed(name))
-    {
-        name = std::format("{} {}", temp_name, ++postfix);
-    }
-
-    EntityId entity_id = scene.CreateEntity(name, e.EntityTypeString);
-
-    Match<void>(
-        e.EntityTypeString,
-        std::string("actor"),
-        [&]()
-    {
-        scene.EmplaceComponent<ModelComponent>(entity_id);
-
-        scene.EmplaceComponent<PhysicsComponent>(entity_id);
-
-        TransformComponent& transform_comp =  scene.EmplaceComponent<TransformComponent>(entity_id);
-        transform_comp.AddFlag(TransformComponentFlags::UseRotation);
-    },
-        std::string("camera"),
-        [&]()
-    {
-        scene.EmplaceComponent<CameraComponent>(entity_id);
-
-        TransformComponent& transform_comp = scene.EmplaceComponent<TransformComponent>(entity_id);
-        transform_comp.AddFlag(TransformComponentFlags::UseDirection);
-    },
-        std::string("light"),
-        [&]()
-    {
-        scene.EmplaceComponent<LightComponent>(entity_id);
-
-        TransformComponent& transform_comp = scene.EmplaceComponent<TransformComponent>(entity_id);
-        transform_comp.AddFlag(TransformComponentFlags::UseDirection);
-    }
-    );
-    _ProjectModified = true;
-}
-
-void Arcadia::ProjectLayer::_OnRenameEntity(Events::RenameEntity& e)
-{
-    _spProject->GetActiveScene().RenameEntity(e.EntityId, e.NewName);
-    _ProjectModified = true;
-}
-
-void Arcadia::ProjectLayer::_OnDeleteEntity(Events::DeleteEntity& e)
-{
-    _spProject->GetActiveScene().DestroyEntity(e.EntityId);
-    _ProjectModified = true;
-}
-
-void Arcadia::ProjectLayer::_OnAddComponent(Events::AddComponent& e)
-{
-    Scene& scene = _spProject->GetActiveScene();
-
-    Match<void>(
-        e.ComponentTypeString,
-        CameraComponent::GetTypeStringStatic(),
-        [&]()
-    {
-        scene.EmplaceComponent<CameraComponent>(e.EntityId);
-    },
-        LightComponent::GetTypeStringStatic(),
-        [&]()
-    {
-        scene.EmplaceComponent<LightComponent>(e.EntityId);
-    },
-        ModelComponent::GetTypeStringStatic(),
-        [&]()
-    {
-        scene.EmplaceComponent<ModelComponent>(e.EntityId);
-    },
-        PhysicsComponent::GetTypeStringStatic(),
-        [&]()
-    {
-        scene.EmplaceComponent<PhysicsComponent>(e.EntityId);
-    }
-    );
-    _ProjectModified = true;
-}
-
-void Arcadia::ProjectLayer::_OnRemoveComponent(Events::RemoveComponent& e)
-{
-    Scene& scene = _spProject->GetActiveScene();
-
-    Match<void>(
-        e.ComponentTypeString,
-        CameraComponent::GetTypeStringStatic(),
-        [&]()
-    {
-        scene.RemoveComponent<CameraComponent>(e.EntityId);
-    },
-        LightComponent::GetTypeStringStatic(),
-        [&]()
-    {
-        scene.RemoveComponent<LightComponent>(e.EntityId);
-    },
-        ModelComponent::GetTypeStringStatic(),
-        [&]()
-    {
-        scene.RemoveComponent<ModelComponent>(e.EntityId);
-    },
-        PhysicsComponent::GetTypeStringStatic(),
-        [&]()
-    {
-        scene.RemoveComponent<PhysicsComponent>(e.EntityId);
-    }
-    );
-    _ProjectModified = true;
 }

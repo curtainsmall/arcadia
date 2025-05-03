@@ -52,9 +52,7 @@ namespace Arcadia
         using RegistryType = entt::registry;
         using SelfType = Scene;
     public:
-        Scene(const std::string& name):
-            _Name(name)
-        {}
+        Scene(const std::string& name);
         Scene(const nlohmann::json& json);
         ~Scene() = default;
         auto ToJson() const->nlohmann::json;

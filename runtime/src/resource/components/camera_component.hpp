@@ -69,7 +69,7 @@ namespace Arcadia
         auto IsGridDisplaying() const -> bool;
         void SetGridDisplaying(bool displaying);
 
-#if 0
+    #if 0
         auto MoveForward() -> SelfType&;
         auto MoveBackward() -> SelfType&;
         auto MoveLeft() -> SelfType&;
@@ -95,13 +95,13 @@ namespace Arcadia
         auto GetForwardDir() const->glm::vec3;
         auto GetLeftDir() const->glm::vec3;
         auto GetUpDir() const->glm::vec3;
-#endif
+    #endif
 
         static auto GenerateViewMat4(const glm::vec3& pos, const glm::vec3& dir) -> glm::mat4;
 
         auto GenerateProjectiveMat4() const->glm::mat4;
 
-#if 0
+    #if 0
     private:
         // Angle of pitch
         // Look from right:
@@ -120,7 +120,7 @@ namespace Arcadia
 
         // Test whether a cursor move should be filtered
         auto _TestCursorMove(float x_offset, float y_offset) -> bool;
-#endif
+    #endif
 
     private:
         static inline glm::vec3 _UpAxis{ Glm::Vec3_CreateUnitPositiveY() };
@@ -133,7 +133,7 @@ namespace Arcadia
         float _Speed{ .25f };
         glm::i32vec2 _ViewportSize{ 800,600 };
         bool _UpAxisFixed{ true };
-        float _UpAxisAngleEpsilon{ glm::degrees(0.1f) };
+        float _UpAxisAngleEpsilon{ glm::radians(0.1f) };
         glm::vec2 _CursorMoveOffsetRange{ -100.f,100.f };
         bool _GridDisplaying{ false };
     };

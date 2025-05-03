@@ -16,6 +16,7 @@
 #include "resource/components/physics_component.hpp"
 #include "resource/components/transform_component.hpp"
 #include "resource/scene.hpp"
+#include "resource/scene_events.hpp"
 
 #include "project/project_events.hpp"
 #include "ui/imgui.hpp"

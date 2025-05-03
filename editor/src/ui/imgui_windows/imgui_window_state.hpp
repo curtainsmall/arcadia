@@ -9,6 +9,7 @@
 #include "ui/imgui_window.hpp"
 #include "function/render/renderer_events.hpp"
 #include "function/physics/physics_events.hpp"
+#include "resource/scene_events.hpp"
 
 #include "project/project.hpp"
 #include "project/project_events.hpp"

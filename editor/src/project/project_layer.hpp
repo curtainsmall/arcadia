@@ -41,19 +41,6 @@ namespace Arcadia
         void _OnCloseProject(Events::CloseProject& e);
         void _OnProjectSaved(Events::ProjectSaved& e);
 
-        void _OnCreateScene(Events::CreateScene& e);
-        void _OnRenameScene(Events::RenameScene& e);
-        void _OnSelectScene(Events::SelectScene& e);
-        void _OnCloseScene(Events::CloseScene& e);
-        void _OnDeleteScene(Events::DeleteScene& e);
-
-        void _OnNewEntity(Events::NewEntity& e);
-        void _OnRenameEntity(Events::RenameEntity& e);
-        void _OnDeleteEntity(Events::DeleteEntity& e);
-
-        void _OnAddComponent(Events::AddComponent& e);
-        void _OnRemoveComponent(Events::RemoveComponent& e);
-
     private:
         std::filesystem::path _ProjectFilepath{};
         std::shared_ptr<Project> _spProject{};
