@@ -35,35 +35,7 @@ namespace Arcadia
         class ProjectSaved: public EventBase
         {};
 
-        //==== Event for renderer ====//
 
-        class RendererBuilt: public EventBase
-        {
-        public:
-            RendererBuilt(std::shared_ptr<RendererInterface> renderer_sptr):
-                spRenderer(renderer_sptr)
-            {}
-        public:
-            const std::shared_ptr<RendererInterface> spRenderer;
-        };
-
-        class RendererUnbuilt: public EventBase
-        {};
-
-        //==== Event for physics simulator ====//
-
-        class PhysicsSimulatorBuilt: public EventBase
-        {
-        public:
-            PhysicsSimulatorBuilt(const std::shared_ptr<PhysicsSimulator>& physcis_simulator_sptr):
-                spPhysicsSimulator(physcis_simulator_sptr)
-            {}
-        public:
-            const std::shared_ptr<PhysicsSimulator> spPhysicsSimulator;
-        };
-
-        class PhysicsSimulatorUnbuilt: public EventBase
-        {};
 
         //==== Event for scene ====//
 

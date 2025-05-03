@@ -144,6 +144,12 @@
     <ClCompile Include="src\core\math\glm.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\function\render\renderer_layer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\function\physics\physics_layer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\core\app\app_config.hpp">
@@ -360,6 +366,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\resource\entity_id.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\function\render\renderer_layer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\function\render\renderer_events.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\function\physics\physics_layer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\function\physics\physics_events.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

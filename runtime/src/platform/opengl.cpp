@@ -194,10 +194,11 @@ ACDA_API auto Arcadia::GetGlMaxTextureImageUnitsCount() -> GLint
 
 Arcadia::OpenglContext::OpenglContext()
 {
-    auto error = glewInit();
+    GLenum error = glewInit();
     if(error != GLEW_OK)
     {
-        throw Exceptions::GlError(reinterpret_cast<const char*>(glewGetErrorString(error)));
+        const GLubyte* msg = glewGetErrorString(error);
+        throw Exceptions::GlError(reinterpret_cast<const char*>(msg));
     }
     ACDA_GL_CALL(std::string gl_version_string(reinterpret_cast<const char*>(glGetString(GL_VERSION))));
     ACDA_LOG_INFO(std::format("OpenGL Version: {}", gl_version_string));

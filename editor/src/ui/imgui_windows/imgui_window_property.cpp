@@ -904,7 +904,7 @@ void Arcadia::ImguiWindowProperty::OnUpdate()
     std::shared_ptr<Scene> scene_sptr = _wpScene.lock();
 
     std::string imgui_title = scene_sptr && _SelectedEntityId
-        ? _Title + " - " + ToString(_SelectedEntityId) + GetIdString()
+        ? _Title + " - " + scene_sptr->GetEntityInfo(_SelectedEntityId).GetName() + GetIdString()
         : _Title + GetIdString();
 
     ImGui::SetNextWindowSize(glm::vec2{ 1024,768 }, ImGuiCond_Once);

@@ -28,6 +28,8 @@ Arcadia::EditorAppLayer::EditorAppLayer()
 
     editor_context.UiScale = app_config.UiScale;
 
+    // DO NOT CHANGE THE ORDER OF PUSHING LAYERS
+
     // Window layer
     {
         editor_context.wpMainWindowLayer = layer_stack
@@ -39,7 +41,24 @@ Arcadia::EditorAppLayer::EditorAppLayer()
             .GetTopLayer<WindowLayer>();
     }
 
-    // spProject layer
+    // Renderer layer
+    {
+        editor_context.wpMainRendererLayer = layer_stack
+            .PushLayer<RendererLayer>(
+                app_config.GraphicApi,
+                app_config.WorkingDirectory
+            )
+            .GetTopLayer<RendererLayer>();
+    }
+
+    // Physics layer
+    {
+        editor_context.wpMainPhysicsLayer = layer_stack
+            .PushLayer<PhysicsLayer>()
+            .GetTopLayer<PhysicsLayer>();
+    }
+
+    // Project layer
     {
         editor_context.wpMainProjectLayer = layer_stack
             .PushLayer<ProjectLayer>()

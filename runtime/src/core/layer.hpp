@@ -26,7 +26,6 @@ namespace Arcadia
         auto GetName() const -> const std::string&;
 
         virtual void OnEvent(EventBase& event) = 0;
-
         virtual void OnUpdate() = 0;
 
     private:

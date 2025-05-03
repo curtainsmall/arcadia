@@ -22,33 +22,10 @@
 
 Arcadia::ProjectLayer::ProjectLayer():
     LayerInterface("project")
-{
-    const AppConfig& app_config = AppConfig::Instance();
-    EventQueue& event_queue = EventQueue::Instance();
-
-    MatchVariant<void>(
-        app_config.GraphicApi,
-        [&](const GraphicApi::Opengl&)
-    {
-        static OpenglContext gl_context{};
-        _spRenderer = std::make_shared<GlRenderer>(app_config.WorkingDirectory / ToFilepath("shaders/opengl"));
-    },
-        [](auto&&)
-    {
-    }
-    );
-    event_queue.Signal<Events::RendererBuilt>(_spRenderer);
-
-    _spPhysicsSimulator = std::make_shared<PhysicsSimulator>();
-    event_queue.Signal<Events::PhysicsSimulatorBuilt>(_spPhysicsSimulator);
-}
+{}
 
 Arcadia::ProjectLayer::~ProjectLayer()
-{
-    EventQueue& event_queue = EventQueue::Instance();
-    event_queue.Signal<Events::RendererUnbuilt>();
-    event_queue.Signal<Events::PhysicsSimulatorUnbuilt>();
-}
+{}
 
 void Arcadia::ProjectLayer::OnEvent(EventBase& e)
 {

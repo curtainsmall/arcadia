@@ -7,6 +7,7 @@
 #include "platform/api_def.hpp"
 #include "platform/jolt.hpp"
 #include "resource/scene.hpp"
+#include "core/noncopyable.hpp"
 
 namespace Arcadia
 {
@@ -43,7 +44,7 @@ namespace Arcadia
         virtual auto ShouldCollide(JPH::ObjectLayer obj, JPH::BroadPhaseLayer bp) const -> bool override;
     };
 
-    class PhysicsSimulator
+    class PhysicsSimulator: public Noncopyable
     {
     public:
         using JphBodyIdStorageType = std::unordered_map<Uuid, JPH::BodyID>;

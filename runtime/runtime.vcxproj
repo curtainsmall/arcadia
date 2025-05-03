@@ -115,6 +115,7 @@
     <ClCompile Include="src\core\time.cpp" />
     <ClCompile Include="src\core\uuid.cpp" />
     <ClCompile Include="src\core\version.cpp" />
+    <ClCompile Include="src\function\physics\physics_layer.cpp" />
     <ClCompile Include="src\function\physics\physics_simulator.cpp" />
     <ClCompile Include="src\function\render\opengl\buffer\gl_cubemap.cpp" />
     <ClCompile Include="src\function\render\opengl\buffer\gl_framebuffer.cpp" />
@@ -127,6 +128,7 @@
     <ClCompile Include="src\function\render\opengl\gl_renderer.cpp" />
     <ClCompile Include="src\function\render\opengl\pipeline\gl_pipeline.cpp" />
     <ClCompile Include="src\function\render\opengl\pipeline\gl_shader.cpp" />
+    <ClCompile Include="src\function\render\renderer_layer.cpp" />
     <ClCompile Include="src\function\window\window_layer.cpp" />
     <ClCompile Include="src\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -180,6 +182,8 @@
     <ClInclude Include="src\core\uuid.hpp" />
     <ClInclude Include="src\core\version.hpp" />
     <ClInclude Include="src\function\input\input_events.hpp" />
+    <ClInclude Include="src\function\physics\physics_events.hpp" />
+    <ClInclude Include="src\function\physics\physics_layer.hpp" />
     <ClInclude Include="src\function\physics\physics_simulator.hpp" />
     <ClInclude Include="src\function\render\opengl\buffer\gl_cubemap.hpp" />
     <ClInclude Include="src\function\render\opengl\buffer\gl_framebuffer.hpp" />
@@ -193,6 +197,8 @@
     <ClInclude Include="src\function\render\opengl\pipeline\gl_pipeline.hpp" />
     <ClInclude Include="src\function\render\opengl\pipeline\gl_shader.hpp" />
     <ClInclude Include="src\function\render\renderer.hpp" />
+    <ClInclude Include="src\function\render\renderer_events.hpp" />
+    <ClInclude Include="src\function\render\renderer_layer.hpp" />
     <ClInclude Include="src\function\window\window_events.hpp" />
     <ClInclude Include="src\function\window\window_layer.hpp" />
     <ClInclude Include="src\pch.hpp" />
