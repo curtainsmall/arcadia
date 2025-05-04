@@ -8,7 +8,7 @@
 #include "core/app/app_config.hpp"
 #include "core/match.hpp"
 
-ACDA_API void Arcadia::ImguiBackend::Initialize(const WindowLayer& window)
+ACDA_API void Arcadia::ImguiBackend::Initialize(const std::shared_ptr<WindowLayer>& window_sptr)
 {
     const AppConfig& app_config = AppConfig::Instance();
 
@@ -32,7 +32,7 @@ ACDA_API void Arcadia::ImguiBackend::Initialize(const WindowLayer& window)
                 glsl_version = std::format("#version 1{}0", opengl.Version.Minor + 1);
             }
         }
-        ImGui_ImplGlfw_InitForOpenGL(window.GetGlfwWindow(), false);
+        ImGui_ImplGlfw_InitForOpenGL(window_sptr->GetGlfwWindow(), false);
         ImGui_ImplOpenGL3_Init(glsl_version.c_str());
     },
         [](auto&&) -> void
@@ -41,7 +41,7 @@ ACDA_API void Arcadia::ImguiBackend::Initialize(const WindowLayer& window)
     );
 }
 
-ACDA_API void Arcadia::ImguiBackend::NewFrame(const WindowLayer& window)
+ACDA_API void Arcadia::ImguiBackend::NewFrame(const std::shared_ptr<WindowLayer>& window_sptr)
 {
     const AppConfig& app_config = AppConfig::Instance();
 
@@ -58,7 +58,7 @@ ACDA_API void Arcadia::ImguiBackend::NewFrame(const WindowLayer& window)
     );
 }
 
-ACDA_API void Arcadia::ImguiBackend::RenderDrawData(const WindowLayer& window)
+ACDA_API void Arcadia::ImguiBackend::RenderDrawData(const std::shared_ptr<WindowLayer>& window_sptr)
 {
     const AppConfig& app_config = AppConfig::Instance();
 
@@ -74,7 +74,7 @@ ACDA_API void Arcadia::ImguiBackend::RenderDrawData(const WindowLayer& window)
     );
 }
 
-ACDA_API void Arcadia::ImguiBackend::Shutdown(const WindowLayer& window)
+ACDA_API void Arcadia::ImguiBackend::Shutdown(const std::shared_ptr<WindowLayer>& window_sptr)
 {
     const AppConfig& app_config = AppConfig::Instance();
 

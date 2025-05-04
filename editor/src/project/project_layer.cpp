@@ -254,10 +254,10 @@ void Arcadia::ProjectLayer::_OnCloseProject(Events::CloseProject& e)
     ACDA_ASSERT(_spProject);
 
     EventQueue& event_queue = EventQueue::Instance();
-    SceneLayer& scene_layer = *EditorContext::Instance().wpMainSceneLayer.lock();
+    std::shared_ptr<SceneLayer> scene_layer_sptr = EditorContext::Instance().wpMainSceneLayer.lock();
 
     CommandList& cmd_list = CommandList::Instance();
-    if(cmd_list.GetSize() || _ProjectModified || scene_layer.IsSceneModified())
+    if(cmd_list.GetSize() || _ProjectModified || scene_layer_sptr->IsSceneModified())
     {
         pfd::button res = pfd::message{
                         "Unsaved",

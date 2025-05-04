@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include "platform/api_def.hpp"
 #include "function/input/input_events.hpp"
 #include "function/window/window_events.hpp"
@@ -10,10 +12,10 @@ namespace Arcadia
 {
     namespace ImguiBackend
     {
-        ACDA_API void Initialize(const WindowLayer& window);
-        ACDA_API void NewFrame(const WindowLayer& window);
-        ACDA_API void RenderDrawData(const WindowLayer& window);
-        ACDA_API void Shutdown(const WindowLayer& window);
+        ACDA_API void Initialize(const std::shared_ptr<WindowLayer>& window_sptr);
+        ACDA_API void NewFrame(const std::shared_ptr<WindowLayer>& window_sptr);
+        ACDA_API void RenderDrawData(const std::shared_ptr<WindowLayer>& window_sptr);
+        ACDA_API void Shutdown(const std::shared_ptr<WindowLayer>& window_sptr);
 
         // Event handlers
         ACDA_API void OnEvent(EventBase& e);

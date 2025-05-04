@@ -18,29 +18,30 @@ void Arcadia::ImguiWindowMainStatusbar::OnUpdate()
         | ImGuiWindowFlags_NoFocusOnAppearing;
     if(ImGui::BeginViewportSideBar("statusbar", ImGui::GetMainViewport(), ImGuiDir_Down, ImGui::GetFrameHeight(), window_flags))
     {
-        ImGuiComboFlags combo_flags =
-            ImGuiComboFlags_NoPreview;
         EditorContext& editor_context = EditorContext::Instance();
         AppConfig& app_config = AppConfig::Instance();
 
         static const std::array<std::pair<std::string, float>, 3> scales{
-            std::make_pair("70%",0.7f),
-            std::make_pair("100%",1.0f),
-            std::make_pair("150%",1.5f)
+            std::make_pair(std::string("70%"),0.7f),
+            std::make_pair(std::string("100%"),1.0f),
+            std::make_pair(std::string("150%"),1.5f)
         };
         static std::int32_t scale_idx = std::distance(
             scales.begin(),
             std::find_if(
                 scales.begin(),
                 scales.end(),
-                [&](const std::pair<std::string, float>& pair)-> bool
+                [&](const std::pair<std::string, float>& pair) -> bool
         {
             return pair.second == editor_context.UiScale;
         }
             )
         );
+
+        ImGuiComboFlags combo_flags =
+            ImGuiComboFlags_NoPreview;
         //ImGui::SetNextWindowSizeConstraints({ -1,-1 }, { 20,50 });
-        if(ImGui::BeginCombo(std::format("{}##UiScale", scales[scale_idx].first).c_str(), nullptr, combo_flags))
+        if(ImGui::BeginCombo(std::format("{}##ui_scale", scales[scale_idx].first).c_str(), nullptr, combo_flags))
         {
             std::int32_t new_idx = -1;
             for(auto& [string, factor] : scales)

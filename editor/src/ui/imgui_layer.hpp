@@ -19,14 +19,14 @@ namespace Arcadia
         using SelfType = ImguiLayer;
     public:
         ImguiLayer(
-            const std::shared_ptr<const WindowLayer>& window_layer,
+            const std::shared_ptr< WindowLayer>& window_layer,
             const std::function<void(ImguiLayer&)>& imgui_window_installer ={},
             const std::function<void()>& imgui_style_setter = ImguiStyle::SetToDefaultDark
         );
         virtual ~ImguiLayer();
 
         [[nodiscard]]
-        auto GetWindow() const -> std::shared_ptr<const WindowLayer>
+        auto GetWindow() const -> std::shared_ptr< WindowLayer>
         {
             return _wpWindow.lock();
         }
@@ -56,7 +56,7 @@ namespace Arcadia
         bool ShouldShowDemoWindow{ false };
         bool ShouldShowDebugInfo{ false };
     private:
-        std::weak_ptr<const WindowLayer> _wpWindow;
+        std::weak_ptr< WindowLayer> _wpWindow;
         ImGuiContext* _pImguiContext{ nullptr };
         std::vector<std::unique_ptr<ImguiWindowInterface>> _ImguiWindow{};
     };

@@ -10,12 +10,12 @@
 #include "ui/imgui_backend.hpp"
 
 Arcadia::ImguiLayer::ImguiLayer(
-    const std::shared_ptr<const WindowLayer>& window_layer,
+    const std::shared_ptr<WindowLayer>& window_layer_sptr,
     const std::function<void(ImguiLayer&)>& imgui_window_installer,
     const std::function<void()>& imgui_style_setter
 ):
     LayerInterface("imgui"),
-    _wpWindow(window_layer)
+    _wpWindow(window_layer_sptr)
 {
     _pImguiContext = ImGui::CreateContext();
     ImGui::SetCurrentContext(_pImguiContext);
@@ -35,7 +35,7 @@ Arcadia::ImguiLayer::ImguiLayer(
     static const std::array<ImWchar, 3> imgui_icon_ranges{ ICON_MIN_FA, ICON_MAX_FA,0 };
     io.Fonts->AddFontFromFileTTF(FontFilepathString.c_str(), FontSize, &imgui_font_config, imgui_icon_ranges.data());
 
-    ImguiBackend::Initialize(*_wpWindow.lock());
+    ImguiBackend::Initialize(_wpWindow.lock());
 
     imgui_style_setter();
     imgui_window_installer(*this);
@@ -45,7 +45,7 @@ Arcadia::ImguiLayer::~ImguiLayer()
 {
     if(_pImguiContext)
     {
-        ImguiBackend::Shutdown(*_wpWindow.lock());
+        ImguiBackend::Shutdown(_wpWindow.lock());
         ImGui::DestroyContext(_pImguiContext);
     }
 }
@@ -58,7 +58,7 @@ void Arcadia::ImguiLayer::OnEvent(EventBase& e)
         return;
     }
 
-    EventDispatcher{ e }
+    EventDispatcher(e)
         .Dispatch<Events::ScaleImguiWindow>(ACDA_BIND_MEMBER_FN(_OnScaleImguiWindow))
         .IsDispatched();
 
@@ -71,11 +71,11 @@ void Arcadia::ImguiLayer::OnEvent(EventBase& e)
 
 void Arcadia::ImguiLayer::OnUpdate()
 {
-    std::shared_ptr<const WindowLayer> window = _wpWindow.lock();
+    std::shared_ptr<WindowLayer> window_sptr = _wpWindow.lock();
 
     ImGui::SetCurrentContext(_pImguiContext);
 
-    ImguiBackend::NewFrame(*window);
+    ImguiBackend::NewFrame(window_sptr);
     ImGui::NewFrame();
     ImGuizmo::BeginFrame();
 
@@ -100,7 +100,7 @@ void Arcadia::ImguiLayer::OnUpdate()
     }
 
     ImGui::Render();
-    ImguiBackend::RenderDrawData(*window);
+    ImguiBackend::RenderDrawData(window_sptr);
 
     if(ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
     {

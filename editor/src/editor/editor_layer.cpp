@@ -172,8 +172,8 @@ void Arcadia::EditorAppLayer::_OnWindowCloseCanceled(Events::WindowCloseCanceled
 
 void Arcadia::EditorAppLayer::_OnTogglePlayMode(Events::TogglePlayMode& e)
 {
-    EditorContext& instance = EditorContext::Instance();
-    instance.InPlayMode = !instance.InPlayMode;
+    EditorContext& editor_context = EditorContext::Instance();
+    editor_context.InPlayMode = !editor_context.InPlayMode;
 }
 
 void Arcadia::EditorAppLayer::_OnInputKey(Events::InputKey& e)

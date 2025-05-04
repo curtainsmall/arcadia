@@ -13,33 +13,33 @@ Arcadia::Project::Project(std::string name):
 Arcadia::Project::Project(nlohmann::json& json):
     _Name(json.at("name"))
 {
-    SceneLayer& scene_layer = *EditorContext::Instance().wpMainSceneLayer.lock();
+    std::shared_ptr<SceneLayer> scene_layer_sptr = EditorContext::Instance().wpMainSceneLayer.lock();
 
     for(const nlohmann::json& json_scene : json.at("scenes"))
     {
-        scene_layer.CreateScene(json_scene);
+        scene_layer_sptr->CreateScene(json_scene);
     }
-    scene_layer.SetActiveScene(json.at("active_scene_name"));
+    scene_layer_sptr->SetActiveScene(json.at("active_scene_name"));
 }
 
 Arcadia::Project::~Project()
 {
-    SceneLayer& scene_layer = *EditorContext::Instance().wpMainSceneLayer.lock();
-    scene_layer.DestroyAllScenes();
+    std::shared_ptr<SceneLayer> scene_layer_sptr = EditorContext::Instance().wpMainSceneLayer.lock();
+    scene_layer_sptr->DestroyAllScenes();
 }
 
 auto Arcadia::Project::ToJson() const -> nlohmann::json
 {
-    SceneLayer& scene_layer = *EditorContext::Instance().wpMainSceneLayer.lock();
+    std::shared_ptr<SceneLayer> scene_layer_sptr = EditorContext::Instance().wpMainSceneLayer.lock();
 
     nlohmann::json json{
         {"name",GetName()},
         {"scenes",nlohmann::json::array()},
-        {"active_scene_name",scene_layer.HasActiveScene() ? scene_layer.GetActiveSceneShared()->GetName() : ""}
+        {"active_scene_name",scene_layer_sptr->HasActiveScene() ? scene_layer_sptr->GetActiveSceneShared()->GetName() : ""}
     };
 
     nlohmann::json& json_scenes = json["scenes"];
-    for(const auto& [name, scene_sptr] : scene_layer.GetSceneStorage())
+    for(const auto& [name, scene_sptr] : scene_layer_sptr->GetSceneStorage())
     {
         json_scenes.push_back(scene_sptr->ToJson());
     }
