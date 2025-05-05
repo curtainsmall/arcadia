@@ -15,6 +15,32 @@ namespace Arcadia
     {
         //==== Event for project ====//
 
+        class NewProject: public EventBase
+        {};
+
+        class CreateProject: public EventBase
+        {
+        public:
+            CreateProject(const std::string& name, const std::string& filepath_string):
+                Name(name), FilepathString(filepath_string)
+            {}
+        public:
+            const std::string Name;
+            const std::string FilepathString;
+        };
+
+        class OpenProject: public EventBase
+        {};
+
+        class SaveProject: public EventBase
+        {};
+
+        class SaveProjectAs: public EventBase
+        {};
+
+        class CloseProject: public EventBase
+        {};
+
         class ProjectBuilt: public EventBase
         {
         public:

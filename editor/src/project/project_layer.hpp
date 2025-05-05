@@ -12,7 +12,6 @@
 
 #include "project/project.hpp"
 #include "project/project_events.hpp"
-#include "ui/ui_events.hpp"
 
 namespace Arcadia
 {

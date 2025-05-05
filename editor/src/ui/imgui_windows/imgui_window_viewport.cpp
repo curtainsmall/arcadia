@@ -29,6 +29,7 @@ void Arcadia::ImguiWindowViewport::OnEvent(EventBase& e)
         .Dispatch<Events::PhysicsSimulatorBuilt>(ACDA_BIND_MEMBER_FN(_OnPhysicsSimulatorBuilt))
         .Dispatch<Events::PhysicsSimulatorUnbuilt>(ACDA_BIND_MEMBER_FN(_OnPhysicsSimulatorUnbuilt))
         .Dispatch<Events::ShowGizmo>(ACDA_BIND_MEMBER_FN(_OnShowGizmo))
+        .Dispatch<Events::KeyboardInputOccupied>(ACDA_BIND_MEMBER_FN(_OnKeyboardInputOccupied))
         .IsDispatched();
 }
 
@@ -202,7 +203,7 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
                 {
                     ImGui::PopStyleColor();
                 }
-                if(!_InViewportFreecamMode && (ImGui::IsItemClicked() || ImGui::IsKeyDown(ImGuiKey_Q)))
+                if(!_InViewportFreecamMode && (ImGui::IsItemClicked() || _GizmoShortcutAvailable && ImGui::IsKeyDown(ImGuiKey_Q)))
                 {
                     _GizmoOption = GizmoOption::None;
                 }
@@ -218,7 +219,7 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
                 {
                     ImGui::PopStyleColor();
                 }
-                if(!_InViewportFreecamMode && (ImGui::IsItemClicked() || ImGui::IsKeyDown(ImGuiKey_W)))
+                if(!_InViewportFreecamMode && (ImGui::IsItemClicked() || _GizmoShortcutAvailable && ImGui::IsKeyDown(ImGuiKey_W)))
                 {
                     _GizmoOption = GizmoOption::Translation;
                 }
@@ -234,7 +235,7 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
                 {
                     ImGui::PopStyleColor();
                 }
-                if(!_InViewportFreecamMode && (ImGui::IsItemClicked() || ImGui::IsKeyDown(ImGuiKey_E)))
+                if(!_InViewportFreecamMode && (ImGui::IsItemClicked() || _GizmoShortcutAvailable && ImGui::IsKeyDown(ImGuiKey_E)))
                 {
                     _GizmoOption = GizmoOption::Rotation;
                 }
@@ -250,7 +251,7 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
                 {
                     ImGui::PopStyleColor();
                 }
-                if(!_InViewportFreecamMode && (ImGui::IsItemClicked() || ImGui::IsKeyDown(ImGuiKey_R)))
+                if(!_InViewportFreecamMode && (ImGui::IsItemClicked() || _GizmoShortcutAvailable && ImGui::IsKeyDown(ImGuiKey_R)))
                 {
                     _GizmoOption = GizmoOption::Scale;
                 }
@@ -417,3 +418,11 @@ void Arcadia::ImguiWindowViewport::_OnShowGizmo(Events::ShowGizmo& e)
 {
     _ShowGizmo = e.ShouldShowGizmo;
 }
+
+void Arcadia::ImguiWindowViewport::_OnKeyboardInputOccupied(Events::KeyboardInputOccupied& e)
+{
+    _GizmoShortcutAvailable = !e.Occupied;
+}
+
+
+

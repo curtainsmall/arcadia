@@ -17,6 +17,8 @@ void Arcadia::ImguiWindowPopupFunctor_CreateProject::operator()()
         return;
     }
 
+    EventQueue::Instance().Signal<Events::KeyboardInputOccupied>(true);
+
     std::string imgui_window_title("Create Project");
 
     ImGuiPopupFlags popup_flags =
@@ -71,6 +73,7 @@ void Arcadia::ImguiWindowPopupFunctor_CreateProject::operator()()
         {
             ImGui::CloseCurrentPopup();
             Opened = false;
+            EventQueue::Instance().Signal<Events::KeyboardInputOccupied>(false);
             _Name.clear();
             _FilepathString.clear();
         }
@@ -85,6 +88,8 @@ void Arcadia::ImguiWindowPopupFunctor_CreateScene::operator()()
     {
         return;
     }
+
+    EventQueue::Instance().Signal<Events::KeyboardInputOccupied>(true);
 
     std::shared_ptr<SceneLayer> scene_layer_sptr = EditorContext::Instance().wpMainSceneLayer.lock();
 
@@ -141,6 +146,7 @@ void Arcadia::ImguiWindowPopupFunctor_CreateScene::operator()()
         {
             ImGui::CloseCurrentPopup();
             Opened = false;
+            EventQueue::Instance().Signal<Events::KeyboardInputOccupied>(false);
             _Name.clear();
             _AsCurrent = true;
             _NameAvailable = true;
@@ -157,6 +163,7 @@ void Arcadia::ImguiWindowPopupFunctor_RenameScene::operator()()
         return;
     }
 
+    EventQueue::Instance().Signal<Events::KeyboardInputOccupied>(true);
     std::shared_ptr<SceneLayer> scene_layer = EditorContext::Instance().wpMainSceneLayer.lock();
 
     if(!_Initailized)
@@ -209,6 +216,7 @@ void Arcadia::ImguiWindowPopupFunctor_RenameScene::operator()()
         {
             ImGui::CloseCurrentPopup();
             Opened = false;
+            EventQueue::Instance().Signal<Events::KeyboardInputOccupied>(false);
             _NewName.clear();
             _PrevName.clear();
             _Initailized = false;

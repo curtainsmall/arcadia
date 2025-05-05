@@ -105,6 +105,7 @@ void Arcadia::ImguiWindowOutliner::OnUpdate()
                                 event_queue.Signal<Events::RenameEntity>(entity_id, _EntityNewName);
                             }
                         }
+                        event_queue.Signal<Events::KeyboardInputOccupied>(false);
                         _EntityOldName.clear();
                         _EntityNewName.clear();
                     }
@@ -135,6 +136,7 @@ void Arcadia::ImguiWindowOutliner::OnUpdate()
                         if(ImGui::Selectable("Rename Entity"))
                         {
                             _EntityOldName = entity_info.GetName();
+                            event_queue.Signal<Events::KeyboardInputOccupied>(true);
                         }
                         if(ImGui::Selectable("Delete Entity"))
                         {

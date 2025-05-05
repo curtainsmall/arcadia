@@ -63,6 +63,7 @@ namespace Arcadia
         void _OnPhysicsSimulatorBuilt(Events::PhysicsSimulatorBuilt& e);
         void _OnPhysicsSimulatorUnbuilt(Events::PhysicsSimulatorUnbuilt& e);
         void _OnShowGizmo(Events::ShowGizmo& e);
+        void _OnKeyboardInputOccupied(Events::KeyboardInputOccupied& e);
 
     private:
         static inline std::string _ViewportCameraEntityName{ "viewport_camera" };
@@ -77,10 +78,11 @@ namespace Arcadia
         glm::vec2 _CursorMoveDistance{};
 
         bool _InViewportFreecamMode{ false };
-        bool _ShowGizmo{ true };
 
+        bool _ShowGizmo{ true };
         GizmoOption _GizmoOption{ GizmoOption::None };
         GizmoMode _GizmoMode{ GizmoMode::Local };
         bool _GizmoEdited{ false };
+        bool _GizmoShortcutAvailable{ true };
     };
 }

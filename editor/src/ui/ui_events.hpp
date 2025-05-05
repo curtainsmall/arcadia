@@ -10,7 +10,6 @@ namespace Arcadia
 {
     namespace Events
     {
-        //==== Events for imgui window ====//
         class OpenImguiWindow: public EventBase
         {
         public:
@@ -31,33 +30,16 @@ namespace Arcadia
             const float NewScale;
         };
 
-        //==== Events for project ====//
-
-        class NewProject: public EventBase
-        {};
-
-        class CreateProject: public EventBase
+        // When keyboard input is occupied in multiple loops (e.g. text input)
+        class KeyboardInputOccupied: public EventBase
         {
         public:
-            CreateProject(const std::string& name, const std::string& filepath_string):
-                Name(name), FilepathString(filepath_string)
+            KeyboardInputOccupied(bool occupied):
+                Occupied(occupied)
             {}
         public:
-            const std::string Name;
-            const std::string FilepathString;
+            const bool Occupied;
         };
-
-        class OpenProject: public EventBase
-        {};
-
-        class SaveProject: public EventBase
-        {};
-
-        class SaveProjectAs: public EventBase
-        {};
-
-        class CloseProject: public EventBase
-        {};
 
         //==== Events for physics simulator ====//
 
@@ -70,8 +52,6 @@ namespace Arcadia
         public:
             const bool ShouldUpdate;
         };
-
-
 
         //==== Events for physics component ====//
 
