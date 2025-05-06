@@ -9,14 +9,15 @@
 #include "core/nlohmann_json.hpp"
 #include "core/version.hpp"
 
-Arcadia::AppLayerInterface::AppLayerInterface():
+Arcadia::AppLayerInterface::AppLayerInterface() :
     LayerInterface("app")
 {
     // Prepare AppConfig (either read from disk or use default value)
     try
     {
         std::ifstream ifs(AppConfig::Filepath);
-        nlohmann::json json = nlohmann::json::parse(ifs);
+        nlohmann::json json{};
+        ifs >> json;
 
         AppConfig& app_config = AppConfig::Instance();
 
@@ -32,27 +33,27 @@ Arcadia::AppLayerInterface::AppLayerInterface():
             app_config.GraphicApi = Match<GraphicApi::Type>(
                 graphic_api_type_string,
                 []()
-            {
-                return GraphicApi::Type();
-            },
+                {
+                    return GraphicApi::Type();
+                },
                 "opengl",
                 [&]()
-            {
-                return GraphicApi::Opengl(graphic_api_version);
-            },
+                {
+                    return GraphicApi::Opengl(graphic_api_version);
+                },
                 "directx",
                 [&]()
-            {
-                return GraphicApi::Directx(graphic_api_version);
-            },
+                {
+                    return GraphicApi::Directx(graphic_api_version);
+                },
                 "vulkan",
                 [&]()
-            {
-                return GraphicApi::Vulkan(graphic_api_version);
-            }
+                {
+                    return GraphicApi::Vulkan(graphic_api_version);
+                }
             );
         }
-        catch(nlohmann::json::out_of_range)
+        catch (nlohmann::json::out_of_range)
         {
             // Use default value
         }
@@ -61,15 +62,15 @@ Arcadia::AppLayerInterface::AppLayerInterface():
         try
         {
             const nlohmann::json& json_window = json.at("window");
-            app_config.WindowPosition         = Glm::Int32Vec2_FromJson(json_window.value("pos", Glm::Int32Vec2_ToJson(app_config.WindowPosition)));
-            app_config.WindowSize             = Glm::Int32Vec2_FromJson(json_window.value("size", Glm::Int32Vec2_ToJson(app_config.WindowSize)));
-            app_config.WindowSizeMax          = Glm::Int32Vec2_FromJson(json_window.value("max_size", Glm::Int32Vec2_ToJson(app_config.WindowSizeMax)));
-            app_config.WindowSizeMin          = Glm::Int32Vec2_FromJson(json_window.value("min_size", Glm::Int32Vec2_ToJson(app_config.WindowSizeMin)));
+            app_config.WindowPosition = Glm::Int32Vec2_FromJson(json_window.value("pos", Glm::Int32Vec2_ToJson(app_config.WindowPosition)));
+            app_config.WindowSize = Glm::Int32Vec2_FromJson(json_window.value("size", Glm::Int32Vec2_ToJson(app_config.WindowSize)));
+            app_config.WindowSizeMax = Glm::Int32Vec2_FromJson(json_window.value("max_size", Glm::Int32Vec2_ToJson(app_config.WindowSizeMax)));
+            app_config.WindowSizeMin = Glm::Int32Vec2_FromJson(json_window.value("min_size", Glm::Int32Vec2_ToJson(app_config.WindowSizeMin)));
             app_config.WindowMultisampleCount = json_window.value("multisample_count", app_config.WindowMultisampleCount);
-            app_config.WindowTitle            = json_window.value("title", app_config.WindowTitle);
-            app_config.WindowMaxmized         = json_window.value("maxmized", app_config.WindowMaxmized);
+            app_config.WindowTitle = json_window.value("title", app_config.WindowTitle);
+            app_config.WindowMaxmized = json_window.value("maxmized", app_config.WindowMaxmized);
         }
-        catch(nlohmann::json::out_of_range)
+        catch (nlohmann::json::out_of_range)
         {
             // Use default value
         }
@@ -78,18 +79,18 @@ Arcadia::AppLayerInterface::AppLayerInterface():
         try
         {
             const nlohmann::json& json_imgui = json.at("imgui");
-            for(const auto& id_strs : json_imgui.value("opened_window_id_strs", nlohmann::json::array()))
+            for (const auto& id_strs : json_imgui.value("opened_window_id_strs", nlohmann::json::array()))
             {
                 app_config.ImguiOpenedWindowIdStrings.emplace(id_strs);
             }
             app_config.UiScale = json_imgui.at("ui_scale");
         }
-        catch(nlohmann::json::out_of_range)
+        catch (nlohmann::json::out_of_range)
         {
             // Use default value
         }
     }
-    catch(const std::ios_base::failure&)
+    catch (const nlohmann::json::parse_error&)
     {
         // Use default value
     }
@@ -108,17 +109,17 @@ Arcadia::AppLayerInterface::~AppLayerInterface()
     const auto [graphic_api_type_str, json_version] = MatchVariant<std::tuple<std::string, nlohmann::json>>(
         app_config.GraphicApi,
         [&](const GraphicApi::Opengl& gl)
-    {
-        return std::make_tuple(std::string("opengl"), gl.Version.ToJson());
-    },
+        {
+            return std::make_tuple(std::string("opengl"), gl.Version.ToJson());
+        },
         [&](const GraphicApi::Directx& dx)
-    {
-        return std::make_tuple(std::string("directx"), dx.Version.ToJson());
-    },
+        {
+            return std::make_tuple(std::string("directx"), dx.Version.ToJson());
+        },
         [&](const GraphicApi::Vulkan& vk)
-    {
-        return std::make_tuple(std::string("vulkan"), vk.Version.ToJson());
-    }
+        {
+            return std::make_tuple(std::string("vulkan"), vk.Version.ToJson());
+        }
     );
     json.push_back(
         { "graphic_api",{
@@ -150,7 +151,7 @@ Arcadia::AppLayerInterface::~AppLayerInterface()
             }
         }
     );
-    for(const std::string& id_string : app_config.ImguiOpenedWindowIdStrings)
+    for (const std::string& id_string : app_config.ImguiOpenedWindowIdStrings)
     {
         json.at("imgui")
             .at("opened_window_id_strs")
