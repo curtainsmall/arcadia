@@ -1,13 +1,13 @@
 #pragma once
 
 #include <memory>
-#include <set>
 #include <unordered_map>
+#include <unordered_set>
 
+#include "core/noncopyable.hpp"
 #include "platform/api_def.hpp"
 #include "platform/jolt.hpp"
 #include "resource/scene.hpp"
-#include "core/noncopyable.hpp"
 
 namespace Arcadia
 {
@@ -47,22 +47,20 @@ namespace Arcadia
     class PhysicsSimulator: public Noncopyable
     {
     public:
-        using JphBodyIdStorageType = std::unordered_map<Uuid, JPH::BodyID>;
         using SelfType = PhysicsSimulator;
     public:
         PhysicsSimulator();
         ~PhysicsSimulator();
 
-        void Prepare();
-
-        void Finalize();
-
-        void Submit(const Scene& scene, EntityId entity_id);
-
+        [[nodiscard]]
+        auto HasScene() const -> bool;
+        void SetScene(const std::shared_ptr<Scene>& scene_sptr);
+        [[nodiscard]]
+        auto HasEntity(EntityId entity_id) const -> bool;
+        void AddEntity(EntityId entity_id);
+        void RemoveEntity(EntityId entity_id);
+        void UpdateEntity(EntityId entity_id);
         void Update();
-
-        void Query(Scene& scene, EntityId entity_id);
-
         void Reset();
 
         [[nodiscard]]
@@ -78,19 +76,22 @@ namespace Arcadia
         void SetJphPhysicsSystemUpdatesPerSecond(std::int32_t jph_physics_system_updates_per_second);
 
         [[nodiscard]]
-        auto GetJphBodyIdStorage() const -> const JphBodyIdStorageType&;
+        auto GetBodyCount() const->std::size_t;
 
     private:
-        bool _InBuild{ false };
+        void _BuildForEntity(EntityId entity_id, bool update_hint);
+        void _ClearForEntity(EntityId entity_id);
+        void _Clear();
+    private:
 
         bool _Active{ false };
 
         JPH::uint _JphTempAllocatorSize{ 10 * 1024 * 1024 };
-
         std::int32_t _JphPhysicsSystemUpdatesPerSecond{ 60 };
 
-        JphBodyIdStorageType _JphBodyIdStorage{};
-        std::set<Uuid> _SubmittedBodyInfos{};
+        std::unordered_map<EntityId, JPH::BodyID> _JphBodyIdStorage{};
+        std::unordered_set<EntityId> _EntityIdSet{};
+        std::shared_ptr<Scene> _spScene{};
 
         JphBroadPhaseLayerImpl _JphBroadPhaseLayer{};
         JphObjectVsBroadPhaseLayerFilterImpl _JphObjectVsBroadLayerFilter{};

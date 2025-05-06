@@ -5,8 +5,8 @@
 
 #include "core/event.hpp"
 #include "function/input/input_events.hpp"
-#include "function/physics/physics_simulator.hpp"
 #include "function/physics/physics_events.hpp"
+#include "function/physics/physics_simulator.hpp"
 #include "function/render/renderer.hpp"
 #include "function/render/renderer_events.hpp"
 #include "platform/api_def.hpp"
@@ -15,13 +15,13 @@
 
 #include "project/project.hpp"
 #include "project/project_events.hpp"
-#include "ui/imgui_window.hpp"
 #include "ui/imgui.hpp"
+#include "ui/imgui_window.hpp"
 #include "ui/ui_events.hpp"
 
 namespace Arcadia
 {
-    class ImguiWindowViewport: public ImguiWindowInterface
+    class ImguiWindowViewport : public ImguiWindowInterface
     {
     public:
         enum class GizmoOption
@@ -74,6 +74,7 @@ namespace Arcadia
         std::weak_ptr<PhysicsSimulator> _wpPhysicsSimulator{};
 
         EntityId _SelectedEntityId{};
+        EntityId _ViewportCameraEntityId{};
 
         glm::vec2 _CursorMoveDistance{};
 

@@ -29,6 +29,15 @@ Arcadia::EditorAppLayer::EditorAppLayer()
     editor_context.UiScale = app_config.UiScale;
 
     // DO NOT CHANGE THE ORDER OF PUSHING LAYERS
+    // OnEvent call goes bottom to top
+    // OnUpdate call goes top to bottom
+
+    // Project layer
+    {
+        editor_context.wpMainProjectLayer = layer_stack
+            .PushLayer<ProjectLayer>()
+            .GetTopLayerShared<ProjectLayer>();
+    }
 
     // Window layer
     {
@@ -41,14 +50,11 @@ Arcadia::EditorAppLayer::EditorAppLayer()
             .GetTopLayerShared<WindowLayer>();
     }
 
-    // Renderer layer
+    // Scene layer
     {
-        editor_context.wpMainRendererLayer = layer_stack
-            .PushLayer<RendererLayer>(
-                app_config.GraphicApi,
-                app_config.WorkingDirectory
-            )
-            .GetTopLayerShared<RendererLayer>();
+        editor_context.wpMainSceneLayer = layer_stack
+            .PushLayer<SceneLayer>()
+            .GetTopLayerShared<SceneLayer>();
     }
 
     // Physics layer
@@ -58,17 +64,14 @@ Arcadia::EditorAppLayer::EditorAppLayer()
             .GetTopLayerShared<PhysicsLayer>();
     }
 
+    // Renderer layer
     {
-        editor_context.wpMainSceneLayer = layer_stack
-            .PushLayer<SceneLayer>()
-            .GetTopLayerShared<SceneLayer>();
-    }
-
-    // Project layer
-    {
-        editor_context.wpMainProjectLayer = layer_stack
-            .PushLayer<ProjectLayer>()
-            .GetTopLayerShared<ProjectLayer>();
+        editor_context.wpMainRendererLayer = layer_stack
+            .PushLayer<RendererLayer>(
+                app_config.GraphicApi,
+                app_config.WorkingDirectory
+            )
+            .GetTopLayerShared<RendererLayer>();
     }
 
     // Editor ImGui layer
@@ -81,11 +84,13 @@ Arcadia::EditorAppLayer::EditorAppLayer()
             )
             .GetTopLayerShared<ImguiLayer>();
     }
+
     app_context.Running = true;
 }
 
 void Arcadia::EditorAppLayer::OnUpdate()
-{}
+{
+}
 
 void Arcadia::EditorAppLayer::OnEvent(EventBase& e)
 {

@@ -3,8 +3,9 @@
 
 #include "core/command.hpp"
 #include "core/function.hpp"
-#include "core/pfd.hpp"
 #include "core/match.hpp"
+#include "core/pfd.hpp"
+#include "function/render/renderer_events.hpp"
 #include "resource/components/camera_component.hpp"
 #include "resource/components/light_component.hpp"
 #include "resource/components/model_component.hpp"
@@ -13,10 +14,12 @@
 
 Arcadia::SceneLayer::SceneLayer():
     LayerInterface("scene")
-{}
+{
+}
 
 Arcadia::SceneLayer::~SceneLayer()
-{}
+{
+}
 
 void Arcadia::SceneLayer::OnEvent(EventBase& event)
 {
@@ -35,7 +38,19 @@ void Arcadia::SceneLayer::OnEvent(EventBase& event)
 }
 
 void Arcadia::SceneLayer::OnUpdate()
-{}
+{
+    if(_spActiveScene)
+    {
+        for(auto& [entity_id, entity_info] : _spActiveScene->GetEntityInfoStorage())
+        {
+            EventQueue::Instance()
+                .Signal<Events::RendererSetEntity>(
+                    entity_id,
+                    Events::RendererSetEntity_ActionType::Update
+                );
+        }
+    }
+}
 
 auto Arcadia::SceneLayer::HasActiveScene() const -> bool
 {
@@ -244,30 +259,30 @@ void Arcadia::SceneLayer::_OnNewEntity(Events::NewEntity& e)
         e.EntityTypeString,
         std::string("actor"),
         [&]()
-    {
-        scene.EmplaceComponent<ModelComponent>(entity_id);
+        {
+            scene.EmplaceComponent<ModelComponent>(entity_id);
 
-        scene.EmplaceComponent<PhysicsComponent>(entity_id);
+            scene.EmplaceComponent<PhysicsComponent>(entity_id);
 
-        TransformComponent& transform_comp =  scene.EmplaceComponent<TransformComponent>(entity_id);
-        transform_comp.AddFlag(TransformComponentFlags::UseRotation);
-    },
+            TransformComponent& transform_comp = scene.EmplaceComponent<TransformComponent>(entity_id);
+            transform_comp.AddFlag(TransformComponentFlags::UseRotation);
+        },
         std::string("camera"),
         [&]()
-    {
-        scene.EmplaceComponent<CameraComponent>(entity_id);
+        {
+            scene.EmplaceComponent<CameraComponent>(entity_id);
 
-        TransformComponent& transform_comp = scene.EmplaceComponent<TransformComponent>(entity_id);
-        transform_comp.AddFlag(TransformComponentFlags::UseDirection);
-    },
+            TransformComponent& transform_comp = scene.EmplaceComponent<TransformComponent>(entity_id);
+            transform_comp.AddFlag(TransformComponentFlags::UseDirection);
+        },
         std::string("light"),
         [&]()
-    {
-        scene.EmplaceComponent<LightComponent>(entity_id);
+        {
+            scene.EmplaceComponent<LightComponent>(entity_id);
 
-        TransformComponent& transform_comp = scene.EmplaceComponent<TransformComponent>(entity_id);
-        transform_comp.AddFlag(TransformComponentFlags::UseDirection);
-    }
+            TransformComponent& transform_comp = scene.EmplaceComponent<TransformComponent>(entity_id);
+            transform_comp.AddFlag(TransformComponentFlags::UseDirection);
+        }
     );
     _SceneModified = true;
 }
@@ -292,24 +307,24 @@ void Arcadia::SceneLayer::_OnAddComponent(Events::AddComponent& e)
         e.ComponentTypeString,
         CameraComponent::GetTypeStringStatic(),
         [&]()
-    {
-        scene.EmplaceComponent<CameraComponent>(e.EntityId);
-    },
+        {
+            scene.EmplaceComponent<CameraComponent>(e.EntityId);
+        },
         LightComponent::GetTypeStringStatic(),
         [&]()
-    {
-        scene.EmplaceComponent<LightComponent>(e.EntityId);
-    },
+        {
+            scene.EmplaceComponent<LightComponent>(e.EntityId);
+        },
         ModelComponent::GetTypeStringStatic(),
         [&]()
-    {
-        scene.EmplaceComponent<ModelComponent>(e.EntityId);
-    },
+        {
+            scene.EmplaceComponent<ModelComponent>(e.EntityId);
+        },
         PhysicsComponent::GetTypeStringStatic(),
         [&]()
-    {
-        scene.EmplaceComponent<PhysicsComponent>(e.EntityId);
-    }
+        {
+            scene.EmplaceComponent<PhysicsComponent>(e.EntityId);
+        }
     );
     _SceneModified = true;
 }
@@ -322,24 +337,24 @@ void Arcadia::SceneLayer::_OnRemoveComponent(Events::RemoveComponent& e)
         e.ComponentTypeString,
         CameraComponent::GetTypeStringStatic(),
         [&]()
-    {
-        scene.RemoveComponent<CameraComponent>(e.EntityId);
-    },
+        {
+            scene.RemoveComponent<CameraComponent>(e.EntityId);
+        },
         LightComponent::GetTypeStringStatic(),
         [&]()
-    {
-        scene.RemoveComponent<LightComponent>(e.EntityId);
-    },
+        {
+            scene.RemoveComponent<LightComponent>(e.EntityId);
+        },
         ModelComponent::GetTypeStringStatic(),
         [&]()
-    {
-        scene.RemoveComponent<ModelComponent>(e.EntityId);
-    },
+        {
+            scene.RemoveComponent<ModelComponent>(e.EntityId);
+        },
         PhysicsComponent::GetTypeStringStatic(),
         [&]()
-    {
-        scene.RemoveComponent<PhysicsComponent>(e.EntityId);
-    }
+        {
+            scene.RemoveComponent<PhysicsComponent>(e.EntityId);
+        }
     );
     _SceneModified = true;
 }

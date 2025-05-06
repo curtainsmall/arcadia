@@ -1,10 +1,11 @@
 #pragma once
 
 #include <filesystem>
+#include <memory>
 #include <optional>
-#include <set>
 #include <tuple>
 #include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
 #include "core/exception.hpp"
@@ -25,13 +26,13 @@ namespace Arcadia
     {
     public:
         GlFramebuffer Framebuffer;
-        glm::i32vec2 _ViewportSize;
+        glm::i32vec2 ViewportSize;
         glm::mat4 CameraViewMatrix;
         glm::mat4 CameraProjectionMatrix;
         glm::vec3 CameraPosition;
-        bool _GridDisplaying;
-        float _NearPlane;
-        float _FarPlane;
+        bool GridDisplaying;
+        float NearPlane;
+        float FarPlane;
     };
 
     class GlRenderUnitLight
@@ -72,27 +73,40 @@ namespace Arcadia
     public:
 
         using SelfType = GlRenderer;
+    private:
+        enum class _UpdateHint
+        {
+            None = 0,
+            All,
+            JustTransformMatrix,
+        };
     public:
         GlRenderer(const std::filesystem::path& gl_shader_folder_path);
         virtual ~GlRenderer() = default;
 
         [[nodiscard]]
-        virtual auto IsInBuild() const -> bool override;
-
-        virtual void Prepare() override;
-        virtual void Finalize() override;
-        virtual void Submit(const Scene& scene, EntityId entity_id) override;
+        virtual auto HasScene() const -> bool override;
+        virtual void SetScene(const std::shared_ptr<Scene>& scene_sptr) override;
+        [[nodiscard]]
+        virtual auto HasEntity(EntityId entity_id) const -> bool override;
+        virtual void AddEntity(EntityId entity_id) override;
+        virtual void RemoveEntity(EntityId entity_id) override;
+        virtual void UpdateEntity(EntityId entity_id) override;
         virtual void Draw() override;
-
         virtual void Reset() override;
 
         [[nodiscard]]
-        virtual auto GetRenderResultId(std::size_t index) const->void* override;
-
+        virtual auto HasRenderResult() const -> bool;
+        [[nodiscard]]
+        virtual auto GetRenderResultId(EntityId entity_id) const->void* override;
         [[nodiscard]]
         virtual auto GetGraphicApiType() const->GraphicApi::Type override;
 
     public:
+        void _BuildForEntity(EntityId entity_id, _UpdateHint update_hint);
+        void _ClearForEntity(EntityId entity_id);
+        void _Clear();
+
         void _DrawGrid(
             const GlVertexArray& gl_grid_vertex_array,
             const glm::mat4& camera_view,
@@ -124,18 +138,14 @@ namespace Arcadia
         );
 
     private:
-        bool _InBuild{ false };
-
-        std::unordered_map<Uuid, std::vector<GlRenderUnitMesh>> _GlRenderUnitMeshStorage{};
-        std::set<Uuid> _SubmittedMeshUuids{};
-
-        std::unordered_map<Uuid, GlRenderUnitPhysicsBodyShape> _GlRenderUnitPhysicsBodyShapeStorage{};
-        std::set<Uuid> _SubmittedPhysicsBodyShapeUuids{};
-
-        std::vector<GlRenderUnitCamera> _GlRenderUnitCameras{};
-        std::vector<GlRenderUnitLight> _GlRenderUnitLights{};
+        std::unordered_map<EntityId, std::vector<GlRenderUnitMesh>> _GlRenderUnitMeshStorage{};
+        std::unordered_map<EntityId, GlRenderUnitPhysicsBodyShape> _GlRenderUnitPhysicsBodyShapeStorage{};
+        std::unordered_map<EntityId, GlRenderUnitCamera> _GlRenderUnitCameraStorage{};
+        std::unordered_map<EntityId, GlRenderUnitLight> _GlRenderUnitLightStorage{};
         std::optional<GlRenderUnitSkybox> _GlRenderUnitSkybox{};
 
+        std::shared_ptr<Scene> _spScene{};
+        std::unordered_set<EntityId> _EntityIdSet{};
         GlPipeline _GlModelPipeline;
         GlPipeline _GlSkyboxPipeline;
         GlPipeline _GlGridPipeline;

@@ -11,7 +11,8 @@
 
 Arcadia::ImguiWindowViewport::ImguiWindowViewport(bool open, const std::string& title):
     ImguiWindowInterface(open, title)
-{}
+{
+}
 
 void Arcadia::ImguiWindowViewport::OnEvent(EventBase& e)
 {
@@ -67,33 +68,19 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
             ACDA_ASSERT(physics_simulator_sptr);
             ACDA_ASSERT(renderer_sptr);
 
-            physics_simulator_sptr->Prepare();
-            renderer_sptr->Prepare();
-
             auto [viewport_camera_comp, viewport_transform_comp] = scene_sptr->GetComponent<CameraComponent, TransformComponent>(scene_sptr->GetEntityIdByName(_ViewportCameraEntityName));
             viewport_camera_comp.SetViewportSize(ImGui::GetContentRegionAvail());
-            for(const auto& [entity_id, entity_info] : scene_sptr->GetEntityInfoStorage())
-            {
-                physics_simulator_sptr->Submit(*scene_sptr, entity_id);
-            }
-            physics_simulator_sptr->Finalize();
-            physics_simulator_sptr->Update();
-            for(const auto& [entity_id, entity_info] : scene_sptr->GetEntityInfoStorage())
-            {
-                physics_simulator_sptr->Query(*scene_sptr, entity_id);
-
-                // We submit entity to renderer after query
-                if(entity_info.Displayed)
-                {
-                    renderer_sptr->Submit(*scene_sptr, entity_id);
-                }
-            }
-
-            renderer_sptr->Finalize();
-            renderer_sptr->Draw();
+            EventQueue::Instance()
+                .Signal<Events::RendererSetEntity>(
+                    _ViewportCameraEntityId,
+                    Events::RendererSetEntity_ActionType::Update
+                );
 
             glm::vec2 image_cursor_pos = ImGui::GetCursorPos();
-            ImGui::Image(renderer_sptr->GetRenderResultId(0), viewport_camera_comp.GetViewportSize(), { 0,1 }, { 1,0 });
+            if(renderer_sptr->HasRenderResult())
+            {
+                ImGui::Image(renderer_sptr->GetRenderResultId(_ViewportCameraEntityId), viewport_camera_comp.GetViewportSize(), { 0,1 }, { 1,0 });
+            }
 
             if(!_InViewportFreecamMode && ImGui::IsItemHovered() && ImGui::IsMouseDown(ImGuiMouseButton_Right))
             {
@@ -328,7 +315,7 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
                             default:
                                 break;
                         }
-                        (void) description;
+                        (void)description;
                     }
                 }
             }
@@ -362,6 +349,11 @@ void Arcadia::ImguiWindowViewport::_OnProjectUnbuilt(Events::ProjectUnbuilt& e)
 
 void Arcadia::ImguiWindowViewport::_OnSceneActivated(Events::SceneActivated& e)
 {
+    std::shared_ptr<RendererInterface> renderer_sptr = _wpRenderer.lock();
+    std::shared_ptr<PhysicsSimulator> physics_simulator_sptr = _wpPhysicsSimulator.lock();
+    ACDA_ASSERT(renderer_sptr);
+    ACDA_ASSERT(physics_simulator_sptr);
+
     const std::shared_ptr<Scene>& scene_sptr = e.spScene;
     if(!scene_sptr->IsEntityNameUsed(_ViewportCameraEntityName))
     {
@@ -373,11 +365,40 @@ void Arcadia::ImguiWindowViewport::_OnSceneActivated(Events::SceneActivated& e)
         transform_comp.SetPosition(glm::vec3(1.f));
         transform_comp.IncreaseDirection(glm::vec3(-1.f));
     }
+    _ViewportCameraEntityId = scene_sptr->GetEntityIdByName(_ViewportCameraEntityName);
+
+    EventQueue::Instance().Signal<Events::RendererSetScene>(scene_sptr);
+    EventQueue::Instance().Signal<Events::PhysicsSimulatorSetScene>(scene_sptr);
+
+    for(const auto& [entity_id, entity_info] : scene_sptr->GetEntityInfoStorage())
+    {
+        EventQueue::Instance()
+            .Signal<Events::RendererSetEntity>(
+                entity_id,
+                Events::RendererSetEntity_ActionType::Add
+            );
+        EventQueue::Instance()
+            .Signal<Events::PhysicsSimulatorSetEntity>(
+                entity_id,
+                Events::PhysicsSimulatorSetEntity_ActionType::Add
+            );
+    }
+    EventQueue::Instance().Signal<Events::RendererSetActive>(true);
+
     _wpScene = scene_sptr;
 }
 
 void Arcadia::ImguiWindowViewport::_OnSceneDeactivated(Events::SceneDeactivated& e)
 {
+    std::shared_ptr<RendererInterface> renderer_sptr = _wpRenderer.lock();
+    std::shared_ptr<PhysicsSimulator> physics_simulator_sptr = _wpPhysicsSimulator.lock();
+    ACDA_ASSERT(renderer_sptr);
+    ACDA_ASSERT(physics_simulator_sptr);
+
+    EventQueue::Instance().Signal<Events::RendererSetActive>(false);
+    EventQueue::Instance().Signal<Events::RendererSetScene>(nullptr);
+    EventQueue::Instance().Signal<Events::PhysicsSimulatirSetActive>(false);
+    EventQueue::Instance().Signal<Events::PhysicsSimulatorSetScene>(nullptr);
     _wpScene.reset();
 }
 
@@ -423,6 +444,3 @@ void Arcadia::ImguiWindowViewport::_OnKeyboardInputOccupied(Events::KeyboardInpu
 {
     _GizmoShortcutAvailable = !e.Occupied;
 }
-
-
-

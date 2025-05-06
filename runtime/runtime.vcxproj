@@ -128,6 +128,7 @@
     <ClCompile Include="src\function\render\opengl\gl_renderer.cpp" />
     <ClCompile Include="src\function\render\opengl\pipeline\gl_pipeline.cpp" />
     <ClCompile Include="src\function\render\opengl\pipeline\gl_shader.cpp" />
+    <ClCompile Include="src\function\render\renderer.cpp" />
     <ClCompile Include="src\function\render\renderer_layer.cpp" />
     <ClCompile Include="src\function\window\window_layer.cpp" />
     <ClCompile Include="src\pch.cpp">
