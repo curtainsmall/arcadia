@@ -4,8 +4,8 @@
 
 #include "core/assert.hpp"
 #include "core/file.hpp"
-#include "core/pfd.hpp"
 #include "core/log.hpp"
+#include "core/pfd.hpp"
 
 #include "assimp/postprocess.h"
 #define STBI_FAILURE_USERMSG
@@ -33,7 +33,8 @@ Arcadia::ModelComponent::ModelComponent(const std::filesystem::path& filepath):
 
 Arcadia::ModelComponent::ModelComponent(const nlohmann::json& json):
     ModelComponent(ToFilepath(json.at("filepath")))
-{}
+{
+}
 
 auto Arcadia::ModelComponent::ToJson() const -> nlohmann::json
 {
@@ -65,12 +66,12 @@ void Arcadia::ModelComponent::LoadModel(const std::filesystem::path& filepath)
 
     if(!_Filepath.empty())
     {
-        pfd::button res = pfd::message{
-             "Replacing Model",
-             std::format("Do you want to replace model from {} with model from {}",_Filepath.generic_string(),filepath.generic_string()),
-             pfd::choice::yes_no,
-             pfd::icon::info
-        }.result();
+        pfd::button res = pfd::message(
+            "Replacing Model",
+            std::format("Do you want to replace model from {} with model from {}", _Filepath.generic_string(), filepath.generic_string()),
+            pfd::choice::yes_no,
+            pfd::icon::info
+        ).result();
 
         switch(res)
         {
@@ -278,7 +279,7 @@ void Arcadia::ModelComponent::_LoadTexture(
         std::filesystem::path filepath = directory / std::filesystem::path(str.C_Str());
         float* ptr = reinterpret_cast<float*>(stbi_load(filepath.string().c_str(), &x, &y, nullptr, 4));
         texture.Size = glm::i32vec2(x, y);
-        for(std::size_t i = 0; i < x * y; i+=4)
+        for(std::size_t i = 0; i < x * y; i += 4)
         {
             texture.Pixels.emplace_back(
                 ptr[i],

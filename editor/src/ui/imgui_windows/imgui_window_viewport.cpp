@@ -53,6 +53,7 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
     ImGui::SetNextWindowSize(glm::vec2{ 1024,768 }, ImGuiCond_Once);
     ImGuiWindowFlags window_flags =
         ImGuiWindowFlags_NoCollapse;
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, glm::vec2(2, 2));
     if(ImGui::Begin(imgui_title.c_str(), &_Opened, window_flags))
     {
         if(!scene_sptr)
@@ -73,7 +74,7 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
             EventQueue::Instance()
                 .Signal<Events::RendererSetEntity>(
                     _ViewportCameraEntityId,
-                    Events::RendererSetEntity_ActionType::Update
+                    Events::RendererSetEntity::ActionType::Update
                 );
 
             glm::vec2 image_cursor_pos = ImGui::GetCursorPos();
@@ -322,6 +323,7 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
         }
     }
     ImGui::End();
+    ImGui::PopStyleVar();
 }
 
 void Arcadia::ImguiWindowViewport::_OnInputCursorMove(Events::InputCursorMove& e)
@@ -375,12 +377,12 @@ void Arcadia::ImguiWindowViewport::_OnSceneActivated(Events::SceneActivated& e)
         EventQueue::Instance()
             .Signal<Events::RendererSetEntity>(
                 entity_id,
-                Events::RendererSetEntity_ActionType::Add
+                Events::RendererSetEntity::ActionType::Add
             );
         EventQueue::Instance()
             .Signal<Events::PhysicsSimulatorSetEntity>(
                 entity_id,
-                Events::PhysicsSimulatorSetEntity_ActionType::Add
+                Events::PhysicsSimulatorSetEntity::ActionType::Add
             );
     }
     EventQueue::Instance().Signal<Events::RendererSetActive>(true);

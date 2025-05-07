@@ -60,17 +60,17 @@ void Arcadia::RendererLayer::_OnRendererSetEntity(Events::RendererSetEntity& e)
 {
     switch(e.ActionType)
     {
-        case Events::RendererSetEntity_ActionType::Add:
+        case Events::RendererSetEntity::ActionType::Add:
         {
             _spRenderer->AddEntity(e.EntityId);
             break;
         }
-        case Events::RendererSetEntity_ActionType::Remove:
+        case Events::RendererSetEntity::ActionType::Remove:
         {
             _spRenderer->RemoveEntity(e.EntityId);
             break;
         }
-        case Events::RendererSetEntity_ActionType::Update:
+        case Events::RendererSetEntity::ActionType::Update:
         {
             _spRenderer->UpdateEntity(e.EntityId);
             break;

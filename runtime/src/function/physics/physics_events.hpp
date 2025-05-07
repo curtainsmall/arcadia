@@ -47,22 +47,23 @@ namespace Arcadia::Events
         std::shared_ptr<Scene> spScene;
     };
 
-    enum class PhysicsSimulatorSetEntity_ActionType
-    {
-        Add,
-        Remove,
-        Update,
-    };
     class PhysicsSimulatorSetEntity: public EventBase
     {
     public:
-        PhysicsSimulatorSetEntity(EntityId entitiy_id, PhysicsSimulatorSetEntity_ActionType active_type):
+        enum class ActionType
+        {
+            Add,
+            Remove,
+            Update
+        };
+    public:
+        PhysicsSimulatorSetEntity(EntityId entitiy_id, ActionType active_type):
             EntityId(entitiy_id),
             ActionType(active_type)
         {
         }
     public:
         EntityId EntityId;
-        PhysicsSimulatorSetEntity_ActionType ActionType;
+        ActionType ActionType;
     };
 }

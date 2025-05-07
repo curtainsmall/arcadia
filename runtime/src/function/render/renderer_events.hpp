@@ -43,22 +43,23 @@ namespace Arcadia::Events
         std::shared_ptr<Scene> spScene;
     };
 
-    enum class RendererSetEntity_ActionType
-    {
-        Add,
-        Remove,
-        Update,
-    };
     class RendererSetEntity: public EventBase
     {
     public:
-        RendererSetEntity(EntityId entitiy_id, RendererSetEntity_ActionType active_type):
+        enum class ActionType
+        {
+            Add,
+            Remove,
+            Update,
+        };
+    public:
+        RendererSetEntity(EntityId entitiy_id, ActionType active_type):
             EntityId(entitiy_id),
             ActionType(active_type)
         {
         }
     public:
         EntityId EntityId;
-        RendererSetEntity_ActionType ActionType;
+        ActionType ActionType;
     };
 }

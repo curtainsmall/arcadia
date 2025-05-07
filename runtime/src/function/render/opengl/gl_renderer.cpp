@@ -50,7 +50,7 @@ void Arcadia::GlRenderer::AddEntity(EntityId entity_id)
         return;
     }
     _EntityIdSet.emplace(entity_id);
-    _BuildForEntity(entity_id, _UpdateHint::None);
+    _BuildForEntity(entity_id, _BuildHint::BuildAll);
 }
 
 void Arcadia::GlRenderer::RemoveEntity(EntityId entity_id)
@@ -69,7 +69,7 @@ void Arcadia::GlRenderer::UpdateEntity(EntityId entity_id)
     {
         return;
     }
-    _BuildForEntity(entity_id, _UpdateHint::JustTransformMatrix);
+    _BuildForEntity(entity_id, _BuildHint::UpdateJustTransformMatrix);
 }
 
 void Arcadia::GlRenderer::Draw()
@@ -96,16 +96,16 @@ void Arcadia::GlRenderer::Draw()
         if(gl_render_unit_camera.GridDisplaying)
         {
             std::vector<Vertex> grid_vertices{
-                    Vertex{ glm::vec3{-1,1,0} },
-                    Vertex{ glm::vec3{-1,-1,0} },
-                    Vertex{ glm::vec3{1,-1,0} },
-                    Vertex{ glm::vec3{1,1,0} }
+                    Vertex(glm::vec3(-1,1,0)),
+                    Vertex(glm::vec3(-1,-1,0)),
+                    Vertex(glm::vec3(1,-1,0)),
+                    Vertex(glm::vec3(1,1,0))
             };
             std::vector<Mesh::IndexType> grid_indices{
-                0,1,2,
-                2,3,0
+                0, 1, 2,
+                2, 3, 0
             };
-            GlVertexArray gl_grid_vertex_array{ grid_vertices, grid_indices };
+            GlVertexArray gl_grid_vertex_array(grid_vertices, grid_indices);
 
             _DrawGrid(
                 gl_grid_vertex_array,
@@ -189,7 +189,7 @@ auto Arcadia::GlRenderer::GetGraphicApiType() const -> GraphicApi::Type
     return GraphicApi::Opengl(Version(4, 6, 0));
 }
 
-void Arcadia::GlRenderer::_BuildForEntity(EntityId entity_id, _UpdateHint update_hint)
+void Arcadia::GlRenderer::_BuildForEntity(EntityId entity_id, _BuildHint hint)
 {
     const EntityInfo& entity = _spScene->GetEntityInfo(entity_id);
 
@@ -204,17 +204,17 @@ void Arcadia::GlRenderer::_BuildForEntity(EntityId entity_id, _UpdateHint update
         {
             const auto& [camera_comp, transform_comp] = _spScene->GetComponent<CameraComponent, TransformComponent>(entity_id);
 
-            if(update_hint != _UpdateHint::None)
+            if(hint != _BuildHint::BuildAll)
             {
                 _GlRenderUnitCameraStorage.erase(entity_id);
             }
             _GlRenderUnitCameraStorage.try_emplace(
                 entity_id,
-                GlFramebuffer{
+                GlFramebuffer(
                     camera_comp.GetViewportSize(),
                     camera_comp.GetNearPlane(),
                     camera_comp.GetFarPlane()
-                },
+                ),
                 camera_comp.GetViewportSize(),
                 camera_comp.GenerateViewMat4(transform_comp.GetPosition(), transform_comp.GetDirection()),
                 camera_comp.GenerateProjectiveMat4(),
@@ -228,7 +228,7 @@ void Arcadia::GlRenderer::_BuildForEntity(EntityId entity_id, _UpdateHint update
         [&]()
         {
             const auto& [light_comp, transform_comp] = _spScene->GetComponent<LightComponent, TransformComponent>(entity_id);
-            if(update_hint != _UpdateHint::None)
+            if(hint != _BuildHint::BuildAll)
             {
                 _GlRenderUnitLightStorage.erase(entity_id);
             }
@@ -250,12 +250,12 @@ void Arcadia::GlRenderer::_BuildForEntity(EntityId entity_id, _UpdateHint update
 
                 const glm::mat4 transform_mat = transform_comp.GetTransformMatrix();
 
-                if(update_hint == _UpdateHint::All)
+                if(hint == _BuildHint::UpdateAll)
                 {
                     _GlRenderUnitMeshStorage.erase(entity_id);
                 }
 
-                if(update_hint == _UpdateHint::JustTransformMatrix)
+                if(hint == _BuildHint::UpdateJustTransformMatrix)
                 {
                     for(GlRenderUnitMesh& gl_render_unit_mesh : _GlRenderUnitMeshStorage.at(entity_id))
                     {
@@ -269,7 +269,7 @@ void Arcadia::GlRenderer::_BuildForEntity(EntityId entity_id, _UpdateHint update
                     {
                         // For any uuid, its corresponding meshes must be the same
                         gl_meshes.emplace_back(
-                            GlVertexArray{ mesh.Vertices, mesh.Indices },
+                            GlVertexArray(mesh.Vertices, mesh.Indices),
                             transform_mat,
                             mesh.Material.AmbientTexture2d,
                             mesh.Material.DiffuseTexture2d,
@@ -286,7 +286,7 @@ void Arcadia::GlRenderer::_BuildForEntity(EntityId entity_id, _UpdateHint update
             if(physics_comp.HasBodyInfo())
             {
                 const auto& [uuid, jph_body] = physics_comp.GetIdentifiableJphBodyInfo();
-                if(update_hint == _UpdateHint::None)
+                if(hint == _BuildHint::BuildAll)
                 {
                     const JphShapeInfo& shape_info = jph_body.JphShapeInfo;
                     const Mesh& shape_mesh = MatchVariant<Mesh>(
@@ -312,8 +312,8 @@ void Arcadia::GlRenderer::_BuildForEntity(EntityId entity_id, _UpdateHint update
                     _GlRenderUnitPhysicsBodyShapeStorage.try_emplace(
                         entity_id,
                         GlVertexArray(shape_mesh.Vertices, shape_mesh.Indices),
-                        glm::mat4{},
-                        glm::vec3{}
+                        glm::mat4(),
+                        glm::vec3()
                     );
                 }
 

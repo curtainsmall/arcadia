@@ -46,7 +46,7 @@ void Arcadia::SceneLayer::OnUpdate()
             EventQueue::Instance()
                 .Signal<Events::RendererSetEntity>(
                     entity_id,
-                    Events::RendererSetEntity_ActionType::Update
+                    Events::RendererSetEntity::ActionType::Update
                 );
         }
     }

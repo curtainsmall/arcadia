@@ -74,11 +74,11 @@ namespace Arcadia
 
         using SelfType = GlRenderer;
     private:
-        enum class _UpdateHint
+        enum class _BuildHint: std::uint8_t
         {
-            None = 0,
-            All,
-            JustTransformMatrix,
+            BuildAll = 0,
+            UpdateAll,
+            UpdateJustTransformMatrix,
         };
     public:
         GlRenderer(const std::filesystem::path& gl_shader_folder_path);
@@ -103,7 +103,7 @@ namespace Arcadia
         virtual auto GetGraphicApiType() const->GraphicApi::Type override;
 
     public:
-        void _BuildForEntity(EntityId entity_id, _UpdateHint update_hint);
+        void _BuildForEntity(EntityId entity_id, _BuildHint hint);
         void _ClearForEntity(EntityId entity_id);
         void _Clear();
 

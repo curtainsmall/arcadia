@@ -50,17 +50,17 @@ void Arcadia::PhysicsLayer::_OnPhysicsSimulatorSetEntity(Events::PhysicsSimulato
 {
     switch(e.ActionType)
     {
-        case Events::PhysicsSimulatorSetEntity_ActionType::Add:
+        case Events::PhysicsSimulatorSetEntity::ActionType::Add:
         {
             _spPhysicsSimulator->AddEntity(e.EntityId);
             break;
         }
-        case Events::PhysicsSimulatorSetEntity_ActionType::Remove:
+        case Events::PhysicsSimulatorSetEntity::ActionType::Remove:
         {
             _spPhysicsSimulator->RemoveEntity(e.EntityId);
             break;
         }
-        case Events::PhysicsSimulatorSetEntity_ActionType::Update:
+        case Events::PhysicsSimulatorSetEntity::ActionType::Update:
         {
             _spPhysicsSimulator->UpdateEntity(e.EntityId);
             break;

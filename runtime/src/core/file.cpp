@@ -32,7 +32,8 @@ ACDA_API auto Arcadia::LoadText(const std::filesystem::path& filepath) -> std::s
 
 Arcadia::File::File(const std::filesystem::path& filepath):
     _Filepath(filepath)
-{}
+{
+}
 
 Arcadia::File::~File()
 {
@@ -65,6 +66,7 @@ auto Arcadia::File::Load() -> SelfType&
         ACDA_ASSERT(buf);
         ifs.read(buf, len);
         std::string section_name(buf, len);
+        std::free(buf);
 
         // Section
         ifs.read(reinterpret_cast<char*>(&len), sizeof(len));

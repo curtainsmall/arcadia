@@ -50,18 +50,18 @@ Arcadia::EditorAppLayer::EditorAppLayer()
             .GetTopLayerShared<WindowLayer>();
     }
 
-    // Scene layer
-    {
-        editor_context.wpMainSceneLayer = layer_stack
-            .PushLayer<SceneLayer>()
-            .GetTopLayerShared<SceneLayer>();
-    }
-
     // Physics layer
     {
         editor_context.wpMainPhysicsLayer = layer_stack
             .PushLayer<PhysicsLayer>()
             .GetTopLayerShared<PhysicsLayer>();
+    }
+
+    // Scene layer
+    {
+        editor_context.wpMainSceneLayer = layer_stack
+            .PushLayer<SceneLayer>()
+            .GetTopLayerShared<SceneLayer>();
     }
 
     // Renderer layer

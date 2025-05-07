@@ -11,7 +11,7 @@
 Arcadia::PhysicsSimulator::PhysicsSimulator()
 {
     JPH::RegisterDefaultAllocator();
-    JPH::Factory::sInstance = new JPH::Factory{};
+    JPH::Factory::sInstance = new JPH::Factory();
     JPH::RegisterTypes();
 
     const JPH::uint max_bodies = 65536;
@@ -90,11 +90,20 @@ void Arcadia::PhysicsSimulator::Update()
     // Update physics simulation
 
     JPH::TempAllocatorImpl temp_allocator(_JphTempAllocatorSize);
-    JPH::JobSystemThreadPool job_system_thread_pool(JPH::cMaxPhysicsJobs, JPH::cMaxPhysicsBarriers, static_cast<int>(std::thread::hardware_concurrency() - 1));
+    JPH::JobSystemThreadPool job_system_thread_pool(
+        JPH::cMaxPhysicsJobs,
+        JPH::cMaxPhysicsBarriers,
+        static_cast<int>(std::thread::hardware_concurrency() - 1)
+    );
 
     int collusion_step = 60 / _JphPhysicsSystemUpdatesPerSecond;
     collusion_step = collusion_step > 0 ? collusion_step : 1;
-    _upJphPhysicsSystemUniquePtr->Update(1.f / _JphPhysicsSystemUpdatesPerSecond, collusion_step, &temp_allocator, &job_system_thread_pool);
+    _upJphPhysicsSystemUniquePtr->Update(
+        1.f / _JphPhysicsSystemUpdatesPerSecond,
+        collusion_step,
+        &temp_allocator,
+        &job_system_thread_pool
+    );
 
     for(const EntityId& entity_id : _EntityIdSet)
     {
