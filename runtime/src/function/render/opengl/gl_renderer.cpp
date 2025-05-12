@@ -74,7 +74,7 @@ void Arcadia::GlRenderer::UpdateEntity(EntityId entity_id)
 
 void Arcadia::GlRenderer::Draw()
 {
-    if(!_Active)
+    if(!_Active || _GlRenderUnitCameraStorage.empty())
     {
         return;
     }
@@ -196,135 +196,135 @@ void Arcadia::GlRenderer::_BuildForEntity(EntityId entity_id, _UpdateHint update
     Match<void>(
         entity.TypeString,
         [&]()
-        {
-            ACDA_UNREACHABLE("Entity type not supported");
-        },
+    {
+        ACDA_UNREACHABLE("Entity type not supported");
+    },
         "camera",
         [&]()
-        {
-            const auto& [camera_comp, transform_comp] = _spScene->GetComponent<CameraComponent, TransformComponent>(entity_id);
+    {
+        const auto& [camera_comp, transform_comp] = _spScene->GetComponent<CameraComponent, TransformComponent>(entity_id);
 
-            if(update_hint != _UpdateHint::None)
-            {
-                _GlRenderUnitCameraStorage.erase(entity_id);
-            }
-            _GlRenderUnitCameraStorage.try_emplace(
-                entity_id,
-                GlFramebuffer{
-                    camera_comp.GetViewportSize(),
-                    camera_comp.GetNearPlane(),
-                    camera_comp.GetFarPlane()
-                },
+        if(update_hint != _UpdateHint::None)
+        {
+            _GlRenderUnitCameraStorage.erase(entity_id);
+        }
+        _GlRenderUnitCameraStorage.try_emplace(
+            entity_id,
+            GlFramebuffer{
                 camera_comp.GetViewportSize(),
-                camera_comp.GenerateViewMat4(transform_comp.GetPosition(), transform_comp.GetDirection()),
-                camera_comp.GenerateProjectiveMat4(),
-                transform_comp.GetPosition(),
-                camera_comp.IsGridDisplaying(),
                 camera_comp.GetNearPlane(),
                 camera_comp.GetFarPlane()
-            );
-        },
+            },
+            camera_comp.GetViewportSize(),
+            camera_comp.GenerateViewMat4(transform_comp.GetPosition(), transform_comp.GetDirection()),
+            camera_comp.GenerateProjectiveMat4(),
+            transform_comp.GetPosition(),
+            camera_comp.IsGridDisplaying(),
+            camera_comp.GetNearPlane(),
+            camera_comp.GetFarPlane()
+        );
+    },
         "light",
         [&]()
+    {
+        const auto& [light_comp, transform_comp] = _spScene->GetComponent<LightComponent, TransformComponent>(entity_id);
+        if(update_hint != _UpdateHint::None)
         {
-            const auto& [light_comp, transform_comp] = _spScene->GetComponent<LightComponent, TransformComponent>(entity_id);
-            if(update_hint != _UpdateHint::None)
-            {
-                _GlRenderUnitLightStorage.erase(entity_id);
-            }
-            _GlRenderUnitLightStorage.try_emplace(
-                entity_id,
-                transform_comp.GetPosition(),
-                transform_comp.GetPosition(),
-                light_comp.GetLight()
-            );
-        },
+            _GlRenderUnitLightStorage.erase(entity_id);
+        }
+        _GlRenderUnitLightStorage.try_emplace(
+            entity_id,
+            transform_comp.GetPosition(),
+            transform_comp.GetPosition(),
+            light_comp.GetLight()
+        );
+    },
         "actor",
         [&]()
+    {
+        const auto [model_comp, transform_comp, physics_comp] = _spScene->GetComponent<ModelComponent, TransformComponent, PhysicsComponent>(entity_id);
+
+        if(model_comp.HasIdentifiableMeshes())
         {
-            const auto [model_comp, transform_comp, physics_comp] = _spScene->GetComponent<ModelComponent, TransformComponent, PhysicsComponent>(entity_id);
+            const auto& [uuid, meshes] = model_comp.GetIdentifiableMeshes();
 
-            if(model_comp.HasIdentifiableMeshes())
+            const glm::mat4 transform_mat = transform_comp.GetTransformMatrix();
+
+            if(update_hint == _UpdateHint::All)
             {
-                const auto& [uuid, meshes] = model_comp.GetIdentifiableMeshes();
-
-                const glm::mat4 transform_mat = transform_comp.GetTransformMatrix();
-
-                if(update_hint == _UpdateHint::All)
-                {
-                    _GlRenderUnitMeshStorage.erase(entity_id);
-                }
-
-                if(update_hint == _UpdateHint::JustTransformMatrix)
-                {
-                    for(GlRenderUnitMesh& gl_render_unit_mesh : _GlRenderUnitMeshStorage.at(entity_id))
-                    {
-                        gl_render_unit_mesh.TransformMatrix = transform_mat;
-                    }
-                }
-                else
-                {
-                    std::vector<GlRenderUnitMesh> gl_meshes{};
-                    for(const Mesh& mesh : meshes)
-                    {
-                        // For any uuid, its corresponding meshes must be the same
-                        gl_meshes.emplace_back(
-                            GlVertexArray{ mesh.Vertices, mesh.Indices },
-                            transform_mat,
-                            mesh.Material.AmbientTexture2d,
-                            mesh.Material.DiffuseTexture2d,
-                            mesh.Material.SepcularTexture2d
-                        );
-                    }
-                    _GlRenderUnitMeshStorage.try_emplace(
-                        entity_id,
-                        std::move(gl_meshes)
-                    );
-                }
+                _GlRenderUnitMeshStorage.erase(entity_id);
             }
 
-            if(physics_comp.HasBodyInfo())
+            if(update_hint == _UpdateHint::JustTransformMatrix)
             {
-                const auto& [uuid, jph_body] = physics_comp.GetIdentifiableJphBodyInfo();
-                if(update_hint == _UpdateHint::None)
+                for(GlRenderUnitMesh& gl_render_unit_mesh : _GlRenderUnitMeshStorage.at(entity_id))
                 {
-                    const JphShapeInfo& shape_info = jph_body.JphShapeInfo;
-                    const Mesh& shape_mesh = MatchVariant<Mesh>(
-                        shape_info,
-                        [&](const JphBoxShapeInfo& info)
-                        {
-                            return Mesh::CreateBox(info.HalfExtent);
-                        },
-                        [&](const JphCapsuleShapeInfo& info)
-                        {
-                            return Mesh::CreateCapsule(info.Radius, info.HalfHeightOfCylinder);
-                        },
-                        [&](const JphCylinderShapeInfo& info)
-                        {
-                            return Mesh::CreateCylinder(info.HalfHeight, info.Radius);
-                        },
-                        [&](const JphSphereShapeInfo& info)
-                        {
-                            return Mesh::CreateSphere(info.Radius);
-                        }
-                    );
-
-                    _GlRenderUnitPhysicsBodyShapeStorage.try_emplace(
-                        entity_id,
-                        GlVertexArray(shape_mesh.Vertices, shape_mesh.Indices),
-                        glm::mat4{},
-                        glm::vec3{}
+                    gl_render_unit_mesh.TransformMatrix = transform_mat;
+                }
+            }
+            else
+            {
+                std::vector<GlRenderUnitMesh> gl_meshes{};
+                for(const Mesh& mesh : meshes)
+                {
+                    // For any uuid, its corresponding meshes must be the same
+                    gl_meshes.emplace_back(
+                        GlVertexArray{ mesh.Vertices, mesh.Indices },
+                        transform_mat,
+                        mesh.Material.AmbientTexture2d,
+                        mesh.Material.DiffuseTexture2d,
+                        mesh.Material.SepcularTexture2d
                     );
                 }
-
-                GlRenderUnitPhysicsBodyShape& gl_render_unit_physics_body_shape
-                    = _GlRenderUnitPhysicsBodyShapeStorage.at(entity_id);
-                gl_render_unit_physics_body_shape.TransformMatrix =
-                    glm::translate(Glm::Mat4_CreateIdentity(), transform_comp.GetPosition())
-                    * glm::mat4_cast(transform_comp.GetRotationQuaternion());
-                gl_render_unit_physics_body_shape.Color = physics_comp.GetBodyShapeColor();
+                _GlRenderUnitMeshStorage.try_emplace(
+                    entity_id,
+                    std::move(gl_meshes)
+                );
             }
         }
+
+        if(physics_comp.HasBodyInfo())
+        {
+            const auto& [uuid, jph_body] = physics_comp.GetIdentifiableJphBodyInfo();
+            if(update_hint == _UpdateHint::None)
+            {
+                const JphShapeInfo& shape_info = jph_body.JphShapeInfo;
+                const Mesh& shape_mesh = MatchVariant<Mesh>(
+                    shape_info,
+                    [&](const JphBoxShapeInfo& info)
+                {
+                    return Mesh::CreateBox(info.HalfExtent);
+                },
+                    [&](const JphCapsuleShapeInfo& info)
+                {
+                    return Mesh::CreateCapsule(info.Radius, info.HalfHeightOfCylinder);
+                },
+                    [&](const JphCylinderShapeInfo& info)
+                {
+                    return Mesh::CreateCylinder(info.HalfHeight, info.Radius);
+                },
+                    [&](const JphSphereShapeInfo& info)
+                {
+                    return Mesh::CreateSphere(info.Radius);
+                }
+                );
+
+                _GlRenderUnitPhysicsBodyShapeStorage.try_emplace(
+                    entity_id,
+                    GlVertexArray(shape_mesh.Vertices, shape_mesh.Indices),
+                    glm::mat4{},
+                    glm::vec3{}
+                );
+            }
+
+            GlRenderUnitPhysicsBodyShape& gl_render_unit_physics_body_shape
+                = _GlRenderUnitPhysicsBodyShapeStorage.at(entity_id);
+            gl_render_unit_physics_body_shape.TransformMatrix =
+                glm::translate(Glm::Mat4_CreateIdentity(), transform_comp.GetPosition())
+                * glm::mat4_cast(transform_comp.GetRotationQuaternion());
+            gl_render_unit_physics_body_shape.Color = physics_comp.GetBodyShapeColor();
+        }
+    }
     );
 }
 
@@ -396,74 +396,74 @@ void Arcadia::GlRenderer::_DrawLights(
         MatchVariant<void>(
             gl_render_unit_light.Light,
             [&](const NullLight& light)
-            {},
+        {},
             [&](const SpotLight& light)
-            {
-                GLintptr base_offfset = light_count_size_aligned + light_count * light_t_size;
-                gl_light_uniform_buffer.SetBufferSubData(base_offfset + 0, sizeof(int), &light_type_spot);
-                float cosine_inner_cutoff_angle = glm::cos(light.GetCutoffAngles().x);
-                float cosine_outer_cutoff_angle = glm::cos(light.GetCutoffAngles().y);
-                glm::vec3 attenuation_coeffs = light.GetAttenuationCoefficients();
-                glm::vec3 color = light.GetColor();
-                glm::vec3 ambient = light.GetAmbientStrength();
-                glm::vec3 diffuse = light.GetDiffuseStrength();
-                glm::vec3 specular = light.GetSpecularStrength();
-                gl_light_uniform_buffer
-                    .SetBufferSubData(base_offfset + 4, sizeof(float), &cosine_inner_cutoff_angle)
-                    .SetBufferSubData(base_offfset + 8, sizeof(float), &cosine_outer_cutoff_angle)
-                    .SetBufferSubData(base_offfset + 16, sizeof(glm::vec3), glm::value_ptr(gl_render_unit_light.Position))
-                    .SetBufferSubData(base_offfset + 32, sizeof(glm::vec3), glm::value_ptr(gl_render_unit_light.Direction))
-                    .SetBufferSubData(base_offfset + 48, sizeof(glm::vec3), glm::value_ptr(attenuation_coeffs))
-                    .SetBufferSubData(base_offfset + 64, sizeof(glm::vec3), glm::value_ptr(color))
-                    .SetBufferSubData(base_offfset + 80, sizeof(glm::vec3), glm::value_ptr(ambient))
-                    .SetBufferSubData(base_offfset + 96, sizeof(glm::vec3), glm::value_ptr(diffuse))
-                    .SetBufferSubData(base_offfset + 112, sizeof(glm::vec3), glm::value_ptr(specular));
-                ++light_count;
+        {
+            GLintptr base_offfset = light_count_size_aligned + light_count * light_t_size;
+            gl_light_uniform_buffer.SetBufferSubData(base_offfset + 0, sizeof(int), &light_type_spot);
+            float cosine_inner_cutoff_angle = glm::cos(light.GetCutoffAngles().x);
+            float cosine_outer_cutoff_angle = glm::cos(light.GetCutoffAngles().y);
+            glm::vec3 attenuation_coeffs = light.GetAttenuationCoefficients();
+            glm::vec3 color = light.GetColor();
+            glm::vec3 ambient = light.GetAmbientStrength();
+            glm::vec3 diffuse = light.GetDiffuseStrength();
+            glm::vec3 specular = light.GetSpecularStrength();
+            gl_light_uniform_buffer
+                .SetBufferSubData(base_offfset + 4, sizeof(float), &cosine_inner_cutoff_angle)
+                .SetBufferSubData(base_offfset + 8, sizeof(float), &cosine_outer_cutoff_angle)
+                .SetBufferSubData(base_offfset + 16, sizeof(glm::vec3), glm::value_ptr(gl_render_unit_light.Position))
+                .SetBufferSubData(base_offfset + 32, sizeof(glm::vec3), glm::value_ptr(gl_render_unit_light.Direction))
+                .SetBufferSubData(base_offfset + 48, sizeof(glm::vec3), glm::value_ptr(attenuation_coeffs))
+                .SetBufferSubData(base_offfset + 64, sizeof(glm::vec3), glm::value_ptr(color))
+                .SetBufferSubData(base_offfset + 80, sizeof(glm::vec3), glm::value_ptr(ambient))
+                .SetBufferSubData(base_offfset + 96, sizeof(glm::vec3), glm::value_ptr(diffuse))
+                .SetBufferSubData(base_offfset + 112, sizeof(glm::vec3), glm::value_ptr(specular));
+            ++light_count;
 
-                _GlShapePipeline
-                    .SetUniform("u_transform_mat", glm::translate(Glm::Mat4_CreateIdentity(), gl_render_unit_light.Position))
-                    .SetUniform("u_color", light.GetColor());
-            },
+            _GlShapePipeline
+                .SetUniform("u_transform_mat", glm::translate(Glm::Mat4_CreateIdentity(), gl_render_unit_light.Position))
+                .SetUniform("u_color", light.GetColor());
+        },
             [&](const DirectLight& light)
-            {
-                GLintptr base_offfset = light_count_size_aligned + light_count * light_t_size;
-                glm::vec3 color = light.GetColor();
-                glm::vec3 ambient = light.GetAmbientStrength();
-                glm::vec3 diffuse = light.GetDiffuseStrength();
-                glm::vec3 specular = light.GetSpecularStrength();
-                gl_light_uniform_buffer
-                    .SetBufferSubData(base_offfset + 0, sizeof(int), &light_type_direct)
-                    .SetBufferSubData(base_offfset + 32, sizeof(glm::vec3), glm::value_ptr(gl_render_unit_light.Direction))
-                    .SetBufferSubData(base_offfset + 64, sizeof(glm::vec3), glm::value_ptr(color))
-                    .SetBufferSubData(base_offfset + 80, sizeof(glm::vec3), glm::value_ptr(ambient))
-                    .SetBufferSubData(base_offfset + 96, sizeof(glm::vec3), glm::value_ptr(diffuse))
-                    .SetBufferSubData(base_offfset + 112, sizeof(glm::vec3), glm::value_ptr(specular));
-                ++light_count;
-            },
+        {
+            GLintptr base_offfset = light_count_size_aligned + light_count * light_t_size;
+            glm::vec3 color = light.GetColor();
+            glm::vec3 ambient = light.GetAmbientStrength();
+            glm::vec3 diffuse = light.GetDiffuseStrength();
+            glm::vec3 specular = light.GetSpecularStrength();
+            gl_light_uniform_buffer
+                .SetBufferSubData(base_offfset + 0, sizeof(int), &light_type_direct)
+                .SetBufferSubData(base_offfset + 32, sizeof(glm::vec3), glm::value_ptr(gl_render_unit_light.Direction))
+                .SetBufferSubData(base_offfset + 64, sizeof(glm::vec3), glm::value_ptr(color))
+                .SetBufferSubData(base_offfset + 80, sizeof(glm::vec3), glm::value_ptr(ambient))
+                .SetBufferSubData(base_offfset + 96, sizeof(glm::vec3), glm::value_ptr(diffuse))
+                .SetBufferSubData(base_offfset + 112, sizeof(glm::vec3), glm::value_ptr(specular));
+            ++light_count;
+        },
             [&](const AreaLight& light)
-            {},
+        {},
             [&](const PointLight& light)
-            {
-                GLintptr base_offfset = light_count_size_aligned + light_count * light_t_size;
-                glm::vec3 attenuation_coeffs = light.GetAttenuationCoefficients();
-                glm::vec3 color = light.GetColor();
-                glm::vec3 ambient = light.GetAmbientStrength();
-                glm::vec3 diffuse = light.GetDiffuseStrength();
-                glm::vec3 specular = light.GetSpecularStrength();
-                gl_light_uniform_buffer
-                    .SetBufferSubData(base_offfset + 0, sizeof(int), &light_type_point)
-                    .SetBufferSubData(base_offfset + 16, sizeof(glm::vec3), glm::value_ptr(gl_render_unit_light.Position))
-                    .SetBufferSubData(base_offfset + 48, sizeof(glm::vec3), glm::value_ptr(attenuation_coeffs))
-                    .SetBufferSubData(base_offfset + 64, sizeof(glm::vec3), glm::value_ptr(color))
-                    .SetBufferSubData(base_offfset + 80, sizeof(glm::vec3), glm::value_ptr(ambient))
-                    .SetBufferSubData(base_offfset + 96, sizeof(glm::vec3), glm::value_ptr(diffuse))
-                    .SetBufferSubData(base_offfset + 112, sizeof(glm::vec3), glm::value_ptr(specular));
-                ++light_count;
+        {
+            GLintptr base_offfset = light_count_size_aligned + light_count * light_t_size;
+            glm::vec3 attenuation_coeffs = light.GetAttenuationCoefficients();
+            glm::vec3 color = light.GetColor();
+            glm::vec3 ambient = light.GetAmbientStrength();
+            glm::vec3 diffuse = light.GetDiffuseStrength();
+            glm::vec3 specular = light.GetSpecularStrength();
+            gl_light_uniform_buffer
+                .SetBufferSubData(base_offfset + 0, sizeof(int), &light_type_point)
+                .SetBufferSubData(base_offfset + 16, sizeof(glm::vec3), glm::value_ptr(gl_render_unit_light.Position))
+                .SetBufferSubData(base_offfset + 48, sizeof(glm::vec3), glm::value_ptr(attenuation_coeffs))
+                .SetBufferSubData(base_offfset + 64, sizeof(glm::vec3), glm::value_ptr(color))
+                .SetBufferSubData(base_offfset + 80, sizeof(glm::vec3), glm::value_ptr(ambient))
+                .SetBufferSubData(base_offfset + 96, sizeof(glm::vec3), glm::value_ptr(diffuse))
+                .SetBufferSubData(base_offfset + 112, sizeof(glm::vec3), glm::value_ptr(specular));
+            ++light_count;
 
-                _GlShapePipeline
-                    .SetUniform("u_transform_mat", glm::translate(Glm::Mat4_CreateIdentity(), gl_render_unit_light.Position))
-                    .SetUniform("u_color", light.GetColor());
-            }
+            _GlShapePipeline
+                .SetUniform("u_transform_mat", glm::translate(Glm::Mat4_CreateIdentity(), gl_render_unit_light.Position))
+                .SetUniform("u_color", light.GetColor());
+        }
         );
 
         gl_light_shape_vertex_array.Draw(GL_TRIANGLES);

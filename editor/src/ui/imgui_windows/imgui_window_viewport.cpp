@@ -4,10 +4,14 @@
 #include "core/assert.hpp"
 #include "core/function.hpp"
 #include "function/window/window_events.hpp"
+#include "function/render/renderer_layer.hpp"
+#include "function/physics/physics_layer.hpp"
 #include "resource/components/camera_component.hpp"
 #include "resource/components/model_component.hpp"
 #include "resource/components/physics_component.hpp"
 #include "resource/components/transform_component.hpp"
+
+#include "editor/editor_context.hpp"
 
 Arcadia::ImguiWindowViewport::ImguiWindowViewport(bool open, const std::string& title):
     ImguiWindowInterface(open, title)
@@ -25,10 +29,6 @@ void Arcadia::ImguiWindowViewport::OnEvent(EventBase& e)
         .Dispatch<Events::SceneDeactivated>(ACDA_BIND_MEMBER_FN(_OnSceneDeactivated))
         .Dispatch<Events::SelectEntity>(ACDA_BIND_MEMBER_FN(_OnSelectEntity))
         .Dispatch<Events::DeleteEntity>(ACDA_BIND_MEMBER_FN(_OnDeleteEntity))
-        .Dispatch<Events::RendererBuilt>(ACDA_BIND_MEMBER_FN(_OnRendererBuilt))
-        .Dispatch<Events::RendererUnbuilt>(ACDA_BIND_MEMBER_FN(_OnRendererUnbuilt))
-        .Dispatch<Events::PhysicsSimulatorBuilt>(ACDA_BIND_MEMBER_FN(_OnPhysicsSimulatorBuilt))
-        .Dispatch<Events::PhysicsSimulatorUnbuilt>(ACDA_BIND_MEMBER_FN(_OnPhysicsSimulatorUnbuilt))
         .Dispatch<Events::ShowGizmo>(ACDA_BIND_MEMBER_FN(_OnShowGizmo))
         .Dispatch<Events::KeyboardInputOccupied>(ACDA_BIND_MEMBER_FN(_OnKeyboardInputOccupied))
         .IsDispatched();
@@ -41,9 +41,9 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
         return;
     }
 
-    std::shared_ptr<Scene> scene_sptr = _wpScene.lock();
-    std::shared_ptr<PhysicsSimulator> physics_simulator_sptr = _wpPhysicsSimulator.lock();
-    std::shared_ptr<RendererInterface> renderer_sptr = _wpRenderer.lock();
+    std::shared_ptr<SceneLayer> scene_layer_sptr = EditorContext::Instance().wpMainSceneLayer.lock();
+    std::shared_ptr<PhysicsLayer> physics_layer_sptr = EditorContext::Instance().wpMainPhysicsLayer.lock();
+    std::shared_ptr<RendererLayer> renderer_layer_sptr = EditorContext::Instance().wpMainRendererLayer.lock();
     std::shared_ptr<Project> project_sptr = _wpProject.lock();
 
     const AppContext& app_context = AppContext::Instance();
@@ -55,20 +55,20 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
         ImGuiWindowFlags_NoCollapse;
     if(ImGui::Begin(imgui_title.c_str(), &_Opened, window_flags))
     {
-        if(!scene_sptr)
+        if(!scene_layer_sptr->HasActiveScene())
         {
             ImGui::Text("(No scene)");
         }
-        else if(!renderer_sptr)
+        else if(!renderer_layer_sptr->HasRenderer())
         {
             ImGui::Text("(No renderer)");
         }
         else
         {
-            ACDA_ASSERT(physics_simulator_sptr);
-            ACDA_ASSERT(renderer_sptr);
+            ACDA_ASSERT(physics_layer_sptr);
+            ACDA_ASSERT(renderer_layer_sptr);
 
-            auto [viewport_camera_comp, viewport_transform_comp] = scene_sptr->GetComponent<CameraComponent, TransformComponent>(scene_sptr->GetEntityIdByName(_ViewportCameraEntityName));
+            auto [viewport_camera_comp, viewport_transform_comp] = scene_layer_sptr->ActiveScene_GetComponent<CameraComponent, TransformComponent>(scene_layer_sptr->ActiveScene_GetEntityIdByName(_ViewportCameraEntityName));
             viewport_camera_comp.SetViewportSize(ImGui::GetContentRegionAvail());
             EventQueue::Instance()
                 .Signal<Events::RendererSetEntity>(
@@ -77,9 +77,9 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
                 );
 
             glm::vec2 image_cursor_pos = ImGui::GetCursorPos();
-            if(renderer_sptr->HasRenderResult())
+            if(renderer_layer_sptr->HasRenderResult())
             {
-                ImGui::Image(renderer_sptr->GetRenderResultId(_ViewportCameraEntityId), viewport_camera_comp.GetViewportSize(), { 0,1 }, { 1,0 });
+                ImGui::Image(renderer_layer_sptr->GetRenderResultId(_ViewportCameraEntityId), viewport_camera_comp.GetViewportSize(), { 0,1 }, { 1,0 });
             }
 
             if(!_InViewportFreecamMode && ImGui::IsItemHovered() && ImGui::IsMouseDown(ImGuiMouseButton_Right))
@@ -247,7 +247,7 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
                 ImGui::PopStyleColor(2);
 
                 // Gizmo
-                if(scene_sptr->ContainsEntity(_SelectedEntityId) && scene_sptr->ContainsAllComponents<TransformComponent>(_SelectedEntityId))
+                if(scene_layer_sptr->ActiveScene_ContainsEntity(_SelectedEntityId) && scene_layer_sptr->ActiveScene_ContainsAllComponents<TransformComponent>(_SelectedEntityId))
                 {
                     ImGuizmo::SetDrawlist();
 
@@ -255,7 +255,7 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
                     glm::mat4 view_mat = viewport_camera_comp.GenerateViewMat4(viewport_transform_comp.GetPosition(), viewport_transform_comp.GetDirection());
                     glm::mat4 proj_mat = viewport_camera_comp.GenerateProjectiveMat4();
 
-                    TransformComponent& transform_comp = scene_sptr->GetComponent<TransformComponent>(_SelectedEntityId);
+                    TransformComponent& transform_comp = scene_layer_sptr->ActiveScene_GetComponent<TransformComponent>(_SelectedEntityId);
                     glm::mat4 transform_mat = transform_comp.GetTransformMatrix();
                     ImGuizmo::Manipulate(
                         glm::value_ptr(view_mat),
@@ -315,7 +315,7 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
                             default:
                                 break;
                         }
-                        (void)description;
+                        (void) description;
                     }
                 }
             }
@@ -349,10 +349,10 @@ void Arcadia::ImguiWindowViewport::_OnProjectUnbuilt(Events::ProjectUnbuilt& e)
 
 void Arcadia::ImguiWindowViewport::_OnSceneActivated(Events::SceneActivated& e)
 {
-    std::shared_ptr<RendererInterface> renderer_sptr = _wpRenderer.lock();
-    std::shared_ptr<PhysicsSimulator> physics_simulator_sptr = _wpPhysicsSimulator.lock();
-    ACDA_ASSERT(renderer_sptr);
-    ACDA_ASSERT(physics_simulator_sptr);
+    std::shared_ptr<RendererLayer> renderer_layer_sptr = EditorContext::Instance().wpMainRendererLayer.lock();
+    std::shared_ptr<PhysicsLayer> physics_layer_sptr = EditorContext::Instance().wpMainPhysicsLayer.lock();
+    ACDA_ASSERT(renderer_layer_sptr);
+    ACDA_ASSERT(physics_layer_sptr);
 
     const std::shared_ptr<Scene>& scene_sptr = e.spScene;
     if(!scene_sptr->IsEntityNameUsed(_ViewportCameraEntityName))
@@ -385,21 +385,14 @@ void Arcadia::ImguiWindowViewport::_OnSceneActivated(Events::SceneActivated& e)
     }
     EventQueue::Instance().Signal<Events::RendererSetActive>(true);
 
-    _wpScene = scene_sptr;
 }
 
 void Arcadia::ImguiWindowViewport::_OnSceneDeactivated(Events::SceneDeactivated& e)
 {
-    std::shared_ptr<RendererInterface> renderer_sptr = _wpRenderer.lock();
-    std::shared_ptr<PhysicsSimulator> physics_simulator_sptr = _wpPhysicsSimulator.lock();
-    ACDA_ASSERT(renderer_sptr);
-    ACDA_ASSERT(physics_simulator_sptr);
-
     EventQueue::Instance().Signal<Events::RendererSetActive>(false);
     EventQueue::Instance().Signal<Events::RendererSetScene>(nullptr);
     EventQueue::Instance().Signal<Events::PhysicsSimulatirSetActive>(false);
     EventQueue::Instance().Signal<Events::PhysicsSimulatorSetScene>(nullptr);
-    _wpScene.reset();
 }
 
 void Arcadia::ImguiWindowViewport::_OnSelectEntity(Events::SelectEntity& e)
@@ -413,26 +406,6 @@ void Arcadia::ImguiWindowViewport::_OnDeleteEntity(Events::DeleteEntity& e)
     {
         _SelectedEntityId.SetNull();
     }
-}
-
-void Arcadia::ImguiWindowViewport::_OnRendererBuilt(Events::RendererBuilt& e)
-{
-    _wpRenderer = e.spRenderer;
-}
-
-void Arcadia::ImguiWindowViewport::_OnRendererUnbuilt(Events::RendererUnbuilt& e)
-{
-    _wpRenderer.reset();
-}
-
-void Arcadia::ImguiWindowViewport::_OnPhysicsSimulatorBuilt(Events::PhysicsSimulatorBuilt& e)
-{
-    _wpPhysicsSimulator = e.spPhysicsSimulator;
-}
-
-void Arcadia::ImguiWindowViewport::_OnPhysicsSimulatorUnbuilt(Events::PhysicsSimulatorUnbuilt& e)
-{
-    _wpPhysicsSimulator.reset();
 }
 
 void Arcadia::ImguiWindowViewport::_OnShowGizmo(Events::ShowGizmo& e)

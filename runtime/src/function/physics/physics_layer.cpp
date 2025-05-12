@@ -8,12 +8,10 @@ Arcadia::PhysicsLayer::PhysicsLayer():
     LayerInterface("physics")
 {
     _spPhysicsSimulator = std::make_shared<PhysicsSimulator>();
-    EventQueue::Instance().Signal<Events::PhysicsSimulatorBuilt>(_spPhysicsSimulator);
 }
 
 Arcadia::PhysicsLayer::~PhysicsLayer()
 {
-    EventQueue::Instance().Signal<Events::PhysicsSimulatorUnbuilt>();
 }
 
 void Arcadia::PhysicsLayer::OnEvent(EventBase& event)
@@ -29,6 +27,26 @@ void Arcadia::PhysicsLayer::OnEvent(EventBase& event)
 void Arcadia::PhysicsLayer::OnUpdate()
 {
     _spPhysicsSimulator->Update();
+}
+
+auto Arcadia::PhysicsLayer::IsPhysicsSimulatorActive() const -> bool
+{
+    return _spPhysicsSimulator->IsActive();
+}
+
+auto Arcadia::PhysicsLayer::GetPhysicsBodyCount() const -> std::size_t
+{
+    return _spPhysicsSimulator->GetBodyCount();
+}
+
+auto Arcadia::PhysicsLayer::GetTempAllocatorSize() const -> std::size_t
+{
+    return _spPhysicsSimulator->GetJphTempAllocatorSize();
+}
+
+auto Arcadia::PhysicsLayer::GetUpdatesPerSecondCount() const -> std::int32_t
+{
+    return _spPhysicsSimulator->GetJphPhysicsSystemUpdatesPerSecond();
 }
 
 void Arcadia::PhysicsLayer::_OnPhysicsSimulatorSetActive(Events::PhysicsSimulatirSetActive& e)

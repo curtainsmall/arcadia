@@ -23,7 +23,7 @@ namespace Arcadia
         virtual ~LayerInterface() = default;
 
         [[nodiscard]]
-        auto GetName() const -> const std::string&;
+        auto GetLayerName() const -> const std::string&;
 
         virtual void OnEvent(EventBase& event) = 0;
         virtual void OnUpdate() = 0;

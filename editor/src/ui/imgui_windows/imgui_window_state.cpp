@@ -7,33 +7,35 @@
 #include "resource/components/light_component.hpp"
 #include "resource/components/model_component.hpp"
 #include "resource/components/physics_component.hpp"
+
+#include "editor/editor_context.hpp"
 #include "ui/imgui.hpp"
 #include "ui/imgui_wrapper.hpp"
 
-void Arcadia::ImguiWindowStateFunctor_Scene::operator()(const Scene& scene)
+void Arcadia::ImguiWindowStateFunctor_Scene::operator()(const std::shared_ptr<SceneLayer>& scene_layer)
 {
-    ImGui::Text(std::format("Entity Count: {}", scene.CountEntity([&](EntityId, const EntityInfo& info)->bool
-                                                                  {
-                                                                      return !info.Internal;
-                                                                  })).c_str());
+    ImGui::Text(std::format("Entity Count: {}", scene_layer->ActiveScene_GetEntityCount([&](EntityId, const EntityInfo& info)->bool
+    {
+        return !info.Internal;
+    })).c_str());
 }
 
-void Arcadia::ImguiWindowStateFunctor_Renderer::operator()(const RendererInterface& renderer)
+void Arcadia::ImguiWindowStateFunctor_Renderer::operator()(const std::shared_ptr<RendererLayer>& renderer_layer)
 {
-    auto graphic_api_type_string = MatchVariant<std::string>(
-        renderer.GetGraphicApiType(),
+    std::string graphic_api_type_string = MatchVariant<std::string>(
+        renderer_layer->GetCurrentGraphicApiType(),
         [&](const GraphicApi::Opengl& api)
-        {
-            return std::format("OpenGL ({})", api.Version);
-        },
+    {
+        return std::format("OpenGL ({})", api.Version);
+    },
         [&](const GraphicApi::Directx& api)
-        {
-            return std::format("DirectX ({})", api.Version);
-        },
+    {
+        return std::format("DirectX ({})", api.Version);
+    },
         [&](const GraphicApi::Vulkan& api)
-        {
-            return std::format("Vulkan ({})", api.Version);
-        }
+    {
+        return std::format("Vulkan ({})", api.Version);
+    }
     );
 
     if(ImGui::BeginCombo("Graphic API", graphic_api_type_string.c_str()))
@@ -43,25 +45,15 @@ void Arcadia::ImguiWindowStateFunctor_Renderer::operator()(const RendererInterfa
     }
 }
 
-void Arcadia::ImguiWindowStateFunctor_PhysicsSimulator::operator()(PhysicsSimulator& physics_simulator)
+void Arcadia::ImguiWindowStateFunctor_PhysicsSimulator::operator()(const std::shared_ptr<PhysicsLayer>& physics_layer)
 {
-    ImGui::Text(std::format("Body Count: {}", physics_simulator.GetBodyCount()).c_str());
-
-    auto slider_flags =
-        ImGuiSliderFlags_AlwaysClamp;
-    ImGui::BeginDisabled();
-    std::int32_t temp_allocator_size_in_kib = physics_simulator.GetJphTempAllocatorSize() / 1024;
-    ImguiWrappers::DragInt("Temporary Allocator Size (KiB)", temp_allocator_size_in_kib, 1.0f, 64 /*64 KiB*/, 16 * 1024 * 1024 /*16 GiB*/, "%d", slider_flags);
-    physics_simulator.SetJphTempAllocatorSize(temp_allocator_size_in_kib * 1024);
-    ImGui::EndDisabled();
-
-    auto update_per_second = physics_simulator.GetJphPhysicsSystemUpdatesPerSecond();
-    ImguiWrappers::DragInt("Update per Second", update_per_second, 1.0f, 0, INT_MAX, "%d", slider_flags);
-    physics_simulator.SetJphPhysicsSystemUpdatesPerSecond(update_per_second);
+    ImGui::Text(std::format("Body Count: {}", physics_layer->GetPhysicsBodyCount()).c_str());
+    ImGui::Text(std::format("Temporary Allocator Size (KiB)", physics_layer->GetTempAllocatorSize()).c_str());
+    ImGui::Text(std::format("Update per Second", physics_layer->GetUpdatesPerSecondCount()).c_str());
 
     ImGui::NewLine();
 
-    if(physics_simulator.IsActive())
+    if(physics_layer->IsPhysicsSimulatorActive())
     {
         if(ImGui::Button("Stop"))
         {
@@ -92,15 +84,6 @@ Arcadia::ImguiWindowState::ImguiWindowState(bool open, const std::string& title)
 
 void Arcadia::ImguiWindowState::OnEvent(EventBase& e)
 {
-    EventDispatcher{ e }
-        .Dispatch<Events::OpenImguiWindow>(ACDA_BIND_MEMBER_FN(_OnOpenImguiWindow))
-        .Dispatch<Events::SceneActivated>(ACDA_BIND_MEMBER_FN(_OnSceneActivated))
-        .Dispatch<Events::SceneDeactivated>(ACDA_BIND_MEMBER_FN(_OnSceneDeactivated))
-        .Dispatch<Events::RendererBuilt>(ACDA_BIND_MEMBER_FN(_OnRendererBuilt))
-        .Dispatch<Events::RendererUnbuilt>(ACDA_BIND_MEMBER_FN(_OnRendererUnbuilt))
-        .Dispatch<Events::PhysicsSimulatorBuilt>(ACDA_BIND_MEMBER_FN(_OnPhysicsSimulatorBuilt))
-        .Dispatch<Events::PhysicsSimulatorUnbuilt>(ACDA_BIND_MEMBER_FN(_OnPhysicsSimulatorUnbuilt))
-        .IsDispatched();
 }
 
 void Arcadia::ImguiWindowState::OnUpdate()
@@ -110,11 +93,11 @@ void Arcadia::ImguiWindowState::OnUpdate()
         return;
     }
 
-    auto scene = _wpScene.lock();
-    auto renderer = _wpRenderer.lock();
-    auto physics_simualtor = _wpPhysicsSimulator.lock();
+    std::shared_ptr<SceneLayer> scene_layer_sptr = EditorContext::Instance().wpMainSceneLayer.lock();
+    std::shared_ptr<RendererLayer> renderer_layer_sptr = EditorContext::Instance().wpMainRendererLayer.lock();
+    std::shared_ptr<PhysicsLayer> physcis_layer = EditorContext::Instance().wpMainPhysicsLayer.lock();
 
-    auto imgui_window_title = _Title + GetIdString();
+    std::string imgui_window_title = _Title + GetIdString();
 
     ImGui::SetNextWindowSize(glm::vec2{ 1024,768 }, ImGuiCond_Once);
     auto window_flags =
@@ -127,9 +110,9 @@ void Arcadia::ImguiWindowState::OnUpdate()
 
         if(ImGui::TreeNodeEx("Scene", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_FramePadding))
         {
-            if(scene)
+            if(scene_layer_sptr->HasActiveScene())
             {
-                _ImguiWindowStateFunctor_Scene(*scene);
+                _ImguiWindowStateFunctor_Scene(scene_layer_sptr);
             }
             else
             {
@@ -139,9 +122,9 @@ void Arcadia::ImguiWindowState::OnUpdate()
         }
         if(ImGui::TreeNodeEx("Renderer", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_FramePadding))
         {
-            if(renderer)
+            if(renderer_layer_sptr)
             {
-                _ImguiWindowStateFunctor_Renderer(*renderer);
+                _ImguiWindowStateFunctor_Renderer(renderer_layer_sptr);
             }
             else
             {
@@ -151,9 +134,9 @@ void Arcadia::ImguiWindowState::OnUpdate()
         }
         if(ImGui::TreeNodeEx("Physics Simulator", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_FramePadding))
         {
-            if(physics_simualtor)
+            if(physcis_layer)
             {
-                _ImguiWindowStateFunctor_PhysicsSimulator(*physics_simualtor);
+                _ImguiWindowStateFunctor_PhysicsSimulator(physcis_layer);
             }
             else
             {
@@ -172,32 +155,3 @@ void Arcadia::ImguiWindowState::_OnOpenImguiWindow(Events::OpenImguiWindow& e)
     _Opened = true;
 }
 
-void Arcadia::ImguiWindowState::_OnSceneActivated(Events::SceneActivated& e)
-{
-    _wpScene = e.spScene;
-}
-
-void Arcadia::ImguiWindowState::_OnSceneDeactivated(Events::SceneDeactivated& e)
-{
-    _wpScene.reset();
-}
-
-void Arcadia::ImguiWindowState::_OnRendererBuilt(Events::RendererBuilt& e)
-{
-    _wpRenderer = e.spRenderer;
-}
-
-void Arcadia::ImguiWindowState::_OnRendererUnbuilt(Events::RendererUnbuilt& e)
-{
-    _wpRenderer.reset();
-}
-
-void Arcadia::ImguiWindowState::_OnPhysicsSimulatorBuilt(Events::PhysicsSimulatorBuilt& e)
-{
-    _wpPhysicsSimulator = e.spPhysicsSimulator;
-}
-
-void Arcadia::ImguiWindowState::_OnPhysicsSimulatorUnbuilt(Events::PhysicsSimulatorUnbuilt& e)
-{
-    _wpPhysicsSimulator.reset();
-}

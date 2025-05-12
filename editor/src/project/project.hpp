@@ -19,7 +19,6 @@ namespace Arcadia
     class Project: public Noncopyable
     {
     public:
-        using SceneStorageType = std::unordered_map<std::string, std::shared_ptr<Scene>>;
         using SelfType = Project;
     public:
         Project(std::string name);
@@ -37,6 +36,5 @@ namespace Arcadia
 
     private:
         std::string _Name;
-        std::shared_ptr<Scene> _spActiveScene{};
     };
 }

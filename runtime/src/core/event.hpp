@@ -37,28 +37,6 @@ namespace Arcadia
         concept Event = std::derived_from<T, EventBase>;
     }
 
-    template<typename ...Args>
-    class BasicEvent: public EventBase
-    {
-    public:
-        using DataTupleType = std::tuple<Args...>;
-
-        using SelfType = BasicEvent<Args...>;
-    public:
-        BasicEvent(Args ...args):
-            DataTuple(std::make_tuple<Args...>(std::forward<Args>(args)...))
-        {}
-        virtual ~BasicEvent() = default;
-
-        operator const DataTupleType() const
-        {
-            return DataTuple;
-        }
-
-    public:
-        const DataTupleType DataTuple;
-    };
-
     template<Concepts::Event Event>
     using EventHandler = std::function<void(Event&)>;
 
