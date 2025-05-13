@@ -5,8 +5,8 @@
 
 #include "core/app/app_context.hpp"
 #include "core/app/app_layer.hpp"
-#include "core/layer.hpp"
 #include "core/event.hpp"
+#include "core/layer.hpp"
 #include "platform/debug_def.hpp"
 
 #if defined(_WIN32) && !defined(ACDA_DEBUG_MODE)
@@ -15,13 +15,16 @@
 #define ACDA_MAIN_FN_DECL int main()
 #endif // _WIN32
 
-extern auto Arcadia::CreateApplication()->std::unique_ptr<Arcadia::AppLayerInterface>;
+extern auto Arcadia::CreateApplicationUnique()->std::unique_ptr<Arcadia::AppLayerInterface>;
 
 ACDA_MAIN_FN_DECL
 {
     // Add app_layer
     Arcadia::LayerStack & layer_stack = Arcadia::LayerStack::Instance();
-    layer_stack.PushLayer<Arcadia::AppLayerInterface>(layer_stack.end(), std::shared_ptr<Arcadia::AppLayerInterface>(Arcadia::CreateApplication()));
+    layer_stack.PushLayer<Arcadia::AppLayerInterface>(
+        layer_stack.end(),
+        std::shared_ptr<Arcadia::AppLayerInterface>(Arcadia::CreateApplicationUnique())
+    );
 
     // Main loop
     Arcadia::AppContext& app_context = Arcadia::AppContext::Instance();

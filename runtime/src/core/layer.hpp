@@ -5,10 +5,13 @@
 #include <memory>
 #include <ranges>
 #include <string>
+#include <typeindex>
+#include <typeinfo>
 #include <vector>
 
 #include "core/assert.hpp"
 #include "core/event.hpp"
+#include "core/exception.hpp"
 #include "core/noncopyable.hpp"
 #include "platform/api_def.hpp"
 
@@ -41,9 +44,8 @@ namespace Arcadia
     class LayerStack
     {
     public:
-
         using LayerVectorType = std::vector<std::shared_ptr<LayerInterface>>;
-
+        using LayerLookupTableType = std::unordered_map<std::type_index, std::size_t>;
         using SelfType = LayerStack;
     public:
         static auto Instance() -> SelfType&;
@@ -61,8 +63,7 @@ namespace Arcadia
         >
         auto PushLayer(std::shared_ptr<Layer>&& sptr) -> SelfType&
         {
-            _Layers.emplace(_Layers.begin(), std::move(sptr));
-            return *this;
+            return PushLayer(_Layers.begin(), std::move(sptr));
         }
         template<
             Concepts::Layer Layer,
@@ -77,9 +78,21 @@ namespace Arcadia
         >
         auto PushLayer(LayerVectorType::const_iterator iter, std::shared_ptr<Layer>&& sptr) -> SelfType&
         {
+            std::size_t index = std::distance(_Layers.cbegin(), iter);
             _Layers.emplace(
                 iter,
                 std::move(sptr)
+            );
+            for(auto& [type_index, value] : _LookupTable)
+            {
+                if(value >= index)
+                {
+                    value++;
+                }
+            }
+            _LookupTable.try_emplace(
+                typeid(Layer),
+                index
             );
             return *this;
         }
@@ -87,25 +100,21 @@ namespace Arcadia
         auto PopLayer(LayerVectorType::const_iterator iter) -> SelfType&;
         auto PopAllLayers() -> SelfType&;
 
-        template<Concepts::Layer Layer = LayerInterface>
-        auto GetLayer(std::size_t idx) -> Layer&
+        template<Concepts::Layer Layer>
+        auto ContainsLayer() const -> bool
         {
-            ACDA_ASSERT(idx >= GetSize(), "Index out of range");
-            return static_cast<Layer&>(*_Layers.at(GetSize() - idx - 1));
+            std::type_index type_index = static_cast<std::type_index>(typeid(Layer));
+            return _LookupTable.contains(type_index);
         }
 
-        template<Concepts::Layer Layer = LayerInterface>
-        auto GetTopLayerShared() -> std::shared_ptr<Layer>
+        template<Concepts::Layer Layer>
+        auto GetLayerShared() -> std::shared_ptr<Layer>
         {
-            ACDA_ASSERT(GetSize(), "Empty layer stack");
-            return std::static_pointer_cast<Layer>(_Layers.front());
-        }
+            ACDA_ASSERT(ContainsLayer<Layer>());
 
-        template<Concepts::Layer Layer = LayerInterface>
-        auto GetBottomLayerShared() -> std::shared_ptr<Layer>
-        {
-            ACDA_ASSERT(GetSize(), "Empty layer stack");
-            return std::static_pointer_cast<Layer>(_Layers.back());
+            std::type_index type_index = static_cast<std::type_index>(typeid(Layer));
+            std::size_t index = _LookupTable.at(type_index);
+            return std::static_pointer_cast<Layer>(_Layers.at(index));
         }
 
         auto GetSize() -> std::size_t;
@@ -117,5 +126,6 @@ namespace Arcadia
 
     private:
         LayerVectorType _Layers{};
+        LayerLookupTableType _LookupTable{};
     };
 }

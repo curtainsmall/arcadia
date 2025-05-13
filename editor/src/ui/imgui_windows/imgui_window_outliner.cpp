@@ -2,8 +2,8 @@
 
 #include "core/command.hpp"
 #include "core/event.hpp"
-#include "core/pfd.hpp"
 #include "core/function.hpp"
+#include "core/pfd.hpp"
 #include "resource/components/camera_component.hpp"
 #include "resource/components/light_component.hpp"
 #include "resource/components/model_component.hpp"
@@ -11,7 +11,6 @@
 #include "resource/components/skybox_component.hpp"
 #include "resource/scene_layer.hpp"
 
-#include "editor/editor_context.hpp"
 #include "ui/imgui.hpp"
 
 Arcadia::ImguiWindowOutliner::ImguiWindowOutliner(bool open, const std::string& title):
@@ -34,7 +33,7 @@ void Arcadia::ImguiWindowOutliner::OnUpdate()
         return;
     }
 
-    std::shared_ptr<SceneLayer> scene_layer_sptr = EditorContext::Instance().wpMainSceneLayer.lock();
+    std::shared_ptr<SceneLayer> scene_layer_sptr = LayerStack::Instance().GetLayerShared<SceneLayer>();
 
     EventQueue& event_queue = EventQueue::Instance();
 
@@ -130,9 +129,9 @@ void Arcadia::ImguiWindowOutliner::OnUpdate()
                             .Signal<Events::UpdateEntityInfo>(
                                 entity_id,
                                 [=](EntityInfo& entity_info)
-                        {
-                            entity_info.Displayed = display_entity;
-                        }
+                                {
+                                    entity_info.Displayed = display_entity;
+                                }
                             );
                     }
                     ImGui::SameLine();

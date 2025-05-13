@@ -4,6 +4,7 @@
 #include "core/event.hpp"
 #include "core/function.hpp"
 #include "resource/fonts/icon.hpp"
+#include "resource/scene_layer.hpp"
 
 #include "editor/editor_context.hpp"
 #include "ui/imgui.hpp"
@@ -15,7 +16,7 @@ void Arcadia::ImguiWindowMainToolbar::OnEvent(EventBase& e)
 
 void Arcadia::ImguiWindowMainToolbar::OnUpdate()
 {
-    std::shared_ptr<SceneLayer> scene_layer_sptr = EditorContext::Instance().wpMainSceneLayer.lock();
+    std::shared_ptr<SceneLayer> scene_layer_sptr = LayerStack::Instance().GetLayerShared<SceneLayer>();
 
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, glm::vec2{ 0,0 });
     ImGuiWindowFlags window_flags =
@@ -93,4 +94,3 @@ void Arcadia::ImguiWindowMainToolbar::OnUpdate()
     }
     ImGui::PopStyleVar();
 }
-

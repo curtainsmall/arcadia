@@ -10,8 +10,8 @@
 #include "resource/components/model_component.hpp"
 #include "resource/components/physics_component.hpp"
 #include "resource/components/transform_component.hpp"
+#include "resource/scene_layer.hpp"
 
-#include "editor/editor_context.hpp"
 #include "project/project_layer.hpp"
 
 Arcadia::ImguiWindowViewport::ImguiWindowViewport(bool open, const std::string& title):
@@ -40,9 +40,9 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
         return;
     }
 
-    std::shared_ptr<SceneLayer> scene_layer_sptr = EditorContext::Instance().wpMainSceneLayer.lock();
-    std::shared_ptr<PhysicsLayer> physics_layer_sptr = EditorContext::Instance().wpMainPhysicsLayer.lock();
-    std::shared_ptr<RendererLayer> renderer_layer_sptr = EditorContext::Instance().wpMainRendererLayer.lock();
+    std::shared_ptr<SceneLayer> scene_layer_sptr = LayerStack::Instance().GetLayerShared<SceneLayer>();
+    std::shared_ptr<PhysicsLayer> physics_layer_sptr = LayerStack::Instance().GetLayerShared<PhysicsLayer>();
+    std::shared_ptr<RendererLayer> renderer_layer_sptr = LayerStack::Instance().GetLayerShared<RendererLayer>();
 
     const AppContext& app_context = AppContext::Instance();
 
@@ -339,8 +339,8 @@ void Arcadia::ImguiWindowViewport::_OnOpenImguiWindow(Events::OpenImguiWindow& e
 
 void Arcadia::ImguiWindowViewport::_OnSceneActivated(Events::SceneActivated& e)
 {
-    std::shared_ptr<RendererLayer> renderer_layer_sptr = EditorContext::Instance().wpMainRendererLayer.lock();
-    std::shared_ptr<PhysicsLayer> physics_layer_sptr = EditorContext::Instance().wpMainPhysicsLayer.lock();
+    std::shared_ptr<RendererLayer> renderer_layer_sptr = LayerStack::Instance().GetLayerShared<RendererLayer>();
+    std::shared_ptr<PhysicsLayer> physics_layer_sptr = LayerStack::Instance().GetLayerShared<PhysicsLayer>();
     ACDA_ASSERT(renderer_layer_sptr);
     ACDA_ASSERT(physics_layer_sptr);
 

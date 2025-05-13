@@ -23,5 +23,5 @@ namespace Arcadia
         virtual void OnUpdate() override = 0;
     };
 
-    ACDA_API auto CreateApplication() -> std::unique_ptr<AppLayerInterface>;
+    ACDA_API auto CreateApplicationUnique() -> std::unique_ptr<AppLayerInterface>;
 }

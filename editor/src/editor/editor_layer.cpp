@@ -34,55 +34,43 @@ Arcadia::EditorAppLayer::EditorAppLayer()
 
     // Project layer
     {
-        editor_context.wpMainProjectLayer = layer_stack
-            .PushLayer<ProjectLayer>()
-            .GetTopLayerShared<ProjectLayer>();
+        layer_stack.PushLayer<ProjectLayer>();
     }
 
     // Window layer
     {
-        editor_context.wpMainWindowLayer = layer_stack
-            .PushLayer<WindowLayer>(
-                app_config.WindowSize,
-                app_config.WindowTitle,
-                app_config.WindowMultisampleCount
-            )
-            .GetTopLayerShared<WindowLayer>();
+        layer_stack.PushLayer<WindowLayer>(
+            app_config.WindowSize,
+            app_config.WindowTitle,
+            app_config.WindowMultisampleCount
+        );
     }
 
     // Physics layer
     {
-        editor_context.wpMainPhysicsLayer = layer_stack
-            .PushLayer<PhysicsLayer>()
-            .GetTopLayerShared<PhysicsLayer>();
+        layer_stack.PushLayer<PhysicsLayer>();
     }
 
     // Scene layer
     {
-        editor_context.wpMainSceneLayer = layer_stack
-            .PushLayer<SceneLayer>()
-            .GetTopLayerShared<SceneLayer>();
+        layer_stack.PushLayer<SceneLayer>();
     }
 
     // Renderer layer
     {
-        editor_context.wpMainRendererLayer = layer_stack
-            .PushLayer<RendererLayer>(
-                app_config.GraphicApi,
-                app_config.WorkingDirectory
-            )
-            .GetTopLayerShared<RendererLayer>();
+        layer_stack.PushLayer<RendererLayer>(
+            app_config.GraphicApi,
+            app_config.WorkingDirectory
+        );
     }
 
     // Editor ImGui layer
     {
-        editor_context.wpMainImguiLayer = layer_stack
-            .PushLayer<ImguiLayer>(
-                editor_context.wpMainWindowLayer.lock(),
-                ACDA_BIND_MEMBER_FN(_InstallImguiWindow),
-                ImguiStyle::SetToDark
-            )
-            .GetTopLayerShared<ImguiLayer>();
+        layer_stack.PushLayer<ImguiLayer>(
+            layer_stack.GetLayerShared<WindowLayer>(),
+            ACDA_BIND_MEMBER_FN(_InstallImguiWindow),
+            ImguiStyle::SetToDark
+        );
     }
 
     app_context.Running = true;
@@ -125,9 +113,9 @@ void Arcadia::EditorAppLayer::_InstallImguiWindow(ImguiLayer& imgui_layer)
 
 void Arcadia::EditorAppLayer::_Stop()
 {
-    EditorContext& editor_context = EditorContext::Instance();
-    std::shared_ptr<WindowLayer> main_window_layer_sptr = editor_context.wpMainWindowLayer.lock();
-    std::shared_ptr<ImguiLayer> main_imgui_layer_sptr = editor_context.wpMainImguiLayer.lock();
+    LayerStack& layer_stack = LayerStack::Instance();
+    std::shared_ptr<WindowLayer> main_window_layer_sptr = layer_stack.GetLayerShared<WindowLayer>();
+    std::shared_ptr<ImguiLayer> main_imgui_layer_sptr = layer_stack.GetLayerShared<ImguiLayer>();
 
     AppConfig& app_config = AppConfig::Instance();
     app_config.WindowSize = main_window_layer_sptr->GetSize();
@@ -148,9 +136,9 @@ void Arcadia::EditorAppLayer::_Stop()
 
 void Arcadia::EditorAppLayer::_OnWindowShouldClose(Events::WindowShouldClose& e)
 {
-    EditorContext& editor_context = EditorContext::Instance();
-    std::shared_ptr<WindowLayer> main_window_layer_sptr = editor_context.wpMainWindowLayer.lock();
-    std::shared_ptr<ProjectLayer> main_project_layer_sptr = editor_context.wpMainProjectLayer.lock();
+    LayerStack& layer_stack = LayerStack::Instance();
+    std::shared_ptr<WindowLayer> main_window_layer_sptr = layer_stack.GetLayerShared<WindowLayer>();
+    std::shared_ptr<ProjectLayer> main_project_layer_sptr = layer_stack.GetLayerShared<ProjectLayer>();
 
     if(e.pWindowLayer == main_window_layer_sptr.get() && main_project_layer_sptr->HasProject())
     {
@@ -189,7 +177,7 @@ void Arcadia::EditorAppLayer::_OnInputKey(Events::InputKey& e)
     }
 }
 
-auto Arcadia::CreateApplication() -> std::unique_ptr<AppLayerInterface>
+auto Arcadia::CreateApplicationUnique() -> std::unique_ptr<AppLayerInterface>
 {
     return std::make_unique<EditorAppLayer>();
 }

@@ -5,13 +5,12 @@
 #include "core/assert.hpp"
 #include "core/command.hpp"
 #include "core/enum.hpp"
-#include "core/pfd.hpp"
 #include "core/function.hpp"
 #include "core/match.hpp"
+#include "core/pfd.hpp"
 #include "resource/fonts/icon.hpp"
 #include "resource/scene_layer.hpp"
 
-#include "editor/editor_context.hpp"
 #include "ui/imgui.hpp"
 #include "ui/imgui_wrapper.hpp"
 
@@ -129,234 +128,234 @@ void Arcadia::ImguiWindowPropertyFunctor_LightComponent::operator()(LightCompone
     MatchVariant<void>(
         light_comp.GetLight(),
         [&](NullLight&)
-    {
-        if(ImGui::BeginCombo("Light Type", "(No light)"))
         {
-            if(ImGui::Selectable("Spot Light"))
+            if(ImGui::BeginCombo("Light Type", "(No light)"))
             {
-                light_comp.SetLight<SpotLight>();
-                Refresh(light_comp);
+                if(ImGui::Selectable("Spot Light"))
+                {
+                    light_comp.SetLight<SpotLight>();
+                    Refresh(light_comp);
+                    ImGui::EndCombo();
+                }
+                if(ImGui::Selectable("Direct Light"))
+                {
+                    light_comp.SetLight<DirectLight>();
+                    Refresh(light_comp);
+                    ImGui::EndCombo();
+                }
+                if(ImGui::Selectable("Area Light"))
+                {
+                    light_comp.SetLight<AreaLight>();
+                    Refresh(light_comp);
+                    ImGui::EndCombo();
+                }
+                if(ImGui::Selectable("Point Light"))
+                {
+                    light_comp.SetLight<PointLight>();
+                    Refresh(light_comp);
+                    ImGui::EndCombo();
+                }
                 ImGui::EndCombo();
             }
-            if(ImGui::Selectable("Direct Light"))
-            {
-                light_comp.SetLight<DirectLight>();
-                Refresh(light_comp);
-                ImGui::EndCombo();
-            }
-            if(ImGui::Selectable("Area Light"))
-            {
-                light_comp.SetLight<AreaLight>();
-                Refresh(light_comp);
-                ImGui::EndCombo();
-            }
-            if(ImGui::Selectable("Point Light"))
-            {
-                light_comp.SetLight<PointLight>();
-                Refresh(light_comp);
-                ImGui::EndCombo();
-            }
-            ImGui::EndCombo();
-        }
-    },
+        },
         [&](SpotLight& light)
-    {
-        if(ImGui::BeginCombo("Light Type", "Spot Light"))
         {
-            if(_ChangeLightTypeSelectable<DirectLight>(light_comp, "Direct Light"))
+            if(ImGui::BeginCombo("Light Type", "Spot Light"))
             {
+                if(_ChangeLightTypeSelectable<DirectLight>(light_comp, "Direct Light"))
+                {
+                    ImGui::EndCombo();
+                }
+                if(_ChangeLightTypeSelectable<AreaLight>(light_comp, "Area Light"))
+                {
+                    ImGui::EndCombo();
+                }
+                if(_ChangeLightTypeSelectable<PointLight>(light_comp, "Point Light"))
+                {
+                    ImGui::EndCombo();
+                }
                 ImGui::EndCombo();
             }
-            if(_ChangeLightTypeSelectable<AreaLight>(light_comp, "Area Light"))
-            {
-                ImGui::EndCombo();
-            }
-            if(_ChangeLightTypeSelectable<PointLight>(light_comp, "Point Light"))
-            {
-                ImGui::EndCombo();
-            }
-            ImGui::EndCombo();
-        }
-        ImGui::NewLine();
+            ImGui::NewLine();
 
-        glm::vec3 coeffs = light.GetAttenuationCoefficients();
-        ImGui::DragFloat3("Attenuation Coefficients", glm::value_ptr(coeffs), speed, min, max, format, flags);
-        light.SetAttenuationCoefficients(coeffs);
-        _ACDA_COMMAND_HELPER("[Spot Light] Attenuation", light, GetAttenuationCoefficients, SetAttenuationCoefficients, coeffs, _OriginAttenuationCoefficients);
+            glm::vec3 coeffs = light.GetAttenuationCoefficients();
+            ImGui::DragFloat3("Attenuation Coefficients", glm::value_ptr(coeffs), speed, min, max, format, flags);
+            light.SetAttenuationCoefficients(coeffs);
+            _ACDA_COMMAND_HELPER("[Spot Light] Attenuation", light, GetAttenuationCoefficients, SetAttenuationCoefficients, coeffs, _OriginAttenuationCoefficients);
 
-        ImGui::SameLine();
-        ImguiWrappers::HelpMark(ICON_FA_QUESTION, "In order of constant, linear and quadratic terms");
+            ImGui::SameLine();
+            ImguiWrappers::HelpMark(ICON_FA_QUESTION, "In order of constant, linear and quadratic terms");
 
-        const float cutoff_angle_drag_speend = .1f;
-        const float cutoff_angle_min = 0.f;
-        const float cutoff_angle_max = 180.f;
-        glm::vec2 cutoff = light.GetCutoffAngles();
-        ImGui::DragFloat2("Cutoff Angle", glm::value_ptr(cutoff), cutoff_angle_drag_speend, cutoff_angle_min, cutoff_angle_max, format, flags);
-        light.SetCutoffAngles(cutoff);
-        _ACDA_COMMAND_HELPER("[Spot Light] Cutoff Angle", light, GetCutoffAngles, SetCutoffAngles, cutoff, _OriginCutoffAngle);
-        ImGui::SameLine();
-        ImguiWrappers::HelpMark(ICON_FA_QUESTION, "Inner and outter");
+            const float cutoff_angle_drag_speend = .1f;
+            const float cutoff_angle_min = 0.f;
+            const float cutoff_angle_max = 180.f;
+            glm::vec2 cutoff = light.GetCutoffAngles();
+            ImGui::DragFloat2("Cutoff Angle", glm::value_ptr(cutoff), cutoff_angle_drag_speend, cutoff_angle_min, cutoff_angle_max, format, flags);
+            light.SetCutoffAngles(cutoff);
+            _ACDA_COMMAND_HELPER("[Spot Light] Cutoff Angle", light, GetCutoffAngles, SetCutoffAngles, cutoff, _OriginCutoffAngle);
+            ImGui::SameLine();
+            ImguiWrappers::HelpMark(ICON_FA_QUESTION, "Inner and outter");
 
-        glm::vec3 color = light.GetColor();
-        ImGui::ColorEdit3("Color", glm::value_ptr(color));
-        light.SetColor(color);
-        _ACDA_COMMAND_HELPER("[Spot Light] Color", light, GetColor, SetColor, color, _OriginColor);
+            glm::vec3 color = light.GetColor();
+            ImGui::ColorEdit3("Color", glm::value_ptr(color));
+            light.SetColor(color);
+            _ACDA_COMMAND_HELPER("[Spot Light] Color", light, GetColor, SetColor, color, _OriginColor);
 
-        ImGui::NewLine();
+            ImGui::NewLine();
 
-        glm::vec3 ambient = light.GetAmbientStrength();
-        ImGui::DragFloat3("Ambient Strength", glm::value_ptr(ambient), speed, min, max, format, flags);
-        light.SetAmbientStrength(ambient);
-        _ACDA_COMMAND_HELPER("[Spot Light] Ambient Strength", light, GetAmbientStrength, SetAmbientStrength, ambient, _OriginAmbientStrength);
+            glm::vec3 ambient = light.GetAmbientStrength();
+            ImGui::DragFloat3("Ambient Strength", glm::value_ptr(ambient), speed, min, max, format, flags);
+            light.SetAmbientStrength(ambient);
+            _ACDA_COMMAND_HELPER("[Spot Light] Ambient Strength", light, GetAmbientStrength, SetAmbientStrength, ambient, _OriginAmbientStrength);
 
-        glm::vec3 diffuse = light.GetDiffuseStrength();
-        ImGui::DragFloat3("Diffuse Strength", glm::value_ptr(diffuse), speed, min, max, format, flags);
-        light.SetDiffuseStrength(diffuse);
-        _ACDA_COMMAND_HELPER("[Spot Light] Diffuse Strength", light, GetDiffuseStrength, SetDiffuseStrength, diffuse, _OriginDiffuseStrength);
+            glm::vec3 diffuse = light.GetDiffuseStrength();
+            ImGui::DragFloat3("Diffuse Strength", glm::value_ptr(diffuse), speed, min, max, format, flags);
+            light.SetDiffuseStrength(diffuse);
+            _ACDA_COMMAND_HELPER("[Spot Light] Diffuse Strength", light, GetDiffuseStrength, SetDiffuseStrength, diffuse, _OriginDiffuseStrength);
 
-        glm::vec3 specular = light.GetSpecularStrength();
-        ImGui::DragFloat3("Specular Strength", glm::value_ptr(specular), speed, min, max, format, flags);
-        light.SetSpecularStrength(specular);
-        _ACDA_COMMAND_HELPER("[Spot Light] Specular Strength", light, GetSpecularStrength, SetSpecularStrength, specular, _OriginSpecularStrength);
-    },
+            glm::vec3 specular = light.GetSpecularStrength();
+            ImGui::DragFloat3("Specular Strength", glm::value_ptr(specular), speed, min, max, format, flags);
+            light.SetSpecularStrength(specular);
+            _ACDA_COMMAND_HELPER("[Spot Light] Specular Strength", light, GetSpecularStrength, SetSpecularStrength, specular, _OriginSpecularStrength);
+        },
         [&](DirectLight& light)
-    {
-        if(ImGui::BeginCombo("Light Type", "Direct Light"))
         {
-            if(_ChangeLightTypeSelectable<SpotLight>(light_comp, "Spot Light"))
+            if(ImGui::BeginCombo("Light Type", "Direct Light"))
             {
+                if(_ChangeLightTypeSelectable<SpotLight>(light_comp, "Spot Light"))
+                {
+                    ImGui::EndCombo();
+                }
+                if(_ChangeLightTypeSelectable<AreaLight>(light_comp, "Area Light"))
+                {
+                    ImGui::EndCombo();
+                }
+                if(_ChangeLightTypeSelectable<PointLight>(light_comp, "Point Light"))
+                {
+                    ImGui::EndCombo();
+                }
                 ImGui::EndCombo();
             }
-            if(_ChangeLightTypeSelectable<AreaLight>(light_comp, "Area Light"))
-            {
-                ImGui::EndCombo();
-            }
-            if(_ChangeLightTypeSelectable<PointLight>(light_comp, "Point Light"))
-            {
-                ImGui::EndCombo();
-            }
-            ImGui::EndCombo();
-        }
-        ImGui::NewLine();
+            ImGui::NewLine();
 
-        glm::vec3 color = light.GetColor();
-        ImGui::ColorEdit3("Color", glm::value_ptr(color));
-        light.SetColor(color);
-        _ACDA_COMMAND_HELPER("[Direct Light] Color", light, GetColor, SetColor, color, _OriginColor);
+            glm::vec3 color = light.GetColor();
+            ImGui::ColorEdit3("Color", glm::value_ptr(color));
+            light.SetColor(color);
+            _ACDA_COMMAND_HELPER("[Direct Light] Color", light, GetColor, SetColor, color, _OriginColor);
 
-        ImGui::NewLine();
+            ImGui::NewLine();
 
-        glm::vec3 ambient = light.GetAmbientStrength();
-        ImGui::DragFloat3("Ambient Strength", glm::value_ptr(ambient), speed, min, max, format, flags);
-        light.SetAmbientStrength(ambient);
-        _ACDA_COMMAND_HELPER("[Direct Light] Ambient Strength", light, GetAmbientStrength, SetAmbientStrength, ambient, _OriginAmbientStrength);
+            glm::vec3 ambient = light.GetAmbientStrength();
+            ImGui::DragFloat3("Ambient Strength", glm::value_ptr(ambient), speed, min, max, format, flags);
+            light.SetAmbientStrength(ambient);
+            _ACDA_COMMAND_HELPER("[Direct Light] Ambient Strength", light, GetAmbientStrength, SetAmbientStrength, ambient, _OriginAmbientStrength);
 
-        glm::vec3 diffuse = light.GetDiffuseStrength();
-        ImGui::DragFloat3("Diffuse Strength", glm::value_ptr(diffuse), speed, min, max, format, flags);
-        light.SetDiffuseStrength(diffuse);
-        _ACDA_COMMAND_HELPER("[Direct Light] Diffuse Strength", light, GetDiffuseStrength, SetDiffuseStrength, diffuse, _OriginDiffuseStrength);
+            glm::vec3 diffuse = light.GetDiffuseStrength();
+            ImGui::DragFloat3("Diffuse Strength", glm::value_ptr(diffuse), speed, min, max, format, flags);
+            light.SetDiffuseStrength(diffuse);
+            _ACDA_COMMAND_HELPER("[Direct Light] Diffuse Strength", light, GetDiffuseStrength, SetDiffuseStrength, diffuse, _OriginDiffuseStrength);
 
-        glm::vec3 specular = light.GetSpecularStrength();
-        ImGui::DragFloat3("Specular Strength", glm::value_ptr(specular), speed, min, max, format, flags);
-        light.SetSpecularStrength(specular);
-        _ACDA_COMMAND_HELPER("[Direct Light] Specular Strength", light, GetSpecularStrength, SetSpecularStrength, specular, _OriginSpecularStrength);
-    },
+            glm::vec3 specular = light.GetSpecularStrength();
+            ImGui::DragFloat3("Specular Strength", glm::value_ptr(specular), speed, min, max, format, flags);
+            light.SetSpecularStrength(specular);
+            _ACDA_COMMAND_HELPER("[Direct Light] Specular Strength", light, GetSpecularStrength, SetSpecularStrength, specular, _OriginSpecularStrength);
+        },
         [&](AreaLight& light)
-    {
-        if(ImGui::BeginCombo("Light Type", "Area Light"))
         {
-            if(_ChangeLightTypeSelectable<SpotLight>(light_comp, "Spot Light"))
+            if(ImGui::BeginCombo("Light Type", "Area Light"))
             {
+                if(_ChangeLightTypeSelectable<SpotLight>(light_comp, "Spot Light"))
+                {
+                    ImGui::EndCombo();
+                }
+                if(_ChangeLightTypeSelectable<DirectLight>(light_comp, "Direct Light"))
+                {
+                    ImGui::EndCombo();
+                }
+                if(_ChangeLightTypeSelectable<PointLight>(light_comp, "Point Light"))
+                {
+                    ImGui::EndCombo();
+                }
                 ImGui::EndCombo();
             }
-            if(_ChangeLightTypeSelectable<DirectLight>(light_comp, "Direct Light"))
-            {
-                ImGui::EndCombo();
-            }
-            if(_ChangeLightTypeSelectable<PointLight>(light_comp, "Point Light"))
-            {
-                ImGui::EndCombo();
-            }
-            ImGui::EndCombo();
-        }
-        ImGui::NewLine();
+            ImGui::NewLine();
 
-        glm::vec2 size = light.GetSize();
-        ImGui::DragFloat2("Size", glm::value_ptr(size), speed, min, max, format, flags);
-        light.SetSize(size);
-        _ACDA_COMMAND_HELPER("[Area Light] Size", light, GetSize, SetSize, size, _OriginSize);
+            glm::vec2 size = light.GetSize();
+            ImGui::DragFloat2("Size", glm::value_ptr(size), speed, min, max, format, flags);
+            light.SetSize(size);
+            _ACDA_COMMAND_HELPER("[Area Light] Size", light, GetSize, SetSize, size, _OriginSize);
 
-        glm::vec3 color = light.GetColor();
-        ImGui::ColorEdit3("Color", glm::value_ptr(color));
-        light.SetColor(color);
-        _ACDA_COMMAND_HELPER("[Area Light] Color", light, GetColor, SetColor, color, _OriginColor);
+            glm::vec3 color = light.GetColor();
+            ImGui::ColorEdit3("Color", glm::value_ptr(color));
+            light.SetColor(color);
+            _ACDA_COMMAND_HELPER("[Area Light] Color", light, GetColor, SetColor, color, _OriginColor);
 
-        ImGui::NewLine();
+            ImGui::NewLine();
 
-        glm::vec3 ambient = light.GetAmbientStrength();
-        ImGui::DragFloat3("Ambient Strength", glm::value_ptr(ambient), speed, min, max, format, flags);
-        light.SetAmbientStrength(ambient);
-        _ACDA_COMMAND_HELPER("[Area Light] Ambient Strength", light, GetAmbientStrength, SetAmbientStrength, ambient, _OriginAmbientStrength);
+            glm::vec3 ambient = light.GetAmbientStrength();
+            ImGui::DragFloat3("Ambient Strength", glm::value_ptr(ambient), speed, min, max, format, flags);
+            light.SetAmbientStrength(ambient);
+            _ACDA_COMMAND_HELPER("[Area Light] Ambient Strength", light, GetAmbientStrength, SetAmbientStrength, ambient, _OriginAmbientStrength);
 
-        glm::vec3 diffuse = light.GetDiffuseStrength();
-        ImGui::DragFloat3("Diffuse Strength", glm::value_ptr(diffuse), speed, min, max, format, flags);
-        light.SetDiffuseStrength(diffuse);
-        _ACDA_COMMAND_HELPER("[Area Light] Diffuse Strength", light, GetDiffuseStrength, SetDiffuseStrength, diffuse, _OriginDiffuseStrength);
+            glm::vec3 diffuse = light.GetDiffuseStrength();
+            ImGui::DragFloat3("Diffuse Strength", glm::value_ptr(diffuse), speed, min, max, format, flags);
+            light.SetDiffuseStrength(diffuse);
+            _ACDA_COMMAND_HELPER("[Area Light] Diffuse Strength", light, GetDiffuseStrength, SetDiffuseStrength, diffuse, _OriginDiffuseStrength);
 
-        glm::vec3 specular = light.GetSpecularStrength();
-        ImGui::DragFloat3("Specular Strength", glm::value_ptr(specular), speed, min, max, format, flags);
-        light.SetSpecularStrength(specular);
-        _ACDA_COMMAND_HELPER("[Area Light] Specular Strength", light, GetSpecularStrength, SetSpecularStrength, specular, _OriginSpecularStrength);
-    },
+            glm::vec3 specular = light.GetSpecularStrength();
+            ImGui::DragFloat3("Specular Strength", glm::value_ptr(specular), speed, min, max, format, flags);
+            light.SetSpecularStrength(specular);
+            _ACDA_COMMAND_HELPER("[Area Light] Specular Strength", light, GetSpecularStrength, SetSpecularStrength, specular, _OriginSpecularStrength);
+        },
         [&](PointLight& light)
-    {
-        if(ImGui::BeginCombo("Light Type", "Point Light"))
         {
-            if(_ChangeLightTypeSelectable<SpotLight>(light_comp, "Spot Light"))
+            if(ImGui::BeginCombo("Light Type", "Point Light"))
             {
+                if(_ChangeLightTypeSelectable<SpotLight>(light_comp, "Spot Light"))
+                {
+                    ImGui::EndCombo();
+                }
+                if(_ChangeLightTypeSelectable<DirectLight>(light_comp, "Direct Light"))
+                {
+                    ImGui::EndCombo();
+                }
+                if(_ChangeLightTypeSelectable<AreaLight>(light_comp, "Area Light"))
+                {
+                    ImGui::EndCombo();
+                }
                 ImGui::EndCombo();
             }
-            if(_ChangeLightTypeSelectable<DirectLight>(light_comp, "Direct Light"))
-            {
-                ImGui::EndCombo();
-            }
-            if(_ChangeLightTypeSelectable<AreaLight>(light_comp, "Area Light"))
-            {
-                ImGui::EndCombo();
-            }
-            ImGui::EndCombo();
+            ImGui::NewLine();
+
+            glm::vec3 coeffs = light.GetAttenuationCoefficients();
+            ImGui::DragFloat3("Attenuation", glm::value_ptr(coeffs), speed, min, max, format, flags);
+            light.SetAttenuationCoefficients(coeffs);
+            _ACDA_COMMAND_HELPER("[Point Light] Attenuation", light, GetAttenuationCoefficients, SetAttenuationCoefficients, coeffs, _OriginAttenuationCoefficients);
+            ImGui::SameLine();
+            ImguiWrappers::HelpMark(ICON_FA_QUESTION, "In order of constant, linear and quadratic terms");
+
+            glm::vec3 color = light.GetColor();
+            ImGui::ColorEdit3("Color", glm::value_ptr(color));
+            light.SetColor(color);
+            _ACDA_COMMAND_HELPER("[Point Light] Color", light, GetColor, SetColor, color, _OriginColor);
+
+            ImGui::NewLine();
+
+            glm::vec3 ambient = light.GetAmbientStrength();
+            ImGui::DragFloat3("Ambient Strength", glm::value_ptr(ambient), speed, min, max, format, flags);
+            light.SetAmbientStrength(ambient);
+            _ACDA_COMMAND_HELPER("[Point Light] Ambient Strength", light, GetAmbientStrength, SetAmbientStrength, ambient, _OriginAmbientStrength);
+
+            glm::vec3 diffuse = light.GetDiffuseStrength();
+            ImGui::DragFloat3("Diffuse Strength", glm::value_ptr(diffuse), speed, min, max, format, flags);
+            light.SetDiffuseStrength(diffuse);
+            _ACDA_COMMAND_HELPER("[Point Light] Diffuse Strength", light, GetDiffuseStrength, SetDiffuseStrength, diffuse, _OriginDiffuseStrength);
+
+            glm::vec3 specular = light.GetSpecularStrength();
+            ImGui::DragFloat3("Specular Strength", glm::value_ptr(specular), speed, min, max, format, flags);
+            light.SetSpecularStrength(specular);
+            _ACDA_COMMAND_HELPER("[Point Light] Specular Strength", light, GetSpecularStrength, SetSpecularStrength, specular, _OriginSpecularStrength);
         }
-        ImGui::NewLine();
-
-        glm::vec3 coeffs = light.GetAttenuationCoefficients();
-        ImGui::DragFloat3("Attenuation", glm::value_ptr(coeffs), speed, min, max, format, flags);
-        light.SetAttenuationCoefficients(coeffs);
-        _ACDA_COMMAND_HELPER("[Point Light] Attenuation", light, GetAttenuationCoefficients, SetAttenuationCoefficients, coeffs, _OriginAttenuationCoefficients);
-        ImGui::SameLine();
-        ImguiWrappers::HelpMark(ICON_FA_QUESTION, "In order of constant, linear and quadratic terms");
-
-        glm::vec3 color = light.GetColor();
-        ImGui::ColorEdit3("Color", glm::value_ptr(color));
-        light.SetColor(color);
-        _ACDA_COMMAND_HELPER("[Point Light] Color", light, GetColor, SetColor, color, _OriginColor);
-
-        ImGui::NewLine();
-
-        glm::vec3 ambient = light.GetAmbientStrength();
-        ImGui::DragFloat3("Ambient Strength", glm::value_ptr(ambient), speed, min, max, format, flags);
-        light.SetAmbientStrength(ambient);
-        _ACDA_COMMAND_HELPER("[Point Light] Ambient Strength", light, GetAmbientStrength, SetAmbientStrength, ambient, _OriginAmbientStrength);
-
-        glm::vec3 diffuse = light.GetDiffuseStrength();
-        ImGui::DragFloat3("Diffuse Strength", glm::value_ptr(diffuse), speed, min, max, format, flags);
-        light.SetDiffuseStrength(diffuse);
-        _ACDA_COMMAND_HELPER("[Point Light] Diffuse Strength", light, GetDiffuseStrength, SetDiffuseStrength, diffuse, _OriginDiffuseStrength);
-
-        glm::vec3 specular = light.GetSpecularStrength();
-        ImGui::DragFloat3("Specular Strength", glm::value_ptr(specular), speed, min, max, format, flags);
-        light.SetSpecularStrength(specular);
-        _ACDA_COMMAND_HELPER("[Point Light] Specular Strength", light, GetSpecularStrength, SetSpecularStrength, specular, _OriginSpecularStrength);
-    }
     );
     ImGui::EndGroup();
 }
@@ -366,55 +365,55 @@ void Arcadia::ImguiWindowPropertyFunctor_LightComponent::Refresh(const LightComp
     MatchVariant<void>(
         comp.GetLight(),
         [&](const NullLight&)
-    {
-        _OriginAttenuationCoefficients = {};
-        _OriginCutoffAngle = {};
-        _OriginSize = {};
-        _OriginColor = {};
-        _OriginAmbientStrength = {};
-        _OriginDiffuseStrength = {};
-        _OriginSpecularStrength = {};
-    },
+        {
+            _OriginAttenuationCoefficients = {};
+            _OriginCutoffAngle = {};
+            _OriginSize = {};
+            _OriginColor = {};
+            _OriginAmbientStrength = {};
+            _OriginDiffuseStrength = {};
+            _OriginSpecularStrength = {};
+        },
         [&](const SpotLight& light)
-    {
-        _OriginAttenuationCoefficients = light.GetAttenuationCoefficients();
-        _OriginCutoffAngle = light.GetCutoffAngles();
-        _OriginSize = {};
-        _OriginColor = light.GetColor();
-        _OriginAmbientStrength = light.GetAmbientStrength();
-        _OriginDiffuseStrength = light.GetDiffuseStrength();
-        _OriginSpecularStrength = light.GetSpecularStrength();
-    },
+        {
+            _OriginAttenuationCoefficients = light.GetAttenuationCoefficients();
+            _OriginCutoffAngle = light.GetCutoffAngles();
+            _OriginSize = {};
+            _OriginColor = light.GetColor();
+            _OriginAmbientStrength = light.GetAmbientStrength();
+            _OriginDiffuseStrength = light.GetDiffuseStrength();
+            _OriginSpecularStrength = light.GetSpecularStrength();
+        },
         [&](const DirectLight& light)
-    {
-        _OriginAttenuationCoefficients = {};
-        _OriginCutoffAngle = {};
-        _OriginSize = {};
-        _OriginColor = light.GetColor();
-        _OriginAmbientStrength = light.GetAmbientStrength();
-        _OriginDiffuseStrength = light.GetDiffuseStrength();
-        _OriginSpecularStrength = light.GetSpecularStrength();
-    },
+        {
+            _OriginAttenuationCoefficients = {};
+            _OriginCutoffAngle = {};
+            _OriginSize = {};
+            _OriginColor = light.GetColor();
+            _OriginAmbientStrength = light.GetAmbientStrength();
+            _OriginDiffuseStrength = light.GetDiffuseStrength();
+            _OriginSpecularStrength = light.GetSpecularStrength();
+        },
         [&](const AreaLight& light)
-    {
-        _OriginAttenuationCoefficients = {};
-        _OriginCutoffAngle = {};
-        _OriginSize = light.GetSize();
-        _OriginColor = light.GetColor();
-        _OriginAmbientStrength = light.GetAmbientStrength();
-        _OriginDiffuseStrength = light.GetDiffuseStrength();
-        _OriginSpecularStrength = light.GetSpecularStrength();
-    },
+        {
+            _OriginAttenuationCoefficients = {};
+            _OriginCutoffAngle = {};
+            _OriginSize = light.GetSize();
+            _OriginColor = light.GetColor();
+            _OriginAmbientStrength = light.GetAmbientStrength();
+            _OriginDiffuseStrength = light.GetDiffuseStrength();
+            _OriginSpecularStrength = light.GetSpecularStrength();
+        },
         [&](const PointLight& light)
-    {
-        _OriginAttenuationCoefficients = light.GetAttenuationCoefficients();
-        _OriginCutoffAngle = {};
-        _OriginSize = {};
-        _OriginColor = light.GetColor();
-        _OriginAmbientStrength = light.GetAmbientStrength();
-        _OriginDiffuseStrength = light.GetDiffuseStrength();
-        _OriginSpecularStrength = light.GetSpecularStrength();
-    }
+        {
+            _OriginAttenuationCoefficients = light.GetAttenuationCoefficients();
+            _OriginCutoffAngle = {};
+            _OriginSize = {};
+            _OriginColor = light.GetColor();
+            _OriginAmbientStrength = light.GetAmbientStrength();
+            _OriginDiffuseStrength = light.GetDiffuseStrength();
+            _OriginSpecularStrength = light.GetSpecularStrength();
+        }
     );
 }
 
@@ -440,7 +439,7 @@ void Arcadia::ImguiWindowPropertyFunctor_ModelComponent::operator()(ModelCompone
             }
             catch(const Exceptions::ModelComponent_ModelLoadInvalidFormat&)
             {
-                (void) pfd::message(
+                (void)pfd::message(
                     "Arcadia",
                     std::format("Cannot load model from {} because it has invalid format", res.at(0)),
                     pfd::choice::ok,
@@ -516,143 +515,143 @@ void Arcadia::ImguiWindowPopupFunctor_PhysicsComponentCreateBody::operator()(Phy
         _TempJphBodyInfo.JphShapeInfo = MatchVariant<JphShapeInfo>(
             _TempJphBodyInfo.JphShapeInfo,
             [&](JphBoxShapeInfo& info) -> JphShapeInfo
-        {
-            if(ImGui::BeginCombo("Shape Type", "Box Shape"))
             {
-                ImGui::Selectable("Box Shape");
-                if(ImGui::Selectable("Capsule Shape"))
+                if(ImGui::BeginCombo("Shape Type", "Box Shape"))
                 {
+                    ImGui::Selectable("Box Shape");
+                    if(ImGui::Selectable("Capsule Shape"))
+                    {
+                        ImGui::EndCombo();
+                        return JphCapsuleShapeInfo{};
+                    }
+                    if(ImGui::Selectable("Cylinder Shape"))
+                    {
+                        ImGui::EndCombo();
+                        return JphCylinderShapeInfo{};
+                    }
+                    if(ImGui::Selectable("Sphere Shape"))
+                    {
+                        ImGui::EndCombo();
+                        return JphSphereShapeInfo{};
+                    }
                     ImGui::EndCombo();
-                    return JphCapsuleShapeInfo{};
                 }
-                if(ImGui::Selectable("Cylinder Shape"))
-                {
-                    ImGui::EndCombo();
-                    return JphCylinderShapeInfo{};
-                }
-                if(ImGui::Selectable("Sphere Shape"))
-                {
-                    ImGui::EndCombo();
-                    return JphSphereShapeInfo{};
-                }
-                ImGui::EndCombo();
-            }
-            ImGui::SeparatorText("Box Shape");
+                ImGui::SeparatorText("Box Shape");
 
-            // Half extent
-            float half_extent_min = std::max({ .01f,info.ConvexRadius });
-            float half_extent_max = FLT_MAX;
-            ImGui::DragFloat3("Half Extent", glm::value_ptr(info.HalfExtent), speed, half_extent_min, half_extent_max, format, slider_flags);
+                // Half extent
+                float half_extent_min = std::max({ .01f,info.ConvexRadius });
+                float half_extent_max = FLT_MAX;
+                ImGui::DragFloat3("Half Extent", glm::value_ptr(info.HalfExtent), speed, half_extent_min, half_extent_max, format, slider_flags);
 
-            // Convex radius
-            float convex_radius_min = .0f;
-            float convex_radius_max = std::min({ info.HalfExtent.x,info.HalfExtent.y,info.HalfExtent.z });
-            ImGui::DragFloat("Convex Radius", &info.ConvexRadius, speed, convex_radius_min, convex_radius_max, format, slider_flags);
+                // Convex radius
+                float convex_radius_min = .0f;
+                float convex_radius_max = std::min({ info.HalfExtent.x,info.HalfExtent.y,info.HalfExtent.z });
+                ImGui::DragFloat("Convex Radius", &info.ConvexRadius, speed, convex_radius_min, convex_radius_max, format, slider_flags);
 
-            return _TempJphBodyInfo.JphShapeInfo;
-        },
+                return _TempJphBodyInfo.JphShapeInfo;
+            },
             [&](JphCapsuleShapeInfo& info) -> JphShapeInfo
-        {
-            if(ImGui::BeginCombo("Shape Type", "Capsule Shape"))
             {
-                if(ImGui::Selectable("Box Shape"))
+                if(ImGui::BeginCombo("Shape Type", "Capsule Shape"))
                 {
+                    if(ImGui::Selectable("Box Shape"))
+                    {
+                        ImGui::EndCombo();
+                        return JphShapeInfo{};
+                    }
+                    ImGui::Selectable("Capsule Shape");
+                    if(ImGui::Selectable("Cylinder Shape"))
+                    {
+                        ImGui::EndCombo();
+                        return JphCylinderShapeInfo{};
+                    }
+                    if(ImGui::Selectable("Sphere Shape"))
+                    {
+                        ImGui::EndCombo();
+                        return JphSphereShapeInfo{};
+                    }
                     ImGui::EndCombo();
-                    return JphShapeInfo{};
                 }
-                ImGui::Selectable("Capsule Shape");
-                if(ImGui::Selectable("Cylinder Shape"))
-                {
-                    ImGui::EndCombo();
-                    return JphCylinderShapeInfo{};
-                }
-                if(ImGui::Selectable("Sphere Shape"))
-                {
-                    ImGui::EndCombo();
-                    return JphSphereShapeInfo{};
-                }
-                ImGui::EndCombo();
-            }
-            ImGui::SeparatorText("Capsule Type");
+                ImGui::SeparatorText("Capsule Type");
 
-            float radius_min = .0f;
-            float radius_max = FLT_MAX;
-            ImGui::DragFloat("Radius", &info.Radius, speed, radius_min, radius_max, format, slider_flags);
+                float radius_min = .0f;
+                float radius_max = FLT_MAX;
+                ImGui::DragFloat("Radius", &info.Radius, speed, radius_min, radius_max, format, slider_flags);
 
-            float half_height_of_cylinder_min = .0f;
-            float half_height_of_cylinder_max = FLT_MAX;
-            ImGui::DragFloat("Half Height if Cylinder", &info.HalfHeightOfCylinder, speed, half_height_of_cylinder_min, half_height_of_cylinder_max, format, slider_flags);
+                float half_height_of_cylinder_min = .0f;
+                float half_height_of_cylinder_max = FLT_MAX;
+                ImGui::DragFloat("Half Height if Cylinder", &info.HalfHeightOfCylinder, speed, half_height_of_cylinder_min, half_height_of_cylinder_max, format, slider_flags);
 
-            return _TempJphBodyInfo.JphShapeInfo;
-        },
+                return _TempJphBodyInfo.JphShapeInfo;
+            },
             [&](JphCylinderShapeInfo& info) -> JphShapeInfo
-        {
-            if(ImGui::BeginCombo("Shape Type", "Cylinder Shape"))
             {
-                if(ImGui::Selectable("Box Shape"))
+                if(ImGui::BeginCombo("Shape Type", "Cylinder Shape"))
                 {
+                    if(ImGui::Selectable("Box Shape"))
+                    {
+                        ImGui::EndCombo();
+                        return JphShapeInfo{};
+                    }
+                    if(ImGui::Selectable("Capsule Shape"))
+                    {
+                        ImGui::EndCombo();
+                        return JphCapsuleShapeInfo{};
+                    }
+                    ImGui::Selectable("Cylinder Shape");
+                    if(ImGui::Selectable("Sphere Shape"))
+                    {
+                        ImGui::EndCombo();
+                        return JphSphereShapeInfo{};
+                    }
                     ImGui::EndCombo();
-                    return JphShapeInfo{};
                 }
-                if(ImGui::Selectable("Capsule Shape"))
-                {
-                    ImGui::EndCombo();
-                    return JphCapsuleShapeInfo{};
-                }
-                ImGui::Selectable("Cylinder Shape");
-                if(ImGui::Selectable("Sphere Shape"))
-                {
-                    ImGui::EndCombo();
-                    return JphSphereShapeInfo{};
-                }
-                ImGui::EndCombo();
-            }
-            ImGui::SeparatorText("Cylinder Shape");
+                ImGui::SeparatorText("Cylinder Shape");
 
-            float half_height_min = .0f;
-            float half_height_max = FLT_MAX;
-            ImGui::DragFloat("Half Height", &info.HalfHeight, speed, half_height_min, half_height_max, format, slider_flags);
+                float half_height_min = .0f;
+                float half_height_max = FLT_MAX;
+                ImGui::DragFloat("Half Height", &info.HalfHeight, speed, half_height_min, half_height_max, format, slider_flags);
 
-            float radius_min = .0f;
-            float radius_max = FLT_MAX;
-            ImGui::DragFloat("Radius", &info.Radius, speed, radius_min, radius_max, format, slider_flags);
+                float radius_min = .0f;
+                float radius_max = FLT_MAX;
+                ImGui::DragFloat("Radius", &info.Radius, speed, radius_min, radius_max, format, slider_flags);
 
-            float convex_radius_min = .0f;
-            float convex_radius_max = FLT_MAX;
-            ImGui::DragFloat("Convex Radius", &info.ConvexRadius, speed, convex_radius_min, convex_radius_max, format, slider_flags);
+                float convex_radius_min = .0f;
+                float convex_radius_max = FLT_MAX;
+                ImGui::DragFloat("Convex Radius", &info.ConvexRadius, speed, convex_radius_min, convex_radius_max, format, slider_flags);
 
-            return _TempJphBodyInfo.JphShapeInfo;
-        },
+                return _TempJphBodyInfo.JphShapeInfo;
+            },
             [&](JphSphereShapeInfo& info) -> JphShapeInfo
-        {
-            if(ImGui::BeginCombo("Shape Type", "Sphere Shape"))
             {
-                if(ImGui::Selectable("Box Shape"))
+                if(ImGui::BeginCombo("Shape Type", "Sphere Shape"))
                 {
+                    if(ImGui::Selectable("Box Shape"))
+                    {
+                        ImGui::EndCombo();
+                        return JphShapeInfo{};
+                    }
+                    if(ImGui::Selectable("Capsule Shape"))
+                    {
+                        ImGui::EndCombo();
+                        return JphCapsuleShapeInfo{};
+                    }
+                    if(ImGui::Selectable("Cylinder Shape"))
+                    {
+                        ImGui::EndCombo();
+                        return JphCylinderShapeInfo{};
+                    }
+                    ImGui::Selectable("Sphere Shape");
                     ImGui::EndCombo();
-                    return JphShapeInfo{};
                 }
-                if(ImGui::Selectable("Capsule Shape"))
-                {
-                    ImGui::EndCombo();
-                    return JphCapsuleShapeInfo{};
-                }
-                if(ImGui::Selectable("Cylinder Shape"))
-                {
-                    ImGui::EndCombo();
-                    return JphCylinderShapeInfo{};
-                }
-                ImGui::Selectable("Sphere Shape");
-                ImGui::EndCombo();
+                ImGui::SeparatorText("Sphere Shape");
+
+                float radius_min = .0f;
+                float radius_max = FLT_MAX;
+                ImGui::DragFloat("Radius", &info.Radius, speed, radius_min, radius_max, format, slider_flags);
+
+                return _TempJphBodyInfo.JphShapeInfo;
             }
-            ImGui::SeparatorText("Sphere Shape");
-
-            float radius_min = .0f;
-            float radius_max = FLT_MAX;
-            ImGui::DragFloat("Radius", &info.Radius, speed, radius_min, radius_max, format, slider_flags);
-
-            return _TempJphBodyInfo.JphShapeInfo;
-        }
         );
 
         ImGui::NewLine();
@@ -693,19 +692,19 @@ void Arcadia::ImguiWindowPropertyFunctor_PhysicsComponent::operator()(PhysicsCom
                     jph_body_info_initial.JphMotionType,
                     JPH::EMotionType::Static,
                     [&]()
-            {
-                return "Static";
-            },
+                    {
+                        return "Static";
+                    },
                     JPH::EMotionType::Dynamic,
                     [&]()
-            {
-                return "Dynamic";
-            },
+                    {
+                        return "Dynamic";
+                    },
                     JPH::EMotionType::Kinematic,
                     [&]()
-            {
-                return "Kinematic";
-            }
+                    {
+                        return "Kinematic";
+                    }
                 )
             ).c_str());
             ImGui::Text(std::format("Object Layer: {}", jph_body_info_initial.JphObjectLayer).c_str());
@@ -724,45 +723,45 @@ void Arcadia::ImguiWindowPropertyFunctor_PhysicsComponent::operator()(PhysicsCom
         bool tree_open = MatchVariant<bool>(
             jph_body_info_initial.JphShapeInfo,
             [&](const JphBoxShapeInfo& info)
-        {
-            bool tree_open = ImGui::TreeNodeEx("Body Shape - Box", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_FramePadding);
-            if(tree_open)
             {
-                ImGui::Text(std::format("Half Extent: {}", info.HalfExtent).c_str());
-                ImGui::Text(std::format("Convex Radius: {:.2f}", info.ConvexRadius).c_str());
-            }
-            return tree_open;
-        },
+                bool tree_open = ImGui::TreeNodeEx("Body Shape - Box", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_FramePadding);
+                if(tree_open)
+                {
+                    ImGui::Text(std::format("Half Extent: {}", info.HalfExtent).c_str());
+                    ImGui::Text(std::format("Convex Radius: {:.2f}", info.ConvexRadius).c_str());
+                }
+                return tree_open;
+            },
             [&](const JphCapsuleShapeInfo& info)
-        {
-            bool tree_open = ImGui::TreeNodeEx("Body Shape - Capsule", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_FramePadding);
-            if(tree_open)
             {
-                ImGui::Text(std::format("Radius: {:.2f}", info.Radius).c_str());
-                ImGui::Text(std::format("Half Height of Cylinder: {:.2f}", info.HalfHeightOfCylinder).c_str());
-            }
-            return tree_open;
-        },
+                bool tree_open = ImGui::TreeNodeEx("Body Shape - Capsule", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_FramePadding);
+                if(tree_open)
+                {
+                    ImGui::Text(std::format("Radius: {:.2f}", info.Radius).c_str());
+                    ImGui::Text(std::format("Half Height of Cylinder: {:.2f}", info.HalfHeightOfCylinder).c_str());
+                }
+                return tree_open;
+            },
             [&](const JphCylinderShapeInfo& info)
-        {
-            bool tree_open = ImGui::TreeNodeEx("Body Shape - Cylinder", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_FramePadding);
-            if(tree_open)
             {
-                ImGui::Text(std::format("Half Height: {:.2f}", info.HalfHeight).c_str());
-                ImGui::Text(std::format("Radius: {:.2f}", info.Radius).c_str());
-                ImGui::Text(std::format("Convex Radius: {:.2f}", info.ConvexRadius).c_str());
-            }
-            return tree_open;
-        },
+                bool tree_open = ImGui::TreeNodeEx("Body Shape - Cylinder", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_FramePadding);
+                if(tree_open)
+                {
+                    ImGui::Text(std::format("Half Height: {:.2f}", info.HalfHeight).c_str());
+                    ImGui::Text(std::format("Radius: {:.2f}", info.Radius).c_str());
+                    ImGui::Text(std::format("Convex Radius: {:.2f}", info.ConvexRadius).c_str());
+                }
+                return tree_open;
+            },
             [&](const JphSphereShapeInfo& info)
-        {
-            bool tree_open = ImGui::TreeNodeEx("Body Shape - Sphere", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_FramePadding);
-            if(tree_open)
             {
-                ImGui::Text(std::format("Radius: {:.2f}", info.Radius).c_str());
+                bool tree_open = ImGui::TreeNodeEx("Body Shape - Sphere", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_FramePadding);
+                if(tree_open)
+                {
+                    ImGui::Text(std::format("Radius: {:.2f}", info.Radius).c_str());
+                }
+                return tree_open;
             }
-            return tree_open;
-        }
         );
         if(tree_open)
         {
@@ -785,13 +784,13 @@ void Arcadia::ImguiWindowPropertyFunctor_PhysicsComponent::operator()(PhysicsCom
             CommandList::Instance().Emplace(
                 "[Physics] Body Shape Color",
                 [&]() -> void
-            {
-                physics_comp.SetBodyShapeColor(color);
-            },
+                {
+                    physics_comp.SetBodyShapeColor(color);
+                },
                 [&]() -> void
-            {
-                physics_comp.SetBodyShapeColor(origin);
-            }
+                {
+                    physics_comp.SetBodyShapeColor(origin);
+                }
             );
         }
 
@@ -903,7 +902,7 @@ void Arcadia::ImguiWindowProperty::OnUpdate()
         return;
     }
 
-    std::shared_ptr<SceneLayer> scene_layer_sptr = EditorContext::Instance().wpMainSceneLayer.lock();
+    std::shared_ptr<SceneLayer> scene_layer_sptr = LayerStack::Instance().GetLayerShared<SceneLayer>();
 
     std::string imgui_title = scene_layer_sptr->HasActiveScene() && _SelectedEntityId
         ? _Title + " - " + scene_layer_sptr->ActiveScene_GetEntityInfo(_SelectedEntityId).GetName() + GetIdString()
@@ -958,7 +957,7 @@ void Arcadia::ImguiWindowProperty::_OnSceneDeactivated(Events::SceneDeactivated&
 void Arcadia::ImguiWindowProperty::_OnSelectEntity(Events::SelectEntity& e)
 {
     _SelectedEntityId = e.EntityId;
-    std::shared_ptr<SceneLayer> scene_layer_sptr = EditorContext::Instance().wpMainSceneLayer.lock();
+    std::shared_ptr<SceneLayer> scene_layer_sptr = LayerStack::Instance().GetLayerShared<SceneLayer>();
     if(scene_layer_sptr->ActiveScene_ContainsAllComponents<TransformComponent>(_SelectedEntityId))
     {
         _ImguiWindowPropertyFunctor_TransformComponent.Refresh(scene_layer_sptr->ActiveScene_GetComponent<TransformComponent>(_SelectedEntityId));

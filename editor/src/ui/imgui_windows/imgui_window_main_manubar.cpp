@@ -5,8 +5,9 @@
 #include "core/pfd.hpp"
 #include "platform/graphic_api.hpp"
 #include "resource/fonts/icon.hpp"
+#include "resource/scene_layer.hpp"
 
-#include "editor/editor_context.hpp"
+#include "project/project_layer.hpp"
 #include "ui/imgui.hpp"
 #include "ui/ui_events.hpp"
 
@@ -91,7 +92,7 @@ void Arcadia::ImguiWindowPopupFunctor_CreateScene::operator()()
 
     EventQueue::Instance().Signal<Events::KeyboardInputOccupied>(true);
 
-    std::shared_ptr<SceneLayer> scene_layer_sptr = EditorContext::Instance().wpMainSceneLayer.lock();
+    std::shared_ptr<SceneLayer> scene_layer_sptr = LayerStack::Instance().GetLayerShared<SceneLayer>();
 
     std::string imgui_window_title("Create Scene");
 
@@ -164,7 +165,7 @@ void Arcadia::ImguiWindowPopupFunctor_RenameScene::operator()()
     }
 
     EventQueue::Instance().Signal<Events::KeyboardInputOccupied>(true);
-    std::shared_ptr<SceneLayer> scene_layer = EditorContext::Instance().wpMainSceneLayer.lock();
+    std::shared_ptr<SceneLayer> scene_layer = LayerStack::Instance().GetLayerShared<SceneLayer>();
 
     if(!_Initailized)
     {
@@ -245,7 +246,7 @@ void Arcadia::ImguiWindowMainMenubar::OnUpdate()
 
 void Arcadia::ImguiWindowMainMenubar::_ShowFileMenu()
 {
-    std::shared_ptr<ProjectLayer> project_layer_sptr = EditorContext::Instance().wpMainProjectLayer.lock();
+    std::shared_ptr<ProjectLayer> project_layer_sptr = LayerStack::Instance().GetLayerShared<ProjectLayer>();
 
     EventQueue& event_queue = EventQueue::Instance();
 
@@ -279,8 +280,8 @@ void Arcadia::ImguiWindowMainMenubar::_ShowFileMenu()
 
 void Arcadia::ImguiWindowMainMenubar::_ShowEditMenu()
 {
-    std::shared_ptr<SceneLayer> scene_layer_sptr = EditorContext::Instance().wpMainSceneLayer.lock();
-    std::shared_ptr<ProjectLayer> project_layer_sptr = EditorContext::Instance().wpMainProjectLayer.lock();
+    std::shared_ptr<SceneLayer> scene_layer_sptr = LayerStack::Instance().GetLayerShared<SceneLayer>();
+    std::shared_ptr<ProjectLayer> project_layer_sptr = LayerStack::Instance().GetLayerShared<ProjectLayer>();
 
     if(project_layer_sptr->HasProject())
     {

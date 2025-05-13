@@ -5,11 +5,11 @@
 
 #include "platform/api_def.hpp"
 #include "resource/scene_events.hpp"
+#include "resource/scene_layer.hpp"
+
+#include "project/project_events.hpp"
 #include "ui/imgui.hpp"
 #include "ui/imgui_window.hpp"
-
-#include "editor/editor_context.hpp"
-#include "project/project_events.hpp"
 #include "ui/ui_events.hpp"
 
 namespace Arcadia
@@ -50,7 +50,7 @@ namespace Arcadia
     void ImguiWindowOutliner::_MenuItemAddComponent(int& item_count)
     {
         std::string type_string = Component::GetTypeStringStatic();
-        bool exists = EditorContext::Instance().wpMainSceneLayer.lock()->ActiveScene_ContainsAllComponents<Component>(_SelectedEntityId);
+        bool exists = LayerStack::Instance().GetLayerShared<SceneLayer>()->ActiveScene_ContainsAllComponents<Component>(_SelectedEntityId);
 
         if(!exists)
         {
@@ -67,7 +67,7 @@ namespace Arcadia
     void ImguiWindowOutliner::_MenuItemRemoveComponent(int& item_count)
     {
         std::string type_string = Component::GetTypeStringStatic();
-        bool exists = EditorContext::Instance().wpMainSceneLayer.lock()->ActiveScene_ContainsAllComponents<Component>(_SelectedEntityId);
+        bool exists = LayerStack::Instance().GetLayerShared<SceneLayer>()->ActiveScene_ContainsAllComponents<Component>(_SelectedEntityId);
 
         if(exists)
         {

@@ -2,18 +2,19 @@
 
 #include "core/assert.hpp"
 #include "core/command.hpp"
+#include "resource/scene_layer.hpp"
 
 #include "project/project_events.hpp"
-#include "editor/editor_context.hpp"
 
 Arcadia::Project::Project(std::string name):
     _Name(name)
-{}
+{
+}
 
 Arcadia::Project::Project(nlohmann::json& json):
     _Name(json.at("name"))
 {
-    std::shared_ptr<SceneLayer> scene_layer_sptr = EditorContext::Instance().wpMainSceneLayer.lock();
+    std::shared_ptr<SceneLayer> scene_layer_sptr = LayerStack::Instance().GetLayerShared<SceneLayer>();
 
     for(const nlohmann::json& json_scene : json.at("scenes"))
     {
@@ -24,13 +25,13 @@ Arcadia::Project::Project(nlohmann::json& json):
 
 Arcadia::Project::~Project()
 {
-    std::shared_ptr<SceneLayer> scene_layer_sptr = EditorContext::Instance().wpMainSceneLayer.lock();
+    std::shared_ptr<SceneLayer> scene_layer_sptr = LayerStack::Instance().GetLayerShared<SceneLayer>();
     scene_layer_sptr->DestroyAllScenes();
 }
 
 auto Arcadia::Project::ToJson() const -> nlohmann::json
 {
-    std::shared_ptr<SceneLayer> scene_layer_sptr = EditorContext::Instance().wpMainSceneLayer.lock();
+    std::shared_ptr<SceneLayer> scene_layer_sptr = LayerStack::Instance().GetLayerShared<SceneLayer>();
 
     nlohmann::json json{
         {"name",GetName()},

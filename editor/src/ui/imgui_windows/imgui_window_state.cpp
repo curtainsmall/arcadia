@@ -8,16 +8,15 @@
 #include "resource/components/model_component.hpp"
 #include "resource/components/physics_component.hpp"
 
-#include "editor/editor_context.hpp"
 #include "ui/imgui.hpp"
 #include "ui/imgui_wrapper.hpp"
 
 void Arcadia::ImguiWindowStateFunctor_Scene::operator()(const std::shared_ptr<SceneLayer>& scene_layer)
 {
     ImGui::Text(std::format("Entity Count: {}", scene_layer->ActiveScene_GetEntityCount([&](EntityId, const EntityInfo& info)->bool
-    {
-        return !info.Internal;
-    })).c_str());
+                                                                                        {
+                                                                                            return !info.Internal;
+                                                                                        })).c_str());
 }
 
 void Arcadia::ImguiWindowStateFunctor_Renderer::operator()(const std::shared_ptr<RendererLayer>& renderer_layer)
@@ -25,17 +24,17 @@ void Arcadia::ImguiWindowStateFunctor_Renderer::operator()(const std::shared_ptr
     std::string graphic_api_type_string = MatchVariant<std::string>(
         renderer_layer->GetCurrentGraphicApiType(),
         [&](const GraphicApi::Opengl& api)
-    {
-        return std::format("OpenGL ({})", api.Version);
-    },
+        {
+            return std::format("OpenGL ({})", api.Version);
+        },
         [&](const GraphicApi::Directx& api)
-    {
-        return std::format("DirectX ({})", api.Version);
-    },
+        {
+            return std::format("DirectX ({})", api.Version);
+        },
         [&](const GraphicApi::Vulkan& api)
-    {
-        return std::format("Vulkan ({})", api.Version);
-    }
+        {
+            return std::format("Vulkan ({})", api.Version);
+        }
     );
 
     if(ImGui::BeginCombo("Graphic API", graphic_api_type_string.c_str()))
@@ -93,9 +92,9 @@ void Arcadia::ImguiWindowState::OnUpdate()
         return;
     }
 
-    std::shared_ptr<SceneLayer> scene_layer_sptr = EditorContext::Instance().wpMainSceneLayer.lock();
-    std::shared_ptr<RendererLayer> renderer_layer_sptr = EditorContext::Instance().wpMainRendererLayer.lock();
-    std::shared_ptr<PhysicsLayer> physcis_layer = EditorContext::Instance().wpMainPhysicsLayer.lock();
+    std::shared_ptr<SceneLayer> scene_layer_sptr = LayerStack::Instance().GetLayerShared<SceneLayer>();
+    std::shared_ptr<RendererLayer> renderer_layer_sptr = LayerStack::Instance().GetLayerShared<RendererLayer>();
+    std::shared_ptr<PhysicsLayer> physcis_layer = LayerStack::Instance().GetLayerShared<PhysicsLayer>();
 
     std::string imgui_window_title = _Title + GetIdString();
 
@@ -154,4 +153,3 @@ void Arcadia::ImguiWindowState::_OnOpenImguiWindow(Events::OpenImguiWindow& e)
 {
     _Opened = true;
 }
-

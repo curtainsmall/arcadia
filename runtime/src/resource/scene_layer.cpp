@@ -56,6 +56,12 @@ void Arcadia::SceneLayer::OnUpdate()
                         Events::RendererSetEntity::ActionType::Remove
                     );
             }
+
+            EventQueue::Instance()
+                .Signal<Events::RendererSetEntity>(
+                    entity_id,
+                    Events::RendererSetEntity::ActionType::Update
+                );
         }
     }
 }

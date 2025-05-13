@@ -18,7 +18,6 @@
 #include "resource/scene_events.hpp"
 #include "resource/scene_layer.hpp"
 
-#include "editor/editor_context.hpp"
 #include "editor/editor_layer.hpp"
 #include "project/project_events.hpp"
 #include "ui/imgui.hpp"
@@ -154,7 +153,7 @@ namespace Arcadia
         template<Concepts::Component Component>
         auto _ContainsComponent(EntityId entity_id) const -> bool
         {
-            std::shared_ptr<SceneLayer> scene_layer_sptr = EditorContext::Instance().wpMainSceneLayer.lock();
+            std::shared_ptr<SceneLayer> scene_layer_sptr = LayerStack::Instance().GetLayerShared<SceneLayer>();
             ACDA_ASSERT(scene_layer_sptr->HasActiveScene());
 
             return scene_layer_sptr->ActiveScene_ContainsAllComponents<Component>(entity_id);
@@ -162,7 +161,7 @@ namespace Arcadia
         template<Concepts::Component Component>
         auto _GetComponent(EntityId entity_id) const -> Component&
         {
-            std::shared_ptr<SceneLayer> scene_layer_sptr = EditorContext::Instance().wpMainSceneLayer.lock();
+            std::shared_ptr<SceneLayer> scene_layer_sptr = LayerStack::Instance().GetLayerShared<SceneLayer>();
             ACDA_ASSERT(scene_layer_sptr->HasActiveScene());
             ACDA_ASSERT(_ContainsComponent<Component>(entity_id));
 

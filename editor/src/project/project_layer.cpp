@@ -5,20 +5,20 @@
 #include "core/command.hpp"
 #include "core/enum.hpp"
 #include "core/file.hpp"
-#include "core/pfd.hpp"
 #include "core/function.hpp"
 #include "core/hash.hpp"
 #include "core/log.hpp"
 #include "core/match.hpp"
+#include "core/pfd.hpp"
 #include "function/render/opengl/gl_renderer.hpp"
 #include "function/window/window_events.hpp"
+#include "function/window/window_layer.hpp"
 #include "resource/components/camera_component.hpp"
 #include "resource/components/light_component.hpp"
 #include "resource/components/model_component.hpp"
 #include "resource/components/physics_component.hpp"
 #include "resource/components/transform_component.hpp"
-
-#include "editor/editor_context.hpp"
+#include "resource/scene_layer.hpp"
 
 Arcadia::ProjectLayer::ProjectLayer():
     LayerInterface("project")
@@ -85,9 +85,9 @@ void Arcadia::ProjectLayer::_OnWindowShouldClose(Events::WindowShouldClose& e)
 {
     EventQueue& event_queue = EventQueue::Instance();
 
-    std::shared_ptr<WindowLayer> main_window_layer_sptr = EditorContext::Instance().wpMainWindowLayer.lock();
+    std::shared_ptr<WindowLayer> window_layer_sptr = LayerStack::Instance().GetLayerShared<WindowLayer>();
 
-    if(e.pWindowLayer == main_window_layer_sptr.get() && _spProject)
+    if(e.pWindowLayer == window_layer_sptr.get() && _spProject)
     {
         EventQueue::Instance()
             .Signal<Events::CloseProject>();
@@ -183,7 +183,7 @@ void Arcadia::ProjectLayer::_OnOpenProject(Events::OpenProject& e)
     }
     if(_ProjectFilepath.extension() != Project::ProjectExtensionString)
     {
-        (void) pfd::message(
+        (void)pfd::message(
             "Arcadia - Open Project",
             std::format("Arcadia project must ends with extension \"{}\" while {} does not", Project::ProjectExtensionString, _ProjectFilepath.generic_string()),
             pfd::choice::ok,
@@ -198,7 +198,7 @@ void Arcadia::ProjectLayer::_OnOpenProject(Events::OpenProject& e)
     }
     catch(const Exceptions::FileOpenFailed& e)
     {
-        (void) pfd::notify(
+        (void)pfd::notify(
             "Arcadia - Open Project",
             std::format("Failed to open project file at {}", _ProjectFilepath.generic_string()),
             pfd::icon::error
@@ -208,7 +208,7 @@ void Arcadia::ProjectLayer::_OnOpenProject(Events::OpenProject& e)
     }
     catch(const Exceptions::ProjectConstructionFailed& e)
     {
-        (void) pfd::notify(
+        (void)pfd::notify(
             "Arcadia - Open Project",
             std::format("Failed to open project due to invalid project file"),
             pfd::icon::error
@@ -257,7 +257,7 @@ void Arcadia::ProjectLayer::_OnCloseProject(Events::CloseProject& e)
     ACDA_ASSERT(_spProject);
 
     EventQueue& event_queue = EventQueue::Instance();
-    std::shared_ptr<SceneLayer> scene_layer_sptr = EditorContext::Instance().wpMainSceneLayer.lock();
+    std::shared_ptr<SceneLayer> scene_layer_sptr = LayerStack::Instance().GetLayerShared<SceneLayer>();
 
     CommandList& cmd_list = CommandList::Instance();
     if(cmd_list.GetSize() || _ProjectModified || scene_layer_sptr->IsActiveSceneModified())
