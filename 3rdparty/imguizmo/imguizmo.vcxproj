@@ -13,7 +13,7 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{30942B83-0047-4F4D-BE23-BA6F2ED06703}</ProjectGuid>
+    <ProjectGuid>{D4520D82-702E-4C5F-9450-8A4A13B1C30D}</ProjectGuid>
     <RootNamespace>imguizmo</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
     <ProjectName>ImGuizmo</ProjectName>

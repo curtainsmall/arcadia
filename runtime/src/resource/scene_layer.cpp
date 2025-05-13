@@ -49,7 +49,7 @@ void Arcadia::SceneLayer::OnUpdate()
                 EventQueue::Instance()
                     .Signal<Events::RendererSetEntity>(
                         entity_id,
-                        Events::RendererSetEntity_ActionType::Add
+                        Events::RendererSetEntity::ActionType::Add
                     );
             }
             else
@@ -57,7 +57,7 @@ void Arcadia::SceneLayer::OnUpdate()
                 EventQueue::Instance()
                     .Signal<Events::RendererSetEntity>(
                         entity_id,
-                        Events::RendererSetEntity_ActionType::Remove
+                        Events::RendererSetEntity::ActionType::Remove
                     );
             }
         }
@@ -299,30 +299,30 @@ void Arcadia::SceneLayer::_OnNewEntity(Events::NewEntity& e)
         e.EntityTypeString,
         std::string("actor"),
         [&]()
-    {
-        scene.EmplaceComponent<ModelComponent>(entity_id);
+        {
+            scene.EmplaceComponent<ModelComponent>(entity_id);
 
-        scene.EmplaceComponent<PhysicsComponent>(entity_id);
+            scene.EmplaceComponent<PhysicsComponent>(entity_id);
 
-        TransformComponent& transform_comp = scene.EmplaceComponent<TransformComponent>(entity_id);
-        transform_comp.AddFlag(TransformComponentFlags::UseRotation);
-    },
+            TransformComponent& transform_comp = scene.EmplaceComponent<TransformComponent>(entity_id);
+            transform_comp.AddFlag(TransformComponentFlags::UseRotation);
+        },
         std::string("camera"),
         [&]()
-    {
-        scene.EmplaceComponent<CameraComponent>(entity_id);
+        {
+            scene.EmplaceComponent<CameraComponent>(entity_id);
 
-        TransformComponent& transform_comp = scene.EmplaceComponent<TransformComponent>(entity_id);
-        transform_comp.AddFlag(TransformComponentFlags::UseDirection);
-    },
+            TransformComponent& transform_comp = scene.EmplaceComponent<TransformComponent>(entity_id);
+            transform_comp.AddFlag(TransformComponentFlags::UseDirection);
+        },
         std::string("light"),
         [&]()
-    {
-        scene.EmplaceComponent<LightComponent>(entity_id);
+        {
+            scene.EmplaceComponent<LightComponent>(entity_id);
 
-        TransformComponent& transform_comp = scene.EmplaceComponent<TransformComponent>(entity_id);
-        transform_comp.AddFlag(TransformComponentFlags::UseDirection);
-    }
+            TransformComponent& transform_comp = scene.EmplaceComponent<TransformComponent>(entity_id);
+            transform_comp.AddFlag(TransformComponentFlags::UseDirection);
+        }
     );
     _ActiveSceneModified = true;
 }
@@ -352,24 +352,24 @@ void Arcadia::SceneLayer::_OnAddComponent(Events::AddComponent& e)
         e.ComponentTypeString,
         CameraComponent::GetTypeStringStatic(),
         [&]()
-    {
-        scene.EmplaceComponent<CameraComponent>(e.EntityId);
-    },
+        {
+            scene.EmplaceComponent<CameraComponent>(e.EntityId);
+        },
         LightComponent::GetTypeStringStatic(),
         [&]()
-    {
-        scene.EmplaceComponent<LightComponent>(e.EntityId);
-    },
+        {
+            scene.EmplaceComponent<LightComponent>(e.EntityId);
+        },
         ModelComponent::GetTypeStringStatic(),
         [&]()
-    {
-        scene.EmplaceComponent<ModelComponent>(e.EntityId);
-    },
+        {
+            scene.EmplaceComponent<ModelComponent>(e.EntityId);
+        },
         PhysicsComponent::GetTypeStringStatic(),
         [&]()
-    {
-        scene.EmplaceComponent<PhysicsComponent>(e.EntityId);
-    }
+        {
+            scene.EmplaceComponent<PhysicsComponent>(e.EntityId);
+        }
     );
     _ActiveSceneModified = true;
 }
@@ -382,24 +382,24 @@ void Arcadia::SceneLayer::_OnRemoveComponent(Events::RemoveComponent& e)
         e.ComponentTypeString,
         CameraComponent::GetTypeStringStatic(),
         [&]()
-    {
-        scene.RemoveComponent<CameraComponent>(e.EntityId);
-    },
+        {
+            scene.RemoveComponent<CameraComponent>(e.EntityId);
+        },
         LightComponent::GetTypeStringStatic(),
         [&]()
-    {
-        scene.RemoveComponent<LightComponent>(e.EntityId);
-    },
+        {
+            scene.RemoveComponent<LightComponent>(e.EntityId);
+        },
         ModelComponent::GetTypeStringStatic(),
         [&]()
-    {
-        scene.RemoveComponent<ModelComponent>(e.EntityId);
-    },
+        {
+            scene.RemoveComponent<ModelComponent>(e.EntityId);
+        },
         PhysicsComponent::GetTypeStringStatic(),
         [&]()
-    {
-        scene.RemoveComponent<PhysicsComponent>(e.EntityId);
-    }
+        {
+            scene.RemoveComponent<PhysicsComponent>(e.EntityId);
+        }
     );
     _ActiveSceneModified = true;
 }
