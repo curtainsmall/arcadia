@@ -15,9 +15,11 @@
 #include "resource/components/model_component.hpp"
 #include "resource/components/physics_component.hpp"
 #include "resource/components/transform_component.hpp"
-#include "resource/scene.hpp"
+#include "resource/scene_layer.hpp"
 #include "resource/scene_events.hpp"
 
+#include "editor/editor_layer.hpp"
+#include "editor/editor_context.hpp"
 #include "project/project_events.hpp"
 #include "ui/imgui.hpp"
 #include "ui/imgui_window.hpp"
@@ -152,23 +154,22 @@ namespace Arcadia
         template<Concepts::Component Component>
         auto _ContainsComponent(EntityId entity_id) const -> bool
         {
-            std::shared_ptr<Scene> scene_sptr = _wpScene.lock();
-            ACDA_ASSERT(scene_sptr);
+            std::shared_ptr<SceneLayer> scene_layer_sptr = EditorContext::Instance().wpMainSceneLayer.lock();
+            ACDA_ASSERT(scene_layer_sptr->HasActiveScene());
 
-            return scene_sptr->ContainsAllComponents<Component>(entity_id);
+            return scene_layer_sptr->ActiveScene_ContainsAllComponents<Component>(entity_id);
         }
         template<Concepts::Component Component>
         auto _GetComponent(EntityId entity_id) const -> Component&
         {
-            std::shared_ptr<Scene> scene_sptr = _wpScene.lock();
-            ACDA_ASSERT(scene_sptr);
+            std::shared_ptr<SceneLayer> scene_layer_sptr = EditorContext::Instance().wpMainSceneLayer.lock();
+            ACDA_ASSERT(scene_layer_sptr->HasActiveScene());
             ACDA_ASSERT(_ContainsComponent<Component>(entity_id));
 
-            return scene_sptr->GetComponent<Component>(entity_id);
+            return scene_layer_sptr->ActiveScene_GetComponent<Component>(entity_id);
         }
 
         void _OnOpenImguiWindow(Events::OpenImguiWindow& e);
-        void _OnSceneActivated(Events::SceneActivated& e);
         void _OnSceneDeactivated(Events::SceneDeactivated& e);
         void _OnSelectEntity(Events::SelectEntity& e);
         void _OnDeleteEntity(Events::DeleteEntity& e);
@@ -184,8 +185,6 @@ namespace Arcadia
         }
 
     private:
-
-        std::weak_ptr<Scene> _wpScene{};
         EntityId _SelectedEntityId{};
 
         ImguiWindowPropertyFunctor_CameraComponent _ImguiWindowPropertyFunctor_CameraComponent{};

@@ -7,7 +7,6 @@
 #include "function/input/input_events.hpp"
 #include "function/physics/physics_events.hpp"
 #include "function/physics/physics_simulator.hpp"
-#include "function/render/renderer.hpp"
 #include "function/render/renderer_events.hpp"
 #include "platform/api_def.hpp"
 #include "resource/scene.hpp"
@@ -21,7 +20,7 @@
 
 namespace Arcadia
 {
-    class ImguiWindowViewport : public ImguiWindowInterface
+    class ImguiWindowViewport: public ImguiWindowInterface
     {
     public:
         enum class GizmoOption
@@ -58,10 +57,6 @@ namespace Arcadia
         void _OnSceneDeactivated(Events::SceneDeactivated& e);
         void _OnSelectEntity(Events::SelectEntity& e);
         void _OnDeleteEntity(Events::DeleteEntity& e);
-        void _OnRendererBuilt(Events::RendererBuilt& e);
-        void _OnRendererUnbuilt(Events::RendererUnbuilt& e);
-        void _OnPhysicsSimulatorBuilt(Events::PhysicsSimulatorBuilt& e);
-        void _OnPhysicsSimulatorUnbuilt(Events::PhysicsSimulatorUnbuilt& e);
         void _OnShowGizmo(Events::ShowGizmo& e);
         void _OnKeyboardInputOccupied(Events::KeyboardInputOccupied& e);
 
@@ -69,9 +64,6 @@ namespace Arcadia
         static inline std::string _ViewportCameraEntityName{ "viewport_camera" };
 
         std::weak_ptr<Project> _wpProject{};
-        std::weak_ptr<Scene> _wpScene{};
-        std::weak_ptr<RendererInterface> _wpRenderer{};
-        std::weak_ptr<PhysicsSimulator> _wpPhysicsSimulator{};
 
         EntityId _SelectedEntityId{};
         EntityId _ViewportCameraEntityId{};

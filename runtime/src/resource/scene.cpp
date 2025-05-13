@@ -12,7 +12,8 @@
 
 Arcadia::Scene::Scene(const std::string& name):
     _Name(name)
-{}
+{
+}
 
 Arcadia::Scene::Scene(const nlohmann::json& json):
     _Name(json.at("name"))
@@ -103,12 +104,12 @@ auto Arcadia::Scene::ContainsEntity(EntityId entity_id) const -> bool
     return _EntityInfoStorage.contains(entity_id);
 }
 
-auto Arcadia::Scene::GetSize() const -> std::size_t
+auto Arcadia::Scene::GetEntityCount() const -> std::size_t
 {
     return _EntityInfoStorage.size();
 }
 
-auto Arcadia::Scene::CountEntity(const std::function<bool(EntityId, const EntityInfo&)>& pred) const -> std::size_t
+auto Arcadia::Scene::GetEntityCount(const std::function<bool(EntityId, const EntityInfo&)>& pred) const -> std::size_t
 {
     std::size_t count = 0;
     for(const auto& [entity_id, entity] : _EntityInfoStorage)
@@ -209,6 +210,11 @@ auto Arcadia::Scene::_CreateJsonComponents(EntityId entity_id) const -> nlohmann
     return json_comps;
 }
 
+auto Arcadia::Scene::GetEntityInfoStorage() -> EntityInfoStorageType&
+{
+    return _EntityInfoStorage;
+}
+
 auto Arcadia::Scene::IsEntityNameUsed(const std::string& entity_name) const -> bool
 {
     return _EntityNameToEntityIdLookupMap.contains(entity_name);
@@ -217,4 +223,9 @@ auto Arcadia::Scene::IsEntityNameUsed(const std::string& entity_name) const -> b
 auto Arcadia::Scene::GetEntityIdByName(const std::string& entity_name) const -> EntityId
 {
     return _EntityNameToEntityIdLookupMap.at(entity_name);
+}
+
+auto Arcadia::EntityInfo::GetName() const -> const std::string&
+{
+    return _Name;
 }

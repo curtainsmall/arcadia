@@ -20,6 +20,18 @@ namespace Arcadia
         virtual void OnEvent(EventBase& event) override;
         virtual void OnUpdate() override;
 
+        [[nodiscard]]
+        auto IsPhysicsSimulatorActive() const -> bool;
+
+        [[nodiscard]]
+        auto GetPhysicsBodyCount() const->std::size_t;
+
+        [[nodiscard]]
+        auto GetTempAllocatorSize() const->std::size_t;
+
+        [[nodiscard]]
+        auto GetUpdatesPerSecondCount() const->std::int32_t;
+
     private:
         void _OnPhysicsSimulatorSetActive(Events::PhysicsSimulatirSetActive& e);
         void _OnPhysicsSimulatorReset(Events::PhysicsSimulatorReset& e);

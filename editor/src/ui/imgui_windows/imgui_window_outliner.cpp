@@ -9,17 +9,20 @@
 #include "resource/components/model_component.hpp"
 #include "resource/components/physics_component.hpp"
 #include "resource/components/skybox_component.hpp"
+#include "resource/scene_layer.hpp"
+
+#include "editor/editor_context.hpp"
 #include "ui/imgui.hpp"
 
 Arcadia::ImguiWindowOutliner::ImguiWindowOutliner(bool open, const std::string& title):
     ImguiWindowInterface(open, title)
-{}
+{
+}
 
 void Arcadia::ImguiWindowOutliner::OnEvent(EventBase& e)
 {
     EventDispatcher(e)
         .Dispatch<Events::OpenImguiWindow>(ACDA_BIND_MEMBER_FN(_OnOpenImguiWindow))
-        .Dispatch<Events::SceneActivated>(ACDA_BIND_MEMBER_FN(_OnSceneActivated))
         .Dispatch<Events::SceneDeactivated>(ACDA_BIND_MEMBER_FN(_OnSceneDeactivated))
         .IsDispatched();
 }
@@ -31,12 +34,12 @@ void Arcadia::ImguiWindowOutliner::OnUpdate()
         return;
     }
 
-    std::shared_ptr<Scene> scene_sptr = _wpScene.lock();
+    std::shared_ptr<SceneLayer> scene_layer_sptr = EditorContext::Instance().wpMainSceneLayer.lock();
 
     EventQueue& event_queue = EventQueue::Instance();
 
-    std::string imgui_window_title = scene_sptr
-        ? _Title + " - " + scene_sptr->GetName() + GetIdString()
+    std::string imgui_window_title = scene_layer_sptr->HasActiveScene()
+        ? _Title + " - " + scene_layer_sptr->ActiveScene_GetName() + GetIdString()
         : _Title + GetIdString();
 
     ImGui::SetNextWindowSize(glm::vec2{ 1024,768 }, ImGuiCond_Once);
@@ -44,7 +47,7 @@ void Arcadia::ImguiWindowOutliner::OnUpdate()
         ImGuiWindowFlags_NoCollapse;
     if(ImGui::Begin(imgui_window_title.c_str(), &_Opened, window_flags))
     {
-        if(scene_sptr && ImGui::BeginPopupContextWindow())
+        if(scene_layer_sptr->HasActiveScene() && ImGui::BeginPopupContextWindow())
         {
             ImGui::SeparatorText("New");
 
@@ -70,13 +73,13 @@ void Arcadia::ImguiWindowOutliner::OnUpdate()
             ImGui::EndPopup();
         }
 
-        if(!scene_sptr)
+        if(!scene_layer_sptr->HasActiveScene())
         {
             ImGui::Text("(No scene)");
         }
         else
         {
-            for(auto& [entity_id, entity_info] : scene_sptr->GetEntityInfoStorage())
+            for(auto& [entity_id, entity_info] : scene_layer_sptr->ActiveScene_GetEntityInfoStorage())
             {
                 // Display text input
                 if(_EntityOldName == entity_info.GetName())
@@ -91,7 +94,7 @@ void Arcadia::ImguiWindowOutliner::OnUpdate()
                     {
                         if(_EntityOldName != _EntityNewName)
                         {
-                            if(scene_sptr->IsEntityNameUsed(_EntityNewName))
+                            if(scene_layer_sptr->ActiveScene_IsEntityNameUsed(_EntityNewName))
                             {
                                 pfd::message msg{
                                     "Arcadia - Rename Entity",
@@ -119,7 +122,19 @@ void Arcadia::ImguiWindowOutliner::OnUpdate()
                         continue;
                     }
 
-                    ImGui::Checkbox(std::format("##render_in_viewport_{}", entity_id).c_str(), &entity_info.Displayed);
+                    bool display_entity = entity_info.Displayed;
+                    ImGui::Checkbox(std::format("##render_in_viewport_{}", entity_id).c_str(), &display_entity);
+                    if(display_entity != entity_info.Displayed)
+                    {
+                        EventQueue::Instance()
+                            .Signal<Events::UpdateEntityInfo>(
+                                entity_id,
+                                [=](EntityInfo& entity_info)
+                        {
+                            entity_info.Displayed = display_entity;
+                        }
+                            );
+                    }
                     ImGui::SameLine();
                     if(ImGui::Selectable(entity_info.GetName().c_str(), _SelectedEntityId == entity_id))
                     {
@@ -197,13 +212,7 @@ void Arcadia::ImguiWindowOutliner::_OnOpenImguiWindow(Events::OpenImguiWindow& e
     }
 }
 
-void Arcadia::ImguiWindowOutliner::_OnSceneActivated(Events::SceneActivated& e)
-{
-    _wpScene = e.spScene;
-}
-
 void Arcadia::ImguiWindowOutliner::_OnSceneDeactivated(Events::SceneDeactivated& e)
 {
-    _wpScene.reset();
     _SelectedEntityId.SetNull();
 }

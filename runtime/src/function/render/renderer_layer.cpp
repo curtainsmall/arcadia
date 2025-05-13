@@ -14,22 +14,20 @@ Arcadia::RendererLayer::RendererLayer(const GraphicApi::Type& graphic_api, std::
     MatchVariant<void>(
         graphic_api,
         [&](const GraphicApi::Opengl&)
-        {
-            static OpenglContext gl_context{};
-            _spRenderer = std::make_shared<GlRenderer>(working_directory / ToFilepath("shaders/opengl"));
-        },
+    {
+        static OpenglContext gl_context{};
+        _spRenderer = std::make_shared<GlRenderer>(working_directory / ToFilepath("shaders/opengl"));
+    },
         [](auto&&)
-        {
-            ACDA_UNREACHABLE("Unknown renderer type");
-        }
+    {
+        ACDA_UNREACHABLE("Unknown renderer type");
+    }
     );
 
-    EventQueue::Instance().Signal<Events::RendererBuilt>(_spRenderer);
 }
 
 Arcadia::RendererLayer::~RendererLayer()
 {
-    EventQueue::Instance().Signal<Events::RendererUnbuilt>();
 }
 
 void Arcadia::RendererLayer::OnEvent(EventBase& event)
@@ -38,12 +36,39 @@ void Arcadia::RendererLayer::OnEvent(EventBase& event)
         .Dispatch<Events::RendererSetActive>(ACDA_BIND_MEMBER_FN(_OnRendererSetActive))
         .Dispatch<Events::RendererSetScene>(ACDA_BIND_MEMBER_FN(_OnRendererSetScene))
         .Dispatch<Events::RendererSetEntity>(ACDA_BIND_MEMBER_FN(_OnRendererSetEntity))
+        .Dispatch<Events::SceneActivated>(ACDA_BIND_MEMBER_FN(_OnSceneActivated))
+        .Dispatch<Events::SceneDeactivated>(ACDA_BIND_MEMBER_FN(_OnSceneDeactivated))
         .IsDispatched();
 }
 
 void Arcadia::RendererLayer::OnUpdate()
 {
     _spRenderer->Draw();
+}
+
+auto Arcadia::RendererLayer::HasRenderer() const -> bool
+{
+    return !!_spRenderer;
+}
+
+auto Arcadia::RendererLayer::HasRenderResult() const -> bool
+{
+    return _spRenderer->HasRenderResult();
+}
+
+auto Arcadia::RendererLayer::GetRenderResultId(EntityId entity_id) const -> void*
+{
+    return _spRenderer->GetRenderResultId(entity_id);
+}
+
+auto Arcadia::RendererLayer::GetCurrentGraphicApiType() const -> GraphicApi::Type
+{
+    return _spRenderer->GetGraphicApiType();
+}
+
+auto Arcadia::RendererLayer::IsRendererActive() const -> bool
+{
+    return _spRenderer->IsActive();
 }
 
 void Arcadia::RendererLayer::_OnRendererSetActive(Events::RendererSetActive& e)
@@ -80,4 +105,14 @@ void Arcadia::RendererLayer::_OnRendererSetEntity(Events::RendererSetEntity& e)
             ACDA_UNREACHABLE("Invalid action type");
         }
     }
+}
+
+void Arcadia::RendererLayer::_OnSceneActivated(Events::SceneActivated& e)
+{
+    _spRenderer->SetScene(e.spScene);
+}
+
+void Arcadia::RendererLayer::_OnSceneDeactivated(Events::SceneDeactivated& e)
+{
+    _spRenderer->SetScene(nullptr);
 }

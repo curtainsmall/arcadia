@@ -4,9 +4,10 @@
 
 Arcadia::LayerInterface::LayerInterface(const std::string& name):
     _Name(name)
-{}
+{
+}
 
-auto Arcadia::LayerInterface::GetName() const -> const std::string&
+auto Arcadia::LayerInterface::GetLayerName() const -> const std::string&
 {
     return _Name;
 }

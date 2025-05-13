@@ -30,8 +30,6 @@ namespace Arcadia
         virtual void OnUpdate();
 
         [[nodiscard]]
-        auto HasActiveScene() const -> bool;
-        [[nodiscard]]
         auto GetActiveSceneShared() -> std::shared_ptr<Scene>&;
         [[nodiscard]]
         auto GetActiveSceneShared() const -> const std::shared_ptr<Scene>&;
@@ -42,9 +40,7 @@ namespace Arcadia
         [[nodiscard]]
         auto HasScene(const std::string& name) const -> bool;
         [[nodiscard]]
-        auto GetSceneShared(const std::string& name) -> std::shared_ptr<Scene>&;
-        [[nodiscard]]
-        auto GetSceneShared(const std::string& name) const -> const std::shared_ptr<Scene>&;
+        auto HasActiveScene() const -> bool;
         void CreateScene(const std::string& name);
         void CreateScene(const nlohmann::json& json);
         auto SaveScene(const std::string& name) -> nlohmann::json;
@@ -56,7 +52,53 @@ namespace Arcadia
         auto GetSceneStorage() const -> const SceneStorageType&;
 
         [[nodiscard]]
-        auto IsSceneModified() const -> bool;
+        auto ActiveScene_GetName() const -> const std::string&;
+
+        [[nodiscard]]
+        auto ActiveScene_ContainsEntity(EntityId entity_id) const -> bool;
+
+        [[nodiscard]]
+        auto ActiveScene_IsEntityNameUsed(const std::string& entity_name) const -> bool;
+
+        [[nodiscard]]
+        auto ActiveScene_GetEntityIdByName(const std::string& entity_name) const->EntityId;
+
+        [[nodiscard]]
+        auto ActiveScene_GetEntityCount() const->std::size_t;
+
+        [[nodiscard]]
+        auto ActiveScene_GetEntityCount(const std::function<bool(EntityId, const EntityInfo&)>& pred) const->std::size_t;
+
+        [[nodiscard]]
+        auto ActiveScene_GetEntityInfo(EntityId entity_id) const -> const EntityInfo&;
+
+        [[nodiscard]]
+        auto ActiveScene_GetEntityInfoStorage() const -> const Scene::EntityInfoStorageType&;
+
+        template<Concepts::Component ...Ts_Components>
+        [[nodiscard]]
+        auto ActiveScene_ContainsAllComponents(EntityId entity_id) const -> bool
+        {
+            return _spActiveScene->ContainsAllComponents<Ts_Components...>(entity_id);
+        }
+
+        template<Concepts::Component ...Ts_Components>
+        [[nodiscard]]
+        auto ActiveScene_CotainsAnyComponent(EntityId entity_id) const -> bool
+        {
+            return _spActiveScene->ContainsAnyComponent<Ts_Components...>(entity_id);
+        }
+
+        template<Concepts::Component ...Ts_Components>
+        [[nodiscard]]
+        auto ActiveScene_GetComponent(EntityId entity_id) const -> decltype(auto)
+        {
+            ACDA_ASSERT(ActiveScene_ContainsAllComponents<Ts_Components...>(entity_id));
+            return _spActiveScene->GetComponent<Ts_Components...>(entity_id);
+        }
+
+        [[nodiscard]]
+        auto IsActiveSceneModified() const -> bool;
 
     private:
         void _OnCreateScene(Events::CreateScene& e);
@@ -68,6 +110,7 @@ namespace Arcadia
         void _OnNewEntity(Events::NewEntity& e);
         void _OnRenameEntity(Events::RenameEntity& e);
         void _OnDeleteEntity(Events::DeleteEntity& e);
+        void _OnUpdateEntityInfo(Events::UpdateEntityInfo& e);
 
         void _OnAddComponent(Events::AddComponent& e);
         void _OnRemoveComponent(Events::RemoveComponent& e);
@@ -75,6 +118,6 @@ namespace Arcadia
     private:
         SceneStorageType _SceneStorage{};
         std::shared_ptr<Scene> _spActiveScene{};
-        bool _SceneModified{ false };
+        bool _ActiveSceneModified{ false };
     };
 }

@@ -9,7 +9,9 @@
 #include "core/function.hpp"
 #include "core/match.hpp"
 #include "resource/fonts/icon.hpp"
+#include "resource/scene_layer.hpp"
 
+#include "editor/editor_context.hpp"
 #include "ui/imgui.hpp"
 #include "ui/imgui_wrapper.hpp"
 
@@ -881,13 +883,13 @@ void Arcadia::ImguiWindowPropertyFunctor_TransformComponent::operator()(Transfor
 
 Arcadia::ImguiWindowProperty::ImguiWindowProperty(bool open, const std::string& title):
     ImguiWindowInterface(open, title)
-{}
+{
+}
 
 void Arcadia::ImguiWindowProperty::OnEvent(EventBase& e)
 {
     EventDispatcher{ e }
         .Dispatch<Events::OpenImguiWindow>(ACDA_BIND_MEMBER_FN(_OnOpenImguiWindow))
-        .Dispatch<Events::SceneActivated>(ACDA_BIND_MEMBER_FN(_OnSceneActivated))
         .Dispatch<Events::SceneDeactivated>(ACDA_BIND_MEMBER_FN(_OnSceneDeactivated))
         .Dispatch<Events::SelectEntity>(ACDA_BIND_MEMBER_FN(_OnSelectEntity))
         .Dispatch<Events::DeleteEntity>(ACDA_BIND_MEMBER_FN(_OnDeleteEntity))
@@ -901,10 +903,10 @@ void Arcadia::ImguiWindowProperty::OnUpdate()
         return;
     }
 
-    std::shared_ptr<Scene> scene_sptr = _wpScene.lock();
+    std::shared_ptr<SceneLayer> scene_layer_sptr = EditorContext::Instance().wpMainSceneLayer.lock();
 
-    std::string imgui_title = scene_sptr && _SelectedEntityId
-        ? _Title + " - " + scene_sptr->GetEntityInfo(_SelectedEntityId).GetName() + GetIdString()
+    std::string imgui_title = scene_layer_sptr->HasActiveScene() && _SelectedEntityId
+        ? _Title + " - " + scene_layer_sptr->ActiveScene_GetEntityInfo(_SelectedEntityId).GetName() + GetIdString()
         : _Title + GetIdString();
 
     ImGui::SetNextWindowSize(glm::vec2{ 1024,768 }, ImGuiCond_Once);
@@ -912,7 +914,7 @@ void Arcadia::ImguiWindowProperty::OnUpdate()
         ImGuiWindowFlags_NoCollapse;
     if(ImGui::Begin(imgui_title.c_str(), &_Opened, window_flags))
     {
-        if(!scene_sptr)
+        if(!scene_layer_sptr->HasActiveScene())
         {
             ImGui::Text("(No scene)");
         }
@@ -948,34 +950,28 @@ void Arcadia::ImguiWindowProperty::_OnOpenImguiWindow(Events::OpenImguiWindow& e
     }
 }
 
-void Arcadia::ImguiWindowProperty::_OnSceneActivated(Events::SceneActivated& e)
-{
-    _wpScene = e.spScene;
-}
-
 void Arcadia::ImguiWindowProperty::_OnSceneDeactivated(Events::SceneDeactivated& e)
 {
-    _wpScene.reset();
     _SelectedEntityId.SetNull();
 }
 
 void Arcadia::ImguiWindowProperty::_OnSelectEntity(Events::SelectEntity& e)
 {
     _SelectedEntityId = e.EntityId;
-    Scene& scene = *(_wpScene.lock());
-    if(scene.ContainsAllComponents<TransformComponent>(_SelectedEntityId))
+    std::shared_ptr<SceneLayer> scene_layer_sptr = EditorContext::Instance().wpMainSceneLayer.lock();
+    if(scene_layer_sptr->ActiveScene_ContainsAllComponents<TransformComponent>(_SelectedEntityId))
     {
-        _ImguiWindowPropertyFunctor_TransformComponent.Refresh(scene.GetComponent<TransformComponent>(_SelectedEntityId));
+        _ImguiWindowPropertyFunctor_TransformComponent.Refresh(scene_layer_sptr->ActiveScene_GetComponent<TransformComponent>(_SelectedEntityId));
     }
 
-    if(scene.ContainsAllComponents<CameraComponent>(_SelectedEntityId))
+    if(scene_layer_sptr->ActiveScene_ContainsAllComponents<CameraComponent>(_SelectedEntityId))
     {
-        _ImguiWindowPropertyFunctor_CameraComponent.Refresh(scene.GetComponent<CameraComponent>(_SelectedEntityId));
+        _ImguiWindowPropertyFunctor_CameraComponent.Refresh(scene_layer_sptr->ActiveScene_GetComponent<CameraComponent>(_SelectedEntityId));
     }
 
-    if(scene.ContainsAllComponents<LightComponent>(_SelectedEntityId))
+    if(scene_layer_sptr->ActiveScene_ContainsAllComponents<LightComponent>(_SelectedEntityId))
     {
-        _ImguiWindowPropertyFunctor_LightComponent.Refresh(scene.GetComponent<LightComponent>(_SelectedEntityId));
+        _ImguiWindowPropertyFunctor_LightComponent.Refresh(scene_layer_sptr->ActiveScene_GetComponent<LightComponent>(_SelectedEntityId));
     }
 }
 

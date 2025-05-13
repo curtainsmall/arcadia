@@ -4,15 +4,17 @@
 
 #include "core/event.hpp"
 #include "function/physics/physics_simulator.hpp"
-#include "function/render/renderer.hpp"
 #include "platform/api_def.hpp"
-#include "ui/imgui_window.hpp"
 #include "function/render/renderer_events.hpp"
 #include "function/physics/physics_events.hpp"
+#include "function/render/renderer_layer.hpp"
+#include "function/physics/physics_layer.hpp"
 #include "resource/scene_events.hpp"
+#include "resource/scene_layer.hpp"
 
 #include "project/project.hpp"
 #include "project/project_events.hpp"
+#include "ui/imgui_window.hpp"
 #include "ui/ui_events.hpp"
 
 namespace Arcadia
@@ -22,7 +24,7 @@ namespace Arcadia
     public:
         using SelfType = ImguiWindowStateFunctor_Scene;
     public:
-        void operator()(const Scene& scene);
+        void operator()(const std::shared_ptr<SceneLayer>& scene_layer);
     };
 
     class ImguiWindowStateFunctor_Renderer
@@ -30,7 +32,7 @@ namespace Arcadia
     public:
         using SelfType = ImguiWindowStateFunctor_Renderer;
     public:
-        void operator()(const RendererInterface& renderer);
+        void operator()(const std::shared_ptr<RendererLayer>& renderer_layer);
     };
 
     class ImguiWindowStateFunctor_PhysicsSimulator
@@ -38,7 +40,7 @@ namespace Arcadia
     public:
         using SelfType = ImguiWindowStateFunctor_PhysicsSimulator;
     public:
-        void operator()(PhysicsSimulator& physics_simulator);
+        void operator()(const std::shared_ptr<PhysicsLayer>& physics_layer);
     private:
         bool _EnabledModifyingTempAllocatorSize{ false };
         bool _ShouldLinkUpsAndSpu{ true };
@@ -62,18 +64,8 @@ namespace Arcadia
 
     private:
         void _OnOpenImguiWindow(Events::OpenImguiWindow& e);
-        void _OnSceneActivated(Events::SceneActivated& e);
-        void _OnSceneDeactivated(Events::SceneDeactivated& e);
-        void _OnRendererBuilt(Events::RendererBuilt& e);
-        void _OnRendererUnbuilt(Events::RendererUnbuilt& e);
-        void _OnPhysicsSimulatorBuilt(Events::PhysicsSimulatorBuilt& e);
-        void _OnPhysicsSimulatorUnbuilt(Events::PhysicsSimulatorUnbuilt& e);
 
     private:
-        std::weak_ptr<Scene> _wpScene{};
-        std::weak_ptr<RendererInterface> _wpRenderer{};
-        std::weak_ptr<PhysicsSimulator> _wpPhysicsSimulator{};
-
         ImguiWindowStateFunctor_Scene _ImguiWindowStateFunctor_Scene{};
         ImguiWindowStateFunctor_Renderer _ImguiWindowStateFunctor_Renderer{};
         ImguiWindowStateFunctor_PhysicsSimulator _ImguiWindowStateFunctor_PhysicsSimulator{};

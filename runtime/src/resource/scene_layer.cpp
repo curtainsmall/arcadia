@@ -32,6 +32,7 @@ void Arcadia::SceneLayer::OnEvent(EventBase& event)
         .Dispatch<Events::NewEntity>(ACDA_BIND_MEMBER_FN(_OnNewEntity))
         .Dispatch<Events::RenameEntity>(ACDA_BIND_MEMBER_FN(_OnRenameEntity))
         .Dispatch<Events::DeleteEntity>(ACDA_BIND_MEMBER_FN(_OnDeleteEntity))
+        .Dispatch<Events::UpdateEntityInfo>(ACDA_BIND_MEMBER_FN(_OnUpdateEntityInfo))
         .Dispatch<Events::AddComponent>(ACDA_BIND_MEMBER_FN(_OnAddComponent))
         .Dispatch<Events::RemoveComponent>(ACDA_BIND_MEMBER_FN(_OnRemoveComponent))
         .IsDispatched();
@@ -43,18 +44,24 @@ void Arcadia::SceneLayer::OnUpdate()
     {
         for(auto& [entity_id, entity_info] : _spActiveScene->GetEntityInfoStorage())
         {
-            EventQueue::Instance()
-                .Signal<Events::RendererSetEntity>(
-                    entity_id,
-                    Events::RendererSetEntity::ActionType::Update
-                );
+            if(entity_info.Displayed)
+            {
+                EventQueue::Instance()
+                    .Signal<Events::RendererSetEntity>(
+                        entity_id,
+                        Events::RendererSetEntity_ActionType::Add
+                    );
+            }
+            else
+            {
+                EventQueue::Instance()
+                    .Signal<Events::RendererSetEntity>(
+                        entity_id,
+                        Events::RendererSetEntity_ActionType::Remove
+                    );
+            }
         }
     }
-}
-
-auto Arcadia::SceneLayer::HasActiveScene() const -> bool
-{
-    return !!_spActiveScene;
 }
 
 auto Arcadia::SceneLayer::GetActiveSceneShared() -> std::shared_ptr<Scene>&
@@ -106,16 +113,9 @@ auto Arcadia::SceneLayer::HasScene(const std::string& name) const -> bool
     return _SceneStorage.contains(name);
 }
 
-auto Arcadia::SceneLayer::GetSceneShared(const std::string& name) -> std::shared_ptr<Scene>&
+auto Arcadia::SceneLayer::HasActiveScene() const -> bool
 {
-    ACDA_ASSERT(HasScene(name));
-    return _SceneStorage.at(name);
-}
-
-auto Arcadia::SceneLayer::GetSceneShared(const std::string& name) const -> const std::shared_ptr<Scene>&
-{
-    ACDA_ASSERT(HasScene(name));
-    return _SceneStorage.at(name);
+    return !!_spActiveScene;
 }
 
 void Arcadia::SceneLayer::CreateScene(const std::string& name)
@@ -146,7 +146,7 @@ void Arcadia::SceneLayer::CreateScene(const nlohmann::json& json)
 auto Arcadia::SceneLayer::SaveScene(const std::string& name) -> nlohmann::json
 {
     nlohmann::json json = nlohmann::json::array();
-    json.push_back(GetSceneShared(name)->ToJson());
+    json.push_back(_SceneStorage.at(name)->ToJson());
     return json;
 }
 
@@ -183,9 +183,49 @@ auto Arcadia::SceneLayer::GetSceneStorage() const -> const SceneStorageType&
     return _SceneStorage;
 }
 
-auto Arcadia::SceneLayer::IsSceneModified() const -> bool
+auto Arcadia::SceneLayer::ActiveScene_GetName() const -> const std::string&
 {
-    return _SceneModified;
+    return _spActiveScene->GetName();
+}
+
+auto Arcadia::SceneLayer::ActiveScene_ContainsEntity(EntityId entity_id) const -> bool
+{
+    return _spActiveScene->ContainsEntity(entity_id);
+}
+
+auto Arcadia::SceneLayer::ActiveScene_IsEntityNameUsed(const std::string& entity_name) const -> bool
+{
+    return _spActiveScene->IsEntityNameUsed(entity_name);
+}
+
+auto Arcadia::SceneLayer::ActiveScene_GetEntityIdByName(const std::string& entity_name) const -> EntityId
+{
+    return _spActiveScene->GetEntityIdByName(entity_name);
+}
+
+auto Arcadia::SceneLayer::ActiveScene_GetEntityCount() const -> std::size_t
+{
+    return _spActiveScene->GetEntityCount();
+}
+
+auto Arcadia::SceneLayer::ActiveScene_GetEntityCount(const std::function<bool(EntityId, const EntityInfo&)>& pred) const -> std::size_t
+{
+    return _spActiveScene->GetEntityCount(pred);
+}
+
+auto Arcadia::SceneLayer::ActiveScene_GetEntityInfo(EntityId entity_id) const -> const EntityInfo&
+{
+    return _spActiveScene->GetEntityInfo(entity_id);
+}
+
+auto Arcadia::SceneLayer::ActiveScene_GetEntityInfoStorage() const -> const Scene::EntityInfoStorageType&
+{
+    return _spActiveScene->GetEntityInfoStorage();
+}
+
+auto Arcadia::SceneLayer::IsActiveSceneModified() const -> bool
+{
+    return _ActiveSceneModified;
 }
 
 void Arcadia::SceneLayer::_OnCreateScene(Events::CreateScene& e)
@@ -195,25 +235,25 @@ void Arcadia::SceneLayer::_OnCreateScene(Events::CreateScene& e)
     {
         SetActiveScene(e.Name);
     }
-    _SceneModified = true;
+    _ActiveSceneModified = true;
 }
 
 void Arcadia::SceneLayer::_OnRenameScene(Events::RenameScene& e)
 {
     RenameScene(GetActiveSceneShared()->GetName(), e.NewName);
-    _SceneModified = true;
+    _ActiveSceneModified = true;
 }
 
 void Arcadia::SceneLayer::_OnSelectScene(Events::SelectScene& e)
 {
     SetActiveScene(e.Name);
-    _SceneModified = true;
+    _ActiveSceneModified = true;
 }
 
 void Arcadia::SceneLayer::_OnCloseScene(Events::CloseScene& e)
 {
     SetActiveScene();
-    _SceneModified = true;
+    _ActiveSceneModified = true;
 }
 
 void Arcadia::SceneLayer::_OnDeleteScene(Events::DeleteScene& e)
@@ -238,7 +278,7 @@ void Arcadia::SceneLayer::_OnDeleteScene(Events::DeleteScene& e)
             break;
         }
     }
-    _SceneModified = true;
+    _ActiveSceneModified = true;
 }
 
 void Arcadia::SceneLayer::_OnNewEntity(Events::NewEntity& e)
@@ -259,44 +299,49 @@ void Arcadia::SceneLayer::_OnNewEntity(Events::NewEntity& e)
         e.EntityTypeString,
         std::string("actor"),
         [&]()
-        {
-            scene.EmplaceComponent<ModelComponent>(entity_id);
+    {
+        scene.EmplaceComponent<ModelComponent>(entity_id);
 
-            scene.EmplaceComponent<PhysicsComponent>(entity_id);
+        scene.EmplaceComponent<PhysicsComponent>(entity_id);
 
-            TransformComponent& transform_comp = scene.EmplaceComponent<TransformComponent>(entity_id);
-            transform_comp.AddFlag(TransformComponentFlags::UseRotation);
-        },
+        TransformComponent& transform_comp = scene.EmplaceComponent<TransformComponent>(entity_id);
+        transform_comp.AddFlag(TransformComponentFlags::UseRotation);
+    },
         std::string("camera"),
         [&]()
-        {
-            scene.EmplaceComponent<CameraComponent>(entity_id);
+    {
+        scene.EmplaceComponent<CameraComponent>(entity_id);
 
-            TransformComponent& transform_comp = scene.EmplaceComponent<TransformComponent>(entity_id);
-            transform_comp.AddFlag(TransformComponentFlags::UseDirection);
-        },
+        TransformComponent& transform_comp = scene.EmplaceComponent<TransformComponent>(entity_id);
+        transform_comp.AddFlag(TransformComponentFlags::UseDirection);
+    },
         std::string("light"),
         [&]()
-        {
-            scene.EmplaceComponent<LightComponent>(entity_id);
+    {
+        scene.EmplaceComponent<LightComponent>(entity_id);
 
-            TransformComponent& transform_comp = scene.EmplaceComponent<TransformComponent>(entity_id);
-            transform_comp.AddFlag(TransformComponentFlags::UseDirection);
-        }
+        TransformComponent& transform_comp = scene.EmplaceComponent<TransformComponent>(entity_id);
+        transform_comp.AddFlag(TransformComponentFlags::UseDirection);
+    }
     );
-    _SceneModified = true;
+    _ActiveSceneModified = true;
 }
 
 void Arcadia::SceneLayer::_OnRenameEntity(Events::RenameEntity& e)
 {
     GetActiveSceneShared()->RenameEntity(e.EntityId, e.NewName);
-    _SceneModified = true;
+    _ActiveSceneModified = true;
 }
 
 void Arcadia::SceneLayer::_OnDeleteEntity(Events::DeleteEntity& e)
 {
     GetActiveSceneShared()->DestroyEntity(e.EntityId);
-    _SceneModified = true;
+    _ActiveSceneModified = true;
+}
+
+void Arcadia::SceneLayer::_OnUpdateEntityInfo(Events::UpdateEntityInfo& e)
+{
+    e.EntityInfoModifier(_spActiveScene->GetEntityInfo(e.EntityId));
 }
 
 void Arcadia::SceneLayer::_OnAddComponent(Events::AddComponent& e)
@@ -307,26 +352,26 @@ void Arcadia::SceneLayer::_OnAddComponent(Events::AddComponent& e)
         e.ComponentTypeString,
         CameraComponent::GetTypeStringStatic(),
         [&]()
-        {
-            scene.EmplaceComponent<CameraComponent>(e.EntityId);
-        },
+    {
+        scene.EmplaceComponent<CameraComponent>(e.EntityId);
+    },
         LightComponent::GetTypeStringStatic(),
         [&]()
-        {
-            scene.EmplaceComponent<LightComponent>(e.EntityId);
-        },
+    {
+        scene.EmplaceComponent<LightComponent>(e.EntityId);
+    },
         ModelComponent::GetTypeStringStatic(),
         [&]()
-        {
-            scene.EmplaceComponent<ModelComponent>(e.EntityId);
-        },
+    {
+        scene.EmplaceComponent<ModelComponent>(e.EntityId);
+    },
         PhysicsComponent::GetTypeStringStatic(),
         [&]()
-        {
-            scene.EmplaceComponent<PhysicsComponent>(e.EntityId);
-        }
+    {
+        scene.EmplaceComponent<PhysicsComponent>(e.EntityId);
+    }
     );
-    _SceneModified = true;
+    _ActiveSceneModified = true;
 }
 
 void Arcadia::SceneLayer::_OnRemoveComponent(Events::RemoveComponent& e)
@@ -337,24 +382,24 @@ void Arcadia::SceneLayer::_OnRemoveComponent(Events::RemoveComponent& e)
         e.ComponentTypeString,
         CameraComponent::GetTypeStringStatic(),
         [&]()
-        {
-            scene.RemoveComponent<CameraComponent>(e.EntityId);
-        },
+    {
+        scene.RemoveComponent<CameraComponent>(e.EntityId);
+    },
         LightComponent::GetTypeStringStatic(),
         [&]()
-        {
-            scene.RemoveComponent<LightComponent>(e.EntityId);
-        },
+    {
+        scene.RemoveComponent<LightComponent>(e.EntityId);
+    },
         ModelComponent::GetTypeStringStatic(),
         [&]()
-        {
-            scene.RemoveComponent<ModelComponent>(e.EntityId);
-        },
+    {
+        scene.RemoveComponent<ModelComponent>(e.EntityId);
+    },
         PhysicsComponent::GetTypeStringStatic(),
         [&]()
-        {
-            scene.RemoveComponent<PhysicsComponent>(e.EntityId);
-        }
+    {
+        scene.RemoveComponent<PhysicsComponent>(e.EntityId);
+    }
     );
-    _SceneModified = true;
+    _ActiveSceneModified = true;
 }

@@ -22,10 +22,12 @@
 
 Arcadia::ProjectLayer::ProjectLayer():
     LayerInterface("project")
-{}
+{
+}
 
 Arcadia::ProjectLayer::~ProjectLayer()
-{}
+{
+}
 
 void Arcadia::ProjectLayer::OnEvent(EventBase& e)
 {
@@ -42,7 +44,8 @@ void Arcadia::ProjectLayer::OnEvent(EventBase& e)
 }
 
 void Arcadia::ProjectLayer::OnUpdate()
-{}
+{
+}
 
 auto Arcadia::ProjectLayer::HasProject() const -> bool
 {
@@ -257,7 +260,7 @@ void Arcadia::ProjectLayer::_OnCloseProject(Events::CloseProject& e)
     std::shared_ptr<SceneLayer> scene_layer_sptr = EditorContext::Instance().wpMainSceneLayer.lock();
 
     CommandList& cmd_list = CommandList::Instance();
-    if(cmd_list.GetSize() || _ProjectModified || scene_layer_sptr->IsSceneModified())
+    if(cmd_list.GetSize() || _ProjectModified || scene_layer_sptr->IsActiveSceneModified())
     {
         pfd::button res = pfd::message{
                         "Unsaved",

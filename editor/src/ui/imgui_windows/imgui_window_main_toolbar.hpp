@@ -20,16 +20,12 @@ namespace Arcadia
     public:
         ImguiWindowMainToolbar():
             ImguiWindowInterface(true, "Toolbar")
-        {}
+        {
+        }
         virtual ~ImguiWindowMainToolbar() = default;
 
         virtual void OnEvent(EventBase& e) override;
         virtual void OnUpdate() override;
 
-    private:
-        void _OnSceneActivated(Events::SceneActivated& e);
-        void _OnSceneDeactivated(Events::SceneDeactivated& e);
-    private:
-        std::weak_ptr<Scene> _wpScene{};
     };
 }

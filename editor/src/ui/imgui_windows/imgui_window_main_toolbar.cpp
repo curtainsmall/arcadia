@@ -11,15 +11,11 @@
 
 void Arcadia::ImguiWindowMainToolbar::OnEvent(EventBase& e)
 {
-    EventDispatcher{ e }
-        .Dispatch<Events::SceneActivated>(ACDA_BIND_MEMBER_FN(_OnSceneActivated))
-        .Dispatch<Events::SceneDeactivated>(ACDA_BIND_MEMBER_FN(_OnSceneDeactivated))
-        .IsDispatched();
 }
 
 void Arcadia::ImguiWindowMainToolbar::OnUpdate()
 {
-    std::shared_ptr<Scene> scene_sptr = _wpScene.lock();
+    std::shared_ptr<SceneLayer> scene_layer_sptr = EditorContext::Instance().wpMainSceneLayer.lock();
 
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, glm::vec2{ 0,0 });
     ImGuiWindowFlags window_flags =
@@ -75,7 +71,7 @@ void Arcadia::ImguiWindowMainToolbar::OnUpdate()
         }
         ImGui::SetItemTooltip(" Redo ");
 
-        if(scene_sptr)
+        if(scene_layer_sptr->HasActiveScene())
         {
             ImGui::SameLine();
             if(EditorContext::Instance().InPlayMode)
@@ -98,12 +94,3 @@ void Arcadia::ImguiWindowMainToolbar::OnUpdate()
     ImGui::PopStyleVar();
 }
 
-void Arcadia::ImguiWindowMainToolbar::_OnSceneActivated(Events::SceneActivated& e)
-{
-    _wpScene = e.spScene;
-}
-
-void Arcadia::ImguiWindowMainToolbar::_OnSceneDeactivated(Events::SceneDeactivated& e)
-{
-    _wpScene.reset();
-}
