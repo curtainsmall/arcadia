@@ -4,9 +4,9 @@
 #include <string>
 #include <unordered_map>
 
-#include "core/layer.hpp"
 #include "core/event.hpp"
 #include "core/exception.hpp"
+#include "core/layer.hpp"
 #include "resource/scene.hpp"
 #include "resource/scene_events.hpp"
 
@@ -24,7 +24,7 @@ namespace Arcadia
         using SelfType = SceneLayer;
     public:
         SceneLayer();
-        virtual ~SceneLayer();
+        virtual ~SceneLayer() override = default;
 
         virtual void OnEvent(EventBase& event);
         virtual void OnUpdate();

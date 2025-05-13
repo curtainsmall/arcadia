@@ -10,10 +10,6 @@ Arcadia::PhysicsLayer::PhysicsLayer():
     _spPhysicsSimulator = std::make_shared<PhysicsSimulator>();
 }
 
-Arcadia::PhysicsLayer::~PhysicsLayer()
-{
-}
-
 void Arcadia::PhysicsLayer::OnEvent(EventBase& event)
 {
     EventDispatcher(event)

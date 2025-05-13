@@ -3,15 +3,16 @@
 #include "core/app/app_context.hpp"
 #include "core/assert.hpp"
 #include "core/function.hpp"
-#include "function/window/window_events.hpp"
-#include "function/render/renderer_layer.hpp"
 #include "function/physics/physics_layer.hpp"
+#include "function/render/renderer_layer.hpp"
+#include "function/window/window_events.hpp"
 #include "resource/components/camera_component.hpp"
 #include "resource/components/model_component.hpp"
 #include "resource/components/physics_component.hpp"
 #include "resource/components/transform_component.hpp"
 
 #include "editor/editor_context.hpp"
+#include "project/project_layer.hpp"
 
 Arcadia::ImguiWindowViewport::ImguiWindowViewport(bool open, const std::string& title):
     ImguiWindowInterface(open, title)
@@ -23,8 +24,6 @@ void Arcadia::ImguiWindowViewport::OnEvent(EventBase& e)
     EventDispatcher{ e }
         .Dispatch<Events::InputCursorMove>(ACDA_BIND_MEMBER_FN(_OnInputCursorMove))
         .Dispatch<Events::OpenImguiWindow>(ACDA_BIND_MEMBER_FN(_OnOpenImguiWindow))
-        .Dispatch<Events::ProjectBuilt>(ACDA_BIND_MEMBER_FN(_OnProjectBuilt))
-        .Dispatch<Events::ProjectUnbuilt>(ACDA_BIND_MEMBER_FN(_OnProjectUnbuilt))
         .Dispatch<Events::SceneActivated>(ACDA_BIND_MEMBER_FN(_OnSceneActivated))
         .Dispatch<Events::SceneDeactivated>(ACDA_BIND_MEMBER_FN(_OnSceneDeactivated))
         .Dispatch<Events::SelectEntity>(ACDA_BIND_MEMBER_FN(_OnSelectEntity))
@@ -44,7 +43,6 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
     std::shared_ptr<SceneLayer> scene_layer_sptr = EditorContext::Instance().wpMainSceneLayer.lock();
     std::shared_ptr<PhysicsLayer> physics_layer_sptr = EditorContext::Instance().wpMainPhysicsLayer.lock();
     std::shared_ptr<RendererLayer> renderer_layer_sptr = EditorContext::Instance().wpMainRendererLayer.lock();
-    std::shared_ptr<Project> project_sptr = _wpProject.lock();
 
     const AppContext& app_context = AppContext::Instance();
 
@@ -316,7 +314,7 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
                             default:
                                 break;
                         }
-                        (void) description;
+                        (void)description;
                     }
                 }
             }
@@ -337,16 +335,6 @@ void Arcadia::ImguiWindowViewport::_OnOpenImguiWindow(Events::OpenImguiWindow& e
     {
         _Opened = true;
     }
-}
-
-void Arcadia::ImguiWindowViewport::_OnProjectBuilt(Events::ProjectBuilt& e)
-{
-    _wpProject = e.spProject;
-}
-
-void Arcadia::ImguiWindowViewport::_OnProjectUnbuilt(Events::ProjectUnbuilt& e)
-{
-    _wpProject.reset();
 }
 
 void Arcadia::ImguiWindowViewport::_OnSceneActivated(Events::SceneActivated& e)
@@ -386,7 +374,6 @@ void Arcadia::ImguiWindowViewport::_OnSceneActivated(Events::SceneActivated& e)
             );
     }
     EventQueue::Instance().Signal<Events::RendererSetActive>(true);
-
 }
 
 void Arcadia::ImguiWindowViewport::_OnSceneDeactivated(Events::SceneDeactivated& e)

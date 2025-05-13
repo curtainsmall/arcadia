@@ -43,7 +43,7 @@ namespace Arcadia
             bool open,
             const std::string& title
         );
-        virtual ~ImguiWindowViewport() = default;
+        virtual ~ImguiWindowViewport() override = default;
 
         virtual void OnEvent(EventBase& e) override;
         virtual void OnUpdate() override;
@@ -51,8 +51,6 @@ namespace Arcadia
     private:
         void _OnInputCursorMove(Events::InputCursorMove& e);
         void _OnOpenImguiWindow(Events::OpenImguiWindow& e);
-        void _OnProjectBuilt(Events::ProjectBuilt& e);
-        void _OnProjectUnbuilt(Events::ProjectUnbuilt& e);
         void _OnSceneActivated(Events::SceneActivated& e);
         void _OnSceneDeactivated(Events::SceneDeactivated& e);
         void _OnSelectEntity(Events::SelectEntity& e);
@@ -62,8 +60,6 @@ namespace Arcadia
 
     private:
         static inline std::string _ViewportCameraEntityName{ "viewport_camera" };
-
-        std::weak_ptr<Project> _wpProject{};
 
         EntityId _SelectedEntityId{};
         EntityId _ViewportCameraEntityId{};

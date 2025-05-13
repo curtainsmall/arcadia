@@ -16,8 +16,9 @@ namespace Arcadia
 
         ImguiWindowMainStatusbar():
             ImguiWindowInterface(true, "Statusbar")
-        {}
-        virtual ~ImguiWindowMainStatusbar() = default;
+        {
+        }
+        virtual ~ImguiWindowMainStatusbar() override = default;
 
         virtual void OnEvent(EventBase& e) override;
         virtual void OnUpdate() override;

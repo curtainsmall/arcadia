@@ -14,20 +14,15 @@ Arcadia::RendererLayer::RendererLayer(const GraphicApi::Type& graphic_api, std::
     MatchVariant<void>(
         graphic_api,
         [&](const GraphicApi::Opengl&)
-    {
-        static OpenglContext gl_context{};
-        _spRenderer = std::make_shared<GlRenderer>(working_directory / ToFilepath("shaders/opengl"));
-    },
+        {
+            static OpenglContext gl_context{};
+            _spRenderer = std::make_shared<GlRenderer>(working_directory / ToFilepath("shaders/opengl"));
+        },
         [](auto&&)
-    {
-        ACDA_UNREACHABLE("Unknown renderer type");
-    }
+        {
+            ACDA_UNREACHABLE("Unknown renderer type");
+        }
     );
-
-}
-
-Arcadia::RendererLayer::~RendererLayer()
-{
 }
 
 void Arcadia::RendererLayer::OnEvent(EventBase& event)

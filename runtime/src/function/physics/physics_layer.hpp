@@ -15,7 +15,7 @@ namespace Arcadia
         using SelfType = PhysicsLayer;
     public:
         PhysicsLayer();
-        virtual ~PhysicsLayer() override;
+        virtual ~PhysicsLayer() override = default;
 
         virtual void OnEvent(EventBase& event) override;
         virtual void OnUpdate() override;

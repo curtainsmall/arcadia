@@ -22,10 +22,9 @@ namespace Arcadia
             ImguiWindowInterface(true, "Toolbar")
         {
         }
-        virtual ~ImguiWindowMainToolbar() = default;
+        virtual ~ImguiWindowMainToolbar() override = default;
 
         virtual void OnEvent(EventBase& e) override;
         virtual void OnUpdate() override;
-
     };
 }

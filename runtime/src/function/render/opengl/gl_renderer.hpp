@@ -82,7 +82,7 @@ namespace Arcadia
         };
     public:
         GlRenderer(const std::filesystem::path& gl_shader_folder_path);
-        virtual ~GlRenderer() = default;
+        virtual ~GlRenderer() override = default;
 
         [[nodiscard]]
         virtual auto HasScene() const -> bool override;

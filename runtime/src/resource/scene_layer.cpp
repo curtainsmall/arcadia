@@ -17,10 +17,6 @@ Arcadia::SceneLayer::SceneLayer():
 {
 }
 
-Arcadia::SceneLayer::~SceneLayer()
-{
-}
-
 void Arcadia::SceneLayer::OnEvent(EventBase& event)
 {
     EventDispatcher(event)

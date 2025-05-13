@@ -25,10 +25,10 @@ namespace Arcadia
             bool open,
             const std::string& title
         );
-        virtual ~ImguiWindowOutliner() = default;
+        virtual ~ImguiWindowOutliner() override = default;
 
-        virtual void OnEvent(EventBase& e);
-        virtual void OnUpdate();
+        virtual void OnEvent(EventBase& e) override;
+        virtual void OnUpdate() override;
 
     private:
         template<Concepts::Component Component>

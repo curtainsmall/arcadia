@@ -1,14 +1,14 @@
 #include "imgui_window_main_manubar.hpp"
 
 #include "core/assert.hpp"
-#include "core/pfd.hpp"
 #include "core/function.hpp"
+#include "core/pfd.hpp"
 #include "platform/graphic_api.hpp"
 #include "resource/fonts/icon.hpp"
 
+#include "editor/editor_context.hpp"
 #include "ui/imgui.hpp"
 #include "ui/ui_events.hpp"
-#include "editor/editor_context.hpp"
 
 void Arcadia::ImguiWindowPopupFunctor_CreateProject::operator()()
 {
@@ -34,7 +34,7 @@ void Arcadia::ImguiWindowPopupFunctor_CreateProject::operator()()
         ImGuiInputTextFlags input_text_flags =
             ImGuiInputTextFlags_AutoSelectAll;
         ImGui::Text("Project name");
-        (void) ImGui::InputText("##project_name", &_Name, input_text_flags);
+        (void)ImGui::InputText("##project_name", &_Name, input_text_flags);
 
         if(ImGui::Button("Project location"))
         {
@@ -197,7 +197,7 @@ void Arcadia::ImguiWindowPopupFunctor_RenameScene::operator()()
         if(_NewName.empty() || _NewName == _PrevName || !_NameAvailable)
         {
             ImGui::BeginDisabled();
-            (void) ImGui::Button("Confirm");
+            (void)ImGui::Button("Confirm");
             ImGui::EndDisabled();
         }
         else
@@ -228,10 +228,6 @@ void Arcadia::ImguiWindowPopupFunctor_RenameScene::operator()()
 
 void Arcadia::ImguiWindowMainMenubar::OnEvent(EventBase& e)
 {
-    EventDispatcher{ e }
-        .Dispatch<Events::ProjectBuilt>(ACDA_BIND_MEMBER_FN(_OnProjectBuilt))
-        .Dispatch<Events::ProjectUnbuilt>(ACDA_BIND_MEMBER_FN(_OnProjectUnbuilt))
-        .IsDispatched();
 }
 
 void Arcadia::ImguiWindowMainMenubar::OnUpdate()
@@ -249,7 +245,7 @@ void Arcadia::ImguiWindowMainMenubar::OnUpdate()
 
 void Arcadia::ImguiWindowMainMenubar::_ShowFileMenu()
 {
-    std::shared_ptr<Project> project_sptr = _wpProject.lock();
+    std::shared_ptr<ProjectLayer> project_layer_sptr = EditorContext::Instance().wpMainProjectLayer.lock();
 
     EventQueue& event_queue = EventQueue::Instance();
 
@@ -264,15 +260,15 @@ void Arcadia::ImguiWindowMainMenubar::_ShowFileMenu()
         {
             event_queue.Signal<Events::OpenProject>();
         }
-        if(ImGui::MenuItem("Save Project", nullptr, nullptr, !!project_sptr))
+        if(ImGui::MenuItem("Save Project", nullptr, nullptr, project_layer_sptr->HasProject()))
         {
             event_queue.Signal<Events::SaveProject>();
         }
-        if(ImGui::MenuItem("Save Project As...", nullptr, nullptr, !!project_sptr))
+        if(ImGui::MenuItem("Save Project As...", nullptr, nullptr, project_layer_sptr->HasProject()))
         {
             event_queue.Signal<Events::SaveProjectAs>();
         }
-        if(ImGui::MenuItem("Close Project", nullptr, nullptr, !!project_sptr))
+        if(ImGui::MenuItem("Close Project", nullptr, nullptr, project_layer_sptr->HasProject()))
         {
             event_queue.Signal<Events::CloseProject>();
         }
@@ -284,9 +280,9 @@ void Arcadia::ImguiWindowMainMenubar::_ShowFileMenu()
 void Arcadia::ImguiWindowMainMenubar::_ShowEditMenu()
 {
     std::shared_ptr<SceneLayer> scene_layer_sptr = EditorContext::Instance().wpMainSceneLayer.lock();
-    std::shared_ptr<Project> project_sptr = _wpProject.lock();
+    std::shared_ptr<ProjectLayer> project_layer_sptr = EditorContext::Instance().wpMainProjectLayer.lock();
 
-    if(project_sptr)
+    if(project_layer_sptr->HasProject())
     {
         _ImguiWindowPopupFunctor_CreateScene();
         _ImguiWindowPopupFunctor_RenameScene();
@@ -294,17 +290,17 @@ void Arcadia::ImguiWindowMainMenubar::_ShowEditMenu()
     EventQueue& event_queue = EventQueue::Instance();
     if(ImGui::BeginMenu("Edit"))
     {
-        if(ImGui::MenuItem("New Scene ...", nullptr, nullptr, !!project_sptr))
+        if(ImGui::MenuItem("New Scene ...", nullptr, nullptr, project_layer_sptr->HasProject()))
         {
             _ImguiWindowPopupFunctor_CreateScene.Opened = true;
         }
 
-        bool has_scene = project_sptr && scene_layer_sptr->HasScene();
+        bool has_scene = project_layer_sptr->HasProject() && scene_layer_sptr->HasScene();
         bool has_active_scene = has_scene && scene_layer_sptr->HasActiveScene();
 
         if(ImGui::BeginMenu("Select Scene", has_scene))
         {
-            ACDA_ASSERT(project_sptr);
+            ACDA_ASSERT(project_layer_sptr->HasProject());
 
             for(const auto& [key, scene] : scene_layer_sptr->GetSceneStorage())
             {
@@ -364,14 +360,4 @@ void Arcadia::ImguiWindowMainMenubar::_ShowOptionMenu()
 
         ImGui::EndMenu();
     }
-}
-
-void Arcadia::ImguiWindowMainMenubar::_OnProjectBuilt(Events::ProjectBuilt& e)
-{
-    _wpProject = e.spProject;
-}
-
-void Arcadia::ImguiWindowMainMenubar::_OnProjectUnbuilt(Events::ProjectUnbuilt& e)
-{
-    _wpProject.reset();
 }

@@ -3,12 +3,12 @@
 #include <memory>
 
 #include "core/event.hpp"
-#include "function/physics/physics_simulator.hpp"
-#include "platform/api_def.hpp"
-#include "function/render/renderer_events.hpp"
 #include "function/physics/physics_events.hpp"
-#include "function/render/renderer_layer.hpp"
 #include "function/physics/physics_layer.hpp"
+#include "function/physics/physics_simulator.hpp"
+#include "function/render/renderer_events.hpp"
+#include "function/render/renderer_layer.hpp"
+#include "platform/api_def.hpp"
 #include "resource/scene_events.hpp"
 #include "resource/scene_layer.hpp"
 
@@ -57,7 +57,7 @@ namespace Arcadia
             bool open,
             const std::string& title
         );
-        virtual ~ImguiWindowState() = default;
+        virtual ~ImguiWindowState() override = default;
 
         virtual void OnEvent(EventBase& e) override;
         virtual void OnUpdate() override;

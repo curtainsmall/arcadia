@@ -15,11 +15,11 @@
 #include "resource/components/model_component.hpp"
 #include "resource/components/physics_component.hpp"
 #include "resource/components/transform_component.hpp"
-#include "resource/scene_layer.hpp"
 #include "resource/scene_events.hpp"
+#include "resource/scene_layer.hpp"
 
-#include "editor/editor_layer.hpp"
 #include "editor/editor_context.hpp"
+#include "editor/editor_layer.hpp"
 #include "project/project_events.hpp"
 #include "ui/imgui.hpp"
 #include "ui/imgui_window.hpp"
@@ -146,7 +146,7 @@ namespace Arcadia
             bool open,
             const std::string& title
         );
-        virtual ~ImguiWindowProperty() = default;
+        virtual ~ImguiWindowProperty() override = default;
 
         virtual void OnEvent(EventBase& e) override;
         virtual void OnUpdate() override;

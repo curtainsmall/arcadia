@@ -66,8 +66,9 @@ namespace Arcadia
         ImguiWindowMainMenubar(const std::initializer_list<std::tuple<std::string, std::string>>& imgui_window_title_id_pairs):
             ImguiWindowInterface(true, "Main Menubar"),
             _ImguiWindowTitleAndIdStringPairs(imgui_window_title_id_pairs)
-        {}
-        virtual ~ImguiWindowMainMenubar() = default;
+        {
+        }
+        virtual ~ImguiWindowMainMenubar() override = default;
 
         virtual void OnEvent(EventBase& e) override;
         virtual void OnUpdate() override;
@@ -77,15 +78,10 @@ namespace Arcadia
         void _ShowViewMenu();
         void _ShowOptionMenu();
 
-        void _OnProjectBuilt(Events::ProjectBuilt& e);
-        void _OnProjectUnbuilt(Events::ProjectUnbuilt& e);
-
     private:
         ImguiWindowPopupFunctor_CreateProject _ImguiWindowPopupFunctor_CreateProject{};
         ImguiWindowPopupFunctor_CreateScene _ImguiWindowPopupFunctor_CreateScene{};
         ImguiWindowPopupFunctor_RenameScene _ImguiWindowPopupFunctor_RenameScene{};
-
-        std::weak_ptr<Project> _wpProject{};
 
         std::vector<std::tuple<std::string, std::string>> _ImguiWindowTitleAndIdStringPairs{};
 

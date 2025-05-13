@@ -20,7 +20,7 @@ namespace Arcadia
             const GraphicApi::Type& graphic_api,
             std::filesystem::path working_directory
         );
-        virtual ~RendererLayer() override;
+        virtual ~RendererLayer() override = default;
 
         virtual void OnEvent(EventBase& event) override;
         virtual void OnUpdate() override;
