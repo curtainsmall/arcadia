@@ -5,6 +5,10 @@
 
 namespace Arcadia::Events
 {
+    class PhysicsSimulatorReset: public EventBase
+    {
+    };
+
     class PhysicsSimulatirSetActive: public EventBase
     {
     public:
@@ -15,21 +19,6 @@ namespace Arcadia::Events
 
     public:
         const bool Active;
-    };
-
-    class PhysicsSimulatorReset: public EventBase
-    {
-    };
-
-    class PhysicsSimulatorSetScene: public EventBase
-    {
-    public:
-        PhysicsSimulatorSetScene(const std::shared_ptr<Scene>& scene_sptr):
-            spScene(scene_sptr)
-        {
-        }
-    public:
-        std::shared_ptr<Scene> spScene;
     };
 
     class PhysicsSimulatorSetEntity: public EventBase

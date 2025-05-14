@@ -33,9 +33,8 @@ namespace Arcadia
         auto GetUpdatesPerSecondCount() const->std::int32_t;
 
     private:
-        void _OnPhysicsSimulatorSetActive(Events::PhysicsSimulatirSetActive& e);
         void _OnPhysicsSimulatorReset(Events::PhysicsSimulatorReset& e);
-        void _OnPhysicsSimulatorSetScene(Events::PhysicsSimulatorSetScene& e);
+        void _OnPhysicsSimulatorSetActive(Events::PhysicsSimulatirSetActive& e);
         void _OnPhysicsSimulatorSetEntity(Events::PhysicsSimulatorSetEntity& e);
 
     private:

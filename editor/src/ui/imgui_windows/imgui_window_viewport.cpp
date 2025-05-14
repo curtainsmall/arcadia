@@ -357,9 +357,6 @@ void Arcadia::ImguiWindowViewport::_OnSceneActivated(Events::SceneActivated& e)
     }
     _ViewportCameraEntityId = scene_sptr->GetEntityIdByName(_ViewportCameraEntityName);
 
-    EventQueue::Instance().Signal<Events::RendererSetScene>(scene_sptr);
-    EventQueue::Instance().Signal<Events::PhysicsSimulatorSetScene>(scene_sptr);
-
     for(const auto& [entity_id, entity_info] : scene_sptr->GetEntityInfoStorage())
     {
         EventQueue::Instance()
@@ -379,9 +376,7 @@ void Arcadia::ImguiWindowViewport::_OnSceneActivated(Events::SceneActivated& e)
 void Arcadia::ImguiWindowViewport::_OnSceneDeactivated(Events::SceneDeactivated& e)
 {
     EventQueue::Instance().Signal<Events::RendererSetActive>(false);
-    EventQueue::Instance().Signal<Events::RendererSetScene>(nullptr);
     EventQueue::Instance().Signal<Events::PhysicsSimulatirSetActive>(false);
-    EventQueue::Instance().Signal<Events::PhysicsSimulatorSetScene>(nullptr);
 }
 
 void Arcadia::ImguiWindowViewport::_OnSelectEntity(Events::SelectEntity& e)

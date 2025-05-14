@@ -53,9 +53,6 @@ namespace Arcadia
         ~PhysicsSimulator();
 
         [[nodiscard]]
-        auto HasScene() const -> bool;
-        void SetScene(const std::shared_ptr<Scene>& scene_sptr);
-        [[nodiscard]]
         auto HasEntity(EntityId entity_id) const -> bool;
         void AddEntity(EntityId entity_id);
         void RemoveEntity(EntityId entity_id);
@@ -91,7 +88,6 @@ namespace Arcadia
 
         std::unordered_map<EntityId, JPH::BodyID> _JphBodyIdStorage{};
         std::unordered_set<EntityId> _EntityIdSet{};
-        std::shared_ptr<Scene> _spScene{};
 
         JphBroadPhaseLayerImpl _JphBroadPhaseLayer{};
         JphObjectVsBroadPhaseLayerFilterImpl _JphObjectVsBroadLayerFilter{};

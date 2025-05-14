@@ -7,6 +7,7 @@
 #include "core/match.hpp"
 #include "resource/components/physics_component.hpp"
 #include "resource/components/transform_component.hpp"
+#include "resource/scene_layer.hpp"
 
 Arcadia::PhysicsSimulator::PhysicsSimulator()
 {
@@ -28,22 +29,6 @@ Arcadia::PhysicsSimulator::~PhysicsSimulator()
     JPH::UnregisterTypes();
     delete JPH::Factory::sInstance;
     JPH::Factory::sInstance = nullptr;
-}
-
-auto Arcadia::PhysicsSimulator::HasScene() const -> bool
-{
-    return !!_spScene;
-}
-
-void Arcadia::PhysicsSimulator::SetScene(const std::shared_ptr<Scene>& scene_sptr)
-{
-    if(scene_sptr)
-    {
-        _spScene = scene_sptr;
-        return;
-    }
-    _Clear();
-    _EntityIdSet.clear();
 }
 
 auto Arcadia::PhysicsSimulator::HasEntity(EntityId entity_id) const -> bool
@@ -107,8 +92,8 @@ void Arcadia::PhysicsSimulator::Update()
 
     for(const EntityId& entity_id : _EntityIdSet)
     {
-        // Update entities
-        const EntityInfo& entity_info = _spScene->GetEntityInfo(entity_id);
+        std::shared_ptr<SceneLayer> scene_layer_sptr = LayerStack::Instance().GetLayerShared<SceneLayer>();
+        const EntityInfo& entity_info = scene_layer_sptr->ActiveScene_GetEntityInfo(entity_id);
 
         // For now, only actor entity has physics component
         if(entity_info.TypeString != "actor")
@@ -116,7 +101,7 @@ void Arcadia::PhysicsSimulator::Update()
             continue;
         }
 
-        auto [physics_comp, transform_comp] = _spScene->GetComponent<PhysicsComponent, TransformComponent>(entity_id);
+        auto [physics_comp, transform_comp] = scene_layer_sptr->ActiveScene_GetComponent<PhysicsComponent, TransformComponent>(entity_id);
 
         if(physics_comp.HasBodyInfo())
         {
@@ -145,6 +130,7 @@ void Arcadia::PhysicsSimulator::Reset()
         jph_body_interface.DestroyBody(body_id);
     }
     _JphBodyIdStorage.clear();
+    _EntityIdSet.clear();
 }
 
 auto Arcadia::PhysicsSimulator::IsActive() const -> bool
@@ -184,15 +170,16 @@ auto Arcadia::PhysicsSimulator::GetBodyCount() const->std::size_t
 
 void Arcadia::PhysicsSimulator::_BuildForEntity(EntityId entity_id, bool update_hint)
 {
-    const EntityInfo& entity = _spScene->GetEntityInfo(entity_id);
+    std::shared_ptr<SceneLayer> scene_layer_sptr = LayerStack::Instance().GetLayerShared<SceneLayer>();
+    const EntityInfo& entity_info = scene_layer_sptr->ActiveScene_GetEntityInfo(entity_id);
 
     // For now, only actor entity has physics component
-    if(entity.TypeString != "actor")
+    if(entity_info.TypeString != "actor")
     {
         return;
     }
 
-    const auto [physics_comp, transform_comp] = _spScene->GetComponent<PhysicsComponent, TransformComponent>(entity_id);
+    const auto [physics_comp, transform_comp] = scene_layer_sptr->ActiveScene_GetComponent<PhysicsComponent, TransformComponent>(entity_id);
 
     if(physics_comp.HasBodyInfo())
     {

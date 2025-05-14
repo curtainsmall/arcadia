@@ -21,17 +21,6 @@ namespace Arcadia::Events
         const bool Active;
     };
 
-    class RendererSetScene: public EventBase
-    {
-    public:
-        RendererSetScene(const std::shared_ptr<Scene>& scene_sptr):
-            spScene(scene_sptr)
-        {
-        }
-    public:
-        std::shared_ptr<Scene> spScene;
-    };
-
     class RendererSetEntity: public EventBase
     {
     public:

@@ -2,6 +2,7 @@
 
 #include "core/assert.hpp"
 #include "core/command.hpp"
+#include "function/physics/physics_events.hpp"
 #include "function/render/renderer_events.hpp"
 #include "resource/scene_events.hpp"
 #include "resource/scene_layer.hpp"
@@ -31,7 +32,8 @@ Arcadia::Project::~Project()
 {
     EventQueue::Instance()
         .Signal<Events::DestroyAllScenes>()
-        .Signal<Events::RendererReset>();
+        .Signal<Events::RendererReset>()
+        .Signal<Events::PhysicsSimulatorReset>();
 }
 
 auto Arcadia::Project::ToJson() const -> nlohmann::json
