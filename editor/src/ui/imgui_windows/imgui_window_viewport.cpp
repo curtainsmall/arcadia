@@ -2,6 +2,7 @@
 
 #include "core/app/app_context.hpp"
 #include "core/assert.hpp"
+#include "core/command.hpp"
 #include "core/function.hpp"
 #include "function/physics/physics_layer.hpp"
 #include "function/render/renderer_layer.hpp"
@@ -264,58 +265,115 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
                         glm::value_ptr(transform_mat)
                     );
 
+                    glm::vec3 scale{};
+                    glm::vec3 translation{};
+                    glm::vec3 rotation{};
+
                     // On use gizmo
                     if(ImGuizmo::IsUsing())
                     {
-                        glm::vec3
-                            scale{},
-                            translation{},
-                            rotation{};
-
                         Glm::Decompose(transform_mat, translation, rotation, scale);
-
-                        if(transform_comp.GetPosition() != translation
-                           || transform_comp.GetRotationEularAngle() != rotation
-                           || transform_comp.GetScale() != scale)
-                        {
-                            _GizmoEdited = true;
-                        }
-
-                        glm::vec3 delta_rotation = rotation - transform_comp.GetRotationEularAngle();
-                        transform_comp.IncreasePivot(translation - transform_comp.GetPosition());
-                        transform_comp.SetPosition(translation);
-                        transform_comp.IncreaseRotationEularAngle(delta_rotation);
-                        transform_comp.SetScale(scale);
+                        _GizmoEditState = GizmoEditState::Editing;
                     }
-
-                    // On release gizmo
-                    if(!ImGuizmo::IsUsingAny() && _GizmoEdited)
+                    else
                     {
-                        _GizmoEdited = false;
-
-                        std::string description{};
-                        switch(_GizmoOption)
-                        {
-                            case Arcadia::ImguiWindowViewport::GizmoOption::Translation:
-                            {
-                                description = "Translation";
-                                break;
-                            }
-                            case Arcadia::ImguiWindowViewport::GizmoOption::Rotation:
-                            {
-                                description = "Rotation";
-                                break;
-                            }
-                            case Arcadia::ImguiWindowViewport::GizmoOption::Scale:
-                            {
-                                description = "Scale";
-                                break;
-                            }
-                            default:
-                                break;
-                        }
-                        (void)description;
+                        translation = transform_comp.GetPosition();
+                        rotation = transform_comp.GetRotationEularAngle();
+                        scale = transform_comp.GetScale();
                     }
+
+                    if(!ImGuizmo::IsUsingAny() && _GizmoEditState == GizmoEditState::Editing)
+                    {
+                        _GizmoEditState = GizmoEditState::Edited;
+                    }
+
+                    switch(_GizmoOption)
+                    {
+                        case Arcadia::ImguiWindowViewport::GizmoOption::Translation:
+                        {
+                            if(_GizmoOriginPosition != translation)
+                            {
+                                if(_GizmoEditState == GizmoEditState::Edited)
+                                {
+                                    CommandList::Instance().Emplace(
+                                        "Transform - Position",
+                                        [&comp = transform_comp, value = translation, origin_ptr = &_GizmoOriginPosition]() -> void
+                                        {
+                                            comp.SetPosition(value);
+                                            *origin_ptr = value;
+                                        },
+                                        [&comp = transform_comp, origin = _GizmoOriginPosition, origin_ptr = &_GizmoOriginPosition]() -> void
+                                        {
+                                            comp.SetPosition(origin);
+                                            *origin_ptr = origin;
+                                        }
+                                    );
+                                    _GizmoEditState = GizmoEditState::None;
+                                    _GizmoOriginPosition = transform_comp.GetPosition();
+                                }
+                                transform_comp.SetPosition(translation);
+                            }
+                            break;
+                        }
+                        case Arcadia::ImguiWindowViewport::GizmoOption::Rotation:
+                        {
+                            if(_GizmoOriginRotationEularAngle != rotation)
+                            {
+                                glm::vec3 delta_rotation = rotation - _GizmoOriginRotationEularAngle;
+                                if(_GizmoEditState == GizmoEditState::Edited)
+                                {
+                                    CommandList::Instance().Emplace(
+                                        "Transform - Rotation",
+                                        [&comp = transform_comp, value = delta_rotation, origin_ptr = &_GizmoOriginPosition]() -> void
+                                        {
+                                            comp.IncreaseRotationEularAngle(value);
+                                            *origin_ptr = value;
+                                        },
+                                        [&comp = transform_comp, origin_delta = -delta_rotation, origin = _GizmoOriginRotationEularAngle, origin_ptr = &_GizmoOriginPosition]() -> void
+                                        {
+                                            comp.IncreaseRotationEularAngle(origin_delta);
+                                            *origin_ptr = origin;
+                                        }
+                                    );
+                                    _GizmoEditState = GizmoEditState::None;
+                                    _GizmoOriginRotationEularAngle = transform_comp.GetRotationEularAngle();
+                                }
+                                transform_comp.IncreaseRotationEularAngle(delta_rotation);
+                            }
+                            break;
+                        }
+                        case Arcadia::ImguiWindowViewport::GizmoOption::Scale:
+                        {
+                            if(_GizmoOriginScale != scale)
+                            {
+                                if(_GizmoEditState == GizmoEditState::Edited)
+                                {
+                                    CommandList::Instance().Emplace(
+                                        "Transform - Scale",
+                                        [&comp = transform_comp, value = scale, origin_ptr = &_GizmoOriginPosition]() -> void
+                                        {
+                                            comp.SetScale(value);
+                                            *origin_ptr = value;
+                                        },
+                                        [&comp = transform_comp, origin = _GizmoOriginScale, origin_ptr = &_GizmoOriginPosition]() -> void
+                                        {
+                                            comp.SetScale(origin);
+                                            *origin_ptr = origin;
+                                        }
+                                    );
+                                    _GizmoEditState = GizmoEditState::None;
+                                    _GizmoOriginScale = transform_comp.GetScale();
+                                }
+                                transform_comp.SetScale(scale);
+                            }
+                            break;
+                        }
+                        case Arcadia::ImguiWindowViewport::GizmoOption::None:
+                        default:
+                            break;
+                    }
+
+                    transform_comp.IncreasePivot(translation - transform_comp.GetPosition());
                 }
             }
         }
@@ -382,6 +440,14 @@ void Arcadia::ImguiWindowViewport::_OnSceneDeactivated(Events::SceneDeactivated&
 void Arcadia::ImguiWindowViewport::_OnSelectEntity(Events::SelectEntity& e)
 {
     _SelectedEntityId = e.EntityId;
+    std::shared_ptr<SceneLayer> scene_layer_sptr = LayerStack::Instance().GetLayerShared<SceneLayer>();
+    if(scene_layer_sptr->ActiveScene_ContainsAllComponents<TransformComponent>(_SelectedEntityId))
+    {
+        const TransformComponent& transform_comp = scene_layer_sptr->ActiveScene_GetComponent<TransformComponent>(_SelectedEntityId);
+        _GizmoOriginPosition = transform_comp.GetPosition();
+        _GizmoOriginRotationEularAngle = transform_comp.GetRotationEularAngle();
+        _GizmoOriginScale = transform_comp.GetScale();
+    }
 }
 
 void Arcadia::ImguiWindowViewport::_OnDeleteEntity(Events::DeleteEntity& e)

@@ -34,6 +34,12 @@ namespace Arcadia
             Local = ImGuizmo::MODE::LOCAL,
             World = ImGuizmo::MODE::WORLD,
         };
+        enum class GizmoEditState
+        {
+            None,
+            Editing,
+            Edited,
+        };
         using SelfType = ImguiWindowViewport;
     public:
         ACDA_IMGUI_WINDOW_ID_STR_GETTERS("###viewport");
@@ -70,7 +76,11 @@ namespace Arcadia
         bool _ShowGizmo{ true };
         GizmoOption _GizmoOption{ GizmoOption::None };
         GizmoMode _GizmoMode{ GizmoMode::Local };
-        bool _GizmoEdited{ false };
+        GizmoEditState _GizmoEditState{ GizmoEditState::None };
         bool _GizmoShortcutAvailable{ true };
+
+        glm::vec3 _GizmoOriginPosition{};
+        glm::vec3 _GizmoOriginRotationEularAngle{};
+        glm::vec3 _GizmoOriginScale{};
     };
 }
