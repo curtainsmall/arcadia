@@ -30,10 +30,7 @@ namespace Arcadia
         virtual void OnUpdate();
 
         [[nodiscard]]
-        auto GetActiveSceneShared() -> std::shared_ptr<Scene>&;
-        [[nodiscard]]
         auto GetActiveSceneShared() const -> const std::shared_ptr<Scene>&;
-        void SetActiveScene(const std::string& name = {});
 
         [[nodiscard]]
         auto HasScene() const -> bool;
@@ -41,12 +38,6 @@ namespace Arcadia
         auto HasScene(const std::string& name) const -> bool;
         [[nodiscard]]
         auto HasActiveScene() const -> bool;
-        void CreateScene(const std::string& name);
-        void CreateScene(const nlohmann::json& json);
-        auto SaveScene(const std::string& name) -> nlohmann::json;
-        void DestroyScene(const std::string& name);
-        void DestroyAllScenes();
-        void RenameScene(const std::string& name, const std::string& new_name);
 
         [[nodiscard]]
         auto GetSceneStorage() const -> const SceneStorageType&;
@@ -79,6 +70,7 @@ namespace Arcadia
         [[nodiscard]]
         auto ActiveScene_ContainsAllComponents(EntityId entity_id) const -> bool
         {
+            ACDA_ASSERT(_spActiveScene);
             return _spActiveScene->ContainsAllComponents<Ts_Components...>(entity_id);
         }
 
@@ -86,6 +78,7 @@ namespace Arcadia
         [[nodiscard]]
         auto ActiveScene_CotainsAnyComponent(EntityId entity_id) const -> bool
         {
+            ACDA_ASSERT(_spActiveScene);
             return _spActiveScene->ContainsAnyComponent<Ts_Components...>(entity_id);
         }
 
@@ -101,11 +94,21 @@ namespace Arcadia
         auto IsActiveSceneModified() const -> bool;
 
     private:
+        void _SetActiveScene(const std::string& name = {});
+
+        void _CreateScene(const std::string& name);
+        void _CreateScene(const nlohmann::json& json);
+        auto _SaveScene(const std::string& name) -> nlohmann::json;
+        void _DestroyScene(const std::string& name);
+        void _RenameScene(const std::string& name, const std::string& new_name);
+
         void _OnCreateScene(Events::CreateScene& e);
+        void _OnCreateSceneFromJson(Events::CreateSceneFromJson& e);
         void _OnRenameScene(Events::RenameScene& e);
         void _OnSelectScene(Events::SelectScene& e);
         void _OnCloseScene(Events::CloseScene& e);
         void _OnDeleteScene(Events::DeleteScene& e);
+        void _OnDestroyAllScene(Events::DestroyAllScenes& e);
 
         void _OnNewEntity(Events::NewEntity& e);
         void _OnRenameEntity(Events::RenameEntity& e);

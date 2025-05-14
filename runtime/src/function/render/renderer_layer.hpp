@@ -39,12 +39,10 @@ namespace Arcadia
         auto IsRendererActive() const -> bool;
 
     private:
-        void _OnRendererSetActive(Events::RendererSetActive& e);
-        void _OnRendererSetScene(Events::RendererSetScene& e);
-        void _OnRendererSetEntity(Events::RendererSetEntity& e);
+        void _OnRendererReset(Events::RendererReset& e);
 
-        void _OnSceneActivated(Events::SceneActivated& e);
-        void _OnSceneDeactivated(Events::SceneDeactivated& e);
+        void _OnRendererSetActive(Events::RendererSetActive& e);
+        void _OnRendererSetEntity(Events::RendererSetEntity& e);
     private:
         std::shared_ptr<RendererInterface> _spRenderer{};
     };

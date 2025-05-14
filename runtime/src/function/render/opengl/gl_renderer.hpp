@@ -85,9 +85,6 @@ namespace Arcadia
         virtual ~GlRenderer() override = default;
 
         [[nodiscard]]
-        virtual auto HasScene() const -> bool override;
-        virtual void SetScene(const std::shared_ptr<Scene>& scene_sptr) override;
-        [[nodiscard]]
         virtual auto HasEntity(EntityId entity_id) const -> bool override;
         virtual void AddEntity(EntityId entity_id) override;
         virtual void RemoveEntity(EntityId entity_id) override;
@@ -105,7 +102,6 @@ namespace Arcadia
     public:
         void _BuildForEntity(EntityId entity_id, _BuildHint hint);
         void _ClearForEntity(EntityId entity_id);
-        void _Clear();
 
         void _DrawGrid(
             const GlVertexArray& gl_grid_vertex_array,
@@ -143,9 +139,8 @@ namespace Arcadia
         std::unordered_map<EntityId, GlRenderUnitCamera> _GlRenderUnitCameraStorage{};
         std::unordered_map<EntityId, GlRenderUnitLight> _GlRenderUnitLightStorage{};
         std::optional<GlRenderUnitSkybox> _GlRenderUnitSkybox{};
-
-        std::shared_ptr<Scene> _spScene{};
         std::unordered_set<EntityId> _EntityIdSet{};
+
         GlPipeline _GlModelPipeline;
         GlPipeline _GlSkyboxPipeline;
         GlPipeline _GlGridPipeline;

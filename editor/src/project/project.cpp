@@ -2,6 +2,8 @@
 
 #include "core/assert.hpp"
 #include "core/command.hpp"
+#include "function/render/renderer_events.hpp"
+#include "resource/scene_events.hpp"
 #include "resource/scene_layer.hpp"
 
 #include "project/project_events.hpp"
@@ -18,15 +20,18 @@ Arcadia::Project::Project(nlohmann::json& json):
 
     for(const nlohmann::json& json_scene : json.at("scenes"))
     {
-        scene_layer_sptr->CreateScene(json_scene);
+        EventQueue::Instance()
+            .Signal<Events::CreateSceneFromJson>(json_scene);
     }
-    scene_layer_sptr->SetActiveScene(json.at("active_scene_name"));
+    EventQueue::Instance()
+        .Signal<Events::SelectScene>(json.at("active_scene_name"));
 }
 
 Arcadia::Project::~Project()
 {
-    std::shared_ptr<SceneLayer> scene_layer_sptr = LayerStack::Instance().GetLayerShared<SceneLayer>();
-    scene_layer_sptr->DestroyAllScenes();
+    EventQueue::Instance()
+        .Signal<Events::DestroyAllScenes>()
+        .Signal<Events::RendererReset>();
 }
 
 auto Arcadia::Project::ToJson() const -> nlohmann::json

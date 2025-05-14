@@ -11,6 +11,7 @@
 #include "resource/components/physics_component.hpp"
 #include "resource/components/skybox_component.hpp"
 #include "resource/components/transform_component.hpp"
+#include "resource/scene_layer.hpp"
 
 Arcadia::GlRenderer::GlRenderer(const std::filesystem::path& gl_shader_folder_path):
     _GlModelPipeline(gl_shader_folder_path, GenerateModelShadersBuilder()),
@@ -20,22 +21,6 @@ Arcadia::GlRenderer::GlRenderer(const std::filesystem::path& gl_shader_folder_pa
 {
     ACDA_GL_CALL(glEnable(GL_DEPTH_TEST));
     ACDA_GL_CALL(glEnable(GL_CULL_FACE));
-}
-
-auto Arcadia::GlRenderer::HasScene() const -> bool
-{
-    return !!_spScene;
-}
-
-void Arcadia::GlRenderer::SetScene(const std::shared_ptr<Scene>& scene_sptr)
-{
-    if(scene_sptr)
-    {
-        _spScene = scene_sptr;
-        return;
-    }
-    _Clear();
-    _EntityIdSet.clear();
 }
 
 auto Arcadia::GlRenderer::HasEntity(EntityId entity_id) const -> bool
@@ -166,6 +151,7 @@ void Arcadia::GlRenderer::Reset()
     _GlRenderUnitMeshStorage.clear();
     _GlRenderUnitPhysicsBodyShapeStorage.clear();
     _GlRenderUnitSkybox.reset();
+    _EntityIdSet.clear();
 }
 
 auto Arcadia::GlRenderer::HasRenderResult() const -> bool
@@ -191,10 +177,11 @@ auto Arcadia::GlRenderer::GetGraphicApiType() const -> GraphicApi::Type
 
 void Arcadia::GlRenderer::_BuildForEntity(EntityId entity_id, _BuildHint hint)
 {
-    const EntityInfo& entity = _spScene->GetEntityInfo(entity_id);
+    std::shared_ptr<SceneLayer> scene_layer_sptr = LayerStack::Instance().GetLayerShared<SceneLayer>();
+    const EntityInfo& entity_info = scene_layer_sptr->ActiveScene_GetEntityInfo(entity_id);
 
     Match<void>(
-        entity.TypeString,
+        entity_info.TypeString,
         [&]()
         {
             ACDA_UNREACHABLE("Entity type not supported");
@@ -202,7 +189,7 @@ void Arcadia::GlRenderer::_BuildForEntity(EntityId entity_id, _BuildHint hint)
         "camera",
         [&]()
         {
-            const auto& [camera_comp, transform_comp] = _spScene->GetComponent<CameraComponent, TransformComponent>(entity_id);
+            const auto& [camera_comp, transform_comp] = scene_layer_sptr->ActiveScene_GetComponent<CameraComponent, TransformComponent>(entity_id);
 
             if(hint != _BuildHint::BuildAll)
             {
@@ -227,7 +214,7 @@ void Arcadia::GlRenderer::_BuildForEntity(EntityId entity_id, _BuildHint hint)
         "light",
         [&]()
         {
-            const auto& [light_comp, transform_comp] = _spScene->GetComponent<LightComponent, TransformComponent>(entity_id);
+            const auto& [light_comp, transform_comp] = scene_layer_sptr->ActiveScene_GetComponent<LightComponent, TransformComponent>(entity_id);
             if(hint != _BuildHint::BuildAll)
             {
                 _GlRenderUnitLightStorage.erase(entity_id);
@@ -242,7 +229,7 @@ void Arcadia::GlRenderer::_BuildForEntity(EntityId entity_id, _BuildHint hint)
         "actor",
         [&]()
         {
-            const auto [model_comp, transform_comp, physics_comp] = _spScene->GetComponent<ModelComponent, TransformComponent, PhysicsComponent>(entity_id);
+            const auto [model_comp, transform_comp, physics_comp] = scene_layer_sptr->ActiveScene_GetComponent<ModelComponent, TransformComponent, PhysicsComponent>(entity_id);
 
             if(model_comp.HasIdentifiableMeshes())
             {
@@ -334,14 +321,6 @@ void Arcadia::GlRenderer::_ClearForEntity(EntityId entity_id)
     _GlRenderUnitLightStorage.erase(entity_id);
     _GlRenderUnitMeshStorage.erase(entity_id);
     _GlRenderUnitPhysicsBodyShapeStorage.erase(entity_id);
-}
-
-void Arcadia::GlRenderer::_Clear()
-{
-    _GlRenderUnitCameraStorage.clear();
-    _GlRenderUnitLightStorage.clear();
-    _GlRenderUnitMeshStorage.clear();
-    _GlRenderUnitPhysicsBodyShapeStorage.clear();
 }
 
 void Arcadia::GlRenderer::_DrawGrid(

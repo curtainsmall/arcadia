@@ -5,7 +5,11 @@
 
 namespace Arcadia::Events
 {
-    class RendererSetActive:public EventBase
+    class RendererReset: public EventBase
+    {
+    };
+
+    class RendererSetActive: public EventBase
     {
     public:
         RendererSetActive(bool active):

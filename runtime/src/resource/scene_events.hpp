@@ -1,7 +1,7 @@
 #pragma once
 
-#include <memory>
 #include <functional>
+#include <memory>
 
 #include "core/nlohmann_json.hpp"
 
@@ -57,7 +57,6 @@ namespace Arcadia::Events
     {
     };
 
-
     class NewScene: public EventBase
     {
     };
@@ -72,6 +71,17 @@ namespace Arcadia::Events
     public:
         const std::string Name;
         const bool AsCurrent;
+    };
+
+    class CreateSceneFromJson: public EventBase
+    {
+    public:
+        CreateSceneFromJson(const nlohmann::json& json):
+            Json(json)
+        {
+        }
+    public:
+        const nlohmann::json Json;
     };
 
     class RenameScene: public EventBase
@@ -101,6 +111,10 @@ namespace Arcadia::Events
     };
 
     class DeleteScene: public EventBase
+    {
+    };
+
+    class DestroyAllScenes: public EventBase
     {
     };
 

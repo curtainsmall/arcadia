@@ -18,7 +18,7 @@ namespace Arcadia
         glm::i32vec2 Size;
     };
 
-    class RendererInterface : public Noncopyable
+    class RendererInterface: public Noncopyable
     {
     public:
 
@@ -27,19 +27,12 @@ namespace Arcadia
         RendererInterface() = default;
         virtual ~RendererInterface() = default;
 
-        /*virtual auto IsInBuild() const -> bool = 0;
-        virtual void Prepare() = 0;
-        virtual void Finalize() = 0;
-        virtual void Submit(const Scene& scene, EntityId entity_id) = 0;*/
-
-        [[nodiscard]]
-        virtual auto HasScene() const -> bool = 0;
-        virtual void SetScene(const std::shared_ptr<Scene>& scene_sptr) = 0;
         [[nodiscard]]
         virtual auto HasEntity(EntityId entity_id) const -> bool = 0;
         virtual void AddEntity(EntityId entity_id) = 0;
         virtual void RemoveEntity(EntityId entity_id) = 0;
         virtual void UpdateEntity(EntityId entity_id) = 0;
+
         virtual void Draw() = 0;
         virtual void Reset() = 0;
 
