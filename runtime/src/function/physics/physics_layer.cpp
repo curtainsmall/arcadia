@@ -74,7 +74,7 @@ void Arcadia::PhysicsLayer::_OnPhysicsSimulatorSetEntity(Events::PhysicsSimulato
     ACDA_ASSERT(_spPhysicsSimulator);
 
     std::shared_ptr<SceneLayer> scene_layer_sptr = LayerStack::Instance().GetLayerShared<SceneLayer>();
-    if(!scene_layer_sptr->HasActiveScene())
+    if(!scene_layer_sptr->HasActiveScene() || !scene_layer_sptr->ActiveScene_ContainsEntity(e.EntityId))
     {
         return;
     }

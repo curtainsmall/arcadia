@@ -87,7 +87,7 @@ void Arcadia::RendererLayer::_OnRendererSetEntity(Events::RendererSetEntity& e)
     ACDA_ASSERT(_spRenderer);
 
     std::shared_ptr<SceneLayer> scene_layer_sptr = LayerStack::Instance().GetLayerShared<SceneLayer>();
-    if(!scene_layer_sptr->HasActiveScene())
+    if(!scene_layer_sptr->HasActiveScene() || !scene_layer_sptr->ActiveScene_ContainsEntity(e.EntityId))
     {
         return;
     }

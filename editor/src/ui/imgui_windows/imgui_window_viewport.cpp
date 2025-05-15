@@ -63,6 +63,9 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
         {
             ImGui::Text("(No renderer)");
         }
+        else if(!scene_layer_sptr->ActiveScene_IsEntityNameUsed(_ViewportCameraEntityName))
+        {
+        }
         else
         {
             ACDA_ASSERT(physics_layer_sptr);
