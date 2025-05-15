@@ -5,7 +5,9 @@
 #include "core/function.hpp"
 #include "core/match.hpp"
 #include "core/pfd.hpp"
+#include "function/physics/physics_layer.hpp"
 #include "function/render/renderer_events.hpp"
+#include "function/render/renderer_layer.hpp"
 #include "resource/components/camera_component.hpp"
 #include "resource/components/light_component.hpp"
 #include "resource/components/model_component.hpp"
@@ -40,6 +42,8 @@ void Arcadia::SceneLayer::OnUpdate()
 {
     if(_spActiveScene)
     {
+        std::shared_ptr<RendererLayer> renderer_layer_sptr = LayerStack::Instance().GetLayerShared<RendererLayer>();
+
         for(auto& [entity_id, entity_info] : _spActiveScene->GetEntityInfoStorage())
         {
             if(entity_info.Displayed)
@@ -47,7 +51,7 @@ void Arcadia::SceneLayer::OnUpdate()
                 EventQueue::Instance()
                     .Signal<Events::RendererSetEntity>(
                         entity_id,
-                        Events::RendererSetEntity::ActionType::Add
+                        Events::RendererSetEntity::ActionType::Build
                     );
             }
             else
@@ -59,11 +63,26 @@ void Arcadia::SceneLayer::OnUpdate()
                     );
             }
 
-            EventQueue::Instance()
-                .Signal<Events::RendererSetEntity>(
-                    entity_id,
-                    Events::RendererSetEntity::ActionType::Update
-                );
+            if(_spActiveScene->ContainsAllComponents<PhysicsComponent>(entity_id))
+            {
+                const PhysicsComponent& physics_comp = _spActiveScene->GetComponent<PhysicsComponent>(entity_id);
+                if(physics_comp.IsInUse())
+                {
+                    EventQueue::Instance()
+                        .Signal<Events::PhysicsSimulatorSetEntity>(
+                            entity_id,
+                            Events::PhysicsSimulatorSetEntity::ActionType::Build
+                        );
+                }
+                else
+                {
+                    EventQueue::Instance()
+                        .Signal<Events::PhysicsSimulatorSetEntity>(
+                            entity_id,
+                            Events::PhysicsSimulatorSetEntity::ActionType::Remove
+                        );
+                }
+            }
         }
     }
 }

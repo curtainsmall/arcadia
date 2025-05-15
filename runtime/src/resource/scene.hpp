@@ -5,6 +5,7 @@
 #include <unordered_map>
 
 #include "core/assert.hpp"
+#include "core/enum.hpp"
 #include "core/event.hpp"
 #include "core/exception.hpp"
 #include "core/nlohmann_json.hpp"
@@ -29,7 +30,6 @@ namespace Arcadia
         friend class Scene;
     public:
         using SelfType = EntityInfo;
-
     public:
         [[nodiscard]]
         auto GetName() const -> const std::string&;

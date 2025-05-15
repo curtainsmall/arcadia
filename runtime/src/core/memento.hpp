@@ -35,13 +35,13 @@ namespace Arcadia
         using SelfType = MementoOriginatorInterface;
     public:
         auto Snapshot() -> std::shared_ptr<MementoDataBase>;
-        void Restore(const std::shared_ptr<MementoDataBase>& sp_memento_data);
+        void Restore(const std::shared_ptr<MementoDataBase>& memento_data_base_sptr);
 
     protected:
         [[nodiscard]]
         virtual auto OnSnapshot() const->std::shared_ptr<MementoDataBase> = 0;
 
-        virtual void OnRestore(const std::shared_ptr<MementoDataBase>& memento_data) = 0;
+        virtual void OnRestore(const std::shared_ptr<MementoDataBase>& memento_data_base_sptr) = 0;
 
     private:
         std::shared_ptr<MementoDataBase> _spPreviousMementoData{};
@@ -71,19 +71,20 @@ namespace Arcadia
             _upOriginatorRetriever(
                 new std::function<MementoOriginator& ()>(originator_retriever),
                 [](void* ptr)
-        {
-            delete static_cast<std::function<MementoOriginator& ()>*>(ptr);
-        }
+                {
+                    delete static_cast<std::function<MementoOriginator& ()>*>(ptr);
+                }
             ),
             _spMementoData(memento_data_sptr),
             _OriginatorRestoreFunction(
                 [&]()
-        {
-            MementoOriginator& originator = (*static_cast<std::function<MementoOriginator & ()>*>(_upOriginatorRetriever.get()))();
-            originator.Restore(_spMementoData);
-        }
+                {
+                    MementoOriginator& originator = (*static_cast<std::function<MementoOriginator & ()>*>(_upOriginatorRetriever.get()))();
+                    originator.Restore(_spMementoData);
+                }
             )
-        {}
+        {
+        }
 
         void Restore() const;
 

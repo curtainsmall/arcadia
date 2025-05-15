@@ -135,25 +135,21 @@ void Arcadia::ImguiWindowPropertyFunctor_LightComponent::operator()(LightCompone
                 {
                     light_comp.SetLight<SpotLight>();
                     Refresh(light_comp);
-                    ImGui::EndCombo();
                 }
                 if(ImGui::Selectable("Direct Light"))
                 {
                     light_comp.SetLight<DirectLight>();
                     Refresh(light_comp);
-                    ImGui::EndCombo();
                 }
                 if(ImGui::Selectable("Area Light"))
                 {
                     light_comp.SetLight<AreaLight>();
                     Refresh(light_comp);
-                    ImGui::EndCombo();
                 }
                 if(ImGui::Selectable("Point Light"))
                 {
                     light_comp.SetLight<PointLight>();
                     Refresh(light_comp);
-                    ImGui::EndCombo();
                 }
                 ImGui::EndCombo();
             }
@@ -164,15 +160,12 @@ void Arcadia::ImguiWindowPropertyFunctor_LightComponent::operator()(LightCompone
             {
                 if(_ChangeLightTypeSelectable<DirectLight>(light_comp, "Direct Light"))
                 {
-                    ImGui::EndCombo();
                 }
                 if(_ChangeLightTypeSelectable<AreaLight>(light_comp, "Area Light"))
                 {
-                    ImGui::EndCombo();
                 }
                 if(_ChangeLightTypeSelectable<PointLight>(light_comp, "Point Light"))
                 {
-                    ImGui::EndCombo();
                 }
                 ImGui::EndCombo();
             }
@@ -224,15 +217,12 @@ void Arcadia::ImguiWindowPropertyFunctor_LightComponent::operator()(LightCompone
             {
                 if(_ChangeLightTypeSelectable<SpotLight>(light_comp, "Spot Light"))
                 {
-                    ImGui::EndCombo();
                 }
                 if(_ChangeLightTypeSelectable<AreaLight>(light_comp, "Area Light"))
                 {
-                    ImGui::EndCombo();
                 }
                 if(_ChangeLightTypeSelectable<PointLight>(light_comp, "Point Light"))
                 {
-                    ImGui::EndCombo();
                 }
                 ImGui::EndCombo();
             }
@@ -266,15 +256,12 @@ void Arcadia::ImguiWindowPropertyFunctor_LightComponent::operator()(LightCompone
             {
                 if(_ChangeLightTypeSelectable<SpotLight>(light_comp, "Spot Light"))
                 {
-                    ImGui::EndCombo();
                 }
                 if(_ChangeLightTypeSelectable<DirectLight>(light_comp, "Direct Light"))
                 {
-                    ImGui::EndCombo();
                 }
                 if(_ChangeLightTypeSelectable<PointLight>(light_comp, "Point Light"))
                 {
-                    ImGui::EndCombo();
                 }
                 ImGui::EndCombo();
             }
@@ -313,15 +300,12 @@ void Arcadia::ImguiWindowPropertyFunctor_LightComponent::operator()(LightCompone
             {
                 if(_ChangeLightTypeSelectable<SpotLight>(light_comp, "Spot Light"))
                 {
-                    ImGui::EndCombo();
                 }
                 if(_ChangeLightTypeSelectable<DirectLight>(light_comp, "Direct Light"))
                 {
-                    ImGui::EndCombo();
                 }
                 if(_ChangeLightTypeSelectable<AreaLight>(light_comp, "Area Light"))
                 {
-                    ImGui::EndCombo();
                 }
                 ImGui::EndCombo();
             }
@@ -483,7 +467,7 @@ void Arcadia::ImguiWindowPopupFunctor_PhysicsComponentCreateBody::operator()(Phy
 
         // Motion type
         std::string jph_motion_type_preview_string = Match<std::string>(
-            _TempJphBodyInfo.JphMotionType,
+            _TempJphMotionType,
             JPH::EMotionType::Static,
             "Static",
             JPH::EMotionType::Dynamic,
@@ -495,25 +479,49 @@ void Arcadia::ImguiWindowPopupFunctor_PhysicsComponentCreateBody::operator()(Phy
         {
             if(ImGui::Selectable("Static"))
             {
-                _TempJphBodyInfo.JphMotionType = JPH::EMotionType::Static;
-                _TempJphBodyInfo.JphObjectLayer = JphObjectLayers::NonMoving;
+                _TempJphMotionType = JPH::EMotionType::Static;
+                _TempJphObjectLayer = JphObjectLayers::NonMoving;
             }
             if(ImGui::Selectable("Dynamic"))
             {
-                _TempJphBodyInfo.JphMotionType = JPH::EMotionType::Dynamic;
-                _TempJphBodyInfo.JphObjectLayer = JphObjectLayers::Moving;
+                _TempJphMotionType = JPH::EMotionType::Dynamic;
+                _TempJphObjectLayer = JphObjectLayers::Moving;
             }
             if(ImGui::Selectable("Kinematic"))
             {
-                _TempJphBodyInfo.JphMotionType = JPH::EMotionType::Kinematic;
-                _TempJphBodyInfo.JphObjectLayer = JphObjectLayers::Moving;
+                _TempJphMotionType = JPH::EMotionType::Kinematic;
+                _TempJphObjectLayer = JphObjectLayers::Moving;
             }
             ImGui::EndCombo();
         }
 
         //Shape
-        _TempJphBodyInfo.JphShapeInfo = MatchVariant<JphShapeInfo>(
-            _TempJphBodyInfo.JphShapeInfo,
+        _TempJphShapeInfo = MatchVariant<JphShapeInfo>(
+            _TempJphShapeInfo,
+            [&](const JphNoShapeInfo&) -> JphShapeInfo
+            {
+                if(ImGui::BeginCombo("Shape Type", "Sphere Shape"))
+                {
+                    if(ImGui::Selectable("Box Shape"))
+                    {
+                        ImGui::EndCombo();
+                        return JphBoxShapeInfo{};
+                    }
+                    if(ImGui::Selectable("Capsule Shape"))
+                    {
+                        ImGui::EndCombo();
+                        return JphCapsuleShapeInfo{};
+                    }
+                    if(ImGui::Selectable("Cylinder Shape"))
+                    {
+                        ImGui::EndCombo();
+                        return JphCylinderShapeInfo{};
+                    }
+                    ImGui::Selectable("Sphere Shape");
+                    ImGui::EndCombo();
+                }
+                return _TempJphShapeInfo;
+            },
             [&](JphBoxShapeInfo& info) -> JphShapeInfo
             {
                 if(ImGui::BeginCombo("Shape Type", "Box Shape"))
@@ -548,7 +556,7 @@ void Arcadia::ImguiWindowPopupFunctor_PhysicsComponentCreateBody::operator()(Phy
                 float convex_radius_max = std::min({ info.HalfExtent.x,info.HalfExtent.y,info.HalfExtent.z });
                 ImGui::DragFloat("Convex Radius", &info.ConvexRadius, speed, convex_radius_min, convex_radius_max, format, slider_flags);
 
-                return _TempJphBodyInfo.JphShapeInfo;
+                return _TempJphShapeInfo;
             },
             [&](JphCapsuleShapeInfo& info) -> JphShapeInfo
             {
@@ -557,7 +565,7 @@ void Arcadia::ImguiWindowPopupFunctor_PhysicsComponentCreateBody::operator()(Phy
                     if(ImGui::Selectable("Box Shape"))
                     {
                         ImGui::EndCombo();
-                        return JphShapeInfo{};
+                        return JphBoxShapeInfo{};
                     }
                     ImGui::Selectable("Capsule Shape");
                     if(ImGui::Selectable("Cylinder Shape"))
@@ -582,7 +590,7 @@ void Arcadia::ImguiWindowPopupFunctor_PhysicsComponentCreateBody::operator()(Phy
                 float half_height_of_cylinder_max = FLT_MAX;
                 ImGui::DragFloat("Half Height if Cylinder", &info.HalfHeightOfCylinder, speed, half_height_of_cylinder_min, half_height_of_cylinder_max, format, slider_flags);
 
-                return _TempJphBodyInfo.JphShapeInfo;
+                return _TempJphShapeInfo;
             },
             [&](JphCylinderShapeInfo& info) -> JphShapeInfo
             {
@@ -591,7 +599,7 @@ void Arcadia::ImguiWindowPopupFunctor_PhysicsComponentCreateBody::operator()(Phy
                     if(ImGui::Selectable("Box Shape"))
                     {
                         ImGui::EndCombo();
-                        return JphShapeInfo{};
+                        return JphBoxShapeInfo{};
                     }
                     if(ImGui::Selectable("Capsule Shape"))
                     {
@@ -620,7 +628,7 @@ void Arcadia::ImguiWindowPopupFunctor_PhysicsComponentCreateBody::operator()(Phy
                 float convex_radius_max = FLT_MAX;
                 ImGui::DragFloat("Convex Radius", &info.ConvexRadius, speed, convex_radius_min, convex_radius_max, format, slider_flags);
 
-                return _TempJphBodyInfo.JphShapeInfo;
+                return _TempJphShapeInfo;
             },
             [&](JphSphereShapeInfo& info) -> JphShapeInfo
             {
@@ -629,7 +637,7 @@ void Arcadia::ImguiWindowPopupFunctor_PhysicsComponentCreateBody::operator()(Phy
                     if(ImGui::Selectable("Box Shape"))
                     {
                         ImGui::EndCombo();
-                        return JphShapeInfo{};
+                        return JphBoxShapeInfo{};
                     }
                     if(ImGui::Selectable("Capsule Shape"))
                     {
@@ -650,7 +658,7 @@ void Arcadia::ImguiWindowPopupFunctor_PhysicsComponentCreateBody::operator()(Phy
                 float radius_max = FLT_MAX;
                 ImGui::DragFloat("Radius", &info.Radius, speed, radius_min, radius_max, format, slider_flags);
 
-                return _TempJphBodyInfo.JphShapeInfo;
+                return _TempJphShapeInfo;
             }
         );
 
@@ -658,16 +666,19 @@ void Arcadia::ImguiWindowPopupFunctor_PhysicsComponentCreateBody::operator()(Phy
         bool confirmed = ImGui::Button("Confirm");
         if(confirmed)
         {
-            physics_comp.BuildIndentifiableJphBodyInfo(
-                _TempJphBodyInfo
-            );
+            physics_comp.SetJphMotionType(_TempJphMotionType);
+            physics_comp.SetJphObjectLayer(_TempJphObjectLayer);
+            physics_comp.SetJphShapeInfo(_TempJphShapeInfo);
+            physics_comp.SetInUse(true);
         }
         ImGui::SameLine();
         if(confirmed || ImGui::Button("Cancel"))
         {
             ImGui::CloseCurrentPopup();
             Opened = false;
-            _TempJphBodyInfo = JphBodyInfo{};
+            _TempJphMotionType = JPH::EMotionType::Static;
+            _TempJphObjectLayer = JphObjectLayers::NonMoving;
+            _TempJphShapeInfo = JphNoShapeInfo{};
         }
 
         ImGui::EndPopup();
@@ -680,16 +691,14 @@ void Arcadia::ImguiWindowPropertyFunctor_PhysicsComponent::operator()(PhysicsCom
 
     ImGui::BeginGroup();
 
-    if(physics_comp.HasBodyInfo())
+    if(physics_comp.IsInUse())
     {
-        const auto& [uuid, jph_body_info_initial] = physics_comp.GetIdentifiableJphBodyInfo();
-
         if(ImGui::TreeNodeEx("Initial", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_FramePadding))
         {
             ImGui::Text(std::format(
                 "Motion Type: {}",
                 Match<std::string>(
-                    jph_body_info_initial.JphMotionType,
+                    physics_comp.GetJphMotionType(),
                     JPH::EMotionType::Static,
                     [&]()
                     {
@@ -707,21 +716,25 @@ void Arcadia::ImguiWindowPropertyFunctor_PhysicsComponent::operator()(PhysicsCom
                     }
                 )
             ).c_str());
-            ImGui::Text(std::format("Object Layer: {}", jph_body_info_initial.JphObjectLayer).c_str());
+            ImGui::Text(std::format("Object Layer: {}", physics_comp.GetJphObjectLayer()).c_str());
             ImGui::TreePop();
         }
 
         if(ImGui::TreeNodeEx("Current", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_FramePadding))
         {
-            const JphBodyState& jph_body_state = physics_comp.GetBodyState();
-            ImGui::Text(std::format("Active: {}", jph_body_state.Active).c_str());
-            ImGui::Text(std::format("Linear Velocity - {}", jph_body_state.LinearVelocity).c_str());
-            ImGui::Text(std::format("Angular Velocity - {}", jph_body_state.AngularVelocity).c_str());
+            ImGui::Text(std::format("Active: {}", physics_comp.IsActive()).c_str());
+            ImGui::Text(std::format("Linear Velocity - {}", physics_comp.GetLinearVelocity()).c_str());
+            ImGui::Text(std::format("Angular Velocity - {}", physics_comp.GetAngularVelocity()).c_str());
             ImGui::TreePop();
         }
 
         bool tree_open = MatchVariant<bool>(
-            jph_body_info_initial.JphShapeInfo,
+            physics_comp.GetJphShapeInfo(),
+            [&](const JphNoShapeInfo)
+            {
+                ACDA_UNREACHABLE("Invalid shape info type");
+                return false;
+            },
             [&](const JphBoxShapeInfo& info)
             {
                 bool tree_open = ImGui::TreeNodeEx("Body Shape - Box", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_FramePadding);
@@ -773,7 +786,7 @@ void Arcadia::ImguiWindowPropertyFunctor_PhysicsComponent::operator()(PhysicsCom
         ImGui::Text("(No body state)");
     }
 
-    if(physics_comp.HasBodyInfo())
+    if(physics_comp.IsInUse())
     {
         glm::vec3 color = physics_comp.GetBodyShapeColor();
         ImGui::ColorEdit3("Body Shape Color", glm::value_ptr(color));
@@ -801,7 +814,7 @@ void Arcadia::ImguiWindowPropertyFunctor_PhysicsComponent::operator()(PhysicsCom
         ImGui::SameLine();
         if(ImGui::Button("Destroy Body"))
         {
-            physics_comp.DestroyJphBodyInfo();
+            physics_comp.SetInUse(false);
         }
     }
     else

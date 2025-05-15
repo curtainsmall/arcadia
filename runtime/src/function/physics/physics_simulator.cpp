@@ -36,16 +36,61 @@ auto Arcadia::PhysicsSimulator::HasEntity(EntityId entity_id) const -> bool
     return _JphBodyIdStorage.contains(entity_id);
 }
 
-void Arcadia::PhysicsSimulator::AddEntity(EntityId entity_id)
+void Arcadia::PhysicsSimulator::BuildEntity(EntityId entity_id)
 {
-    if(HasEntity(entity_id))
+    _EntityIdSet.emplace(entity_id);
+
+    std::shared_ptr<SceneLayer> scene_layer_sptr = LayerStack::Instance().GetLayerShared<SceneLayer>();
+    const EntityInfo& entity_info = scene_layer_sptr->ActiveScene_GetEntityInfo(entity_id);
+
+    // For now, only actor entity has physics component
+    if(entity_info.TypeString != "actor")
     {
-        _BuildForEntity(entity_id, true);
+        return;
     }
-    else
+
+    const auto [physics_comp, transform_comp] = scene_layer_sptr->ActiveScene_GetComponent<PhysicsComponent, TransformComponent>(entity_id);
+
+    if(physics_comp.IsInUse() && !HasEntity(entity_id))
     {
-        _EntityIdSet.emplace(entity_id);
-        _BuildForEntity(entity_id, false);
+        JPH::BodyInterface& jph_body_interface = _upJphPhysicsSystemUniquePtr->GetBodyInterface();
+
+        JPH::ShapeRefC jph_shape_refc = MatchVariant<JPH::Shape*>(
+            physics_comp.GetJphShapeInfo(),
+            [&](const JphNoShapeInfo&)
+            {
+                ACDA_UNREACHABLE("Invalid shape info type");
+                return nullptr;
+            },
+            [&](const JphBoxShapeInfo& info)
+            {
+                return new JPH::BoxShape(ToJphVec3(info.HalfExtent), info.ConvexRadius);
+            },
+            [&](const JphCapsuleShapeInfo& info)
+            {
+                return new JPH::CapsuleShape(info.HalfHeightOfCylinder, info.Radius);
+            },
+            [&](const JphCylinderShapeInfo& info)
+            {
+                return new JPH::CylinderShape(info.HalfHeight, info.Radius, info.ConvexRadius);
+            },
+            [&](const JphSphereShapeInfo& info)
+            {
+                return new JPH::SphereShape(info.Radius);
+            }
+        );
+        const JPH::BodyID body_id = jph_body_interface.CreateAndAddBody(
+            JPH::BodyCreationSettings(
+                jph_shape_refc,
+                ToJphVec3(transform_comp.GetPosition()),
+                ToJphQuat(transform_comp.GetRotationQuaternion()),
+                physics_comp.GetJphMotionType(),
+                physics_comp.GetJphObjectLayer()
+            ),
+            JPH::EActivation::Activate
+        );
+        ACDA_ASSERT(!body_id.IsInvalid(), "Failed to create body");
+        _JphBodyIdStorage.try_emplace(entity_id, body_id);
     }
 }
 
@@ -55,7 +100,11 @@ void Arcadia::PhysicsSimulator::RemoveEntity(EntityId entity_id)
     {
         return;
     }
-    _ClearForEntity(entity_id);
+    JPH::BodyInterface& jph_body_interface = _upJphPhysicsSystemUniquePtr->GetBodyInterface();
+    JPH::BodyID body_id = _JphBodyIdStorage.at(entity_id);
+    jph_body_interface.RemoveBody(body_id);
+    jph_body_interface.DestroyBody(body_id);
+    _JphBodyIdStorage.erase(entity_id);
     _EntityIdSet.erase(entity_id);
 }
 
@@ -80,7 +129,7 @@ void Arcadia::PhysicsSimulator::Update()
     );
 }
 
-void Arcadia::PhysicsSimulator::Query()
+void Arcadia::PhysicsSimulator::ApplyToEntity()
 {
     for(const EntityId& entity_id : _EntityIdSet)
     {
@@ -95,17 +144,14 @@ void Arcadia::PhysicsSimulator::Query()
 
         auto [physics_comp, transform_comp] = scene_layer_sptr->ActiveScene_GetComponent<PhysicsComponent, TransformComponent>(entity_id);
 
-        if(physics_comp.HasBodyInfo())
+        if(physics_comp.IsInUse())
         {
-            const auto& [uuid, jph_body_info_initial] = physics_comp.GetIdentifiableJphBodyInfo();
             const JPH::BodyInterface& jph_body_interface = _upJphPhysicsSystemUniquePtr->GetBodyInterface();
             const JPH::BodyID& body_id = _JphBodyIdStorage.at(entity_id);
 
-            JphBodyState jph_body_state = physics_comp.GetBodyState();
-            jph_body_state.Active = jph_body_interface.IsActive(body_id);
-            jph_body_state.LinearVelocity = FromJphVec3(jph_body_interface.GetLinearVelocity(body_id));
-            jph_body_state.AngularVelocity = FromJphVec3(jph_body_interface.GetAngularVelocity(body_id));
-            physics_comp.SetBodyState(jph_body_state);
+            physics_comp.SetActive(jph_body_interface.IsActive(body_id));
+            physics_comp.SetLinearVelocity(FromJphVec3(jph_body_interface.GetLinearVelocity(body_id)));
+            physics_comp.SetAngularVelocity(FromJphVec3(jph_body_interface.GetAngularVelocity(body_id)));
 
             transform_comp.SetPosition(FromJphVec3(jph_body_interface.GetPosition(body_id)));
             transform_comp.SetRotationQuaternion(FromJphQuat(jph_body_interface.GetRotation(body_id)));
@@ -158,69 +204,6 @@ void Arcadia::PhysicsSimulator::SetJphPhysicsSystemUpdatesPerSecond(std::int32_t
 auto Arcadia::PhysicsSimulator::GetBodyCount() const->std::size_t
 {
     return _JphBodyIdStorage.size();
-}
-
-void Arcadia::PhysicsSimulator::_BuildForEntity(EntityId entity_id, bool update_hint)
-{
-    std::shared_ptr<SceneLayer> scene_layer_sptr = LayerStack::Instance().GetLayerShared<SceneLayer>();
-    const EntityInfo& entity_info = scene_layer_sptr->ActiveScene_GetEntityInfo(entity_id);
-
-    // For now, only actor entity has physics component
-    if(entity_info.TypeString != "actor")
-    {
-        return;
-    }
-
-    const auto [physics_comp, transform_comp] = scene_layer_sptr->ActiveScene_GetComponent<PhysicsComponent, TransformComponent>(entity_id);
-
-    if(physics_comp.HasBodyInfo())
-    {
-        const auto& [uuid, body_info] = physics_comp.GetIdentifiableJphBodyInfo();
-        JPH::BodyInterface& jph_body_interface = _upJphPhysicsSystemUniquePtr->GetBodyInterface();
-        if(update_hint)
-        {
-            const JPH::BodyID body_id = _JphBodyIdStorage.at(entity_id);
-            jph_body_interface.RemoveBody(body_id);
-            jph_body_interface.DestroyBody(body_id);
-        }
-
-        JPH::ShapeRefC jph_shape_refc = MatchVariant<JPH::Shape*>(
-            body_info.JphShapeInfo,
-            [&](const JphBoxShapeInfo& info)
-            {
-                return new JPH::BoxShape(ToJphVec3(info.HalfExtent), info.ConvexRadius);
-            },
-            [&](const JphCapsuleShapeInfo& info)
-            {
-                return new JPH::CapsuleShape(info.HalfHeightOfCylinder, info.Radius);
-            },
-            [&](const JphCylinderShapeInfo& info)
-            {
-                return new JPH::CylinderShape(info.HalfHeight, info.Radius, info.ConvexRadius);
-            },
-            [&](const JphSphereShapeInfo& info)
-            {
-                return new JPH::SphereShape(info.Radius);
-            }
-        );
-        const JPH::BodyID body_id = jph_body_interface.CreateAndAddBody(
-            JPH::BodyCreationSettings(
-                jph_shape_refc,
-                ToJphVec3(transform_comp.GetPosition()),
-                ToJphQuat(transform_comp.GetRotationQuaternion()),
-                body_info.JphMotionType,
-                body_info.JphObjectLayer
-            ),
-            JPH::EActivation::Activate
-        );
-        ACDA_ASSERT(!body_id.IsInvalid(), "Failed to create body");
-        _JphBodyIdStorage.try_emplace(entity_id, body_id);
-    }
-}
-
-void Arcadia::PhysicsSimulator::_ClearForEntity(EntityId entity_id)
-{
-    _JphBodyIdStorage.erase(entity_id);
 }
 
 void Arcadia::PhysicsSimulator::_Clear()

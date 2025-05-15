@@ -5,6 +5,7 @@
 
 #include "core/identifiable.hpp"
 #include "core/math.hpp"
+#include "core/memento.hpp"
 #include "core/nlohmann_json.hpp"
 #include "platform/api_def.hpp"
 #include "platform/jolt.hpp"
@@ -12,6 +13,10 @@
 
 namespace Arcadia
 {
+    class JphNoShapeInfo
+    {
+    };
+
     class JphBoxShapeInfo
     {
     public:
@@ -41,40 +46,28 @@ namespace Arcadia
     };
 
     using JphShapeInfo = std::variant<
+        JphNoShapeInfo,
         JphBoxShapeInfo,
         JphCapsuleShapeInfo,
         JphCylinderShapeInfo,
         JphSphereShapeInfo
     >;
 
-    class JphBodyInfo
-    {
-    public:
-        using SelfType = JphBodyInfo;
-    public:
-        // Transform information comes from transform component
-
-        JPH::EMotionType JphMotionType{ JPH::EMotionType::Static };
-        JPH::ObjectLayer JphObjectLayer{ JphObjectLayers::NonMoving };
-        JphShapeInfo JphShapeInfo{ JphBoxShapeInfo{} };
-    };
-
-    class JphBodyState
-    {
-    public:
-        using SelfType = JphBodyState;
-    public:
-        bool Active{ false };
-        glm::vec3 LinearVelocity{ Glm::Vec3_CreateZero() };
-        glm::vec3 AngularVelocity{ Glm::Vec3_CreateZero() };
-    };
-
     class PhysicsComponent:
-        public ComponentInterface
+        public ComponentInterface,
+        public MementoOriginatorInterface
     {
     public:
-        using IdentifiableJphBodyInfoType = Identifiable<JphBodyInfo>;
         using SelfType = PhysicsComponent;
+    private:
+        class _MementoData: public MementoDataBase
+        {
+        public:
+            bool Active{ false };
+            JPH::EMotionType JphMotionType{ JPH::EMotionType::Static };
+            JPH::ObjectLayer JphObjectLayer{ JphObjectLayers::NonMoving };
+            JphShapeInfo JphShapeInfo{ JphNoShapeInfo{} };
+        };
     public:
         ACDA_COMPONENT_TYPE_STR_GETTERS("physics");
 
@@ -85,34 +78,51 @@ namespace Arcadia
         auto ToJson() const->nlohmann::json;
 
         [[nodiscard]]
-        auto HasBodyInfo() const -> bool;
-
-        [[nodiscard]]
-        auto GetIdentifiableJphBodyInfo() const -> const IdentifiableJphBodyInfoType&;
-
-        void BuildIndentifiableJphBodyInfo(
-            JPH::EMotionType jph_motion_type,
-            JPH::ObjectLayer jph_object_layer,
-            const JphShapeInfo& jph_shape_info
-        );
-
-        void BuildIndentifiableJphBodyInfo(
-            const JphBodyInfo& jph_body_info_initial
-        );
-
-        void DestroyJphBodyInfo();
+        auto IsInUse() const -> bool;
+        void SetInUse(bool in_use);
 
         [[nodiscard]]
         auto GetBodyShapeColor() const -> const glm::vec3&;
         void SetBodyShapeColor(const glm::vec3& color);
 
         [[nodiscard]]
-        auto GetBodyState() const -> const JphBodyState&;
-        void SetBodyState(const JphBodyState& state);
+        auto IsActive() const -> bool;
+        void SetActive(bool active);
+
+        [[nodiscard]]
+        auto GetLinearVelocity() const -> const glm::vec3&;
+        void SetLinearVelocity(const glm::vec3& linear_velocity);
+
+        [[nodiscard]]
+        auto GetAngularVelocity() const -> const glm::vec3&;
+        void SetAngularVelocity(const glm::vec3& angular_velocity);
+
+        [[nodiscard]]
+        auto GetJphMotionType() const->JPH::EMotionType;
+        void SetJphMotionType(JPH::EMotionType jph_motion_type);
+
+        [[nodiscard]]
+        auto GetJphObjectLayer() const->JPH::ObjectLayer;
+        void SetJphObjectLayer(JPH::ObjectLayer jph_object_layer);
+
+        [[nodiscard]]
+        auto GetJphShapeInfo() const -> const JphShapeInfo&;
+        void SetJphShapeInfo(const JphShapeInfo& jph_shape_info);
+
+    protected:
+        [[nodiscard]]
+        virtual auto OnSnapshot() const->std::shared_ptr<MementoDataBase> override;
+        virtual void OnRestore(const std::shared_ptr<MementoDataBase>& memento_data_base_sptr) override;
 
     private:
+        bool _InUse{ false };
+
+        bool _Active{ false };
         glm::vec3 _BodyShapeColor{ .2f,.2f,.2f };
-        JphBodyState _BodyState{};
-        std::unique_ptr<IdentifiableJphBodyInfoType> _upIdentifiableJphBodyInfo{};
+        glm::vec3 _LinearVelocity{ Glm::Vec3_CreateZero() };
+        glm::vec3 _AngularVelocity{ Glm::Vec3_CreateZero() };
+        JPH::EMotionType _JphMotionType{ JPH::EMotionType::Static };
+        JPH::ObjectLayer _JphObjectLayer{ JphObjectLayers::NonMoving };
+        JphShapeInfo _JphShapeInfo{ JphNoShapeInfo{} };
     };
 }

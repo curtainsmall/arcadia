@@ -29,9 +29,8 @@ namespace Arcadia
 
         [[nodiscard]]
         virtual auto HasEntity(EntityId entity_id) const -> bool = 0;
-        virtual void AddEntity(EntityId entity_id) = 0;
+        virtual void BuildEntity(EntityId entity_id) = 0;
         virtual void RemoveEntity(EntityId entity_id) = 0;
-        virtual void UpdateEntity(EntityId entity_id) = 0;
 
         virtual void Draw() = 0;
         virtual void Reset() = 0;

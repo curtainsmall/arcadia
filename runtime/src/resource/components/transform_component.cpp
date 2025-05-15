@@ -11,7 +11,8 @@ Arcadia::TransformComponent::TransformComponent(const nlohmann::json& json):
     _Direction(Glm::Vec3_FromJson(json.at("direction"))),
     _Scale(Glm::Vec3_FromJson(json.at("scale"))),
     _Pivot(Glm::Vec3_FromJson(json.at("pivot")))
-{}
+{
+}
 
 auto Arcadia::TransformComponent::ToJson() const -> nlohmann::json
 {
@@ -25,6 +26,29 @@ auto Arcadia::TransformComponent::ToJson() const -> nlohmann::json
     };
 
     return json;
+}
+
+auto Arcadia::TransformComponent::OnSnapshot() const -> std::shared_ptr<MementoDataBase>
+{
+    std::shared_ptr<_MementoData> memento_data_sptr = std::make_shared<_MementoData>();
+    memento_data_sptr->Flags = GetFlags();
+    memento_data_sptr->Position = GetPosition();
+    memento_data_sptr->RotationQuaternion = GetRotationQuaternion();
+    memento_data_sptr->Scale = GetScale();
+    memento_data_sptr->Direction = GetDirection();
+    memento_data_sptr->Pivot = GetPivot();
+    return memento_data_sptr;
+}
+
+void Arcadia::TransformComponent::OnRestore(const std::shared_ptr<MementoDataBase>& memento_data_base_sptr)
+{
+    const _MementoData& memento_data = memento_data_base_sptr->CastTo<_MementoData>();
+    SetFlags(memento_data.Flags);
+    SetPosition(memento_data.Position);
+    SetRotationQuaternion(memento_data.RotationQuaternion);
+    SetScale(memento_data.Scale);
+    SetDirection(memento_data.Direction);
+    SetPivot(memento_data.Pivot);
 }
 
 auto Arcadia::TransformComponent::GetFlags() const -> TransformComponentFlags

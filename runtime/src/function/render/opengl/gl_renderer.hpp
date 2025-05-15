@@ -73,22 +73,14 @@ namespace Arcadia
     public:
 
         using SelfType = GlRenderer;
-    private:
-        enum class _BuildHint: std::uint8_t
-        {
-            BuildAll = 0,
-            UpdateAll,
-            UpdateJustTransformMatrix,
-        };
     public:
         GlRenderer(const std::filesystem::path& gl_shader_folder_path);
         virtual ~GlRenderer() override = default;
 
         [[nodiscard]]
         virtual auto HasEntity(EntityId entity_id) const -> bool override;
-        virtual void AddEntity(EntityId entity_id) override;
+        virtual void BuildEntity(EntityId entity_id) override;
         virtual void RemoveEntity(EntityId entity_id) override;
-        virtual void UpdateEntity(EntityId entity_id) override;
         virtual void Draw() override;
         virtual void Reset() override;
 
@@ -100,9 +92,6 @@ namespace Arcadia
         virtual auto GetGraphicApiType() const->GraphicApi::Type override;
 
     public:
-        void _BuildForEntity(EntityId entity_id, _BuildHint hint);
-        void _ClearForEntity(EntityId entity_id);
-
         void _DrawGrid(
             const GlVertexArray& gl_grid_vertex_array,
             const glm::mat4& camera_view,

@@ -28,14 +28,158 @@ auto Arcadia::GlRenderer::HasEntity(EntityId entity_id) const -> bool
     return _EntityIdSet.contains(entity_id);
 }
 
-void Arcadia::GlRenderer::AddEntity(EntityId entity_id)
+void Arcadia::GlRenderer::BuildEntity(EntityId entity_id)
 {
-    if(HasEntity(entity_id))
-    {
-        return;
-    }
     _EntityIdSet.emplace(entity_id);
-    _BuildForEntity(entity_id, _BuildHint::BuildAll);
+
+    std::shared_ptr<SceneLayer> scene_layer_sptr = LayerStack::Instance().GetLayerShared<SceneLayer>();
+    const EntityInfo& entity_info = scene_layer_sptr->ActiveScene_GetEntityInfo(entity_id);
+
+    Match<void>(
+        entity_info.TypeString,
+        [&]()
+        {
+            ACDA_UNREACHABLE("Entity type not supported");
+        },
+        "camera",
+        [&]()
+        {
+            const auto& [camera_comp, transform_comp] = scene_layer_sptr->ActiveScene_GetComponent<CameraComponent, TransformComponent>(entity_id);
+
+            if(_GlRenderUnitCameraStorage.contains(entity_id))
+            {
+                GlRenderUnitCamera& gl_render_unit_camera = _GlRenderUnitCameraStorage.at(entity_id);
+                gl_render_unit_camera.CameraViewMatrix = camera_comp.GenerateViewMat4(transform_comp.GetPosition(), transform_comp.GetDirection());
+                gl_render_unit_camera.CameraProjectionMatrix = camera_comp.GenerateProjectiveMat4();
+                gl_render_unit_camera.CameraPosition = transform_comp.GetPosition();
+            }
+            else
+            {
+                _GlRenderUnitCameraStorage.try_emplace(
+                    entity_id,
+                    GlFramebuffer{
+                        camera_comp.GetViewportSize(),
+                        camera_comp.GetNearPlane(),
+                        camera_comp.GetFarPlane()
+                    },
+                    camera_comp.GetViewportSize(),
+                    camera_comp.GenerateViewMat4(transform_comp.GetPosition(), transform_comp.GetDirection()),
+                    camera_comp.GenerateProjectiveMat4(),
+                    transform_comp.GetPosition(),
+                    camera_comp.IsGridDisplaying(),
+                    camera_comp.GetNearPlane(),
+                    camera_comp.GetFarPlane()
+                );
+            }
+        },
+        "light",
+        [&]()
+        {
+            const auto& [light_comp, transform_comp] = scene_layer_sptr->ActiveScene_GetComponent<LightComponent, TransformComponent>(entity_id);
+
+            if(_GlRenderUnitLightStorage.contains(entity_id))
+            {
+                GlRenderUnitLight& gl_render_unit_light = _GlRenderUnitLightStorage.at(entity_id);
+                gl_render_unit_light.Position = transform_comp.GetPosition();
+                gl_render_unit_light.Direction = transform_comp.GetDirection();
+                gl_render_unit_light.Light = light_comp.GetLight();
+            }
+            else
+            {
+                _GlRenderUnitLightStorage.try_emplace(
+                    entity_id,
+                    transform_comp.GetPosition(),
+                    transform_comp.GetDirection(),
+                    light_comp.GetLight()
+                );
+            }
+        },
+        "actor",
+        [&]()
+        {
+            const auto [model_comp, transform_comp, physics_comp] = scene_layer_sptr->ActiveScene_GetComponent<ModelComponent, TransformComponent, PhysicsComponent>(entity_id);
+
+            if(model_comp.HasIdentifiableMeshes())
+            {
+                const auto& [uuid, meshes] = model_comp.GetIdentifiableMeshes();
+
+                const glm::mat4 transform_mat = transform_comp.GetTransformMatrix();
+
+                if(_GlRenderUnitMeshStorage.contains(entity_id))
+                {
+                    for(GlRenderUnitMesh& gl_render_unit_mesh : _GlRenderUnitMeshStorage.at(entity_id))
+                    {
+                        gl_render_unit_mesh.TransformMatrix = transform_mat;
+                    }
+                }
+                else
+                {
+                    std::vector<GlRenderUnitMesh> gl_meshes{};
+                    for(const Mesh& mesh : meshes)
+                    {
+                        // For any uuid, its corresponding meshes must be the same
+                        gl_meshes.emplace_back(
+                            GlVertexArray{ mesh.Vertices, mesh.Indices },
+                            transform_mat,
+                            mesh.Material.AmbientTexture2d,
+                            mesh.Material.DiffuseTexture2d,
+                            mesh.Material.SepcularTexture2d
+                        );
+                    }
+                    _GlRenderUnitMeshStorage.try_emplace(
+                        entity_id,
+                        std::move(gl_meshes)
+                    );
+                }
+            }
+
+            if(physics_comp.IsInUse())
+            {
+                if(!_GlRenderUnitPhysicsBodyShapeStorage.contains(entity_id))
+                {
+                    const JphShapeInfo& shape_info = physics_comp.GetJphShapeInfo();
+                    const Mesh& shape_mesh = MatchVariant<Mesh>(
+                        shape_info,
+                        [&](const JphNoShapeInfo&)
+                        {
+                            ACDA_UNREACHABLE("Invalid shape info type");
+                            return Mesh{};
+                        },
+                        [&](const JphBoxShapeInfo& info)
+                        {
+                            return Mesh::CreateBox(info.HalfExtent);
+                        },
+                        [&](const JphCapsuleShapeInfo& info)
+                        {
+                            return Mesh::CreateCapsule(info.Radius, info.HalfHeightOfCylinder);
+                        },
+                        [&](const JphCylinderShapeInfo& info)
+                        {
+                            return Mesh::CreateCylinder(info.HalfHeight, info.Radius);
+                        },
+                        [&](const JphSphereShapeInfo& info)
+                        {
+                            return Mesh::CreateSphere(info.Radius);
+                        }
+                    );
+
+                    _GlRenderUnitPhysicsBodyShapeStorage.try_emplace(
+                        entity_id,
+                        GlVertexArray(shape_mesh.Vertices, shape_mesh.Indices),
+                        glm::mat4{},
+                        glm::vec3{}
+                    );
+                }
+
+                GlRenderUnitPhysicsBodyShape& gl_render_unit_physics_body_shape
+                    = _GlRenderUnitPhysicsBodyShapeStorage.at(entity_id);
+                gl_render_unit_physics_body_shape.TransformMatrix =
+                    glm::translate(Glm::Mat4_CreateIdentity(), transform_comp.GetPosition())
+                    * glm::mat4_cast(transform_comp.GetRotationQuaternion());
+                gl_render_unit_physics_body_shape.Color = physics_comp.GetBodyShapeColor();
+            }
+        }
+    );
 }
 
 void Arcadia::GlRenderer::RemoveEntity(EntityId entity_id)
@@ -44,17 +188,11 @@ void Arcadia::GlRenderer::RemoveEntity(EntityId entity_id)
     {
         return;
     }
-    _ClearForEntity(entity_id);
+    _GlRenderUnitCameraStorage.erase(entity_id);
+    _GlRenderUnitLightStorage.erase(entity_id);
+    _GlRenderUnitMeshStorage.erase(entity_id);
+    _GlRenderUnitPhysicsBodyShapeStorage.erase(entity_id);
     _EntityIdSet.erase(entity_id);
-}
-
-void Arcadia::GlRenderer::UpdateEntity(EntityId entity_id)
-{
-    if(!HasEntity(entity_id))
-    {
-        return;
-    }
-    _BuildForEntity(entity_id, _BuildHint::UpdateJustTransformMatrix);
 }
 
 void Arcadia::GlRenderer::Draw()
@@ -173,154 +311,6 @@ auto Arcadia::GlRenderer::GetRenderResultId(EntityId entity_id) const -> void*
 auto Arcadia::GlRenderer::GetGraphicApiType() const -> GraphicApi::Type
 {
     return GraphicApi::Opengl(Version(4, 6, 0));
-}
-
-void Arcadia::GlRenderer::_BuildForEntity(EntityId entity_id, _BuildHint hint)
-{
-    std::shared_ptr<SceneLayer> scene_layer_sptr = LayerStack::Instance().GetLayerShared<SceneLayer>();
-    const EntityInfo& entity_info = scene_layer_sptr->ActiveScene_GetEntityInfo(entity_id);
-
-    Match<void>(
-        entity_info.TypeString,
-        [&]()
-        {
-            ACDA_UNREACHABLE("Entity type not supported");
-        },
-        "camera",
-        [&]()
-        {
-            const auto& [camera_comp, transform_comp] = scene_layer_sptr->ActiveScene_GetComponent<CameraComponent, TransformComponent>(entity_id);
-
-            if(hint != _BuildHint::BuildAll)
-            {
-                _GlRenderUnitCameraStorage.erase(entity_id);
-            }
-            _GlRenderUnitCameraStorage.try_emplace(
-                entity_id,
-                GlFramebuffer{
-                    camera_comp.GetViewportSize(),
-                    camera_comp.GetNearPlane(),
-                    camera_comp.GetFarPlane()
-                },
-                camera_comp.GetViewportSize(),
-                camera_comp.GenerateViewMat4(transform_comp.GetPosition(), transform_comp.GetDirection()),
-                camera_comp.GenerateProjectiveMat4(),
-                transform_comp.GetPosition(),
-                camera_comp.IsGridDisplaying(),
-                camera_comp.GetNearPlane(),
-                camera_comp.GetFarPlane()
-            );
-        },
-        "light",
-        [&]()
-        {
-            const auto& [light_comp, transform_comp] = scene_layer_sptr->ActiveScene_GetComponent<LightComponent, TransformComponent>(entity_id);
-            if(hint != _BuildHint::BuildAll)
-            {
-                _GlRenderUnitLightStorage.erase(entity_id);
-            }
-            _GlRenderUnitLightStorage.try_emplace(
-                entity_id,
-                transform_comp.GetPosition(),
-                transform_comp.GetPosition(),
-                light_comp.GetLight()
-            );
-        },
-        "actor",
-        [&]()
-        {
-            const auto [model_comp, transform_comp, physics_comp] = scene_layer_sptr->ActiveScene_GetComponent<ModelComponent, TransformComponent, PhysicsComponent>(entity_id);
-
-            if(model_comp.HasIdentifiableMeshes())
-            {
-                const auto& [uuid, meshes] = model_comp.GetIdentifiableMeshes();
-
-                const glm::mat4 transform_mat = transform_comp.GetTransformMatrix();
-
-                if(hint == _BuildHint::UpdateAll)
-                {
-                    _GlRenderUnitMeshStorage.erase(entity_id);
-                }
-
-                if(hint == _BuildHint::UpdateJustTransformMatrix)
-                {
-                    for(GlRenderUnitMesh& gl_render_unit_mesh : _GlRenderUnitMeshStorage.at(entity_id))
-                    {
-                        gl_render_unit_mesh.TransformMatrix = transform_mat;
-                    }
-                }
-                else
-                {
-                    std::vector<GlRenderUnitMesh> gl_meshes{};
-                    for(const Mesh& mesh : meshes)
-                    {
-                        // For any uuid, its corresponding meshes must be the same
-                        gl_meshes.emplace_back(
-                            GlVertexArray{ mesh.Vertices, mesh.Indices },
-                            transform_mat,
-                            mesh.Material.AmbientTexture2d,
-                            mesh.Material.DiffuseTexture2d,
-                            mesh.Material.SepcularTexture2d
-                        );
-                    }
-                    _GlRenderUnitMeshStorage.try_emplace(
-                        entity_id,
-                        std::move(gl_meshes)
-                    );
-                }
-            }
-
-            if(physics_comp.HasBodyInfo())
-            {
-                const auto& [uuid, jph_body] = physics_comp.GetIdentifiableJphBodyInfo();
-                if(hint == _BuildHint::BuildAll)
-                {
-                    const JphShapeInfo& shape_info = jph_body.JphShapeInfo;
-                    const Mesh& shape_mesh = MatchVariant<Mesh>(
-                        shape_info,
-                        [&](const JphBoxShapeInfo& info)
-                        {
-                            return Mesh::CreateBox(info.HalfExtent);
-                        },
-                        [&](const JphCapsuleShapeInfo& info)
-                        {
-                            return Mesh::CreateCapsule(info.Radius, info.HalfHeightOfCylinder);
-                        },
-                        [&](const JphCylinderShapeInfo& info)
-                        {
-                            return Mesh::CreateCylinder(info.HalfHeight, info.Radius);
-                        },
-                        [&](const JphSphereShapeInfo& info)
-                        {
-                            return Mesh::CreateSphere(info.Radius);
-                        }
-                    );
-
-                    _GlRenderUnitPhysicsBodyShapeStorage.try_emplace(
-                        entity_id,
-                        GlVertexArray(shape_mesh.Vertices, shape_mesh.Indices),
-                        glm::mat4{},
-                        glm::vec3{}
-                    );
-                }
-
-                GlRenderUnitPhysicsBodyShape& gl_render_unit_physics_body_shape
-                    = _GlRenderUnitPhysicsBodyShapeStorage.at(entity_id);
-                gl_render_unit_physics_body_shape.TransformMatrix =
-                    glm::translate(Glm::Mat4_CreateIdentity(), transform_comp.GetPosition())
-                    * glm::mat4_cast(transform_comp.GetRotationQuaternion());
-                gl_render_unit_physics_body_shape.Color = physics_comp.GetBodyShapeColor();
-            }
-        }
-    );
-}
-
-void Arcadia::GlRenderer::_ClearForEntity(EntityId entity_id)
-{
-    _GlRenderUnitCameraStorage.erase(entity_id);
-    _GlRenderUnitLightStorage.erase(entity_id);
-    _GlRenderUnitMeshStorage.erase(entity_id);
-    _GlRenderUnitPhysicsBodyShapeStorage.erase(entity_id);
 }
 
 void Arcadia::GlRenderer::_DrawGrid(

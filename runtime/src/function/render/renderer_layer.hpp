@@ -29,6 +29,9 @@ namespace Arcadia
         auto HasRenderer() const -> bool;
 
         [[nodiscard]]
+        auto RendererHasEntity(EntityId entity_id) const -> bool;
+
+        [[nodiscard]]
         auto HasRenderResult() const -> bool;
         [[nodiscard]]
         auto GetRenderResultId(EntityId entity_id) const -> void*;

@@ -26,9 +26,8 @@ namespace Arcadia::Events
     public:
         enum class ActionType
         {
-            Add,
+            Build,
             Remove,
-            Update,
         };
     public:
         RendererSetEntity(EntityId entitiy_id, ActionType active_type):

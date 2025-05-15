@@ -76,7 +76,7 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
             EventQueue::Instance()
                 .Signal<Events::RendererSetEntity>(
                     _ViewportCameraEntityId,
-                    Events::RendererSetEntity::ActionType::Update
+                    Events::RendererSetEntity::ActionType::Build
                 );
 
             glm::vec2 image_cursor_pos = ImGui::GetCursorPos();
@@ -414,12 +414,12 @@ void Arcadia::ImguiWindowViewport::_OnSceneActivated(Events::SceneActivated& e)
         EventQueue::Instance()
             .Signal<Events::RendererSetEntity>(
                 entity_id,
-                Events::RendererSetEntity::ActionType::Add
+                Events::RendererSetEntity::ActionType::Build
             );
         EventQueue::Instance()
             .Signal<Events::PhysicsSimulatorSetEntity>(
                 entity_id,
-                Events::PhysicsSimulatorSetEntity::ActionType::Add
+                Events::PhysicsSimulatorSetEntity::ActionType::Build
             );
     }
     EventQueue::Instance().Signal<Events::RendererSetActive>(true);

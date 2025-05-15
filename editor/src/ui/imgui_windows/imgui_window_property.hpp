@@ -104,7 +104,9 @@ namespace Arcadia
     public:
         bool Opened{ false };
     private:
-        JphBodyInfo _TempJphBodyInfo{};
+        JPH::EMotionType _TempJphMotionType{ JPH::EMotionType::Static };
+        JPH::ObjectLayer _TempJphObjectLayer{ JphObjectLayers::NonMoving };
+        JphShapeInfo     _TempJphShapeInfo{ JphNoShapeInfo{} };
     };
 
     class ImguiWindowPropertyFunctor_PhysicsComponent

@@ -54,14 +54,14 @@ namespace Arcadia
 
         [[nodiscard]]
         auto HasEntity(EntityId entity_id) const -> bool;
-        void AddEntity(EntityId entity_id);
+        void BuildEntity(EntityId entity_id);
         void RemoveEntity(EntityId entity_id);
 
         // Update physics simulation
         void Update();
 
         // Apply changes to entity
-        void Query();
+        void ApplyToEntity();
 
         void Reset();
 
@@ -81,8 +81,6 @@ namespace Arcadia
         auto GetBodyCount() const->std::size_t;
 
     private:
-        void _BuildForEntity(EntityId entity_id, bool update_hint);
-        void _ClearForEntity(EntityId entity_id);
         void _Clear();
     private:
 

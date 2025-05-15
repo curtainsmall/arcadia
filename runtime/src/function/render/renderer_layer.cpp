@@ -46,6 +46,12 @@ auto Arcadia::RendererLayer::HasRenderer() const -> bool
     return !!_spRenderer;
 }
 
+auto Arcadia::RendererLayer::RendererHasEntity(EntityId entity_id) const -> bool
+{
+    ACDA_ASSERT(_spRenderer);
+    return _spRenderer->HasEntity(entity_id);
+}
+
 auto Arcadia::RendererLayer::HasRenderResult() const -> bool
 {
     ACDA_ASSERT(_spRenderer);
@@ -94,19 +100,14 @@ void Arcadia::RendererLayer::_OnRendererSetEntity(Events::RendererSetEntity& e)
 
     switch(e.ActionType)
     {
-        case Events::RendererSetEntity::ActionType::Add:
+        case Events::RendererSetEntity::ActionType::Build:
         {
-            _spRenderer->AddEntity(e.EntityId);
+            _spRenderer->BuildEntity(e.EntityId);
             break;
         }
         case Events::RendererSetEntity::ActionType::Remove:
         {
             _spRenderer->RemoveEntity(e.EntityId);
-            break;
-        }
-        case Events::RendererSetEntity::ActionType::Update:
-        {
-            _spRenderer->UpdateEntity(e.EntityId);
             break;
         }
         default:

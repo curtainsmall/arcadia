@@ -30,7 +30,7 @@ void Arcadia::PhysicsLayer::OnUpdate()
     }
 
     _spPhysicsSimulator->Update();
-    _spPhysicsSimulator->Query();
+    _spPhysicsSimulator->ApplyToEntity();
 }
 
 auto Arcadia::PhysicsLayer::IsPhysicsSimulatorActive() const -> bool
@@ -81,9 +81,9 @@ void Arcadia::PhysicsLayer::_OnPhysicsSimulatorSetEntity(Events::PhysicsSimulato
 
     switch(e.ActionType)
     {
-        case Events::PhysicsSimulatorSetEntity::ActionType::Add:
+        case Events::PhysicsSimulatorSetEntity::ActionType::Build:
         {
-            _spPhysicsSimulator->AddEntity(e.EntityId);
+            _spPhysicsSimulator->BuildEntity(e.EntityId);
             break;
         }
         case Events::PhysicsSimulatorSetEntity::ActionType::Remove:

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "core/math.hpp"
+#include "core/memento.hpp"
 #include "core/nlohmann_json.hpp"
 #include "platform/api_def.hpp"
 #include "resource/components/component_interface.hpp"
@@ -16,10 +17,22 @@ namespace Arcadia
     };
 
     class TransformComponent:
-        public ComponentInterface
+        public ComponentInterface,
+        public MementoOriginatorInterface
     {
     public:
         using SelfType = TransformComponent;
+    private:
+        class _MementoData: public MementoDataBase
+        {
+        public:
+            TransformComponentFlags Flags{ TransformComponentFlags::None };
+            glm::vec3 Position{ Glm::Vec3_CreateZero() };
+            glm::quat RotationQuaternion{ Glm::Quat_CreateIdentity() };
+            glm::vec3 Direction{ Glm::Vec3_CreateUnitPositiveZ() };
+            glm::vec3 Scale{ 1,1,1 };
+            glm::vec3 Pivot{ Glm::Vec3_CreateZero() };
+        };
     public:
         ACDA_COMPONENT_TYPE_STR_GETTERS("transform");
 
@@ -72,9 +85,13 @@ namespace Arcadia
         [[nodiscarc]]
         auto GetTransformMatrix() const -> const glm::mat4&;
 
+    protected:
+        [[nodiscard]]
+        virtual auto OnSnapshot() const->std::shared_ptr<MementoDataBase> override;
+        virtual void OnRestore(const std::shared_ptr<MementoDataBase>& memento_data_base_sptr) override;
+
     private:
         TransformComponentFlags _Flags{ TransformComponentFlags::None };
-
         glm::vec3 _Position{ Glm::Vec3_CreateZero() };
         glm::vec3 _RotationEularAngle{ Glm::Vec3_CreateZero() };
         glm::quat _RotationQuaternion{ Glm::Quat_CreateIdentity() };

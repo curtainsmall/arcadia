@@ -36,29 +36,29 @@ Arcadia::Scene::Scene(const nlohmann::json& json):
                 json_comp_type_str,
                 ModelComponent::GetTypeStringStatic(),
                 [&]()
-            {
-                EmplaceComponent<ModelComponent>(entity_id, json_comp);
-            },
+                {
+                    EmplaceComponent<ModelComponent>(entity_id, json_comp);
+                },
                 LightComponent::GetTypeStringStatic(),
                 [&]()
-            {
-                EmplaceComponent<LightComponent>(entity_id, json_comp);
-            },
+                {
+                    EmplaceComponent<LightComponent>(entity_id, json_comp);
+                },
                 CameraComponent::GetTypeStringStatic(),
                 [&]()
-            {
-                EmplaceComponent<CameraComponent>(entity_id, json_comp);
-            },
+                {
+                    EmplaceComponent<CameraComponent>(entity_id, json_comp);
+                },
                 PhysicsComponent::GetTypeStringStatic(),
                 [&]()
-            {
-                EmplaceComponent<PhysicsComponent>(entity_id, json_comp);
-            },
+                {
+                    EmplaceComponent<PhysicsComponent>(entity_id, json_comp);
+                },
                 TransformComponent::GetTypeStringStatic(),
                 [&]()
-            {
-                EmplaceComponent<TransformComponent>(entity_id, json_comp);
-            }
+                {
+                    EmplaceComponent<TransformComponent>(entity_id, json_comp);
+                }
             );
         }
     }

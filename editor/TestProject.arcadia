@@ -1,0 +1,249 @@
+{
+    "active_scene_name": "TestScene1",
+    "name": "TestProject",
+    "scenes": [
+        {
+            "entities": [
+                {
+                    "components": {
+                        "camera": {
+                            "cursor_move_offset_range": [
+                                -100.0,
+                                100.0
+                            ],
+                            "far_plane": 100.0,
+                            "fixed_up": true,
+                            "fovy": 1.3089969158172607,
+                            "fovy_max": 2.094395160675049,
+                            "fovy_min": 0.01745329238474369,
+                            "near_plane": 0.10000000149011612,
+                            "speed": 0.25,
+                            "up_epsilon": 0.001745329238474369,
+                            "viewport_size": [
+                                1708,
+                                1331
+                            ]
+                        },
+                        "transform": {
+                            "direction": [
+                                0.09333126991987228,
+                                0.12459920346736908,
+                                -0.9878078699111938
+                            ],
+                            "flags": 0,
+                            "pivot": [
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            "position": [
+                                -5.8028082847595215,
+                                -4.625431060791016,
+                                27.165212631225586
+                            ],
+                            "rotation": [
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0,
+                                1.0
+                            ]
+                        }
+                    },
+                    "display": true,
+                    "internal": true,
+                    "name": "viewport_camera",
+                    "type": "camera"
+                },
+                {
+                    "components": {
+                        "model": {
+                            "filepath": "D:/CppProject/arcadia/editor/assets/models/nanosuit/nanosuit.obj"
+                        },
+                        "physics": {
+                            "body_shape_color": [
+                                0.1404748111963272,
+                                0.38725489377975464,
+                                0.38725489377975464
+                            ],
+                            "jph_motion_type": 2,
+                            "jph_object_layer": 1,
+                            "jph_shape_info": {
+                                "info": {
+                                    "convex_radius": 0.05000000074505806,
+                                    "half_extent": [
+                                        1.0,
+                                        1.0,
+                                        1.0
+                                    ]
+                                },
+                                "type": "box_shape"
+                            }
+                        },
+                        "transform": {
+                            "direction": [
+                                0.0,
+                                0.0,
+                                1.0
+                            ],
+                            "flags": 1,
+                            "pivot": [
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            "position": [
+                                -5.539709568023682,
+                                -5.737775802612305,
+                                0.0
+                            ],
+                            "rotation": [
+                                0.0,
+                                -0.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0,
+                                1.0
+                            ]
+                        }
+                    },
+                    "display": true,
+                    "internal": false,
+                    "name": "Model",
+                    "type": "actor"
+                },
+                {
+                    "components": {
+                        "light": {
+                            "light": {
+                                "ambient_strength": [
+                                    0.0,
+                                    0.0,
+                                    0.0
+                                ],
+                                "attenuation_coefs": [
+                                    1.0,
+                                    0.04500000178813934,
+                                    0.007499999832361937
+                                ],
+                                "color": [
+                                    1.0,
+                                    1.0,
+                                    1.0
+                                ],
+                                "diffuse_strength": [
+                                    5.0,
+                                    5.0,
+                                    5.0
+                                ],
+                                "specular_strength": [
+                                    0.0,
+                                    0.0,
+                                    0.0
+                                ]
+                            },
+                            "type": "point"
+                        },
+                        "transform": {
+                            "direction": [
+                                0.0,
+                                0.0,
+                                1.0
+                            ],
+                            "flags": 2,
+                            "pivot": [
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            "position": [
+                                6.885863304138184,
+                                5.72165584564209,
+                                0.0
+                            ],
+                            "rotation": [
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0,
+                                1.0
+                            ]
+                        }
+                    },
+                    "display": true,
+                    "internal": false,
+                    "name": "Light",
+                    "type": "light"
+                },
+                {
+                    "components": {
+                        "model": {
+                            "filepath": ""
+                        },
+                        "physics": {
+                            "body_shape_color": [
+                                0.6715686321258545,
+                                0.2370242029428482,
+                                0.2370242029428482
+                            ],
+                            "jph_motion_type": 0,
+                            "jph_object_layer": 0,
+                            "jph_shape_info": {
+                                "info": {
+                                    "convex_radius": 0.05000000074505806,
+                                    "half_extent": [
+                                        5.0,
+                                        1.0,
+                                        5.0
+                                    ]
+                                },
+                                "type": "box_shape"
+                            }
+                        },
+                        "transform": {
+                            "direction": [
+                                0.0,
+                                0.0,
+                                1.0
+                            ],
+                            "flags": 1,
+                            "pivot": [
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            "position": [
+                                0.0,
+                                -10.933131217956543,
+                                0.0
+                            ],
+                            "rotation": [
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0,
+                                1.0
+                            ]
+                        }
+                    },
+                    "display": true,
+                    "internal": false,
+                    "name": "Platform",
+                    "type": "actor"
+                }
+            ],
+            "name": "TestScene1"
+        }
+    ]
+}

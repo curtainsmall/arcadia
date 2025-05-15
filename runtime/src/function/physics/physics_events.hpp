@@ -26,7 +26,7 @@ namespace Arcadia::Events
     public:
         enum class ActionType
         {
-            Add,
+            Build,
             Remove,
         };
     public:
