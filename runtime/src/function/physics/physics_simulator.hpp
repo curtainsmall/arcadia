@@ -56,8 +56,13 @@ namespace Arcadia
         auto HasEntity(EntityId entity_id) const -> bool;
         void AddEntity(EntityId entity_id);
         void RemoveEntity(EntityId entity_id);
-        void UpdateEntity(EntityId entity_id);
+
+        // Update physics simulation
         void Update();
+
+        // Apply changes to entity
+        void Query();
+
         void Reset();
 
         [[nodiscard]]
@@ -66,7 +71,7 @@ namespace Arcadia
 
         [[nodiscard]]
         auto GetJphTempAllocatorSize() const->JPH::uint;
-        void SetJphTempAllocatorSize(JPH::uint get_jph_temp_allocator_size);
+        void SetJphTempAllocatorSize(JPH::uint jph_temp_allocator_size);
 
         [[nodiscard]]
         auto GetJphPhysicsSystemUpdatesPerSecond() const->std::int32_t;

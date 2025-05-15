@@ -28,7 +28,6 @@ namespace Arcadia::Events
         {
             Add,
             Remove,
-            Update
         };
     public:
         PhysicsSimulatorSetEntity(EntityId entitiy_id, ActionType active_type):

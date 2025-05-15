@@ -23,7 +23,14 @@ void Arcadia::PhysicsLayer::OnEvent(EventBase& event)
 void Arcadia::PhysicsLayer::OnUpdate()
 {
     ACDA_ASSERT(_spPhysicsSimulator);
+
+    if(!_spPhysicsSimulator->IsActive())
+    {
+        return;
+    }
+
     _spPhysicsSimulator->Update();
+    _spPhysicsSimulator->Query();
 }
 
 auto Arcadia::PhysicsLayer::IsPhysicsSimulatorActive() const -> bool
@@ -82,11 +89,6 @@ void Arcadia::PhysicsLayer::_OnPhysicsSimulatorSetEntity(Events::PhysicsSimulato
         case Events::PhysicsSimulatorSetEntity::ActionType::Remove:
         {
             _spPhysicsSimulator->RemoveEntity(e.EntityId);
-            break;
-        }
-        case Events::PhysicsSimulatorSetEntity::ActionType::Update:
-        {
-            _spPhysicsSimulator->UpdateEntity(e.EntityId);
             break;
         }
         default:

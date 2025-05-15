@@ -40,10 +40,13 @@ void Arcadia::PhysicsSimulator::AddEntity(EntityId entity_id)
 {
     if(HasEntity(entity_id))
     {
-        return;
+        _BuildForEntity(entity_id, true);
     }
-    _EntityIdSet.emplace(entity_id);
-    _BuildForEntity(entity_id, false);
+    else
+    {
+        _EntityIdSet.emplace(entity_id);
+        _BuildForEntity(entity_id, false);
+    }
 }
 
 void Arcadia::PhysicsSimulator::RemoveEntity(EntityId entity_id)
@@ -56,22 +59,8 @@ void Arcadia::PhysicsSimulator::RemoveEntity(EntityId entity_id)
     _EntityIdSet.erase(entity_id);
 }
 
-void Arcadia::PhysicsSimulator::UpdateEntity(EntityId entity_id)
-{
-    if(!HasEntity(entity_id))
-    {
-        return;
-    }
-    _BuildForEntity(entity_id, true);
-}
-
 void Arcadia::PhysicsSimulator::Update()
 {
-    if(!_Active)
-    {
-        return;
-    }
-
     // Update physics simulation
 
     JPH::TempAllocatorImpl temp_allocator(_JphTempAllocatorSize);
@@ -89,7 +78,10 @@ void Arcadia::PhysicsSimulator::Update()
         &temp_allocator,
         &job_system_thread_pool
     );
+}
 
+void Arcadia::PhysicsSimulator::Query()
+{
     for(const EntityId& entity_id : _EntityIdSet)
     {
         std::shared_ptr<SceneLayer> scene_layer_sptr = LayerStack::Instance().GetLayerShared<SceneLayer>();
@@ -148,9 +140,9 @@ auto Arcadia::PhysicsSimulator::GetJphTempAllocatorSize() const -> JPH::uint
     return _JphTempAllocatorSize;
 }
 
-void Arcadia::PhysicsSimulator::SetJphTempAllocatorSize(JPH::uint get_jph_temp_allocator_size)
+void Arcadia::PhysicsSimulator::SetJphTempAllocatorSize(JPH::uint jph_temp_allocator_size)
 {
-    _JphTempAllocatorSize = get_jph_temp_allocator_size;
+    _JphTempAllocatorSize = jph_temp_allocator_size;
 }
 
 auto Arcadia::PhysicsSimulator::GetJphPhysicsSystemUpdatesPerSecond() const -> std::int32_t

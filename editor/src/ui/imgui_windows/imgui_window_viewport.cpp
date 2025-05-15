@@ -291,80 +291,71 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
                     {
                         case Arcadia::ImguiWindowViewport::GizmoOption::Translation:
                         {
-                            if(_GizmoOriginPosition != translation)
+                            transform_comp.SetPosition(translation);
+                            if(_GizmoEditState == GizmoEditState::Edited)
                             {
-                                if(_GizmoEditState == GizmoEditState::Edited)
-                                {
-                                    CommandList::Instance().Emplace(
-                                        "Transform - Position",
-                                        [&comp = transform_comp, value = translation, origin_ptr = &_GizmoOriginPosition]() -> void
-                                        {
-                                            comp.SetPosition(value);
-                                            *origin_ptr = value;
-                                        },
-                                        [&comp = transform_comp, origin = _GizmoOriginPosition, origin_ptr = &_GizmoOriginPosition]() -> void
-                                        {
-                                            comp.SetPosition(origin);
-                                            *origin_ptr = origin;
-                                        }
-                                    );
-                                    _GizmoEditState = GizmoEditState::None;
-                                    _GizmoOriginPosition = transform_comp.GetPosition();
-                                }
-                                transform_comp.SetPosition(translation);
+                                CommandList::Instance().Emplace(
+                                    "Transform - Position",
+                                    [&comp = transform_comp, value = translation, origin_ptr = &_GizmoOriginPosition]() -> void
+                                    {
+                                        comp.SetPosition(value);
+                                        *origin_ptr = value;
+                                    },
+                                    [&comp = transform_comp, origin = _GizmoOriginPosition, origin_ptr = &_GizmoOriginPosition]() -> void
+                                    {
+                                        comp.SetPosition(origin);
+                                        *origin_ptr = origin;
+                                    }
+                                );
+                                _GizmoEditState = GizmoEditState::None;
+                                _GizmoOriginPosition = transform_comp.GetPosition();
                             }
                             break;
                         }
                         case Arcadia::ImguiWindowViewport::GizmoOption::Rotation:
                         {
-                            if(_GizmoOriginRotationEularAngle != rotation)
+                            glm::vec3 delta_rotation = rotation - _GizmoOriginRotationEularAngle;
+                            transform_comp.IncreaseRotationEularAngle(delta_rotation);
+                            if(_GizmoEditState == GizmoEditState::Edited)
                             {
-                                glm::vec3 delta_rotation = rotation - _GizmoOriginRotationEularAngle;
-                                if(_GizmoEditState == GizmoEditState::Edited)
-                                {
-                                    CommandList::Instance().Emplace(
-                                        "Transform - Rotation",
-                                        [&comp = transform_comp, value = delta_rotation, origin_ptr = &_GizmoOriginPosition]() -> void
-                                        {
-                                            comp.IncreaseRotationEularAngle(value);
-                                            *origin_ptr = value;
-                                        },
-                                        [&comp = transform_comp, origin_delta = -delta_rotation, origin = _GizmoOriginRotationEularAngle, origin_ptr = &_GizmoOriginPosition]() -> void
-                                        {
-                                            comp.IncreaseRotationEularAngle(origin_delta);
-                                            *origin_ptr = origin;
-                                        }
-                                    );
-                                    _GizmoEditState = GizmoEditState::None;
-                                    _GizmoOriginRotationEularAngle = transform_comp.GetRotationEularAngle();
-                                }
-                                transform_comp.IncreaseRotationEularAngle(delta_rotation);
+                                CommandList::Instance().Emplace(
+                                    "Transform - Rotation",
+                                    [&comp = transform_comp, value = delta_rotation, origin_ptr = &_GizmoOriginPosition]() -> void
+                                    {
+                                        comp.IncreaseRotationEularAngle(value);
+                                        *origin_ptr = value;
+                                    },
+                                    [&comp = transform_comp, origin_delta = -delta_rotation, origin = _GizmoOriginRotationEularAngle, origin_ptr = &_GizmoOriginPosition]() -> void
+                                    {
+                                        comp.IncreaseRotationEularAngle(origin_delta);
+                                        *origin_ptr = origin;
+                                    }
+                                );
+                                _GizmoEditState = GizmoEditState::None;
+                                _GizmoOriginRotationEularAngle = transform_comp.GetRotationEularAngle();
                             }
                             break;
                         }
                         case Arcadia::ImguiWindowViewport::GizmoOption::Scale:
                         {
-                            if(_GizmoOriginScale != scale)
+                            transform_comp.SetScale(scale);
+                            if(_GizmoEditState == GizmoEditState::Edited)
                             {
-                                if(_GizmoEditState == GizmoEditState::Edited)
-                                {
-                                    CommandList::Instance().Emplace(
-                                        "Transform - Scale",
-                                        [&comp = transform_comp, value = scale, origin_ptr = &_GizmoOriginPosition]() -> void
-                                        {
-                                            comp.SetScale(value);
-                                            *origin_ptr = value;
-                                        },
-                                        [&comp = transform_comp, origin = _GizmoOriginScale, origin_ptr = &_GizmoOriginPosition]() -> void
-                                        {
-                                            comp.SetScale(origin);
-                                            *origin_ptr = origin;
-                                        }
-                                    );
-                                    _GizmoEditState = GizmoEditState::None;
-                                    _GizmoOriginScale = transform_comp.GetScale();
-                                }
-                                transform_comp.SetScale(scale);
+                                CommandList::Instance().Emplace(
+                                    "Transform - Scale",
+                                    [&comp = transform_comp, value = scale, origin_ptr = &_GizmoOriginPosition]() -> void
+                                    {
+                                        comp.SetScale(value);
+                                        *origin_ptr = value;
+                                    },
+                                    [&comp = transform_comp, origin = _GizmoOriginScale, origin_ptr = &_GizmoOriginPosition]() -> void
+                                    {
+                                        comp.SetScale(origin);
+                                        *origin_ptr = origin;
+                                    }
+                                );
+                                _GizmoEditState = GizmoEditState::None;
+                                _GizmoOriginScale = transform_comp.GetScale();
                             }
                             break;
                         }
