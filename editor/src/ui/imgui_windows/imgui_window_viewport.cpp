@@ -163,6 +163,8 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
                 ImGui::PushStyleColor(ImGuiCol_ButtonHovered, hovered_color);
                 ImGui::PushStyleColor(ImGuiCol_ButtonActive, active_color);
 
+                TransformComponent& transform_comp = scene_layer_sptr->ActiveScene_GetComponent<TransformComponent>(_SelectedEntityId);
+
                 if(_GizmoMode == GizmoMode::Local)
                 {
                     if(ImGui::Button("Local"))
@@ -212,6 +214,8 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
                 if(!_InViewportFreecamMode && (ImGui::IsItemClicked() || _GizmoShortcutAvailable && ImGui::IsKeyDown(ImGuiKey_W)))
                 {
                     _GizmoOption = GizmoOption::Translation;
+                    _GizmoOriginPosition = transform_comp.GetPosition();
+                    _GizmoOriginPivot = transform_comp.GetPivot();
                 }
                 ImGui::SetItemTooltip("Set gizmo to translation mode (W)");
 
@@ -228,6 +232,7 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
                 if(!_InViewportFreecamMode && (ImGui::IsItemClicked() || _GizmoShortcutAvailable && ImGui::IsKeyDown(ImGuiKey_E)))
                 {
                     _GizmoOption = GizmoOption::Rotation;
+                    _GizmoOriginRotationEularAngle = transform_comp.GetRotationEularAngle();
                 }
                 ImGui::SetItemTooltip("Set gizmo to rotation mode (E)");
 
@@ -244,6 +249,7 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
                 if(!_InViewportFreecamMode && (ImGui::IsItemClicked() || _GizmoShortcutAvailable && ImGui::IsKeyDown(ImGuiKey_R)))
                 {
                     _GizmoOption = GizmoOption::Scale;
+                    _GizmoOriginScale = transform_comp.GetScale();
                 }
                 ImGui::SetItemTooltip("Set gizmo to scale mode (R)");
 
@@ -258,7 +264,6 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
                     glm::mat4 view_mat = viewport_camera_comp.GenerateViewMat4(viewport_transform_comp.GetPosition(), viewport_transform_comp.GetDirection());
                     glm::mat4 proj_mat = viewport_camera_comp.GenerateProjectiveMat4();
 
-                    TransformComponent& transform_comp = scene_layer_sptr->ActiveScene_GetComponent<TransformComponent>(_SelectedEntityId);
                     glm::mat4 transform_mat = transform_comp.GetTransformMatrix();
                     ImGuizmo::Manipulate(
                         glm::value_ptr(view_mat),
@@ -295,6 +300,7 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
                         case Arcadia::ImguiWindowViewport::GizmoOption::Translation:
                         {
                             transform_comp.SetPosition(translation);
+                            transform_comp.SetPivot(_GizmoOriginPivot + translation - _GizmoOriginPosition);
                             if(_GizmoEditState == GizmoEditState::Edited)
                             {
                                 CommandList::Instance().Emplace(
@@ -312,13 +318,14 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
                                 );
                                 _GizmoEditState = GizmoEditState::None;
                                 _GizmoOriginPosition = transform_comp.GetPosition();
+                                _GizmoOriginPivot = transform_comp.GetPivot();
                             }
                             break;
                         }
                         case Arcadia::ImguiWindowViewport::GizmoOption::Rotation:
                         {
                             glm::vec3 delta_rotation = rotation - _GizmoOriginRotationEularAngle;
-                            transform_comp.IncreaseRotationEularAngle(delta_rotation);
+                            transform_comp.SetRotationEularAngle(rotation);
                             if(_GizmoEditState == GizmoEditState::Edited)
                             {
                                 CommandList::Instance().Emplace(
@@ -366,8 +373,6 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
                         default:
                             break;
                     }
-
-                    transform_comp.IncreasePivot(translation - transform_comp.GetPosition());
                 }
             }
         }
@@ -441,6 +446,7 @@ void Arcadia::ImguiWindowViewport::_OnSelectEntity(Events::SelectEntity& e)
         _GizmoOriginPosition = transform_comp.GetPosition();
         _GizmoOriginRotationEularAngle = transform_comp.GetRotationEularAngle();
         _GizmoOriginScale = transform_comp.GetScale();
+        _GizmoOriginPivot = transform_comp.GetPivot();
     }
 }
 

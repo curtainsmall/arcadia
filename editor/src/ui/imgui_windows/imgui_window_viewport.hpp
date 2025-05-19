@@ -82,5 +82,6 @@ namespace Arcadia
         glm::vec3 _GizmoOriginPosition{};
         glm::vec3 _GizmoOriginRotationEularAngle{};
         glm::vec3 _GizmoOriginScale{};
+        glm::vec3 _GizmoOriginPivot{};
     };
 }
