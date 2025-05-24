@@ -8,17 +8,17 @@
 
 namespace Arcadia
 {
-    template<typename ...Fns>
-    class OverloadedFunctionsWrapper: public Fns...
+    template<class ...Fns>
+    struct OverloadedFunctionsWrapper: public Fns...
     {
     public:
         using Fns::operator()...;
     };
 
     template<
-        typename Ret,
+        class Ret,
         Concepts::InstantiatedFrom<std::variant> Variant,
-        typename ...BranchFns
+        class ...BranchFns
     >
     [[nodiscard]]
     ACDA_API auto MatchVariant(Variant& variant, BranchFns&& ...fns) -> Ret
@@ -32,9 +32,9 @@ namespace Arcadia
     }
 
     template<
-        typename Ret,
+        class Ret,
         Concepts::InstantiatedFrom<std::variant> Variant,
-        typename ...BranchFns
+        class ...BranchFns
     >
     [[nodiscard]]
     ACDA_API auto MatchVariant(const Variant& variant, BranchFns&& ...fns) -> Ret
@@ -48,10 +48,10 @@ namespace Arcadia
     }
 
     template<
-        typename Ret,
-        typename Cond,
+        class Ret,
+        class Cond,
         std::convertible_to<Cond> Case,
-        typename ...Cases
+        class ...Cases
     >
         requires (sizeof...(Cases) % 2 == 0)
     [[nodiscard]]
@@ -68,10 +68,10 @@ namespace Arcadia
     }
 
     template<
-        typename Ret,
-        typename Cond,
+        class Ret,
+        class Cond,
         std::convertible_to<Cond> Case,
-        typename ...Cases
+        class ...Cases
     >
         requires (sizeof...(Cases) % 2 == 0)
     [[nodiscard]]
@@ -88,10 +88,10 @@ namespace Arcadia
     }
 
     template<
-        typename Ret,
-        typename Cond,
+        class Ret,
+        class Cond,
         std::convertible_to<Cond> Case,
-        typename ...Cases
+        class ...Cases
     >
         requires (sizeof...(Cases) % 2 == 0)
     [[nodiscard]]
@@ -108,10 +108,10 @@ namespace Arcadia
     }
 
     template<
-        typename Ret,
-        typename Cond,
+        class Ret,
+        class Cond,
         std::convertible_to<Cond> Case,
-        typename ...Cases
+        class ...Cases
     >
         requires (sizeof...(Cases) % 2 == 0)
     [[nodiscard]]

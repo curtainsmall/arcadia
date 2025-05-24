@@ -10,7 +10,7 @@ auto main() -> int;
 
 namespace Arcadia
 {
-    class AppLayerInterface: public LayerInterface
+    struct AppLayerInterface: public LayerInterface
     {
         friend auto ::main() -> int;
     public:

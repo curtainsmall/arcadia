@@ -15,7 +15,7 @@ namespace Arcadia
         ACDA_DEFINE_RUNTIME_ERROR_EXCEPTION(ProjectConstructionFailed);
     }
 
-    class Project: public Noncopyable
+    struct Project: public Noncopyable
     {
     public:
         using SelfType = Project;

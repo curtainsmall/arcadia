@@ -16,38 +16,38 @@
 
 namespace Arcadia
 {
-    class EventBase: public Noncopyable
+    struct EventBase: public Noncopyable
     {
     public:
         EventBase() = default;
         // Virtual destructor that make event type virtual
-        virtual ~EventBase()
-        {};
+        virtual ~EventBase() = default;
 
         void MarkHandled();
-
         auto IsHandled() const -> bool;
+
     private:
         bool _Handled{ false };
     };
 
     namespace Concepts
     {
-        template<typename T>
+        template<class T>
         concept Event = std::derived_from<T, EventBase>;
     }
 
     template<Concepts::Event Event>
     using EventHandler = std::function<void(Event&)>;
 
-    class EventDispatcher: public Noncopyable
+    struct EventDispatcher: public Noncopyable
     {
     public:
         using SelfType = EventDispatcher;
     public:
         EventDispatcher(EventBase& event):
             _pEvent(&event)
-        {}
+        {
+        }
         ~EventDispatcher() = default;
 
         template<Concepts::Event Event>
@@ -61,20 +61,16 @@ namespace Arcadia
             return *this;
         }
 
-        auto IsDispatched() const -> bool
-        {
-            return _Dispatched;
-        }
+        auto IsDispatched() const -> bool;
 
     private:
         EventBase* _pEvent;
         bool _Dispatched{ false };
     };
 
-    class EventQueue
+    struct EventQueue
     {
     public:
-
         using SelfType = EventQueue;
         using DebugExcludedEventTypeSetType = std::unordered_set<std::type_index>;
     private:
@@ -83,7 +79,7 @@ namespace Arcadia
     public:
         static auto Instance() -> SelfType&;
 
-        template<Concepts::Event Event, typename ...Args>
+        template<Concepts::Event Event, class ...Args>
         auto Signal(Args&& ...args) -> SelfType&
         {
             _pCurrentQueue->emplace(std::make_unique<Event>(std::forward<Args>(args)...));

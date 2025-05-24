@@ -26,7 +26,7 @@ namespace Arcadia
         ACDA_DEFINE_RUNTIME_ERROR_EXCEPTION(FileSaveFailed);
     }
 
-    class File
+    struct File
     {
     public:
         using SectionType = Serialization::BufferType;

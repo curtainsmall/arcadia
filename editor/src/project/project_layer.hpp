@@ -15,7 +15,7 @@
 
 namespace Arcadia
 {
-    class ProjectLayer: public LayerInterface
+    struct ProjectLayer: public LayerInterface
     {
     public:
         ProjectLayer();

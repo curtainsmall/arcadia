@@ -25,9 +25,9 @@ namespace Arcadia
          "light",
     };
 
-    class EntityInfo
+    struct EntityInfo
     {
-        friend class Scene;
+        friend struct Scene;
     public:
         using SelfType = EntityInfo;
     public:
@@ -42,7 +42,7 @@ namespace Arcadia
         std::string _Name;
     };
 
-    class Scene: public Noncopyable
+    struct Scene: public Noncopyable
     {
     public:
         using EntityInfoStorageType = std::unordered_map<EntityId, EntityInfo>;
@@ -84,13 +84,13 @@ namespace Arcadia
 
         void RenameEntity(EntityId entity_id, const std::string& new_entity_name);
 
-        template<Concepts::Component Component, typename ...Args>
+        template<Concepts::Component Component, class ...Args>
         auto EmplaceComponent(EntityId entity_id, Args&& ...args) -> Component&
         {
             return _Registry.emplace<Component>(entity_id, std::forward<Args>(args)...);
         }
 
-        template<Concepts::Component Component, typename ...Args>
+        template<Concepts::Component Component, class ...Args>
         auto ReplaceComponent(EntityId entity_id, Args&& ...args) -> Component&
         {
             ACDA_ASSERT(ContainsAllComponents<Component>(entity_id));
@@ -98,7 +98,7 @@ namespace Arcadia
             return _Registry.replace<Component>(entity_id, std::forward<Args>(args)...);
         }
 
-        template<Concepts::Component Component, typename ...Args>
+        template<Concepts::Component Component, class ...Args>
         auto EmplaceOrReplaceComponent(EntityId entity_id, Args&& ...args) -> Component&
         {
             return _Registry.emplace_or_replace<Component>(entity_id, std::forward<Args>(args)...);

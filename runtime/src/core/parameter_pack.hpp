@@ -6,8 +6,8 @@
 
 namespace Arcadia
 {
-    template<typename ...Args>
-    class ParameterPack
+    template<class ...Args>
+    struct ParameterPack
     {
     public:
         using TupleType = std::tuple<Args...>;
@@ -17,7 +17,7 @@ namespace Arcadia
         using ElementTypeAt = std::tuple_element_t<Index, TupleType>;
 
     public:
-        template<typename T>
+        template<class T>
         static constexpr bool ContainsType = IsTypeInTuple<T, TupleType>;
 
         static constexpr std::size_t Size = std::tuple_size_v<TupleType>;
@@ -26,8 +26,8 @@ namespace Arcadia
     namespace Concepts
     {
         template<
-            typename T,
-            typename Pack
+            class T,
+            class Pack
         >
         concept TypeInParameterPack =
             Concepts::InstantiatedFrom<Pack, ParameterPack>

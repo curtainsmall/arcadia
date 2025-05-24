@@ -26,7 +26,7 @@
 
 namespace Arcadia
 {
-    class ImguiWindowPropertyFunctor_CameraComponent
+    struct ImguiWindowPropertyFunctor_CameraComponent
     {
     public:
         using SelfType = ImguiWindowPropertyFunctor_CameraComponent;
@@ -47,7 +47,7 @@ namespace Arcadia
         float _OriginUpAxisAngleEpsilon{};
     };
 
-    class ImguiWindowPropertyFunctor_LightComponent
+    struct ImguiWindowPropertyFunctor_LightComponent
     {
     public:
         using SelfType = ImguiWindowPropertyFunctor_LightComponent;
@@ -87,7 +87,7 @@ namespace Arcadia
         glm::vec3 _OriginSpecularStrength{};
     };
 
-    class ImguiWindowPropertyFunctor_ModelComponent
+    struct ImguiWindowPropertyFunctor_ModelComponent
     {
     public:
         using SelfType = ImguiWindowPropertyFunctor_ModelComponent;
@@ -95,7 +95,7 @@ namespace Arcadia
         void operator()(ModelComponent& model_comp);
     };
 
-    class ImguiWindowPopupFunctor_PhysicsComponentCreateBody
+    struct ImguiWindowPopupFunctor_PhysicsComponentCreateBody
     {
     public:
         using SelfType = ImguiWindowPopupFunctor_PhysicsComponentCreateBody;
@@ -109,7 +109,7 @@ namespace Arcadia
         JphShapeInfo     _TempJphShapeInfo{ JphNoShapeInfo{} };
     };
 
-    class ImguiWindowPropertyFunctor_PhysicsComponent
+    struct ImguiWindowPropertyFunctor_PhysicsComponent
     {
     public:
         using SelfType = ImguiWindowPropertyFunctor_PhysicsComponent;
@@ -119,7 +119,7 @@ namespace Arcadia
         ImguiWindowPopupFunctor_PhysicsComponentCreateBody _ImguiWindowPopupPhysicsComponentCreateBody{};
     };
 
-    class ImguiWindowPropertyFunctor_TransformComponent
+    struct ImguiWindowPropertyFunctor_TransformComponent
     {
     public:
         using SelfType = ImguiWindowPropertyFunctor_TransformComponent;
@@ -136,7 +136,7 @@ namespace Arcadia
         glm::vec3 _OriginPivot{};
     };
 
-    class ImguiWindowProperty: public ImguiWindowInterface
+    struct ImguiWindowProperty: public ImguiWindowInterface
     {
     public:
         using SelfType = ImguiWindowProperty;

@@ -10,7 +10,7 @@
 
 namespace Arcadia::Events
 {
-    class UpdateEntityInfo: public EventBase
+    struct UpdateEntityInfo: public EventBase
     {
     public:
         using EntityInfoModifierType = std::function<void(EntityInfo&)>;
@@ -27,7 +27,7 @@ namespace Arcadia::Events
 
     //==== Events for scene ====//
 
-    class SceneBuilt: public EventBase
+    struct SceneBuilt: public EventBase
     {
     public:
         SceneBuilt(const std::shared_ptr<Scene>& scene_sptr):
@@ -38,7 +38,7 @@ namespace Arcadia::Events
         const std::shared_ptr<Scene> spScene;
     };
 
-    class SceneActivated: public EventBase
+    struct SceneActivated: public EventBase
     {
     public:
         SceneActivated(const std::shared_ptr<Scene>& scene_sptr):
@@ -49,19 +49,19 @@ namespace Arcadia::Events
         const std::shared_ptr<Scene> spScene;
     };
 
-    class SceneDeactivated: public EventBase
+    struct SceneDeactivated: public EventBase
     {
     };
 
-    class SceneUnbuilt: public EventBase
+    struct SceneUnbuilt: public EventBase
     {
     };
 
-    class NewScene: public EventBase
+    struct NewScene: public EventBase
     {
     };
 
-    class CreateScene: public EventBase
+    struct CreateScene: public EventBase
     {
     public:
         CreateScene(const std::string& name, bool as_current):
@@ -73,7 +73,7 @@ namespace Arcadia::Events
         const bool AsCurrent;
     };
 
-    class CreateSceneFromJson: public EventBase
+    struct CreateSceneFromJson: public EventBase
     {
     public:
         CreateSceneFromJson(const nlohmann::json& json):
@@ -84,7 +84,7 @@ namespace Arcadia::Events
         const nlohmann::json Json;
     };
 
-    class RenameScene: public EventBase
+    struct RenameScene: public EventBase
     {
     public:
         RenameScene(const std::string& new_name):
@@ -95,7 +95,7 @@ namespace Arcadia::Events
         const std::string NewName;
     };
 
-    class SelectScene: public EventBase
+    struct SelectScene: public EventBase
     {
     public:
         SelectScene(const std::string& name):
@@ -106,21 +106,21 @@ namespace Arcadia::Events
         const std::string Name;
     };
 
-    class CloseScene: public EventBase
+    struct CloseScene: public EventBase
     {
     };
 
-    class DeleteScene: public EventBase
+    struct DeleteScene: public EventBase
     {
     };
 
-    class DestroyAllScenes: public EventBase
+    struct DestroyAllScenes: public EventBase
     {
     };
 
     //==== Events for entity ====//
 
-    class NewEntity: public EventBase
+    struct NewEntity: public EventBase
     {
     public:
         NewEntity(const std::string& entity_type_string):
@@ -131,7 +131,7 @@ namespace Arcadia::Events
         const std::string EntityTypeString;
     };
 
-    class SelectEntity: public EventBase
+    struct SelectEntity: public EventBase
     {
     public:
         SelectEntity(EntityId entity_id):
@@ -142,7 +142,7 @@ namespace Arcadia::Events
         const EntityId EntityId;
     };
 
-    class RenameEntity: public EventBase
+    struct RenameEntity: public EventBase
     {
     public:
         RenameEntity(EntityId entity_id, const std::string& new_name):
@@ -154,7 +154,7 @@ namespace Arcadia::Events
         const std::string NewName;
     };
 
-    class DeleteEntity: public EventBase
+    struct DeleteEntity: public EventBase
     {
     public:
         DeleteEntity(EntityId entity_id):
@@ -167,7 +167,7 @@ namespace Arcadia::Events
 
     //==== Events for component ====//
 
-    class AddComponent: public EventBase
+    struct AddComponent: public EventBase
     {
     public:
         AddComponent(EntityId entity_id, const std::string& component_type_string):
@@ -179,7 +179,7 @@ namespace Arcadia::Events
         const std::string ComponentTypeString;
     };
 
-    class RemoveComponent: public EventBase
+    struct RemoveComponent: public EventBase
     {
     public:
         RemoveComponent(EntityId entity_id, const std::string& component_type_string):

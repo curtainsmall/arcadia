@@ -9,7 +9,7 @@
 
 namespace Arcadia
 {
-    class Texture2d
+    struct Texture2d
     {
     public:
 

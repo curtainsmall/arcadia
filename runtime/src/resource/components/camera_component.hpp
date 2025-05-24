@@ -7,7 +7,7 @@
 
 namespace Arcadia
 {
-    class CameraComponent:
+    struct CameraComponent:
         public ComponentInterface
     {
     public:

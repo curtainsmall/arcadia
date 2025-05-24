@@ -11,7 +11,7 @@
 
 namespace Arcadia
 {
-    class GlBufferLayoutAttribute
+    struct GlBufferLayoutAttribute
     {
     public:
         GLuint Count;
@@ -20,7 +20,7 @@ namespace Arcadia
         GLuint Divisor;
     };
 
-    class GlBufferLayout
+    struct GlBufferLayout
     {
     public:
         using SelfType = GlBufferLayout;
@@ -28,7 +28,7 @@ namespace Arcadia
         GlBufferLayout() = default;
         ~GlBufferLayout() = default;
 
-        template<typename Type>
+        template<class Type>
         auto Push(GLuint count = 1, GLuint dividor = 0) -> SelfType&
         {
             ACDA_UNREACHABLE("This generic template should never be occured");
@@ -123,7 +123,7 @@ namespace Arcadia
         GLsizei Stride{};
     };
 
-    class GlVertexBuffer: public Noncopyable
+    struct GlVertexBuffer: public Noncopyable
     {
     public:
         using SelfType = GlVertexBuffer;

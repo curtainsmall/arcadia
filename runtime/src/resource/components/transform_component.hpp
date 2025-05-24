@@ -8,7 +8,7 @@
 
 namespace Arcadia
 {
-    enum class TransformComponentFlags: std::uint8_t
+    enum struct TransformComponentFlags: std::uint8_t
     {
         None = 0,
         UseRotation = 0x01,
@@ -16,14 +16,14 @@ namespace Arcadia
         _EnumBitfield
     };
 
-    class TransformComponent:
+    struct TransformComponent:
         public ComponentInterface,
         public MementoOriginatorInterface
     {
     public:
         using SelfType = TransformComponent;
     private:
-        class _MementoData: public MementoDataBase
+        struct _MementoData: public MementoDataBase
         {
         public:
             TransformComponentFlags Flags{ TransformComponentFlags::None };

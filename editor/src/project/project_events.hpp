@@ -6,19 +6,19 @@
 
 namespace Arcadia
 {
-    class Project;
-    class RendererInterface;
-    class PhysicsSimulator;
-    class Scene;
+    struct Project;
+    struct RendererInterface;
+    struct PhysicsSimulator;
+    struct Scene;
 
     namespace Events
     {
         //==== Event for project ====//
 
-        class NewProject: public EventBase
+        struct NewProject: public EventBase
         {};
 
-        class CreateProject: public EventBase
+        struct CreateProject: public EventBase
         {
         public:
             CreateProject(const std::string& name, const std::string& filepath_string):
@@ -29,19 +29,19 @@ namespace Arcadia
             const std::string FilepathString;
         };
 
-        class OpenProject: public EventBase
+        struct OpenProject: public EventBase
         {};
 
-        class SaveProject: public EventBase
+        struct SaveProject: public EventBase
         {};
 
-        class SaveProjectAs: public EventBase
+        struct SaveProjectAs: public EventBase
         {};
 
-        class CloseProject: public EventBase
+        struct CloseProject: public EventBase
         {};
 
-        class ProjectBuilt: public EventBase
+        struct ProjectBuilt: public EventBase
         {
         public:
             ProjectBuilt(const std::shared_ptr<Project>& project_sptr):
@@ -52,13 +52,13 @@ namespace Arcadia
             const std::shared_ptr<Project> spProject;
         };
 
-        class ProjectUnbuilt: public EventBase
+        struct ProjectUnbuilt: public EventBase
         {};
 
-        class ProjectLoaded: public EventBase
+        struct ProjectLoaded: public EventBase
         {};
 
-        class ProjectSaved: public EventBase
+        struct ProjectSaved: public EventBase
         {};
     }
 }

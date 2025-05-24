@@ -42,3 +42,8 @@ auto Arcadia::EventBase::IsHandled() const -> bool
 {
     return _Handled;
 }
+
+auto Arcadia::EventDispatcher::IsDispatched() const -> bool
+{
+    return _Dispatched;
+}

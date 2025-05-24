@@ -21,18 +21,19 @@ virtual auto GetIdString() const -> std::string override\
 
 namespace Arcadia
 {
-    class ImguiWindowInterface
+    struct ImguiWindowInterface
     {
     public:
         using SelfType = ImguiWindowInterface;
     public:
         ImguiWindowInterface(
             bool open = false,
-            const std::string& title={}
+            const std::string& title = {}
         ):
             _Opened(open),
             _Title(title)
-        {}
+        {
+        }
         virtual ~ImguiWindowInterface() = default;
 
         [[nodiscard]]
@@ -48,7 +49,8 @@ namespace Arcadia
         }
 
         virtual void OnEvent(EventBase& e)
-        {}
+        {
+        }
         virtual void OnUpdate() = 0;
         virtual auto GetIdString() const->std::string = 0;
 
@@ -59,7 +61,7 @@ namespace Arcadia
 
     namespace Concepts
     {
-        template<typename T>
+        template<class T>
         concept ImguiWindow =
             std::derived_from<T, ImguiWindowInterface>
             && requires

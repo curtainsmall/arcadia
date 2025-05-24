@@ -7,7 +7,7 @@
 
 namespace Arcadia
 {
-    class ImguiWindowMainStatusbar: public ImguiWindowInterface
+    struct ImguiWindowMainStatusbar: public ImguiWindowInterface
     {
     public:
         using SelfType = ImguiWindowMainStatusbar;

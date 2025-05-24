@@ -4,7 +4,7 @@
 
 namespace Arcadia
 {
-    template<typename Num>
+    template<class Num>
     [[nodiscard]]
     ACDA_API auto IsInRange(Num num, Num min, Num max) -> bool
     {

@@ -19,7 +19,7 @@
 
 namespace Arcadia
 {
-    class ImguiWindowStateFunctor_Scene
+    struct ImguiWindowStateFunctor_Scene
     {
     public:
         using SelfType = ImguiWindowStateFunctor_Scene;
@@ -27,7 +27,7 @@ namespace Arcadia
         void operator()(const std::shared_ptr<SceneLayer>& scene_layer);
     };
 
-    class ImguiWindowStateFunctor_Renderer
+    struct ImguiWindowStateFunctor_Renderer
     {
     public:
         using SelfType = ImguiWindowStateFunctor_Renderer;
@@ -35,7 +35,7 @@ namespace Arcadia
         void operator()(const std::shared_ptr<RendererLayer>& renderer_layer);
     };
 
-    class ImguiWindowStateFunctor_PhysicsSimulator
+    struct ImguiWindowStateFunctor_PhysicsSimulator
     {
     public:
         using SelfType = ImguiWindowStateFunctor_PhysicsSimulator;
@@ -46,7 +46,7 @@ namespace Arcadia
         bool _ShouldLinkUpsAndSpu{ true };
     };
 
-    class ImguiWindowState: public ImguiWindowInterface
+    struct ImguiWindowState: public ImguiWindowInterface
     {
     public:
         using SelfType = ImguiWindowState;

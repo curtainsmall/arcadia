@@ -10,7 +10,7 @@ namespace Arcadia
 {
     namespace Events
     {
-        class OpenImguiWindow: public EventBase
+        struct OpenImguiWindow: public EventBase
         {
         public:
             OpenImguiWindow(const std::string& id_string):
@@ -20,7 +20,7 @@ namespace Arcadia
             const std::string IdString;
         };
 
-        class ScaleImguiWindow: public EventBase
+        struct ScaleImguiWindow: public EventBase
         {
         public:
             ScaleImguiWindow(float new_scale):
@@ -31,7 +31,7 @@ namespace Arcadia
         };
 
         // When keyboard input is occupied in multiple loops (e.g. text input)
-        class KeyboardInputOccupied: public EventBase
+        struct KeyboardInputOccupied: public EventBase
         {
         public:
             KeyboardInputOccupied(bool occupied):
@@ -43,7 +43,7 @@ namespace Arcadia
 
         //==== Events for physics simulator ====//
 
-        class PhysicsSimulatorShouldUpdate: public EventBase
+        struct PhysicsSimulatorShouldUpdate: public EventBase
         {
         public:
             PhysicsSimulatorShouldUpdate(bool should_update):
@@ -55,17 +55,17 @@ namespace Arcadia
 
         //==== Events for physics component ====//
 
-        class PhysicsComponentNewBody: public EventBase
+        struct PhysicsComponentNewBody: public EventBase
         {};
 
         //==== Events for modes ====//
 
-        class TogglePlayMode: public EventBase
+        struct TogglePlayMode: public EventBase
         {};
 
         //==== Events for viewport ====//
 
-        class ShowGizmo: public EventBase
+        struct ShowGizmo: public EventBase
         {
         public:
             ShowGizmo(bool should_show_gizmo):

@@ -9,7 +9,7 @@ namespace Arcadia
 {
     namespace GraphicApi
     {
-        class Directx
+        struct Directx
         {
         public:
             using SelfType = Directx;
@@ -17,7 +17,7 @@ namespace Arcadia
             Version Version{ 12,0,0 };
         };
 
-        class Opengl
+        struct Opengl
         {
         public:
             using SelfType = Opengl;
@@ -25,7 +25,7 @@ namespace Arcadia
             Version Version{ 4,6,0 };
         };
 
-        class Vulkan
+        struct Vulkan
         {
         public:
             using SelfType = Vulkan;

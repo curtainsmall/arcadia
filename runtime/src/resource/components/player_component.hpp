@@ -6,7 +6,7 @@
 
 namespace Arcadia
 {
-    class PlayerComponent: public ComponentInterface
+    struct PlayerComponent: public ComponentInterface
     {
     public:
         using SelfType = PlayerComponent;

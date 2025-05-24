@@ -14,7 +14,7 @@
 
 namespace Arcadia
 {
-    class ImguiWindowPopupFunctor_CreateProject
+    struct ImguiWindowPopupFunctor_CreateProject
     {
     public:
         using SelfType = ImguiWindowPopupFunctor_CreateProject;
@@ -27,7 +27,7 @@ namespace Arcadia
         std::string _FilepathString{};
     };
 
-    class ImguiWindowPopupFunctor_CreateScene
+    struct ImguiWindowPopupFunctor_CreateScene
     {
     public:
         using SelfType = ImguiWindowPopupFunctor_CreateScene;
@@ -41,7 +41,7 @@ namespace Arcadia
         bool _NameAvailable{ true };
     };
 
-    class ImguiWindowPopupFunctor_RenameScene
+    struct ImguiWindowPopupFunctor_RenameScene
     {
     public:
         using SelfType = ImguiWindowPopupFunctor_RenameScene;
@@ -56,7 +56,7 @@ namespace Arcadia
         bool _NameAvailable{ false };
     };
 
-    class ImguiWindowMainMenubar: public ImguiWindowInterface
+    struct ImguiWindowMainMenubar: public ImguiWindowInterface
     {
     public:
         using SelfType = ImguiWindowMainMenubar;

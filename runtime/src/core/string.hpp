@@ -7,7 +7,7 @@
 namespace Arcadia
 {
     template<std::size_t N>
-    class StringLiteral
+    struct StringLiteral
     {
     public:
         constexpr StringLiteral(const char(&str)[N])

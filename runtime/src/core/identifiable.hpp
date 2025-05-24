@@ -7,8 +7,8 @@
 
 namespace Arcadia
 {
-    template<typename Value>
-    class Identifiable: public Noncopyable
+    template<class Value>
+    struct Identifiable: public Noncopyable
     {
     public:
         using ValueType = Value;
@@ -21,7 +21,7 @@ namespace Arcadia
         Identifiable(ValueType&& val):
             _Value(val)
         {}
-        template<typename ...Args>
+        template<class ...Args>
         Identifiable(Args&& ...args) :
             _Value(std::forward<Args>(args)...)
         {}
@@ -65,13 +65,13 @@ namespace Arcadia
 
 namespace std
 {
-    template<typename Value>
-    class tuple_size<Arcadia::Identifiable<Value>>:
+    template<class Value>
+    struct tuple_size<Arcadia::Identifiable<Value>>:
         public std::integral_constant<std::size_t, 2>
     {};
 
-    template<std::size_t Index, typename Value>
-    class tuple_element<Index, Arcadia::Identifiable<Value>>:
+    template<std::size_t Index, class Value>
+    struct tuple_element<Index, Arcadia::Identifiable<Value>>:
         public std::tuple_element<Index, std::tuple<Arcadia::Uuid, Value>>
     {};
 }

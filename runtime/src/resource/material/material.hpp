@@ -5,7 +5,7 @@
 
 namespace Arcadia
 {
-    class Material
+    struct Material
     {
     public:
         using SelfType = Material;

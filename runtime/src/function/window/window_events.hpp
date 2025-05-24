@@ -7,16 +7,16 @@ struct GLFWmonitor;
 
 namespace Arcadia
 {
-    class WindowLayer;
+    struct WindowLayer;
 
-    enum class WindowSizeState
+    enum struct WindowSizeState
     {
         Minimized = -1,
         Restored = 0,
         Maxmized = 1,
     };
 
-    enum class WindowCursorInputMode
+    enum struct WindowCursorInputMode
     {
         Normal,
         Hidden,
@@ -28,7 +28,7 @@ namespace Arcadia
     {
         //==== Notifications ====//
 
-        class WindowShouldClose: public EventBase
+        struct WindowShouldClose: public EventBase
         {
         public:
             WindowShouldClose(WindowLayer* const window):
@@ -38,7 +38,7 @@ namespace Arcadia
             WindowLayer* const pWindowLayer;
         };
 
-        class WindowCloseCanceled: public EventBase
+        struct WindowCloseCanceled: public EventBase
         {
         public:
             WindowCloseCanceled(WindowLayer* const window):
@@ -48,7 +48,7 @@ namespace Arcadia
             WindowLayer* const pWindowLayer;
         };
 
-        class WindowSetSize: public EventBase
+        struct WindowSetSize: public EventBase
         {
         public:
             WindowSetSize(WindowLayer* const window, const glm::i32vec2& new_size):
@@ -59,7 +59,7 @@ namespace Arcadia
             const glm::i32vec2 NewSize;
         };
 
-        class WindowSetPosition: public EventBase
+        struct WindowSetPosition: public EventBase
         {
         public:
             WindowSetPosition(WindowLayer* const window, const glm::i32vec2& new_size):
@@ -70,7 +70,7 @@ namespace Arcadia
             const glm::i32vec2 NewPosition;
         };
 
-        class WindowSizeStateChanged: public EventBase
+        struct WindowSizeStateChanged: public EventBase
         {
         public:
             WindowSizeStateChanged(WindowLayer* const window, WindowSizeState state):
@@ -81,7 +81,7 @@ namespace Arcadia
             const WindowSizeState State;
         };
 
-        class WindowSetFocused: public EventBase
+        struct WindowSetFocused: public EventBase
         {
         public:
             WindowSetFocused(WindowLayer* const window, bool focused):
@@ -92,7 +92,7 @@ namespace Arcadia
             const bool Focused;
         };
 
-        class MonitorSetConnected: public EventBase
+        struct MonitorSetConnected: public EventBase
         {
         public:
             MonitorSetConnected(::GLFWmonitor* const glfw_monitor, bool connected):
@@ -105,7 +105,7 @@ namespace Arcadia
 
         //==== Adjustments ====//
 
-        class WindowSetCursorInputMode: public EventBase
+        struct WindowSetCursorInputMode: public EventBase
         {
         public:
             WindowSetCursorInputMode(WindowCursorInputMode mode):

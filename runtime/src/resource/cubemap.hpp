@@ -7,7 +7,7 @@
 
 namespace Arcadia
 {
-    class Cubemap
+    struct Cubemap
     {
     public:
         using SelfType = Cubemap;

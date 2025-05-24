@@ -19,22 +19,22 @@
 
 namespace Arcadia
 {
-    class ImguiWindowViewport: public ImguiWindowInterface
+    struct ImguiWindowViewport: public ImguiWindowInterface
     {
     public:
-        enum class GizmoOption
+        enum struct GizmoOption
         {
             None = 0,
             Translation = ImGuizmo::OPERATION::TRANSLATE,
             Rotation = ImGuizmo::OPERATION::ROTATE,
             Scale = ImGuizmo::OPERATION::SCALE,
         };
-        enum class GizmoMode
+        enum struct GizmoMode
         {
             Local = ImGuizmo::MODE::LOCAL,
             World = ImGuizmo::MODE::WORLD,
         };
-        enum class GizmoEditState
+        enum struct GizmoEditState
         {
             None,
             Editing,

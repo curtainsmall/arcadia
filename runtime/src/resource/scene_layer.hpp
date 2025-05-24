@@ -17,7 +17,7 @@ namespace Arcadia
         ACDA_DEFINE_RUNTIME_ERROR_EXCEPTION(CreatingSceneFromJsonFailed);
     }
 
-    class SceneLayer: public LayerInterface
+    struct SceneLayer: public LayerInterface
     {
     public:
         using SceneStorageType = std::unordered_map<std::string, std::shared_ptr<Scene>>;

@@ -22,7 +22,7 @@ namespace Arcadia
         ACDA_DEFINE_RUNTIME_ERROR_EXCEPTION(GlPipelineInvalidUniformLocation);
     }
 
-    class GlPipeline: public Noncopyable
+    struct GlPipeline: public Noncopyable
     {
     public:
 

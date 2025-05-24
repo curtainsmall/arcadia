@@ -6,7 +6,7 @@
 
 namespace Arcadia
 {
-    template<typename Type>
+    template<class Type>
     [[nodiscard]]
     ACDA_API auto CombineHash(const std::size_t& seed, const Type& val) -> std::size_t
     {
@@ -15,7 +15,7 @@ namespace Arcadia
         return res;
     }
 
-    template<typename Type, typename ...Types>
+    template<class Type, class ...Types>
     [[nodiscard]]
     ACDA_API auto Hash(const Type& val, const Types& ...vals) -> std::size_t
     {

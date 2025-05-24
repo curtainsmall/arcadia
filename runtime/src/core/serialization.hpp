@@ -11,8 +11,8 @@ namespace Arcadia
     {
         using BufferType = std::vector<std::byte>;
 
-#if 0
-        template<typename Data, typename ...Args>
+    #if 0
+        template<class Data, class ...Args>
             requires requires (flatbuffers::FlatBufferBuilder builder, Data data, Args&& ...args)
         {
             {
@@ -37,8 +37,8 @@ namespace Arcadia
             };
         }
 
-        template<typename Data, typename ...Args>
-            requires requires(typename Data::serialization_type flat_data, Args&& ...args)
+        template<class Data, class ...Args>
+            requires requires(class Data::serialization_type flat_data, Args&& ...args)
         {
             {
                 Data::from_flatbuffers(flat_data, std::forward<Args>(args)...)
@@ -47,13 +47,13 @@ namespace Arcadia
         auto from_flatbuffers(const BufferType& buf, Args&& ...args) -> Data
         {
             return Data::from_flatbuffers(
-                *flatbuffers::GetRoot<typename Data::serialization_type>(buf.data()),
+                *flatbuffers::GetRoot<class Data::serialization_type>(buf.data()),
                 std::forward<Args>(args)...
             );
         }
 
-        template<typename Data, typename ...Args>
-            requires requires(typename Data::serialization_type flat_data, Args&& ...args)
+        template<class Data, class ...Args>
+            requires requires(class Data::serialization_type flat_data, Args&& ...args)
         {
             {
                 Data::from_flatbuffers_unique(flat_data, std::forward<Args>(args)...)
@@ -62,10 +62,10 @@ namespace Arcadia
         auto from_flatbuffers_unique(const BufferType& buf, Args&& ...args) -> std::unique_ptr<Data>
         {
             return Data::from_flatbuffers_unique(
-                *flatbuffers::GetRoot<typename Data::serialization_type>(buf.data()),
+                *flatbuffers::GetRoot<class Data::serialization_type>(buf.data()),
                 std::forward<Args>(args)...
             );
         }
-#endif
+    #endif
     }
 }

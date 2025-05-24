@@ -21,7 +21,7 @@ namespace Arcadia
         ACDA_DEFINE_RUNTIME_ERROR_EXCEPTION(ModelComponent_ModelLoadInvalidFormat);
     }
 
-    class ModelComponent:
+    struct ModelComponent:
         public ComponentInterface
     {
     public:

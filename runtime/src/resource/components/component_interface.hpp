@@ -20,7 +20,7 @@ virtual auto GetTypeString() const -> std::string override\
 
 namespace Arcadia
 {
-    class ComponentInterface:
+    struct ComponentInterface:
         public Noncopyable
     {
     public:
@@ -29,7 +29,7 @@ namespace Arcadia
 
     namespace Concepts
     {
-        template<typename T>
+        template<class T>
         concept Component =
             std::derived_from<T, ComponentInterface>
             && requires(const T comp, const nlohmann::json json)

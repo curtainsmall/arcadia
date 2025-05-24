@@ -8,7 +8,7 @@
 
 namespace Arcadia::Exceptions
 {
-    class BasicException: public std::exception
+    struct BasicException: public std::exception
     {
     public:
         explicit BasicException(const std::string& msg = "Basic Exception"):
@@ -23,7 +23,7 @@ namespace Arcadia::Exceptions
         }
     };
 
-    class RuntimeError: public BasicException
+    struct RuntimeError: public BasicException
     {
     public:
         explicit RuntimeError(const std::string& msg = "(No Message Given)"):
@@ -33,7 +33,7 @@ namespace Arcadia::Exceptions
         }
     };
 
-    class LogicError: public BasicException
+    struct LogicError: public BasicException
     {
     public:
         explicit LogicError(const std::string& msg = "(No Message Given)"):
@@ -47,7 +47,7 @@ namespace Arcadia::Exceptions
 //==== Logic error exception ====
 
 #define _ACDA_DEFINE_LOGIC_ERROR_EXCEPTION(exception_name) \
-class exception_name: public Arcadia::Exceptions::LogicError{\
+struct exception_name: public Arcadia::Exceptions::LogicError{\
 public:\
         inline exception_name(const std::string& msg = #exception_name) :\
         Arcadia::Exceptions::LogicError(msg)\
@@ -55,7 +55,7 @@ public:\
 }
 
 #define _ACDA_DEFINE_LOGIC_ERROR_EXCEPTION_WITH_MESSAGE(exception_name, message) \
-class exception_name: public Arcadia::Exceptions::LogicError{\
+struct exception_name: public Arcadia::Exceptions::LogicError{\
 public:\
     inline exception_name(const std::string& msg = message ):\
         Arcadia::Exceptions::LogicError(msg)\
@@ -70,7 +70,7 @@ _ACDA_GET_DEFINE_LOGIC_ERROR_EXCEPTION_MACRO(__VA_ARGS__, _ACDA_DEFINE_LOGIC_ERR
 //==== Runtime error exception ====
 
 #define _ACDA_DEFINE_RUNTIME_ERROR_EXCEPTION(exception_name) \
-class exception_name: public Arcadia::Exceptions::RuntimeError{\
+struct exception_name: public Arcadia::Exceptions::RuntimeError{\
 public:\
         inline exception_name(const std::string& msg = #exception_name) :\
         Arcadia::Exceptions::RuntimeError(msg)\
@@ -78,7 +78,7 @@ public:\
 }
 
 #define _ACDA_DEFINE_RUNTIME_ERROR_EXCEPTION_WITH_MESSAGE(exception_name, message) \
-class exception_name: public Arcadia::Exceptions::RuntimeError{\
+struct exception_name: public Arcadia::Exceptions::RuntimeError{\
 public:\
     inline exception_name(const std::string& msg = message ):\
         Arcadia::Exceptions::RuntimeError(msg)\

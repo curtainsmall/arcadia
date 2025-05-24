@@ -10,7 +10,7 @@
 
 namespace Arcadia
 {
-    class AppContext
+    struct AppContext
     {
     public:
         using SelfType = AppContext;

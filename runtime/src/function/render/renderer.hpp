@@ -11,14 +11,14 @@
 
 namespace Arcadia
 {
-    class RenderResultInfo
+    struct RenderResultInfo
     {
     public:
         void* Id;
         glm::i32vec2 Size;
     };
 
-    class RendererInterface: public Noncopyable
+    struct RendererInterface: public Noncopyable
     {
     public:
 
@@ -56,7 +56,7 @@ namespace Arcadia
 
     namespace Concepts
     {
-        template<typename T>
+        template<class T>
         concept Renderer = std::derived_from<T, RendererInterface>;
     }
 }

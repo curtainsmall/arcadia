@@ -5,39 +5,39 @@
 
 namespace Arcadia
 {
-    template<typename, template<typename ...> typename>
+    template<class, template<class ...> class>
     constexpr bool IsSpecializationOf = false;
 
-    template<template<typename...> typename T, typename ...Args>
+    template<template<class...> class T, class ...Args>
     constexpr bool IsSpecializationOf<T<Args...>, T> = true;
 
     namespace Concepts
     {
-        template<typename Type, template<typename ...> typename Template>
+        template<class Type, template<class ...> class Template>
         concept InstantiatedFrom = IsSpecializationOf<Type, Template>;
     }
 
-    template<typename, typename ...>
+    template<class, class ...>
     constexpr bool IsTypeInTuple = false;
 
-    template<typename T, typename ...Args>
+    template<class T, class ...Args>
     constexpr bool IsTypeInTuple<T, std::tuple<Args...>> = (std::is_same_v<T, Args> || ...);
 
     namespace Concepts
     {
-        template<typename T, typename Tuple>
+        template<class T, class Tuple>
         concept TupleContainsType = IsTypeInTuple<T, Tuple>;
     }
 
-    template<typename, typename ...>
+    template<class, class ...>
     constexpr bool IsTypeInVariant = false;
 
-    template<typename T, typename ...Args>
+    template<class T, class ...Args>
     constexpr bool IsTypeInVariant<T, std::variant<Args...>> = (std::is_same_v<T, Args> || ...);
 
     namespace Concepts
     {
-        template<typename T, typename Variant>
+        template<class T, class Variant>
         concept VariantContainsType = IsTypeInVariant<T, Variant>;
     };
 }

@@ -10,13 +10,13 @@
 
 namespace Arcadia
 {
-    class NullLight
+    struct NullLight
     {
     public:
         auto operator==(const NullLight&) const -> bool = default;
     };
 
-    class SpotLight
+    struct SpotLight
     {
     public:
         auto operator==(const SpotLight&) const -> bool = default;
@@ -54,7 +54,7 @@ namespace Arcadia
         glm::vec3 _SpecularStrength{ Glm::Vec3_CreateZero() };
     };
 
-    class DirectLight
+    struct DirectLight
     {
     public:
         auto operator==(const DirectLight&) const -> bool = default;
@@ -81,7 +81,7 @@ namespace Arcadia
         glm::vec3 _SpecularStrength{ Glm::Vec3_CreateZero() };
     };
 
-    class AreaLight
+    struct AreaLight
     {
     public:
         auto operator==(const AreaLight&) const -> bool = default;
@@ -114,7 +114,7 @@ namespace Arcadia
         glm::vec3 _SpecularStrength{ Glm::Vec3_CreateZero() };
     };
 
-    class PointLight
+    struct PointLight
     {
     public:
         auto operator==(const PointLight&) const -> bool = default;
@@ -154,7 +154,7 @@ namespace Arcadia
         PointLight
     >;
 
-    class LightComponent:
+    struct LightComponent:
         public ComponentInterface
     {
     public:
@@ -174,7 +174,7 @@ namespace Arcadia
         auto GetLight() -> LightType&;
         void SetLight(const LightType& light);
 
-        template<typename Light, typename ...Args>
+        template<class Light, class ...Args>
         void SetLight(Args&& ...args)
         {
             _Light = Light(std::forward<Args>(args)...);

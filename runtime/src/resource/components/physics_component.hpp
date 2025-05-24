@@ -13,25 +13,25 @@
 
 namespace Arcadia
 {
-    class JphNoShapeInfo
+    struct JphNoShapeInfo
     {
     };
 
-    class JphBoxShapeInfo
+    struct JphBoxShapeInfo
     {
     public:
         glm::vec3 HalfExtent{ 1.f,1.f,1.f };
         float ConvexRadius{ JPH::cDefaultConvexRadius };
     };
 
-    class JphCapsuleShapeInfo
+    struct JphCapsuleShapeInfo
     {
     public:
         float Radius{ 1.f };
         float HalfHeightOfCylinder{ 1.f };
     };
 
-    class JphCylinderShapeInfo
+    struct JphCylinderShapeInfo
     {
     public:
         float HalfHeight{ 1.f };
@@ -39,7 +39,7 @@ namespace Arcadia
         float ConvexRadius{ JPH::cDefaultConvexRadius };
     };
 
-    class JphSphereShapeInfo
+    struct JphSphereShapeInfo
     {
     public:
         float Radius{ 1.f };
@@ -53,14 +53,14 @@ namespace Arcadia
         JphSphereShapeInfo
     >;
 
-    class PhysicsComponent:
+    struct PhysicsComponent:
         public ComponentInterface,
         public MementoOriginatorInterface
     {
     public:
         using SelfType = PhysicsComponent;
     private:
-        class _MementoData: public MementoDataBase
+        struct _MementoData: public MementoDataBase
         {
         public:
             bool Active{ false };

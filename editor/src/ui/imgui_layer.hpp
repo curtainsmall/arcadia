@@ -13,7 +13,7 @@
 
 namespace Arcadia
 {
-    class ImguiLayer: public LayerInterface
+    struct ImguiLayer: public LayerInterface
     {
     public:
         using SelfType = ImguiLayer;
@@ -40,7 +40,7 @@ namespace Arcadia
         virtual void OnEvent(EventBase& e) override;
         virtual void OnUpdate() override;
 
-        template<Concepts::ImguiWindow ImGuiWindow, typename ...Args>
+        template<Concepts::ImguiWindow ImGuiWindow, class ...Args>
         auto EmplaceImguiWindow(Args&& ...args) -> SelfType&
         {
             _ImguiWindow.emplace_back(std::make_unique<ImGuiWindow>(std::forward<Args>(args)...));

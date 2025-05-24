@@ -11,7 +11,7 @@
 
 namespace Arcadia
 {
-    class RendererLayer: public LayerInterface
+    struct RendererLayer: public LayerInterface
     {
     public:
         using SelfType = RendererLayer;

@@ -6,7 +6,7 @@
 
 namespace Arcadia
 {
-    class Timer
+    struct Timer
     {
     public:
         using ClockType = std::chrono::steady_clock;

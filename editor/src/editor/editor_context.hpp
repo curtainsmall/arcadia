@@ -13,7 +13,7 @@
 
 namespace Arcadia
 {
-    class EditorContext
+    struct EditorContext
     {
     public:
         using SelfType = EditorContext;

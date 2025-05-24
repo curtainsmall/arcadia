@@ -13,7 +13,7 @@
 
 namespace Arcadia
 {
-    class EditorAppLayer: public AppLayerInterface
+    struct EditorAppLayer: public AppLayerInterface
     {
     public:
         EditorAppLayer();

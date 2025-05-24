@@ -6,7 +6,7 @@
 
 namespace Arcadia
 {
-    class GlUniformBuffer: public Noncopyable
+    struct GlUniformBuffer: public Noncopyable
     {
     public:
         using SelfType = GlUniformBuffer;

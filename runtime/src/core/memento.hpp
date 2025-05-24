@@ -9,27 +9,27 @@
 
 namespace Arcadia
 {
-    class MementoDataBase;
+    struct MementoDataBase;
 
     namespace Concepts
     {
-        template<typename T>
+        template<class T>
         concept MementoData =
             std::derived_from<T, MementoDataBase>
             && std::equality_comparable<T>;
     }
 
-    class MementoDataBase
+    struct MementoDataBase
     {
     public:
-        template<typename MementoData>
+        template<class MementoData>
         auto CastTo() -> MementoData&
         {
             return static_cast<MementoData&>(*this);
         }
     };
 
-    class MementoOriginatorInterface
+    struct MementoOriginatorInterface
     {
     public:
         using SelfType = MementoOriginatorInterface;
@@ -49,11 +49,11 @@ namespace Arcadia
 
     namespace Concepts
     {
-        template<typename T>
+        template<class T>
         concept MementoOriginator = std::derived_from<T, MementoOriginatorInterface>;
     }
 
-    class Memento: public Noncopyable
+    struct Memento: public Noncopyable
     {
     public:
         using SelfType = Memento;
@@ -98,7 +98,7 @@ namespace Arcadia
         std::function<void()> _OriginatorRestoreFunction; // 1. call originator retriever to get originator; 2. get memento data; 3. call restore() in originator with memento data
     };
 
-    class MementoList: public Noncopyable
+    struct MementoList: public Noncopyable
     {
     public:
         using ContainerType = std::list<Memento>;

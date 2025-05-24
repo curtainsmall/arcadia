@@ -11,7 +11,7 @@
 
 namespace Arcadia
 {
-    class Logger
+    struct Logger
     {
     public:
         using SelfType = Logger;

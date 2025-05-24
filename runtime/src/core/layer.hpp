@@ -17,7 +17,7 @@
 
 namespace Arcadia
 {
-    class LayerInterface: public Noncopyable
+    struct LayerInterface: public Noncopyable
     {
     public:
         using SelfType = LayerInterface;
@@ -37,11 +37,11 @@ namespace Arcadia
 
     namespace Concepts
     {
-        template<typename T>
+        template<class T>
         concept Layer = std::derived_from<T, LayerInterface>;
     }
 
-    class LayerStack
+    struct LayerStack
     {
     public:
         using LayerVectorType = std::vector<std::shared_ptr<LayerInterface>>;
@@ -52,7 +52,7 @@ namespace Arcadia
 
         template<
             Concepts::Layer Layer,
-            typename ...Args
+            class ...Args
         >
         auto PushLayer(Args&& ...args) -> SelfType&
         {
@@ -67,7 +67,7 @@ namespace Arcadia
         }
         template<
             Concepts::Layer Layer,
-            typename ...Args
+            class ...Args
         >
         auto PushLayer(LayerVectorType::const_iterator iter, Args&& ...args) -> SelfType&
         {

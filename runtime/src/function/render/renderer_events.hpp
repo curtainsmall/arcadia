@@ -5,11 +5,11 @@
 
 namespace Arcadia::Events
 {
-    class RendererReset: public EventBase
+    struct RendererReset: public EventBase
     {
     };
 
-    class RendererSetActive: public EventBase
+    struct RendererSetActive: public EventBase
     {
     public:
         RendererSetActive(bool active):
@@ -21,10 +21,10 @@ namespace Arcadia::Events
         const bool Active;
     };
 
-    class RendererSetEntity: public EventBase
+    struct RendererSetEntity: public EventBase
     {
     public:
-        enum class ActionType
+        enum struct ActionType
         {
             Build,
             Remove,

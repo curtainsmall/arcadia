@@ -2,7 +2,7 @@
 
 namespace Arcadia
 {
-    class Noncopyable
+    struct Noncopyable
     {
     protected:
         Noncopyable() = default;

@@ -10,7 +10,7 @@
 
 namespace Arcadia
 {
-    class Command
+    struct Command
     {
     public:
         using FunctionType = std::function<void()>;
@@ -37,7 +37,7 @@ namespace Arcadia
         FunctionType _UnexecuteFunction;
     };
 
-    class CommandList: public Noncopyable
+    struct CommandList: public Noncopyable
     {
     public:
         using FunctionType = Command::FunctionType;

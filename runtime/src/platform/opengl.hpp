@@ -43,7 +43,7 @@ namespace Arcadia
 
     ACDA_API auto GetGlMaxTextureImageUnitsCount() -> GLint;
 
-    class OpenglContext: public Noncopyable
+    struct OpenglContext: public Noncopyable
     {
     public:
         OpenglContext();

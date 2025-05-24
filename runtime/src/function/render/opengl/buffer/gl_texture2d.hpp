@@ -8,7 +8,7 @@
 
 namespace Arcadia
 {
-    class GlTexture2d: public Noncopyable
+    struct GlTexture2d: public Noncopyable
     {
     public:
         using SelfType = GlTexture2d;

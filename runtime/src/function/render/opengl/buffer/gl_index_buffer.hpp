@@ -9,7 +9,7 @@
 
 namespace Arcadia
 {
-    class GlIndexBuffer: public Noncopyable
+    struct GlIndexBuffer: public Noncopyable
     {
     public:
         using SelfType = GlIndexBuffer;

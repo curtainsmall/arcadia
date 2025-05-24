@@ -14,7 +14,7 @@
 
 namespace Arcadia
 {
-    class ImguiWindowOutliner: public ImguiWindowInterface
+    struct ImguiWindowOutliner: public ImguiWindowInterface
     {
     public:
         using SelfType = ImguiWindowOutliner;

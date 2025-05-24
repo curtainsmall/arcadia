@@ -6,7 +6,7 @@
 
 namespace Arcadia
 {
-    class SkyboxComponent:
+    struct SkyboxComponent:
         public ComponentInterface
     {
     public:

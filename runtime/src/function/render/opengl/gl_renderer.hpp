@@ -22,7 +22,7 @@
 
 namespace Arcadia
 {
-    class GlRenderUnitCamera
+    struct GlRenderUnitCamera
     {
     public:
         GlFramebuffer Framebuffer;
@@ -35,7 +35,7 @@ namespace Arcadia
         float FarPlane;
     };
 
-    class GlRenderUnitLight
+    struct GlRenderUnitLight
     {
     public:
         glm::vec3 Position;
@@ -43,7 +43,7 @@ namespace Arcadia
         LightType Light;
     };
 
-    class GlRenderUnitMesh
+    struct GlRenderUnitMesh
     {
     public:
         GlVertexArray VertexArray;
@@ -53,14 +53,14 @@ namespace Arcadia
         GlTexture2d SpecularTexture;
     };
 
-    class GlRenderUnitSkybox
+    struct GlRenderUnitSkybox
     {
     public:
         GlVertexArray VertexArray;
         GlCubemap Cubemap;
     };
 
-    class GlRenderUnitPhysicsBodyShape
+    struct GlRenderUnitPhysicsBodyShape
     {
     public:
         GlVertexArray VertexArray;
@@ -68,7 +68,7 @@ namespace Arcadia
         glm::vec3 Color;
     };
 
-    class GlRenderer: public RendererInterface
+    struct GlRenderer: public RendererInterface
     {
     public:
 

@@ -5,7 +5,7 @@
 
 namespace Arcadia
 {
-    class Vertex
+    struct Vertex
     {
     public:
         using SelfType = Vertex;

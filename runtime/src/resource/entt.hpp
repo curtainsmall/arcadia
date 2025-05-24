@@ -15,7 +15,7 @@ namespace Arcadia
 namespace std
 {
     template<>
-    class formatter<entt::entity>: public std::formatter<std::string>
+    struct formatter<entt::entity>: public std::formatter<std::string>
     {
     public:
         auto format(const entt::entity& entt_entity, std::format_context& ctx) const

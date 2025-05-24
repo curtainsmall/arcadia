@@ -4,7 +4,7 @@
 
 namespace Arcadia
 {
-    class EntityId
+    struct EntityId
     {
     public:
         EntityId() = default;
@@ -28,7 +28,7 @@ namespace Arcadia
 namespace std
 {
     template<>
-    class hash<Arcadia::EntityId>
+    struct hash<Arcadia::EntityId>
     {
     public:
         auto operator()(const Arcadia::EntityId& entity_id) const->std::size_t
@@ -38,7 +38,7 @@ namespace std
     };
 
     template<>
-    class formatter<Arcadia::EntityId>: public std::formatter<std::string>
+    struct formatter<Arcadia::EntityId>: public std::formatter<std::string>
     {
     public:
         auto format(const Arcadia::EntityId& entity_id, std::format_context& ctx) const
