@@ -9,6 +9,7 @@
 #include <unordered_set>
 #include <vector>
 
+#include "core/enum.hpp"
 #include "core/log.hpp"
 #include "core/noncopyable.hpp"
 #include "platform/api_def.hpp"
@@ -16,6 +17,15 @@
 
 namespace Arcadia
 {
+    enum struct EventHandleState: std::uint8_t
+    {
+        NotHandled = 0,
+        Handled = 1 << 0,
+        OnceAgain = 1 << 1,
+
+        _EnumBitfield
+    };
+
     struct EventBase: public Noncopyable
     {
     public:
@@ -24,10 +34,12 @@ namespace Arcadia
         virtual ~EventBase() = default;
 
         void MarkHandled();
-        auto IsHandled() const -> bool;
+        void MarkOnceAgain();
 
+        auto GetHandleState() const->EventHandleState;
+        void ClearMark();
     private:
-        bool _Handled{ false };
+        EventHandleState _HandleState { EventHandleState::NotHandled };
     };
 
     namespace Concepts
@@ -65,14 +77,14 @@ namespace Arcadia
 
     private:
         EventBase* _pEvent;
-        bool _Dispatched{ false };
+        bool _Dispatched { false };
     };
 
     struct EventQueue
     {
     public:
-        using SelfType = EventQueue;
         using DebugExcludedEventTypeSetType = std::unordered_set<std::type_index>;
+        using SelfType = EventQueue;
     private:
         using _EventQueueType = std::queue<std::unique_ptr<EventBase>>;
 
@@ -82,23 +94,19 @@ namespace Arcadia
         template<Concepts::Event Event, class ...Args>
         auto Signal(Args&& ...args) -> SelfType&
         {
-            _pCurrentQueue->emplace(std::make_unique<Event>(std::forward<Args>(args)...));
+            _pCollectingQueue->emplace(std::make_unique<Event>(std::forward<Args>(args)...));
 
             return *this;
         }
 
-        auto SwapQueue() -> bool;
-
-        auto GetSize() const->std::size_t;
-
-        auto GetFront() -> EventBase&;
-
-        auto PopFront() -> bool;
-
+        void SwapQueue();
+        auto HasEvent() const -> bool;
+        auto ProcessEvent(const EventHandler<EventBase>& handler) -> bool;
+        void EventProcessFinished();
     private:
-        _EventQueueType _QueueA{};
-        _EventQueueType _QueueB{};
-        _EventQueueType* _pProcessingQueue{ &_QueueA };
-        _EventQueueType* _pCurrentQueue{ &_QueueB };
+        _EventQueueType _QueueA {};
+        _EventQueueType _QueueB {};
+        _EventQueueType* _pProcessingQueue { &_QueueA };
+        _EventQueueType* _pCollectingQueue { &_QueueB };
     };
 }

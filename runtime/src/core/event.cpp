@@ -6,41 +6,66 @@
 
 auto Arcadia::EventQueue::Instance() -> SelfType&
 {
-    static SelfType event_queue{};
+    static SelfType event_queue {};
     return event_queue;
 }
 
-auto Arcadia::EventQueue::SwapQueue() -> bool
+void Arcadia::EventQueue::SwapQueue()
 {
-    std::swap(_pCurrentQueue, _pProcessingQueue);
-    return GetSize();
+    std::swap(_pCollectingQueue, _pProcessingQueue);
 }
 
-auto Arcadia::EventQueue::GetSize() const -> std::size_t
+auto Arcadia::EventQueue::HasEvent() const -> bool
 {
     return _pProcessingQueue->size();
 }
 
-auto Arcadia::EventQueue::GetFront() -> EventBase&
+auto Arcadia::EventQueue::ProcessEvent(const EventHandler<EventBase>& handler) -> bool
 {
-    ACDA_ASSERT(GetSize(), "Empty event queue");
-    return *_pProcessingQueue->front();
+    ACDA_ASSERT(HasEvent());
+
+    EventBase& event = *_pProcessingQueue->front();
+    handler(event);
+    return !!(event.GetHandleState() & EventHandleState::Handled);
 }
 
-auto Arcadia::EventQueue::PopFront() -> bool
+void Arcadia::EventQueue::EventProcessFinished()
 {
+    std::unique_ptr<EventBase> event_uptr = std::move(_pProcessingQueue->front());
     _pProcessingQueue->pop();
-    return GetSize();
+    switch(event_uptr->GetHandleState())
+    {
+        case EventHandleState::OnceAgain:
+        {
+            event_uptr->ClearMark();
+            _pCollectingQueue->push(std::move(event_uptr));
+            break;
+        }
+        default:
+        {
+            break;
+        }
+    }
 }
 
 void Arcadia::EventBase::MarkHandled()
 {
-    _Handled = true;
+    _HandleState |= EventHandleState::Handled;
 }
 
-auto Arcadia::EventBase::IsHandled() const -> bool
+void Arcadia::EventBase::MarkOnceAgain()
 {
-    return _Handled;
+    _HandleState |= EventHandleState::OnceAgain;
+}
+
+auto Arcadia::EventBase::GetHandleState() const -> EventHandleState
+{
+    return _HandleState;
+}
+
+void Arcadia::EventBase::ClearMark()
+{
+    _HandleState = EventHandleState::NotHandled;
 }
 
 auto Arcadia::EventDispatcher::IsDispatched() const -> bool

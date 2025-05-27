@@ -35,19 +35,22 @@ ACDA_MAIN_FN_DECL
         // Process event
         Arcadia::EventQueue& event_queue = Arcadia::EventQueue::Instance();
         event_queue.SwapQueue();
-        while(event_queue.GetSize())
+        while(event_queue.HasEvent())
         {
-            Arcadia::EventBase& event = event_queue.GetFront();
-
             for(const std::shared_ptr<Arcadia::LayerInterface>& layer_sptr : Arcadia::LayerStack::Instance())
             {
-                layer_sptr->OnEvent(event);
-                if(event.IsHandled())
+                bool event_handled = event_queue.ProcessEvent(
+                    [&](Arcadia::EventBase& event) -> void
+                    {
+                        layer_sptr->OnEvent(event);
+                    }
+                );
+                if(event_handled)
                 {
                     break;
                 }
             }
-            event_queue.PopFront();
+            event_queue.EventProcessFinished();
         }
 
         // Updates
