@@ -6,7 +6,7 @@ bin-int/
 .vs/
 **/*.user
 **/*.filters
-3rdparty/**/exsampl/
+3rdparty/**/example/
 
 /**/imgui.ini
 /**/.acdacfg
