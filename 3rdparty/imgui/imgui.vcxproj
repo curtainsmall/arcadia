@@ -62,12 +62,13 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalIncludeDirectories>$(SolutionDir)3rdparty\glfw\include;$(SolutionDir)3rdparty\imgui;D:\Vulkan\Include</AdditionalIncludeDirectories>
-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <LanguageStandard_C>Default</LanguageStandard_C>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>$(SolutionDir)3rdparty\glew\lib\Release\x64\glew32.lib;$(SolutionDir)3rdparty\glfw\build\src\Release\glfw3dll.lib;User32.lib;Gdi32.lib;Shell32.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -80,7 +81,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)3rdparty\glfw\include;$(SolutionDir)3rdparty\imgui;D:\Vulkan\Include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <LanguageStandard_C>Default</LanguageStandard_C>
     </ClCompile>
     <Link>
@@ -88,12 +89,12 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>$(SolutionDir)3rdparty\glew\lib\Release\x64\glew32.lib;$(SolutionDir)3rdparty\glfw\build\src\Release\glfw3dll.lib;User32.lib;Gdi32.lib;Shell32.lib;opengl32.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="backends\imgui_impl_glfw.cpp" />
     <ClCompile Include="backends\imgui_impl_opengl3.cpp" />
-    <ClCompile Include="backends\imgui_impl_vulkan.cpp" />
     <ClCompile Include="imgui.cpp" />
     <ClCompile Include="imgui_demo.cpp" />
     <ClCompile Include="imgui_draw.cpp" />
@@ -104,7 +105,6 @@
   <ItemGroup>
     <ClInclude Include="backends\imgui_impl_glfw.h" />
     <ClInclude Include="backends\imgui_impl_opengl3.h" />
-    <ClInclude Include="backends\imgui_impl_vulkan.h" />
     <ClInclude Include="imgui.h" />
     <ClInclude Include="imgui_internal.h" />
     <ClInclude Include="imstb_rectpack.h" />

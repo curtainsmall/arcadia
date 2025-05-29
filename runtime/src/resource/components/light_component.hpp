@@ -10,13 +10,13 @@
 
 namespace Arcadia
 {
-    struct NullLight
+    struct ACDA_API NullLight
     {
     public:
         auto operator==(const NullLight&) const -> bool = default;
     };
 
-    struct SpotLight
+    struct ACDA_API SpotLight
     {
     public:
         auto operator==(const SpotLight&) const -> bool = default;
@@ -54,7 +54,7 @@ namespace Arcadia
         glm::vec3 _SpecularStrength{ Glm::Vec3_CreateZero() };
     };
 
-    struct DirectLight
+    struct ACDA_API DirectLight
     {
     public:
         auto operator==(const DirectLight&) const -> bool = default;
@@ -81,7 +81,7 @@ namespace Arcadia
         glm::vec3 _SpecularStrength{ Glm::Vec3_CreateZero() };
     };
 
-    struct AreaLight
+    struct ACDA_API AreaLight
     {
     public:
         auto operator==(const AreaLight&) const -> bool = default;
@@ -114,7 +114,7 @@ namespace Arcadia
         glm::vec3 _SpecularStrength{ Glm::Vec3_CreateZero() };
     };
 
-    struct PointLight
+    struct ACDA_API PointLight
     {
     public:
         auto operator==(const PointLight&) const -> bool = default;
@@ -154,7 +154,7 @@ namespace Arcadia
         PointLight
     >;
 
-    struct LightComponent:
+    struct ACDA_API LightComponent:
         public ComponentInterface
     {
     public:

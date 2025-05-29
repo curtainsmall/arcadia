@@ -6,7 +6,7 @@
 
 namespace Arcadia
 {
-    struct SkyboxComponent:
+    struct ACDA_API SkyboxComponent:
         public ComponentInterface
     {
     public:

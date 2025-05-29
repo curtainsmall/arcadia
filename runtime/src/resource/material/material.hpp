@@ -5,7 +5,7 @@
 
 namespace Arcadia
 {
-    struct Material
+    struct ACDA_API Material
     {
     public:
         using SelfType = Material;

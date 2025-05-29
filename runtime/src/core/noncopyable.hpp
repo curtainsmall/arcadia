@@ -2,7 +2,7 @@
 
 namespace Arcadia
 {
-    struct Noncopyable
+    struct ACDA_API Noncopyable
     {
     protected:
         Noncopyable() = default;

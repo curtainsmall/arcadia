@@ -35,5 +35,5 @@ namespace Arcadia
         bool _WaitingForProjectUnbuiltBeforeClosing{ false };
     };
 
-    ACDA_API auto CreateApplicationUnique() -> std::unique_ptr<AppLayerInterface>;
+     auto CreateApplicationUnique() -> std::unique_ptr<AppLayerInterface>;
 }

@@ -7,7 +7,7 @@
 
 namespace Arcadia
 {
-    struct Uuid
+    struct ACDA_API Uuid
     {
     public:
         using ValueType = std::uint64_t;
@@ -32,7 +32,7 @@ namespace Arcadia
 namespace std
 {
     template<>
-    struct hash<Arcadia::Uuid>
+    struct ACDA_API hash<Arcadia::Uuid>
     {
     public:
         auto operator()(const Arcadia::Uuid& Uuid) const->std::size_t
@@ -42,7 +42,7 @@ namespace std
     };
 
     template<>
-    struct formatter<Arcadia::Uuid>: public std::formatter<std::string>
+    struct ACDA_API formatter<Arcadia::Uuid>: public std::formatter<std::string>
     {
     public:
         auto format(const Arcadia::Uuid& Uuid, std::format_context& ctx) const

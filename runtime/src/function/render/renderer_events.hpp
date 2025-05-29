@@ -5,11 +5,11 @@
 
 namespace Arcadia::Events
 {
-    struct RendererReset: public EventBase
+    struct ACDA_API RendererReset: public EventBase
     {
     };
 
-    struct RendererSetActive: public EventBase
+    struct ACDA_API RendererSetActive: public EventBase
     {
     public:
         RendererSetActive(bool active):
@@ -21,10 +21,10 @@ namespace Arcadia::Events
         const bool Active;
     };
 
-    struct RendererSetEntity: public EventBase
+    struct ACDA_API RendererSetEntity: public EventBase
     {
     public:
-        enum struct ActionType
+        enum struct ACDA_API ActionType
         {
             Build,
             Remove,

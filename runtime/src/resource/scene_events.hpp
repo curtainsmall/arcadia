@@ -10,7 +10,7 @@
 
 namespace Arcadia::Events
 {
-    struct UpdateEntityInfo: public EventBase
+    struct ACDA_API UpdateEntityInfo: public EventBase
     {
     public:
         using EntityInfoModifierType = std::function<void(EntityInfo&)>;
@@ -27,7 +27,7 @@ namespace Arcadia::Events
 
     //==== Events for scene ====//
 
-    struct SceneBuilt: public EventBase
+    struct ACDA_API SceneBuilt: public EventBase
     {
     public:
         SceneBuilt(const std::shared_ptr<Scene>& scene_sptr):
@@ -38,7 +38,7 @@ namespace Arcadia::Events
         const std::shared_ptr<Scene> spScene;
     };
 
-    struct SceneActivated: public EventBase
+    struct ACDA_API SceneActivated: public EventBase
     {
     public:
         SceneActivated(const std::shared_ptr<Scene>& scene_sptr):
@@ -49,19 +49,19 @@ namespace Arcadia::Events
         const std::shared_ptr<Scene> spScene;
     };
 
-    struct SceneDeactivated: public EventBase
+    struct ACDA_API SceneDeactivated: public EventBase
     {
     };
 
-    struct SceneUnbuilt: public EventBase
+    struct ACDA_API SceneUnbuilt: public EventBase
     {
     };
 
-    struct NewScene: public EventBase
+    struct ACDA_API NewScene: public EventBase
     {
     };
 
-    struct CreateScene: public EventBase
+    struct ACDA_API CreateScene: public EventBase
     {
     public:
         CreateScene(const std::string& name, bool as_current):
@@ -73,7 +73,7 @@ namespace Arcadia::Events
         const bool AsCurrent;
     };
 
-    struct CreateSceneFromJson: public EventBase
+    struct ACDA_API CreateSceneFromJson: public EventBase
     {
     public:
         CreateSceneFromJson(const nlohmann::json& json):
@@ -84,7 +84,7 @@ namespace Arcadia::Events
         const nlohmann::json Json;
     };
 
-    struct RenameScene: public EventBase
+    struct ACDA_API RenameScene: public EventBase
     {
     public:
         RenameScene(const std::string& new_name):
@@ -95,7 +95,7 @@ namespace Arcadia::Events
         const std::string NewName;
     };
 
-    struct SelectScene: public EventBase
+    struct ACDA_API SelectScene: public EventBase
     {
     public:
         SelectScene(const std::string& name):
@@ -106,21 +106,21 @@ namespace Arcadia::Events
         const std::string Name;
     };
 
-    struct CloseScene: public EventBase
+    struct ACDA_API CloseScene: public EventBase
     {
     };
 
-    struct DeleteScene: public EventBase
+    struct ACDA_API DeleteScene: public EventBase
     {
     };
 
-    struct DestroyAllScenes: public EventBase
+    struct ACDA_API DestroyAllScenes: public EventBase
     {
     };
 
     //==== Events for entity ====//
 
-    struct NewEntity: public EventBase
+    struct ACDA_API NewEntity: public EventBase
     {
     public:
         NewEntity(const std::string& entity_type_string):
@@ -131,7 +131,7 @@ namespace Arcadia::Events
         const std::string EntityTypeString;
     };
 
-    struct SelectEntity: public EventBase
+    struct ACDA_API SelectEntity: public EventBase
     {
     public:
         SelectEntity(EntityId entity_id):
@@ -142,7 +142,7 @@ namespace Arcadia::Events
         const EntityId EntityId;
     };
 
-    struct RenameEntity: public EventBase
+    struct ACDA_API RenameEntity: public EventBase
     {
     public:
         RenameEntity(EntityId entity_id, const std::string& new_name):
@@ -154,7 +154,7 @@ namespace Arcadia::Events
         const std::string NewName;
     };
 
-    struct DeleteEntity: public EventBase
+    struct ACDA_API DeleteEntity: public EventBase
     {
     public:
         DeleteEntity(EntityId entity_id):
@@ -167,7 +167,7 @@ namespace Arcadia::Events
 
     //==== Events for component ====//
 
-    struct AddComponent: public EventBase
+    struct ACDA_API AddComponent: public EventBase
     {
     public:
         AddComponent(EntityId entity_id, const std::string& component_type_string):
@@ -179,7 +179,7 @@ namespace Arcadia::Events
         const std::string ComponentTypeString;
     };
 
-    struct RemoveComponent: public EventBase
+    struct ACDA_API RemoveComponent: public EventBase
     {
     public:
         RemoveComponent(EntityId entity_id, const std::string& component_type_string):

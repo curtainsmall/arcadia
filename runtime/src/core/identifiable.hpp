@@ -8,7 +8,7 @@
 namespace Arcadia
 {
     template<class Value>
-    struct Identifiable: public Noncopyable
+    struct ACDA_API Identifiable: public Noncopyable
     {
     public:
         using ValueType = Value;
@@ -66,12 +66,12 @@ namespace Arcadia
 namespace std
 {
     template<class Value>
-    struct tuple_size<Arcadia::Identifiable<Value>>:
+    struct ACDA_API tuple_size<Arcadia::Identifiable<Value>>:
         public std::integral_constant<std::size_t, 2>
     {};
 
     template<std::size_t Index, class Value>
-    struct tuple_element<Index, Arcadia::Identifiable<Value>>:
+    struct ACDA_API tuple_element<Index, Arcadia::Identifiable<Value>>:
         public std::tuple_element<Index, std::tuple<Arcadia::Uuid, Value>>
     {};
 }

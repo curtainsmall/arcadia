@@ -7,7 +7,7 @@
 
 namespace Arcadia
 {
-    struct CameraComponent:
+    struct ACDA_API CameraComponent:
         public ComponentInterface
     {
     public:

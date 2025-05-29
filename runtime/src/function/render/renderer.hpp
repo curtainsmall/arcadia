@@ -11,14 +11,14 @@
 
 namespace Arcadia
 {
-    struct RenderResultInfo
+    struct ACDA_API RenderResultInfo
     {
     public:
         void* Id;
         glm::i32vec2 Size;
     };
 
-    struct RendererInterface: public Noncopyable
+    struct ACDA_API RendererInterface: public Noncopyable
     {
     public:
 

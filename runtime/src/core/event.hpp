@@ -17,7 +17,7 @@
 
 namespace Arcadia
 {
-    enum struct EventHandleState: std::uint8_t
+    enum struct ACDA_API EventHandleState: std::uint8_t
     {
         NotHandled = 0,
         Handled = 1 << 0,
@@ -26,7 +26,7 @@ namespace Arcadia
         _EnumBitfield
     };
 
-    struct EventBase: public Noncopyable
+    struct ACDA_API EventBase: public Noncopyable
     {
     public:
         EventBase() = default;
@@ -51,7 +51,7 @@ namespace Arcadia
     template<Concepts::Event Event>
     using EventHandler = std::function<void(Event&)>;
 
-    struct EventDispatcher: public Noncopyable
+    struct ACDA_API EventDispatcher: public Noncopyable
     {
     public:
         using SelfType = EventDispatcher;
@@ -80,7 +80,7 @@ namespace Arcadia
         bool _Dispatched { false };
     };
 
-    struct EventQueue
+    struct ACDA_API EventQueue: public Noncopyable
     {
     public:
         using DebugExcludedEventTypeSetType = std::unordered_set<std::type_index>;

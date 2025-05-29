@@ -13,7 +13,7 @@ namespace Arcadia
         ACDA_DEFINE_RUNTIME_ERROR_EXCEPTION(GlfwError);
     }
 
-    struct GlfwContext: public Noncopyable
+    struct ACDA_API GlfwContext: public Noncopyable
     {
     public:
         using SelfType = GlfwContext;

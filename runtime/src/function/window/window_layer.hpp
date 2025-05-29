@@ -10,7 +10,7 @@
 
 namespace Arcadia
 {
-    struct WindowLayer: public LayerInterface
+    struct ACDA_API WindowLayer: public LayerInterface
     {
     public:
         using SelfType = WindowLayer;

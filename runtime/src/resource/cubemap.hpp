@@ -7,7 +7,7 @@
 
 namespace Arcadia
 {
-    struct Cubemap
+    struct ACDA_API Cubemap
     {
     public:
         using SelfType = Cubemap;

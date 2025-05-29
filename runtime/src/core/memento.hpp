@@ -9,7 +9,7 @@
 
 namespace Arcadia
 {
-    struct MementoDataBase;
+    struct ACDA_API MementoDataBase;
 
     namespace Concepts
     {
@@ -19,7 +19,7 @@ namespace Arcadia
             && std::equality_comparable<T>;
     }
 
-    struct MementoDataBase
+    struct ACDA_API MementoDataBase
     {
     public:
         template<class MementoData>
@@ -29,7 +29,7 @@ namespace Arcadia
         }
     };
 
-    struct MementoOriginatorInterface
+    struct ACDA_API MementoOriginatorInterface
     {
     public:
         using SelfType = MementoOriginatorInterface;
@@ -53,7 +53,7 @@ namespace Arcadia
         concept MementoOriginator = std::derived_from<T, MementoOriginatorInterface>;
     }
 
-    struct Memento: public Noncopyable
+    struct ACDA_API Memento: public Noncopyable
     {
     public:
         using SelfType = Memento;
@@ -98,7 +98,7 @@ namespace Arcadia
         std::function<void()> _OriginatorRestoreFunction; // 1. call originator retriever to get originator; 2. get memento data; 3. call restore() in originator with memento data
     };
 
-    struct MementoList: public Noncopyable
+    struct ACDA_API MementoList: public Noncopyable
     {
     public:
         using ContainerType = std::list<Memento>;

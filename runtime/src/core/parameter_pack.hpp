@@ -7,7 +7,7 @@
 namespace Arcadia
 {
     template<class ...Args>
-    struct ParameterPack
+    struct ACDA_API ParameterPack
     {
     public:
         using TupleType = std::tuple<Args...>;

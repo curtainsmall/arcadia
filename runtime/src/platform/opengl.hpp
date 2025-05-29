@@ -31,19 +31,19 @@ namespace Arcadia
 
     ACDA_API auto GetGlVersion() -> Version;
 
-    ACDA_API void GLAPIENTRY GlDebugCallback(GLenum source,
-                                             GLenum Type,
-                                             GLuint id,
-                                             GLenum severity,
-                                             GLsizei length,
-                                             const GLchar* message,
-                                             const void* user_param);
+    ACDA_API void GlDebugCallback(GLenum source,
+                                  GLenum Type,
+                                  GLuint id,
+                                  GLenum severity,
+                                  GLsizei length,
+                                  const GLchar* message,
+                                  const void* user_param);
 
     ACDA_API auto GetGlMaxCombineTextureImageUnitsCount() -> GLint;
 
     ACDA_API auto GetGlMaxTextureImageUnitsCount() -> GLint;
 
-    struct OpenglContext: public Noncopyable
+    struct ACDA_API OpenglContext: public Noncopyable
     {
     public:
         OpenglContext();

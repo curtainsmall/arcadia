@@ -9,7 +9,7 @@
 
 namespace Arcadia
 {
-    struct Texture2d
+    struct ACDA_API Texture2d
     {
     public:
 

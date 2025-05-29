@@ -20,7 +20,7 @@ virtual auto GetTypeString() const -> std::string override\
 
 namespace Arcadia
 {
-    struct ComponentInterface:
+    struct ACDA_API ComponentInterface:
         public Noncopyable
     {
     public:

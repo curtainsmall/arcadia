@@ -134,7 +134,7 @@ namespace Arcadia
 namespace std
 {
     template<>
-    struct formatter<glm::quat>: public std::formatter<std::string>
+    struct ACDA_API formatter<glm::quat>: public std::formatter<std::string>
     {
     public:
         auto format(const glm::quat& quat, std::format_context& ctx) const
@@ -147,7 +147,7 @@ namespace std
     };
 
     template<>
-    struct formatter<glm::vec2>:public std::formatter<std::string>
+    struct ACDA_API formatter<glm::vec2>:public std::formatter<std::string>
     {
     public:
         auto format(const glm::vec2& vec, std::format_context& ctx) const
@@ -160,7 +160,7 @@ namespace std
     };
 
     template<>
-    struct formatter<glm::i32vec2>: public std::formatter<std::string>
+    struct ACDA_API formatter<glm::i32vec2>: public std::formatter<std::string>
     {
     public:
         auto format(const glm::i32vec2& vec, std::format_context& ctx) const
@@ -173,7 +173,7 @@ namespace std
     };
 
     template<>
-    struct formatter<glm::vec3>: public std::formatter<std::string>
+    struct ACDA_API formatter<glm::vec3>: public std::formatter<std::string>
     {
     public:
         auto format(const glm::vec3& vec, std::format_context& ctx) const
@@ -186,7 +186,7 @@ namespace std
     };
 
     template<>
-    struct formatter<glm::i32vec3>: public std::formatter<std::string>
+    struct ACDA_API formatter<glm::i32vec3>: public std::formatter<std::string>
     {
     public:
         auto format(const glm::i32vec3& vec, std::format_context& ctx) const
@@ -199,7 +199,7 @@ namespace std
     };
 
     template<>
-    struct formatter<glm::vec4>: public std::formatter<std::string>
+    struct ACDA_API formatter<glm::vec4>: public std::formatter<std::string>
     {
     public:
         auto format(const glm::vec4& vec, std::format_context& ctx) const

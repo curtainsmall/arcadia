@@ -9,7 +9,7 @@
 
 namespace Arcadia
 {
-    struct GlFramebuffer:Noncopyable
+    struct ACDA_API GlFramebuffer:Noncopyable
     {
     public:
 

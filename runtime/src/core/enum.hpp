@@ -9,7 +9,7 @@ namespace Arcadia
     template<class Enum>
         requires std::is_enum_v<Enum>
     [[nodiscard]]
-    ACDA_API auto ToUnderlying(Enum e) -> std::underlying_type_t<Enum>
+    auto ToUnderlying(Enum e) -> std::underlying_type_t<Enum>
     {
         return static_cast<std::underlying_type_t<Enum>>(e);
     }
@@ -24,13 +24,13 @@ namespace Arcadia
 
     template<Concepts::EnumBitfield Enum>
     [[nodiscard]]
-    ACDA_API auto operator|(const Enum& a, const Enum& b) -> Enum
+    auto operator|(const Enum& a, const Enum& b) -> Enum
     {
         return static_cast<Enum>(ToUnderlying(a) | ToUnderlying(b));
     }
 
     template<Concepts::EnumBitfield Enum>
-    ACDA_API auto operator|=(Enum& a, const Enum& b) -> Enum&
+    auto operator|=(Enum& a, const Enum& b) -> Enum&
     {
         a = a | b;
         return a;
@@ -38,13 +38,13 @@ namespace Arcadia
 
     template<Concepts::EnumBitfield Enum>
     [[nodiscard]]
-    ACDA_API auto operator&(const Enum& a, const Enum& b) -> Enum
+    auto operator&(const Enum& a, const Enum& b) -> Enum
     {
         return static_cast<Enum>(ToUnderlying(a) & ToUnderlying(b));
     }
 
     template<Concepts::EnumBitfield Enum>
-    ACDA_API auto operator&=(Enum& a, const Enum& b) -> Enum&
+    auto operator&=(Enum& a, const Enum& b) -> Enum&
     {
         a = a & b;
         return a;
@@ -52,14 +52,14 @@ namespace Arcadia
 
     template<Concepts::EnumBitfield Enum>
     [[nodiscard]]
-    ACDA_API auto operator~(const Enum& a) -> Enum
+    auto operator~(const Enum& a) -> Enum
     {
         return static_cast<Enum>(~ToUnderlying(a));
     }
 
     template<Concepts::EnumBitfield Enum>
     [[nodiscard]]
-    ACDA_API auto operator!(const Enum& a) -> bool
+    auto operator!(const Enum& a) -> bool
     {
         return !ToUnderlying(a);
     }
@@ -67,7 +67,7 @@ namespace Arcadia
     template<class Enum, class Int>
         requires std::is_enum_v<Enum>&& std::is_integral_v<Int>
     [[nodiscard]]
-    ACDA_API auto operator==(const Enum& lhs, const Int& rhs) -> bool
+    auto operator==(const Enum& lhs, const Int& rhs) -> bool
     {
         return static_cast<Enum>(rhs) == lhs;
     }
@@ -75,7 +75,7 @@ namespace Arcadia
     template<class Enum, class Int>
         requires std::is_enum_v<Enum>&& std::is_integral_v<Int>
     [[nodiscard]]
-    ACDA_API auto operator==(const Int& lhs, const Enum& rhs) -> bool
+    auto operator==(const Int& lhs, const Enum& rhs) -> bool
     {
         return rhs == lhs;
     }
@@ -83,7 +83,7 @@ namespace Arcadia
     template<Concepts::EnumBitfield Enum, class Int>
         requires std::is_integral_v<Int>
     [[nodiscard]]
-    ACDA_API auto operator&(const Enum& lhs, const Int& rhs) -> Enum
+    auto operator&(const Enum& lhs, const Int& rhs) -> Enum
     {
         return static_cast<Enum>(static_cast<Int>(lhs) & rhs);
     }
@@ -91,14 +91,14 @@ namespace Arcadia
     template<Concepts::EnumBitfield Enum, class Int>
         requires std::is_integral_v<Int>
     [[nodiscard]]
-    ACDA_API auto operator&(const Int& lhs, const Enum& rhs) -> Enum
+    auto operator&(const Int& lhs, const Enum& rhs) -> Enum
     {
         return rhs & lhs;
     }
 
     template<Concepts::EnumBitfield Enum, class Int>
         requires std::is_integral_v<Int>
-    ACDA_API auto operator&=(Enum& lhs, const Int& rhs) -> Enum&
+    auto operator&=(Enum& lhs, const Int& rhs) -> Enum&
     {
         lhs = lhs & rhs;
         return lhs;
@@ -107,7 +107,7 @@ namespace Arcadia
     template<Concepts::EnumBitfield Enum, class Int>
         requires std::is_integral_v<Int>
     [[nodiscard]]
-    ACDA_API auto operator|(const Enum& lhs, const Int& rhs) -> Enum
+    auto operator|(const Enum& lhs, const Int& rhs) -> Enum
     {
         return static_cast<Enum>(static_cast<Int>(lhs) | rhs);
     }
@@ -115,14 +115,14 @@ namespace Arcadia
     template<Concepts::EnumBitfield Enum, class Int>
         requires std::is_integral_v<Int>
     [[nodiscard]]
-    ACDA_API auto operator|(const Int& lhs, const Enum& rhs) -> Enum
+    auto operator|(const Int& lhs, const Enum& rhs) -> Enum
     {
         return rhs | lhs;
     }
 
     template<Concepts::EnumBitfield Enum, class Int>
         requires std::is_integral_v<Int>
-    ACDA_API auto operator|=(Enum& lhs, const Int& rhs) -> Enum&
+    auto operator|=(Enum& lhs, const Int& rhs) -> Enum&
     {
         lhs = lhs | rhs;
         return lhs;

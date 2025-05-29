@@ -8,7 +8,7 @@
 
 namespace Arcadia
 {
-    enum struct GlShaderType: unsigned int
+    enum struct ACDA_API GlShaderType: unsigned int
     {
         None = GL_NONE,
         VertexShader = GL_VERTEX_SHADER,
@@ -24,7 +24,7 @@ namespace Arcadia
         ACDA_DEFINE_RUNTIME_ERROR_EXCEPTION(GlShaderCompileFail);
     }
 
-    struct GlShader: public Noncopyable
+    struct ACDA_API GlShader: public Noncopyable
     {
     public:
 

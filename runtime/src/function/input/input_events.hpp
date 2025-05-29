@@ -9,7 +9,7 @@
 
 namespace Arcadia
 {
-    enum struct InputKey
+    enum struct ACDA_API InputKey
     {
         Unknown          = GLFW_KEY_UNKNOWN,
         Space            = GLFW_KEY_SPACE,
@@ -120,19 +120,19 @@ namespace Arcadia
         RightSuper       = GLFW_KEY_RIGHT_SUPER,
         Menu             = GLFW_KEY_MENU,
     };
-    enum struct InputMouse
+    enum struct ACDA_API InputMouse
     {
         ButtonLeft   = GLFW_MOUSE_BUTTON_LEFT,
         ButtonRight  = GLFW_MOUSE_BUTTON_RIGHT,
         ButtonMiddle = GLFW_MOUSE_BUTTON_MIDDLE,
     };
-    enum struct InputAction
+    enum struct ACDA_API InputAction
     {
         Release = GLFW_RELEASE,
         Press   = GLFW_PRESS,
         Repeat  = GLFW_REPEAT,
     };
-    enum struct InputModifier
+    enum struct ACDA_API InputModifier
     {
         Shift     = GLFW_MOD_SHIFT,
         Ctrl      = GLFW_MOD_CONTROL,
@@ -145,7 +145,7 @@ namespace Arcadia
 
     namespace Events
     {
-        struct InputKey: public EventBase
+        struct ACDA_API InputKey: public EventBase
         {
         public:
             InputKey(
@@ -169,7 +169,7 @@ namespace Arcadia
             const std::int32_t Modifier;
         };
 
-        struct InputCursorPosition: public EventBase
+        struct ACDA_API InputCursorPosition: public EventBase
         {
         public:
             InputCursorPosition(WindowLayer* const input_window, const glm::vec2& cursor_position):
@@ -180,7 +180,7 @@ namespace Arcadia
             const glm::vec2 CursorPosition;
         };
 
-        struct InputCursorMove: public EventBase
+        struct ACDA_API InputCursorMove: public EventBase
         {
         public:
             InputCursorMove(WindowLayer* const input_window, const glm::vec2 cursor_move_distance):
@@ -191,7 +191,7 @@ namespace Arcadia
             const glm::vec2 CursorMoveDistance;
         };
 
-        struct InputScroll: public EventBase
+        struct ACDA_API InputScroll: public EventBase
         {
         public:
             InputScroll(WindowLayer* const input_window, float scroll_offet_vertical, float scroll_offset_horizontal):
@@ -203,7 +203,7 @@ namespace Arcadia
             const float ScrollOffsetHorizontal;
         };
 
-        struct InputMouseButton: public EventBase
+        struct ACDA_API InputMouseButton: public EventBase
         {
         public:
             InputMouseButton(WindowLayer* const input_window, std::int32_t code, std::int32_t action, std::int32_t modifier):
@@ -216,7 +216,7 @@ namespace Arcadia
             const std::int32_t Modifier;
         };
 
-        struct InputCursorEnter: public EventBase
+        struct ACDA_API InputCursorEnter: public EventBase
         {
         public:
             InputCursorEnter(WindowLayer* const input_window, bool entered):
@@ -227,7 +227,7 @@ namespace Arcadia
             const bool Entered;
         };
 
-        struct InputChar: public EventBase
+        struct ACDA_API InputChar: public EventBase
         {
         public:
             InputChar(WindowLayer* const input_window, std::uint32_t unicode_codepoint):

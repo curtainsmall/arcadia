@@ -3,20 +3,20 @@
 #include "core/event.hpp"
 #include "core/math.hpp"
 
-struct GLFWmonitor;
+struct ACDA_API GLFWmonitor;
 
 namespace Arcadia
 {
-    struct WindowLayer;
+    struct ACDA_API WindowLayer;
 
-    enum struct WindowSizeState
+    enum struct ACDA_API WindowSizeState
     {
         Minimized = -1,
         Restored = 0,
         Maxmized = 1,
     };
 
-    enum struct WindowCursorInputMode
+    enum struct ACDA_API WindowCursorInputMode
     {
         Normal,
         Hidden,
@@ -28,7 +28,7 @@ namespace Arcadia
     {
         //==== Notifications ====//
 
-        struct WindowShouldClose: public EventBase
+        struct ACDA_API WindowShouldClose: public EventBase
         {
         public:
             WindowShouldClose(WindowLayer* const window):
@@ -38,7 +38,7 @@ namespace Arcadia
             WindowLayer* const pWindowLayer;
         };
 
-        struct WindowCloseCanceled: public EventBase
+        struct ACDA_API WindowCloseCanceled: public EventBase
         {
         public:
             WindowCloseCanceled(WindowLayer* const window):
@@ -48,7 +48,7 @@ namespace Arcadia
             WindowLayer* const pWindowLayer;
         };
 
-        struct WindowSetSize: public EventBase
+        struct ACDA_API WindowSetSize: public EventBase
         {
         public:
             WindowSetSize(WindowLayer* const window, const glm::i32vec2& new_size):
@@ -59,7 +59,7 @@ namespace Arcadia
             const glm::i32vec2 NewSize;
         };
 
-        struct WindowSetPosition: public EventBase
+        struct ACDA_API WindowSetPosition: public EventBase
         {
         public:
             WindowSetPosition(WindowLayer* const window, const glm::i32vec2& new_size):
@@ -70,7 +70,7 @@ namespace Arcadia
             const glm::i32vec2 NewPosition;
         };
 
-        struct WindowSizeStateChanged: public EventBase
+        struct ACDA_API WindowSizeStateChanged: public EventBase
         {
         public:
             WindowSizeStateChanged(WindowLayer* const window, WindowSizeState state):
@@ -81,7 +81,7 @@ namespace Arcadia
             const WindowSizeState State;
         };
 
-        struct WindowSetFocused: public EventBase
+        struct ACDA_API WindowSetFocused: public EventBase
         {
         public:
             WindowSetFocused(WindowLayer* const window, bool focused):
@@ -92,7 +92,7 @@ namespace Arcadia
             const bool Focused;
         };
 
-        struct MonitorSetConnected: public EventBase
+        struct ACDA_API MonitorSetConnected: public EventBase
         {
         public:
             MonitorSetConnected(::GLFWmonitor* const glfw_monitor, bool connected):
@@ -105,7 +105,7 @@ namespace Arcadia
 
         //==== Adjustments ====//
 
-        struct WindowSetCursorInputMode: public EventBase
+        struct ACDA_API WindowSetCursorInputMode: public EventBase
         {
         public:
             WindowSetCursorInputMode(WindowCursorInputMode mode):

@@ -5,7 +5,7 @@
 
 namespace Arcadia
 {
-    struct Vertex
+    struct ACDA_API Vertex
     {
     public:
         using SelfType = Vertex;

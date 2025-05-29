@@ -5,11 +5,11 @@
 
 namespace Arcadia::Events
 {
-    struct PhysicsSimulatorReset: public EventBase
+    struct ACDA_API PhysicsSimulatorReset: public EventBase
     {
     };
 
-    struct PhysicsSimulatirSetActive: public EventBase
+    struct ACDA_API PhysicsSimulatirSetActive: public EventBase
     {
     public:
         PhysicsSimulatirSetActive(bool active):
@@ -21,10 +21,10 @@ namespace Arcadia::Events
         const bool Active;
     };
 
-    struct PhysicsSimulatorSetEntity: public EventBase
+    struct ACDA_API PhysicsSimulatorSetEntity: public EventBase
     {
     public:
-        enum struct ActionType
+        enum struct ACDA_API ActionType
         {
             Build,
             Remove,

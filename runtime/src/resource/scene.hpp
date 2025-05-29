@@ -25,9 +25,9 @@ namespace Arcadia
          "light",
     };
 
-    struct EntityInfo
+    struct ACDA_API EntityInfo
     {
-        friend struct Scene;
+        friend struct ACDA_API Scene;
     public:
         using SelfType = EntityInfo;
     public:
@@ -42,7 +42,7 @@ namespace Arcadia
         std::string _Name;
     };
 
-    struct Scene: public Noncopyable
+    struct ACDA_API Scene: public Noncopyable
     {
     public:
         using EntityInfoStorageType = std::unordered_map<EntityId, EntityInfo>;

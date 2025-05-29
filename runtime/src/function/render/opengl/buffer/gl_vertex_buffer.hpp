@@ -11,7 +11,7 @@
 
 namespace Arcadia
 {
-    struct GlBufferLayoutAttribute
+    struct ACDA_API GlBufferLayoutAttribute
     {
     public:
         GLuint Count;
@@ -20,7 +20,7 @@ namespace Arcadia
         GLuint Divisor;
     };
 
-    struct GlBufferLayout
+    struct ACDA_API GlBufferLayout
     {
     public:
         using SelfType = GlBufferLayout;
@@ -123,7 +123,7 @@ namespace Arcadia
         GLsizei Stride{};
     };
 
-    struct GlVertexBuffer: public Noncopyable
+    struct ACDA_API GlVertexBuffer: public Noncopyable
     {
     public:
         using SelfType = GlVertexBuffer;

@@ -17,7 +17,7 @@
 
 namespace Arcadia
 {
-    struct LayerInterface: public Noncopyable
+    struct ACDA_API LayerInterface: public Noncopyable
     {
     public:
         using SelfType = LayerInterface;
@@ -41,7 +41,7 @@ namespace Arcadia
         concept Layer = std::derived_from<T, LayerInterface>;
     }
 
-    struct LayerStack
+    struct ACDA_API LayerStack
     {
     public:
         using LayerVectorType = std::vector<std::shared_ptr<LayerInterface>>;

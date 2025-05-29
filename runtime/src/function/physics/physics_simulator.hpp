@@ -11,13 +11,13 @@
 
 namespace Arcadia
 {
-    struct JphObjectLayerPairFilerImpl: public JPH::ObjectLayerPairFilter
+    struct ACDA_API JphObjectLayerPairFilerImpl: public JPH::ObjectLayerPairFilter
     {
     public:
         virtual auto ShouldCollide(JPH::ObjectLayer obj_1, JPH::ObjectLayer obj_2) const -> bool override;
     };
 
-    struct JphBroadPhaseLayerImpl: public JPH::BroadPhaseLayerInterface
+    struct ACDA_API JphBroadPhaseLayerImpl: public JPH::BroadPhaseLayerInterface
     {
     public:
         JphBroadPhaseLayerImpl();
@@ -38,13 +38,13 @@ namespace Arcadia
         JPH::BroadPhaseLayer _ObjectToBroadPhase[JphObjectLayers::NumLayers];
     };
 
-    struct JphObjectVsBroadPhaseLayerFilterImpl: public JPH::ObjectVsBroadPhaseLayerFilter
+    struct ACDA_API JphObjectVsBroadPhaseLayerFilterImpl: public JPH::ObjectVsBroadPhaseLayerFilter
     {
     public:
         virtual auto ShouldCollide(JPH::ObjectLayer obj, JPH::BroadPhaseLayer bp) const -> bool override;
     };
 
-    struct PhysicsSimulator: public Noncopyable
+    struct ACDA_API PhysicsSimulator: public Noncopyable
     {
     public:
         using SelfType = PhysicsSimulator;

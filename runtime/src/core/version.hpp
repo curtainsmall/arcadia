@@ -7,7 +7,7 @@
 
 namespace Arcadia
 {
-    struct Version
+    struct ACDA_API Version
     {
     public:
         using NumType = int;
@@ -36,7 +36,7 @@ namespace Arcadia
 namespace std
 {
     template<>
-    struct formatter<Arcadia::Version>: public std::formatter<std::string>
+    struct ACDA_API formatter<Arcadia::Version>: public std::formatter<std::string>
     {
     public:
         auto format(const Arcadia::Version& version, std::format_context& ctx) const

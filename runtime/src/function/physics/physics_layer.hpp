@@ -9,7 +9,7 @@
 
 namespace Arcadia
 {
-    struct PhysicsLayer: public LayerInterface
+    struct ACDA_API PhysicsLayer: public LayerInterface
     {
     public:
         using SelfType = PhysicsLayer;

@@ -11,7 +11,7 @@
 
 namespace Arcadia
 {
-    struct Logger
+    struct ACDA_API Logger
     {
     public:
         using SelfType = Logger;
@@ -74,7 +74,7 @@ namespace Arcadia
         }
 
     private:
-        std::shared_ptr<spdlog::logger> _spLogger{};
+        std::shared_ptr<spdlog::logger> _spLogger {};
     };
 }
 
