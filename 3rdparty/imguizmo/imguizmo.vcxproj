@@ -45,13 +45,13 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>$(ProjectDir)lib</OutDir>
-    <IntDir>$(ProjectDir)\lib-int\</IntDir>
+    <OutDir>$(SolutionDir)libs\debug</OutDir>
+    <IntDir>$(ProjectDir)\lib-int\$(Configuration)-$(Platform)</IntDir>
     <TargetName>ImGuizmo</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>$(ProjectDir)lib</OutDir>
-    <IntDir>$(ProjectDir)\lib-int\</IntDir>
+    <OutDir>$(SolutionDir)libs\release</OutDir>
+    <IntDir>$(ProjectDir)\lib-int\$(Configuration)-$(Platform)</IntDir>
     <TargetName>ImGuizmo</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">

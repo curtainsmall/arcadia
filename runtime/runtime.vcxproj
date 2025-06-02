@@ -72,8 +72,9 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(SolutionDir)3rdparty\glew\lib\Release\x64\glew32s.lib;$(SolutionDir)3rdparty\glfw\build\src\Release\glfw3dll.lib;$(SolutionDir)3rdparty\spdlog\build\MinSizeRel\spdlog.lib;User32.lib;Gdi32.lib;Shell32.lib;opengl32.lib;$(SolutionDir)3rdparty\JoltPhysics\Build\VS2022_CL\Debug\Jolt.lib;D:\CppProject\arcadia\3rdparty\assimp\build\lib\Debug\assimp-vc143-mtd.lib;D:\CppProject\arcadia\3rdparty\assimp\build\contrib\zlib\Debug\zlibstaticd.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <ImportLibrary>$(SolutionDir)bin\$(Configuration)-$(Platform)\runtime\$(TargetName).lib</ImportLibrary>
+      <AdditionalDependencies>$(SolutionDir)libs\release\glew32s.lib;$(SolutionDir)libs\release\glfw3dll.lib;$(SolutionDir)libs\release\spdlog.lib;User32.lib;Gdi32.lib;Shell32.lib;opengl32.lib;$(SolutionDir)libs\debug\Jolt.lib;$(SolutionDir)libs\debug\assimp-vc143-mtd.lib;$(SolutionDir)libs\debug\zlibstaticd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <ImportLibrary>$(SolutionDir)libs\debug\$(TargetName).lib</ImportLibrary>
+      <AdditionalOptions>/NOEXP %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -98,8 +99,9 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(SolutionDir)3rdparty\glew\lib\Release\x64\glew32s.lib;$(SolutionDir)3rdparty\glfw\build\src\Release\glfw3dll.lib;$(SolutionDir)3rdparty\spdlog\build\MinSizeRel\spdlog.lib;User32.lib;Gdi32.lib;Shell32.lib;opengl32.lib;$(SolutionDir)3rdparty\JoltPhysics\Build\VS2022_CL\Release\Jolt.lib;$(SolutionDir)3rdparty\assimp\build\lib\Release\assimp-vc143-mt.lib;$(SolutionDir)3rdparty\assimp\build\contrib\zlib\MinSizeRel\zlibstatic.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <ImportLibrary>$(SolutionDir)bin\$(Configuration)-$(Platform)\runtime\$(TargetName).lib</ImportLibrary>
+      <AdditionalDependencies>$(SolutionDir)libs\release\glew32s.lib;$(SolutionDir)libs\release\glfw3dll.lib;$(SolutionDir)libs\release\spdlog.lib;User32.lib;Gdi32.lib;Shell32.lib;opengl32.lib;$(SolutionDir)libs\release\Jolt.lib;$(SolutionDir)libs\release\assimp-vc143-mt.lib;$(SolutionDir)libs\release\zlibstatic.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <ImportLibrary>$(SolutionDir)libs\release\$(TargetName).lib</ImportLibrary>
+      <AdditionalOptions>/NOEXP %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

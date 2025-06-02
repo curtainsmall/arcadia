@@ -108,7 +108,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(SolutionDir)3rdparty\imguizmo\lib\ImGuizmo.lib;$(SolutionDir)3rdparty\imgui\lib\ImGui.lib;$(SolutionDir)3rdparty\glfw\build\src\Release\glfw3dll.lib;$(SolutionDir)bin\$(Configuration)-$(Platform)\runtime\ArcadiaRuntime.lib;User32.lib;Gdi32.lib;Shell32.lib;opengl32.lib</AdditionalDependencies>
+      <AdditionalDependencies>$(SolutionDir)libs\debug\ImGuizmo.lib;$(SolutionDir)libs\debug\ImGui.lib;$(SolutionDir)libs\release\glfw3dll.lib;$(SolutionDir)libs\debug\ArcadiaRuntime.lib;User32.lib;Gdi32.lib;Shell32.lib;opengl32.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -131,7 +131,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(SolutionDir)3rdparty\imguizmo\lib\ImGuizmo.lib;$(SolutionDir)3rdparty\imgui\lib\ImGui.lib;$(SolutionDir)3rdparty\glfw\build\src\Release\glfw3dll.lib;$(SolutionDir)bin\$(Configuration)-$(Platform)\runtime\ArcadiaRuntime.lib;User32.lib;Gdi32.lib;Shell32.lib;opengl32.lib</AdditionalDependencies>
+      <AdditionalDependencies>$(SolutionDir)libs\release\ImGuizmo.lib;$(SolutionDir)libs\release\ImGui.lib;$(SolutionDir)libs\release\glfw3dll.lib;$(SolutionDir)libs\release\ArcadiaRuntime.lib;User32.lib;Gdi32.lib;Shell32.lib;opengl32.lib</AdditionalDependencies>
       <EntryPointSymbol>
       </EntryPointSymbol>
     </Link>

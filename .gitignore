@@ -6,7 +6,14 @@ bin-int/
 .vs/
 **/*.user
 **/*.filters
+
 3rdparty/**/example/
+3rdperty/**/build/
+3rdperty/**/Build/
+
+libs/**/*.ipd
+libs/**/*.pdb
+libs/**/*.exp
 
 /**/imgui.ini
 /**/.acdacfg
