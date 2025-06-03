@@ -83,6 +83,9 @@ Arcadia::ImguiWindowState::ImguiWindowState(bool open, const std::string& title)
 
 void Arcadia::ImguiWindowState::OnEvent(EventBase& e)
 {
+    EventDispatcher{e}
+        .Dispatch<Events::OpenImguiWindow>(ACDA_BIND_MEMBER_FN(_OnOpenImguiWindow))
+        .IsDispatched();
 }
 
 void Arcadia::ImguiWindowState::OnUpdate()
@@ -98,7 +101,7 @@ void Arcadia::ImguiWindowState::OnUpdate()
 
     std::string imgui_window_title = _Title + GetIdString();
 
-    ImGui::SetNextWindowSize(glm::vec2{ 1024,768 }, ImGuiCond_Once);
+    ImGui::SetNextWindowSize(glm::vec2{1024, 768}, ImGuiCond_Once);
     auto window_flags =
         ImGuiWindowFlags_NoCollapse;
     if(ImGui::Begin(imgui_window_title.c_str(), &_Opened, window_flags))
@@ -151,5 +154,8 @@ void Arcadia::ImguiWindowState::OnUpdate()
 
 void Arcadia::ImguiWindowState::_OnOpenImguiWindow(Events::OpenImguiWindow& e)
 {
-    _Opened = true;
+    if(e.IdString == GetIdString())
+    {
+        _Opened = true;
+    }
 }
