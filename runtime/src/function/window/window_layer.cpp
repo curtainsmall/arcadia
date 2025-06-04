@@ -21,19 +21,19 @@ Arcadia::WindowLayer::WindowLayer(
     MatchVariant<void>(
         app_config.GraphicApi,
         [&](const GraphicApi::Opengl& gl) -> void
-    {
-        glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, gl.Version.Major);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, gl.Version.Minor);
-        glfwWindowHint(GLFW_SAMPLES, _MultisampleCount);
-    #ifndef NDEBUG
-        glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
-    #endif // NDEBUG
-    },
+        {
+            glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
+            glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, gl.Version.Major);
+            glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, gl.Version.Minor);
+            glfwWindowHint(GLFW_SAMPLES, _MultisampleCount);
+        #ifndef NDEBUG
+            glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
+        #endif // NDEBUG
+        },
         [&](auto&) -> void
-    {
-        glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-    }
+        {
+            glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+        }
     );
 
     glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
@@ -165,193 +165,177 @@ void Arcadia::WindowLayer::_SetupCallbacks()
     glfwSetKeyCallback(
         _GlfwWindow,
         [](GLFWwindow* glfw_wnd_ptr, int key, int scancode, int action, int mods) -> void
-    {
-        EventQueue::Instance()
-            .Signal<Events::InputKey>(
-                _GetWindowPointerFromGlfwUserPointer(glfw_wnd_ptr),
-                key,
-                scancode,
-                action,
-                mods
-            );
-    }
+        {
+            EventQueue::Instance()
+                .Signal<Events::InputKey>(
+                    key,
+                    scancode,
+                    action,
+                    mods
+                );
+        }
     );
     glfwSetCursorPosCallback(
         _GlfwWindow,
         [](GLFWwindow* glfw_wnd_ptr, double xpos, double ypos) -> void
-    {
-        glm::vec2 cursor_pos(xpos, ypos);
-        WindowLayer* wnd_ptr = _GetWindowPointerFromGlfwUserPointer(glfw_wnd_ptr);
-        EventQueue& event_queue = EventQueue::Instance();
-
-        event_queue.Signal<Events::InputCursorPosition>(
-            wnd_ptr,
-            cursor_pos
-        );
-
-        glm::vec2& last_pos = wnd_ptr->_LastCursorPosition;
-        glm::vec2 offset = cursor_pos - last_pos;
-        if(IsInRange(offset.x, _LegalCursorMoveRange.x, _LegalCursorMoveRange.y)
-           && IsInRange(offset.y, _LegalCursorMoveRange.x, _LegalCursorMoveRange.y))
         {
-            event_queue.Signal<Events::InputCursorMove>(
-                wnd_ptr,
-                offset
+            glm::vec2 cursor_pos(xpos, ypos);
+            WindowLayer* wnd_ptr = _GetWindowPointerFromGlfwUserPointer(glfw_wnd_ptr);
+            EventQueue& event_queue = EventQueue::Instance();
+
+            event_queue.Signal<Events::InputCursorPosition>(
+                cursor_pos
             );
+
+            glm::vec2& last_pos = wnd_ptr->_LastCursorPosition;
+            glm::vec2 offset = cursor_pos - last_pos;
+            if(IsInRange(offset.x, _LegalCursorMoveRange.x, _LegalCursorMoveRange.y)
+               && IsInRange(offset.y, _LegalCursorMoveRange.x, _LegalCursorMoveRange.y))
+            {
+                event_queue.Signal<Events::InputCursorMove>(
+                    offset
+                );
+            }
+            last_pos = cursor_pos;
         }
-        last_pos = cursor_pos;
-    }
     );
     glfwSetScrollCallback(
         _GlfwWindow,
         [](GLFWwindow* glfw_wnd_ptr, double xoffset, double yoffset) -> void
-    {
-        EventQueue::Instance()
-            .Signal<Events::InputScroll>(
-                _GetWindowPointerFromGlfwUserPointer(glfw_wnd_ptr),
-                xoffset,
-                yoffset
-            );
-    }
+        {
+            EventQueue::Instance()
+                .Signal<Events::InputScroll>(
+                    xoffset,
+                    yoffset
+                );
+        }
     );
     glfwSetMouseButtonCallback(
         _GlfwWindow,
         [](GLFWwindow* glfw_wnd_ptr, int button, int action, int mods) -> void
-    {
-        EventQueue::Instance()
-            .Signal<Events::InputMouseButton>(
-                _GetWindowPointerFromGlfwUserPointer(glfw_wnd_ptr),
-                button,
-                action,
-                mods
-            );
-    }
+        {
+            EventQueue::Instance()
+                .Signal<Events::InputMouseButton>(
+                    button,
+                    action,
+                    mods
+                );
+        }
     );
     glfwSetWindowSizeCallback(
         _GlfwWindow,
         [](GLFWwindow* glfw_wnd_ptr, int width, int height) -> void
-    {
-        EventQueue::Instance()
-            .Signal<Events::WindowSetSize>(
-                _GetWindowPointerFromGlfwUserPointer(glfw_wnd_ptr),
-                glm::i32vec2{ width,height }
-            );
-    }
+        {
+            EventQueue::Instance()
+                .Signal<Events::WindowSetSize>(
+                    glm::i32vec2{ width,height }
+                );
+        }
     );
     glfwSetWindowPosCallback(
         _GlfwWindow,
         [](GLFWwindow* glfw_wnd_ptr, int xpos, int ypos) -> void
-    {
-        EventQueue::Instance()
-            .Signal<Events::WindowSetPosition>(
-                _GetWindowPointerFromGlfwUserPointer(glfw_wnd_ptr),
-                glm::i32vec2{ xpos,ypos }
-            );
-    }
+        {
+            EventQueue::Instance()
+                .Signal<Events::WindowSetPosition>(
+                    glm::i32vec2{ xpos,ypos }
+                );
+        }
     );
     glfwSetWindowIconifyCallback(
         _GlfwWindow,
         [](GLFWwindow* glfw_wnd_ptr, int iconified) -> void
-    {
-        EventQueue& event_queue = EventQueue::Instance();
-        if(iconified)
         {
-            event_queue.Signal<Events::WindowSizeStateChanged>(
-                _GetWindowPointerFromGlfwUserPointer(glfw_wnd_ptr),
-                WindowSizeState::Minimized
-            );
+            EventQueue& event_queue = EventQueue::Instance();
+            if(iconified)
+            {
+                event_queue.Signal<Events::WindowSizeStateChanged>(
+                    WindowSizeState::Minimized
+                );
+            }
+            else
+            {
+                event_queue.Signal<Events::WindowSizeStateChanged>(
+                    WindowSizeState::Restored
+                );
+            }
         }
-        else
-        {
-            event_queue.Signal<Events::WindowSizeStateChanged>(
-                _GetWindowPointerFromGlfwUserPointer(glfw_wnd_ptr),
-                WindowSizeState::Restored
-            );
-        }
-    }
     );
     glfwSetWindowMaximizeCallback(
         _GlfwWindow,
         [](GLFWwindow* glfw_wnd_ptr, int maxmized) -> void
-    {
-        EventQueue& event_queue = EventQueue::Instance();
-        if(maxmized)
         {
-            event_queue.Signal<Events::WindowSizeStateChanged>(
-                _GetWindowPointerFromGlfwUserPointer(glfw_wnd_ptr),
-                WindowSizeState::Maxmized
-            );
+            EventQueue& event_queue = EventQueue::Instance();
+            if(maxmized)
+            {
+                event_queue.Signal<Events::WindowSizeStateChanged>(
+                    WindowSizeState::Maxmized
+                );
+            }
+            else
+            {
+                event_queue.Signal<Events::WindowSizeStateChanged>(
+                    WindowSizeState::Restored
+                );
+            }
         }
-        else
-        {
-            event_queue.Signal<Events::WindowSizeStateChanged>(
-                _GetWindowPointerFromGlfwUserPointer(glfw_wnd_ptr),
-                WindowSizeState::Restored
-            );
-        }
-    }
     );
     glfwSetWindowFocusCallback(
         _GlfwWindow,
         [](GLFWwindow* glfw_wnd_ptr, int focused) -> void
-    {
-        EventQueue::Instance()
-            .Signal<Events::WindowSetFocused>(
-                _GetWindowPointerFromGlfwUserPointer(glfw_wnd_ptr),
-                focused
-            );
-    }
+        {
+            EventQueue::Instance()
+                .Signal<Events::WindowSetFocused>(
+                    focused
+                );
+        }
     );
     glfwSetCursorEnterCallback(
         _GlfwWindow,
         [](GLFWwindow* glfw_wnd_ptr, int entered) -> void
-    {
-        EventQueue::Instance()
-            .Signal<Events::InputCursorEnter>(
-                _GetWindowPointerFromGlfwUserPointer(glfw_wnd_ptr),
-                entered
-            );
-    }
+        {
+            EventQueue::Instance()
+                .Signal<Events::InputCursorEnter>(
+                    entered
+                );
+        }
     );
     glfwSetCharCallback(
         _GlfwWindow,
         [](GLFWwindow* glfw_wnd_ptr, unsigned int code_point) -> void
-    {
-        EventQueue::Instance()
-            .Signal<Events::InputChar>(
-                _GetWindowPointerFromGlfwUserPointer(glfw_wnd_ptr),
-                code_point
-            );
-    }
+        {
+            EventQueue::Instance()
+                .Signal<Events::InputChar>(
+                    code_point
+                );
+        }
     );
     glfwSetMonitorCallback(
         [](GLFWmonitor* glfw_monitor_ptr, int event) -> void
-    {
-        bool connection = false;
-        if(event == GLFW_CONNECTED)
         {
-            connection = true;
+            bool connection = false;
+            if(event == GLFW_CONNECTED)
+            {
+                connection = true;
+            }
+            else if(event == GLFW_DISCONNECTED)
+            {
+                connection = false;
+            }
+            EventQueue::Instance()
+                .Signal<Events::MonitorSetConnected>(
+                    glfw_monitor_ptr,
+                    connection
+                );
         }
-        else if(event == GLFW_DISCONNECTED)
-        {
-            connection = false;
-        }
-        EventQueue::Instance()
-            .Signal<Events::MonitorSetConnected>(
-                glfw_monitor_ptr,
-                connection
-            );
-    }
     );
     glfwSetWindowCloseCallback(
         _GlfwWindow,
         [](GLFWwindow* glfw_wnd_ptr) -> void
-    {
-        EventQueue::Instance()
-            .Signal<Events::WindowShouldClose>(
-                _GetWindowPointerFromGlfwUserPointer(glfw_wnd_ptr)
-            );
-    }
+        {
+            EventQueue::Instance()
+                .Signal<Events::WindowShouldClose>();
+        }
     );
 }
 
@@ -362,21 +346,18 @@ void Arcadia::WindowLayer::_SwapBuffers()
     MatchVariant<void>(
         app_config.GraphicApi,
         [&](const GraphicApi::Opengl&) -> void
-    {
-        glfwSwapBuffers(_GlfwWindow);
-    },
+        {
+            glfwSwapBuffers(_GlfwWindow);
+        },
         [](auto&&) -> void
-    {
-    }
+        {
+        }
     );
 }
 
 void Arcadia::WindowLayer::_OnWindowCloseCanceled(Events::WindowCloseCanceled& e)
 {
-    if(e.pWindowLayer == this)
-    {
-        glfwSetWindowShouldClose(_GlfwWindow, GLFW_FALSE);
-    }
+    glfwSetWindowShouldClose(_GlfwWindow, GLFW_FALSE);
 }
 
 auto Arcadia::WindowLayer::GetMultisampleCount() const -> std::int32_t

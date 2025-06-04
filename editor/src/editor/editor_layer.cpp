@@ -140,7 +140,7 @@ void Arcadia::EditorAppLayer::_OnWindowShouldClose(Events::WindowShouldClose& e)
     std::shared_ptr<WindowLayer> main_window_layer_sptr = layer_stack.GetLayerShared<WindowLayer>();
     std::shared_ptr<ProjectLayer> main_project_layer_sptr = layer_stack.GetLayerShared<ProjectLayer>();
 
-    if(e.pWindowLayer == main_window_layer_sptr.get() && main_project_layer_sptr->HasProject())
+    if(main_project_layer_sptr->HasProject())
     {
         _WaitingForProjectUnbuiltBeforeClosing = true;
     }

@@ -24,9 +24,9 @@ namespace Arcadia
     auto MatchVariant(Variant& variant, BranchFns&& ...fns) -> Ret
     {
         return std::visit<Ret>(
-            OverloadedFunctionsWrapper {
+            OverloadedFunctionsWrapper(
                 std::forward<BranchFns>(fns)...
-            },
+            ),
             variant
         );
     }
@@ -40,9 +40,9 @@ namespace Arcadia
     auto MatchVariant(const Variant& variant, BranchFns&& ...fns) -> Ret
     {
         return std::visit<Ret>(
-            OverloadedFunctionsWrapper {
+            OverloadedFunctionsWrapper(
                 std::forward<BranchFns>(fns)...
-            },
+            ),
             variant
         );
     }

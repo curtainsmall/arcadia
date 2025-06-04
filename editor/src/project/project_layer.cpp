@@ -87,7 +87,7 @@ void Arcadia::ProjectLayer::_OnWindowShouldClose(Events::WindowShouldClose& e)
 
     std::shared_ptr<WindowLayer> window_layer_sptr = LayerStack::Instance().GetLayerShared<WindowLayer>();
 
-    if(e.pWindowLayer == window_layer_sptr.get() && _spProject)
+    if(_spProject)
     {
         EventQueue::Instance()
             .Signal<Events::CloseProject>();
@@ -183,7 +183,7 @@ void Arcadia::ProjectLayer::_OnOpenProject(Events::OpenProject& e)
     }
     if(_ProjectFilepath.extension() != Project::ProjectExtensionString)
     {
-        (void)pfd::message(
+        (void) pfd::message(
             "Arcadia - Open Project",
             std::format("Arcadia project must ends with extension \"{}\" while {} does not", Project::ProjectExtensionString, _ProjectFilepath.generic_string()),
             pfd::choice::ok,
@@ -198,7 +198,7 @@ void Arcadia::ProjectLayer::_OnOpenProject(Events::OpenProject& e)
     }
     catch(const Exceptions::FileOpenFailed& e)
     {
-        (void)pfd::notify(
+        (void) pfd::notify(
             "Arcadia - Open Project",
             std::format("Failed to open project file at {}", _ProjectFilepath.generic_string()),
             pfd::icon::error
@@ -208,7 +208,7 @@ void Arcadia::ProjectLayer::_OnOpenProject(Events::OpenProject& e)
     }
     catch(const Exceptions::ProjectConstructionFailed& e)
     {
-        (void)pfd::notify(
+        (void) pfd::notify(
             "Arcadia - Open Project",
             std::format("Failed to open project due to invalid project file"),
             pfd::icon::error

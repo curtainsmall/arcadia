@@ -8,90 +8,90 @@
 #include "core/app/app_config.hpp"
 #include "core/match.hpp"
 
- void Arcadia::ImguiBackend::Initialize(const std::shared_ptr<WindowLayer>& window_sptr)
+void Arcadia::ImguiBackend::Initialize(const std::shared_ptr<WindowLayer>& window_sptr)
 {
     const AppConfig& app_config = AppConfig::Instance();
 
     MatchVariant<void>(
         app_config.GraphicApi,
         [&](const GraphicApi::Opengl& opengl) -> void
-    {
-        std::string glsl_version{};
-        if(opengl.Version >= Version{ 3,3,0 })
         {
-            glsl_version = std::format("#version {0}{1}0", opengl.Version.Major, opengl.Version.Minor);
-        }
-        else
-        {
-            if(opengl.Version >= Version{ 3,0,0 })
+            std::string glsl_version{};
+            if(opengl.Version >= Version{ 3, 3, 0 })
             {
-                glsl_version = std::format("#version 1{}0", opengl.Version.Minor + 3);
+                glsl_version = std::format("#version {0}{1}0", opengl.Version.Major, opengl.Version.Minor);
             }
             else
             {
-                glsl_version = std::format("#version 1{}0", opengl.Version.Minor + 1);
+                if(opengl.Version >= Version{ 3, 0, 0 })
+                {
+                    glsl_version = std::format("#version 1{}0", opengl.Version.Minor + 3);
+                }
+                else
+                {
+                    glsl_version = std::format("#version 1{}0", opengl.Version.Minor + 1);
+                }
             }
+            ImGui_ImplGlfw_InitForOpenGL(window_sptr->GetGlfwWindow(), false);
+            ImGui_ImplOpenGL3_Init(glsl_version.c_str());
+        },
+        [](auto&&) -> void
+        {
         }
-        ImGui_ImplGlfw_InitForOpenGL(window_sptr->GetGlfwWindow(), false);
-        ImGui_ImplOpenGL3_Init(glsl_version.c_str());
-    },
-        [](auto&&) -> void
-    {
-    }
     );
 }
 
- void Arcadia::ImguiBackend::NewFrame(const std::shared_ptr<WindowLayer>& window_sptr)
+void Arcadia::ImguiBackend::NewFrame(const std::shared_ptr<WindowLayer>& window_sptr)
 {
     const AppConfig& app_config = AppConfig::Instance();
 
     MatchVariant<void>(
         app_config.GraphicApi,
         [](const GraphicApi::Opengl&) -> void
-    {
-        ImGui_ImplGlfw_NewFrame();
-        ImGui_ImplOpenGL3_NewFrame();
-    },
+        {
+            ImGui_ImplGlfw_NewFrame();
+            ImGui_ImplOpenGL3_NewFrame();
+        },
         [](auto&&) -> void
-    {
-    }
+        {
+        }
     );
 }
 
- void Arcadia::ImguiBackend::RenderDrawData(const std::shared_ptr<WindowLayer>& window_sptr)
+void Arcadia::ImguiBackend::RenderDrawData(const std::shared_ptr<WindowLayer>& window_sptr)
 {
     const AppConfig& app_config = AppConfig::Instance();
 
     MatchVariant<void>(
         app_config.GraphicApi,
         [](const GraphicApi::Opengl&) -> void
-    {
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-    },
+        {
+            ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+        },
         [](auto&&) -> void
-    {
-    }
+        {
+        }
     );
 }
 
- void Arcadia::ImguiBackend::Shutdown(const std::shared_ptr<WindowLayer>& window_sptr)
+void Arcadia::ImguiBackend::Shutdown(const std::shared_ptr<WindowLayer>& window_sptr)
 {
     const AppConfig& app_config = AppConfig::Instance();
 
     MatchVariant<void>(
         app_config.GraphicApi,
         [](const GraphicApi::Opengl&) -> void
-    {
-        ImGui_ImplOpenGL3_Shutdown();
-        ImGui_ImplGlfw_Shutdown();
-    },
+        {
+            ImGui_ImplOpenGL3_Shutdown();
+            ImGui_ImplGlfw_Shutdown();
+        },
         [](auto&&) -> void
-    {
-    }
+        {
+        }
     );
 }
 
- void Arcadia::ImguiBackend::OnEvent(EventBase& e)
+void Arcadia::ImguiBackend::OnEvent(EventBase& e)
 {
     if(EventDispatcher{ e }
        .Dispatch<Events::WindowSetFocused>(ImguiBackend::OnWindowSetFocused)
@@ -112,42 +112,49 @@
     }
 }
 
- void Arcadia::ImguiBackend::OnWindowSetFocused(Events::WindowSetFocused& e)
+void Arcadia::ImguiBackend::OnWindowSetFocused(Events::WindowSetFocused& e)
 {
-    ImGui_ImplGlfw_WindowFocusCallback(e.pWindowLayer->GetGlfwWindow(), e.Focused);
+    std::shared_ptr<WindowLayer> window_layer_sptr = LayerStack::Instance().GetLayerShared<WindowLayer>();
+    ImGui_ImplGlfw_WindowFocusCallback(window_layer_sptr->GetGlfwWindow(), e.Focused);
 }
 
- void Arcadia::ImguiBackend::OnInputCursorEnter(Events::InputCursorEnter& e)
+void Arcadia::ImguiBackend::OnInputCursorEnter(Events::InputCursorEnter& e)
 {
-    ImGui_ImplGlfw_CursorEnterCallback(e.pWindowLayer->GetGlfwWindow(), e.Entered);
+    std::shared_ptr<WindowLayer> window_layer_sptr = LayerStack::Instance().GetLayerShared<WindowLayer>();
+    ImGui_ImplGlfw_CursorEnterCallback(window_layer_sptr->GetGlfwWindow(), e.Entered);
 }
 
- void Arcadia::ImguiBackend::OnInputCursorPosition(Events::InputCursorPosition& e)
+void Arcadia::ImguiBackend::OnInputCursorPosition(Events::InputCursorPosition& e)
 {
-    ImGui_ImplGlfw_CursorPosCallback(e.pWindowLayer->GetGlfwWindow(), e.CursorPosition.x, e.CursorPosition.y);
+    std::shared_ptr<WindowLayer> window_layer_sptr = LayerStack::Instance().GetLayerShared<WindowLayer>();
+    ImGui_ImplGlfw_CursorPosCallback(window_layer_sptr->GetGlfwWindow(), e.CursorPosition.x, e.CursorPosition.y);
 }
 
- void Arcadia::ImguiBackend::OnInputMouseButton(Events::InputMouseButton& e)
+void Arcadia::ImguiBackend::OnInputMouseButton(Events::InputMouseButton& e)
 {
-    ImGui_ImplGlfw_MouseButtonCallback(e.pWindowLayer->GetGlfwWindow(), e.Code, e.Action, e.Modifier);
+    std::shared_ptr<WindowLayer> window_layer_sptr = LayerStack::Instance().GetLayerShared<WindowLayer>();
+    ImGui_ImplGlfw_MouseButtonCallback(window_layer_sptr->GetGlfwWindow(), e.Code, e.Action, e.Modifier);
 }
 
- void Arcadia::ImguiBackend::OnInputScroll(Events::InputScroll& e)
+void Arcadia::ImguiBackend::OnInputScroll(Events::InputScroll& e)
 {
-    ImGui_ImplGlfw_ScrollCallback(e.pWindowLayer->GetGlfwWindow(), e.ScrollOffsetHorizontal, e.ScrollOffsetVertical);
+    std::shared_ptr<WindowLayer> window_layer_sptr = LayerStack::Instance().GetLayerShared<WindowLayer>();
+    ImGui_ImplGlfw_ScrollCallback(window_layer_sptr->GetGlfwWindow(), e.ScrollOffsetHorizontal, e.ScrollOffsetVertical);
 }
 
- void Arcadia::ImguiBackend::OnInputKey(Events::InputKey& e)
+void Arcadia::ImguiBackend::OnInputKey(Events::InputKey& e)
 {
-    ImGui_ImplGlfw_KeyCallback(e.pWindowLayer->GetGlfwWindow(), e.KeyCode, e.KeyScancode, e.Action, e.Modifier);
+    std::shared_ptr<WindowLayer> window_layer_sptr = LayerStack::Instance().GetLayerShared<WindowLayer>();
+    ImGui_ImplGlfw_KeyCallback(window_layer_sptr->GetGlfwWindow(), e.KeyCode, e.KeyScancode, e.Action, e.Modifier);
 }
 
- void Arcadia::ImguiBackend::OnInputChar(Events::InputChar& e)
+void Arcadia::ImguiBackend::OnInputChar(Events::InputChar& e)
 {
-    ImGui_ImplGlfw_CharCallback(e.pWindowLayer->GetGlfwWindow(), e.UnicodeCodepoint);
+    std::shared_ptr<WindowLayer> window_layer_sptr = LayerStack::Instance().GetLayerShared<WindowLayer>();
+    ImGui_ImplGlfw_CharCallback(window_layer_sptr->GetGlfwWindow(), e.UnicodeCodepoint);
 }
 
- void Arcadia::ImguiBackend::OnMonitorSetConnected(Events::MonitorSetConnected& e)
+void Arcadia::ImguiBackend::OnMonitorSetConnected(Events::MonitorSetConnected& e)
 {
     ImGui_ImplGlfw_MonitorCallback(e.GlfwMonitor, e.Connected);
 }
