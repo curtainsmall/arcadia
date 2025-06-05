@@ -246,6 +246,14 @@ auto Arcadia::SceneLayer::IsActiveSceneModified() const -> bool
     return _ActiveSceneModified;
 }
 
+void Arcadia::SceneLayer::Snapshot()
+{
+}
+
+void Arcadia::SceneLayer::Restore()
+{
+}
+
 void Arcadia::SceneLayer::_OnCreateScene(Events::CreateScene& e)
 {
     _CreateScene(e.Name);

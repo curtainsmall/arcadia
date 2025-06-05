@@ -1,6 +1,7 @@
 #pragma once
 
 #include "core/math.hpp"
+#include "core/memento.hpp"
 #include "core/nlohmann_json.hpp"
 #include "platform/api_def.hpp"
 #include "resource/components/component_interface.hpp"
@@ -8,10 +9,26 @@
 namespace Arcadia
 {
     struct ACDA_API CameraComponent:
-        public ComponentInterface
+        public ComponentInterface,
+        public MementoOriginatorInterface
     {
     public:
         using SelfType = CameraComponent;
+    private:
+        struct ACDA_API _MementoData: public MementoDataBase
+        {
+            float NearPlane{ .1f };
+            float FarPlane{ 100.f };
+            float FovY{ glm::radians(75.f) };
+            float FovYMin{ glm::radians(1.f) };
+            float FovYMax{ glm::radians(120.f) };
+            float Speed{ .25f };
+            glm::i32vec2 ViewportSize{ 800,600 };
+            bool UpAxisFixed{ true };
+            float UpAxisAngleEpsilon{ glm::radians(0.1f) };
+            glm::vec2 CursorMoveOffsetRange{ -100.f,100.f };
+            bool GridDisplaying{ false };
+        };
     public:
         ACDA_COMPONENT_TYPE_STR_GETTERS("camera");
 
@@ -69,58 +86,14 @@ namespace Arcadia
         auto IsGridDisplaying() const -> bool;
         void SetGridDisplaying(bool displaying);
 
-    #if 0
-        auto MoveForward() -> SelfType&;
-        auto MoveBackward() -> SelfType&;
-        auto MoveLeft() -> SelfType&;
-        auto MoveRight() -> SelfType&;
-        auto MoveUp() -> SelfType&;
-        auto MoveDown() -> SelfType&;
-        auto Move(const glm::vec3& Offset) -> SelfType&;
-        auto DragViewMove(const glm::vec2& Offset) -> SelfType&;
-
-        auto RotateView(const glm::vec2& Offset) -> SelfType&;
-        auto DragViewRotate(const glm::vec2& Offset) -> SelfType&;
-
-        [[nodiscard]]
-        auto GenerateViewMat4() const->glm::mat4;
-
-        [[nodiscard]]
-        auto GenerateProjectiveMat4() const->glm::mat4;
-
-        [[nodiscard]]
-        auto GenerateMat4(bool col_major = true) const->glm::mat4;
-
-        // Get forward vector by position and target
-        auto GetForwardDir() const->glm::vec3;
-        auto GetLeftDir() const->glm::vec3;
-        auto GetUpDir() const->glm::vec3;
-    #endif
-
         static auto GenerateViewMat4(const glm::vec3& pos, const glm::vec3& dir) -> glm::mat4;
 
         auto GenerateProjectiveMat4() const->glm::mat4;
 
-    #if 0
-    private:
-        // Angle of pitch
-        // Look from right:
-        // increase when rotating counter-clockwise
-        auto _PitchAngle() const->float;
-
-        // Angle of yaw
-        // Look from top:
-        // increase when rotating counter-clockwise
-        auto _YawAngle() const->float;
-
-        // Angle of roll
-        // Lock from back:
-        // increase when rotating counter-clockwise
-        auto _RollAngle() const->float;
-
-        // Test whether a cursor move should be filtered
-        auto _TestCursorMove(float x_offset, float y_offset) -> bool;
-    #endif
+    protected:
+        [[nodiscard]]
+        virtual auto OnSnapshot() const->std::unique_ptr<MementoDataBase> override;
+        virtual void OnRestore(const std::unique_ptr<MementoDataBase>& memento_data_uptr) override;
 
     private:
         static inline glm::vec3 _UpAxis{ Glm::Vec3_CreateUnitPositiveY() };

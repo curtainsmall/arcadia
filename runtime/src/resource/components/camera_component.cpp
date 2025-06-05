@@ -17,15 +17,15 @@ void Arcadia::CameraComponent::SetUpAxis(const glm::vec3& up_axis)
 
 Arcadia::CameraComponent::CameraComponent(const nlohmann::json& json)
 {
-    _NearPlane             = json.at("near_plane");
-    _FarPlane              = json.at("far_plane");
-    _FovY                  = json.at("fovy");
-    _FovYMin               = json.at("fovy_min");
-    _FovYMax               = json.at("fovy_max");
-    _Speed                 = json.at("speed");
-    _ViewportSize          = Glm::Int32Vec2_FromJson(json.at("viewport_size"));
-    _UpAxisFixed               = json.at("fixed_up");
-    _UpAxisAngleEpsilon             = json.at("up_epsilon");
+    _NearPlane = json.at("near_plane");
+    _FarPlane = json.at("far_plane");
+    _FovY = json.at("fovy");
+    _FovYMin = json.at("fovy_min");
+    _FovYMax = json.at("fovy_max");
+    _Speed = json.at("speed");
+    _ViewportSize = Glm::Int32Vec2_FromJson(json.at("viewport_size"));
+    _UpAxisFixed = json.at("fixed_up");
+    _UpAxisAngleEpsilon = json.at("up_epsilon");
     _CursorMoveOffsetRange = Glm::Vec2_FromJson(json.at("cursor_move_offset_range"));
 }
 
@@ -170,183 +170,35 @@ auto Arcadia::CameraComponent::GenerateProjectiveMat4() const -> glm::mat4
     );
 }
 
-#if 0
-
-auto Arcadia::CameraComponent::MoveForward() -> SelfType&
+auto Arcadia::CameraComponent::OnSnapshot() const -> std::unique_ptr<MementoDataBase>
 {
-    return Move(GetForwardDir() * _Speed);
+    std::unique_ptr<_MementoData> memento_data_uptr = std::make_unique<_MementoData>();
+    memento_data_uptr->NearPlane = GetNearPlane();
+    memento_data_uptr->FarPlane = GetFarPlane();
+    memento_data_uptr->FovY = GetFovY();
+    memento_data_uptr->FovYMin = GetFovYMin();
+    memento_data_uptr->FovYMax = GetFovYMax();
+    memento_data_uptr->Speed = GetSpeed();
+    memento_data_uptr->ViewportSize = GetViewportSize();
+    memento_data_uptr->UpAxisFixed = IsUpAxisFixed();
+    memento_data_uptr->UpAxisAngleEpsilon = GetUpAxisAngleEpsilon();
+    memento_data_uptr->CursorMoveOffsetRange = GetCursorMoveOffsetRange();
+    memento_data_uptr->GridDisplaying = IsGridDisplaying();
+    return memento_data_uptr;
 }
 
-auto Arcadia::CameraComponent::MoveBackward() -> SelfType&
+void Arcadia::CameraComponent::OnRestore(const std::unique_ptr<MementoDataBase>& memento_data_uptr)
 {
-    return Move(-GetForwardDir() * _Speed);
+    const _MementoData& memento_data = memento_data_uptr->CastTo<_MementoData>();
+    SetNearPlane(memento_data.NearPlane);
+    SetFarPlane(memento_data.FarPlane);
+    SetFovY(memento_data.FovY);
+    SetFovYMin(memento_data.FovYMin);
+    SetFovYMax(memento_data.FovYMax);
+    SetSpeed(memento_data.Speed);
+    SetViewportSize(memento_data.ViewportSize);
+    SetUpAxisFixed(memento_data.UpAxisFixed);
+    SetUpAxisAngleEpsilon(memento_data.UpAxisAngleEpsilon);
+    SetCursorMoveOffsetRange(memento_data.CursorMoveOffsetRange);
+    SetGridDisplaying(memento_data.GridDisplaying);
 }
-
-auto Arcadia::CameraComponent::MoveLeft() -> SelfType&
-{
-    return Move(GetLeftDir() * _Speed);
-}
-
-auto Arcadia::CameraComponent::MoveRight() -> SelfType&
-{
-    return Move(-GetLeftDir() * _Speed);
-}
-
-auto Arcadia::CameraComponent::MoveUp() -> SelfType&
-{
-    return Move(GetUpDir() * _Speed);
-}
-
-auto Arcadia::CameraComponent::MoveDown() -> SelfType&
-{
-    return Move(-GetUpDir() * _Speed);
-}
-
-auto Arcadia::CameraComponent::Move(const glm::vec3& Offset) -> SelfType&
-{
-    Position += Offset;
-    Target += Offset;
-    return *this;
-}
-
-auto Arcadia::CameraComponent::DragViewMove(const glm::vec2& Offset) -> SelfType&
-{
-    Move(
-        GetLeftDir() * Offset.x
-        + GetUpDir() * Offset.y
-    );
-    return *this;
-}
-
-auto Arcadia::CameraComponent::RotateView(const glm::vec2& Offset) -> SelfType&
-{
-    auto forward = GetForwardDir();
-
-    //Horizontal
-    auto x_angle_offset = -Offset.x;
-    forward = glm::angleAxis(x_angle_offset, _UpAxis) * forward;
-
-    //Vertical
-    auto y_angle_offset =
-        glm::clamp(
-            -Offset.y + _PitchAngle(),
-            -glm::half_pi<float>() + _UpAxisAngleEpsilon,
-            glm::half_pi<float>() - _UpAxisAngleEpsilon
-        )
-        - _PitchAngle();
-    forward = glm::angleAxis(y_angle_offset, glm::cross(forward, _UpAxis)) * forward;
-
-    Target = Position + forward;
-    return *this;
-}
-
-auto Arcadia::CameraComponent::DragViewRotate(const glm::vec2& Offset) -> SelfType&
-{
-    if(_TestCursorMove(Offset.x, Offset.y))
-    {
-        const auto& forward = GetForwardDir();
-
-        //Horizontal
-        auto x_angle_offset = -Offset.x;
-        auto Rotation = glm::angleAxis(x_angle_offset, _UpAxis);
-        Position = Rotation * Position;
-        Target = Rotation * Target;
-
-        //Vertical
-        auto y_angle_offset =
-            glm::clamp(
-                -Offset.y + _PitchAngle(),
-                -glm::half_pi<float>() + _UpAxisAngleEpsilon,
-                glm::half_pi<float>() - _UpAxisAngleEpsilon
-            )
-            - _PitchAngle();
-        Rotation = glm::angleAxis(y_angle_offset, glm::cross(forward, _UpAxis));
-        Position = Rotation * Position;
-        Target = Rotation * Target;
-    }
-
-    return *this;
-}
-
-auto Arcadia::CameraComponent::GenerateViewMat4() const -> glm::mat4
-{
-    return glm::lookAt(Position, Target, _UpAxis);
-}
-
-auto Arcadia::CameraComponent::GenerateProjectiveMat4() const -> glm::mat4
-{
-    return glm::perspective(
-        Fov,
-        _ViewportSize.x * 1.f / _ViewportSize.y,
-        _NearPlane,
-        _FarPlane
-    );
-}
-
-auto Arcadia::CameraComponent::GenerateMat4(bool col_major) const -> glm::mat4
-{
-    if(col_major)
-    {
-        return GenerateProjectiveMat4() * GenerateViewMat4();
-    }
-    else
-    {
-        return glm::transpose(GenerateViewMat4()) * glm::transpose(GenerateProjectiveMat4());
-    }
-}
-
-auto Arcadia::CameraComponent::GetForwardDir() const -> glm::vec3
-{
-    return glm::normalize(Target - Position);
-}
-
-auto Arcadia::CameraComponent::GetLeftDir() const -> glm::vec3
-{
-    return glm::normalize(glm::cross(_UpAxis, GetForwardDir()));
-}
-
-auto Arcadia::CameraComponent::GetUpDir() const -> glm::vec3
-{
-    return glm::normalize(glm::cross(GetForwardDir(), GetLeftDir()));
-}
-
-auto Arcadia::CameraComponent::_PitchAngle() const -> float
-{
-    const auto& forward = GetForwardDir();
-    return glm::half_pi<float>() - glm::angle(forward, _UpAxis);
-}
-
-auto Arcadia::CameraComponent::_YawAngle() const -> float
-{
-    ACDA_UNREACHABLE("This function is not working");
-
-    const auto& forward = GetForwardDir();
-    auto yaw_vec = forward - glm::dot(forward, vec3::CreateUnitPositiveY());
-
-    auto coef =
-        glm::angle(yaw_vec, vec3::CreateUnitPositiveX()) < glm::half_pi<float>() ?
-        1 : -1;
-    return coef * glm::angle(yaw_vec, vec3::CreateUnitNegativeZ());
-}
-
-auto Arcadia::CameraComponent::_RollAngle() const -> float
-{
-    ACDA_UNREACHABLE("This function is not working");
-
-    const auto& forward = GetForwardDir();
-    auto normal_of_forward_and_Up = glm::cross(forward, _UpAxis);
-    auto pos_uni_y_proj_on_forward_and_Up = _UpAxis - glm::dot(_UpAxis, normal_of_forward_and_Up);
-
-    auto coef =
-        glm::angle(_UpAxis, normal_of_forward_and_Up) < glm::half_pi<float>() ?
-        1 : -1;
-    return coef * glm::angle(_UpAxis, pos_uni_y_proj_on_forward_and_Up);
-}
-
-auto Arcadia::CameraComponent::_TestCursorMove(float x_offset, float y_offset) -> bool
-{
-    return IsInRange(x_offset, _CursorMoveOffsetRange.x, _CursorMoveOffsetRange.y)
-        && IsInRange(y_offset, _CursorMoveOffsetRange.x, _CursorMoveOffsetRange.y);
-}
-
-#endif

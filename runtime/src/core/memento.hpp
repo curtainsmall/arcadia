@@ -34,17 +34,16 @@ namespace Arcadia
     public:
         using SelfType = MementoOriginatorInterface;
     public:
-        auto Snapshot() -> std::shared_ptr<MementoDataBase>;
-        void Restore(const std::shared_ptr<MementoDataBase>& memento_data_base_sptr);
+        void Snapshot();
+        void Restore();
 
     protected:
         [[nodiscard]]
-        virtual auto OnSnapshot() const->std::shared_ptr<MementoDataBase> = 0;
-
-        virtual void OnRestore(const std::shared_ptr<MementoDataBase>& memento_data_base_sptr) = 0;
+        virtual auto OnSnapshot() const->std::unique_ptr<MementoDataBase> = 0;
+        virtual void OnRestore(const std::unique_ptr<MementoDataBase>& memento_data_base_sptr) = 0;
 
     private:
-        std::shared_ptr<MementoDataBase> _spPreviousMementoData{};
+        std::unique_ptr<MementoDataBase> _upMementoData{};
     };
 
     namespace Concepts

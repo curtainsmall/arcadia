@@ -9,6 +9,7 @@
 #include "core/exception.hpp"
 #include "core/identifiable.hpp"
 #include "core/math.hpp"
+#include "core/memento.hpp"
 #include "core/nlohmann_json.hpp"
 #include "platform/api_def.hpp"
 #include "resource/components/component_interface.hpp"
@@ -22,12 +23,19 @@ namespace Arcadia
     }
 
     struct ACDA_API ModelComponent:
-        public ComponentInterface
+        public ComponentInterface,
+        public MementoOriginatorInterface
     {
     public:
         using IdentifiableMeshesType = Identifiable<std::vector<Mesh>>;
-
         using SelfType = ModelComponent;
+    private:
+        struct ACDA_API _MementoData: public MementoDataBase
+        {
+        public:
+            std::filesystem::path Filepath{};
+            std::unique_ptr<IdentifiableMeshesType> upIdentifiableMeshes{};
+        };
     public:
         ACDA_COMPONENT_TYPE_STR_GETTERS("model");
 
@@ -52,6 +60,11 @@ namespace Arcadia
         void UnloadModel();
         [[nodiscard]]
         auto IsModelLoaded() const -> bool;
+
+    protected:
+        [[nodiscard]]
+        virtual auto OnSnapshot() const->std::unique_ptr<MementoDataBase> override;
+        virtual void OnRestore(const std::unique_ptr<MementoDataBase>& memento_data_uptr) override;
 
     private:
         void _LoadModel();

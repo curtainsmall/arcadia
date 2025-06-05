@@ -93,6 +93,9 @@ namespace Arcadia
         [[nodiscard]]
         auto IsActiveSceneModified() const -> bool;
 
+        void Snapshot();
+        void Restore();
+
     private:
         void _SetActiveScene(const std::string& name = {});
 

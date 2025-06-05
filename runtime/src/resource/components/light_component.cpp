@@ -12,53 +12,53 @@ Arcadia::LightComponent::LightComponent(const nlohmann::json& json)
         type_string,
         "null",
         [&]()
-    {
-        return LightType(NullLight{});
-    },
+        {
+            return LightType(NullLight{});
+        },
         "spot",
         [&]()
-    {
-        SpotLight light{};
-        light.SetAttenuationCoefficients(Glm::Vec3_FromJson(json_light.at("attenuation_coefs")));
-        light.SetCutoffAngles(Glm::Vec2_FromJson(json_light.at("cutoff_angles")));
-        light.SetColor(Glm::Vec3_FromJson(json_light.at("color")));
-        light.SetAmbientStrength(Glm::Vec3_FromJson(json_light.at("ambient_strength")));
-        light.SetDiffuseStrength(Glm::Vec3_FromJson(json_light.at("diffuse_strength")));
-        light.SetSpecularStrength(Glm::Vec3_FromJson(json_light.at("specular_strength")));
-        return LightType(light);
-    },
+        {
+            SpotLight light{};
+            light.SetAttenuationCoefficients(Glm::Vec3_FromJson(json_light.at("attenuation_coefs")));
+            light.SetCutoffAngles(Glm::Vec2_FromJson(json_light.at("cutoff_angles")));
+            light.SetColor(Glm::Vec3_FromJson(json_light.at("color")));
+            light.SetAmbientStrength(Glm::Vec3_FromJson(json_light.at("ambient_strength")));
+            light.SetDiffuseStrength(Glm::Vec3_FromJson(json_light.at("diffuse_strength")));
+            light.SetSpecularStrength(Glm::Vec3_FromJson(json_light.at("specular_strength")));
+            return LightType(light);
+        },
         "direct",
         [&]()
-    {
-        DirectLight light{};
-        light.SetColor(Glm::Vec3_FromJson(json_light.at("color")));
-        light.SetAmbientStrength(Glm::Vec3_FromJson(json_light.at("ambient_strength")));
-        light.SetDiffuseStrength(Glm::Vec3_FromJson(json_light.at("diffuse_strength")));
-        light.SetSpecularStrength(Glm::Vec3_FromJson(json_light.at("specular_strength")));
-        return LightType(light);
-    },
+        {
+            DirectLight light{};
+            light.SetColor(Glm::Vec3_FromJson(json_light.at("color")));
+            light.SetAmbientStrength(Glm::Vec3_FromJson(json_light.at("ambient_strength")));
+            light.SetDiffuseStrength(Glm::Vec3_FromJson(json_light.at("diffuse_strength")));
+            light.SetSpecularStrength(Glm::Vec3_FromJson(json_light.at("specular_strength")));
+            return LightType(light);
+        },
         "area",
         [&]()
-    {
-        AreaLight light{};
-        light.SetSize(Glm::Vec2_FromJson(json_light.at("size")));
-        light.SetColor(Glm::Vec3_FromJson(json_light.at("color")));
-        light.SetAmbientStrength(Glm::Vec3_FromJson(json_light.at("ambient_strength")));
-        light.SetDiffuseStrength(Glm::Vec3_FromJson(json_light.at("diffuse_strength")));
-        light.SetSpecularStrength(Glm::Vec3_FromJson(json_light.at("specular_strength")));
-        return LightType(light);
-    },
+        {
+            AreaLight light{};
+            light.SetSize(Glm::Vec2_FromJson(json_light.at("size")));
+            light.SetColor(Glm::Vec3_FromJson(json_light.at("color")));
+            light.SetAmbientStrength(Glm::Vec3_FromJson(json_light.at("ambient_strength")));
+            light.SetDiffuseStrength(Glm::Vec3_FromJson(json_light.at("diffuse_strength")));
+            light.SetSpecularStrength(Glm::Vec3_FromJson(json_light.at("specular_strength")));
+            return LightType(light);
+        },
         "point",
         [&]()
-    {
-        PointLight light{};
-        light.SetAttenuationCoefficients(Glm::Vec3_FromJson(json_light.at("attenuation_coefs")));
-        light.SetColor(Glm::Vec3_FromJson(json_light.at("color")));
-        light.SetAmbientStrength(Glm::Vec3_FromJson(json_light.at("ambient_strength")));
-        light.SetDiffuseStrength(Glm::Vec3_FromJson(json_light.at("diffuse_strength")));
-        light.SetSpecularStrength(Glm::Vec3_FromJson(json_light.at("specular_strength")));
-        return LightType(light);
-    }
+        {
+            PointLight light{};
+            light.SetAttenuationCoefficients(Glm::Vec3_FromJson(json_light.at("attenuation_coefs")));
+            light.SetColor(Glm::Vec3_FromJson(json_light.at("color")));
+            light.SetAmbientStrength(Glm::Vec3_FromJson(json_light.at("ambient_strength")));
+            light.SetDiffuseStrength(Glm::Vec3_FromJson(json_light.at("diffuse_strength")));
+            light.SetSpecularStrength(Glm::Vec3_FromJson(json_light.at("specular_strength")));
+            return LightType(light);
+        }
     );
 }
 
@@ -67,68 +67,68 @@ auto Arcadia::LightComponent::ToJson() const -> nlohmann::json
     return MatchVariant<nlohmann::json>(
         _Light,
         [&](const NullLight&)
-    {
-        return nlohmann::json{
-            {"type","null"},
-            {"light",nullptr}
-        };
-    },
+        {
+            return nlohmann::json{
+                {"type","null"},
+                {"light",nullptr}
+            };
+        },
         [&](const SpotLight& light)
-    {
-        return nlohmann::json{
-            {"type","spot"},
-            {"light",{
-                    {"attenuation_coefs",Glm::Vec3_ToJson(light.GetAttenuationCoefficients())},
-                    {"cutoff_angles"    ,Glm::Vec2_ToJson(light.GetCutoffAngles())},
-                    {"color"            ,Glm::Vec3_ToJson(light.GetColor())},
-                    {"ambient_strength" ,Glm::Vec3_ToJson(light.GetAmbientStrength())},
-                    {"diffuse_strength" ,Glm::Vec3_ToJson(light.GetDiffuseStrength())},
-                    {"specular_strength",Glm::Vec3_ToJson(light.GetSpecularStrength())}
+        {
+            return nlohmann::json{
+                {"type","spot"},
+                {"light",{
+                        {"attenuation_coefs",Glm::Vec3_ToJson(light.GetAttenuationCoefficients())},
+                        {"cutoff_angles"    ,Glm::Vec2_ToJson(light.GetCutoffAngles())},
+                        {"color"            ,Glm::Vec3_ToJson(light.GetColor())},
+                        {"ambient_strength" ,Glm::Vec3_ToJson(light.GetAmbientStrength())},
+                        {"diffuse_strength" ,Glm::Vec3_ToJson(light.GetDiffuseStrength())},
+                        {"specular_strength",Glm::Vec3_ToJson(light.GetSpecularStrength())}
+                    }
                 }
-            }
-        };
-    },
+            };
+        },
         [&](const AreaLight& light)
-    {
-        return nlohmann::json{
-            {"type","area"},
-            {"light",{
-                    {"size"             ,Glm::Vec2_ToJson(light.GetSize())},
-                    {"color"            ,Glm::Vec3_ToJson(light.GetColor())},
-                    {"ambient_strength" ,Glm::Vec3_ToJson(light.GetAmbientStrength())},
-                    {"diffuse_strength" ,Glm::Vec3_ToJson(light.GetDiffuseStrength())},
-                    {"specular_strength",Glm::Vec3_ToJson(light.GetSpecularStrength())}
+        {
+            return nlohmann::json{
+                {"type","area"},
+                {"light",{
+                        {"size"             ,Glm::Vec2_ToJson(light.GetSize())},
+                        {"color"            ,Glm::Vec3_ToJson(light.GetColor())},
+                        {"ambient_strength" ,Glm::Vec3_ToJson(light.GetAmbientStrength())},
+                        {"diffuse_strength" ,Glm::Vec3_ToJson(light.GetDiffuseStrength())},
+                        {"specular_strength",Glm::Vec3_ToJson(light.GetSpecularStrength())}
+                    }
                 }
-            }
-        };
-    },
+            };
+        },
         [&](const DirectLight& light)
-    {
-        return nlohmann::json{
-            {"type","direct"},
-            {"light",{
-                    {"color"            ,Glm::Vec3_ToJson(light.GetColor())},
-                    {"ambient_strength" ,Glm::Vec3_ToJson(light.GetAmbientStrength())},
-                    {"diffuse_strength" ,Glm::Vec3_ToJson(light.GetDiffuseStrength())},
-                    {"specular_strength",Glm::Vec3_ToJson(light.GetSpecularStrength())}
+        {
+            return nlohmann::json{
+                {"type","direct"},
+                {"light",{
+                        {"color"            ,Glm::Vec3_ToJson(light.GetColor())},
+                        {"ambient_strength" ,Glm::Vec3_ToJson(light.GetAmbientStrength())},
+                        {"diffuse_strength" ,Glm::Vec3_ToJson(light.GetDiffuseStrength())},
+                        {"specular_strength",Glm::Vec3_ToJson(light.GetSpecularStrength())}
+                    }
                 }
-            }
-        };
-    },
+            };
+        },
         [&](const PointLight& light)
-    {
-        return nlohmann::json{
-            {"type","point"},
-            {"light",{
-                    {"attenuation_coefs",Glm::Vec3_ToJson(light.GetAttenuationCoefficients())},
-                    {"color"            ,Glm::Vec3_ToJson(light.GetColor())},
-                    {"ambient_strength" ,Glm::Vec3_ToJson(light.GetAmbientStrength())},
-                    {"diffuse_strength" ,Glm::Vec3_ToJson(light.GetDiffuseStrength())},
-                    {"specular_strength",Glm::Vec3_ToJson(light.GetSpecularStrength())}
+        {
+            return nlohmann::json{
+                {"type","point"},
+                {"light",{
+                        {"attenuation_coefs",Glm::Vec3_ToJson(light.GetAttenuationCoefficients())},
+                        {"color"            ,Glm::Vec3_ToJson(light.GetColor())},
+                        {"ambient_strength" ,Glm::Vec3_ToJson(light.GetAmbientStrength())},
+                        {"diffuse_strength" ,Glm::Vec3_ToJson(light.GetDiffuseStrength())},
+                        {"specular_strength",Glm::Vec3_ToJson(light.GetSpecularStrength())}
+                    }
                 }
-            }
-        };
-    }
+            };
+        }
     );
 }
 
@@ -145,6 +145,19 @@ auto Arcadia::LightComponent::GetLight() -> LightType&
 void Arcadia::LightComponent::SetLight(const LightType& light)
 {
     _Light = light;
+}
+
+auto Arcadia::LightComponent::OnSnapshot() const -> std::unique_ptr<MementoDataBase>
+{
+    std::unique_ptr<_MementoData> memento_data_uptr = std::make_unique<_MementoData>();
+    memento_data_uptr->Light = GetLight();
+    return memento_data_uptr;
+}
+
+void Arcadia::LightComponent::OnRestore(const std::unique_ptr<MementoDataBase>& memento_data_uptr)
+{
+    const _MementoData& memento_data = memento_data_uptr->CastTo<_MementoData>();
+    SetLight(memento_data.Light);
 }
 
 auto Arcadia::SpotLight::GetAttenuationCoefficients() const -> const glm::vec3&

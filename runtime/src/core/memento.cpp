@@ -2,6 +2,7 @@
 
 #include "memento.hpp"
 
+#if 0
 void Arcadia::Memento::Restore() const
 {
     _OriginatorRestoreFunction();
@@ -94,23 +95,14 @@ auto Arcadia::MementoList::cend() const noexcept -> ContainerType::const_iterato
 {
     return _List.cend();
 }
+#endif
 
-auto Arcadia::MementoOriginatorInterface::Snapshot() -> std::shared_ptr<MementoDataBase>
+void Arcadia::MementoOriginatorInterface::Snapshot()
 {
-    auto memento_data = OnSnapshot();
-    if(!_spPreviousMementoData)
-    {
-        _spPreviousMementoData = memento_data;
-    }
-    else if(memento_data != _spPreviousMementoData)
-    {
-        std::swap(memento_data, _spPreviousMementoData);
-    }
-    return memento_data;
+    _upMementoData = OnSnapshot();
 }
 
-void Arcadia::MementoOriginatorInterface::Restore(const std::shared_ptr<MementoDataBase>& memento_data)
+void Arcadia::MementoOriginatorInterface::Restore()
 {
-    OnRestore(memento_data);
-    _spPreviousMementoData = memento_data;
+    OnRestore(_upMementoData);
 }

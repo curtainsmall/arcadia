@@ -123,6 +123,21 @@ auto Arcadia::ModelComponent::IsModelLoaded() const -> bool
     return HasIdentifiableMeshes();
 }
 
+auto Arcadia::ModelComponent::OnSnapshot() const -> std::unique_ptr<MementoDataBase>
+{
+    std::unique_ptr<_MementoData> memento_data_sptr = std::make_unique<_MementoData>();
+    memento_data_sptr->Filepath = GetFilepath();
+    memento_data_sptr->upIdentifiableMeshes = std::make_unique<IdentifiableMeshesType>(GetIdentifiableMeshes().GetValue());
+    return memento_data_sptr;
+}
+
+void Arcadia::ModelComponent::OnRestore(const std::unique_ptr<MementoDataBase>& memento_data_uptr)
+{
+    const _MementoData& memento_data = memento_data_uptr->CastTo<_MementoData>();
+    _Filepath = memento_data.Filepath;
+    _upIdentifiableMeshes = std::make_unique<IdentifiableMeshesType>(memento_data.upIdentifiableMeshes->GetValue());
+}
+
 void Arcadia::ModelComponent::_LoadModel()
 {
     Assimp::Importer importer{};

@@ -111,8 +111,8 @@ namespace Arcadia
 
     protected:
         [[nodiscard]]
-        virtual auto OnSnapshot() const->std::shared_ptr<MementoDataBase> override;
-        virtual void OnRestore(const std::shared_ptr<MementoDataBase>& memento_data_base_sptr) override;
+        virtual auto OnSnapshot() const->std::unique_ptr<MementoDataBase> override;
+        virtual void OnRestore(const std::unique_ptr<MementoDataBase>& memento_data_base_uptr) override;
 
     private:
         bool _InUse{ false };

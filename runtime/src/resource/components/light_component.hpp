@@ -4,6 +4,7 @@
 #include <variant>
 
 #include "core/math.hpp"
+#include "core/memento.hpp"
 #include "core/nlohmann_json.hpp"
 #include "platform/api_def.hpp"
 #include "resource/components/component_interface.hpp"
@@ -155,10 +156,16 @@ namespace Arcadia
     >;
 
     struct ACDA_API LightComponent:
-        public ComponentInterface
+        public ComponentInterface,
+        public MementoOriginatorInterface
     {
     public:
         using SelfType = LightComponent;
+    private:
+        struct ACDA_API _MementoData: public MementoDataBase
+        {
+            LightType Light{ NullLight{} };
+        };
     public:
         ACDA_COMPONENT_TYPE_STR_GETTERS("light");
 
@@ -179,6 +186,11 @@ namespace Arcadia
         {
             _Light = Light(std::forward<Args>(args)...);
         }
+
+    protected:
+        [[nodiscard]]
+        virtual auto OnSnapshot() const->std::unique_ptr<MementoDataBase> override;
+        virtual void OnRestore(const std::unique_ptr<MementoDataBase>& memento_data_uptr) override;
 
     private:
         LightType _Light{ NullLight{} };

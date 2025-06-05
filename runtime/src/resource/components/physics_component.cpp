@@ -208,19 +208,19 @@ void Arcadia::PhysicsComponent::SetJphShapeInfo(const JphShapeInfo& jph_shape_in
     _JphShapeInfo = jph_shape_info;
 }
 
-auto Arcadia::PhysicsComponent::OnSnapshot() const -> std::shared_ptr<MementoDataBase>
+auto Arcadia::PhysicsComponent::OnSnapshot() const -> std::unique_ptr<MementoDataBase>
 {
-    std::shared_ptr<_MementoData> memento_data_sptr = std::make_shared<_MementoData>();
-    memento_data_sptr->Active = IsActive();
-    memento_data_sptr->JphMotionType = GetJphMotionType();
-    memento_data_sptr->JphObjectLayer = GetJphObjectLayer();
-    memento_data_sptr->JphShapeInfo = GetJphShapeInfo();
-    return memento_data_sptr;
+    std::unique_ptr<_MementoData> memento_data_uptr = std::make_unique<_MementoData>();
+    memento_data_uptr->Active = IsActive();
+    memento_data_uptr->JphMotionType = GetJphMotionType();
+    memento_data_uptr->JphObjectLayer = GetJphObjectLayer();
+    memento_data_uptr->JphShapeInfo = GetJphShapeInfo();
+    return memento_data_uptr;
 }
 
-void Arcadia::PhysicsComponent::OnRestore(const std::shared_ptr<MementoDataBase>& memento_data_base_sptr)
+void Arcadia::PhysicsComponent::OnRestore(const std::unique_ptr<MementoDataBase>& memento_data_base_uptr)
 {
-    const _MementoData& memento_data = memento_data_base_sptr->CastTo<_MementoData>();
+    const _MementoData& memento_data = memento_data_base_uptr->CastTo<_MementoData>();
     SetActive(memento_data.Active);
     SetJphMotionType(memento_data.JphMotionType);
     SetJphObjectLayer(memento_data.JphObjectLayer);
