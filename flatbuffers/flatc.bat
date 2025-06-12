@@ -1,1 +1,0 @@
-.\flatc.exe --cpp --scoped-enums -o ..\3rdparty\flatbuffers_generated\ .\asset.fbs .\math.fbs .\meta.fbs .\editor_project.fbs .\editor_ui.fbs .\scene.fbs .\window.fbs .\renderer.fbs

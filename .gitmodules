@@ -1,0 +1,30 @@
+[submodule "dependencies/stb"]
+	path = dependencies/stb
+	url = https://github.com/nothings/stb.git
+[submodule "dependencies/assimp"]
+	path = dependencies/assimp
+	url = https://github.com/assimp/assimp.git
+[submodule "dependencies/entt"]
+	path = dependencies/entt
+	url = https://github.com/skypjack/entt.git
+[submodule "dependencies/spdlog"]
+	path = dependencies/spdlog
+	url = https://github.com/gabime/spdlog.git
+[submodule "dependencies/glfw"]
+	path = dependencies/glfw
+	url = https://github.com/glfw/glfw.git
+[submodule "dependencies/imgui"]
+	path = dependencies/imgui
+	url = https://github.com/ocornut/imgui.git
+[submodule "dependencies/imguizmo"]
+	path = dependencies/imguizmo
+	url = https://github.com/CedricGuillemet/ImGuizmo.git
+[submodule "dependencies/portable-file-dialogs"]
+	path = dependencies/portable-file-dialogs
+	url = https://github.com/samhocevar/portable-file-dialogs.git
+[submodule "dependencies/jolt_physics"]
+	path = dependencies/jolt_physics
+	url = https://github.com/jrouwe/JoltPhysics.git
+[submodule "dependencies/nlohmann_json"]
+	path = dependencies/nlohmann_json
+	url = https://github.com/nlohmann/json.git
