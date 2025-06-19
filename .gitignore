@@ -2,6 +2,7 @@ bin/
 bin-int/
 **/lib/
 **/lib-int/
+build/
 
 .vs/
 **/*.user

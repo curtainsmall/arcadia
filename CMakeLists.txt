@@ -1,6 +1,23 @@
-cmake_minimum_required(VERSION 3.26)
+cmake_minimum_required(VERSION 3.26 FATAL_ERROR)
 
+<<<<<<< Updated upstream
 project(arcadia)
+||||||| Stash base
+project(Arcadia)
+
+if(PROJECT_SOURCE_DIR STREQUAL PROJECT_BINARY_DIR)
+    message(FATAL_ERROR "In-source build is NOT allowed.")
+endif()
+=======
+project(Arcadia VERSION 0.1.0)
+
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+if(PROJECT_SOURCE_DIR STREQUAL PROJECT_BINARY_DIR)
+    message(FATAL_ERROR "In-source build is NOT allowed.")
+endif()
+>>>>>>> Stashed changes
 
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
   message("Setting build type to Release since there it is not specified.")
@@ -10,11 +27,25 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
   set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release")
 endif()
 
+<<<<<<< Updated upstream
 set(3RDPARTY_LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/")
 set(EDITOR_APP_NAME ${PROJECT_NAME}_editor)
 set(RUNTIME_LIB_NAME ${PROJECT_NAME}_runtime)
+||||||| Stash base
+set(DEPENDENCY_LIB_DIR "${PROJECT_SOURCE_DIR}/dependencies")
+=======
+set(ARCADIA_ROOT_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
+set(CMAKE_INSTALL_PREFIX "${ARCADIA_ROOT_DIR}/bin")
+set(ARCADIA_BINARY_ROOT_DIR "${CMAKE_INSTALL_PREFIX}")
+>>>>>>> Stashed changes
 
+<<<<<<< Updated upstream
 # 3rdparty Libraries
+||||||| Stash base
+add_subdirectory()
+=======
+add_subdirectory(engine)
+>>>>>>> Stashed changes
 
 # Runtime Library
 add_library(RUNTIME_LIB_NAME DYNAMIC)
