@@ -1,4 +1,4 @@
-#include "pch.hpp"
+
 #include "transform_component.hpp"
 
 #include "core/assert.hpp"

@@ -1,4 +1,4 @@
-#include "pch.hpp"
+
 #include "scene_layer.hpp"
 
 #include "core/command.hpp"

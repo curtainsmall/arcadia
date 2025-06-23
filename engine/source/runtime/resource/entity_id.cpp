@@ -1,4 +1,4 @@
-#include "pch.hpp"
+
 #include "entity_id.hpp"
 
 Arcadia::EntityId::EntityId(entt::entity id):

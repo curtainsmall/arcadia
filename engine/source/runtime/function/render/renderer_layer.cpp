@@ -1,4 +1,4 @@
-#include "pch.hpp"
+
 #include "renderer_layer.hpp"
 
 #include "core/assert.hpp"

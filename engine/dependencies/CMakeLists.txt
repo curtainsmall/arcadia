@@ -26,12 +26,26 @@ if(NOT TARGET glfw)
                                                    "${depndency_folder}/glfw")
 endif()
 
-if(NOT TARGET EnTT)
-  add_subdirectory(entt)
+if(NOT TARGET glew)
+  include(glew.cmake)
+  set_target_properties(glew PROPERTIES FOLDER "${dependency_folder}/glew")
 endif()
 
-if(NOT TARGET portable-file-dialogs)
+if(NOT TARGET boost)
+  include(boost.cmake)
+  set_target_properties(boost PROPERTIES FOLDER "${dependency_folder}/boost")
+endif()
+
+if(NOT TARGET EnTT)
+  add_subdirectory(entt)
+  set_target_properties(EnTT PROPERTIES FOLDER "${dependency_folder}/entt")
+endif()
+
+if(NOT TARGET portable_file_dialogs)
   add_subdirectory(portable-file-dialogs)
+  set_target_properties(
+    portable_file_dialogs
+    PROPERTIES FOLDER "${dependency_folder}/portable-file-dialogs")
 endif()
 
 if(NOT TARGET spdlog)
@@ -39,6 +53,19 @@ if(NOT TARGET spdlog)
   option(SPDLOG_INSTALL "" OFF)
   add_subdirectory(spdlog)
   set_target_properties(spdlog PROPERTIES FOLDER "${dependency_folder}/spdlog")
+endif()
+
+if(NOT TARGET glm)
+    # option(GLM_ENABLE_CXX_20 "" ON)
+    add_subdirectory(glm)
+    set_target_properties(glm PROPERTIES FOLDER "${dependency_folder}/glm")
+endif()
+
+if(NOT TARGET nlohmann_json)
+  set(JSON_BuildTests
+      OFF
+      CACHE INTERNAL "")
+  add_subdirectory(nlohmann_json)
 endif()
 
 if(NOT TARGET stb)

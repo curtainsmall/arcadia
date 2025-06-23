@@ -1,4 +1,5 @@
 set(EDITOR_APP_NAME ArcadiaEditor)
+set(EDITOR_APP_SOURCE_DIR "${ENGINE_ROOT_DIR}/source/editor")
 
 file(GLOB_RECURSE EDITOR_APP_HEADERS CONFIGURE_DEPENDS
      "${CMAKE_CURRENT_SOURCE_DIR}/*.hpp")
@@ -11,9 +12,6 @@ source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" FILES "${EDITOR_APP_NAME}"
 add_executable(${EDITOR_APP_NAME} "${EDITOR_APP_HEADERS}"
                                   "${EDITOR_APP_SOURCES}")
 
-target_include_directories(${EDITOR_APP_NAME}
-                           PUBLIC $<BUILD_INTERFACE:${DEPENDENCY_DIR}/stb>)
-
 set_target_properties(
   ${EDITOR_APP_NAME} PROPERTIES OUTPUT_NAME "${EDITOR_APP_NAME}" FOLDER
                                                                  "engine")
@@ -22,6 +20,8 @@ set_target_properties(
 # "$<$<COMPILE_LANG_AND_ID:CXX,MSVC>:/WX->")
 
 target_link_libraries(${EDITOR_APP_NAME} ArcadiaRuntime)
+
+target_include_directories(${EDITOR_APP_NAME} PUBLIC "${EDITOR_APP_SOURCE_DIR}")
 
 set(POST_BUILD_COMMAND
     COMMAND ${CMAKE_COMMAND} -E make_directory "${BINARY_ROOT_DIR}" COMMAND

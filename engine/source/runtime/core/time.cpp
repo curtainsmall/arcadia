@@ -1,4 +1,4 @@
-#include "pch.hpp"
+
 #include "time.hpp"
 
 Arcadia::Timer::Timer()
