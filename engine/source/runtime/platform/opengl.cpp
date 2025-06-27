@@ -129,31 +129,31 @@ void GLAPIENTRY Arcadia::GlDebugCallback(
     switch(Type)
     {
         case GL_DEBUG_TYPE_ERROR:
-            type_string= "Error";
+            type_string = "Error";
             break;
         case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR:
-            type_string= "Deprecated Behaviour";
+            type_string = "Deprecated Behaviour";
             break;
         case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:
-            type_string= "Undefined Behaviour";
+            type_string = "Undefined Behaviour";
             break;
         case GL_DEBUG_TYPE_PORTABILITY:
-            type_string= "Portability";
+            type_string = "Portability";
             break;
         case GL_DEBUG_TYPE_PERFORMANCE:
-            type_string= "Performance";
+            type_string = "Performance";
             break;
         case GL_DEBUG_TYPE_MARKER:
-            type_string= "Marker";
+            type_string = "Marker";
             break;
         case GL_DEBUG_TYPE_PUSH_GROUP:
-            type_string= "Push Group";
+            type_string = "Push Group";
             break;
         case GL_DEBUG_TYPE_POP_GROUP:
-            type_string= "Pop Group";
+            type_string = "Pop Group";
             break;
         case GL_DEBUG_TYPE_OTHER:
-            type_string= "Other";
+            type_string = "Other";
             break;
     }
 
@@ -161,16 +161,16 @@ void GLAPIENTRY Arcadia::GlDebugCallback(
     switch(severity)
     {
         case GL_DEBUG_SEVERITY_HIGH:
-            severity_string= "high";
+            severity_string = "high";
             break;
         case GL_DEBUG_SEVERITY_MEDIUM:
-            severity_string= "medium";
+            severity_string = "medium";
             break;
         case GL_DEBUG_SEVERITY_LOW:
-            severity_string= "low";
+            severity_string = "low";
             break;
         case GL_DEBUG_SEVERITY_NOTIFICATION:
-            severity_string= "notification";
+            severity_string = "notification";
             break;
     }
 
@@ -194,11 +194,10 @@ ACDA_API auto Arcadia::GetGlMaxTextureImageUnitsCount() -> GLint
 
 Arcadia::OpenglContext::OpenglContext()
 {
-    GLenum error = glewInit();
-    if(error != GLEW_OK)
+    GLenum error = gl3wInit();
+    if(error != GL3W_OK)
     {
-        const GLubyte* msg = glewGetErrorString(error);
-        throw Exceptions::GlError(reinterpret_cast<const char*>(msg));
+        throw Exceptions::GlError("Failed to init GL3W");
     }
     ACDA_GL_CALL(std::string gl_version_string(reinterpret_cast<const char*>(glGetString(GL_VERSION))));
     ACDA_LOG_INFO(std::format("OpenGL Version: {}", gl_version_string));

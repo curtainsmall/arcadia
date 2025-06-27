@@ -11,6 +11,8 @@ source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" FILES "${RUNTIME_LIB_HEADERS}"
                                                       "${RUNTIME_LIB_SOURCES}")
 add_library(${RUNTIME_LIB_NAME} ${RUNTIME_LIB_SOURCES} ${RUNTIME_LIB_HEADERS})
 
+add_compile_definitions(ACDA_DYNAMIC_RUNTIME_LIB ACDA_EXPORT)
+
 set_target_properties(${RUNTIME_LIB_NAME} PROPERTIES CXX_STANARD 20)
 set_target_properties(${RUNTIME_LIB_NAME} PROPERTIES FOLDER "engine")
 
@@ -22,20 +24,21 @@ target_compile_options(${RUNTIME_LIB_NAME}
 
 target_link_libraries(
   ${RUNTIME_LIB_NAME}
-  PUBLIC assimp
-  PUBLIC boost
-  PUBLIC spdlog::spdlog
-  PRIVATE stb
-  PUBLIC glfw
-  PUBLIC glew
-  PUBLIC glm
-  PUBLIC boost
-  PUBLIC imgui
-  PUBLIC imguizmo
-  PUBLIC Jolt
-  PUBLIC EnTT
-  PUBLIC nlohmann_json
-  PUBLIC portable_file_dialogs)
+  PUBLIC
+  assimp
+  boost
+  spdlog::spdlog
+  stb
+  glfw
+  gl3w
+  glm::glm-header-only
+  boost
+  imgui
+  imguizmo
+  Jolt
+  EnTT
+  nlohmann_json
+  portable_file_dialogs)
 
 set(RUNTIME_DEPENDENCY_INCLUDES
     "${ENGINE_ROOT_DIR}/source/runtime"
@@ -43,7 +46,7 @@ set(RUNTIME_DEPENDENCY_INCLUDES
     "${DEPENDENCY_DIR}/assimp/include"
     "${DEPENDENCY_DIR}/boost"
     "${DEPENDENCY_DIR}/entt/src"
-    "${DEPENDENCY_DIR}/glew/include"
+    # "${DEPENDENCY_DIR}/glew/include"
     "${DEPENDENCY_DIR}/glfw/include"
     "${DEPENDENCY_DIR}/glm/"
     "${DEPENDENCY_DIR}/imgui"

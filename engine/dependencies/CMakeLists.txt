@@ -26,9 +26,14 @@ if(NOT TARGET glfw)
                                                    "${depndency_folder}/glfw")
 endif()
 
-if(NOT TARGET glew)
-  include(glew.cmake)
-  set_target_properties(glew PROPERTIES FOLDER "${dependency_folder}/glew")
+# if(NOT TARGET glew)
+#   add_subdirectory(glew/build/cmake)
+#   set_target_properties(glew PROPERTIES FOLDER "${dependency_folder}/glew")
+# endif()
+
+if(NOT TARGET gl3w)
+    include(gl3w.cmake)
+    set_target_properties(gl3w PROPERTIES FOLDER "${dependency_folder}/gl3w")
 endif()
 
 if(NOT TARGET boost)
@@ -56,9 +61,12 @@ if(NOT TARGET spdlog)
 endif()
 
 if(NOT TARGET glm)
-    # option(GLM_ENABLE_CXX_20 "" ON)
-    add_subdirectory(glm)
-    set_target_properties(glm PROPERTIES FOLDER "${dependency_folder}/glm")
+  option(GLM_ENABLE_CXX_20 "" ON)
+  option(GLM_BUILD_INSTALL "" OFF)
+  option(GLM_BUILD_LIBRARY "" OFF)
+  option(GLM_BUILD_TESTS "" OFF)
+  add_subdirectory(glm)
+  set_target_properties(glm PROPERTIES FOLDER "${dependency_folder}/glm")
 endif()
 
 if(NOT TARGET nlohmann_json)
@@ -73,7 +81,7 @@ if(NOT TARGET stb)
   set_target_properties(stb PROPERTIES FOLDER "${dependency_folder}/stb")
 endif()
 
-if(NOT TARGET Assimp)
+if(NOT TARGET assimp)
   option(ASSIMP_BUILD_TESTS "" OFF)
   option(ASSIMP_WARNINGS_AS_ERRORS "" OFF)
   add_subdirectory(assimp)
@@ -86,6 +94,10 @@ if(NOT TARGET Jolt)
   option(TARGET_SAMPLES "" OFF)
   option(TARGET_UNIT_TESTS "" OFF)
   option(TARGET_VIEWER "" OFF)
+  option(ENABLE_INSTALL "" OFF)
+  option(JPH_SHARED_LIBRARY "" ON)
+  option(JPH_DEBUG_RENDERER "" OFF)
+  option(USE_STATIC_MSVC_RUNTIME_LIBRARY "" OFF)
 
   if(ENABLE_PHYSICS_DEBUG_RENDERER)
     option(TARGET_TEST_FRAMEWORK "" ON)
@@ -95,14 +107,16 @@ if(NOT TARGET Jolt)
 
   add_subdirectory(jolt_physics/Build)
 
-  if(ENABLE_PHYSICS_DEBUG_RENDERER)
-    set_target_properties(
-      Jolt TestFramework PROPERTIES FOLDER "${dependency_folder}/jolt_physics"
-                                    MSVC_RUNTIME_LIBRARY "MultiThreadedDLL")
-  else()
-    set_target_properties(
-      Jolt PROPERTIES FOLDER "${dependency_folder}/jolt_physics"
-                      MSVC_RUNTIME_LIBRARY "MultiThreadedDLL")
-  endif()
+  set_target_properties(Jolt PROPERTIES FOLDER "${dependency_folder}/jolt")
+
+  # if(ENABLE_PHYSICS_DEBUG_RENDERER)
+  #   set_target_properties(
+  #     Jolt TestFramework PROPERTIES FOLDER "${dependency_folder}/jolt_physics"
+  #                                   MSVC_RUNTIME_LIBRARY "MultiThreadedDLL")
+  # else()
+  #   set_target_properties(
+  #     Jolt PROPERTIES FOLDER "${dependency_folder}/jolt_physics"
+  #                     MSVC_RUNTIME_LIBRARY "MultiThreadedDLL")
+  # endif()
 
 endif()

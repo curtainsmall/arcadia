@@ -19,13 +19,18 @@ set_target_properties(
 # target_compile_features(${EDITOR_APP_NAME} PUBLIC
 # "$<$<COMPILE_LANG_AND_ID:CXX,MSVC>:/WX->")
 
-target_link_libraries(${EDITOR_APP_NAME} ArcadiaRuntime)
+target_link_libraries(${EDITOR_APP_NAME} PRIVATE ArcadiaRuntime)
 
 target_include_directories(${EDITOR_APP_NAME} PUBLIC "${EDITOR_APP_SOURCE_DIR}")
 
+# set(POST_BUILD_COMMAND COMMAND ${CMAKE_COMMAND} -E make_directory
+# "${BINARY_ROOT_DIR}" COMMAND ${CMAKE_COMMAND} -E copy_directory
+# "$<TARGET_FILE_DIR:${EDITOR_APP_NAME}>/"
+# "${BINARY_ROOT_DIR}")
+
 set(POST_BUILD_COMMAND
-    COMMAND ${CMAKE_COMMAND} -E make_directory "${BINARY_ROOT_DIR}" COMMAND
-    ${CMAKE_COMMAND} -E copy_directory "$<TARGET_FILE_DIR:${EDITOR_APP_NAME}>/"
-    "${BINARY_ROOT_DIR}")
+    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${EDITOR_APP_NAME}>
+    $<TARGET_RUNTIME_DLLS:${EDITOR_APP_NAME}>
+    $<TARGET_FILE_DIR:${EDITOR_APP_NAME}>)
 
 add_custom_command(TARGET ${EDITOR_APP_NAME} ${POST_BUILD_COMMAND})

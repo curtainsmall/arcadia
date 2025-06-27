@@ -2,7 +2,7 @@
 
 #ifdef _WIN32
 #   include<Windows.h>
-#   ifdef ACDA_DYNAMIC_LINK
+#   ifdef ACDA_DYNAMIC_RUNTIME_LIB
 #       ifdef ACDA_EXPORT
 #           define ACDA_API __declspec(dllexport)
 #       else
@@ -10,7 +10,7 @@
 #       endif // ACDA_EXPORT
 #   else
 #       define ACDA_API
-#   endif // ACDA_DYNAMIC_LINK
+#   endif // ACDA_DYNAMIC_RUNTIME_LIB
 #else
 #   error Arcadia Engine does not support your operating system
 #endif // _WIN32

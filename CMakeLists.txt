@@ -6,9 +6,11 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 if(PROJECT_SOURCE_DIR STREQUAL PROJECT_BINARY_DIR)
-    message(FATAL_ERROR "In-source build is NOT allowed.")
+  message(FATAL_ERROR "In-source build is NOT allowed.")
 endif()
 
+#Config
+set(CMAKE_CONFIGURATION_TYPES "Debug;Release")
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
   message("Setting build type to Release since there it is not specified.")
   set(CMAKE_BUILD_TYPE
@@ -21,6 +23,7 @@ set(ARCADIA_ROOT_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
 set(CMAKE_INSTALL_PREFIX "${ARCADIA_ROOT_DIR}/bin")
 set(ARCADIA_BINARY_ROOT_DIR "${CMAKE_INSTALL_PREFIX}")
 
+#MSVC
+set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
 
 add_subdirectory(engine)
-
