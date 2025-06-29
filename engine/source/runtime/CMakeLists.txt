@@ -2,13 +2,11 @@ set(RUNTIME_LIB_NAME ArcadiaRuntime)
 set(RUNTIME_LIB_SOURCE_DIR "${ENGINE_ROOT_DIR}/source/runtime")
 
 # Runtime lib
-file(GLOB_RECURSE RUNTIME_LIB_HEADERS CONFIGURE_DEPENDS
-     "${CMAKE_CURRENT_SOURCE_DIR}/*.hpp")
-file(GLOB_RECURSE RUNTIME_LIB_SOURCES CONFIGURE_DEPENDS
-     "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp")
+file(GLOB_RECURSE RUNTIME_LIB_HEADERS CONFIGURE_DEPENDS "*.hpp")
+file(GLOB_RECURSE RUNTIME_LIB_SOURCES CONFIGURE_DEPENDS "*.cpp")
 
-source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" FILES "${RUNTIME_LIB_HEADERS}"
-                                                      "${RUNTIME_LIB_SOURCES}")
+source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" FILES ${RUNTIME_LIB_HEADERS}
+                                                      ${RUNTIME_LIB_SOURCES})
 add_library(${RUNTIME_LIB_NAME} ${RUNTIME_LIB_SOURCES} ${RUNTIME_LIB_HEADERS})
 
 add_compile_definitions(ACDA_DYNAMIC_RUNTIME_LIB ACDA_EXPORT)
@@ -24,21 +22,20 @@ target_compile_options(${RUNTIME_LIB_NAME}
 
 target_link_libraries(
   ${RUNTIME_LIB_NAME}
-  PUBLIC
-  assimp
-  boost
-  spdlog::spdlog
-  stb
-  glfw
-  gl3w
-  glm::glm-header-only
-  boost
-  imgui
-  imguizmo
-  Jolt
-  EnTT
-  nlohmann_json
-  portable_file_dialogs)
+  PUBLIC assimp
+         boost
+         spdlog::spdlog
+         stb
+         glfw
+         gl3w
+         glm::glm-header-only
+         boost
+         imgui
+         imguizmo
+         Jolt
+         EnTT
+         nlohmann_json
+         portable_file_dialogs)
 
 set(RUNTIME_DEPENDENCY_INCLUDES
     "${ENGINE_ROOT_DIR}/source/runtime"
