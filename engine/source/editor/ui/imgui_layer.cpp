@@ -50,6 +50,16 @@ Arcadia::ImguiLayer::~ImguiLayer()
     }
 }
 
+auto Arcadia::ImguiLayer::GetWindow() const -> std::shared_ptr<WindowLayer>
+{
+    return _wpWindow.lock();
+}
+
+auto Arcadia::ImguiLayer::GetImguiWindows() const -> const std::vector<std::unique_ptr<ImguiWindowInterface>>&
+{
+    return _ImguiWindows;
+}
+
 void Arcadia::ImguiLayer::OnEvent(EventBase& e)
 {
     // We do not dispatch events to ImGui when the editor is in play mode
@@ -63,7 +73,7 @@ void Arcadia::ImguiLayer::OnEvent(EventBase& e)
         .IsDispatched();
 
     ImguiBackend::OnEvent(e);
-    for(std::unique_ptr<ImguiWindowInterface>& imgui_window_uptr : _ImguiWindow)
+    for(std::unique_ptr<ImguiWindowInterface>& imgui_window_uptr : _ImguiWindows)
     {
         imgui_window_uptr->OnEvent(e);
     }
@@ -93,7 +103,7 @@ void Arcadia::ImguiLayer::OnUpdate()
     }
     else
     {
-        for(std::unique_ptr<ImguiWindowInterface>& imgui_window_uptr : _ImguiWindow)
+        for(std::unique_ptr<ImguiWindowInterface>& imgui_window_uptr : _ImguiWindows)
         {
             imgui_window_uptr->OnUpdate();
         }

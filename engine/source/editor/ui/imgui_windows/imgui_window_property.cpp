@@ -423,7 +423,7 @@ void Arcadia::ImguiWindowPropertyFunctor_ModelComponent::operator()(ModelCompone
             }
             catch(const Exceptions::ModelComponent_ModelLoadInvalidFormat&)
             {
-                (void)pfd::message(
+                (void) pfd::message(
                     "Arcadia",
                     std::format("Cannot load model from {} because it has invalid format", res.at(0)),
                     pfd::choice::ok,
@@ -548,7 +548,7 @@ void Arcadia::ImguiWindowPopupFunctor_PhysicsComponentCreateBody::operator()(Phy
 
                 // Half extent
                 float half_extent_min = std::max({ .01f,info.ConvexRadius });
-                float half_extent_max = FLT_MAX;
+                float half_extent_max = std::numeric_limits<float>::max();
                 ImGui::DragFloat3("Half Extent", glm::value_ptr(info.HalfExtent), speed, half_extent_min, half_extent_max, format, slider_flags);
 
                 // Convex radius
@@ -583,11 +583,11 @@ void Arcadia::ImguiWindowPopupFunctor_PhysicsComponentCreateBody::operator()(Phy
                 ImGui::SeparatorText("Capsule Type");
 
                 float radius_min = .0f;
-                float radius_max = FLT_MAX;
+                float radius_max = std::numeric_limits<float>::max();
                 ImGui::DragFloat("Radius", &info.Radius, speed, radius_min, radius_max, format, slider_flags);
 
                 float half_height_of_cylinder_min = .0f;
-                float half_height_of_cylinder_max = FLT_MAX;
+                float half_height_of_cylinder_max = std::numeric_limits<float>::max();
                 ImGui::DragFloat("Half Height if Cylinder", &info.HalfHeightOfCylinder, speed, half_height_of_cylinder_min, half_height_of_cylinder_max, format, slider_flags);
 
                 return _TempJphShapeInfo;
@@ -617,15 +617,15 @@ void Arcadia::ImguiWindowPopupFunctor_PhysicsComponentCreateBody::operator()(Phy
                 ImGui::SeparatorText("Cylinder Shape");
 
                 float half_height_min = .0f;
-                float half_height_max = FLT_MAX;
+                float half_height_max = std::numeric_limits<float>::max();
                 ImGui::DragFloat("Half Height", &info.HalfHeight, speed, half_height_min, half_height_max, format, slider_flags);
 
                 float radius_min = .0f;
-                float radius_max = FLT_MAX;
+                float radius_max = std::numeric_limits<float>::max();
                 ImGui::DragFloat("Radius", &info.Radius, speed, radius_min, radius_max, format, slider_flags);
 
                 float convex_radius_min = .0f;
-                float convex_radius_max = FLT_MAX;
+                float convex_radius_max = std::numeric_limits<float>::max();
                 ImGui::DragFloat("Convex Radius", &info.ConvexRadius, speed, convex_radius_min, convex_radius_max, format, slider_flags);
 
                 return _TempJphShapeInfo;
@@ -655,7 +655,7 @@ void Arcadia::ImguiWindowPopupFunctor_PhysicsComponentCreateBody::operator()(Phy
                 ImGui::SeparatorText("Sphere Shape");
 
                 float radius_min = .0f;
-                float radius_max = FLT_MAX;
+                float radius_max = std::numeric_limits<float>::max();
                 ImGui::DragFloat("Radius", &info.Radius, speed, radius_min, radius_max, format, slider_flags);
 
                 return _TempJphShapeInfo;
@@ -842,8 +842,8 @@ void Arcadia::ImguiWindowPropertyFunctor_TransformComponent::operator()(Transfor
     ImGui::BeginGroup();
 
     const float speed = 1.f;
-    const float min = .0f;
-    const float max = .0f;
+    const float min = std::numeric_limits<float>::max();
+    const float max = std::numeric_limits<float>::lowest();
     const char* format = "%.3f";
     const ImGuiSliderFlags slider_flags =
         ImGuiSliderFlags_AlwaysClamp;

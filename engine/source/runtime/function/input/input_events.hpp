@@ -192,13 +192,13 @@ namespace Arcadia
         struct ACDA_API InputScroll: public EventBase
         {
         public:
-            InputScroll(float scroll_offet_vertical, float scroll_offset_horizontal):
-                ScrollOffsetVertical(scroll_offet_vertical), ScrollOffsetHorizontal(scroll_offset_horizontal)
+            InputScroll(float scroll_offet_x, float scroll_offset_y):
+                ScrollOffsetX(scroll_offet_x), ScrollOffsetY(scroll_offset_y)
             {
             }
         public:
-            const float ScrollOffsetVertical;
-            const float ScrollOffsetHorizontal;
+            const float ScrollOffsetX;
+            const float ScrollOffsetY;
         };
 
         struct ACDA_API InputMouseButton: public EventBase

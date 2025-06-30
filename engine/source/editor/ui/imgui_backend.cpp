@@ -139,7 +139,7 @@ void Arcadia::ImguiBackend::OnInputMouseButton(Events::InputMouseButton& e)
 void Arcadia::ImguiBackend::OnInputScroll(Events::InputScroll& e)
 {
     std::shared_ptr<WindowLayer> window_layer_sptr = LayerStack::Instance().GetLayerShared<WindowLayer>();
-    ImGui_ImplGlfw_ScrollCallback(window_layer_sptr->GetGlfwWindow(), e.ScrollOffsetHorizontal, e.ScrollOffsetVertical);
+    ImGui_ImplGlfw_ScrollCallback(window_layer_sptr->GetGlfwWindow(), e.ScrollOffsetX, e.ScrollOffsetY);
 }
 
 void Arcadia::ImguiBackend::OnInputKey(Events::InputKey& e)
