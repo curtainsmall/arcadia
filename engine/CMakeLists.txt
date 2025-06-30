@@ -1,4 +1,4 @@
-set(ENGINE_ROOT_DIR "${ARCADIA_ROOT_DIR}/engine")
+set(ENGINE_ROOT_DIR "${ROOT_DIR}/engine")
 set(DEPENDENCY_DIR "${ENGINE_ROOT_DIR}/dependencies")
 
 option(ENABLE_PHYSICS_DEBUG_RENDERER "Enable Physics Debug Renderer" OFF)

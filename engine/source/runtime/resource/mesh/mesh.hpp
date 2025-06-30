@@ -2,7 +2,7 @@
 
 #include <vector>
 
-#include "platform/api_def.hpp"
+#include "platform/defines.hpp"
 #include "resource/components/component_interface.hpp"
 #include "resource/material/material.hpp"
 #include "resource/mesh/vertex.hpp"

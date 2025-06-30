@@ -6,8 +6,7 @@
 #define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_TRACE
 #include "spdlog/spdlog.h"
 
-#include "platform/api_def.hpp"
-#include "platform/debug_def.hpp"
+#include "platform/defines.hpp"
 
 namespace Arcadia
 {
@@ -74,7 +73,7 @@ namespace Arcadia
         }
 
     private:
-        std::shared_ptr<spdlog::logger> _spLogger {};
+        std::shared_ptr<spdlog::logger> _spLogger{};
     };
 }
 

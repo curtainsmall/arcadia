@@ -8,7 +8,7 @@
 #include "function/physics/physics_events.hpp"
 #include "function/physics/physics_simulator.hpp"
 #include "function/render/renderer_events.hpp"
-#include "platform/api_def.hpp"
+
 #include "resource/scene_events.hpp"
 
 #include "project/project.hpp"

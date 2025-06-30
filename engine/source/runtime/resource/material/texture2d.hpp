@@ -5,7 +5,7 @@
 
 #include "core/exception.hpp"
 #include "core/math.hpp"
-#include "platform/api_def.hpp"
+#include "platform/defines.hpp"
 
 namespace Arcadia
 {

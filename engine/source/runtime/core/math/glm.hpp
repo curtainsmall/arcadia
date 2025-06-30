@@ -13,7 +13,7 @@
 #include "glm/gtx/rotate_vector.hpp"
 #include "glm/gtx/vector_angle.hpp"
 
-#include "platform/api_def.hpp"
+#include "platform/defines.hpp"
 #include "core/nlohmann_json.hpp"
 
 namespace Arcadia

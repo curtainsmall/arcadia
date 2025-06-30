@@ -6,7 +6,7 @@
 
 #include "core/exception.hpp"
 #include "core/serialization.hpp"
-#include "platform/api_def.hpp"
+#include "platform/defines.hpp"
 
 namespace Arcadia
 {

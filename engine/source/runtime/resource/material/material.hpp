@@ -1,6 +1,6 @@
 #pragma once
 
-#include "platform/api_def.hpp"
+#include "platform/defines.hpp"
 #include "resource/material/texture2d.hpp"
 
 namespace Arcadia

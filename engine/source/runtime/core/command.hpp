@@ -6,7 +6,7 @@
 #include <string>
 
 #include "core/noncopyable.hpp"
-#include "platform/api_def.hpp"
+#include "platform/defines.hpp"
 
 namespace Arcadia
 {

@@ -11,7 +11,7 @@
 #include "core/math.hpp"
 #include "core/noncopyable.hpp"
 #include "function/render/opengl/pipeline/gl_shader.hpp"
-#include "platform/api_def.hpp"
+#include "platform/defines.hpp"
 #include "platform/opengl.hpp"
 
 namespace Arcadia

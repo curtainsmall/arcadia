@@ -6,7 +6,7 @@
 #include "core/math.hpp"
 #include "core/memento.hpp"
 #include "core/nlohmann_json.hpp"
-#include "platform/api_def.hpp"
+#include "platform/defines.hpp"
 #include "resource/components/component_interface.hpp"
 
 namespace Arcadia

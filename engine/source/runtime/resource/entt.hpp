@@ -5,7 +5,7 @@
 #include "entt/entt.hpp"
 
 #include "core/enum.hpp"
-#include "platform/api_def.hpp"
+#include "platform/defines.hpp"
 
 namespace Arcadia
 {

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "platform/api_def.hpp"
+
 #include "ui/imgui.hpp"
 
 namespace Arcadia

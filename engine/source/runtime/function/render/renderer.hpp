@@ -5,7 +5,7 @@
 #include "core/exception.hpp"
 #include "core/math.hpp"
 #include "core/noncopyable.hpp"
-#include "platform/api_def.hpp"
+#include "platform/defines.hpp"
 #include "platform/graphic_api.hpp"
 #include "resource/scene.hpp"
 

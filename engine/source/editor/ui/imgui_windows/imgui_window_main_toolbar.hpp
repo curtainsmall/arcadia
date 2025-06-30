@@ -2,7 +2,7 @@
 
 #include <memory>
 
-#include "platform/api_def.hpp"
+
 #include "resource/scene.hpp"
 #include "resource/scene_events.hpp"
 

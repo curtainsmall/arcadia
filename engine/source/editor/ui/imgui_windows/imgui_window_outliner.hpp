@@ -3,7 +3,7 @@
 #include <memory>
 #include <string>
 
-#include "platform/api_def.hpp"
+
 #include "resource/scene_events.hpp"
 #include "resource/scene_layer.hpp"
 

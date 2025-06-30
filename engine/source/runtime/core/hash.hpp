@@ -2,7 +2,7 @@
 
 #include "boost/functional/hash.hpp"
 
-#include "platform/api_def.hpp"
+#include "platform/defines.hpp"
 
 namespace Arcadia
 {

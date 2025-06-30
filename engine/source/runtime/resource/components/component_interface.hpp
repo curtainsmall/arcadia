@@ -4,7 +4,7 @@
 
 #include "core/nlohmann_json.hpp"
 #include "core/noncopyable.hpp"
-#include "platform/api_def.hpp"
+#include "platform/defines.hpp"
 
 #define ACDA_COMPONENT_TYPE_STR_GETTERS(type_str) \
 [[nodiscard]]\

@@ -4,7 +4,7 @@
 #include <string>
 
 #include "core/log.hpp"
-#include "platform/api_def.hpp"
+#include "platform/defines.hpp"
 
 namespace Arcadia::Exceptions
 {
@@ -13,7 +13,8 @@ namespace Arcadia::Exceptions
     public:
         explicit BasicException(const std::string& msg = "Basic Exception"):
             std::exception(msg.c_str())
-        {}
+        {
+        }
 
         virtual ~BasicException() = default;
 

@@ -1,5 +1,3 @@
-
-
 #include "app_layer.hpp"
 
 #include "core/app/app_config.hpp"
@@ -9,7 +7,7 @@
 #include "core/nlohmann_json.hpp"
 #include "core/version.hpp"
 
-Arcadia::AppLayerInterface::AppLayerInterface() :
+Arcadia::AppLayerInterface::AppLayerInterface():
     LayerInterface("app")
 {
     // Prepare AppConfig (either read from disk or use default value)
@@ -53,7 +51,7 @@ Arcadia::AppLayerInterface::AppLayerInterface() :
                 }
             );
         }
-        catch (nlohmann::json::out_of_range)
+        catch(nlohmann::json::out_of_range)
         {
             // Use default value
         }
@@ -70,7 +68,7 @@ Arcadia::AppLayerInterface::AppLayerInterface() :
             app_config.WindowTitle = json_window.value("title", app_config.WindowTitle);
             app_config.WindowMaxmized = json_window.value("maxmized", app_config.WindowMaxmized);
         }
-        catch (nlohmann::json::out_of_range)
+        catch(nlohmann::json::out_of_range)
         {
             // Use default value
         }
@@ -79,18 +77,18 @@ Arcadia::AppLayerInterface::AppLayerInterface() :
         try
         {
             const nlohmann::json& json_imgui = json.at("imgui");
-            for (const auto& id_strs : json_imgui.value("opened_window_id_strs", nlohmann::json::array()))
+            for(const auto& id_strs : json_imgui.value("opened_window_id_strs", nlohmann::json::array()))
             {
                 app_config.ImguiOpenedWindowIdStrings.emplace(id_strs);
             }
             app_config.UiScale = json_imgui.at("ui_scale");
         }
-        catch (nlohmann::json::out_of_range)
+        catch(nlohmann::json::out_of_range)
         {
             // Use default value
         }
     }
-    catch (const nlohmann::json::parse_error&)
+    catch(const nlohmann::json::parse_error&)
     {
         // Use default value
     }
@@ -151,7 +149,7 @@ Arcadia::AppLayerInterface::~AppLayerInterface()
             }
         }
     );
-    for (const std::string& id_string : app_config.ImguiOpenedWindowIdStrings)
+    for(const std::string& id_string : app_config.ImguiOpenedWindowIdStrings)
     {
         json.at("imgui")
             .at("opened_window_id_strs")

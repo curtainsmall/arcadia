@@ -2,7 +2,7 @@
 
 #include <type_traits>
 
-#include "platform/api_def.hpp"
+#include "platform/defines.hpp"
 
 namespace Arcadia
 {

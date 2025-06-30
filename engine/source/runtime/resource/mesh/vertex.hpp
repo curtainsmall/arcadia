@@ -1,6 +1,6 @@
 #pragma once
 
-#include "platform/api_def.hpp"
+#include "platform/defines.hpp"
 #include "core/math.hpp"
 
 namespace Arcadia

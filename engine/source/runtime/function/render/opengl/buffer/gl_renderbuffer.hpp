@@ -2,7 +2,7 @@
 
 #include "core/math.hpp"
 #include "core/noncopyable.hpp"
-#include "platform/api_def.hpp"
+#include "platform/defines.hpp"
 #include "platform/opengl.hpp"
 
 namespace Arcadia

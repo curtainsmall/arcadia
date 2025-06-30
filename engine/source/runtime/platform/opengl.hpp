@@ -5,7 +5,7 @@
 #include "core/exception.hpp"
 #include "core/noncopyable.hpp"
 #include "core/version.hpp"
-#include "platform/api_def.hpp"
+#include "platform/defines.hpp"
 
 #ifndef NDEBUG
 #   define ACDA_GL_USE_DEBUG_CALLBACK 0

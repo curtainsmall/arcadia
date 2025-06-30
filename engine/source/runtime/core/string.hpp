@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include "platform/api_def.hpp"
+#include "platform/defines.hpp"
 
 namespace Arcadia
 {

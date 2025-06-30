@@ -4,9 +4,9 @@
 #include <functional>
 #include <set>
 
-#include "platform/api_def.hpp"
 #include "core/file.hpp"
 #include "core/math.hpp"
+#include "platform/defines.hpp"
 #include "platform/graphic_api.hpp"
 
 namespace Arcadia
@@ -20,7 +20,7 @@ namespace Arcadia
     public:
         static inline std::filesystem::path Filepath{ ToFilepath(".acdacfg") };
 
-        std::filesystem::path WorkingDirectory{ ToFilepath("./") };
+        std::filesystem::path WorkingDirectory{ ACDA_DEFAULT_WORKING_DIR };
         GraphicApi::Type GraphicApi{};
 
         // Window
@@ -34,6 +34,6 @@ namespace Arcadia
 
         // ImGui
         std::set<std::string> ImguiOpenedWindowIdStrings{};
-        float UiScale ={ 1.0f };
+        float UiScale = { 1.0f };
     };
 }

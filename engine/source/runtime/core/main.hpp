@@ -7,7 +7,6 @@
 #include "core/app/app_layer.hpp"
 #include "core/event.hpp"
 #include "core/layer.hpp"
-#include "platform/debug_def.hpp"
 
 #if defined(_WIN32) && !defined(ACDA_DEBUG_MODE)
 #define ACDA_MAIN_FN_DECL int APIENTRY WinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
