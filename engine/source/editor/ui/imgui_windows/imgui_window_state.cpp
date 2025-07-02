@@ -13,10 +13,18 @@
 
 void Arcadia::ImguiWindowStateFunctor_Scene::operator()(const std::shared_ptr<SceneLayer>& scene_layer)
 {
-    ImGui::Text(std::format("Entity Count: {}", scene_layer->ActiveScene_GetEntityCount([&](EntityId, const EntityInfo& info)->bool
-                                                                                        {
-                                                                                            return !info.Internal;
-                                                                                        })).c_str());
+    ImGui::Text(
+        std::format(
+            "Entity Count: {}",
+            scene_layer->ActiveScene_GetEntityCount(
+                [&](EntityId, const EntityInfo& info)->bool
+                {
+                    return !info.Internal;
+                }
+            )
+        )
+        .c_str()
+    );
 }
 
 void Arcadia::ImguiWindowStateFunctor_Renderer::operator()(const std::shared_ptr<RendererLayer>& renderer_layer)
@@ -83,7 +91,7 @@ Arcadia::ImguiWindowState::ImguiWindowState(bool open, const std::string& title)
 
 void Arcadia::ImguiWindowState::OnEvent(EventBase& e)
 {
-    EventDispatcher{e}
+    EventDispatcher{ e }
         .Dispatch<Events::OpenImguiWindow>(ACDA_BIND_MEMBER_FN(_OnOpenImguiWindow))
         .IsDispatched();
 }
@@ -101,7 +109,7 @@ void Arcadia::ImguiWindowState::OnUpdate()
 
     std::string imgui_window_title = _Title + GetIdString();
 
-    ImGui::SetNextWindowSize(glm::vec2{1024, 768}, ImGuiCond_Once);
+    ImGui::SetNextWindowSize(glm::vec2{ 1024, 768 }, ImGuiCond_Once);
     auto window_flags =
         ImGuiWindowFlags_NoCollapse;
     if(ImGui::Begin(imgui_window_title.c_str(), &_Opened, window_flags))
