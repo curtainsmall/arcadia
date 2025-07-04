@@ -22,20 +22,24 @@ namespace Arcadia
         ACDA_DEFINE_RUNTIME_ERROR_EXCEPTION(ModelComponent_ModelLoadInvalidFormat);
     }
 
-    struct ACDA_API ModelComponent:
-        public ComponentInterface,
-        public MementoOriginatorInterface
+    using ModelComponent_IdentifiableMeshesType = Identifiable<std::vector<Mesh>>;
+
+    struct ModelComponent_Memento
     {
     public:
-        using IdentifiableMeshesType = Identifiable<std::vector<Mesh>>;
+    public:
+        std::filesystem::path Filepath{};
+        std::unique_ptr<ModelComponent_IdentifiableMeshesType> upIdentifiableMeshes{};
+
+    };
+
+    struct ACDA_API ModelComponent:
+        public ComponentInterface,
+        public Mementoable<ModelComponent_Memento>
+    {
+    public:
+        using MementoType = ModelComponent_Memento;
         using SelfType = ModelComponent;
-    private:
-        struct ACDA_API _MementoData: public MementoDataBase
-        {
-        public:
-            std::filesystem::path Filepath{};
-            std::unique_ptr<IdentifiableMeshesType> upIdentifiableMeshes{};
-        };
     public:
         ACDA_COMPONENT_TYPE_STR_GETTERS("model");
 
@@ -44,7 +48,7 @@ namespace Arcadia
         ModelComponent(const nlohmann::json& json);
         ~ModelComponent() = default;
         [[nodiscard]]
-        auto ToJson() const->nlohmann::json;
+        auto ToJson() const -> nlohmann::json;
 
         ModelComponent(SelfType&&) noexcept = default;
         auto operator=(SelfType&&) noexcept -> SelfType & = default;
@@ -54,7 +58,7 @@ namespace Arcadia
         [[nodiscard]]
         auto HasIdentifiableMeshes() const -> bool;
         [[nodiscard]]
-        auto GetIdentifiableMeshes() const -> const IdentifiableMeshesType&;
+        auto GetIdentifiableMeshes() const -> const ModelComponent_IdentifiableMeshesType&;
 
         void LoadModel(const std::filesystem::path& filepath);
         void UnloadModel();
@@ -63,8 +67,8 @@ namespace Arcadia
 
     protected:
         [[nodiscard]]
-        virtual auto OnSnapshot() const->std::unique_ptr<MementoDataBase> override;
-        virtual void OnRestore(const std::unique_ptr<MementoDataBase>& memento_data_uptr) override;
+        virtual auto OnSnapshot() const -> std::unique_ptr<MementoType> override;
+        virtual void OnRestore(const std::unique_ptr<MementoType>& memento_data_uptr) override;
 
     private:
         void _LoadModel();
@@ -86,6 +90,6 @@ namespace Arcadia
 
     private:
         std::filesystem::path _Filepath{};
-        std::unique_ptr<IdentifiableMeshesType> _upIdentifiableMeshes{};
+        std::unique_ptr<ModelComponent_IdentifiableMeshesType> _upIdentifiableMeshes{};
     };
 }

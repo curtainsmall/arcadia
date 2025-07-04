@@ -95,7 +95,6 @@ auto Arcadia::MementoList::cend() const noexcept -> ContainerType::const_iterato
 {
     return _List.cend();
 }
-#endif
 
 void Arcadia::MementoOriginatorInterface::Snapshot()
 {
@@ -106,3 +105,4 @@ void Arcadia::MementoOriginatorInterface::Restore()
 {
     OnRestore(_upMementoData);
 }
+#endif

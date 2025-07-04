@@ -53,21 +53,22 @@ namespace Arcadia
         JphSphereShapeInfo
     >;
 
-    struct ACDA_API PhysicsComponent:
-        public ComponentInterface,
-        public MementoOriginatorInterface
+    struct PhysicsComponent_Memento
     {
     public:
+        bool Active{ false };
+        JPH::EMotionType JphMotionType{ JPH::EMotionType::Static };
+        JPH::ObjectLayer JphObjectLayer{ JphObjectLayers::NonMoving };
+        JphShapeInfo JphShapeInfo{ JphNoShapeInfo{} };
+    };
+
+    struct ACDA_API PhysicsComponent:
+        public ComponentInterface,
+        public Mementoable<PhysicsComponent_Memento>
+    {
+    public:
+        using MementoType = PhysicsComponent_Memento;
         using SelfType = PhysicsComponent;
-    private:
-        struct ACDA_API _MementoData: public MementoDataBase
-        {
-        public:
-            bool Active{ false };
-            JPH::EMotionType JphMotionType{ JPH::EMotionType::Static };
-            JPH::ObjectLayer JphObjectLayer{ JphObjectLayers::NonMoving };
-            JphShapeInfo JphShapeInfo{ JphNoShapeInfo{} };
-        };
     public:
         ACDA_COMPONENT_TYPE_STR_GETTERS("physics");
 
@@ -75,7 +76,7 @@ namespace Arcadia
         PhysicsComponent(const nlohmann::json& json);
         ~PhysicsComponent() = default;
         [[nodiscard]]
-        auto ToJson() const->nlohmann::json;
+        auto ToJson() const -> nlohmann::json;
 
         [[nodiscard]]
         auto IsInUse() const -> bool;
@@ -98,11 +99,11 @@ namespace Arcadia
         void SetAngularVelocity(const glm::vec3& angular_velocity);
 
         [[nodiscard]]
-        auto GetJphMotionType() const->JPH::EMotionType;
+        auto GetJphMotionType() const -> JPH::EMotionType;
         void SetJphMotionType(JPH::EMotionType jph_motion_type);
 
         [[nodiscard]]
-        auto GetJphObjectLayer() const->JPH::ObjectLayer;
+        auto GetJphObjectLayer() const -> JPH::ObjectLayer;
         void SetJphObjectLayer(JPH::ObjectLayer jph_object_layer);
 
         [[nodiscard]]
@@ -111,8 +112,8 @@ namespace Arcadia
 
     protected:
         [[nodiscard]]
-        virtual auto OnSnapshot() const->std::unique_ptr<MementoDataBase> override;
-        virtual void OnRestore(const std::unique_ptr<MementoDataBase>& memento_data_base_uptr) override;
+        virtual auto OnSnapshot() const -> std::unique_ptr<MementoType> override;
+        virtual void OnRestore(const std::unique_ptr<MementoType>& memento_data_uptr) override;
 
     private:
         bool _InUse{ false };

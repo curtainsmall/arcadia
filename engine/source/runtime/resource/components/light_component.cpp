@@ -147,17 +147,16 @@ void Arcadia::LightComponent::SetLight(const LightType& light)
     _Light = light;
 }
 
-auto Arcadia::LightComponent::OnSnapshot() const -> std::unique_ptr<MementoDataBase>
+auto Arcadia::LightComponent::OnSnapshot() const -> std::unique_ptr<MementoType>
 {
-    std::unique_ptr<_MementoData> memento_data_uptr = std::make_unique<_MementoData>();
+    std::unique_ptr<MementoType> memento_data_uptr = std::make_unique<MementoType>();
     memento_data_uptr->Light = GetLight();
     return memento_data_uptr;
 }
 
-void Arcadia::LightComponent::OnRestore(const std::unique_ptr<MementoDataBase>& memento_data_uptr)
+void Arcadia::LightComponent::OnRestore(const std::unique_ptr<MementoType>& memento_data_uptr)
 {
-    const _MementoData& memento_data = memento_data_uptr->CastTo<_MementoData>();
-    SetLight(memento_data.Light);
+    SetLight(memento_data_uptr->Light);
 }
 
 auto Arcadia::SpotLight::GetAttenuationCoefficients() const -> const glm::vec3&

@@ -170,9 +170,9 @@ auto Arcadia::CameraComponent::GenerateProjectiveMat4() const -> glm::mat4
     );
 }
 
-auto Arcadia::CameraComponent::OnSnapshot() const -> std::unique_ptr<MementoDataBase>
+auto Arcadia::CameraComponent::OnSnapshot() const -> std::unique_ptr<MementoType>
 {
-    std::unique_ptr<_MementoData> memento_data_uptr = std::make_unique<_MementoData>();
+    std::unique_ptr<MementoType> memento_data_uptr = std::make_unique<MementoType>();
     memento_data_uptr->NearPlane = GetNearPlane();
     memento_data_uptr->FarPlane = GetFarPlane();
     memento_data_uptr->FovY = GetFovY();
@@ -187,18 +187,17 @@ auto Arcadia::CameraComponent::OnSnapshot() const -> std::unique_ptr<MementoData
     return memento_data_uptr;
 }
 
-void Arcadia::CameraComponent::OnRestore(const std::unique_ptr<MementoDataBase>& memento_data_uptr)
+void Arcadia::CameraComponent::OnRestore(const std::unique_ptr<MementoType>& memento_data_uptr)
 {
-    const _MementoData& memento_data = memento_data_uptr->CastTo<_MementoData>();
-    SetNearPlane(memento_data.NearPlane);
-    SetFarPlane(memento_data.FarPlane);
-    SetFovY(memento_data.FovY);
-    SetFovYMin(memento_data.FovYMin);
-    SetFovYMax(memento_data.FovYMax);
-    SetSpeed(memento_data.Speed);
-    SetViewportSize(memento_data.ViewportSize);
-    SetUpAxisFixed(memento_data.UpAxisFixed);
-    SetUpAxisAngleEpsilon(memento_data.UpAxisAngleEpsilon);
-    SetCursorMoveOffsetRange(memento_data.CursorMoveOffsetRange);
-    SetGridDisplaying(memento_data.GridDisplaying);
+    SetNearPlane(memento_data_uptr->NearPlane);
+    SetFarPlane(memento_data_uptr->FarPlane);
+    SetFovY(memento_data_uptr->FovY);
+    SetFovYMin(memento_data_uptr->FovYMin);
+    SetFovYMax(memento_data_uptr->FovYMax);
+    SetSpeed(memento_data_uptr->Speed);
+    SetViewportSize(memento_data_uptr->ViewportSize);
+    SetUpAxisFixed(memento_data_uptr->UpAxisFixed);
+    SetUpAxisAngleEpsilon(memento_data_uptr->UpAxisAngleEpsilon);
+    SetCursorMoveOffsetRange(memento_data_uptr->CursorMoveOffsetRange);
+    SetGridDisplaying(memento_data_uptr->GridDisplaying);
 }

@@ -16,23 +16,24 @@ namespace Arcadia
         _EnumBitfield
     };
 
-    struct ACDA_API TransformComponent:
-        public ComponentInterface,
-        public MementoOriginatorInterface
+    struct TransformComponent_Memento
     {
     public:
+        TransformComponentFlags Flags{ TransformComponentFlags::None };
+        glm::vec3 Position{ Glm::Vec3_CreateZero() };
+        glm::quat RotationQuaternion{ Glm::Quat_CreateIdentity() };
+        glm::vec3 Direction{ Glm::Vec3_CreateUnitPositiveZ() };
+        glm::vec3 Scale{ 1,1,1 };
+        glm::vec3 Pivot{ Glm::Vec3_CreateZero() };
+    };
+
+    struct ACDA_API TransformComponent:
+        public ComponentInterface,
+        public Mementoable<TransformComponent_Memento>
+    {
+    public:
+        using MementoType = TransformComponent_Memento;
         using SelfType = TransformComponent;
-    private:
-        struct ACDA_API _MementoData: public MementoDataBase
-        {
-        public:
-            TransformComponentFlags Flags{ TransformComponentFlags::None };
-            glm::vec3 Position{ Glm::Vec3_CreateZero() };
-            glm::quat RotationQuaternion{ Glm::Quat_CreateIdentity() };
-            glm::vec3 Direction{ Glm::Vec3_CreateUnitPositiveZ() };
-            glm::vec3 Scale{ 1,1,1 };
-            glm::vec3 Pivot{ Glm::Vec3_CreateZero() };
-        };
     public:
         ACDA_COMPONENT_TYPE_STR_GETTERS("transform");
 
@@ -40,13 +41,13 @@ namespace Arcadia
         TransformComponent(const nlohmann::json& json);
         ~TransformComponent() = default;
         [[nodiscard]]
-        auto ToJson() const->nlohmann::json;
+        auto ToJson() const -> nlohmann::json;
 
         TransformComponent(SelfType&&) noexcept = default;
         auto operator=(SelfType&&) noexcept -> SelfType & = default;
 
         [[nodiscard]]
-        auto GetFlags() const->TransformComponentFlags;
+        auto GetFlags() const -> TransformComponentFlags;
         void SetFlags(TransformComponentFlags flags);
         [[nodiscard]]
         auto CheckFlag(TransformComponentFlags flag) const -> bool;
@@ -87,8 +88,8 @@ namespace Arcadia
 
     protected:
         [[nodiscard]]
-        virtual auto OnSnapshot() const->std::unique_ptr<MementoDataBase> override;
-        virtual void OnRestore(const std::unique_ptr<MementoDataBase>& memento_data_base_uptr) override;
+        virtual auto OnSnapshot() const -> std::unique_ptr<MementoType> override;
+        virtual void OnRestore(const std::unique_ptr<MementoType>& memento_data_uptr) override;
 
     private:
         TransformComponentFlags _Flags{ TransformComponentFlags::None };

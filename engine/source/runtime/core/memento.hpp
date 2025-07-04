@@ -9,6 +9,7 @@
 
 namespace Arcadia
 {
+#if 0
     struct ACDA_API MementoDataBase;
 
     namespace Concepts
@@ -39,7 +40,7 @@ namespace Arcadia
 
     protected:
         [[nodiscard]]
-        virtual auto OnSnapshot() const->std::unique_ptr<MementoDataBase> = 0;
+        virtual auto OnSnapshot() const -> std::unique_ptr<MementoDataBase> = 0;
         virtual void OnRestore(const std::unique_ptr<MementoDataBase>& memento_data_base_sptr) = 0;
 
     private:
@@ -125,11 +126,11 @@ namespace Arcadia
         auto Redo() -> bool;
 
         [[nodiscard]]
-        auto GetCapacity() const->std::size_t;
+        auto GetCapacity() const -> std::size_t;
         void SetCapacity(std::size_t capacity);
 
         [[nodiscard]]
-        auto GetSize() const->std::size_t;
+        auto GetSize() const -> std::size_t;
 
         void Clear();
 
@@ -145,18 +146,45 @@ namespace Arcadia
         auto end() noexcept -> ContainerType::iterator;
 
         [[nodiscard]]
-        auto begin() const noexcept->ContainerType::const_iterator;
+        auto begin() const noexcept -> ContainerType::const_iterator;
         [[nodiscard]]
-        auto end() const noexcept->ContainerType::const_iterator;
+        auto end() const noexcept -> ContainerType::const_iterator;
 
         [[nodiscard]]
-        auto cbegin() const noexcept->ContainerType::const_iterator;
+        auto cbegin() const noexcept -> ContainerType::const_iterator;
         [[nodiscard]]
-        auto cend() const noexcept->ContainerType::const_iterator;
+        auto cend() const noexcept -> ContainerType::const_iterator;
 
     private:
         std::size_t _Capacity{ 40 };
         ContainerType _List{};
         ContainerType::iterator _CurrentIterator{ _List.begin() }; // Points to the memento to be undone
+    };
+
+#endif
+
+    template<class Memento>
+    struct ACDA_API Mementoable
+    {
+    public:
+        Mementoable() = default;
+        virtual ~Mementoable() = default;
+
+        void Snapshot()
+        {
+            _upMemento = OnSnapshot();
+        }
+
+        void Restore()
+        {
+            OnRestore(_upMemento);
+        }
+
+    protected:
+        virtual auto OnSnapshot() const -> std::unique_ptr<Memento> = 0;
+        virtual void OnRestore(const std::unique_ptr<Memento>& memento_uptr) = 0;
+
+    private:
+        std::unique_ptr<Memento> _upMemento{};
     };
 }

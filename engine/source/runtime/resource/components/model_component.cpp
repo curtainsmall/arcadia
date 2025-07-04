@@ -54,7 +54,7 @@ auto Arcadia::ModelComponent::HasIdentifiableMeshes() const -> bool
     return _upIdentifiableMeshes.get();
 }
 
-auto Arcadia::ModelComponent::GetIdentifiableMeshes() const -> const IdentifiableMeshesType&
+auto Arcadia::ModelComponent::GetIdentifiableMeshes() const -> const ModelComponent_IdentifiableMeshesType&
 {
     ACDA_ASSERT(HasIdentifiableMeshes());
     return *_upIdentifiableMeshes;
@@ -123,19 +123,18 @@ auto Arcadia::ModelComponent::IsModelLoaded() const -> bool
     return HasIdentifiableMeshes();
 }
 
-auto Arcadia::ModelComponent::OnSnapshot() const -> std::unique_ptr<MementoDataBase>
+auto Arcadia::ModelComponent::OnSnapshot() const -> std::unique_ptr<MementoType>
 {
-    std::unique_ptr<_MementoData> memento_data_sptr = std::make_unique<_MementoData>();
+    std::unique_ptr<MementoType> memento_data_sptr = std::make_unique<MementoType>();
     memento_data_sptr->Filepath = GetFilepath();
-    memento_data_sptr->upIdentifiableMeshes = std::make_unique<IdentifiableMeshesType>(GetIdentifiableMeshes().GetValue());
+    memento_data_sptr->upIdentifiableMeshes = std::make_unique<ModelComponent_IdentifiableMeshesType>(GetIdentifiableMeshes().GetValue());
     return memento_data_sptr;
 }
 
-void Arcadia::ModelComponent::OnRestore(const std::unique_ptr<MementoDataBase>& memento_data_uptr)
+void Arcadia::ModelComponent::OnRestore(const std::unique_ptr<MementoType>& memento_data_uptr)
 {
-    const _MementoData& memento_data = memento_data_uptr->CastTo<_MementoData>();
-    _Filepath = memento_data.Filepath;
-    _upIdentifiableMeshes = std::make_unique<IdentifiableMeshesType>(memento_data.upIdentifiableMeshes->GetValue());
+    _Filepath = memento_data_uptr->Filepath;
+    _upIdentifiableMeshes = std::make_unique<ModelComponent_IdentifiableMeshesType>(memento_data_uptr->upIdentifiableMeshes->GetValue());
 }
 
 void Arcadia::ModelComponent::_LoadModel()
@@ -170,7 +169,7 @@ void Arcadia::ModelComponent::_LoadModel()
         next_mesh_index
     );
 
-    _upIdentifiableMeshes = std::make_unique<IdentifiableMeshesType>(std::move(meshes));
+    _upIdentifiableMeshes = std::make_unique<ModelComponent_IdentifiableMeshesType>(std::move(meshes));
 }
 
 void Arcadia::ModelComponent::_UnloadModel()

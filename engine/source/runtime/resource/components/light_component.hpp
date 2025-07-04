@@ -155,17 +155,19 @@ namespace Arcadia
         PointLight
     >;
 
-    struct ACDA_API LightComponent:
-        public ComponentInterface,
-        public MementoOriginatorInterface
+    struct LightComponent_Memento
     {
     public:
+        LightType Light{ NullLight{} };
+    };
+
+    struct ACDA_API LightComponent:
+        public ComponentInterface,
+        public Mementoable<LightComponent_Memento>
+    {
+    public:
+        using MementoType = LightComponent_Memento;
         using SelfType = LightComponent;
-    private:
-        struct ACDA_API _MementoData: public MementoDataBase
-        {
-            LightType Light{ NullLight{} };
-        };
     public:
         ACDA_COMPONENT_TYPE_STR_GETTERS("light");
 
@@ -173,7 +175,7 @@ namespace Arcadia
         LightComponent(const nlohmann::json& json);
         ~LightComponent() = default;
         [[nodiscard]]
-        auto ToJson() const->nlohmann::json;
+        auto ToJson() const -> nlohmann::json;
 
         [[nodiscard]]
         auto GetLight() const -> const LightType&;
@@ -189,8 +191,8 @@ namespace Arcadia
 
     protected:
         [[nodiscard]]
-        virtual auto OnSnapshot() const->std::unique_ptr<MementoDataBase> override;
-        virtual void OnRestore(const std::unique_ptr<MementoDataBase>& memento_data_uptr) override;
+        virtual auto OnSnapshot() const -> std::unique_ptr<MementoType> override;
+        virtual void OnRestore(const std::unique_ptr<MementoType>& memento_data_uptr) override;
 
     private:
         LightType _Light{ NullLight{} };

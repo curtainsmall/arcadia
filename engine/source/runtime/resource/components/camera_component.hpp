@@ -8,27 +8,30 @@
 
 namespace Arcadia
 {
-    struct ACDA_API CameraComponent:
-        public ComponentInterface,
-        public MementoOriginatorInterface
+    struct CameraComponent_Memento
     {
     public:
+        float NearPlane{ .1f };
+        float FarPlane{ 100.f };
+        float FovY{ glm::radians(75.f) };
+        float FovYMin{ glm::radians(1.f) };
+        float FovYMax{ glm::radians(120.f) };
+        float Speed{ .25f };
+        glm::i32vec2 ViewportSize{ 800,600 };
+        bool UpAxisFixed{ true };
+        float UpAxisAngleEpsilon{ glm::radians(0.1f) };
+        glm::vec2 CursorMoveOffsetRange{ -100.f,100.f };
+        bool GridDisplaying{ false };
+
+    };
+
+    struct ACDA_API CameraComponent:
+        public ComponentInterface,
+        public Mementoable<CameraComponent_Memento>
+    {
+    public:
+        using MementoType = CameraComponent_Memento;
         using SelfType = CameraComponent;
-    private:
-        struct ACDA_API _MementoData: public MementoDataBase
-        {
-            float NearPlane{ .1f };
-            float FarPlane{ 100.f };
-            float FovY{ glm::radians(75.f) };
-            float FovYMin{ glm::radians(1.f) };
-            float FovYMax{ glm::radians(120.f) };
-            float Speed{ .25f };
-            glm::i32vec2 ViewportSize{ 800,600 };
-            bool UpAxisFixed{ true };
-            float UpAxisAngleEpsilon{ glm::radians(0.1f) };
-            glm::vec2 CursorMoveOffsetRange{ -100.f,100.f };
-            bool GridDisplaying{ false };
-        };
     public:
         ACDA_COMPONENT_TYPE_STR_GETTERS("camera");
 
@@ -40,7 +43,7 @@ namespace Arcadia
         CameraComponent(const nlohmann::json& json);
         ~CameraComponent() = default;
         [[nodiscard]]
-        auto ToJson() const->nlohmann::json;
+        auto ToJson() const -> nlohmann::json;
 
         [[nodiscard]]
         auto GetNearPlane() const -> float;
@@ -79,7 +82,7 @@ namespace Arcadia
         void SetUpAxisAngleEpsilon(float epsilon);
 
         [[nodiscard]]
-        auto GetCursorMoveOffsetRange() const-> const glm::vec2&;
+        auto GetCursorMoveOffsetRange() const -> const glm::vec2&;
         void SetCursorMoveOffsetRange(const glm::vec2& range);
 
         [[nodiscard]]
@@ -88,12 +91,12 @@ namespace Arcadia
 
         static auto GenerateViewMat4(const glm::vec3& pos, const glm::vec3& dir) -> glm::mat4;
 
-        auto GenerateProjectiveMat4() const->glm::mat4;
+        auto GenerateProjectiveMat4() const -> glm::mat4;
 
     protected:
         [[nodiscard]]
-        virtual auto OnSnapshot() const->std::unique_ptr<MementoDataBase> override;
-        virtual void OnRestore(const std::unique_ptr<MementoDataBase>& memento_data_uptr) override;
+        virtual auto OnSnapshot() const -> std::unique_ptr<MementoType> override;
+        virtual void OnRestore(const std::unique_ptr<MementoType>& memento_data_uptr) override;
 
     private:
         static inline glm::vec3 _UpAxis{ Glm::Vec3_CreateUnitPositiveY() };
