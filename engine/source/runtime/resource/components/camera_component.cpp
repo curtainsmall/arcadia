@@ -172,32 +172,32 @@ auto Arcadia::CameraComponent::GenerateProjectiveMat4() const -> glm::mat4
 
 auto Arcadia::CameraComponent::OnSnapshot() const -> std::unique_ptr<MementoType>
 {
-    std::unique_ptr<MementoType> memento_data_uptr = std::make_unique<MementoType>();
-    memento_data_uptr->NearPlane = GetNearPlane();
-    memento_data_uptr->FarPlane = GetFarPlane();
-    memento_data_uptr->FovY = GetFovY();
-    memento_data_uptr->FovYMin = GetFovYMin();
-    memento_data_uptr->FovYMax = GetFovYMax();
-    memento_data_uptr->Speed = GetSpeed();
-    memento_data_uptr->ViewportSize = GetViewportSize();
-    memento_data_uptr->UpAxisFixed = IsUpAxisFixed();
-    memento_data_uptr->UpAxisAngleEpsilon = GetUpAxisAngleEpsilon();
-    memento_data_uptr->CursorMoveOffsetRange = GetCursorMoveOffsetRange();
-    memento_data_uptr->GridDisplaying = IsGridDisplaying();
-    return memento_data_uptr;
+    std::unique_ptr<MementoType> memento_uptr = std::make_unique<MementoType>();
+    memento_uptr->NearPlane = GetNearPlane();
+    memento_uptr->FarPlane = GetFarPlane();
+    memento_uptr->FovY = GetFovY();
+    memento_uptr->FovYMin = GetFovYMin();
+    memento_uptr->FovYMax = GetFovYMax();
+    memento_uptr->Speed = GetSpeed();
+    memento_uptr->ViewportSize = GetViewportSize();
+    memento_uptr->UpAxisFixed = IsUpAxisFixed();
+    memento_uptr->UpAxisAngleEpsilon = GetUpAxisAngleEpsilon();
+    memento_uptr->CursorMoveOffsetRange = GetCursorMoveOffsetRange();
+    memento_uptr->GridDisplaying = IsGridDisplaying();
+    return memento_uptr;
 }
 
-void Arcadia::CameraComponent::OnRestore(const std::unique_ptr<MementoType>& memento_data_uptr)
+void Arcadia::CameraComponent::OnRestore(const std::unique_ptr<MementoType>& memento_uptr)
 {
-    SetNearPlane(memento_data_uptr->NearPlane);
-    SetFarPlane(memento_data_uptr->FarPlane);
-    SetFovY(memento_data_uptr->FovY);
-    SetFovYMin(memento_data_uptr->FovYMin);
-    SetFovYMax(memento_data_uptr->FovYMax);
-    SetSpeed(memento_data_uptr->Speed);
-    SetViewportSize(memento_data_uptr->ViewportSize);
-    SetUpAxisFixed(memento_data_uptr->UpAxisFixed);
-    SetUpAxisAngleEpsilon(memento_data_uptr->UpAxisAngleEpsilon);
-    SetCursorMoveOffsetRange(memento_data_uptr->CursorMoveOffsetRange);
-    SetGridDisplaying(memento_data_uptr->GridDisplaying);
+    SetNearPlane(memento_uptr->NearPlane);
+    SetFarPlane(memento_uptr->FarPlane);
+    SetFovY(memento_uptr->FovY);
+    SetFovYMin(memento_uptr->FovYMin);
+    SetFovYMax(memento_uptr->FovYMax);
+    SetSpeed(memento_uptr->Speed);
+    SetViewportSize(memento_uptr->ViewportSize);
+    SetUpAxisFixed(memento_uptr->UpAxisFixed);
+    SetUpAxisAngleEpsilon(memento_uptr->UpAxisAngleEpsilon);
+    SetCursorMoveOffsetRange(memento_uptr->CursorMoveOffsetRange);
+    SetGridDisplaying(memento_uptr->GridDisplaying);
 }

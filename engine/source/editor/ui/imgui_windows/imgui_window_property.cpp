@@ -669,7 +669,7 @@ void Arcadia::ImguiWindowPopupFunctor_PhysicsComponentCreateBody::operator()(Phy
             physics_comp.SetJphMotionType(_TempJphMotionType);
             physics_comp.SetJphObjectLayer(_TempJphObjectLayer);
             physics_comp.SetJphShapeInfo(_TempJphShapeInfo);
-            physics_comp.SetInUse(true);
+            physics_comp.SetValid(true);
         }
         ImGui::SameLine();
         if(confirmed || ImGui::Button("Cancel"))
@@ -691,9 +691,13 @@ void Arcadia::ImguiWindowPropertyFunctor_PhysicsComponent::operator()(PhysicsCom
 
     ImGui::BeginGroup();
 
-    if(physics_comp.IsInUse())
+    ImGuiTreeNodeFlags tree_node_flags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_FramePadding;
+
+    if(physics_comp.IsValid())
     {
-        if(ImGui::TreeNodeEx("Initial", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_FramePadding))
+        // Display physics component status
+
+        if(ImGui::TreeNodeEx("Initial", tree_node_flags))
         {
             ImGui::Text(std::format(
                 "Motion Type: {}",
@@ -720,7 +724,7 @@ void Arcadia::ImguiWindowPropertyFunctor_PhysicsComponent::operator()(PhysicsCom
             ImGui::TreePop();
         }
 
-        if(ImGui::TreeNodeEx("Current", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_FramePadding))
+        if(ImGui::TreeNodeEx("Current", tree_node_flags))
         {
             ImGui::Text(std::format("Active: {}", physics_comp.IsActive()).c_str());
             ImGui::Text(std::format("Linear Velocity - {}", physics_comp.GetLinearVelocity()).c_str());
@@ -737,7 +741,7 @@ void Arcadia::ImguiWindowPropertyFunctor_PhysicsComponent::operator()(PhysicsCom
             },
             [&](const JphBoxShapeInfo& info)
             {
-                bool tree_open = ImGui::TreeNodeEx("Body Shape - Box", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_FramePadding);
+                bool tree_open = ImGui::TreeNodeEx("Body Shape - Box", tree_node_flags);
                 if(tree_open)
                 {
                     ImGui::Text(std::format("Half Extent: {}", info.HalfExtent).c_str());
@@ -747,7 +751,7 @@ void Arcadia::ImguiWindowPropertyFunctor_PhysicsComponent::operator()(PhysicsCom
             },
             [&](const JphCapsuleShapeInfo& info)
             {
-                bool tree_open = ImGui::TreeNodeEx("Body Shape - Capsule", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_FramePadding);
+                bool tree_open = ImGui::TreeNodeEx("Body Shape - Capsule", tree_node_flags);
                 if(tree_open)
                 {
                     ImGui::Text(std::format("Radius: {:.2f}", info.Radius).c_str());
@@ -757,7 +761,7 @@ void Arcadia::ImguiWindowPropertyFunctor_PhysicsComponent::operator()(PhysicsCom
             },
             [&](const JphCylinderShapeInfo& info)
             {
-                bool tree_open = ImGui::TreeNodeEx("Body Shape - Cylinder", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_FramePadding);
+                bool tree_open = ImGui::TreeNodeEx("Body Shape - Cylinder", tree_node_flags);
                 if(tree_open)
                 {
                     ImGui::Text(std::format("Half Height: {:.2f}", info.HalfHeight).c_str());
@@ -768,7 +772,7 @@ void Arcadia::ImguiWindowPropertyFunctor_PhysicsComponent::operator()(PhysicsCom
             },
             [&](const JphSphereShapeInfo& info)
             {
-                bool tree_open = ImGui::TreeNodeEx("Body Shape - Sphere", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_FramePadding);
+                bool tree_open = ImGui::TreeNodeEx("Body Shape - Sphere", tree_node_flags);
                 if(tree_open)
                 {
                     ImGui::Text(std::format("Radius: {:.2f}", info.Radius).c_str());
@@ -780,14 +784,7 @@ void Arcadia::ImguiWindowPropertyFunctor_PhysicsComponent::operator()(PhysicsCom
         {
             ImGui::TreePop();
         }
-    }
-    else
-    {
-        ImGui::Text("(No body state)");
-    }
 
-    if(physics_comp.IsInUse())
-    {
         glm::vec3 color = physics_comp.GetBodyShapeColor();
         ImGui::ColorEdit3("Body Shape Color", glm::value_ptr(color));
         physics_comp.SetBodyShapeColor(color);
@@ -814,15 +811,18 @@ void Arcadia::ImguiWindowPropertyFunctor_PhysicsComponent::operator()(PhysicsCom
         ImGui::SameLine();
         if(ImGui::Button("Destroy Body"))
         {
-            physics_comp.SetInUse(false);
+            physics_comp.SetValid(false);
         }
     }
     else
     {
+        ImGui::Text("(No body state)");
+
         if(ImGui::Button("Create Body"))
         {
             _ImguiWindowPopupPhysicsComponentCreateBody.Opened = true;
         }
+
     }
 
     ImGui::EndGroup();

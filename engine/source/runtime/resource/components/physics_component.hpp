@@ -79,8 +79,8 @@ namespace Arcadia
         auto ToJson() const -> nlohmann::json;
 
         [[nodiscard]]
-        auto IsInUse() const -> bool;
-        void SetInUse(bool in_use);
+        auto IsValid() const -> bool;
+        void SetValid(bool validity);
 
         [[nodiscard]]
         auto GetBodyShapeColor() const -> const glm::vec3&;
@@ -113,17 +113,19 @@ namespace Arcadia
     protected:
         [[nodiscard]]
         virtual auto OnSnapshot() const -> std::unique_ptr<MementoType> override;
-        virtual void OnRestore(const std::unique_ptr<MementoType>& memento_data_uptr) override;
+        virtual void OnRestore(const std::unique_ptr<MementoType>& memento_uptr) override;
 
     private:
-        bool _InUse{ false };
+        // Whether the physcis component contains neccessary informations and is ready for use
+        bool _Validity{ false };
+        JPH::EMotionType _JphMotionType{ JPH::EMotionType::Static };
+        JPH::ObjectLayer _JphObjectLayer{ JphObjectLayers::NonMoving };
+        JphShapeInfo _JphShapeInfo{ JphNoShapeInfo{} };
 
         bool _Active{ false };
         glm::vec3 _BodyShapeColor{ .2f,.2f,.2f };
         glm::vec3 _LinearVelocity{ Glm::Vec3_CreateZero() };
         glm::vec3 _AngularVelocity{ Glm::Vec3_CreateZero() };
-        JPH::EMotionType _JphMotionType{ JPH::EMotionType::Static };
-        JPH::ObjectLayer _JphObjectLayer{ JphObjectLayers::NonMoving };
-        JphShapeInfo _JphShapeInfo{ JphNoShapeInfo{} };
+
     };
 }

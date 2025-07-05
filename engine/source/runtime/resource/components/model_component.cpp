@@ -131,10 +131,10 @@ auto Arcadia::ModelComponent::OnSnapshot() const -> std::unique_ptr<MementoType>
     return memento_data_sptr;
 }
 
-void Arcadia::ModelComponent::OnRestore(const std::unique_ptr<MementoType>& memento_data_uptr)
+void Arcadia::ModelComponent::OnRestore(const std::unique_ptr<MementoType>& memento_uptr)
 {
-    _Filepath = memento_data_uptr->Filepath;
-    _upIdentifiableMeshes = std::make_unique<ModelComponent_IdentifiableMeshesType>(memento_data_uptr->upIdentifiableMeshes->GetValue());
+    _Filepath = memento_uptr->Filepath;
+    _upIdentifiableMeshes = std::make_unique<ModelComponent_IdentifiableMeshesType>(memento_uptr->upIdentifiableMeshes->GetValue());
 }
 
 void Arcadia::ModelComponent::_LoadModel()

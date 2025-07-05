@@ -62,7 +62,7 @@ Arcadia::PhysicsComponent::PhysicsComponent(const nlohmann::json& json):
 
     SetJphMotionType(json.at("jph_motion_type"));
     SetJphObjectLayer(json.at("jph_object_layer"));
-    SetInUse(true);
+    SetValid(true);
 }
 
 auto Arcadia::PhysicsComponent::ToJson() const -> nlohmann::json
@@ -128,14 +128,14 @@ auto Arcadia::PhysicsComponent::ToJson() const -> nlohmann::json
     };
 }
 
-auto Arcadia::PhysicsComponent::IsInUse() const -> bool
+auto Arcadia::PhysicsComponent::IsValid() const -> bool
 {
-    return _InUse;
+    return _Validity;
 }
 
-void Arcadia::PhysicsComponent::SetInUse(bool in_use)
+void Arcadia::PhysicsComponent::SetValid(bool validity)
 {
-    _InUse = in_use;
+    _Validity = validity;
 }
 
 auto Arcadia::PhysicsComponent::GetBodyShapeColor() const -> const glm::vec3&
@@ -210,18 +210,18 @@ void Arcadia::PhysicsComponent::SetJphShapeInfo(const JphShapeInfo& jph_shape_in
 
 auto Arcadia::PhysicsComponent::OnSnapshot() const -> std::unique_ptr<MementoType>
 {
-    std::unique_ptr<MementoType> memento_data_uptr = std::make_unique<MementoType>();
-    memento_data_uptr->Active = IsActive();
-    memento_data_uptr->JphMotionType = GetJphMotionType();
-    memento_data_uptr->JphObjectLayer = GetJphObjectLayer();
-    memento_data_uptr->JphShapeInfo = GetJphShapeInfo();
-    return memento_data_uptr;
+    std::unique_ptr<MementoType> memento_uptr = std::make_unique<MementoType>();
+    memento_uptr->Active = IsActive();
+    memento_uptr->JphMotionType = GetJphMotionType();
+    memento_uptr->JphObjectLayer = GetJphObjectLayer();
+    memento_uptr->JphShapeInfo = GetJphShapeInfo();
+    return memento_uptr;
 }
 
-void Arcadia::PhysicsComponent::OnRestore(const std::unique_ptr<MementoType>& memento_data_uptr)
+void Arcadia::PhysicsComponent::OnRestore(const std::unique_ptr<MementoType>& memento_uptr)
 {
-    SetActive(memento_data_uptr->Active);
-    SetJphMotionType(memento_data_uptr->JphMotionType);
-    SetJphObjectLayer(memento_data_uptr->JphObjectLayer);
-    SetJphShapeInfo(memento_data_uptr->JphShapeInfo);
+    SetActive(memento_uptr->Active);
+    SetJphMotionType(memento_uptr->JphMotionType);
+    SetJphObjectLayer(memento_uptr->JphObjectLayer);
+    SetJphShapeInfo(memento_uptr->JphShapeInfo);
 }

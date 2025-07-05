@@ -23,10 +23,10 @@ namespace Arcadia
         JphBroadPhaseLayerImpl();
 
         [[nodiscard]]
-        virtual auto GetNumBroadPhaseLayers() const->JPH::uint override;
+        virtual auto GetNumBroadPhaseLayers() const -> JPH::uint override;
 
         [[nodiscard]]
-        virtual auto GetBroadPhaseLayer(JPH::ObjectLayer layer) const->JPH::BroadPhaseLayer override;
+        virtual auto GetBroadPhaseLayer(JPH::ObjectLayer layer) const -> JPH::BroadPhaseLayer override;
 
         [[nodiscard]]
         virtual auto GetBroadPhaseLayerName(JPH::BroadPhaseLayer layer) const -> const char* override
@@ -60,25 +60,26 @@ namespace Arcadia
         // Update physics simulation
         void Update();
 
-        // Apply changes to entity
+        // Apply changes to entities
         void ApplyToEntity();
 
+        // Reset physics simulator, clear all bodies
         void Reset();
 
         [[nodiscard]]
         auto IsActive() const -> bool;
-        void SetActive(bool should_update);
+        void SetActive(bool active);
 
         [[nodiscard]]
-        auto GetJphTempAllocatorSize() const->JPH::uint;
+        auto GetJphTempAllocatorSize() const -> JPH::uint;
         void SetJphTempAllocatorSize(JPH::uint jph_temp_allocator_size);
 
         [[nodiscard]]
-        auto GetJphPhysicsSystemUpdatesPerSecond() const->std::int32_t;
+        auto GetJphPhysicsSystemUpdatesPerSecond() const -> std::int32_t;
         void SetJphPhysicsSystemUpdatesPerSecond(std::int32_t jph_physics_system_updates_per_second);
 
         [[nodiscard]]
-        auto GetBodyCount() const->std::size_t;
+        auto GetBodyCount() const -> std::size_t;
 
     private:
         void _Clear();
@@ -96,6 +97,6 @@ namespace Arcadia
         JphObjectVsBroadPhaseLayerFilterImpl _JphObjectVsBroadLayerFilter{};
         JphObjectLayerPairFilerImpl _JphObjectLayerPairFilter{};
 
-        std::unique_ptr<JPH::PhysicsSystem> _upJphPhysicsSystemUniquePtr{};
+        std::unique_ptr<JPH::PhysicsSystem> _upJphPhysicsSystem{};
     };
 }

@@ -192,7 +192,7 @@ namespace Arcadia
     protected:
         [[nodiscard]]
         virtual auto OnSnapshot() const -> std::unique_ptr<MementoType> override;
-        virtual void OnRestore(const std::unique_ptr<MementoType>& memento_data_uptr) override;
+        virtual void OnRestore(const std::unique_ptr<MementoType>& memento_uptr) override;
 
     private:
         LightType _Light{ NullLight{} };

@@ -42,8 +42,6 @@ void Arcadia::SceneLayer::OnUpdate()
 {
     if(_spActiveScene)
     {
-        std::shared_ptr<RendererLayer> renderer_layer_sptr = LayerStack::Instance().GetLayerShared<RendererLayer>();
-
         for(auto& [entity_id, entity_info] : _spActiveScene->GetEntityInfoStorage())
         {
             if(entity_info.Displayed)
@@ -66,7 +64,7 @@ void Arcadia::SceneLayer::OnUpdate()
             if(_spActiveScene->ContainsAllComponents<PhysicsComponent>(entity_id))
             {
                 const PhysicsComponent& physics_comp = _spActiveScene->GetComponent<PhysicsComponent>(entity_id);
-                if(physics_comp.IsInUse())
+                if(physics_comp.IsValid())
                 {
                     EventQueue::Instance()
                         .Signal<Events::PhysicsSimulatorSetEntity>(

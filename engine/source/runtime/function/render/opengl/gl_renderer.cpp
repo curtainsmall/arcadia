@@ -133,7 +133,7 @@ void Arcadia::GlRenderer::BuildEntity(EntityId entity_id)
                 }
             }
 
-            if(physics_comp.IsInUse())
+            if(physics_comp.IsValid())
             {
                 if(!_GlRenderUnitPhysicsBodyShapeStorage.contains(entity_id))
                 {

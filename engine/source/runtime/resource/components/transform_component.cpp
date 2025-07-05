@@ -30,24 +30,24 @@ auto Arcadia::TransformComponent::ToJson() const -> nlohmann::json
 
 auto Arcadia::TransformComponent::OnSnapshot() const -> std::unique_ptr<MementoType>
 {
-    std::unique_ptr<MementoType> memento_data_uptr = std::make_unique<MementoType>();
-    memento_data_uptr->Flags = GetFlags();
-    memento_data_uptr->Position = GetPosition();
-    memento_data_uptr->RotationQuaternion = GetRotationQuaternion();
-    memento_data_uptr->Scale = GetScale();
-    memento_data_uptr->Direction = GetDirection();
-    memento_data_uptr->Pivot = GetPivot();
-    return memento_data_uptr;
+    std::unique_ptr<MementoType> memento_uptr = std::make_unique<MementoType>();
+    memento_uptr->Flags = GetFlags();
+    memento_uptr->Position = GetPosition();
+    memento_uptr->RotationQuaternion = GetRotationQuaternion();
+    memento_uptr->Scale = GetScale();
+    memento_uptr->Direction = GetDirection();
+    memento_uptr->Pivot = GetPivot();
+    return memento_uptr;
 }
 
-void Arcadia::TransformComponent::OnRestore(const std::unique_ptr<MementoType>& memento_data_uptr)
+void Arcadia::TransformComponent::OnRestore(const std::unique_ptr<MementoType>& memento_uptr)
 {
-    SetFlags(memento_data_uptr->Flags);
-    SetPosition(memento_data_uptr->Position);
-    SetRotationQuaternion(memento_data_uptr->RotationQuaternion);
-    SetScale(memento_data_uptr->Scale);
-    SetDirection(memento_data_uptr->Direction);
-    SetPivot(memento_data_uptr->Pivot);
+    SetFlags(memento_uptr->Flags);
+    SetPosition(memento_uptr->Position);
+    SetRotationQuaternion(memento_uptr->RotationQuaternion);
+    SetScale(memento_uptr->Scale);
+    SetDirection(memento_uptr->Direction);
+    SetPivot(memento_uptr->Pivot);
 }
 
 auto Arcadia::TransformComponent::GetFlags() const -> TransformComponentFlags
