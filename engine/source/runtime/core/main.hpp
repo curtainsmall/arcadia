@@ -22,47 +22,45 @@ namespace Arcadia
 extern void Arcadia::ApplicationStartup();
 ACDA_MAIN_FN_DECL
 {
-    using namespace Arcadia;
+    // Add runtime_layer
+    Arcadia::LayerStack & layer_stack = Arcadia::LayerStack::Instance();
+    layer_stack.PushLayer<Arcadia::RuntimeLayer>();
 
-// Add runtime_layer
-LayerStack& layer_stack = LayerStack::Instance();
-layer_stack.PushLayer<RuntimeLayer>();
+    Arcadia::ApplicationStartup();
 
-ApplicationStartup();
-
-// Main loop
-std::shared_ptr<RuntimeLayer> runtime_layer_sptr = LayerStack::Instance().GetLayerShared<RuntimeLayer>();
-while(runtime_layer_sptr->IsRunning())
-{
-    // Process event
-    EventQueue& event_queue = EventQueue::Instance();
-    event_queue.SwapQueue();
-    while(event_queue.HasEvent())
+    // Main loop
+    std::shared_ptr<Arcadia::RuntimeLayer> runtime_layer_sptr = Arcadia::LayerStack::Instance().GetLayerShared<Arcadia::RuntimeLayer>();
+    while(runtime_layer_sptr->IsRunning())
     {
-        for(const std::shared_ptr<LayerInterface>& layer_sptr : LayerStack::Instance())
+        // Process event
+        Arcadia::EventQueue& event_queue = Arcadia::EventQueue::Instance();
+        event_queue.SwapQueue();
+        while(event_queue.HasEvent())
         {
-            bool event_handled = event_queue.ProcessEvent(
-                [&](EventBase& event) -> void
-                {
-                    layer_sptr->OnEvent(event);
-                }
-            );
-            if(event_handled)
+            for(const std::shared_ptr<Arcadia::LayerInterface>& layer_sptr : Arcadia::LayerStack::Instance())
             {
-                break;
+                bool event_handled = event_queue.ProcessEvent(
+                    [&](Arcadia::EventBase& event) -> void
+                    {
+                        layer_sptr->OnEvent(event);
+                    }
+                );
+                if(event_handled)
+                {
+                    break;
+                }
             }
+            event_queue.EventProcessFinished();
         }
-        event_queue.EventProcessFinished();
+
+        // Updates
+        for(const std::shared_ptr<Arcadia::LayerInterface>& layer_sptr : std::ranges::reverse_view{ Arcadia::LayerStack::Instance() })
+        {
+            layer_sptr->OnUpdate();
+        }
     }
 
-    // Updates
-    for(const std::shared_ptr<LayerInterface>& layer_sptr : std::ranges::reverse_view{ LayerStack::Instance() })
-    {
-        layer_sptr->OnUpdate();
-    }
-}
-
-// Clear layer_stack
-layer_stack.PopAllLayers();
-return 0;
+    // Clear layer_stack
+    layer_stack.PopAllLayers();
+    return 0;
 }

@@ -41,10 +41,8 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
         return;
     }
 
-    std::shared_ptr<SceneLayer> scene_layer_sptr = LayerStack::Instance().GetLayerShared<SceneLayer>();
-    std::shared_ptr<PhysicsLayer> physics_layer_sptr = LayerStack::Instance().GetLayerShared<PhysicsLayer>();
-    std::shared_ptr<RendererLayer> renderer_layer_sptr = LayerStack::Instance().GetLayerShared<RendererLayer>();
-    std::shared_ptr<RuntimeLayer> runtime_layer = LayerStack::Instance().GetLayerShared<RuntimeLayer>();
+    auto [scene_layer_sptr, physics_layer_sptr, renderer_layer_sptr, runtime_layer_sptr] =
+        LayerStack::Instance().GetMultipleLayersShared<SceneLayer, PhysicsLayer, RendererLayer, RuntimeLayer>();
 
     std::string imgui_title = _Title + GetIdString();
 
@@ -147,7 +145,7 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
             ImGui::SameLine(ImGui::GetWindowWidth() - gizmo_option_position_offset_to_right);
             const glm::vec2 gizmo_options_cursor_pos = ImGui::GetCursorPos();
             ImGui::Dummy({ 0,0 });
-            float fps = 1.f / std::chrono::duration_cast<std::chrono::duration<float>>(runtime_layer->GetDeltaTime()).count();
+            float fps = 1.f / std::chrono::duration_cast<std::chrono::duration<float>>(runtime_layer_sptr->GetDeltaTime()).count();
             ImGui::Text(std::format("FPS: {:.2f}", fps).c_str());
 
             ImGui::SetCursorPos(gizmo_options_cursor_pos);
@@ -395,10 +393,7 @@ void Arcadia::ImguiWindowViewport::_OnOpenImguiWindow(Events::OpenImguiWindow& e
 
 void Arcadia::ImguiWindowViewport::_OnSceneActivated(Events::SceneActivated& e)
 {
-    std::shared_ptr<RendererLayer> renderer_layer_sptr = LayerStack::Instance().GetLayerShared<RendererLayer>();
-    std::shared_ptr<PhysicsLayer> physics_layer_sptr = LayerStack::Instance().GetLayerShared<PhysicsLayer>();
-    ACDA_ASSERT(renderer_layer_sptr);
-    ACDA_ASSERT(physics_layer_sptr);
+    auto [renderer_layer_sptr, physics_layer_sptr] = LayerStack::Instance().GetMultipleLayersShared<RendererLayer, PhysicsLayer>();
 
     const std::shared_ptr<Scene>& scene_sptr = e.spScene;
     if(!scene_sptr->IsEntityNameUsed(_ViewportCameraEntityName))
@@ -419,8 +414,7 @@ void Arcadia::ImguiWindowViewport::_OnSceneActivated(Events::SceneActivated& e)
             .Signal<Events::RendererSetEntity>(
                 entity_id,
                 Events::RendererSetEntity::ActionType::Build
-            );
-        EventQueue::Instance()
+            )
             .Signal<Events::PhysicsSimulatorSetEntity>(
                 entity_id,
                 Events::PhysicsSimulatorSetEntity::ActionType::Build
@@ -431,8 +425,11 @@ void Arcadia::ImguiWindowViewport::_OnSceneActivated(Events::SceneActivated& e)
 
 void Arcadia::ImguiWindowViewport::_OnSceneDeactivated(Events::SceneDeactivated& e)
 {
-    EventQueue::Instance().Signal<Events::RendererSetActive>(false);
-    EventQueue::Instance().Signal<Events::PhysicsSimulatirSetActive>(false);
+    EventQueue::Instance()
+        .Signal<Events::RendererSetActive>(false)
+        .Signal<Events::RendererReset>()
+        .Signal<Events::PhysicsSimulatirSetActive>(false)
+        .Signal<Events::PhysicsSimulatorReset>();
 }
 
 void Arcadia::ImguiWindowViewport::_OnSelectEntity(Events::SelectEntity& e)

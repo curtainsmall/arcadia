@@ -35,7 +35,7 @@ void Arcadia::ImguiWindowPopupFunctor_CreateProject::operator()()
         ImGuiInputTextFlags input_text_flags =
             ImGuiInputTextFlags_AutoSelectAll;
         ImGui::Text("Project name");
-        (void)ImGui::InputText("##project_name", &_Name, input_text_flags);
+        (void) ImGui::InputText("##project_name", &_Name, input_text_flags);
 
         if(ImGui::Button("Project location"))
         {
@@ -198,7 +198,7 @@ void Arcadia::ImguiWindowPopupFunctor_RenameScene::operator()()
         if(_NewName.empty() || _NewName == _PrevName || !_NameAvailable)
         {
             ImGui::BeginDisabled();
-            (void)ImGui::Button("Confirm");
+            (void) ImGui::Button("Confirm");
             ImGui::EndDisabled();
         }
         else
@@ -280,8 +280,7 @@ void Arcadia::ImguiWindowMainMenubar::_ShowFileMenu()
 
 void Arcadia::ImguiWindowMainMenubar::_ShowEditMenu()
 {
-    std::shared_ptr<SceneLayer> scene_layer_sptr = LayerStack::Instance().GetLayerShared<SceneLayer>();
-    std::shared_ptr<ProjectLayer> project_layer_sptr = LayerStack::Instance().GetLayerShared<ProjectLayer>();
+    auto [scene_layer_sptr, project_layer_sptr] = LayerStack::Instance().GetMultipleLayersShared<SceneLayer, ProjectLayer>();
 
     if(project_layer_sptr->HasProject())
     {

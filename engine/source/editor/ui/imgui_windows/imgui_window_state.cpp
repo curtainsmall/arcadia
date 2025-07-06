@@ -103,9 +103,7 @@ void Arcadia::ImguiWindowState::OnUpdate()
         return;
     }
 
-    std::shared_ptr<SceneLayer> scene_layer_sptr = LayerStack::Instance().GetLayerShared<SceneLayer>();
-    std::shared_ptr<RendererLayer> renderer_layer_sptr = LayerStack::Instance().GetLayerShared<RendererLayer>();
-    std::shared_ptr<PhysicsLayer> physcis_layer = LayerStack::Instance().GetLayerShared<PhysicsLayer>();
+    auto [scene_layer_sptr, renderer_layer_sptr, physcis_layer] = LayerStack::Instance().GetMultipleLayersShared<SceneLayer, RendererLayer, PhysicsLayer>();
 
     std::string imgui_window_title = _Title + GetIdString();
 

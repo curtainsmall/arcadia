@@ -53,16 +53,14 @@ void Arcadia::EditorLayer::OnEvent(EventBase& e)
 
 void Arcadia::EditorLayer::_Stop()
 {
-    LayerStack& layer_stack = LayerStack::Instance();
-    std::shared_ptr<WindowLayer> main_window_layer_sptr = layer_stack.GetLayerShared<WindowLayer>();
-    std::shared_ptr<ImguiLayer> main_imgui_layer_sptr = layer_stack.GetLayerShared<ImguiLayer>();
+    auto [window_layer_sptr, imgui_layer_sptr] = LayerStack::Instance().GetMultipleLayersShared<WindowLayer, ImguiLayer>();
 
     RuntimeConfig& runtime_config = RuntimeConfig::Instance();
-    runtime_config.WindowSize = main_window_layer_sptr->GetSize();
-    runtime_config.WindowPosition = main_window_layer_sptr->GetPosition();
-    runtime_config.WindowMaxmized = main_window_layer_sptr->GetSizeState() == WindowSizeState::Maxmized;
+    runtime_config.WindowSize = window_layer_sptr->GetSize();
+    runtime_config.WindowPosition = window_layer_sptr->GetPosition();
+    runtime_config.WindowMaxmized = window_layer_sptr->GetSizeState() == WindowSizeState::Maxmized;
 
-    for(const std::unique_ptr<ImguiWindowInterface>& imgui_window : main_imgui_layer_sptr->GetImguiWindows())
+    for(const std::unique_ptr<ImguiWindowInterface>& imgui_window : imgui_layer_sptr->GetImguiWindows())
     {
         if(imgui_window->Open())
         {

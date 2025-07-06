@@ -191,6 +191,7 @@ void Arcadia::RuntimeLayer::OnEvent(EventBase& event)
 
 void Arcadia::RuntimeLayer::OnUpdate()
 {
+    _DeltaTime = _Timer.Segment();
 }
 
 void Arcadia::RuntimeLayer::Start()
@@ -206,11 +207,6 @@ void Arcadia::RuntimeLayer::Stop()
 auto Arcadia::RuntimeLayer::IsRunning() const -> bool
 {
     return _Running;
-}
-
-void Arcadia::RuntimeLayer::NextLoop()
-{
-    _DeltaTime = _Timer.Segment();
 }
 
 auto Arcadia::RuntimeLayer::GetDeltaTime() const -> std::chrono::nanoseconds

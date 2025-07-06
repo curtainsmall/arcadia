@@ -16,8 +16,7 @@ void Arcadia::ImguiWindowMainToolbar::OnEvent(EventBase& e)
 
 void Arcadia::ImguiWindowMainToolbar::OnUpdate()
 {
-    std::shared_ptr<SceneLayer> scene_layer_sptr = LayerStack::Instance().GetLayerShared<SceneLayer>();
-    std::shared_ptr<EditorLayer> editor_layer_sptr = LayerStack::Instance().GetLayerShared<EditorLayer>();
+    auto [scene_layer_sptr, editor_layer_sptr] = LayerStack::Instance().GetMultipleLayersShared<SceneLayer, EditorLayer>();
 
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, glm::vec2{ 0,0 });
     ImGuiWindowFlags window_flags =

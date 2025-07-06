@@ -18,8 +18,6 @@ namespace Arcadia
         void Start();
         void Stop();
         auto IsRunning() const -> bool;
-        void NextLoop();
-
 
         auto GetDeltaTime() const -> std::chrono::nanoseconds;
 

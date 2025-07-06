@@ -14,52 +14,57 @@ Arcadia::PhysicsComponent::PhysicsComponent(const nlohmann::json& json):
     const nlohmann::json& json_shape_info = json.at("jph_shape_info");
     const std::string& json_shape_info_type_string = json_shape_info.at("type");
 
-    if(json_shape_info_type_string != "none")
+    // If there is no shape, the physics component is not valid.
+    // so we do not need to read other fields.
+    if(json_shape_info_type_string == "none")
     {
-        const nlohmann::json& json_shape_info_info = json_shape_info.at("info");
-        JphShapeInfo shape_info = Match<JphShapeInfo>(
-            json_shape_info_type_string,
-            "box_shape",
-            [&]() -> JphShapeInfo
-            {
-                return JphBoxShapeInfo(
-                    Glm::Vec3_FromJson(json_shape_info_info.at("half_extent")),
-                    json_shape_info_info.at("convex_radius")
-                );
-            },
-            "capsule_shape",
-            [&]() -> JphShapeInfo
-            {
-                return JphCapsuleShapeInfo(
-                    json_shape_info_info.at("radius"),
-                    json_shape_info_info.at("half_height_of_cylinder")
-                );
-            },
-            "cylinder",
-            [&]() -> JphShapeInfo
-            {
-                return JphCylinderShapeInfo(
-                    json_shape_info_info.at("half_height"),
-                    json_shape_info_info.at("radius"),
-                    json_shape_info_info.at("convex_radius")
-                );
-            },
-            "sphere",
-            [&]() -> JphShapeInfo
-            {
-                return JphSphereShapeInfo(
-                    json_shape_info_info.at("radius")
-                );
-            },
-            "none",
-            [&]() -> JphShapeInfo
-            {
-                return JphNoShapeInfo{};
-            }
-        );
-        SetJphShapeInfo(shape_info);
+        SetValid(false);
+        return;
     }
 
+    const nlohmann::json& json_shape_info_info = json_shape_info.at("info");
+    JphShapeInfo shape_info = Match<JphShapeInfo>(
+        json_shape_info_type_string,
+        "box_shape",
+        [&]() -> JphShapeInfo
+        {
+            return JphBoxShapeInfo(
+                Glm::Vec3_FromJson(json_shape_info_info.at("half_extent")),
+                json_shape_info_info.at("convex_radius")
+            );
+        },
+        "capsule_shape",
+        [&]() -> JphShapeInfo
+        {
+            return JphCapsuleShapeInfo(
+                json_shape_info_info.at("radius"),
+                json_shape_info_info.at("half_height_of_cylinder")
+            );
+        },
+        "cylinder",
+        [&]() -> JphShapeInfo
+        {
+            return JphCylinderShapeInfo(
+                json_shape_info_info.at("half_height"),
+                json_shape_info_info.at("radius"),
+                json_shape_info_info.at("convex_radius")
+            );
+        },
+        "sphere",
+        [&]() -> JphShapeInfo
+        {
+            return JphSphereShapeInfo(
+                json_shape_info_info.at("radius")
+            );
+        },
+        "none",
+        [&]() -> JphShapeInfo
+        {
+            ACDA_UNREACHABLE("No shape case should have early returned");
+            return JphNoShapeInfo{};
+        }
+    );
+    SetJphShapeInfo(shape_info);
     SetJphMotionType(json.at("jph_motion_type"));
     SetJphObjectLayer(json.at("jph_object_layer"));
     SetValid(true);

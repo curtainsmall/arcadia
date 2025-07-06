@@ -8,6 +8,7 @@
 #include <typeindex>
 #include <typeinfo>
 #include <vector>
+#include <array>
 
 #include "core/assert.hpp"
 #include "core/event.hpp"
@@ -107,6 +108,12 @@ namespace Arcadia
             return _LookupTable.contains(type_index);
         }
 
+        template<Concepts::Layer ...Layers>
+        auto ContainsMultipleLayers() const -> bool
+        {
+            return (_LookupTable.contains(static_cast<std::type_index>(typeid(Layers))) && ...);
+        }
+
         template<Concepts::Layer Layer>
         auto GetLayerShared() -> std::shared_ptr<Layer>
         {
@@ -117,12 +124,37 @@ namespace Arcadia
             return std::static_pointer_cast<Layer>(_Layers.at(index));
         }
 
+        template<Concepts::Layer ...Layers>
+        auto GetMultipleLayersShared() -> std::tuple<std::shared_ptr<Layers>...>
+        {
+            ACDA_ASSERT(ContainsMultipleLayers<Layers...>());
+
+            std::tuple<std::shared_ptr<Layers>...> result{};
+            _GetMultipleLayersSharedHelper<0, Layers...>(result);
+            return result;
+        }
+
         auto GetSize() -> std::size_t;
 
         auto begin() -> LayerVectorType::const_iterator;
         auto end() -> LayerVectorType::const_iterator;
         auto rbegin() -> LayerVectorType::const_reverse_iterator;
         auto rend() -> LayerVectorType::const_reverse_iterator;
+
+    private:
+        template<std::size_t Index, Concepts::Layer ...Layers>
+        void _GetMultipleLayersSharedHelper(std::tuple<std::shared_ptr<Layers>...>& tuple)
+        {
+            if constexpr(Index < sizeof...(Layers))
+            {
+                using LayerType = std::tuple_element_t<Index, std::tuple<std::shared_ptr<Layers>...>>::element_type;
+                std::type_index type_index = static_cast<std::type_index>(typeid(LayerType));
+                std::size_t index = _LookupTable.at(type_index);
+                std::get<Index>(tuple) = std::static_pointer_cast<LayerType>(_Layers.at(index));
+                _GetMultipleLayersSharedHelper<Index + 1, Layers...>(tuple);
+            }
+            return;
+        }
 
     private:
         LayerVectorType _Layers{};
