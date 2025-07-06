@@ -6,7 +6,7 @@
 #include "resource/fonts/icon.hpp"
 #include "resource/scene_layer.hpp"
 
-#include "editor/editor_context.hpp"
+#include "editor/editor_layer.hpp"
 #include "ui/imgui.hpp"
 #include "ui/ui_events.hpp"
 
@@ -17,6 +17,7 @@ void Arcadia::ImguiWindowMainToolbar::OnEvent(EventBase& e)
 void Arcadia::ImguiWindowMainToolbar::OnUpdate()
 {
     std::shared_ptr<SceneLayer> scene_layer_sptr = LayerStack::Instance().GetLayerShared<SceneLayer>();
+    std::shared_ptr<EditorLayer> editor_layer_sptr = LayerStack::Instance().GetLayerShared<EditorLayer>();
 
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, glm::vec2{ 0,0 });
     ImGuiWindowFlags window_flags =
@@ -75,7 +76,7 @@ void Arcadia::ImguiWindowMainToolbar::OnUpdate()
         if(scene_layer_sptr->HasActiveScene())
         {
             ImGui::SameLine();
-            if(EditorContext::Instance().InPlayMode)
+            if(editor_layer_sptr->GetPlayMode())
             {
                 ImGui::PushStyleColor(ImGuiCol_Text, glm::vec4{ 1.f,0.f,0.f,1.f });
                 ImGui::Text("Press Shift + Esc to stop play mode");

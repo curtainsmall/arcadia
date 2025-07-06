@@ -1,9 +1,9 @@
 #include "imgui_window_viewport.hpp"
 
-#include "core/app/app_context.hpp"
 #include "core/assert.hpp"
 #include "core/command.hpp"
 #include "core/function.hpp"
+#include "core/runtime_layer.hpp"
 #include "function/physics/physics_layer.hpp"
 #include "function/render/renderer_layer.hpp"
 #include "function/window/window_events.hpp"
@@ -44,8 +44,7 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
     std::shared_ptr<SceneLayer> scene_layer_sptr = LayerStack::Instance().GetLayerShared<SceneLayer>();
     std::shared_ptr<PhysicsLayer> physics_layer_sptr = LayerStack::Instance().GetLayerShared<PhysicsLayer>();
     std::shared_ptr<RendererLayer> renderer_layer_sptr = LayerStack::Instance().GetLayerShared<RendererLayer>();
-
-    const AppContext& app_context = AppContext::Instance();
+    std::shared_ptr<RuntimeLayer> runtime_layer = LayerStack::Instance().GetLayerShared<RuntimeLayer>();
 
     std::string imgui_title = _Title + GetIdString();
 
@@ -148,7 +147,7 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
             ImGui::SameLine(ImGui::GetWindowWidth() - gizmo_option_position_offset_to_right);
             const glm::vec2 gizmo_options_cursor_pos = ImGui::GetCursorPos();
             ImGui::Dummy({ 0,0 });
-            float fps = 1.f / std::chrono::duration_cast<std::chrono::duration<float>>(app_context.DeltaTime).count();
+            float fps = 1.f / std::chrono::duration_cast<std::chrono::duration<float>>(runtime_layer->GetDeltaTime()).count();
             ImGui::Text(std::format("FPS: {:.2f}", fps).c_str());
 
             ImGui::SetCursorPos(gizmo_options_cursor_pos);

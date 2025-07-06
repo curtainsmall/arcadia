@@ -2,7 +2,7 @@
 
 #include "window_layer.hpp"
 
-#include "core/app/app_config.hpp"
+#include "core/runtime_config.hpp"
 #include "core/function.hpp"
 #include "core/match.hpp"
 #include "function/input/input_events.hpp"
@@ -16,7 +16,7 @@ Arcadia::WindowLayer::WindowLayer(
     _Title(title),
     _MultisampleCount(multisample_count)
 {
-    const AppConfig& app_config = AppConfig::Instance();
+    const RuntimeConfig& app_config = RuntimeConfig::Instance();
 
     MatchVariant<void>(
         app_config.GraphicApi,
@@ -341,7 +341,7 @@ void Arcadia::WindowLayer::_SetupCallbacks()
 
 void Arcadia::WindowLayer::_SwapBuffers()
 {
-    const AppConfig& app_config = AppConfig::Instance();
+    const RuntimeConfig& app_config = RuntimeConfig::Instance();
 
     MatchVariant<void>(
         app_config.GraphicApi,

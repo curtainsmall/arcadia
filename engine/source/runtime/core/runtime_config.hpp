@@ -11,17 +11,17 @@
 
 namespace Arcadia
 {
-    struct ACDA_API AppConfig
+    struct ACDA_API RuntimeConfig
     {
     public:
-        using SelfType = AppConfig;
+        using SelfType = RuntimeConfig;
     public:
         static auto Instance() -> SelfType&;
     public:
         static inline std::filesystem::path Filepath{ ToFilepath(".acdacfg") };
 
         std::filesystem::path WorkingDirectory{ ACDA_DEFAULT_WORKING_DIR };
-        GraphicApi::Type GraphicApi{};
+        GraphicApi::Type GraphicApi{ GraphicApi::Opengl(Version(4, 6, 0)) };
 
         // Window
         glm::i32vec2 WindowPosition{ -1,-1 }; // Use negative value for `don't care`

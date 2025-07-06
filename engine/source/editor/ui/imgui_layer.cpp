@@ -6,7 +6,7 @@
 #include "function/input/input_events.hpp"
 #include "resource/fonts/icon.hpp"
 
-#include "editor/editor_context.hpp"
+#include "editor/editor_layer.hpp"
 #include "ui/imgui_backend.hpp"
 
 Arcadia::ImguiLayer::ImguiLayer(
@@ -17,10 +17,12 @@ Arcadia::ImguiLayer::ImguiLayer(
     LayerInterface("imgui"),
     _wpWindow(window_layer_sptr)
 {
+    std::shared_ptr<EditorLayer> editor_layer_sptr = LayerStack::Instance().GetLayerShared<EditorLayer>();
+
     _pImguiContext = ImGui::CreateContext();
     ImGui::SetCurrentContext(_pImguiContext);
 
-    ScaleUi(EditorContext::Instance().UiScale);
+    ScaleUi(editor_layer_sptr->GetUiScale());
 
     ImGuiIO& io = _pImguiContext->IO;
     io.ConfigWindowsMoveFromTitleBarOnly = true;
@@ -62,8 +64,10 @@ auto Arcadia::ImguiLayer::GetImguiWindows() const -> const std::vector<std::uniq
 
 void Arcadia::ImguiLayer::OnEvent(EventBase& e)
 {
+    std::shared_ptr<EditorLayer> editor_layer_sptr = LayerStack::Instance().GetLayerShared<EditorLayer>();
+
     // We do not dispatch events to ImGui when the editor is in play mode
-    if(EditorContext::Instance().InPlayMode)
+    if(editor_layer_sptr->GetPlayMode())
     {
         return;
     }

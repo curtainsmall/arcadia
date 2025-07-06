@@ -1,12 +1,13 @@
 #include "imgui_window_main_statusbar.hpp"
 
-#include "core/app/app_config.hpp"
+#include "core/runtime_config.hpp"
 
-#include "editor/editor_context.hpp"
+#include "editor/editor_layer.hpp"
 #include "ui/imgui.hpp"
 
 void Arcadia::ImguiWindowMainStatusbar::OnEvent(EventBase& e)
-{}
+{
+}
 
 void Arcadia::ImguiWindowMainStatusbar::OnUpdate()
 {
@@ -18,8 +19,8 @@ void Arcadia::ImguiWindowMainStatusbar::OnUpdate()
         | ImGuiWindowFlags_NoFocusOnAppearing;
     if(ImGui::BeginViewportSideBar("statusbar", ImGui::GetMainViewport(), ImGuiDir_Down, ImGui::GetFrameHeight(), window_flags))
     {
-        EditorContext& editor_context = EditorContext::Instance();
-        AppConfig& app_config = AppConfig::Instance();
+        std::shared_ptr<EditorLayer> editor_layer_sptr = LayerStack::Instance().GetLayerShared<EditorLayer>();
+        RuntimeConfig& runtime_config = RuntimeConfig::Instance();
 
         static const std::array<std::pair<std::string, float>, 3> scales{
             std::make_pair(std::string("70%"),0.7f),
@@ -32,9 +33,9 @@ void Arcadia::ImguiWindowMainStatusbar::OnUpdate()
                 scales.begin(),
                 scales.end(),
                 [&](const std::pair<std::string, float>& pair) -> bool
-        {
-            return pair.second == editor_context.UiScale;
-        }
+                {
+                    return pair.second == editor_layer_sptr->GetUiScale();
+                }
             )
         );
 
@@ -49,15 +50,15 @@ void Arcadia::ImguiWindowMainStatusbar::OnUpdate()
                 new_idx++;
                 if(ImGui::MenuItem(string.c_str()))
                 {
-                    editor_context.UiScale = factor;
+                    editor_layer_sptr->SetUiScale(factor);
                     scale_idx = new_idx;
                 }
             }
 
-            if(app_config.UiScale != editor_context.UiScale)
+            if(runtime_config.UiScale != editor_layer_sptr->GetUiScale())
             {
-                app_config.UiScale = editor_context.UiScale;
-                EventQueue::Instance().Signal<Events::ScaleImguiWindow>(editor_context.UiScale);
+                runtime_config.UiScale = editor_layer_sptr->GetUiScale();
+                EventQueue::Instance().Signal<Events::ScaleImguiWindow>(editor_layer_sptr->GetUiScale());
             }
 
             ImGui::EndCombo();

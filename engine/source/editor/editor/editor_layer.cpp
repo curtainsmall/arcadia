@@ -2,15 +2,13 @@
 
 #include <memory>
 
-#include "core/app/app_config.hpp"
-#include "core/app/app_context.hpp"
+#include "core/runtime_config.hpp"
 #include "core/enum.hpp"
 #include "core/event.hpp"
 #include "core/function.hpp"
 #include "core/layer.hpp"
-#include "core/main.hpp"
+#include "core/runtime_layer.hpp"
 
-#include "editor/editor_context.hpp"
 #include "ui/imgui_windows/imgui_window_main_manubar.hpp"
 #include "ui/imgui_windows/imgui_window_main_statusbar.hpp"
 #include "ui/imgui_windows/imgui_window_main_toolbar.hpp"
@@ -19,68 +17,31 @@
 #include "ui/imgui_windows/imgui_window_state.hpp"
 #include "ui/imgui_windows/imgui_window_viewport.hpp"
 
-Arcadia::EditorAppLayer::EditorAppLayer()
-{
-    LayerStack& layer_stack = LayerStack::Instance();
-    AppConfig& app_config = AppConfig::Instance();
-    AppContext& app_context = AppContext::Instance();
-    EditorContext& editor_context = EditorContext::Instance();
-
-    editor_context.UiScale = app_config.UiScale;
-
-    // DO NOT CHANGE THE ORDER OF PUSHING LAYERS
-    // OnEvent call goes bottom to top
-    // OnUpdate call goes top to bottom
-
-    // Project layer
-    {
-        layer_stack.PushLayer<ProjectLayer>();
-    }
-
-    // Window layer
-    {
-        layer_stack.PushLayer<WindowLayer>(
-            app_config.WindowSize,
-            app_config.WindowTitle,
-            app_config.WindowMultisampleCount
-        );
-    }
-
-    // Physics layer
-    {
-        layer_stack.PushLayer<PhysicsLayer>();
-    }
-
-    // Scene layer
-    {
-        layer_stack.PushLayer<SceneLayer>();
-    }
-
-    // Renderer layer
-    {
-        layer_stack.PushLayer<RendererLayer>(
-            app_config.GraphicApi,
-            app_config.WorkingDirectory
-        );
-    }
-
-    // Editor ImGui layer
-    {
-        layer_stack.PushLayer<ImguiLayer>(
-            layer_stack.GetLayerShared<WindowLayer>(),
-            ACDA_BIND_MEMBER_FN(_InstallImguiWindow),
-            ImguiStyle::SetToDark
-        );
-    }
-
-    app_context.Running = true;
-}
-
-void Arcadia::EditorAppLayer::OnUpdate()
+void Arcadia::EditorLayer::OnUpdate()
 {
 }
 
-void Arcadia::EditorAppLayer::OnEvent(EventBase& e)
+void Arcadia::EditorLayer::SetPlayMode(bool play_mode)
+{
+    _PlayMode = play_mode;
+}
+
+auto Arcadia::EditorLayer::GetPlayMode() const -> bool
+{
+    return _PlayMode;
+}
+
+void Arcadia::EditorLayer::SetUiScale(float ui_scale)
+{
+    _UiScale = ui_scale;
+}
+
+auto Arcadia::EditorLayer::GetUiScale() const -> float
+{
+    return _UiScale;
+}
+
+void Arcadia::EditorLayer::OnEvent(EventBase& e)
 {
     EventDispatcher{ e }
         .Dispatch<Events::WindowShouldClose>(ACDA_BIND_MEMBER_FN(_OnWindowShouldClose))
@@ -90,51 +51,29 @@ void Arcadia::EditorAppLayer::OnEvent(EventBase& e)
         .IsDispatched();
 }
 
-void Arcadia::EditorAppLayer::_InstallImguiWindow(ImguiLayer& imgui_layer)
-{
-    const AppConfig& app_config = AppConfig::Instance();
-    const std::set<std::string>& id_strings = app_config.ImguiOpenedWindowIdStrings;
-
-    std::initializer_list<std::tuple<std::string, std::string>> imgui_window_ids{
-        std::make_tuple(std::string("Outliner"),ImguiWindowOutliner::GetIdStringStatic()),
-        std::make_tuple(std::string("Viewport"),ImguiWindowViewport::GetIdStringStatic()),
-        std::make_tuple(std::string("Property"),ImguiWindowProperty::GetIdStringStatic()),
-        std::make_tuple(std::string("State"),ImguiWindowState::GetIdStringStatic())
-    };
-    imgui_layer
-        .EmplaceImguiWindow<ImguiWindowMainMenubar>(imgui_window_ids)
-        .EmplaceImguiWindow<ImguiWindowMainToolbar>()
-        .EmplaceImguiWindow<ImguiWindowMainStatusbar>()
-        .EmplaceImguiWindow<ImguiWindowOutliner>(id_strings.contains(ImguiWindowOutliner::GetIdStringStatic()), "Outliner")
-        .EmplaceImguiWindow<ImguiWindowViewport>(id_strings.contains(ImguiWindowViewport::GetIdStringStatic()), "Viewport")
-        .EmplaceImguiWindow<ImguiWindowProperty>(id_strings.contains(ImguiWindowProperty::GetIdStringStatic()), "Property")
-        .EmplaceImguiWindow<ImguiWindowState>(id_strings.contains(ImguiWindowState::GetIdStringStatic()), "State");
-}
-
-void Arcadia::EditorAppLayer::_Stop()
+void Arcadia::EditorLayer::_Stop()
 {
     LayerStack& layer_stack = LayerStack::Instance();
     std::shared_ptr<WindowLayer> main_window_layer_sptr = layer_stack.GetLayerShared<WindowLayer>();
     std::shared_ptr<ImguiLayer> main_imgui_layer_sptr = layer_stack.GetLayerShared<ImguiLayer>();
 
-    AppConfig& app_config = AppConfig::Instance();
-    app_config.WindowSize = main_window_layer_sptr->GetSize();
-    app_config.WindowPosition = main_window_layer_sptr->GetPosition();
-    app_config.WindowMaxmized = main_window_layer_sptr->GetSizeState() == WindowSizeState::Maxmized;
+    RuntimeConfig& runtime_config = RuntimeConfig::Instance();
+    runtime_config.WindowSize = main_window_layer_sptr->GetSize();
+    runtime_config.WindowPosition = main_window_layer_sptr->GetPosition();
+    runtime_config.WindowMaxmized = main_window_layer_sptr->GetSizeState() == WindowSizeState::Maxmized;
 
     for(const std::unique_ptr<ImguiWindowInterface>& imgui_window : main_imgui_layer_sptr->GetImguiWindows())
     {
         if(imgui_window->Open())
         {
-            app_config.ImguiOpenedWindowIdStrings.emplace(imgui_window->GetIdString());
+            runtime_config.ImguiOpenedWindowIdStrings.emplace(imgui_window->GetIdString());
         }
     }
 
-    AppContext& app_context = AppContext::Instance();
-    app_context.Running = false;
+    LayerStack::Instance().GetLayerShared<RuntimeLayer>()->Stop();
 }
 
-void Arcadia::EditorAppLayer::_OnWindowShouldClose(Events::WindowShouldClose& e)
+void Arcadia::EditorLayer::_OnWindowShouldClose(Events::WindowShouldClose& e)
 {
     LayerStack& layer_stack = LayerStack::Instance();
     std::shared_ptr<WindowLayer> main_window_layer_sptr = layer_stack.GetLayerShared<WindowLayer>();
@@ -150,7 +89,7 @@ void Arcadia::EditorAppLayer::_OnWindowShouldClose(Events::WindowShouldClose& e)
     }
 }
 
-void Arcadia::EditorAppLayer::_OnProjectUnbuilt(Events::ProjectUnbuilt& e)
+void Arcadia::EditorLayer::_OnProjectUnbuilt(Events::ProjectUnbuilt& e)
 {
     if(_WaitingForProjectUnbuiltBeforeClosing)
     {
@@ -158,26 +97,21 @@ void Arcadia::EditorAppLayer::_OnProjectUnbuilt(Events::ProjectUnbuilt& e)
     }
 }
 
-void Arcadia::EditorAppLayer::_OnWindowCloseCanceled(Events::WindowCloseCanceled& e)
+void Arcadia::EditorLayer::_OnWindowCloseCanceled(Events::WindowCloseCanceled& e)
 {
     _WaitingForProjectUnbuiltBeforeClosing = false;
 }
 
-void Arcadia::EditorAppLayer::_OnTogglePlayMode(Events::TogglePlayMode& e)
+void Arcadia::EditorLayer::_OnTogglePlayMode(Events::TogglePlayMode& e)
 {
-    EditorContext& editor_context = EditorContext::Instance();
-    editor_context.InPlayMode = !editor_context.InPlayMode;
+    std::shared_ptr<EditorLayer> editor_layer_sptr = LayerStack::Instance().GetLayerShared<EditorLayer>();
+    editor_layer_sptr->SetPlayMode(!editor_layer_sptr->GetPlayMode());
 }
 
-void Arcadia::EditorAppLayer::_OnInputKey(Events::InputKey& e)
+void Arcadia::EditorLayer::_OnInputKey(Events::InputKey& e)
 {
     if(e.KeyCode == InputKey::Escape && !!(e.Modifier & InputModifier::Shift))
     {
-        EditorContext::Instance().InPlayMode = false;
+        LayerStack::Instance().GetLayerShared<EditorLayer>()->SetPlayMode(false);
     }
-}
-
-auto Arcadia::CreateApplicationUnique() -> std::unique_ptr<AppLayerInterface>
-{
-    return std::make_unique<EditorAppLayer>();
 }

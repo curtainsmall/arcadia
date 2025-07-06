@@ -1,6 +1,6 @@
 #include "project_layer.hpp"
 
-#include "core/app/app_config.hpp"
+#include "core/runtime_config.hpp"
 #include "core/assert.hpp"
 #include "core/command.hpp"
 #include "core/enum.hpp"

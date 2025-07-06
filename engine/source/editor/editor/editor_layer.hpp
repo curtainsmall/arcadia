@@ -2,7 +2,6 @@
 
 #include <memory>
 
-#include "core/app/app_layer.hpp"
 #include "function/input/input_events.hpp"
 #include "function/window/window_events.hpp"
 #include "function/window/window_layer.hpp"
@@ -13,16 +12,22 @@
 
 namespace Arcadia
 {
-    struct EditorAppLayer: public AppLayerInterface
+    struct EditorLayer: public LayerInterface
     {
     public:
-        EditorAppLayer();
-        virtual ~EditorAppLayer() = default;
+        EditorLayer() = default;
+        virtual ~EditorLayer() = default;
 
         virtual void OnEvent(EventBase& e) override;
         virtual void OnUpdate() override;
+
+        void SetPlayMode(bool play_mode);
+        auto GetPlayMode() const -> bool;
+
+        void SetUiScale(float ui_scale);
+        auto GetUiScale() const -> float;
+
     private:
-        void _InstallImguiWindow(ImguiLayer& imgui_layer);
         void _Stop();
 
         void _OnWindowShouldClose(Events::WindowShouldClose& e);
@@ -32,8 +37,9 @@ namespace Arcadia
         void _OnInputKey(Events::InputKey& e);
 
     private:
+        bool _PlayMode{ false };
+        float _UiScale{ -1.0f };
+
         bool _WaitingForProjectUnbuiltBeforeClosing{ false };
     };
-
-     auto CreateApplicationUnique() -> std::unique_ptr<AppLayerInterface>;
 }

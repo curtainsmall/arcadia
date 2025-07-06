@@ -1,19 +1,17 @@
-
-
 #include "imgui_backend.hpp"
 
 #include "imgui/backends/imgui_impl_glfw.h"
 #include "imgui/backends/imgui_impl_opengl3.h"
 
-#include "core/app/app_config.hpp"
+#include "core/runtime_config.hpp"
 #include "core/match.hpp"
 
 void Arcadia::ImguiBackend::Initialize(const std::shared_ptr<WindowLayer>& window_sptr)
 {
-    const AppConfig& app_config = AppConfig::Instance();
+    const RuntimeConfig& runtime_config = RuntimeConfig::Instance();
 
     MatchVariant<void>(
-        app_config.GraphicApi,
+        runtime_config.GraphicApi,
         [&](const GraphicApi::Opengl& opengl) -> void
         {
             std::string glsl_version{};
@@ -43,10 +41,10 @@ void Arcadia::ImguiBackend::Initialize(const std::shared_ptr<WindowLayer>& windo
 
 void Arcadia::ImguiBackend::NewFrame(const std::shared_ptr<WindowLayer>& window_sptr)
 {
-    const AppConfig& app_config = AppConfig::Instance();
+    const RuntimeConfig& runtime_config = RuntimeConfig::Instance();
 
     MatchVariant<void>(
-        app_config.GraphicApi,
+        runtime_config.GraphicApi,
         [](const GraphicApi::Opengl&) -> void
         {
             ImGui_ImplGlfw_NewFrame();
@@ -60,10 +58,10 @@ void Arcadia::ImguiBackend::NewFrame(const std::shared_ptr<WindowLayer>& window_
 
 void Arcadia::ImguiBackend::RenderDrawData(const std::shared_ptr<WindowLayer>& window_sptr)
 {
-    const AppConfig& app_config = AppConfig::Instance();
+    const RuntimeConfig& runtime_config = RuntimeConfig::Instance();
 
     MatchVariant<void>(
-        app_config.GraphicApi,
+        runtime_config.GraphicApi,
         [](const GraphicApi::Opengl&) -> void
         {
             ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -76,10 +74,10 @@ void Arcadia::ImguiBackend::RenderDrawData(const std::shared_ptr<WindowLayer>& w
 
 void Arcadia::ImguiBackend::Shutdown(const std::shared_ptr<WindowLayer>& window_sptr)
 {
-    const AppConfig& app_config = AppConfig::Instance();
+    const RuntimeConfig& runtime_config = RuntimeConfig::Instance();
 
     MatchVariant<void>(
-        app_config.GraphicApi,
+        runtime_config.GraphicApi,
         [](const GraphicApi::Opengl&) -> void
         {
             ImGui_ImplOpenGL3_Shutdown();

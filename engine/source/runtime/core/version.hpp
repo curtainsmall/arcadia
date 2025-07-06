@@ -10,7 +10,7 @@ namespace Arcadia
     struct ACDA_API Version
     {
     public:
-        using NumType = int;
+        using NumType = std::int32_t;
         using SelfType = Version;
     public:
         Version() = default;
@@ -18,9 +18,10 @@ namespace Arcadia
             Major(major),
             Minor(minor),
             Patch(patch)
-        {}
+        {
+        }
         Version(const nlohmann::json& json);
-        auto ToJson() const->nlohmann::json;
+        auto ToJson() const -> nlohmann::json;
 
         auto operator<=>(const SelfType& rhs) const = default;
 
