@@ -1,7 +1,7 @@
 set(TEST_ROOT_DIR "${ROOT_DIR}/test")
 set(GTEST_DIR "${TEST_ROOT_DIR}/googletest")
 set(TEST_SOURCE_DIR "${TEST_ROOT_DIR}/source")
-set(TEST_NAME arcadia-test)
+set(TEST_NAME arcadia_test)
 
 set(test_folder "test")
 
@@ -18,7 +18,7 @@ if(NOT TARGET gtest)
       CACHE BOOL "" FORCE)
   option(INSTALL_GTEST "" OFF)
   add_subdirectory(googletest)
-  set_target_properties(gtest PROPERTIES FOLDER "${test_folder}/googletest")
+  set_target_properties(gtest PROPERTIES FOLDER "${test_folder}")
 endif()
 
 source_group(TREE "${TEST_SOURCE_DIR}" FILES ${test_header_files}
@@ -28,7 +28,7 @@ add_executable(${TEST_NAME} ${test_header_files} ${test_source_files})
 set_target_properties(
   ${TEST_NAME}
   PROPERTIES OUTPUT_NAME "ArcadiaEngineTest"
-             FOLDER "${test_folder}/source"
+             FOLDER "${test_folder}"
              VS_DEBUGGER_WORKING_DIRECTORY "$<TARGET_FILE_DIR:${TEST_NAME}>")
 target_include_directories(${TEST_NAME} PRIVATE "${TEST_SOURCE_DIR}")
 target_link_libraries(${TEST_NAME} PRIVATE GTest::gtest_main)
