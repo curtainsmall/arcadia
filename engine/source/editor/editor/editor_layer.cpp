@@ -68,7 +68,7 @@ void Arcadia::EditorLayer::_Stop()
         }
     }
 
-    LayerStack::Instance().GetLayerShared<RuntimeLayer>()->Stop();
+    EventQueue::Instance().Signal<Events::RuntimeStop>();
 }
 
 void Arcadia::EditorLayer::_OnWindowShouldClose(Events::WindowShouldClose& e)

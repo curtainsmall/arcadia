@@ -2,6 +2,7 @@
 #include "core/layer.hpp"
 #include "core/function.hpp"
 #include "core/runtime_config.hpp"
+#include "core/event.hpp"
 
 #include "editor/editor_layer.hpp"
 #include "project/project_layer.hpp"
@@ -52,5 +53,5 @@ void Arcadia::ApplicationStartup()
         ImguiStyle::SetToDark
     );
 
-    LayerStack::Instance().GetLayerShared<RuntimeLayer>()->Start();
+    EventQueue::Instance().Signal<Events::RuntimeStart>();
 }

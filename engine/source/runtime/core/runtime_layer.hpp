@@ -2,6 +2,7 @@
 
 #include "core/layer.hpp"
 #include "core/time.hpp"
+#include "core/runtime_events.hpp"
 #include "platform/defines.hpp"
 
 namespace Arcadia
@@ -15,11 +16,12 @@ namespace Arcadia
         virtual void OnEvent(EventBase& event) override;
         virtual void OnUpdate() override;
 
-        void Start();
-        void Stop();
         auto IsRunning() const -> bool;
-
         auto GetDeltaTime() const -> std::chrono::nanoseconds;
+
+    private:
+        void _OnRuntimeStart(Events::RuntimeStart& e);
+        void _OnRuntimeStop(Events::RuntimeStop& e);
 
     private:
         bool _Running{ false };

@@ -30,7 +30,8 @@ ACDA_MAIN_FN_DECL
 
     // Main loop
     std::shared_ptr<Arcadia::RuntimeLayer> runtime_layer_sptr = Arcadia::LayerStack::Instance().GetLayerShared<Arcadia::RuntimeLayer>();
-    while(runtime_layer_sptr->IsRunning())
+    // To make sure all layers will be updated at least once and process events signaled in constructors and startup functions
+    do
     {
         // Process event
         Arcadia::EventQueue& event_queue = Arcadia::EventQueue::Instance();
@@ -58,7 +59,8 @@ ACDA_MAIN_FN_DECL
         {
             layer_sptr->OnUpdate();
         }
-    }
+
+    } while(runtime_layer_sptr->IsRunning());
 
     // Clear layer_stack
     layer_stack.PopAllLayers();

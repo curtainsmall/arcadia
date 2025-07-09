@@ -2,6 +2,7 @@
 
 #include "core/runtime_config.hpp"
 #include "core/match.hpp"
+#include "core/function.hpp"
 #include "function/window/window_layer.hpp"
 #include "function/physics/physics_layer.hpp"
 #include "function/render/renderer_layer.hpp"
@@ -187,21 +188,15 @@ Arcadia::RuntimeLayer::~RuntimeLayer()
 
 void Arcadia::RuntimeLayer::OnEvent(EventBase& event)
 {
+    EventDispatcher(event)
+        .Dispatch<Events::RuntimeStart>(ACDA_BIND_MEMBER_FN(_OnRuntimeStart))
+        .Dispatch<Events::RuntimeStop>(ACDA_BIND_MEMBER_FN(_OnRuntimeStop))
+        .IsDispatched();
 }
 
 void Arcadia::RuntimeLayer::OnUpdate()
 {
     _DeltaTime = _Timer.Segment();
-}
-
-void Arcadia::RuntimeLayer::Start()
-{
-    _Running = true;
-}
-
-void Arcadia::RuntimeLayer::Stop()
-{
-    _Running = false;
 }
 
 auto Arcadia::RuntimeLayer::IsRunning() const -> bool
@@ -212,4 +207,14 @@ auto Arcadia::RuntimeLayer::IsRunning() const -> bool
 auto Arcadia::RuntimeLayer::GetDeltaTime() const -> std::chrono::nanoseconds
 {
     return _DeltaTime;
+}
+
+void Arcadia::RuntimeLayer::_OnRuntimeStart(Events::RuntimeStart& e)
+{
+    _Running = true;
+}
+
+void Arcadia::RuntimeLayer::_OnRuntimeStop(Events::RuntimeStop& e)
+{
+    _Running = false;
 }
