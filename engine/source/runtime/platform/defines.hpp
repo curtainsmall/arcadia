@@ -1,20 +1,16 @@
 #pragma once
 
 // Import/Export
-#ifdef _WIN32
-#   include<Windows.h>
-#   ifdef ACDA_DYNAMIC_RUNTIME_LIB
-#       ifdef ACDA_EXPORT
-#           define ACDA_API __declspec(dllexport)
-#       else
-#           define ACDA_API __declspec(dllimport)
-#       endif // ACDA_EXPORT
-#   else
-#       define ACDA_API
-#   endif // ACDA_DYNAMIC_RUNTIME_LIB
+#include<Windows.h>
+#ifdef ACDA_RUNTIME_EXPORT
+#    ifdef ACDA_RUNTIME
+#        define ACDA_API __declspec(dllexport)
+#    else
+#        define ACDA_API __declspec(dllimport)
+#    endif // ACDA_RUNTIME
 #else
-#   error Arcadia Engine does not support your operating system
-#endif // _WIN32
+#    define ACDA_API
+#endif // ACDA_RUNTIME_EXPORT
 
 // Debug mode
 #define ACDA_DEBUG 1

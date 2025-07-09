@@ -24,4 +24,5 @@ add_subdirectory(source/runtime)
 add_subdirectory(source/editor)
 
 
-
+enable_testing()
+add_subdirectory(test)

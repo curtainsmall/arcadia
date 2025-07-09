@@ -4,20 +4,22 @@ file(GLOB_RECURSE editor_source_files CONFIGURE_DEPENDS "*.cpp")
 source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" FILES ${editor_header_files}
                                                       ${editor_source_files})
 
-add_executable(${EDITOR_NAME} "${editor_header_files}"
-                                  "${editor_source_files}")
+add_executable(${EDITOR_NAME} "${editor_header_files}" "${editor_source_files}")
+
+add_compile_definitions(ACDA_EDITOR_EXPORT ACDA_EDITOR)
 
 set_target_properties(
   ${EDITOR_NAME}
   PROPERTIES # Set output name
-  OUTPUT_NAME "ArcadiaEngine"
+             OUTPUT_NAME "ArcadiaEngine"
              # Set folder in solution view
              FOLDER "engine"
              # Use WinMain in release
              WIN32_EXECUTABLE $<CONFIG:Release>
              # Set debugger working directory to target file directory
-             VS_DEBUGGER_WORKING_DIRECTORY
-             "$<TARGET_FILE_DIR:${EDITOR_NAME}>")
+             VS_DEBUGGER_WORKING_DIRECTORY "$<TARGET_FILE_DIR:${EDITOR_NAME}>"
+             # Export symbols of the editor so it may be tested
+             ENABLE_EXPORTS ON)
 
 # target_compile_features(${EDITOR_NAME} PUBLIC
 # "$<$<COMPILE_LANG_AND_ID:CXX,MSVC>:/WX->")
@@ -37,7 +39,7 @@ set(POST_BUILD_COMMANDS
     "$<TARGET_FILE_DIR:${EDITOR_NAME}>/fonts"
     # Copy dlls
     COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${EDITOR_NAME}>
-    $<TARGET_RUNTIME_DLLS:${EDITOR_NAME}>
-    $<TARGET_FILE_DIR:${EDITOR_NAME}> COMMAND_EXPAND_LISTS)
+    $<TARGET_RUNTIME_DLLS:${EDITOR_NAME}> $<TARGET_FILE_DIR:${EDITOR_NAME}>
+    COMMAND_EXPAND_LISTS)
 
 add_custom_command(TARGET ${EDITOR_NAME} ${POST_BUILD_COMMANDS})

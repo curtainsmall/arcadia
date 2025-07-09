@@ -1,6 +1,5 @@
-set(TEST_ROOT_DIR "${ROOT_DIR}/test")
-set(GTEST_DIR "${TEST_ROOT_DIR}/googletest")
-set(TEST_SOURCE_DIR "${TEST_ROOT_DIR}/source")
+set(GTEST_DIR "${TEST_DIR}/googletest")
+set(TEST_SOURCE_DIR "${TEST_DIR}/source")
 set(TEST_NAME arcadia_test)
 
 set(test_folder "test")

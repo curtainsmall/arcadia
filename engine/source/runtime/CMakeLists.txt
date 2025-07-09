@@ -5,9 +5,9 @@ file(GLOB_RECURSE runtime_source_files CONFIGURE_DEPENDS "*.cpp")
 source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" FILES ${runtime_header_files}
                                                       ${runtime_source_files})
 add_library(${RUNTIME_NAME} SHARED ${runtime_source_files}
-                                       ${runtime_header_files})
+                                   ${runtime_header_files})
 
-add_compile_definitions(ACDA_DYNAMIC_RUNTIME_LIB ACDA_EXPORT)
+add_compile_definitions(ACDA_RUNTIME_EXPORT ACDA_RUNTIME)
 
 set_target_properties(${RUNTIME_NAME} PROPERTIES FOLDER "engine")
 

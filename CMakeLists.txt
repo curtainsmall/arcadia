@@ -21,6 +21,4 @@ set(BINARY_ROOT_DIR "${CMAKE_INSTALL_PREFIX}")
 
 add_subdirectory(engine)
 
-enable_testing()
 
-add_subdirectory(test)
