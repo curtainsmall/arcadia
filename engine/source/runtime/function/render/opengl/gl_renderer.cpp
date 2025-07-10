@@ -1,5 +1,3 @@
-
-
 #include "gl_renderer.hpp"
 
 #include <vector>

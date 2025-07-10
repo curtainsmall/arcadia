@@ -25,9 +25,7 @@ namespace Arcadia
     struct ACDA_API GlPipeline: public Noncopyable
     {
     public:
-
         using GlShadersBuilderType = std::function<void(const std::filesystem::path&, std::vector<GlShader>&)>;
-
         using SelfType = GlPipeline;
     public:
         GlPipeline(
@@ -81,96 +79,96 @@ namespace Arcadia
     static inline auto GenerateModelShadersBuilder() -> GlPipeline::GlShadersBuilderType
     {
         return [](const std::filesystem::path& gl_shader_folder_path, std::vector<GlShader>& gl_shaders) -> void
-        {
-            auto
-                gl_vertex_shader_path = gl_shader_folder_path / "model.vert",
-                gl_fragment_shader_path = gl_shader_folder_path / "model.frag";
+            {
+                auto
+                    gl_vertex_shader_path = gl_shader_folder_path / "model.vert",
+                    gl_fragment_shader_path = gl_shader_folder_path / "model.frag";
 
-            auto
-                gl_vertex_shader_source = LoadText(gl_vertex_shader_path),
-                gl_fragment_shader_source = LoadText(gl_fragment_shader_path);
+                auto
+                    gl_vertex_shader_source = LoadText(gl_vertex_shader_path),
+                    gl_fragment_shader_source = LoadText(gl_fragment_shader_path);
 
-            gl_shaders.emplace_back(
-                gl_vertex_shader_source,
-                GlShaderType::VertexShader
-            );
+                gl_shaders.emplace_back(
+                    gl_vertex_shader_source,
+                    GlShaderType::VertexShader
+                );
 
-            gl_shaders.emplace_back(
-                gl_fragment_shader_source,
-                GlShaderType::FragementShader
-            );
-        };
+                gl_shaders.emplace_back(
+                    gl_fragment_shader_source,
+                    GlShaderType::FragementShader
+                );
+            };
     }
 
     static inline auto GenerateSkyboxShadersBuilder() -> GlPipeline::GlShadersBuilderType
     {
         return [](const std::filesystem::path& gl_shader_folder_path, std::vector<GlShader>& gl_shaders) -> void
-        {
-            auto
-                gl_vertex_shader_path = gl_shader_folder_path / "skybox.vert",
-                gl_fragment_shader_path = gl_shader_folder_path / "skybox.frag";
+            {
+                auto
+                    gl_vertex_shader_path = gl_shader_folder_path / "skybox.vert",
+                    gl_fragment_shader_path = gl_shader_folder_path / "skybox.frag";
 
-            auto
-                gl_vertex_shader_source = LoadText(gl_vertex_shader_path),
-                gl_fragment_shader_source = LoadText(gl_fragment_shader_path);
+                auto
+                    gl_vertex_shader_source = LoadText(gl_vertex_shader_path),
+                    gl_fragment_shader_source = LoadText(gl_fragment_shader_path);
 
-            gl_shaders.emplace_back(
-                gl_vertex_shader_source,
-                GlShaderType::VertexShader
-            );
+                gl_shaders.emplace_back(
+                    gl_vertex_shader_source,
+                    GlShaderType::VertexShader
+                );
 
-            gl_shaders.emplace_back(
-                gl_fragment_shader_source,
-                GlShaderType::FragementShader
-            );
-        };
+                gl_shaders.emplace_back(
+                    gl_fragment_shader_source,
+                    GlShaderType::FragementShader
+                );
+            };
     }
 
     static inline auto GenerateGridShadersBuilder() -> GlPipeline::GlShadersBuilderType
     {
         return [](const std::filesystem::path& gl_shader_folder_path, std::vector<GlShader>& gl_shaders) -> void
-        {
-            auto
-                gl_vertex_shader_path = gl_shader_folder_path / "grid.vert",
-                gl_fragment_shader_path = gl_shader_folder_path / "grid.frag";
+            {
+                auto
+                    gl_vertex_shader_path = gl_shader_folder_path / "grid.vert",
+                    gl_fragment_shader_path = gl_shader_folder_path / "grid.frag";
 
-            auto
-                gl_vertex_shader_source = LoadText(gl_vertex_shader_path),
-                gl_fragment_shader_source = LoadText(gl_fragment_shader_path);
+                auto
+                    gl_vertex_shader_source = LoadText(gl_vertex_shader_path),
+                    gl_fragment_shader_source = LoadText(gl_fragment_shader_path);
 
-            gl_shaders.emplace_back(
-                gl_vertex_shader_source,
-                GlShaderType::VertexShader
-            );
+                gl_shaders.emplace_back(
+                    gl_vertex_shader_source,
+                    GlShaderType::VertexShader
+                );
 
-            gl_shaders.emplace_back(
-                gl_fragment_shader_source,
-                GlShaderType::FragementShader
-            );
-        };
+                gl_shaders.emplace_back(
+                    gl_fragment_shader_source,
+                    GlShaderType::FragementShader
+                );
+            };
     }
 
     static inline auto GenerateShapeShadersBuilder() -> GlPipeline::GlShadersBuilderType
     {
         return [](const std::filesystem::path& gl_shader_folder_path, std::vector<GlShader>& gl_shaders) -> void
-        {
-            auto
-                gl_vertex_shader_path = gl_shader_folder_path / "shape.vert",
-                gl_fragment_shader_path = gl_shader_folder_path / "shape.frag";
+            {
+                auto
+                    gl_vertex_shader_path = gl_shader_folder_path / "shape.vert",
+                    gl_fragment_shader_path = gl_shader_folder_path / "shape.frag";
 
-            auto
-                gl_vertex_shader_source = LoadText(gl_vertex_shader_path),
-                gl_fragment_shader_source = LoadText(gl_fragment_shader_path);
+                auto
+                    gl_vertex_shader_source = LoadText(gl_vertex_shader_path),
+                    gl_fragment_shader_source = LoadText(gl_fragment_shader_path);
 
-            gl_shaders.emplace_back(
-                gl_vertex_shader_source,
-                GlShaderType::VertexShader
-            );
+                gl_shaders.emplace_back(
+                    gl_vertex_shader_source,
+                    GlShaderType::VertexShader
+                );
 
-            gl_shaders.emplace_back(
-                gl_fragment_shader_source,
-                GlShaderType::FragementShader
-            );
-        };
+                gl_shaders.emplace_back(
+                    gl_fragment_shader_source,
+                    GlShaderType::FragementShader
+                );
+            };
     }
 }

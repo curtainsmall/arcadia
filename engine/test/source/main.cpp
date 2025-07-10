@@ -1,7 +1,9 @@
 #include "gtest/gtest.h"
 
-TEST(HelloTest, BasicAssertions)
+#include "core/main.hpp"
+#include "editor/editor_setup.hpp"
+
+TEST(ArcadiaEditor, Overall)
 {
-    EXPECT_STRNE("hellp", "world");
-    EXPECT_EQ(6 * 7, 42);
+    EXPECT_EQ(Arcadia::Main(Arcadia::EditorSetup), 0);
 }

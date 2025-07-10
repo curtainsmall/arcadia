@@ -5,15 +5,15 @@
 #include "core/event.hpp"
 #include "core/layer.hpp"
 
-auto Arcadia::Main(const std::function<void()>& application_setup_funcion) -> int
+auto Arcadia::Main(const std::function<void()>& setup_funcion) -> int
 {
     // Add runtime_layer
     LayerStack& layer_stack = LayerStack::Instance();
     layer_stack.PushLayer<RuntimeLayer>();
 
-    if(application_setup_funcion)
+    if(setup_funcion)
     {
-        application_setup_funcion();
+        setup_funcion();
     }
 
     // Main loop

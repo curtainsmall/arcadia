@@ -27,7 +27,6 @@ namespace Arcadia
     struct ACDA_API GlShader: public Noncopyable
     {
     public:
-
         using SelfType = GlShader;
     public:
         GlShader(

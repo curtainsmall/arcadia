@@ -1,5 +1,3 @@
-
-
 #include "opengl.hpp"
 
 #include "core/log.hpp"

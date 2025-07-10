@@ -34,26 +34,9 @@ target_link_libraries(
          nlohmann_json
          portable_file_dialogs)
 
-set(RUNTIME_DEPENDENCY_INCLUDES
-    "${ENGINE_ROOT_DIR}/source/runtime"
-    "${DEPENDENCY_DIR}"
-    "${DEPENDENCY_DIR}/assimp/include"
-    "${DEPENDENCY_DIR}/boost"
-    "${DEPENDENCY_DIR}/entt/src"
-    # "${DEPENDENCY_DIR}/glew/include"
-    "${DEPENDENCY_DIR}/glfw/include"
-    "${DEPENDENCY_DIR}/glm/"
-    "${DEPENDENCY_DIR}/imgui"
-    "${DEPENDENCY_DIR}/imguizmo"
-    "${DEPENDENCY_DIR}/jolt_physics"
-    "${DEPENDENCY_DIR}/nlohmann_json/include"
-    "${DEPENDENCY_DIR}/portable-file-dialogs"
-    "${DEPENDENCY_DIR}/spdlog/include"
-    "${DEPENDENCY_DIR}/stb")
 
 target_include_directories(
   ${RUNTIME_NAME}
-  # PUBLIC $<BUILD_INTERFACE:${RUNTIME_DEPENDENCY_INCLUDES}>
   PUBLIC "${RUNTIME_DIR}"
   PUBLIC "${DEPENDENCY_DIR}")
 

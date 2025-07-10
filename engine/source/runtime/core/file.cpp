@@ -23,6 +23,10 @@ ACDA_API auto Arcadia::ToFilepath(const char* str) -> std::filesystem::path
 ACDA_API auto Arcadia::LoadText(const std::filesystem::path& filepath) -> std::string
 {
     std::ifstream ifs(filepath);
+    if(!ifs.is_open())
+    {
+        throw std::exception();
+    }
     std::stringstream sstream{};
 
     sstream << ifs.rdbuf();

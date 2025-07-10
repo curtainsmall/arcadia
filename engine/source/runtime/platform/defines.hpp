@@ -1,12 +1,13 @@
 #pragma once
 
+#include "platform/platform_detection.hpp"
+
 // Import/Export
-#include<Windows.h>
 #ifdef ACDA_RUNTIME_EXPORT
 #    ifdef ACDA_RUNTIME
-#        define ACDA_API __declspec(dllexport)
+#        define ACDA_API ACDA_EXPORT_ATTRIBUTE
 #    else
-#        define ACDA_API __declspec(dllimport)
+#        define ACDA_API ACDA_IMPORT_ATTRIBUTE
 #    endif // ACDA_RUNTIME
 #else
 #    define ACDA_API

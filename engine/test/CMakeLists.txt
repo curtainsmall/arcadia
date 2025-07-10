@@ -2,7 +2,7 @@ set(GTEST_DIR "${TEST_DIR}/googletest")
 set(TEST_SOURCE_DIR "${TEST_DIR}/source")
 set(TEST_NAME arcadia_test)
 
-set(test_folder "test")
+set(test_folder "engine/test")
 
 file(GLOB_RECURSE test_header_files CONFIGURE_DEPENDS
      "${TEST_SOURCE_DIR}/*.hpp")
@@ -24,19 +24,30 @@ source_group(TREE "${TEST_SOURCE_DIR}" FILES ${test_header_files}
                                              ${test_source_files})
 
 add_executable(${TEST_NAME} ${test_header_files} ${test_source_files})
+
 set_target_properties(
   ${TEST_NAME}
   PROPERTIES OUTPUT_NAME "ArcadiaEngineTest"
              FOLDER "${test_folder}"
              VS_DEBUGGER_WORKING_DIRECTORY "$<TARGET_FILE_DIR:${TEST_NAME}>")
+
 target_include_directories(${TEST_NAME} PRIVATE "${TEST_SOURCE_DIR}")
-target_link_libraries(${TEST_NAME} PRIVATE GTest::gtest_main)
+
+target_link_libraries(${TEST_NAME} PRIVATE GTest::gtest_main ${EDITOR_NAME}
+                                           ${RUNTIME_NAME})
+
 target_compile_features(${TEST_NAME} PUBLIC cxx_std_20)
 
 set(POST_BUILD_COMMANDS
+    # Copy shaders
+    COMMAND ${CMAKE_COMMAND} -E copy_directory "${ENGINE_ROOT_DIR}/shaders"
+    "$<TARGET_FILE_DIR:${TEST_NAME}>/shaders"
+    # Copy fonds
+    COMMAND ${CMAKE_COMMAND} -E copy_directory "${ENGINE_ROOT_DIR}/fonts"
+    "$<TARGET_FILE_DIR:${TEST_NAME}>/fonts"
     # Copy dlls
     COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${TEST_NAME}>
-    $<TARGET_RUNTIME_DLLS:${TEST_NAME}>
+    $<TARGET_FILE:${EDITOR_NAME}> $<TARGET_RUNTIME_DLLS:${TEST_NAME}>
     $<TARGET_FILE_DIR:${TEST_NAME}> COMMAND_EXPAND_LISTS)
 add_custom_command(TARGET ${TEST_NAME} ${POST_BUILD_COMMANDS})
 
