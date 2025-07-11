@@ -130,7 +130,7 @@ void Arcadia::PhysicsSimulator::BuildEntity(EntityId entity_id)
                 ),
                 JPH::EActivation::Activate
             );
-            ACDA_ASSERT(!body_id.IsInvalid(), "Failed to create body");
+            ACDA_ASSERT(!body_id.IsInvalid() && "Failed to create body");
             _JphBodyIdStorage.try_emplace(entity_id, body_id);
         }
     }

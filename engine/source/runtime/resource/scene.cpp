@@ -124,19 +124,19 @@ auto Arcadia::Scene::GetEntityCount(const std::function<bool(EntityId, const Ent
 
 auto Arcadia::Scene::GetEntityInfo(EntityId entity_id) const -> const EntityInfo&
 {
-    ACDA_ASSERT(ContainsEntity(entity_id), "Entity not found");
+    ACDA_ASSERT(ContainsEntity(entity_id));
     return _EntityInfoStorage.at(entity_id);
 }
 
 auto Arcadia::Scene::GetEntityInfo(EntityId entity_id) -> EntityInfo&
 {
-    ACDA_ASSERT(ContainsEntity(entity_id), "Entity not found");
+    ACDA_ASSERT(ContainsEntity(entity_id));
     return _EntityInfoStorage.at(entity_id);
 }
 
 auto Arcadia::Scene::CreateEntity(const std::string& entity_name, const std::string& type_string) -> EntityId
 {
-    ACDA_ASSERT(!IsEntityNameUsed(entity_name), "Entity name is already used");
+    ACDA_ASSERT(!IsEntityNameUsed(entity_name));
 
     EntityId entity_id = _Registry.create();
 
@@ -168,8 +168,8 @@ void Arcadia::Scene::DestroyEntity(EntityId entity_id)
 
 void Arcadia::Scene::RenameEntity(EntityId entity_id, const std::string& new_entity_name)
 {
-    ACDA_ASSERT(ContainsEntity(entity_id), "Entity not found");
-    ACDA_ASSERT(!IsEntityNameUsed(new_entity_name), "Entity name is alread used");
+    ACDA_ASSERT(ContainsEntity(entity_id));
+    ACDA_ASSERT(!IsEntityNameUsed(new_entity_name));
 
     EntityInfo& entity_info = GetEntityInfo(entity_id);
     const std::string old_name = entity_info._Name;

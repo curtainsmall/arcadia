@@ -9,7 +9,7 @@ file(GLOB_RECURSE test_header_files CONFIGURE_DEPENDS
 file(GLOB_RECURSE test_source_files CONFIGURE_DEPENDS
      "${TEST_SOURCE_DIR}/*.cpp")
 
-if(NOT TARGET gtest)
+if(NOT TARGET GTest::gtest_main)
   # For Windows: Prevent overriding the parent project's compiler/linker
   # settings
   set(gtest_force_shared_crt
