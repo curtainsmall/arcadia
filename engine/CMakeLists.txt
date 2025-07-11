@@ -1,13 +1,22 @@
 set(ENGINE_ROOT_DIR "${ROOT_DIR}/engine")
+
 set(DEPENDENCY_DIR "${ENGINE_ROOT_DIR}/dependencies")
+
 set(RUNTIME_NAME arcadia_runtime)
 set(RUNTIME_DIR "${ENGINE_ROOT_DIR}/source/runtime")
+
 set(EDITOR_NAME arcadia_editor)
 set(EDITOR_DIR "${ENGINE_ROOT_DIR}/source/editor")
+
 set(BOOTSTRAP_NAME arcadia_bootstrap)
 set(BOOTSTRAP_DIR "${ENGINE_ROOT_DIR}/source/bootstrap")
+
 set(TEST_NAME arcadia_test)
 set(TEST_DIR "${ENGINE_ROOT_DIR}/test")
+
+set(SHADERS_NAME arcadia_shaders)
+set(SHADERS_DIR "${ENGINE_ROOT_DIR}/shaders")
+
 
 option(ENABLE_PHYSICS_DEBUG_RENDERER "Enable Physics Debug Renderer" OFF)
 
@@ -25,6 +34,8 @@ add_subdirectory(dependencies)
 add_subdirectory(source/runtime)
 add_subdirectory(source/editor)
 add_subdirectory(source/bootstrap)
+
+add_subdirectory(shaders)
 
 enable_testing()
 add_subdirectory(test)

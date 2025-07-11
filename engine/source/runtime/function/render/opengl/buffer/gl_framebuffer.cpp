@@ -17,7 +17,8 @@ Arcadia::GlFramebuffer::GlFramebuffer(
     ACDA_GL_CALL(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, _GlDepthStencilRenderbuffer.GetGlId()));
     Unbind();
 
-    if(auto res = IsComplete(); res != GL_FRAMEBUFFER_COMPLETE)
+    GLenum res = IsComplete();
+    if(res != GL_FRAMEBUFFER_COMPLETE)
     {
         throw Exceptions::GlInvalid(std::format("OpenGL framebuffer incomplete: {}", res));
     }
