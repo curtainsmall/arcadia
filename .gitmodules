@@ -38,3 +38,6 @@
 [submodule "test/googletest"]
 	path = engine/test/googletest
 	url = https://github.com/google/googletest.git
+[submodule "engine/dependencies/lua"]
+	path = engine/dependencies/lua
+	url = https://github.com/lua/lua.git

@@ -7,7 +7,8 @@ source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" FILES ${editor_header_files}
 add_library(${EDITOR_NAME} SHARED "${editor_header_files}"
                                   "${editor_source_files}")
 
-add_compile_definitions(ACDA_EDITOR_EXPORT ACDA_EDITOR)
+target_compile_definitions(${EDITOR_NAME} PRIVATE ACDA_EDITOR_EXPORT
+                                                  ACDA_EDITOR)
 
 set_target_properties(${EDITOR_NAME} PROPERTIES FOLDER "engine")
 

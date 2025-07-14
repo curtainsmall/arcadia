@@ -120,3 +120,8 @@ if(NOT TARGET Jolt)
   # endif()
 
 endif()
+
+if(NOT TARGET lua)
+    include(lua.cmake)
+    set_target_properties(lua PROPERTIES FOLDER "${dependency_folder}/lua")
+endif()

@@ -7,7 +7,8 @@ source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" FILES ${runtime_header_files}
 add_library(${RUNTIME_NAME} SHARED ${runtime_source_files}
                                    ${runtime_header_files})
 
-add_compile_definitions(ACDA_RUNTIME_EXPORT ACDA_RUNTIME)
+target_compile_definitions(${RUNTIME_NAME} PRIVATE ACDA_RUNTIME_EXPORT
+                                                   ACDA_RUNTIME)
 
 set_target_properties(${RUNTIME_NAME} PROPERTIES FOLDER "engine")
 
@@ -32,8 +33,8 @@ target_link_libraries(
          Jolt
          EnTT
          nlohmann_json
-         portable_file_dialogs)
-
+         portable_file_dialogs
+         lua)
 
 target_include_directories(
   ${RUNTIME_NAME}
