@@ -2,7 +2,6 @@
 
 #include "core/event.hpp"
 
-
 #include "ui/imgui_window.hpp"
 
 namespace Arcadia

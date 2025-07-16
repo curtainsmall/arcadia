@@ -1,7 +1,6 @@
 #pragma once
 
 #ifdef _WIN32 // Windows x86/x64
-#include "Windows.h"
 #   ifdef _WIN64
 #       define ACDA_PLATFORM_WINDOWS
 #   else

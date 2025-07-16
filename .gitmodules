@@ -41,3 +41,9 @@
 [submodule "engine/dependencies/lua"]
 	path = engine/dependencies/lua
 	url = https://github.com/lua/lua.git
+[submodule "engine/dependencies/csys"]
+	path = engine/dependencies/csys
+	url = https://github.com/rmxbalanque/csys.git
+[submodule "engine/dependencies/imgui-console"]
+	path = engine/dependencies/imgui-console
+	url = https://github.com/rmxbalanque/imgui-console.git

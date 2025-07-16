@@ -17,6 +17,7 @@
 #include "ui/imgui_windows/imgui_window_property.hpp"
 #include "ui/imgui_windows/imgui_window_state.hpp"
 #include "ui/imgui_windows/imgui_window_viewport.hpp"
+#include "ui/imgui_windows/imgui_window_console.hpp"
 
 void Arcadia::EditorSetup()
 {
@@ -42,7 +43,8 @@ void Arcadia::EditorSetup()
                 std::make_tuple(std::string("Outliner"),ImguiWindowOutliner::GetIdStringStatic()),
                 std::make_tuple(std::string("Viewport"),ImguiWindowViewport::GetIdStringStatic()),
                 std::make_tuple(std::string("Property"),ImguiWindowProperty::GetIdStringStatic()),
-                std::make_tuple(std::string("State"),ImguiWindowState::GetIdStringStatic())
+                std::make_tuple(std::string("State"),ImguiWindowState::GetIdStringStatic()),
+                std::make_tuple(std::string("Console"), ImguiWindowConsole::GetIdStringStatic())
             };
             imgui_layer
                 .EmplaceImguiWindow<ImguiWindowMainMenubar>(imgui_window_ids)
@@ -51,7 +53,8 @@ void Arcadia::EditorSetup()
                 .EmplaceImguiWindow<ImguiWindowOutliner>(id_strings.contains(ImguiWindowOutliner::GetIdStringStatic()), "Outliner")
                 .EmplaceImguiWindow<ImguiWindowViewport>(id_strings.contains(ImguiWindowViewport::GetIdStringStatic()), "Viewport")
                 .EmplaceImguiWindow<ImguiWindowProperty>(id_strings.contains(ImguiWindowProperty::GetIdStringStatic()), "Property")
-                .EmplaceImguiWindow<ImguiWindowState>(id_strings.contains(ImguiWindowState::GetIdStringStatic()), "State");
+                .EmplaceImguiWindow<ImguiWindowState>(id_strings.contains(ImguiWindowState::GetIdStringStatic()), "State")
+                .EmplaceImguiWindow<ImguiWindowConsole>(id_strings.contains(ImguiWindowConsole::GetIdStringStatic()), "Console");
         },
         ImguiStyle::SetToDark
     );

@@ -3,7 +3,6 @@
 #include <memory>
 #include <string>
 
-
 #include "resource/scene_events.hpp"
 #include "resource/scene_layer.hpp"
 

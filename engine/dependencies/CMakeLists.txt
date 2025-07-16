@@ -26,14 +26,13 @@ if(NOT TARGET glfw)
                                                    "${depndency_folder}/glfw")
 endif()
 
-# if(NOT TARGET glew)
-#   add_subdirectory(glew/build/cmake)
-#   set_target_properties(glew PROPERTIES FOLDER "${dependency_folder}/glew")
+# if(NOT TARGET glew) add_subdirectory(glew/build/cmake)
+# set_target_properties(glew PROPERTIES FOLDER "${dependency_folder}/glew")
 # endif()
 
 if(NOT TARGET gl3w)
-    include(gl3w.cmake)
-    set_target_properties(gl3w PROPERTIES FOLDER "${dependency_folder}/gl3w")
+  include(gl3w.cmake)
+  set_target_properties(gl3w PROPERTIES FOLDER "${dependency_folder}/gl3w")
 endif()
 
 if(NOT TARGET boost)
@@ -109,19 +108,27 @@ if(NOT TARGET Jolt)
 
   set_target_properties(Jolt PROPERTIES FOLDER "${dependency_folder}/jolt")
 
-  # if(ENABLE_PHYSICS_DEBUG_RENDERER)
-  #   set_target_properties(
-  #     Jolt TestFramework PROPERTIES FOLDER "${dependency_folder}/jolt_physics"
-  #                                   MSVC_RUNTIME_LIBRARY "MultiThreadedDLL")
-  # else()
-  #   set_target_properties(
-  #     Jolt PROPERTIES FOLDER "${dependency_folder}/jolt_physics"
-  #                     MSVC_RUNTIME_LIBRARY "MultiThreadedDLL")
+  # if(ENABLE_PHYSICS_DEBUG_RENDERER) set_target_properties( Jolt TestFramework
+  # PROPERTIES FOLDER "${dependency_folder}/jolt_physics" MSVC_RUNTIME_LIBRARY
+  # "MultiThreadedDLL") else() set_target_properties( Jolt PROPERTIES FOLDER
+  # "${dependency_folder}/jolt_physics" MSVC_RUNTIME_LIBRARY "MultiThreadedDLL")
   # endif()
 
 endif()
 
 if(NOT TARGET lua)
-    include(lua.cmake)
-    set_target_properties(lua PROPERTIES FOLDER "${dependency_folder}/lua")
+  include(lua.cmake)
+  set_target_properties(lua PROPERTIES FOLDER "${dependency_folder}/lua")
+endif()
+
+if(NOT TARGET csys)
+  option(CSYS_BUILD_SHARED "" ON)
+  add_subdirectory(csys)
+  set_target_properties(csys PROPERTIES FOLDER "${dependency_folder}/csys")
+endif()
+
+if(NOT TARGET imgui_console)
+  include(imgui_console.cmake)
+  set_target_properties(imgui_console
+                        PROPERTIES FOLDER "${dependency_folder}/imgui_console")
 endif()

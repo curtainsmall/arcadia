@@ -30,6 +30,7 @@ target_link_libraries(
          boost
          imgui
          imguizmo
+         imgui_console
          Jolt
          EnTT
          nlohmann_json
