@@ -6,16 +6,17 @@
 #include "function/window/window_events.hpp"
 #include "function/window/window_layer.hpp"
 
+#include "editor/defines.hpp"
 #include "project/project_events.hpp"
 #include "project/project_layer.hpp"
 #include "ui/imgui_layer.hpp"
 
 namespace Arcadia
 {
-    struct EditorLayer: public LayerInterface
+    struct ACDA_API EditorLayer: public LayerInterface
     {
     public:
-        EditorLayer() = default;
+        EditorLayer();
         virtual ~EditorLayer() = default;
 
         virtual void OnEvent(EventBase& e) override;
@@ -38,7 +39,7 @@ namespace Arcadia
 
     private:
         bool _PlayMode{ false };
-        float _UiScale{ -1.0f };
+        float _UiScale{ 1.0f };
 
         bool _WaitingForProjectUnbuiltBeforeClosing{ false };
     };

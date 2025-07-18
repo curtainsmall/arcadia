@@ -12,17 +12,16 @@
 Arcadia::ImguiLayer::ImguiLayer(
     const std::shared_ptr<WindowLayer>& window_layer_sptr,
     const std::function<void(ImguiLayer&)>& imgui_window_installer,
-    const std::function<void()>& imgui_style_setter
+    const std::function<void()>& imgui_style_setter,
+    float init_scale
 ):
     LayerInterface("imgui"),
     _wpWindow(window_layer_sptr)
 {
-    std::shared_ptr<EditorLayer> editor_layer_sptr = LayerStack::Instance().GetLayerShared<EditorLayer>();
-
     _pImguiContext = ImGui::CreateContext();
     ImGui::SetCurrentContext(_pImguiContext);
 
-    ScaleUi(editor_layer_sptr->GetUiScale());
+    ScaleUi(init_scale);
 
     ImGuiIO& io = _pImguiContext->IO;
     io.ConfigWindowsMoveFromTitleBarOnly = true;

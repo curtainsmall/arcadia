@@ -21,7 +21,8 @@ namespace Arcadia
         ImguiLayer(
             const std::shared_ptr<WindowLayer>& window_layer,
             const std::function<void(ImguiLayer&)>& imgui_window_installer = {},
-            const std::function<void()>& imgui_style_setter = ImguiStyle::SetToDefaultDark
+            const std::function<void()>& imgui_style_setter = ImguiStyle::SetToDefaultDark,
+            float init_scale = 1
         );
         virtual ~ImguiLayer();
 

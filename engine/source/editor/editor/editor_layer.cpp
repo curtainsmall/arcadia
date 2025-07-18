@@ -16,6 +16,7 @@
 #include "ui/imgui_windows/imgui_window_property.hpp"
 #include "ui/imgui_windows/imgui_window_state.hpp"
 #include "ui/imgui_windows/imgui_window_viewport.hpp"
+#include "ui/imgui_windows/imgui_window_console.hpp"
 
 void Arcadia::EditorLayer::OnUpdate()
 {
@@ -39,6 +40,48 @@ void Arcadia::EditorLayer::SetUiScale(float ui_scale)
 auto Arcadia::EditorLayer::GetUiScale() const -> float
 {
     return _UiScale;
+}
+
+Arcadia::EditorLayer::EditorLayer()
+{
+    LayerStack& layer_stack = LayerStack::Instance();
+    RuntimeConfig& runtime_config = RuntimeConfig::Instance();
+
+    //Editor Layer
+    SetUiScale(runtime_config.UiScale);
+
+    // Project layer
+    layer_stack.PushLayer<ProjectLayer>();
+
+    // Editor ImGui layer
+    layer_stack.PushLayer<ImguiLayer>(
+        layer_stack.GetLayerShared<WindowLayer>(),
+        [&](ImguiLayer& imgui_layer)
+        {
+            const std::set<std::string>& id_strings = runtime_config.ImguiOpenedWindowIdStrings;
+
+            std::initializer_list<std::tuple<std::string, std::string>> imgui_window_ids{
+                std::make_tuple(std::string("Outliner"),ImguiWindowOutliner::GetIdStringStatic()),
+                std::make_tuple(std::string("Viewport"),ImguiWindowViewport::GetIdStringStatic()),
+                std::make_tuple(std::string("Property"),ImguiWindowProperty::GetIdStringStatic()),
+                std::make_tuple(std::string("State"),ImguiWindowState::GetIdStringStatic()),
+                std::make_tuple(std::string("Console"), ImguiWindowConsole::GetIdStringStatic())
+            };
+            imgui_layer
+                .EmplaceImguiWindow<ImguiWindowMainMenubar>(imgui_window_ids)
+                .EmplaceImguiWindow<ImguiWindowMainToolbar>()
+                .EmplaceImguiWindow<ImguiWindowMainStatusbar>()
+                .EmplaceImguiWindow<ImguiWindowOutliner>(id_strings.contains(ImguiWindowOutliner::GetIdStringStatic()), "Outliner")
+                .EmplaceImguiWindow<ImguiWindowViewport>(id_strings.contains(ImguiWindowViewport::GetIdStringStatic()), "Viewport")
+                .EmplaceImguiWindow<ImguiWindowProperty>(id_strings.contains(ImguiWindowProperty::GetIdStringStatic()), "Property")
+                .EmplaceImguiWindow<ImguiWindowState>(id_strings.contains(ImguiWindowState::GetIdStringStatic()), "State")
+                .EmplaceImguiWindow<ImguiWindowConsole>(id_strings.contains(ImguiWindowConsole::GetIdStringStatic()), "Console");
+        },
+        ImguiStyle::SetToDark,
+        GetUiScale()
+    );
+
+    EventQueue::Instance().Signal<Events::RuntimeStart>();
 }
 
 void Arcadia::EditorLayer::OnEvent(EventBase& e)
