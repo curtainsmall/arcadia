@@ -42,6 +42,11 @@ auto Arcadia::EditorLayer::GetUiScale() const -> float
     return _UiScale;
 }
 
+auto Arcadia::EditorLayer::GetCsysSystem() -> csys::System&
+{
+    return _CsysSystem;
+}
+
 Arcadia::EditorLayer::EditorLayer()
 {
     LayerStack& layer_stack = LayerStack::Instance();

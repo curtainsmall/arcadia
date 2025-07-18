@@ -423,7 +423,7 @@ void Arcadia::ImguiWrappers::NewLine(float height)
     ImGui::Dummy(size);
 }
 
-void Arcadia::ImguiWrappers::HelpMark(const std::string& icon, const std::string& text)
+void Arcadia::ImguiWrappers::HelpMark(const std::string& text, const std::string& icon)
 {
     ImGui::TextDisabled("%s", icon.c_str());
     if(ImGui::BeginItemTooltip())

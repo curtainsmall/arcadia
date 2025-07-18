@@ -2,6 +2,9 @@
 
 #include <memory>
 
+#undef ERROR
+#include "csys/system.h"
+
 #include "function/input/input_events.hpp"
 #include "function/window/window_events.hpp"
 #include "function/window/window_layer.hpp"
@@ -28,6 +31,8 @@ namespace Arcadia
         void SetUiScale(float ui_scale);
         auto GetUiScale() const -> float;
 
+        auto GetCsysSystem() -> csys::System&;
+
     private:
         void _Stop();
 
@@ -42,5 +47,7 @@ namespace Arcadia
         float _UiScale{ 1.0f };
 
         bool _WaitingForProjectUnbuiltBeforeClosing{ false };
+
+        csys::System _CsysSystem{};
     };
 }

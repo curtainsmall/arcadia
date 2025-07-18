@@ -8,7 +8,6 @@
 #include "core/function.hpp"
 #include "core/match.hpp"
 #include "core/pfd.hpp"
-#include "resource/fonts/icon.hpp"
 #include "resource/scene_layer.hpp"
 
 #include "ui/imgui.hpp"
@@ -177,7 +176,7 @@ void Arcadia::ImguiWindowPropertyFunctor_LightComponent::operator()(LightCompone
             _ACDA_COMMAND_HELPER("[Spot Light] Attenuation", light, GetAttenuationCoefficients, SetAttenuationCoefficients, coeffs, _OriginAttenuationCoefficients);
 
             ImGui::SameLine();
-            ImguiWrappers::HelpMark(ICON_FA_QUESTION, "In order of constant, linear and quadratic terms");
+            ImguiWrappers::HelpMark("In order of constant, linear and quadratic terms");
 
             const float cutoff_angle_drag_speend = .1f;
             const float cutoff_angle_min = 0.f;
@@ -187,7 +186,7 @@ void Arcadia::ImguiWindowPropertyFunctor_LightComponent::operator()(LightCompone
             light.SetCutoffAngles(cutoff);
             _ACDA_COMMAND_HELPER("[Spot Light] Cutoff Angle", light, GetCutoffAngles, SetCutoffAngles, cutoff, _OriginCutoffAngle);
             ImGui::SameLine();
-            ImguiWrappers::HelpMark(ICON_FA_QUESTION, "Inner and outter");
+            ImguiWrappers::HelpMark("Inner and outter");
 
             glm::vec3 color = light.GetColor();
             ImGui::ColorEdit3("Color", glm::value_ptr(color));
@@ -316,7 +315,7 @@ void Arcadia::ImguiWindowPropertyFunctor_LightComponent::operator()(LightCompone
             light.SetAttenuationCoefficients(coeffs);
             _ACDA_COMMAND_HELPER("[Point Light] Attenuation", light, GetAttenuationCoefficients, SetAttenuationCoefficients, coeffs, _OriginAttenuationCoefficients);
             ImGui::SameLine();
-            ImguiWrappers::HelpMark(ICON_FA_QUESTION, "In order of constant, linear and quadratic terms");
+            ImguiWrappers::HelpMark("In order of constant, linear and quadratic terms");
 
             glm::vec3 color = light.GetColor();
             ImGui::ColorEdit3("Color", glm::value_ptr(color));

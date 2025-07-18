@@ -9,7 +9,7 @@ namespace Arcadia
     template<class Enum>
         requires std::is_enum_v<Enum>
     [[nodiscard]]
-    auto ToUnderlying(Enum e) -> std::underlying_type_t<Enum>
+    constexpr auto ToUnderlying(Enum e) -> std::underlying_type_t<Enum>
     {
         return static_cast<std::underlying_type_t<Enum>>(e);
     }

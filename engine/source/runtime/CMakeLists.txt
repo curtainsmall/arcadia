@@ -30,12 +30,12 @@ target_link_libraries(
          boost
          imgui
          imguizmo
-         imgui_console
          Jolt
          EnTT
          nlohmann_json
          portable_file_dialogs
-         lua)
+         lua
+         csys_header_only)
 
 target_include_directories(
   ${RUNTIME_NAME}

@@ -122,13 +122,7 @@ if(NOT TARGET lua)
 endif()
 
 if(NOT TARGET csys)
-  option(CSYS_BUILD_SHARED "" ON)
   add_subdirectory(csys)
-  set_target_properties(csys PROPERTIES FOLDER "${dependency_folder}/csys")
-endif()
-
-if(NOT TARGET imgui_console)
-  include(imgui_console.cmake)
-  set_target_properties(imgui_console
-                        PROPERTIES FOLDER "${dependency_folder}/imgui_console")
+  set_target_properties(csys PROPERTIES FOLDER
+                                                    "${dependency_folder}/csys")
 endif()
