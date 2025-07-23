@@ -34,7 +34,7 @@ namespace Arcadia
 
         static auto CreateSphere(
             float radius,
-            std::size_t stack_count  = 36, // Along latitude
+            std::size_t stack_count = 36, // Along latitude
             std::size_t sector_count = 36  // Alone longitude
         ) -> Mesh;
 

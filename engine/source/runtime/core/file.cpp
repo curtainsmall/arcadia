@@ -1,5 +1,3 @@
-
-
 #include "file.hpp"
 
 #include <format>

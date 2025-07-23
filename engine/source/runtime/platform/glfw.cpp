@@ -1,5 +1,3 @@
-
-
 #include "glfw.hpp"
 
 #include <format>
@@ -16,9 +14,9 @@ Arcadia::GlfwContext::GlfwContext()
 
     glfwSetErrorCallback(
         [](int err_type, const char* desr) -> void
-    {
-        throw Exceptions::GlfwError(std::format("GLFW error[{0}]: {1}", err_type, desr));
-    }
+        {
+            throw Exceptions::GlfwError(std::format("GLFW error[{0}]: {1}", err_type, desr));
+        }
     );
 }
 

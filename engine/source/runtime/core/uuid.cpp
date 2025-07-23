@@ -1,4 +1,3 @@
-
 #include "uuid.hpp"
 
 auto Arcadia::Uuid::CreateZero() -> Uuid
@@ -8,11 +7,13 @@ auto Arcadia::Uuid::CreateZero() -> Uuid
 
 Arcadia::Uuid::Uuid():
     _Value(_NextValue++)
-{}
+{
+}
 
 Arcadia::Uuid::Uuid(ValueType val):
     _Value(val)
-{}
+{
+}
 
 auto Arcadia::Uuid::GetValue() const -> ValueType
 {

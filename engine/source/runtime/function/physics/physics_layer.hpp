@@ -24,13 +24,13 @@ namespace Arcadia
         auto IsPhysicsSimulatorActive() const -> bool;
 
         [[nodiscard]]
-        auto GetPhysicsBodyCount() const->std::size_t;
+        auto GetPhysicsBodyCount() const -> std::size_t;
 
         [[nodiscard]]
-        auto GetTempAllocatorSize() const->std::size_t;
+        auto GetTempAllocatorSize() const -> std::size_t;
 
         [[nodiscard]]
-        auto GetUpdatesPerSecondCount() const->std::int32_t;
+        auto GetUpdatesPerSecondCount() const -> std::int32_t;
 
     private:
         void _OnPhysicsSimulatorReset(Events::PhysicsSimulatorReset& e);

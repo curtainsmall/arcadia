@@ -821,7 +821,6 @@ void Arcadia::ImguiWindowPropertyFunctor_PhysicsComponent::operator()(PhysicsCom
         {
             _ImguiWindowPopupPhysicsComponentCreateBody.Opened = true;
         }
-
     }
 
     ImGui::EndGroup();

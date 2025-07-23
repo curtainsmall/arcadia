@@ -1,5 +1,3 @@
-
-
 #include "physics_component.hpp"
 
 #include <string>

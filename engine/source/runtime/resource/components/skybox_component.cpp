@@ -1,4 +1,3 @@
-
 #include "skybox_component.hpp"
 
 auto Arcadia::SkyboxComponent::GetCubemap() const -> const Cubemap&

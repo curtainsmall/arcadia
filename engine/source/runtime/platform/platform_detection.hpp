@@ -35,6 +35,6 @@
 #   define ACDA_IMPORT_ATTRIBUTE __declspec(dllimport)
 #   define ACDA_EXPORT_ATTRIBUTE __declspec(dllexport)
 #else
-#   define ACDA_IMPORT_ATTRIBUTE 
+#   define ACDA_IMPORT_ATTRIBUTE
 #   define ACDA_EXPORT_ATTRIBUTE
 #endif

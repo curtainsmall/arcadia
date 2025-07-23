@@ -22,7 +22,7 @@ namespace Arcadia
         auto Segment() -> DurationType;
 
     private:
-        auto _Now() const->TimePointType;
+        auto _Now() const -> TimePointType;
     private:
         TimePointType _Start{};
         TimePointType _Last{};

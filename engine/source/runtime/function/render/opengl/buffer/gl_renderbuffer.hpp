@@ -20,7 +20,7 @@ namespace Arcadia
         auto operator=(SelfType&&) noexcept -> SelfType & = default;
 
         [[nodiscard]]
-        auto GetGlId() const ->GLuint
+        auto GetGlId() const -> GLuint
         {
             return _GlId;
         }

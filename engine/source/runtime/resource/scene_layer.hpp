@@ -52,13 +52,13 @@ namespace Arcadia
         auto ActiveScene_IsEntityNameUsed(const std::string& entity_name) const -> bool;
 
         [[nodiscard]]
-        auto ActiveScene_GetEntityIdByName(const std::string& entity_name) const->EntityId;
+        auto ActiveScene_GetEntityIdByName(const std::string& entity_name) const -> EntityId;
 
         [[nodiscard]]
-        auto ActiveScene_GetEntityCount() const->std::size_t;
+        auto ActiveScene_GetEntityCount() const -> std::size_t;
 
         [[nodiscard]]
-        auto ActiveScene_GetEntityCount(const std::function<bool(EntityId, const EntityInfo&)>& pred) const->std::size_t;
+        auto ActiveScene_GetEntityCount(const std::function<bool(EntityId, const EntityInfo&)>& pred) const -> std::size_t;
 
         [[nodiscard]]
         auto ActiveScene_GetEntityInfo(EntityId entity_id) const -> const EntityInfo&;
@@ -66,28 +66,28 @@ namespace Arcadia
         [[nodiscard]]
         auto ActiveScene_GetEntityInfoStorage() const -> const Scene::EntityInfoStorageType&;
 
-        template<Concepts::Component ...Ts_Components>
+        template<Concepts::Component ...Components>
         [[nodiscard]]
         auto ActiveScene_ContainsAllComponents(EntityId entity_id) const -> bool
         {
             ACDA_ASSERT(_spActiveScene);
-            return _spActiveScene->ContainsAllComponents<Ts_Components...>(entity_id);
+            return _spActiveScene->ContainsAllComponents<Components...>(entity_id);
         }
 
-        template<Concepts::Component ...Ts_Components>
+        template<Concepts::Component ...Components>
         [[nodiscard]]
         auto ActiveScene_CotainsAnyComponent(EntityId entity_id) const -> bool
         {
             ACDA_ASSERT(_spActiveScene);
-            return _spActiveScene->ContainsAnyComponent<Ts_Components...>(entity_id);
+            return _spActiveScene->ContainsAnyComponent<Components...>(entity_id);
         }
 
-        template<Concepts::Component ...Ts_Components>
+        template<Concepts::Component ...Components>
         [[nodiscard]]
         auto ActiveScene_GetComponent(EntityId entity_id) const -> decltype(auto)
         {
-            ACDA_ASSERT(ActiveScene_ContainsAllComponents<Ts_Components...>(entity_id));
-            return _spActiveScene->GetComponent<Ts_Components...>(entity_id);
+            ACDA_ASSERT(ActiveScene_ContainsAllComponents<Components...>(entity_id));
+            return _spActiveScene->GetComponent<Components...>(entity_id);
         }
 
         [[nodiscard]]

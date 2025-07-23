@@ -16,35 +16,35 @@ namespace Arcadia
         using SelfType = WindowLayer;
     public:
         WindowLayer(
-            glm::i32vec2 size ={ 800,600 },
+            glm::i32vec2 size = { 800,600 },
             std::string title = "Untitled",
             std::int32_t multisample_count = 0
         );
         virtual ~WindowLayer();
 
         [[nodiscard]]
-        auto GetGlfwWindow() const->GLFWwindow*;
+        auto GetGlfwWindow() const -> GLFWwindow*;
 
         virtual void OnEvent(EventBase& event) override;
         virtual void OnUpdate() override;
 
         [[nodiscard]]
-        auto GetTitle() const->const std::string&;
+        auto GetTitle() const -> const std::string&;
 
         [[nodiscard]]
-        auto GetSizeState() const->WindowSizeState;
+        auto GetSizeState() const -> WindowSizeState;
 
         [[nodiscard]]
-        auto GetSize() const->glm::i32vec2;
+        auto GetSize() const -> glm::i32vec2;
 
         [[nodiscard]]
-        auto GetPosition() const->glm::i32vec2;
+        auto GetPosition() const -> glm::i32vec2;
 
         [[nodiscard]]
-        auto GetMultisampleCount() const->std::int32_t;
+        auto GetMultisampleCount() const -> std::int32_t;
 
         [[nodiscard]]
-        auto GetCursorInputMode() const->WindowCursorInputMode;
+        auto GetCursorInputMode() const -> WindowCursorInputMode;
 
     private:
         static auto _GetWindowPointerFromGlfwUserPointer(GLFWwindow* glfw_window) -> SelfType*;

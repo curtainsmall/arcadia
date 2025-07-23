@@ -1,5 +1,3 @@
-
-
 #include "memento.hpp"
 
 #if 0

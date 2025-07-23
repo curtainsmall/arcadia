@@ -117,7 +117,6 @@ Arcadia::RuntimeLayer::RuntimeLayer():
         runtime_config.GraphicApi,
         runtime_config.WorkingDirectory
     );
-
 }
 
 Arcadia::RuntimeLayer::~RuntimeLayer()

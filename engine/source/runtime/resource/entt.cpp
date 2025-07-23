@@ -1,5 +1,3 @@
-
-
 #include "entt.hpp"
 
 auto Arcadia::ToString(entt::entity entt_entity) -> std::string

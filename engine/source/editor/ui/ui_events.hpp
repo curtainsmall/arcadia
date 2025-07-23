@@ -15,7 +15,8 @@ namespace Arcadia
         public:
             OpenImguiWindow(const std::string& id_string):
                 IdString(id_string)
-            {}
+            {
+            }
         public:
             const std::string IdString;
         };
@@ -25,7 +26,8 @@ namespace Arcadia
         public:
             ScaleImguiWindow(float new_scale):
                 NewScale(new_scale)
-            {}
+            {
+            }
         public:
             const float NewScale;
         };
@@ -36,7 +38,8 @@ namespace Arcadia
         public:
             KeyboardInputOccupied(bool occupied):
                 Occupied(occupied)
-            {}
+            {
+            }
         public:
             const bool Occupied;
         };
@@ -48,7 +51,8 @@ namespace Arcadia
         public:
             PhysicsSimulatorShouldUpdate(bool should_update):
                 ShouldUpdate(should_update)
-            {}
+            {
+            }
         public:
             const bool ShouldUpdate;
         };
@@ -56,12 +60,14 @@ namespace Arcadia
         //==== Events for physics component ====//
 
         struct PhysicsComponentNewBody: public EventBase
-        {};
+        {
+        };
 
         //==== Events for modes ====//
 
         struct TogglePlayMode: public EventBase
-        {};
+        {
+        };
 
         //==== Events for viewport ====//
 
@@ -70,7 +76,8 @@ namespace Arcadia
         public:
             ShowGizmo(bool should_show_gizmo):
                 ShouldShowGizmo(should_show_gizmo)
-            {}
+            {
+            }
         public:
             const bool ShouldShowGizmo;
         };

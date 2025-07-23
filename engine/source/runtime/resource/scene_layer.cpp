@@ -1,4 +1,3 @@
-
 #include "scene_layer.hpp"
 
 #include "core/command.hpp"

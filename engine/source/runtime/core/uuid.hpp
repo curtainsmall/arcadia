@@ -19,7 +19,7 @@ namespace Arcadia
         Uuid(ValueType val);
 
         [[nodiscard]]
-        auto GetValue() const->ValueType;
+        auto GetValue() const -> ValueType;
 
         operator ValueType() const;
 

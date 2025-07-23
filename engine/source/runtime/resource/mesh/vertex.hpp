@@ -16,7 +16,8 @@ namespace Arcadia
             const glm::vec2& tex_coord = Glm::Vec2_CreateZero()
         ):
             Coordinate(coord), Normal(normal), TextureCoordinate(tex_coord)
-        {}
+        {
+        }
     public:
         glm::vec3 Coordinate{ Glm::Vec3_CreateZero() };
         glm::vec3 Normal{ Glm::Vec3_CreateZero() };

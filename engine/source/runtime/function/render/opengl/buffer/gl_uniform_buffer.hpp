@@ -29,7 +29,7 @@ namespace Arcadia
         void BindBufferBase(GLuint index) const;
         void BindBufferRange(GLuint index, GLintptr Offset, GLsizeiptr size) const;
 
-        auto SetBufferSubData(GLintptr offset, GLsizeiptr size, const GLvoid* data) const-> const SelfType&;
+        auto SetBufferSubData(GLintptr offset, GLsizeiptr size, const GLvoid* data) const -> const SelfType&;
 
     private:
         GLuint _GlId{ 0 };

@@ -1,5 +1,3 @@
-
-
 #include "camera_component.hpp"
 
 #include "core/command.hpp"

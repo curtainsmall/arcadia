@@ -17,6 +17,6 @@ namespace Arcadia
         PlayerComponent(const nlohmann::json& json);
         ~PlayerComponent() = default;
         [[nodiscard]]
-        auto ToJson() const->nlohmann::json;
+        auto ToJson() const -> nlohmann::json;
     };
 }

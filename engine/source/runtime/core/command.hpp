@@ -65,11 +65,11 @@ namespace Arcadia
         auto Redo() -> bool;
 
         [[nodiscard]]
-        auto GetMaxSize() const->std::size_t;
+        auto GetMaxSize() const -> std::size_t;
         void SetMaxSize(std::size_t capacity);
 
         [[nodiscard]]
-        auto GetSize() const->std::size_t;
+        auto GetSize() const -> std::size_t;
 
         void Clear();
 
@@ -82,14 +82,14 @@ namespace Arcadia
         auto end() noexcept -> ContainerType::iterator;
 
         [[nodiscard]]
-        auto begin() const noexcept->ContainerType::const_iterator;
+        auto begin() const noexcept -> ContainerType::const_iterator;
         [[nodiscard]]
-        auto end() const noexcept->ContainerType::const_iterator;
+        auto end() const noexcept -> ContainerType::const_iterator;
 
         [[nodiscard]]
-        auto cbegin() const noexcept->ContainerType::const_iterator;
+        auto cbegin() const noexcept -> ContainerType::const_iterator;
         [[nodiscard]]
-        auto cend() const noexcept->ContainerType::const_iterator;
+        auto cend() const noexcept -> ContainerType::const_iterator;
 
     private:
         std::size_t _MaxSize{ 40 };

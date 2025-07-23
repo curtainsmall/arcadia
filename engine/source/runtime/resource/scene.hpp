@@ -19,7 +19,7 @@
 
 namespace Arcadia
 {
-    static constexpr std::array BuildinEntityTypes{
+    static constexpr std::array BuiltinEntityTypes{
          "actor",
          "camera",
          "light",
@@ -53,7 +53,7 @@ namespace Arcadia
         Scene(const std::string& name);
         Scene(const nlohmann::json& json);
         ~Scene() = default;
-        auto ToJson() const->nlohmann::json;
+        auto ToJson() const -> nlohmann::json;
 
         Scene(SelfType&&) noexcept = default;
         auto operator=(SelfType&&) noexcept -> SelfType & = default;
@@ -66,10 +66,10 @@ namespace Arcadia
         auto ContainsEntity(EntityId entity_id) const -> bool;
 
         [[nodiscard]]
-        auto GetEntityCount() const->std::size_t;
+        auto GetEntityCount() const -> std::size_t;
 
         [[nodiscard]]
-        auto GetEntityCount(const std::function<bool(EntityId, const EntityInfo&)>& pred) const->std::size_t;
+        auto GetEntityCount(const std::function<bool(EntityId, const EntityInfo&)>& pred) const -> std::size_t;
 
         [[nodiscard]]
         auto GetEntityInfo(EntityId entity_id) const -> const EntityInfo&;
@@ -104,36 +104,36 @@ namespace Arcadia
             return _Registry.emplace_or_replace<Component>(entity_id, std::forward<Args>(args)...);
         }
 
-        template<Concepts::Component ...Ts_Components>
+        template<Concepts::Component ...Components>
         [[nodiscard]]
         auto GetComponent(EntityId entity_id) const -> decltype(auto)
         {
-            ACDA_ASSERT(ContainsAllComponents<Ts_Components...>(entity_id));
+            ACDA_ASSERT(ContainsAllComponents<Components...>(entity_id));
 
-            return _Registry.get<Ts_Components...>(entity_id);
+            return _Registry.get<Components...>(entity_id);
         }
 
-        template<Concepts::Component ...Ts_Components>
+        template<Concepts::Component ...Components>
         [[nodiscard]]
         auto GetComponent(EntityId entity_id) -> decltype(auto)
         {
-            ACDA_ASSERT(ContainsAllComponents<Ts_Components...>(entity_id));
+            ACDA_ASSERT(ContainsAllComponents<Components...>(entity_id));
 
-            return _Registry.get<Ts_Components...>(entity_id);
+            return _Registry.get<Components...>(entity_id);
         }
 
-        template<Concepts::Component ...Ts_Components>
+        template<Concepts::Component ...Components>
         [[nodiscard]]
         auto ContainsAllComponents(EntityId entity_id) const -> bool
         {
-            return _Registry.all_of<Ts_Components...>(entity_id);
+            return _Registry.all_of<Components...>(entity_id);
         }
 
-        template<Concepts::Component ...Ts_Components>
+        template<Concepts::Component ...Components>
         [[nodiscard]]
         auto ContainsAnyComponent(EntityId entity_id) const -> bool
         {
-            return _Registry.any_of<Ts_Components...>(entity_id);
+            return _Registry.any_of<Components...>(entity_id);
         }
 
         template<Concepts::Component ...Component>
@@ -143,19 +143,19 @@ namespace Arcadia
             return count;
         }
 
-        template<Concepts::Component ...Ts_Components, Concepts::Component ...ExcludeComponents>
+        template<Concepts::Component ...Components, Concepts::Component ...ExcludeComponents>
         [[nodiscard]]
         auto GetComponentView(entt::exclude_t<ExcludeComponents...> exclude = entt::exclude_t{}) -> decltype(auto)
         {
-            auto view = _Registry.view<Ts_Components...>(exclude);
+            auto view = _Registry.view<Components...>(exclude);
             return view;
         }
 
-        template<Concepts::Component ...Ts_Components, Concepts::Component ...ExcludeComponents>
+        template<Concepts::Component ...Components, Concepts::Component ...ExcludeComponents>
         [[nodiscard]]
         auto GetComponentView(entt::exclude_t<ExcludeComponents...> exclude = entt::exclude_t{}) const -> decltype(auto)
         {
-            return _Registry.view<Ts_Components...>(exclude);
+            return _Registry.view<Components...>(exclude);
         }
 
         template<Concepts::Component ...OwnedComponents, Concepts::Component ...GetComponents, Concepts::Component ...ExcludeComponents>
@@ -173,10 +173,10 @@ namespace Arcadia
         auto IsEntityNameUsed(const std::string& entity_name) const -> bool;
 
         [[nodiscard]]
-        auto GetEntityIdByName(const std::string& entity_name) const->EntityId;
+        auto GetEntityIdByName(const std::string& entity_name) const -> EntityId;
 
     private:
-        auto _CreateJsonComponents(EntityId entity_id) const->nlohmann::json;
+        auto _CreateJsonComponents(EntityId entity_id) const -> nlohmann::json;
     private:
         std::string _Name;
 

@@ -1,5 +1,3 @@
-
-
 #include "gl_index_buffer.hpp"
 
 Arcadia::GlIndexBuffer::GlIndexBuffer(const std::vector<Mesh::IndexType>& indices):

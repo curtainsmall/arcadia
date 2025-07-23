@@ -1,5 +1,3 @@
-
-
 #include "gl_cubemap.hpp"
 
 Arcadia::GlCubemap::GlCubemap(const Cubemap& cubemap)

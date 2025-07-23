@@ -1,5 +1,3 @@
-
-
 #include "imgui_layer.hpp"
 
 #include "core/function.hpp"

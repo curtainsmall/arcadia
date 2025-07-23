@@ -1,5 +1,3 @@
-
-
 #include "layer.hpp"
 
 Arcadia::LayerInterface::LayerInterface(const std::string& name):

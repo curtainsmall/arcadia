@@ -1,5 +1,3 @@
-
-
 #include "command.hpp"
 
 #include "core/assert.hpp"
@@ -12,7 +10,8 @@ Arcadia::Command::Command(
     _Description(description),
     _ExecuteFunction(execute_fn),
     _UnexecuteFunction(unexecute_fn)
-{}
+{
+}
 
 void Arcadia::Command::Execute() const
 {

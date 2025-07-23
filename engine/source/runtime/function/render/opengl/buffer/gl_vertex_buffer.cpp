@@ -1,5 +1,3 @@
-
-
 #include "gl_vertex_buffer.hpp"
 
 Arcadia::GlVertexBuffer::GlVertexBuffer(const std::vector<Vertex>& vertices):

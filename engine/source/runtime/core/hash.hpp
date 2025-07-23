@@ -10,7 +10,7 @@ namespace Arcadia
     [[nodiscard]]
     auto CombineHash(const std::size_t& seed, const Type& val) -> std::size_t
     {
-        std::size_t res { seed };
+        std::size_t res{ seed };
         boost::hash_combine(res, val);
         return res;
     }

@@ -30,7 +30,6 @@ namespace Arcadia
     public:
         std::filesystem::path Filepath{};
         std::unique_ptr<ModelComponent_IdentifiableMeshesType> upIdentifiableMeshes{};
-
     };
 
     struct ACDA_API ModelComponent:

@@ -17,14 +17,17 @@ namespace Arcadia
         Identifiable() = default;
         Identifiable(const ValueType& val):
             _Value(val)
-        {}
+        {
+        }
         Identifiable(ValueType&& val):
             _Value(val)
-        {}
+        {
+        }
         template<class ...Args>
         Identifiable(Args&& ...args) :
             _Value(std::forward<Args>(args)...)
-        {}
+        {
+        }
 
         Identifiable(SelfType&&) noexcept = default;
         auto operator=(SelfType&&) noexcept -> SelfType & = default;
@@ -68,10 +71,12 @@ namespace std
     template<class Value>
     struct ACDA_API tuple_size<Arcadia::Identifiable<Value>>:
         public std::integral_constant<std::size_t, 2>
-    {};
+    {
+    };
 
     template<std::size_t Index, class Value>
     struct ACDA_API tuple_element<Index, Arcadia::Identifiable<Value>>:
         public std::tuple_element<Index, std::tuple<Arcadia::Uuid, Value>>
-    {};
+    {
+    };
 }

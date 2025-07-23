@@ -43,9 +43,9 @@ namespace Arcadia
         // - Direct12: D3D12_GPU_DESCRIPTOR_HANDLE
         // - Vulkan: VkDescriptorSet
         [[nodiscard]]
-        virtual auto GetRenderResultId(EntityId entity_id) const->void* = 0;
+        virtual auto GetRenderResultId(EntityId entity_id) const -> void* = 0;
         [[nodiscard]]
-        virtual auto GetGraphicApiType() const->GraphicApi::Type = 0;
+        virtual auto GetGraphicApiType() const -> GraphicApi::Type = 0;
 
         [[nodiscard]]
         virtual auto IsActive() const -> bool;

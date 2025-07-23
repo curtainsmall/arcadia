@@ -1,5 +1,3 @@
-
-
 #include "mesh.hpp"
 
 auto Arcadia::Mesh::CreateBox(

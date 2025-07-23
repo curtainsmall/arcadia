@@ -227,6 +227,12 @@ void Arcadia::ImguiWindowPopupFunctor_RenameScene::operator()()
     }
 }
 
+Arcadia::ImguiWindowMainMenubar::ImguiWindowMainMenubar(const std::initializer_list<std::tuple<std::string, std::string>>& imgui_window_title_id_pairs):
+    ImguiWindowInterface(true, "Main Menubar"),
+    _ImguiWindowTitleAndIdStringPairs(imgui_window_title_id_pairs)
+{
+}
+
 void Arcadia::ImguiWindowMainMenubar::OnEvent(EventBase& e)
 {
 }

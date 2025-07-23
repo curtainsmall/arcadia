@@ -40,7 +40,7 @@ namespace Arcadia
         void Bind() const;
         void Unbind() const;
 
-        auto IsComplete() const->GLenum;
+        auto IsComplete() const -> GLenum;
     private:
         GLuint _GlId{ 0 };
         GlTexture2d _GlTexture2d;

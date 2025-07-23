@@ -1,5 +1,3 @@
-
-
 #include"jolt.hpp"
 
 auto Arcadia::ToJphVec3(const glm::vec3& vec) -> JPH::Vec3

@@ -1,5 +1,3 @@
-
-
 #include "imgui_wrapper.hpp"
 
 auto Arcadia::ImguiWrappers::Checkbox(const std::string& name, bool& b)  -> bool

@@ -24,7 +24,7 @@ namespace Arcadia
         public Noncopyable
     {
     public:
-        virtual auto GetTypeString() const->std::string = 0;
+        virtual auto GetTypeString() const -> std::string = 0;
     };
 
     namespace Concepts

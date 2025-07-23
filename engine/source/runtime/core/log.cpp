@@ -1,5 +1,3 @@
-
-
 #include "log.hpp"
 
 #include "spdlog/async.h"

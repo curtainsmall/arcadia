@@ -5,7 +5,6 @@
 
 #include "core/event.hpp"
 
-
 // ImGui window ID should follow: Title###id so that we can change the title for a curtain window
 #define ACDA_IMGUI_WINDOW_ID_STR_GETTERS(id_str) \
 [[nodiscard]]\
@@ -52,7 +51,7 @@ namespace Arcadia
         {
         }
         virtual void OnUpdate() = 0;
-        virtual auto GetIdString() const->std::string = 0;
+        virtual auto GetIdString() const -> std::string = 0;
 
     protected:
         bool _Opened;

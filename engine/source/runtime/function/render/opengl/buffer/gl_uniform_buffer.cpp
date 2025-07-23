@@ -1,5 +1,3 @@
-
-
 #include "gl_uniform_buffer.hpp"
 
 #include "core/log.hpp"

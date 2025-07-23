@@ -11,4 +11,3 @@
 #else
 #    define ACDA_API
 #endif // ACDA_EDITOR_EXPORT
-

@@ -14,7 +14,6 @@
 #include "core/noncopyable.hpp"
 #include "platform/defines.hpp"
 
-
 namespace Arcadia
 {
     enum struct ACDA_API EventHandleState: std::uint8_t
@@ -36,10 +35,10 @@ namespace Arcadia
         void MarkHandled();
         void MarkOnceAgain();
 
-        auto GetHandleState() const->EventHandleState;
+        auto GetHandleState() const -> EventHandleState;
         void ClearMark();
     private:
-        EventHandleState _HandleState { EventHandleState::NotHandled };
+        EventHandleState _HandleState{ EventHandleState::NotHandled };
     };
 
     namespace Concepts
@@ -77,7 +76,7 @@ namespace Arcadia
 
     private:
         EventBase* _pEvent;
-        bool _Dispatched { false };
+        bool _Dispatched{ false };
     };
 
     struct ACDA_API EventQueue: public Noncopyable
@@ -104,9 +103,9 @@ namespace Arcadia
         auto ProcessEvent(const EventHandler<EventBase>& handler) -> bool;
         void EventProcessFinished();
     private:
-        _EventQueueType _QueueA {};
-        _EventQueueType _QueueB {};
-        _EventQueueType* _pProcessingQueue { &_QueueA };
-        _EventQueueType* _pCollectingQueue { &_QueueB };
+        _EventQueueType _QueueA{};
+        _EventQueueType _QueueB{};
+        _EventQueueType* _pProcessingQueue{ &_QueueA };
+        _EventQueueType* _pCollectingQueue{ &_QueueB };
     };
 }

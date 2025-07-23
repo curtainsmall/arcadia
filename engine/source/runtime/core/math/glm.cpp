@@ -1,5 +1,3 @@
-
-
 #include "glm.hpp"
 
 #include "boost/math/special_functions.hpp"
@@ -357,7 +355,6 @@ auto Arcadia::Glm::Vec3_CreateZero() -> glm::vec3
 {
     return glm::vec3{};
 }
-
 
 auto Arcadia::Glm::Vec3_CreateUnitPositiveX() -> glm::vec3
 {

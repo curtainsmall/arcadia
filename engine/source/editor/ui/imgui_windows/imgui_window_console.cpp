@@ -43,7 +43,6 @@ void Arcadia::ImguiWindowConsole::OnUpdate()
         ImGui::Separator();
 
         _InputBar();
-
     }
     else
     {
@@ -60,7 +59,6 @@ void Arcadia::ImguiWindowConsole::_OnOpenImguiWindow(Events::OpenImguiWindow& e)
         _Opened = true;
     }
 }
-
 
 void Arcadia::ImguiWindowConsole::_MenuBar()
 {
@@ -322,5 +320,4 @@ auto Arcadia::ImguiWindowConsole::_InputCallback(ImGuiInputTextCallbackData* dat
             break;
     }
     return 0;
-
 }

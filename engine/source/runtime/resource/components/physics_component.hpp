@@ -126,6 +126,5 @@ namespace Arcadia
         glm::vec3 _BodyShapeColor{ .2f,.2f,.2f };
         glm::vec3 _LinearVelocity{ Glm::Vec3_CreateZero() };
         glm::vec3 _AngularVelocity{ Glm::Vec3_CreateZero() };
-
     };
 }

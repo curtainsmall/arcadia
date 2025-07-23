@@ -1,12 +1,10 @@
-
-
 #include "event.hpp"
 
 #include "core/assert.hpp"
 
 auto Arcadia::EventQueue::Instance() -> SelfType&
 {
-    static SelfType event_queue {};
+    static SelfType event_queue{};
     return event_queue;
 }
 

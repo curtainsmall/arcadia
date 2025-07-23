@@ -26,11 +26,14 @@ namespace Arcadia
         virtual void OnUpdate() override;
 
         void SetPlayMode(bool play_mode);
+        [[nodiscard]]
         auto GetPlayMode() const -> bool;
 
         void SetUiScale(float ui_scale);
+        [[nodiscard]]
         auto GetUiScale() const -> float;
 
+        [[nodiscard]]
         auto GetCsysSystem() -> csys::System&;
 
     private:

@@ -9,7 +9,6 @@
 #include "function/render/renderer.hpp"
 #include "function/window/window_events.hpp"
 
-
 #include "project/project.hpp"
 #include "project/project_events.hpp"
 

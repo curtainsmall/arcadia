@@ -1,5 +1,3 @@
-
-
 #include "light_component.hpp"
 
 #include "core/match.hpp"

@@ -126,8 +126,6 @@ namespace Arcadia
 
         [[nodiscard]]
         ACDA_API auto Vec4_NormalizeFixedly(const glm::vec4& vec, glm::vec4::length_type index) -> glm::vec4;
-
-
     }
 }
 

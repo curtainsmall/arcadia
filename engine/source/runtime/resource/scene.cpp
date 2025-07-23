@@ -1,5 +1,3 @@
-
-
 #include "scene.hpp"
 
 #include "core/assert.hpp"

@@ -2,7 +2,6 @@
 
 #include <string>
 
-
 #include "core/math.hpp"
 #include "resource/fonts/icon.hpp"
 

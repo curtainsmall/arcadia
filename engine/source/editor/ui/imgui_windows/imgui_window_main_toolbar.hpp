@@ -2,7 +2,6 @@
 
 #include <memory>
 
-
 #include "resource/scene.hpp"
 #include "resource/scene_events.hpp"
 
@@ -18,10 +17,7 @@ namespace Arcadia
     public:
         ACDA_IMGUI_WINDOW_ID_STR_GETTERS("###toolbar");
     public:
-        ImguiWindowMainToolbar():
-            ImguiWindowInterface(true, "Toolbar")
-        {
-        }
+        ImguiWindowMainToolbar();
         virtual ~ImguiWindowMainToolbar() override = default;
 
         virtual void OnEvent(EventBase& e) override;

@@ -1,5 +1,3 @@
-
-
 #include "window_layer.hpp"
 
 #include "core/runtime_config.hpp"

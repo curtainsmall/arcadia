@@ -30,13 +30,11 @@ namespace Arcadia
     [[nodiscard]]
     auto FromJphVec3(const JPH::Vec3& jolt_vec) -> glm::vec3;
 
-
     [[nodiscard]]
     auto ToJphVec4(const glm::vec4& vec) -> JPH::Vec4;
 
     [[nodiscard]]
     auto FromJphVec4(const JPH::Vec4& jolt_vec) -> glm::vec4;
-
 
     [[nodiscard]]
     auto ToJphQuat(const glm::quat& quat) -> JPH::Quat;

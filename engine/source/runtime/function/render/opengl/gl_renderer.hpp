@@ -87,9 +87,9 @@ namespace Arcadia
         [[nodiscard]]
         virtual auto HasRenderResult() const -> bool;
         [[nodiscard]]
-        virtual auto GetRenderResultId(EntityId entity_id) const->void* override;
+        virtual auto GetRenderResultId(EntityId entity_id) const -> void* override;
         [[nodiscard]]
-        virtual auto GetGraphicApiType() const->GraphicApi::Type override;
+        virtual auto GetGraphicApiType() const -> GraphicApi::Type override;
 
     public:
         void _DrawGrid(

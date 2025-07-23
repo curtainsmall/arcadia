@@ -36,7 +36,7 @@ namespace Arcadia
         [[nodiscard]]
         auto GetRenderResultId(EntityId entity_id) const -> void*;
         [[nodiscard]]
-        auto GetCurrentGraphicApiType() const->GraphicApi::Type;
+        auto GetCurrentGraphicApiType() const -> GraphicApi::Type;
 
         [[nodicard]]
         auto IsRendererActive() const -> bool;

@@ -24,7 +24,7 @@ namespace Arcadia
         Project(nlohmann::json& json);
         ~Project();
         [[nodiscard]]
-        auto ToJson() const->nlohmann::json;
+        auto ToJson() const -> nlohmann::json;
 
         [[nodiscard]]
         auto GetName() const -> const std::string&;

@@ -10,6 +10,11 @@
 #include "ui/imgui.hpp"
 #include "ui/ui_events.hpp"
 
+Arcadia::ImguiWindowMainToolbar::ImguiWindowMainToolbar():
+    ImguiWindowInterface(true, "Toolbar")
+{
+}
+
 void Arcadia::ImguiWindowMainToolbar::OnEvent(EventBase& e)
 {
 }

@@ -1,5 +1,3 @@
-
-
 #include "gl_renderbuffer.hpp"
 
 Arcadia::GlRenderbuffer::GlRenderbuffer()

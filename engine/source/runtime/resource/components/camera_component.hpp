@@ -22,7 +22,6 @@ namespace Arcadia
         float UpAxisAngleEpsilon{ glm::radians(0.1f) };
         glm::vec2 CursorMoveOffsetRange{ -100.f,100.f };
         bool GridDisplaying{ false };
-
     };
 
     struct ACDA_API CameraComponent:

@@ -1,5 +1,3 @@
-
-
 #include "model_component.hpp"
 
 #include "core/assert.hpp"

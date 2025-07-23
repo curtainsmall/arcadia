@@ -1,5 +1,3 @@
-
-
 #include "physics_simulator.hpp"
 
 #include <thread>

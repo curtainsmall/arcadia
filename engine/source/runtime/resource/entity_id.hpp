@@ -15,7 +15,7 @@ namespace Arcadia
 
         operator bool() const;
         operator entt::entity() const;
-        auto GetValue() const->entt::entity;
+        auto GetValue() const -> entt::entity;
 
         void SetNull();
         auto IsNull() const -> bool;

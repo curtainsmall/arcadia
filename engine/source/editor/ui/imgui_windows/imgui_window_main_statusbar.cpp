@@ -5,6 +5,11 @@
 #include "editor/editor_layer.hpp"
 #include "ui/imgui.hpp"
 
+Arcadia::ImguiWindowMainStatusbar::ImguiWindowMainStatusbar():
+    ImguiWindowInterface(true, "Statusbar")
+{
+}
+
 void Arcadia::ImguiWindowMainStatusbar::OnEvent(EventBase& e)
 {
 }

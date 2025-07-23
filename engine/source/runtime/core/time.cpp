@@ -1,4 +1,3 @@
-
 #include "time.hpp"
 
 Arcadia::Timer::Timer()

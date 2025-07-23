@@ -1,9 +1,9 @@
-
 #include "entity_id.hpp"
 
 Arcadia::EntityId::EntityId(entt::entity id):
     _Id(id)
-{}
+{
+}
 
 auto Arcadia::EntityId::operator=(entt::entity id)
 {

@@ -1,4 +1,3 @@
-
 #include "renderer.hpp"
 
 auto Arcadia::RendererInterface::IsActive() const -> bool

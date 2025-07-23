@@ -52,7 +52,6 @@ namespace Arcadia
             {
                 layer_sptr->OnUpdate();
             }
-
         } while(runtime_layer_sptr->IsRunning());
 
         // Clear layer_stack
@@ -60,4 +59,3 @@ namespace Arcadia
         return 0;
     }
 }
-

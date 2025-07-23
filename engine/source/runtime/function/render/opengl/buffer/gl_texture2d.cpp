@@ -1,5 +1,3 @@
-
-
 #include "gl_texture2d.hpp"
 
 Arcadia::GlTexture2d::GlTexture2d(
