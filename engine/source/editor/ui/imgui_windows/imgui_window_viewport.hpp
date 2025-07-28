@@ -46,7 +46,7 @@ namespace Arcadia
 
         ImguiWindowViewport(
             bool open,
-            const std::string& title
+            std::string_view title
         );
         virtual ~ImguiWindowViewport() override = default;
 
@@ -64,7 +64,7 @@ namespace Arcadia
         void _OnKeyboardInputOccupied(Events::KeyboardInputOccupied& e);
 
     private:
-        static inline std::string _ViewportCameraEntityName{ "viewport_camera" };
+        static inline std::string_view _ViewportCameraEntityName{ "viewport_camera" };
 
         EntityId _SelectedEntityId{};
         EntityId _ViewportCameraEntityId{};

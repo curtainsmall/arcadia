@@ -20,34 +20,34 @@ namespace Arcadia
 
         static auto Instance() -> SelfType&;
 
-        void LogAsDebug(const std::string& msg)
+        void LogAsDebug(std::string_view msg)
         {
             _spLogger->debug(msg);
         }
 
-        void LogAsInfo(const std::string& msg)
+        void LogAsInfo(std::string_view msg)
         {
             _spLogger->info(msg);
         }
 
-        void LogAsWarning(const std::string& msg)
+        void LogAsWarning(std::string_view msg)
         {
             _spLogger->warn(msg);
         }
 
-        void LogAsError(const std::string& msg)
+        void LogAsError(std::string_view msg)
         {
             _spLogger->error(msg);
             DumpBacktrace();
         }
 
-        void LogAsFatal(const std::string& msg)
+        void LogAsFatal(std::string_view msg)
         {
             _spLogger->critical(msg);
             DumpBacktrace();
         }
 
-        void LogDemarcateLine(const std::string& msg)
+        void LogDemarcateLine(std::string_view msg)
         {
             LogAsDebug(std::format("//==== {} ====//", msg));
         }

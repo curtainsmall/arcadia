@@ -17,7 +17,7 @@ namespace Arcadia
         using SelfType = Command;
     public:
         Command(
-            const std::string& description,
+            std::string_view description,
             const FunctionType& execute_fn,
             const FunctionType& unexecute_fn
         );
@@ -29,7 +29,7 @@ namespace Arcadia
         void Unexecute() const;
 
         [[nodiscard]]
-        auto GetDescription() const -> const std::string&;
+        auto GetDescription() const -> std::string_view;
 
     private:
         std::string _Description{};
@@ -49,13 +49,13 @@ namespace Arcadia
 
         // The latest command is emplaced at the begin of the deque
         void Emplace(
-            const std::string& description,
+            std::string_view description,
             const FunctionType& execute_fn,
             const FunctionType& unexecute_fn
         );
 
         void EmplaceAndExecute(
-            const std::string& description,
+            std::string_view description,
             const FunctionType& execute_fn,
             const FunctionType& unexecute_fn
         );

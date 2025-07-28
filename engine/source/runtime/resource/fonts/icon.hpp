@@ -7,6 +7,6 @@
 
 namespace Arcadia
 {
-    static std::string FontFilepathString{ "fonts/fa-solid-900.ttf" };
+    static std::string_view FontFilepathString{ "fonts/fa-solid-900.ttf" };
     static std::size_t FontSize = 10;
 }

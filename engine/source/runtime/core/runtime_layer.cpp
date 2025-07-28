@@ -177,7 +177,7 @@ Arcadia::RuntimeLayer::~RuntimeLayer()
             }
         }
     );
-    for(const std::string& id_string : runtime_config.ImguiOpenedWindowIdStrings)
+    for(std::string_view id_string : runtime_config.ImguiOpenedWindowIdStrings)
     {
         json.at("imgui")
             .at("opened_window_id_strs")

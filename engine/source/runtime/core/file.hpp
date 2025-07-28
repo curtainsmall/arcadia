@@ -11,7 +11,7 @@
 namespace Arcadia
 {
     [[nodiscard]]
-    ACDA_API auto ToFilepath(const std::string& string) -> std::filesystem::path;
+    ACDA_API auto ToFilepath(std::string_view string) -> std::filesystem::path;
 
     [[nodiscard]]
     ACDA_API auto ToFilepath(const char* str) -> std::filesystem::path;
@@ -48,16 +48,16 @@ namespace Arcadia
         auto Save() -> SelfType&;
 
         [[nodiscard]]
-        auto GetSectionOrCreate(const std::string& section_name) -> SectionType&;
+        auto GetSectionOrCreate(std::string_view section_name) -> SectionType&;
 
         [[nodiscard]]
-        auto GetSection(const std::string& section_name) -> SectionType&;
+        auto GetSection(std::string_view section_name) -> SectionType&;
         [[nodiscard]]
-        auto GetSection(const std::string& section_name) const -> const SectionType&;
+        auto GetSection(std::string_view section_name) const -> const SectionType&;
 
-        auto ContainsSection(const std::string& section_name) const -> bool;
+        auto ContainsSection(std::string_view section_name) const -> bool;
 
-        auto EraseSection(const std::string& section_name) -> SelfType&;
+        auto EraseSection(std::string_view section_name) -> SelfType&;
 
     private:
         std::filesystem::path _Filepath{};

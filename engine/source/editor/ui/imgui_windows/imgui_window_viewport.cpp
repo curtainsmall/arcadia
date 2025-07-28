@@ -12,7 +12,7 @@
 
 #include "project/project_layer.hpp"
 
-Arcadia::ImguiWindowViewport::ImguiWindowViewport(bool open, const std::string& title):
+Arcadia::ImguiWindowViewport::ImguiWindowViewport(bool open, std::string_view title):
     ImguiWindowInterface(open, title)
 {
 }
@@ -41,13 +41,16 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
     auto [scene_layer_sptr, physics_layer_sptr, renderer_layer_sptr, runtime_layer_sptr] =
         LayerStack::Instance().GetMultipleLayersShared<SceneLayer, PhysicsLayer, RendererLayer, RuntimeLayer>();
 
-    std::string imgui_title = _Title + GetIdString();
+    std::string imgui_window_title{};
+    imgui_window_title
+        .append(_Title)
+        .append(GetIdString());
 
     ImGui::SetNextWindowSize(glm::vec2{ 1024,768 }, ImGuiCond_Once);
     ImGuiWindowFlags window_flags =
         ImGuiWindowFlags_NoCollapse;
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, glm::vec2(2, 2));
-    if(ImGui::Begin(imgui_title.c_str(), &_Opened, window_flags))
+    if(ImGui::Begin(imgui_window_title.c_str(), &_Opened, window_flags))
     {
         if(!scene_layer_sptr->HasActiveScene())
         {

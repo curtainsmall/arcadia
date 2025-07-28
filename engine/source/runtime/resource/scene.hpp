@@ -32,7 +32,7 @@ namespace Arcadia
         using SelfType = EntityInfo;
     public:
         [[nodiscard]]
-        auto GetName() const -> const std::string&;
+        auto GetName() const -> std::string_view;
 
     public:
         std::string TypeString{}; // Type of the entity
@@ -50,7 +50,7 @@ namespace Arcadia
         using RegistryType = entt::registry;
         using SelfType = Scene;
     public:
-        Scene(const std::string& name);
+        Scene(std::string_view name);
         Scene(const nlohmann::json& json);
         ~Scene() = default;
         auto ToJson() const -> nlohmann::json;
@@ -59,8 +59,8 @@ namespace Arcadia
         auto operator=(SelfType&&) noexcept -> SelfType & = default;
 
         [[nodiscard]]
-        auto GetName() const -> const std::string&;
-        void SetName(const std::string& name);
+        auto GetName() const -> std::string_view;
+        void SetName(std::string_view name);
 
         [[nodiscard]]
         auto ContainsEntity(EntityId entity_id) const -> bool;
@@ -78,11 +78,11 @@ namespace Arcadia
         auto GetEntityInfo(EntityId entity_id) -> EntityInfo&;
 
         [[nodiscard]]
-        auto CreateEntity(const std::string& entity_name, const std::string& type_string) -> EntityId;
+        auto CreateEntity(std::string_view entity_name, std::string_view type_string) -> EntityId;
 
         void DestroyEntity(EntityId entity_id);
 
-        void RenameEntity(EntityId entity_id, const std::string& new_entity_name);
+        void RenameEntity(EntityId entity_id, std::string_view new_entity_name);
 
         template<Concepts::Component Component, class ...Args>
         auto EmplaceComponent(EntityId entity_id, Args&& ...args) -> Component&
@@ -170,10 +170,10 @@ namespace Arcadia
         auto GetEntityInfoStorage() -> EntityInfoStorageType&;
 
         [[nodiscard]]
-        auto IsEntityNameUsed(const std::string& entity_name) const -> bool;
+        auto IsEntityNameUsed(std::string_view entity_name) const -> bool;
 
         [[nodiscard]]
-        auto GetEntityIdByName(const std::string& entity_name) const -> EntityId;
+        auto GetEntityIdByName(std::string_view entity_name) const -> EntityId;
 
     private:
         auto _CreateJsonComponents(EntityId entity_id) const -> nlohmann::json;

@@ -22,7 +22,7 @@ namespace Arcadia
 
         ImguiWindowOutliner(
             bool open,
-            const std::string& title
+            std::string_view title
         );
         virtual ~ImguiWindowOutliner() override = default;
 
@@ -48,13 +48,13 @@ namespace Arcadia
     template<Concepts::Component Component>
     void ImguiWindowOutliner::_MenuItemAddComponent(int& item_count)
     {
-        std::string type_string = Component::GetTypeStringStatic();
+        std::string_view type_string = Component::GetTypeStringStatic();
         bool exists = LayerStack::Instance().GetLayerShared<SceneLayer>()->ActiveScene_ContainsAllComponents<Component>(_SelectedEntityId);
 
         if(!exists)
         {
             ++item_count;
-            if(ImGui::MenuItem(type_string.c_str()))
+            if(ImGui::MenuItem(type_string.data()))
             {
                 EventQueue::Instance()
                     .Signal<Events::AddComponent>(_SelectedEntityId, type_string);
@@ -65,13 +65,13 @@ namespace Arcadia
     template<Concepts::Component Component>
     void ImguiWindowOutliner::_MenuItemRemoveComponent(int& item_count)
     {
-        std::string type_string = Component::GetTypeStringStatic();
+        std::string_view type_string = Component::GetTypeStringStatic();
         bool exists = LayerStack::Instance().GetLayerShared<SceneLayer>()->ActiveScene_ContainsAllComponents<Component>(_SelectedEntityId);
 
         if(exists)
         {
             ++item_count;
-            if(exists && ImGui::MenuItem(type_string.c_str()))
+            if(exists && ImGui::MenuItem(type_string.data()))
             {
                 EventQueue::Instance()
                     .Signal<Events::RemoveComponent>(_SelectedEntityId, type_string);

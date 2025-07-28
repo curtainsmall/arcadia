@@ -35,7 +35,7 @@ namespace Arcadia
 
         ImguiWindowConsole(
             bool open,
-            const std::string& title
+            std::string_view title
         );
 
         virtual ~ImguiWindowConsole() override = default;

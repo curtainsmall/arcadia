@@ -17,7 +17,7 @@ namespace Arcadia
     public:
         WindowLayer(
             glm::i32vec2 size = { 800,600 },
-            std::string title = "Untitled",
+            std::string_view title = "Untitled",
             std::int32_t multisample_count = 0
         );
         virtual ~WindowLayer();
@@ -29,7 +29,7 @@ namespace Arcadia
         virtual void OnUpdate() override;
 
         [[nodiscard]]
-        auto GetTitle() const -> const std::string&;
+        auto GetTitle() const -> std::string_view;
 
         [[nodiscard]]
         auto GetSizeState() const -> WindowSizeState;

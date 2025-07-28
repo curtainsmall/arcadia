@@ -6,7 +6,7 @@
 #include "core/match.hpp"
 #include "core/assert.hpp"
 
-void Arcadia::ScriptComponent::LoadScript(const std::filesystem::path& filepath, const std::string& name)
+void Arcadia::ScriptComponent::LoadScript(const std::filesystem::path& filepath, std::string_view name)
 {
     _Name = name;
     _Filepath = filepath;
@@ -26,12 +26,12 @@ auto Arcadia::ScriptComponent::GetFilepath() const -> const std::filesystem::pat
     return _Filepath;
 }
 
-auto Arcadia::ScriptComponent::GetName() const -> const std::string&
+auto Arcadia::ScriptComponent::GetName() const -> std::string_view
 {
     return _Name;
 }
 
-auto Arcadia::ScriptComponent::GetScriptText() const -> const std::string&
+auto Arcadia::ScriptComponent::GetScriptText() const -> std::string_view
 {
     return _ScriptText;
 }

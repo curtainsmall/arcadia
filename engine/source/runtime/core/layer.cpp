@@ -1,11 +1,11 @@
 #include "layer.hpp"
 
-Arcadia::LayerInterface::LayerInterface(const std::string& name):
+Arcadia::LayerInterface::LayerInterface(std::string_view name):
     _Name(name)
 {
 }
 
-auto Arcadia::LayerInterface::GetLayerName() const -> const std::string&
+auto Arcadia::LayerInterface::GetLayerName() const -> std::string_view
 {
     return _Name;
 }

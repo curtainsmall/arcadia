@@ -32,7 +32,7 @@ Arcadia::ImguiLayer::ImguiLayer(
     ImFontConfig imgui_font_config{};
     imgui_font_config.MergeMode = true;
     static const std::array<ImWchar, 3> imgui_icon_ranges{ ICON_MIN_FA, ICON_MAX_FA,0 };
-    io.Fonts->AddFontFromFileTTF(FontFilepathString.c_str(), FontSize, &imgui_font_config, imgui_icon_ranges.data());
+    io.Fonts->AddFontFromFileTTF(FontFilepathString.data(), FontSize, &imgui_font_config, imgui_icon_ranges.data());
 
     ImguiBackend::Initialize(_wpWindow.lock());
 

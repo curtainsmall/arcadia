@@ -65,22 +65,22 @@ Arcadia::EditorLayer::EditorLayer()
         {
             const std::set<std::string>& id_strings = runtime_config.ImguiOpenedWindowIdStrings;
 
-            std::initializer_list<std::tuple<std::string, std::string>> imgui_window_ids{
-                std::make_tuple(std::string("Outliner"),ImguiWindowOutliner::GetIdStringStatic()),
-                std::make_tuple(std::string("Viewport"),ImguiWindowViewport::GetIdStringStatic()),
-                std::make_tuple(std::string("Property"),ImguiWindowProperty::GetIdStringStatic()),
-                std::make_tuple(std::string("State"),ImguiWindowState::GetIdStringStatic()),
-                std::make_tuple(std::string("Console"), ImguiWindowConsole::GetIdStringStatic())
+            std::initializer_list<std::tuple<std::string_view, std::string_view>> imgui_window_ids{
+                std::make_tuple("Outliner",ImguiWindowOutliner::GetIdStringStatic()),
+                std::make_tuple("Viewport",ImguiWindowViewport::GetIdStringStatic()),
+                std::make_tuple("Property",ImguiWindowProperty::GetIdStringStatic()),
+                std::make_tuple("State",ImguiWindowState::GetIdStringStatic()),
+                std::make_tuple("Console", ImguiWindowConsole::GetIdStringStatic())
             };
             imgui_layer
                 .EmplaceImguiWindow<ImguiWindowMainMenubar>(imgui_window_ids)
                 .EmplaceImguiWindow<ImguiWindowMainToolbar>()
                 .EmplaceImguiWindow<ImguiWindowMainStatusbar>()
-                .EmplaceImguiWindow<ImguiWindowOutliner>(id_strings.contains(ImguiWindowOutliner::GetIdStringStatic()), "Outliner")
-                .EmplaceImguiWindow<ImguiWindowViewport>(id_strings.contains(ImguiWindowViewport::GetIdStringStatic()), "Viewport")
-                .EmplaceImguiWindow<ImguiWindowProperty>(id_strings.contains(ImguiWindowProperty::GetIdStringStatic()), "Property")
-                .EmplaceImguiWindow<ImguiWindowState>(id_strings.contains(ImguiWindowState::GetIdStringStatic()), "State")
-                .EmplaceImguiWindow<ImguiWindowConsole>(id_strings.contains(ImguiWindowConsole::GetIdStringStatic()), "Console");
+                .EmplaceImguiWindow<ImguiWindowOutliner>(id_strings.contains(std::string(ImguiWindowOutliner::GetIdStringStatic())), "Outliner")
+                .EmplaceImguiWindow<ImguiWindowViewport>(id_strings.contains(std::string(ImguiWindowViewport::GetIdStringStatic())), "Viewport")
+                .EmplaceImguiWindow<ImguiWindowProperty>(id_strings.contains(std::string(ImguiWindowProperty::GetIdStringStatic())), "Property")
+                .EmplaceImguiWindow<ImguiWindowState>(id_strings.contains(std::string(ImguiWindowState::GetIdStringStatic())), "State")
+                .EmplaceImguiWindow<ImguiWindowConsole>(id_strings.contains(std::string(ImguiWindowConsole::GetIdStringStatic())), "Console");
         },
         ImguiStyle::SetToDark,
         GetUiScale()

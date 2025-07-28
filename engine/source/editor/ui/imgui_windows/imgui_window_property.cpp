@@ -449,15 +449,15 @@ void Arcadia::ImguiWindowPopupFunctor_PhysicsComponentCreateBody::operator()(Phy
         return;
     }
 
-    std::string imgui_window_title("Physics Component - Create Body");
+    std::string_view imgui_window_title("Physics Component - Create Body");
 
     ImGuiPopupFlags popup_flags =
         ImGuiPopupFlags_NoOpenOverExistingPopup;
-    ImGui::OpenPopup(imgui_window_title.c_str(), popup_flags);
+    ImGui::OpenPopup(imgui_window_title.data(), popup_flags);
 
     ImGuiWindowFlags window_flags =
         ImGuiWindowFlags_NoCollapse;
-    if(ImGui::BeginPopupModal(imgui_window_title.c_str(), &Opened, window_flags))
+    if(ImGui::BeginPopupModal(imgui_window_title.data(), &Opened, window_flags))
     {
         float speed = .05f;
         float min = .0f;
@@ -467,7 +467,7 @@ void Arcadia::ImguiWindowPopupFunctor_PhysicsComponentCreateBody::operator()(Phy
             ImGuiSliderFlags_AlwaysClamp;
 
         // Motion type
-        std::string jph_motion_type_preview_string = Match<std::string>(
+        std::string_view jph_motion_type_preview_string = Match<std::string_view>(
             _TempJphMotionType,
             JPH::EMotionType::Static,
             "Static",
@@ -476,7 +476,7 @@ void Arcadia::ImguiWindowPopupFunctor_PhysicsComponentCreateBody::operator()(Phy
             JPH::EMotionType::Kinematic,
             "Kinematic"
         );
-        if(ImGui::BeginCombo("Motion Type", jph_motion_type_preview_string.c_str()))
+        if(ImGui::BeginCombo("Motion Type", jph_motion_type_preview_string.data()))
         {
             if(ImGui::Selectable("Static"))
             {
@@ -900,16 +900,16 @@ void Arcadia::ImguiWindowPropertyFunctor_ScriptComponent_AddScriptDialog::operat
         return;
     }
 
-    std::string imgui_window_title("Add Script");
+    std::string_view imgui_window_title("Add Script");
 
     ImGuiPopupFlags popup_flags =
         ImGuiPopupFlags_NoOpenOverExistingPopup;
-    ImGui::OpenPopup(imgui_window_title.c_str(), popup_flags);
+    ImGui::OpenPopup(imgui_window_title.data(), popup_flags);
     ImGui::SetNextWindowSize({ 430,120 }, ImGuiCond_Once);
 
     ImGuiWindowFlags window_flags =
         ImGuiWindowFlags_NoCollapse;
-    if(ImGui::BeginPopupModal(imgui_window_title.c_str(), &Opened, window_flags))
+    if(ImGui::BeginPopupModal(imgui_window_title.data(), &Opened, window_flags))
     {
         if(_UseFilenameAsScriptName)
         {
@@ -956,8 +956,12 @@ void Arcadia::ImguiWindowPropertyFunctor_ScriptComponent_AddScriptDialog::operat
             if(confirmed)
             {
                 std::filesystem::path filepath = _FilepathString;
-                std::string name = _UseFilenameAsScriptName ? filepath.stem().generic_string() : _ScriptName;
-                script_comp.LoadScript(filepath, name);
+                script_comp.LoadScript(
+                    filepath,
+                    _UseFilenameAsScriptName
+                    ? filepath.stem().generic_string()
+                    : _ScriptName
+                );
             }
         }
         ImGui::SameLine();
@@ -995,7 +999,7 @@ void Arcadia::ImguiWindowPropertyFunctor_ScriptComponent::operator()(ScriptCompo
     ImGui::EndGroup();
 }
 
-Arcadia::ImguiWindowProperty::ImguiWindowProperty(bool open, const std::string& title):
+Arcadia::ImguiWindowProperty::ImguiWindowProperty(bool open, std::string_view title):
     ImguiWindowInterface(open, title)
 {
 }
@@ -1019,14 +1023,20 @@ void Arcadia::ImguiWindowProperty::OnUpdate()
 
     std::shared_ptr<SceneLayer> scene_layer_sptr = LayerStack::Instance().GetLayerShared<SceneLayer>();
 
-    std::string imgui_title = scene_layer_sptr->HasActiveScene() && _SelectedEntityId
-        ? _Title + " - " + scene_layer_sptr->ActiveScene_GetEntityInfo(_SelectedEntityId).GetName() + GetIdString()
-        : _Title + GetIdString();
+    std::string imgui_window_title{};
+    scene_layer_sptr->HasActiveScene() && _SelectedEntityId
+        ? imgui_window_title
+        .append(_Title + " - ")
+        .append(scene_layer_sptr->ActiveScene_GetEntityInfo(_SelectedEntityId).GetName())
+        .append(GetIdString())
+        : imgui_window_title
+        .append(_Title)
+        .append(GetIdString());
 
     ImGui::SetNextWindowSize(glm::vec2{ 1024,768 }, ImGuiCond_Once);
     ImGuiWindowFlags window_flags =
         ImGuiWindowFlags_NoCollapse;
-    if(ImGui::Begin(imgui_title.c_str(), &_Opened, window_flags))
+    if(ImGui::Begin(imgui_window_title.c_str(), &_Opened, window_flags))
     {
         if(!scene_layer_sptr->HasActiveScene())
         {

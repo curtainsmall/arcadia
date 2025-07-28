@@ -6,7 +6,7 @@
 
 #include "core/assert.hpp"
 
-ACDA_API auto Arcadia::ToFilepath(const std::string& string) -> std::filesystem::path
+ACDA_API auto Arcadia::ToFilepath(std::string_view string) -> std::filesystem::path
 {
     std::filesystem::path path(string);
     return path.make_preferred();
@@ -99,7 +99,7 @@ auto Arcadia::File::Save() -> SelfType&
         // Section name
         std::size_t len = section_name.size();
         ofs.write(reinterpret_cast<const char*>(&len), sizeof(len));
-        ofs.write(section_name.c_str(), len);
+        ofs.write(section_name.data(), len);
 
         // Section
         len = section.size();
@@ -110,34 +110,34 @@ auto Arcadia::File::Save() -> SelfType&
     return *this;
 }
 
-auto Arcadia::File::GetSectionOrCreate(const std::string& section_name) -> SectionType&
+auto Arcadia::File::GetSectionOrCreate(std::string_view section_name) -> SectionType&
 {
-    if(_SectionStorage.contains(section_name))
+    if(_SectionStorage.contains(std::string(section_name)))
     {
-        _SectionStorage.insert_or_assign(section_name, SectionType());
+        _SectionStorage.insert_or_assign(std::string(section_name), SectionType());
     }
     return GetSection(section_name);
 }
 
-auto Arcadia::File::GetSection(const std::string& section_name) -> SectionType&
+auto Arcadia::File::GetSection(std::string_view section_name) -> SectionType&
 {
     ACDA_ASSERT(ContainsSection(section_name));
-    return _SectionStorage.at(section_name);
+    return _SectionStorage.at(std::string(section_name));
 }
 
-auto Arcadia::File::GetSection(const std::string& section_name) const -> const SectionType&
+auto Arcadia::File::GetSection(std::string_view section_name) const -> const SectionType&
 {
     ACDA_ASSERT(ContainsSection(section_name));
-    return _SectionStorage.at(section_name);
+    return _SectionStorage.at(std::string(section_name));
 }
 
-auto Arcadia::File::ContainsSection(const std::string& section_name) const -> bool
+auto Arcadia::File::ContainsSection(std::string_view section_name) const -> bool
 {
-    return _SectionStorage.contains(section_name);
+    return _SectionStorage.contains(std::string(section_name));
 }
 
-auto Arcadia::File::EraseSection(const std::string& section_name) -> SelfType&
+auto Arcadia::File::EraseSection(std::string_view section_name) -> SelfType&
 {
-    _SectionStorage.erase(section_name);
+    _SectionStorage.erase(std::string(section_name));
     return *this;
 }

@@ -87,7 +87,7 @@ auto Arcadia::SceneLayer::GetActiveSceneShared() const -> const std::shared_ptr<
     return _spActiveScene;
 }
 
-void Arcadia::SceneLayer::_SetActiveScene(const std::string& name)
+void Arcadia::SceneLayer::_SetActiveScene(std::string_view name)
 {
     bool is_same_scene = HasActiveScene() && name == _spActiveScene->GetName();
 
@@ -102,9 +102,9 @@ void Arcadia::SceneLayer::_SetActiveScene(const std::string& name)
                 .Signal<Events::SceneDeactivated>();
         }
 
-        if(!name.empty() && _SceneStorage.contains(name))
+        if(!name.empty() && _SceneStorage.contains(std::string(name)))
         {
-            _spActiveScene = _SceneStorage.at(name);
+            _spActiveScene = _SceneStorage.at(std::string(name));
 
             EventQueue::Instance()
                 .Signal<Events::SceneActivated>(_spActiveScene);
@@ -117,9 +117,9 @@ auto Arcadia::SceneLayer::HasScene() const -> bool
     return !_SceneStorage.empty();
 }
 
-auto Arcadia::SceneLayer::HasScene(const std::string& name) const -> bool
+auto Arcadia::SceneLayer::HasScene(std::string_view name) const -> bool
 {
-    return _SceneStorage.contains(name);
+    return _SceneStorage.contains(std::string(name));
 }
 
 auto Arcadia::SceneLayer::HasActiveScene() const -> bool
@@ -127,12 +127,12 @@ auto Arcadia::SceneLayer::HasActiveScene() const -> bool
     return !!_spActiveScene;
 }
 
-void Arcadia::SceneLayer::_CreateScene(const std::string& name)
+void Arcadia::SceneLayer::_CreateScene(std::string_view name)
 {
     ACDA_ASSERT(!HasScene(name));
 
     _SceneStorage.try_emplace(
-        name,
+        std::string(name),
         std::make_shared<Scene>(name)
     );
 }
@@ -152,30 +152,30 @@ void Arcadia::SceneLayer::_CreateScene(const nlohmann::json& json)
     }
 }
 
-auto Arcadia::SceneLayer::_SaveScene(const std::string& name) -> nlohmann::json
+auto Arcadia::SceneLayer::_SaveScene(std::string_view name) -> nlohmann::json
 {
     nlohmann::json json = nlohmann::json::array();
-    json.push_back(_SceneStorage.at(name)->ToJson());
+    json.push_back(_SceneStorage.at(std::string(name))->ToJson());
     return json;
 }
 
-void Arcadia::SceneLayer::_DestroyScene(const std::string& name)
+void Arcadia::SceneLayer::_DestroyScene(std::string_view name)
 {
     ACDA_ASSERT(HasScene(name));
 
-    _SceneStorage.erase(name);
+    _SceneStorage.erase(std::string(name));
     if(name == GetActiveSceneShared()->GetName())
     {
         _SetActiveScene();
     }
 }
 
-void Arcadia::SceneLayer::_RenameScene(const std::string& name, const std::string& new_name)
+void Arcadia::SceneLayer::_RenameScene(std::string_view name, std::string_view new_name)
 {
     ACDA_ASSERT(HasScene(name));
     ACDA_ASSERT(!HasScene(new_name));
 
-    SceneStorageType::node_type node = _SceneStorage.extract(name);
+    SceneStorageType::node_type node = _SceneStorage.extract(std::string(name));
     node.key() = new_name;
     node.mapped()->SetName(new_name);
     _SceneStorage.insert(std::move(node));
@@ -186,7 +186,7 @@ auto Arcadia::SceneLayer::GetSceneStorage() const -> const SceneStorageType&
     return _SceneStorage;
 }
 
-auto Arcadia::SceneLayer::ActiveScene_GetName() const -> const std::string&
+auto Arcadia::SceneLayer::ActiveScene_GetName() const -> std::string_view
 {
     ACDA_ASSERT(_spActiveScene);
     return _spActiveScene->GetName();
@@ -198,13 +198,13 @@ auto Arcadia::SceneLayer::ActiveScene_ContainsEntity(EntityId entity_id) const -
     return _spActiveScene->ContainsEntity(entity_id);
 }
 
-auto Arcadia::SceneLayer::ActiveScene_IsEntityNameUsed(const std::string& entity_name) const -> bool
+auto Arcadia::SceneLayer::ActiveScene_IsEntityNameUsed(std::string_view entity_name) const -> bool
 {
     ACDA_ASSERT(_spActiveScene);
     return _spActiveScene->IsEntityNameUsed(entity_name);
 }
 
-auto Arcadia::SceneLayer::ActiveScene_GetEntityIdByName(const std::string& entity_name) const -> EntityId
+auto Arcadia::SceneLayer::ActiveScene_GetEntityIdByName(std::string_view entity_name) const -> EntityId
 {
     ACDA_ASSERT(_spActiveScene);
     return _spActiveScene->GetEntityIdByName(entity_name);
@@ -249,7 +249,7 @@ void Arcadia::SceneLayer::Restore()
 
 void Arcadia::SceneLayer::_OnCreateScene(Events::CreateScene& e)
 {
-    _CreateScene(e.Name);
+    _CreateScene(std::string_view(e.Name));
     if(e.AsCurrent)
     {
         _SetActiveScene(e.Name);
@@ -282,7 +282,7 @@ void Arcadia::SceneLayer::_OnCloseScene(Events::CloseScene& e)
 
 void Arcadia::SceneLayer::_OnDeleteScene(Events::DeleteScene& e)
 {
-    const std::string& scene_name = GetActiveSceneShared()->GetName();
+    std::string_view scene_name = GetActiveSceneShared()->GetName();
 
     pfd::button res = pfd::message(
         "Arcadia - Delete Scene",
@@ -315,9 +315,11 @@ void Arcadia::SceneLayer::_OnNewEntity(Events::NewEntity& e)
 {
     Scene& scene = *GetActiveSceneShared();
 
-    std::string temp_name = "New Entity";
-    std::string name = temp_name;
+    std::string_view temp_name = "New Entity";
+    std::string name(temp_name);
     std::int32_t postfix{ 1 };
+
+    // Append extra number for duplicated name
     while(scene.IsEntityNameUsed(name))
     {
         name = std::format("{} {}", temp_name, ++postfix);
@@ -327,7 +329,7 @@ void Arcadia::SceneLayer::_OnNewEntity(Events::NewEntity& e)
 
     Match<void>(
         e.EntityTypeString,
-        std::string("actor"),
+        "actor",
         [&]()
         {
             scene.EmplaceComponent<ModelComponent>(entity_id);
@@ -339,7 +341,7 @@ void Arcadia::SceneLayer::_OnNewEntity(Events::NewEntity& e)
 
             scene.EmplaceComponent<ScriptComponent>(entity_id);
         },
-        std::string("camera"),
+        "camera",
         [&]()
         {
             scene.EmplaceComponent<CameraComponent>(entity_id);
@@ -347,7 +349,7 @@ void Arcadia::SceneLayer::_OnNewEntity(Events::NewEntity& e)
             TransformComponent& transform_comp = scene.EmplaceComponent<TransformComponent>(entity_id);
             transform_comp.AddFlag(TransformComponentFlags::UseDirection);
         },
-        std::string("light"),
+        "light",
         [&]()
         {
             scene.EmplaceComponent<LightComponent>(entity_id);
@@ -381,7 +383,7 @@ void Arcadia::SceneLayer::_OnAddComponent(Events::AddComponent& e)
     Scene& scene = *GetActiveSceneShared();
 
     Match<void>(
-        e.ComponentTypeString,
+        std::string_view(e.ComponentTypeString),
         CameraComponent::GetTypeStringStatic(),
         [&]()
         {
@@ -411,7 +413,7 @@ void Arcadia::SceneLayer::_OnRemoveComponent(Events::RemoveComponent& e)
     Scene& scene = *GetActiveSceneShared();
 
     Match<void>(
-        e.ComponentTypeString,
+        std::string_view(e.ComponentTypeString),
         CameraComponent::GetTypeStringStatic(),
         [&]()
         {

@@ -9,7 +9,7 @@
 
 #include "ui/imgui.hpp"
 
-Arcadia::ImguiWindowOutliner::ImguiWindowOutliner(bool open, const std::string& title):
+Arcadia::ImguiWindowOutliner::ImguiWindowOutliner(bool open, std::string_view title):
     ImguiWindowInterface(open, title)
 {
 }
@@ -33,14 +33,20 @@ void Arcadia::ImguiWindowOutliner::OnUpdate()
 
     EventQueue& event_queue = EventQueue::Instance();
 
-    std::string imgui_window_title = scene_layer_sptr->HasActiveScene()
-        ? _Title + " - " + scene_layer_sptr->ActiveScene_GetName() + GetIdString()
-        : _Title + GetIdString();
+    std::string imgui_window_title{};
+    scene_layer_sptr->HasActiveScene()
+        ? imgui_window_title
+        .append(_Title + " - ")
+        .append(scene_layer_sptr->ActiveScene_GetName())
+        .append(GetIdString())
+        : imgui_window_title
+        .append(_Title)
+        .append(GetIdString());
 
     ImGui::SetNextWindowSize(glm::vec2{ 1024,768 }, ImGuiCond_Once);
     ImGuiWindowFlags window_flags =
         ImGuiWindowFlags_NoCollapse;
-    if(ImGui::Begin(imgui_window_title.c_str(), &_Opened, window_flags))
+    if(ImGui::Begin(imgui_window_title.data(), &_Opened, window_flags))
     {
         if(scene_layer_sptr->HasActiveScene() && ImGui::BeginPopupContextWindow())
         {
@@ -131,7 +137,7 @@ void Arcadia::ImguiWindowOutliner::OnUpdate()
                             );
                     }
                     ImGui::SameLine();
-                    if(ImGui::Selectable(entity_info.GetName().c_str(), _SelectedEntityId == entity_id))
+                    if(ImGui::Selectable(entity_info.GetName().data(), _SelectedEntityId == entity_id))
                     {
                         _SelectedEntityId = entity_id;
                         event_queue.Signal<Events::SelectEntity>(entity_id);

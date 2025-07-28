@@ -20,17 +20,17 @@ void Arcadia::ImguiWindowPopupFunctor_CreateProject::operator()()
 
     EventQueue::Instance().Signal<Events::KeyboardInputOccupied>(true);
 
-    std::string imgui_window_title("Create Project");
+    std::string_view imgui_window_title("Create Project");
 
     ImGuiPopupFlags popup_flags =
         ImGuiPopupFlags_NoOpenOverExistingPopup;
-    ImGui::OpenPopup(imgui_window_title.c_str(), popup_flags);
+    ImGui::OpenPopup(imgui_window_title.data(), popup_flags);
 
     ImGui::SetNextWindowSize({ 430,120 }, ImGuiCond_Once);
 
     ImGuiWindowFlags window_flags =
         ImGuiWindowFlags_NoCollapse;
-    if(ImGui::BeginPopupModal(imgui_window_title.c_str(), &Opened, window_flags))
+    if(ImGui::BeginPopupModal(imgui_window_title.data(), &Opened, window_flags))
     {
         ImGuiInputTextFlags input_text_flags =
             ImGuiInputTextFlags_AutoSelectAll;
@@ -94,17 +94,17 @@ void Arcadia::ImguiWindowPopupFunctor_CreateScene::operator()()
 
     std::shared_ptr<SceneLayer> scene_layer_sptr = LayerStack::Instance().GetLayerShared<SceneLayer>();
 
-    std::string imgui_window_title("Create Scene");
+    std::string_view imgui_window_title("Create Scene");
 
     ImGuiPopupFlags popup_flags =
         ImGuiPopupFlags_NoOpenOverExistingPopup;
-    ImGui::OpenPopup(imgui_window_title.c_str(), popup_flags);
+    ImGui::OpenPopup(imgui_window_title.data(), popup_flags);
 
     ImGui::SetNextWindowSize({ 430,120 }, ImGuiCond_Once);
 
     ImGuiWindowFlags window_flags =
         ImGuiWindowFlags_NoCollapse;
-    if(ImGui::BeginPopupModal(imgui_window_title.c_str(), &Opened, window_flags))
+    if(ImGui::BeginPopupModal(imgui_window_title.data(), &Opened, window_flags))
     {
         ImGuiInputTextFlags input_text_flags =
             ImGuiInputTextFlags_AutoSelectAll;
@@ -174,17 +174,17 @@ void Arcadia::ImguiWindowPopupFunctor_RenameScene::operator()()
         _Initailized = true;
     }
 
-    std::string imgui_window_title("Rename Scene");
+    std::string_view imgui_window_title("Rename Scene");
 
     ImGuiPopupFlags popup_flags =
         ImGuiPopupFlags_NoOpenOverExistingPopup;
-    ImGui::OpenPopup(imgui_window_title.c_str(), popup_flags);
+    ImGui::OpenPopup(imgui_window_title.data(), popup_flags);
 
     ImGui::SetNextWindowSize({ 430,120 }, ImGuiCond_Once);
 
     ImGuiWindowFlags window_flags =
         ImGuiWindowFlags_NoCollapse;
-    if(ImGui::BeginPopupModal(imgui_window_title.c_str(), &Opened, window_flags))
+    if(ImGui::BeginPopupModal(imgui_window_title.data(), &Opened, window_flags))
     {
         ImGuiInputTextFlags input_text_flags =
             ImGuiInputTextFlags_AutoSelectAll;
@@ -227,7 +227,7 @@ void Arcadia::ImguiWindowPopupFunctor_RenameScene::operator()()
     }
 }
 
-Arcadia::ImguiWindowMainMenubar::ImguiWindowMainMenubar(const std::initializer_list<std::tuple<std::string, std::string>>& imgui_window_title_id_pairs):
+Arcadia::ImguiWindowMainMenubar::ImguiWindowMainMenubar(const std::initializer_list<std::tuple<std::string_view, std::string_view>>& imgui_window_title_id_pairs):
     ImguiWindowInterface(true, "Main Menubar"),
     _ImguiWindowTitleAndIdStringPairs(imgui_window_title_id_pairs)
 {
@@ -344,10 +344,10 @@ void Arcadia::ImguiWindowMainMenubar::_ShowViewMenu()
     {
         for(const auto& [title, id_string] : _ImguiWindowTitleAndIdStringPairs)
         {
-            if(ImGui::MenuItem(title.c_str()))
+            if(ImGui::MenuItem(title.data()))
             {
                 event_queue.Signal<Events::OpenImguiWindow>(id_string);
-                ImGui::SetWindowFocus(id_string.c_str());
+                ImGui::SetWindowFocus(id_string.data());
             }
         }
         ImGui::EndMenu();

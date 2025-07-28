@@ -3,7 +3,7 @@
 #include "core/assert.hpp"
 
 Arcadia::Command::Command(
-    const std::string& description,
+    std::string_view description,
     const FunctionType& execute_fn,
     const FunctionType& unexecute_fn
 ):
@@ -23,7 +23,7 @@ void Arcadia::Command::Unexecute() const
     _UnexecuteFunction();
 }
 
-auto Arcadia::Command::GetDescription() const -> const std::string&
+auto Arcadia::Command::GetDescription() const -> std::string_view
 {
     return _Description;
 }
@@ -35,7 +35,7 @@ auto Arcadia::CommandList::Instance() -> SelfType&
 }
 
 void Arcadia::CommandList::Emplace(
-    const std::string& description,
+    std::string_view description,
     const FunctionType& execute_fn,
     const FunctionType& unexecute_fn
 )
@@ -56,7 +56,7 @@ void Arcadia::CommandList::Emplace(
 }
 
 void Arcadia::CommandList::EmplaceAndExecute(
-    const std::string& description,
+    std::string_view description,
     const FunctionType& execute_fn,
     const FunctionType& unexecute_fn
 )

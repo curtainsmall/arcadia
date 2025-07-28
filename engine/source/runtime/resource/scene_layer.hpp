@@ -35,7 +35,7 @@ namespace Arcadia
         [[nodiscard]]
         auto HasScene() const -> bool;
         [[nodiscard]]
-        auto HasScene(const std::string& name) const -> bool;
+        auto HasScene(std::string_view name) const -> bool;
         [[nodiscard]]
         auto HasActiveScene() const -> bool;
 
@@ -43,16 +43,16 @@ namespace Arcadia
         auto GetSceneStorage() const -> const SceneStorageType&;
 
         [[nodiscard]]
-        auto ActiveScene_GetName() const -> const std::string&;
+        auto ActiveScene_GetName() const -> std::string_view;
 
         [[nodiscard]]
         auto ActiveScene_ContainsEntity(EntityId entity_id) const -> bool;
 
         [[nodiscard]]
-        auto ActiveScene_IsEntityNameUsed(const std::string& entity_name) const -> bool;
+        auto ActiveScene_IsEntityNameUsed(std::string_view entity_name) const -> bool;
 
         [[nodiscard]]
-        auto ActiveScene_GetEntityIdByName(const std::string& entity_name) const -> EntityId;
+        auto ActiveScene_GetEntityIdByName(std::string_view entity_name) const -> EntityId;
 
         [[nodiscard]]
         auto ActiveScene_GetEntityCount() const -> std::size_t;
@@ -97,13 +97,13 @@ namespace Arcadia
         void Restore();
 
     private:
-        void _SetActiveScene(const std::string& name = {});
+        void _SetActiveScene(std::string_view name = {});
 
-        void _CreateScene(const std::string& name);
+        void _CreateScene(std::string_view name);
         void _CreateScene(const nlohmann::json& json);
-        auto _SaveScene(const std::string& name) -> nlohmann::json;
-        void _DestroyScene(const std::string& name);
-        void _RenameScene(const std::string& name, const std::string& new_name);
+        auto _SaveScene(std::string_view name) -> nlohmann::json;
+        void _DestroyScene(std::string_view name);
+        void _RenameScene(std::string_view name, std::string_view new_name);
 
         void _OnCreateScene(Events::CreateScene& e);
         void _OnCreateSceneFromJson(Events::CreateSceneFromJson& e);

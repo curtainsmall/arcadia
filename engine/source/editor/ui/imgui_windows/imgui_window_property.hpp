@@ -53,9 +53,9 @@ namespace Arcadia
         void Refresh(const LightComponent& comp);
     private:
         template<Concepts::VariantContainsType<LightType> Light>
-        auto _ChangeLightTypeSelectable(LightComponent& light_comp, const std::string& light_name) -> bool
+        auto _ChangeLightTypeSelectable(LightComponent& light_comp, std::string_view light_name) -> bool
         {
-            if(ImGui::Selectable(light_name.c_str()))
+            if(ImGui::Selectable(light_name.data()))
             {
                 pfd::button res = pfd::message{
                         "Arcadia - Changing Light Type",
@@ -163,7 +163,7 @@ namespace Arcadia
 
         ImguiWindowProperty(
             bool open,
-            const std::string& title
+            std::string_view title
         );
         virtual ~ImguiWindowProperty() override = default;
 
@@ -194,9 +194,9 @@ namespace Arcadia
         void _OnDeleteEntity(Events::DeleteEntity& e);
 
         template<Concepts::Component Component>
-        void _DisplayProperty(const std::string& tab_name, const std::function<void(Component&)>& display_fn) const
+        void _DisplayProperty(std::string_view tab_name, const std::function<void(Component&)>& display_fn) const
         {
-            if(_ContainsComponent<Component>(_SelectedEntityId) && ImGui::TreeNodeEx(tab_name.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_FramePadding))
+            if(_ContainsComponent<Component>(_SelectedEntityId) && ImGui::TreeNodeEx(tab_name.data(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_FramePadding))
             {
                 display_fn(_GetComponent<Component>(_SelectedEntityId));
                 ImGui::TreePop();

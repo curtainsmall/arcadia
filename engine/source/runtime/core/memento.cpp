@@ -6,7 +6,7 @@ void Arcadia::Memento::Restore() const
     _OriginatorRestoreFunction();
 }
 
-auto Arcadia::Memento::GetDescription() const -> const std::string&
+auto Arcadia::Memento::GetDescription() const -> std::string_view
 {
     return _Description;
 }

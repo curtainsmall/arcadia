@@ -20,15 +20,15 @@ namespace Arcadia
     public:
         using SelfType = Project;
     public:
-        Project(std::string name);
+        Project(std::string_view name);
         Project(nlohmann::json& json);
         ~Project();
         [[nodiscard]]
         auto ToJson() const -> nlohmann::json;
 
         [[nodiscard]]
-        auto GetName() const -> const std::string&;
-        void SetName(const std::string& name);
+        auto GetName() const -> std::string_view;
+        void SetName(std::string_view name);
 
     public:
         static inline const char* ProjectFileExtension{ ".arcadia" };

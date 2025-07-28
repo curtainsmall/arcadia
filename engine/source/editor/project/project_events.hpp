@@ -22,7 +22,7 @@ namespace Arcadia
         struct CreateProject: public EventBase
         {
         public:
-            CreateProject(const std::string& name, const std::string& filepath_string):
+            CreateProject(std::string_view name, std::string_view filepath_string):
                 Name(name), FilepathString(filepath_string)
             {
             }

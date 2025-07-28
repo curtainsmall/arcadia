@@ -62,7 +62,7 @@ namespace Arcadia
             Concepts::MementoOriginator MementoOriginator
         >
         Memento(
-            const std::string& description,
+            std::string_view description,
             std::in_place_type_t<MementoOriginator> in_place_type_originator,
             const std::function<MementoOriginator& ()>& originator_retriever,
             const std::shared_ptr<MementoDataBase>& memento_data_sptr
@@ -89,7 +89,7 @@ namespace Arcadia
         void Restore() const;
 
         [[nodiscard]]
-        auto GetDescription() const -> const std::string&;
+        auto GetDescription() const -> std::string_view;
 
     private:
         std::string _Description{};
@@ -108,7 +108,7 @@ namespace Arcadia
 
         template<Concepts::MementoOriginator MementoOriginator>
         void Snapshot(
-            const std::string& description,
+            std::string_view description,
             const std::function<MementoOriginator& ()>& originator_retriever
         )
         {

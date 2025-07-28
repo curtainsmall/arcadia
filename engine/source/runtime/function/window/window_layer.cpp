@@ -7,7 +7,7 @@
 
 Arcadia::WindowLayer::WindowLayer(
     glm::i32vec2 size,
-    std::string title,
+    std::string_view title,
     std::int32_t multisample_count
 ):
     LayerInterface(std::format("window_{}", title)),
@@ -101,7 +101,7 @@ void Arcadia::WindowLayer::OnUpdate()
     glfwPollEvents();
 }
 
-auto Arcadia::WindowLayer::GetTitle() const -> const std::string&
+auto Arcadia::WindowLayer::GetTitle() const -> std::string_view
 {
     return _Title;
 }

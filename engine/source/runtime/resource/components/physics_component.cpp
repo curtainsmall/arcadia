@@ -10,7 +10,7 @@ Arcadia::PhysicsComponent::PhysicsComponent(const nlohmann::json& json):
     _BodyShapeColor(Glm::Vec3_FromJson(json.at("body_shape_color")))
 {
     const nlohmann::json& json_shape_info = json.at("jph_shape_info");
-    const std::string& json_shape_info_type_string = json_shape_info.at("type");
+    std::string_view json_shape_info_type_string = json_shape_info.at("type");
 
     // If there is no shape, the physics component is not valid.
     // so we do not need to read other fields.

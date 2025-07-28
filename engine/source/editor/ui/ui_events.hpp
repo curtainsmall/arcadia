@@ -13,7 +13,7 @@ namespace Arcadia
         struct OpenImguiWindow: public EventBase
         {
         public:
-            OpenImguiWindow(const std::string& id_string):
+            OpenImguiWindow(std::string_view id_string):
                 IdString(id_string)
             {
             }

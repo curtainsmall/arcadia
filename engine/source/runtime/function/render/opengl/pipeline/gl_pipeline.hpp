@@ -46,29 +46,29 @@ namespace Arcadia
         void Use() const;
         void Unuse() const;
 
-        auto SetUniform(const std::string& name, GLfloat f0, GLfloat f1, GLfloat f2, GLfloat f3) -> SelfType&;
-        auto SetUniform(const std::string& name, GLfloat f0, GLfloat f1, GLfloat f2) -> SelfType&;
-        auto SetUniform(const std::string& name, GLfloat f0, GLfloat f1) -> SelfType&;
-        auto SetUniform(const std::string& name, GLfloat f) -> SelfType&;
-        auto SetUniform(const std::string& name, GLint i0, GLint i1, GLint i2, GLint i3) -> SelfType&;
-        auto SetUniform(const std::string& name, GLint i0, GLint i1, GLint i2) -> SelfType&;
-        auto SetUniform(const std::string& name, GLint i0, GLint i1) -> SelfType&;
-        auto SetUniform(const std::string& name, GLint i) -> SelfType&;
-        auto SetUniform(const std::string& name, GLuint u0, GLuint u1, GLuint u2, GLuint u3) -> SelfType&;
-        auto SetUniform(const std::string& name, GLuint u0, GLuint u1, GLuint u2) -> SelfType&;
-        auto SetUniform(const std::string& name, GLuint u0, GLuint u1) -> SelfType&;
-        auto SetUniform(const std::string& name, GLuint u) -> SelfType&;
-        auto SetUniform(const std::string& name, const glm::vec4& vec) -> SelfType&;
-        auto SetUniform(const std::string& name, const glm::vec3& vec) -> SelfType&;
-        auto SetUniform(const std::string& name, const glm::vec2& vec) -> SelfType&;
-        auto SetUniform(const std::string& name, const glm::mat4& mat) -> SelfType&;
-        auto SetUniform(const std::string& name, const glm::mat3& mat) -> SelfType&;
-        auto SetUniform(const std::string& name, const glm::mat2& mat) -> SelfType&;
+        auto SetUniform(std::string_view name, GLfloat f0, GLfloat f1, GLfloat f2, GLfloat f3) -> SelfType&;
+        auto SetUniform(std::string_view name, GLfloat f0, GLfloat f1, GLfloat f2) -> SelfType&;
+        auto SetUniform(std::string_view name, GLfloat f0, GLfloat f1) -> SelfType&;
+        auto SetUniform(std::string_view name, GLfloat f) -> SelfType&;
+        auto SetUniform(std::string_view name, GLint i0, GLint i1, GLint i2, GLint i3) -> SelfType&;
+        auto SetUniform(std::string_view name, GLint i0, GLint i1, GLint i2) -> SelfType&;
+        auto SetUniform(std::string_view name, GLint i0, GLint i1) -> SelfType&;
+        auto SetUniform(std::string_view name, GLint i) -> SelfType&;
+        auto SetUniform(std::string_view name, GLuint u0, GLuint u1, GLuint u2, GLuint u3) -> SelfType&;
+        auto SetUniform(std::string_view name, GLuint u0, GLuint u1, GLuint u2) -> SelfType&;
+        auto SetUniform(std::string_view name, GLuint u0, GLuint u1) -> SelfType&;
+        auto SetUniform(std::string_view name, GLuint u) -> SelfType&;
+        auto SetUniform(std::string_view name, const glm::vec4& vec) -> SelfType&;
+        auto SetUniform(std::string_view name, const glm::vec3& vec) -> SelfType&;
+        auto SetUniform(std::string_view name, const glm::vec2& vec) -> SelfType&;
+        auto SetUniform(std::string_view name, const glm::mat4& mat) -> SelfType&;
+        auto SetUniform(std::string_view name, const glm::mat3& mat) -> SelfType&;
+        auto SetUniform(std::string_view name, const glm::mat2& mat) -> SelfType&;
 
-        auto SetUniformBlockBinding(const std::string& name, GLuint index) -> SelfType&;
+        auto SetUniformBlockBinding(std::string_view name, GLuint index) -> SelfType&;
 
     private:
-        auto _GetUniformLocation(const std::string& name) -> GLint;
+        auto _GetUniformLocation(std::string_view name) -> GLint;
 
     private:
         GLuint _GlId{ 0 };

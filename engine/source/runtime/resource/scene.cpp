@@ -4,7 +4,7 @@
 #include "core/match.hpp"
 #include "resource/components.hpp"
 
-Arcadia::Scene::Scene(const std::string& name):
+Arcadia::Scene::Scene(std::string_view name):
     _Name(name)
 {
 }
@@ -27,7 +27,7 @@ Arcadia::Scene::Scene(const nlohmann::json& json):
         for(const auto& [json_comp_type_str, json_comp] : json_comps.items())
         {
             Match<void>(
-                json_comp_type_str,
+                std::string_view(json_comp_type_str),
                 ModelComponent::GetTypeStringStatic(),
                 [&]()
                 {
@@ -88,12 +88,12 @@ auto Arcadia::Scene::ToJson() const -> nlohmann::json
     return json;
 }
 
-auto Arcadia::Scene::GetName() const -> const std::string&
+auto Arcadia::Scene::GetName() const -> std::string_view
 {
     return _Name;
 }
 
-void Arcadia::Scene::SetName(const std::string& name)
+void Arcadia::Scene::SetName(std::string_view name)
 {
     _Name = name;
 }
@@ -133,7 +133,7 @@ auto Arcadia::Scene::GetEntityInfo(EntityId entity_id) -> EntityInfo&
     return _EntityInfoStorage.at(entity_id);
 }
 
-auto Arcadia::Scene::CreateEntity(const std::string& entity_name, const std::string& type_string) -> EntityId
+auto Arcadia::Scene::CreateEntity(std::string_view entity_name, std::string_view type_string) -> EntityId
 {
     ACDA_ASSERT(!IsEntityNameUsed(entity_name));
 
@@ -149,7 +149,7 @@ auto Arcadia::Scene::CreateEntity(const std::string& entity_name, const std::str
     );
 
     _EntityNameToEntityIdLookupMap.insert_or_assign(
-        entity_name,
+        std::string(entity_name),
         entity_id
     );
 
@@ -160,22 +160,23 @@ void Arcadia::Scene::DestroyEntity(EntityId entity_id)
 {
     ACDA_ASSERT(ContainsEntity(entity_id));
 
-    _EntityNameToEntityIdLookupMap.erase(GetEntityInfo(entity_id).GetName());
+    _EntityNameToEntityIdLookupMap.erase(std::string(GetEntityInfo(entity_id).GetName()));
     _Registry.destroy(entity_id);
     _EntityInfoStorage.erase(entity_id);
 }
 
-void Arcadia::Scene::RenameEntity(EntityId entity_id, const std::string& new_entity_name)
+void Arcadia::Scene::RenameEntity(EntityId entity_id, std::string_view new_entity_name)
 {
     ACDA_ASSERT(ContainsEntity(entity_id));
     ACDA_ASSERT(!IsEntityNameUsed(new_entity_name));
 
     EntityInfo& entity_info = GetEntityInfo(entity_id);
-    const std::string old_name = entity_info._Name;
+    // 'old_name' must be a indenpendent string
+    std::string old_name = entity_info._Name;
     entity_info._Name = new_entity_name;
 
     _EntityNameToEntityIdLookupMap.insert_or_assign(
-        new_entity_name,
+        std::string(new_entity_name),
         _EntityNameToEntityIdLookupMap.at(old_name)
     );
     _EntityNameToEntityIdLookupMap.erase(old_name);
@@ -218,17 +219,17 @@ auto Arcadia::Scene::GetEntityInfoStorage() -> EntityInfoStorageType&
     return _EntityInfoStorage;
 }
 
-auto Arcadia::Scene::IsEntityNameUsed(const std::string& entity_name) const -> bool
+auto Arcadia::Scene::IsEntityNameUsed(std::string_view entity_name) const -> bool
 {
-    return _EntityNameToEntityIdLookupMap.contains(entity_name);
+    return _EntityNameToEntityIdLookupMap.contains(std::string(entity_name));
 }
 
-auto Arcadia::Scene::GetEntityIdByName(const std::string& entity_name) const -> EntityId
+auto Arcadia::Scene::GetEntityIdByName(std::string_view entity_name) const -> EntityId
 {
-    return _EntityNameToEntityIdLookupMap.at(entity_name);
+    return _EntityNameToEntityIdLookupMap.at(std::string(entity_name));
 }
 
-auto Arcadia::EntityInfo::GetName() const -> const std::string&
+auto Arcadia::EntityInfo::GetName() const -> std::string_view
 {
     return _Name;
 }

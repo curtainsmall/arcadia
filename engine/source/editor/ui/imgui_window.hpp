@@ -8,12 +8,12 @@
 // ImGui window ID should follow: Title###id so that we can change the title for a curtain window
 #define ACDA_IMGUI_WINDOW_ID_STR_GETTERS(id_str) \
 [[nodiscard]]\
-static constexpr auto GetIdStringStatic() -> std::string\
+static constexpr auto GetIdStringStatic() -> std::string_view\
 {\
     return id_str;\
 }\
 [[nodiscard]]\
-virtual auto GetIdString() const -> std::string override\
+virtual auto GetIdString() const -> std::string_view override\
 {\
     return GetIdStringStatic();\
 }
@@ -27,7 +27,7 @@ namespace Arcadia
     public:
         ImguiWindowInterface(
             bool open = false,
-            const std::string& title = {}
+            std::string_view title = {}
         ):
             _Opened(open),
             _Title(title)
@@ -42,7 +42,7 @@ namespace Arcadia
         }
 
         [[nodiscard]]
-        auto GetTitle() const -> const std::string&
+        auto GetTitle() const -> std::string_view
         {
             return _Title;
         }
@@ -51,7 +51,7 @@ namespace Arcadia
         {
         }
         virtual void OnUpdate() = 0;
-        virtual auto GetIdString() const -> std::string = 0;
+        virtual auto GetIdString() const -> std::string_view = 0;
 
     protected:
         bool _Opened;
@@ -67,7 +67,7 @@ namespace Arcadia
         {
             {
                 T::GetIdStringStatic()
-            } -> std::same_as<std::string>;
+            } -> std::same_as<std::string_view>;
         };
     }
 }

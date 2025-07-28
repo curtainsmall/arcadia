@@ -64,7 +64,7 @@ namespace Arcadia::Events
     struct ACDA_API CreateScene: public EventBase
     {
     public:
-        CreateScene(const std::string& name, bool as_current):
+        CreateScene(std::string_view name, bool as_current):
             Name(name), AsCurrent(as_current)
         {
         }
@@ -87,7 +87,7 @@ namespace Arcadia::Events
     struct ACDA_API RenameScene: public EventBase
     {
     public:
-        RenameScene(const std::string& new_name):
+        RenameScene(std::string_view new_name):
             NewName(new_name)
         {
         }
@@ -98,7 +98,7 @@ namespace Arcadia::Events
     struct ACDA_API SelectScene: public EventBase
     {
     public:
-        SelectScene(const std::string& name):
+        SelectScene(std::string_view name):
             Name(name)
         {
         }
@@ -123,7 +123,7 @@ namespace Arcadia::Events
     struct ACDA_API NewEntity: public EventBase
     {
     public:
-        NewEntity(const std::string& entity_type_string):
+        NewEntity(std::string_view entity_type_string):
             EntityTypeString(entity_type_string)
         {
         }
@@ -145,7 +145,7 @@ namespace Arcadia::Events
     struct ACDA_API RenameEntity: public EventBase
     {
     public:
-        RenameEntity(EntityId entity_id, const std::string& new_name):
+        RenameEntity(EntityId entity_id, std::string_view new_name):
             EntityId(entity_id), NewName(new_name)
         {
         }
@@ -170,7 +170,7 @@ namespace Arcadia::Events
     struct ACDA_API AddComponent: public EventBase
     {
     public:
-        AddComponent(EntityId entity_id, const std::string& component_type_string):
+        AddComponent(EntityId entity_id, std::string_view component_type_string):
             EntityId(entity_id), ComponentTypeString(component_type_string)
         {
         }
@@ -182,7 +182,7 @@ namespace Arcadia::Events
     struct ACDA_API RemoveComponent: public EventBase
     {
     public:
-        RemoveComponent(EntityId entity_id, const std::string& component_type_string):
+        RemoveComponent(EntityId entity_id, std::string_view component_type_string):
             EntityId(entity_id), ComponentTypeString(component_type_string)
         {
         }

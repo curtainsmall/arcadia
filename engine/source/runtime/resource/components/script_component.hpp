@@ -42,12 +42,12 @@ namespace Arcadia
         auto GetFilepath() const -> const std::filesystem::path&;
 
         [[nodiscard]]
-        auto GetName() const -> const std::string&;
+        auto GetName() const -> std::string_view;
 
         [[nodiscard]]
-        auto GetScriptText() const -> const std::string&;
+        auto GetScriptText() const -> std::string_view;
 
-        void LoadScript(const std::filesystem::path& filepath, const std::string& name);
+        void LoadScript(const std::filesystem::path& filepath, std::string_view name);
 
     protected:
         [[nodiscard]]

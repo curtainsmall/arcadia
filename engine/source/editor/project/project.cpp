@@ -9,7 +9,7 @@
 
 #include "project/project_events.hpp"
 
-Arcadia::Project::Project(std::string name):
+Arcadia::Project::Project(std::string_view name):
     _Name(name)
 {
 }
@@ -55,12 +55,12 @@ auto Arcadia::Project::ToJson() const -> nlohmann::json
     return json;
 }
 
-auto Arcadia::Project::GetName() const -> const std::string&
+auto Arcadia::Project::GetName() const -> std::string_view
 {
     return _Name;
 }
 
-void Arcadia::Project::SetName(const std::string& name)
+void Arcadia::Project::SetName(std::string_view name)
 {
     _Name = name;
 }

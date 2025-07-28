@@ -55,7 +55,7 @@ namespace Arcadia
 
         ImguiWindowState(
             bool open,
-            const std::string& title
+            std::string_view title
         );
         virtual ~ImguiWindowState() override = default;
 

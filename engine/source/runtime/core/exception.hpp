@@ -11,8 +11,8 @@ namespace Arcadia::Exceptions
     struct ACDA_API BasicException: public std::exception
     {
     public:
-        explicit BasicException(const std::string& msg = "Basic Exception"):
-            std::exception(msg.c_str())
+        explicit BasicException(std::string_view msg = "Basic Exception"):
+            std::exception(msg.data())
         {
         }
 
@@ -28,7 +28,7 @@ namespace Arcadia::Exceptions
 #define _ACDA_DEFINE_EXCEPTION(exception_name) \
 struct ACDA_API exception_name: public Arcadia::Exceptions::BasicException{\
 public:\
-        inline exception_name(const std::string& msg = #exception_name) :\
+        inline exception_name(std::string_view msg = #exception_name) :\
         Arcadia::Exceptions::BasicException(msg)\
     {}\
 }
@@ -36,7 +36,7 @@ public:\
 #define _ACDA_DEFINE_EXCEPTION_WITH_MESSAGE(exception_name, message) \
 struct ACDA_API exception_name: public Arcadia::Exceptions::BasicException{\
 public:\
-    inline exception_name(const std::string& msg = message ):\
+    inline exception_name(std::string_view msg = message ):\
         Arcadia::Exceptions::BasicException(msg)\
     {}\
 }

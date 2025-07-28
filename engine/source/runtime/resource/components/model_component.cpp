@@ -289,7 +289,7 @@ void Arcadia::ModelComponent::_LoadTexture(
         int x = 0;
         int y = 0;
         std::filesystem::path filepath = directory / std::filesystem::path(str.C_Str());
-        float* ptr = reinterpret_cast<float*>(stbi_load(filepath.string().c_str(), &x, &y, nullptr, 4));
+        float* ptr = reinterpret_cast<float*>(stbi_load(filepath.generic_string().c_str(), &x, &y, nullptr, 4));
         texture.Size = glm::i32vec2(x, y);
         for(std::size_t i = 0; i < x * y; i += 4)
         {

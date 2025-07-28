@@ -6,7 +6,7 @@ ACDA_API void Arcadia::GlCheckError(const char* fn_name, const char* file_name, 
 {
     while(GLenum error = glGetError())
     {
-        std::string err_des{};
+        std::string_view err_des{ "Unknown OpenGL Error" };
         switch(error)
         {
             case GL_INVALID_ENUM:
@@ -46,11 +46,10 @@ ACDA_API void Arcadia::GlCheckError(const char* fn_name, const char* file_name, 
             }
             default:
             {
-                err_des = std::to_string(error);
                 break;
             }
         }
-        ACDA_LOG_ERROR(std::format("OpenGL ERROR CODE: {0} in {1} at {2}: {3}", err_des, std::string(fn_name), std::string(file_name), std::to_string(line)));
+        ACDA_LOG_ERROR(std::format("OpenGL ERROR CODE: {0} in {1} at {2}: {3}", err_des, fn_name, file_name, line));
         ACDA_LOG_FLUSH();
     }
 }
@@ -100,7 +99,7 @@ void GLAPIENTRY Arcadia::GlDebugCallback(
         return;
     }
 
-    std::string source_string{};
+    std::string_view source_string{};
     switch(source)
     {
         case GL_DEBUG_SOURCE_API:
@@ -123,7 +122,7 @@ void GLAPIENTRY Arcadia::GlDebugCallback(
             break;
     }
 
-    std::string type_string{};
+    std::string_view type_string{};
     switch(Type)
     {
         case GL_DEBUG_TYPE_ERROR:
@@ -155,7 +154,7 @@ void GLAPIENTRY Arcadia::GlDebugCallback(
             break;
     }
 
-    std::string severity_string{};
+    std::string_view severity_string{};
     switch(severity)
     {
         case GL_DEBUG_SEVERITY_HIGH:
@@ -197,8 +196,8 @@ Arcadia::OpenglContext::OpenglContext()
     {
         throw Exceptions::GlError("Failed to init GL3W");
     }
-    ACDA_GL_CALL(std::string gl_version_string(reinterpret_cast<const char*>(glGetString(GL_VERSION))));
-    ACDA_LOG_INFO(std::format("OpenGL Version: {}", gl_version_string));
+    ACDA_GL_CALL(const char* gl_version_str = reinterpret_cast<const char*>(glGetString(GL_VERSION)));
+    ACDA_LOG_INFO(std::format("OpenGL Version: {}", gl_version_str));
 
 #if ACDA_GL_USE_DEBUG_CALLBACK
     if(GetGlVersion() >= Version(4, 6, 0))

@@ -23,11 +23,11 @@ namespace Arcadia
     public:
         using SelfType = LayerInterface;
     public:
-        LayerInterface(const std::string& name = "layer");
+        LayerInterface(std::string_view name = "layer");
         virtual ~LayerInterface() = default;
 
         [[nodiscard]]
-        auto GetLayerName() const -> const std::string&;
+        auto GetLayerName() const -> std::string_view;
 
         virtual void OnEvent(EventBase& event) = 0;
         virtual void OnUpdate() = 0;

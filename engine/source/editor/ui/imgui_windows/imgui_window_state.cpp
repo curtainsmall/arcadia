@@ -85,7 +85,7 @@ void Arcadia::ImguiWindowStateFunctor_ScriptInterpreter::operator()(const std::s
 {
 }
 
-Arcadia::ImguiWindowState::ImguiWindowState(bool open, const std::string& title):
+Arcadia::ImguiWindowState::ImguiWindowState(bool open, std::string_view title):
     ImguiWindowInterface(open, title)
 {
 }
@@ -106,7 +106,10 @@ void Arcadia::ImguiWindowState::OnUpdate()
 
     auto [scene_layer_sptr, renderer_layer_sptr, physcis_layer] = LayerStack::Instance().GetMultipleLayersShared<SceneLayer, RendererLayer, PhysicsLayer>();
 
-    std::string imgui_window_title = _Title + GetIdString();
+    std::string imgui_window_title{};
+    imgui_window_title
+        .append(_Title)
+        .append(GetIdString());
 
     ImGui::SetNextWindowSize(glm::vec2{ 1024, 768 }, ImGuiCond_Once);
     auto window_flags =

@@ -1,8 +1,8 @@
 #include "gl_shader.hpp"
 
-Arcadia::GlShader::GlShader(const std::string& source_code, GlShaderType shader_type)
+Arcadia::GlShader::GlShader(std::string_view source_code, GlShaderType shader_type)
 {
-    const char* src = source_code.c_str();
+    const char* src = source_code.data();
     ACDA_GL_CALL(_GlId = glCreateShader(ToUnderlying(shader_type)));
     ACDA_GL_CALL(glShaderSource(_GlId, 1, &src, nullptr));
 

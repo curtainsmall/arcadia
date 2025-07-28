@@ -8,12 +8,12 @@
 
 #define ACDA_COMPONENT_TYPE_STR_GETTERS(type_str) \
 [[nodiscard]]\
-static constexpr auto GetTypeStringStatic() -> std::string\
+static constexpr auto GetTypeStringStatic() -> std::string_view\
 {\
     return type_str;\
 }\
 [[nodiscard]]\
-virtual auto GetTypeString() const -> std::string override\
+virtual auto GetTypeString() const -> std::string_view override\
 {\
     return GetTypeStringStatic();\
 }
@@ -25,7 +25,7 @@ namespace Arcadia
     {
     public:
         virtual ~ComponentInterface() = default;
-        virtual auto GetTypeString() const -> std::string = 0;
+        virtual auto GetTypeString() const -> std::string_view = 0;
     };
 
     namespace Concepts
@@ -37,7 +37,7 @@ namespace Arcadia
         {
             {
                 T::GetTypeStringStatic()
-            }->std::same_as<std::string>;
+            }->std::same_as<std::string_view>;
 
             {
                 comp.ToJson()

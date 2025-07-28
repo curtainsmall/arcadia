@@ -63,7 +63,7 @@ namespace Arcadia
     public:
         ACDA_IMGUI_WINDOW_ID_STR_GETTERS("###menubar");
 
-        ImguiWindowMainMenubar(const std::initializer_list<std::tuple<std::string, std::string>>& imgui_window_title_id_pairs);
+        ImguiWindowMainMenubar(const std::initializer_list<std::tuple<std::string_view, std::string_view>>& imgui_window_title_id_pairs);
         virtual ~ImguiWindowMainMenubar() override = default;
 
         virtual void OnEvent(EventBase& e) override;
@@ -79,7 +79,7 @@ namespace Arcadia
         ImguiWindowPopupFunctor_CreateScene _ImguiWindowPopupFunctor_CreateScene{};
         ImguiWindowPopupFunctor_RenameScene _ImguiWindowPopupFunctor_RenameScene{};
 
-        std::vector<std::tuple<std::string, std::string>> _ImguiWindowTitleAndIdStringPairs{};
+        std::vector<std::tuple<std::string_view, std::string_view>> _ImguiWindowTitleAndIdStringPairs{};
 
         bool _ShouldShowGizmo{ true };
     };

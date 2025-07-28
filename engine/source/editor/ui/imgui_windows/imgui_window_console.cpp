@@ -5,7 +5,7 @@
 #include "editor/editor_layer.hpp"
 #include "ui/imgui_wrapper.hpp"
 
-Arcadia::ImguiWindowConsole::ImguiWindowConsole(bool open, const std::string& title):
+Arcadia::ImguiWindowConsole::ImguiWindowConsole(bool open, std::string_view title):
     ImguiWindowInterface(open, title)
 {
     _ColorPalette[ToUnderlying(ColorPalette::Command)] = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
@@ -208,7 +208,7 @@ auto Arcadia::ImguiWindowConsole::_InputCallback(ImGuiInputTextCallbackData* dat
         return 0;
 
     // Get input string and console.
-    std::string input_str = data->Buf;
+    //std::string input_str = data->Buf;
     std::string trim_str;
     auto console = static_cast<ImguiWindowConsole*>(data->UserData);
 
@@ -231,19 +231,19 @@ auto Arcadia::ImguiWindowConsole::_InputCallback(ImGuiInputTextCallbackData* dat
         case ImGuiInputTextFlags_CallbackCompletion:
         {
             // Find last word.
-            size_t startSubtrPos = trim_str.find_last_of(' ');
+            size_t start_substr_pos = trim_str.find_last_of(' ');
             csys::AutoComplete* console_autocomplete;
 
             // Command line is an entire word/string (No whitespace)
             // Determine which autocomplete tree to use.
-            if(startSubtrPos == std::string::npos)
+            if(start_substr_pos == std::string::npos)
             {
-                startSubtrPos = 0;
+                start_substr_pos = 0;
                 console_autocomplete = &system.CmdAutocomplete();
             }
             else
             {
-                startSubtrPos += 1;
+                start_substr_pos += 1;
                 console_autocomplete = &system.VarAutocomplete();
             }
 
@@ -262,13 +262,13 @@ auto Arcadia::ImguiWindowConsole::_InputCallback(ImGuiInputTextCallbackData* dat
                 }
 
                 // Get partial completion and suggestions.
-                std::string partial = console_autocomplete->Suggestions(trim_str.substr(startSubtrPos, end_pos + 1), console->_CmdSuggestions);
+                std::string partial = console_autocomplete->Suggestions(trim_str.substr(start_substr_pos, end_pos + 1), console->_CmdSuggestions);
 
                 // Autocomplete only when one work is available.
                 if(!console->_CmdSuggestions.empty() && console->_CmdSuggestions.size() == 1)
                 {
-                    data->DeleteChars(static_cast<int>(startSubtrPos), static_cast<int>(data->BufTextLen - startSubtrPos));
-                    data->InsertChars(static_cast<int>(startSubtrPos), console->_CmdSuggestions[0].data());
+                    data->DeleteChars(static_cast<int>(start_substr_pos), static_cast<int>(data->BufTextLen - start_substr_pos));
+                    data->InsertChars(static_cast<int>(start_substr_pos), console->_CmdSuggestions[0].data());
                     console->_CmdSuggestions.clear();
                 }
                 else
@@ -276,8 +276,8 @@ auto Arcadia::ImguiWindowConsole::_InputCallback(ImGuiInputTextCallbackData* dat
                     // Partially complete word.
                     if(!partial.empty())
                     {
-                        data->DeleteChars(static_cast<int>(startSubtrPos), static_cast<int>(data->BufTextLen - startSubtrPos));
-                        data->InsertChars(static_cast<int>(startSubtrPos), partial.data());
+                        data->DeleteChars(static_cast<int>(start_substr_pos), static_cast<int>(data->BufTextLen - start_substr_pos));
+                        data->InsertChars(static_cast<int>(start_substr_pos), partial.data());
                     }
                 }
             }
@@ -307,10 +307,10 @@ auto Arcadia::ImguiWindowConsole::_InputCallback(ImGuiInputTextCallbackData* dat
             }
 
             // Get history.
-            std::string prevCommand = system.History()[console->_HistoryIndex];
+            std::string_view prev_cmd = system.History()[console->_HistoryIndex];
 
             // Insert commands.
-            data->InsertChars(data->CursorPos, prevCommand.data());
+            data->InsertChars(data->CursorPos, prev_cmd.data());
         }
         break;
 

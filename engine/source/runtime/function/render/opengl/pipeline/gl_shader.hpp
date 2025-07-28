@@ -30,7 +30,7 @@ namespace Arcadia
         using SelfType = GlShader;
     public:
         GlShader(
-            const std::string& source_code,
+            std::string_view source_code,
             GlShaderType shader_type
         );
         ~GlShader();
