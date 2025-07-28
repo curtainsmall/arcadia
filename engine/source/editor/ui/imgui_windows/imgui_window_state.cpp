@@ -3,10 +3,7 @@
 #include "core/function.hpp"
 #include "core/match.hpp"
 #include "core/pfd.hpp"
-#include "resource/components/camera_component.hpp"
-#include "resource/components/light_component.hpp"
-#include "resource/components/model_component.hpp"
-#include "resource/components/physics_component.hpp"
+#include "resource/components.hpp"
 
 #include "ui/imgui.hpp"
 #include "ui/imgui_wrapper.hpp"
@@ -82,6 +79,10 @@ void Arcadia::ImguiWindowStateFunctor_PhysicsSimulator::operator()(const std::sh
         EventQueue::Instance().Signal<Events::PhysicsSimulatirSetActive>(false);
     }
     ImGui::EndDisabled();
+}
+
+void Arcadia::ImguiWindowStateFunctor_ScriptInterpreter::operator()(const std::shared_ptr<ScriptLayer>& script_layer)
+{
 }
 
 Arcadia::ImguiWindowState::ImguiWindowState(bool open, const std::string& title):

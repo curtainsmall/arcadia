@@ -2,11 +2,7 @@
 
 #include "core/assert.hpp"
 #include "core/match.hpp"
-#include "resource/components/camera_component.hpp"
-#include "resource/components/light_component.hpp"
-#include "resource/components/model_component.hpp"
-#include "resource/components/physics_component.hpp"
-#include "resource/components/transform_component.hpp"
+#include "resource/components.hpp"
 
 Arcadia::Scene::Scene(const std::string& name):
     _Name(name)
@@ -56,6 +52,11 @@ Arcadia::Scene::Scene(const nlohmann::json& json):
                 [&]()
                 {
                     EmplaceComponent<TransformComponent>(entity_id, json_comp);
+                },
+                ScriptComponent::GetTypeStringStatic(),
+                [&]()
+                {
+                    EmplaceComponent<ScriptComponent>(entity_id, json_comp);
                 }
             );
         }
@@ -203,6 +204,10 @@ auto Arcadia::Scene::_CreateJsonComponents(EntityId entity_id) const -> nlohmann
     if(ContainsAllComponents<TransformComponent>(entity_id))
     {
         json_comps.push_back({ TransformComponent::GetTypeStringStatic(), GetComponent<TransformComponent>(entity_id).ToJson() });
+    }
+    if(ContainsAllComponents<ScriptComponent>(entity_id))
+    {
+        json_comps.push_back({ ScriptComponent::GetTypeStringStatic(), GetComponent<ScriptComponent>(entity_id).ToJson() });
     }
 
     return json_comps;

@@ -74,7 +74,7 @@ namespace Arcadia
 
         PhysicsComponent() = default;
         PhysicsComponent(const nlohmann::json& json);
-        ~PhysicsComponent() = default;
+        virtual ~PhysicsComponent() = default;
         [[nodiscard]]
         auto ToJson() const -> nlohmann::json;
 

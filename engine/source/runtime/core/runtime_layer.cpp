@@ -6,6 +6,7 @@
 #include "function/window/window_layer.hpp"
 #include "function/physics/physics_layer.hpp"
 #include "function/render/renderer_layer.hpp"
+#include "function/script/script_layer.hpp"
 #include "resource/scene_layer.hpp"
 
 Arcadia::RuntimeLayer::RuntimeLayer():
@@ -117,6 +118,8 @@ Arcadia::RuntimeLayer::RuntimeLayer():
         runtime_config.GraphicApi,
         runtime_config.WorkingDirectory
     );
+
+    layer_stack.PushLayer<ScriptLayer>();
 }
 
 Arcadia::RuntimeLayer::~RuntimeLayer()

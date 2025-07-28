@@ -10,11 +10,7 @@
 #include "core/pfd.hpp"
 #include "function/physics/physics_simulator.hpp"
 #include "platform/jolt.hpp"
-#include "resource/components/camera_component.hpp"
-#include "resource/components/light_component.hpp"
-#include "resource/components/model_component.hpp"
-#include "resource/components/physics_component.hpp"
-#include "resource/components/transform_component.hpp"
+#include "resource/components.hpp"
 #include "resource/scene_events.hpp"
 #include "resource/scene_layer.hpp"
 
@@ -136,6 +132,28 @@ namespace Arcadia
         glm::vec3 _OriginPivot{};
     };
 
+    struct ACDA_API ImguiWindowPropertyFunctor_ScriptComponent_AddScriptDialog
+    {
+    public:
+        void operator()(ScriptComponent& script_comp);
+    public:
+        bool Opened{ false };
+    private:
+        std::string _ScriptName{};
+        std::string _FilepathString{};
+        bool _UseFilenameAsScriptName{ true };
+    };
+
+    struct ACDA_API ImguiWindowPropertyFunctor_ScriptComponent
+    {
+    public:
+        using SelfType = ImguiWindowPropertyFunctor_ScriptComponent;
+    public:
+        void operator()(ScriptComponent& script_comp);
+    private:
+        ImguiWindowPropertyFunctor_ScriptComponent_AddScriptDialog _AddScriptDialog{};
+    };
+
     struct ImguiWindowProperty: public ImguiWindowInterface
     {
     public:
@@ -193,5 +211,6 @@ namespace Arcadia
         ImguiWindowPropertyFunctor_ModelComponent _ImguiWindowPropertyFunctor_ModelComponent{};
         ImguiWindowPropertyFunctor_PhysicsComponent _ImguiWindowPropertyFunctor_PhysicsComponent{};
         ImguiWindowPropertyFunctor_TransformComponent _ImguiWindowPropertyFunctor_TransformComponent{};
+        ImguiWindowPropertyFunctor_ScriptComponent _ImguiWindowPropertyFunctor_ScriptComponent{};
     };
 }

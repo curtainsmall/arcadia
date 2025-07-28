@@ -13,15 +13,11 @@ namespace Arcadia
 {
     struct ACDA_API NullLight
     {
-    public:
-        auto operator==(const NullLight&) const -> bool = default;
     };
 
     struct ACDA_API SpotLight
     {
     public:
-        auto operator==(const SpotLight&) const -> bool = default;
-
         [[nodiscard]]
         auto GetAttenuationCoefficients() const -> const glm::vec3&;
         void SetAttenuationCoefficients(const glm::vec3& coeffs);
@@ -58,8 +54,6 @@ namespace Arcadia
     struct ACDA_API DirectLight
     {
     public:
-        auto operator==(const DirectLight&) const -> bool = default;
-
         [[nodiscard]]
         auto GetColor() const -> const glm::vec3&;
         void SetColor(const glm::vec3& color);
@@ -85,8 +79,6 @@ namespace Arcadia
     struct ACDA_API AreaLight
     {
     public:
-        auto operator==(const AreaLight&) const -> bool = default;
-
         [[nodiscard]]
         auto GetSize() const -> const glm::vec2&;
         void SetSize(const glm::vec2& size);
@@ -118,8 +110,6 @@ namespace Arcadia
     struct ACDA_API PointLight
     {
     public:
-        auto operator==(const PointLight&) const -> bool = default;
-
         [[nodiscard]]
         auto GetAttenuationCoefficients() const -> const glm::vec3&;
         void SetAttenuationCoefficients(const glm::vec3& coeffs);
@@ -173,7 +163,7 @@ namespace Arcadia
 
         LightComponent() = default;
         LightComponent(const nlohmann::json& json);
-        ~LightComponent() = default;
+        virtual ~LightComponent() = default;
         [[nodiscard]]
         auto ToJson() const -> nlohmann::json;
 

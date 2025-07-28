@@ -21,9 +21,9 @@ namespace Arcadia
 
     namespace Exceptions
     {
-        ACDA_DEFINE_RUNTIME_ERROR_EXCEPTION(FileOpenFailed);
-        ACDA_DEFINE_RUNTIME_ERROR_EXCEPTION(FileLoadFailed);
-        ACDA_DEFINE_RUNTIME_ERROR_EXCEPTION(FileSaveFailed);
+        ACDA_DEFINE_EXCEPTION(FileOpenFailed);
+        ACDA_DEFINE_EXCEPTION(FileLoadFailed);
+        ACDA_DEFINE_EXCEPTION(FileSaveFailed);
     }
 
     struct ACDA_API File

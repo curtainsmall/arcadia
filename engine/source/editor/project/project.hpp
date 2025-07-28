@@ -12,7 +12,7 @@ namespace Arcadia
 {
     namespace Exceptions
     {
-        ACDA_DEFINE_RUNTIME_ERROR_EXCEPTION(ProjectConstructionFailed);
+        ACDA_DEFINE_EXCEPTION(ProjectConstructionFailed);
     }
 
     struct Project: public Noncopyable
@@ -31,7 +31,7 @@ namespace Arcadia
         void SetName(const std::string& name);
 
     public:
-        static inline std::string ProjectExtensionString{ ".arcadia" };
+        static inline const char* ProjectFileExtension{ ".arcadia" };
 
     private:
         std::string _Name;

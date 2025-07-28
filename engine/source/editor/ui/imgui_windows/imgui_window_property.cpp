@@ -8,7 +8,9 @@
 #include "core/function.hpp"
 #include "core/match.hpp"
 #include "core/pfd.hpp"
+#include "function/script/script_events.hpp"
 #include "resource/scene_layer.hpp"
+#include "platform/lua.hpp"
 
 #include "ui/imgui.hpp"
 #include "ui/imgui_wrapper.hpp"
@@ -891,6 +893,108 @@ void Arcadia::ImguiWindowPropertyFunctor_TransformComponent::operator()(Transfor
     ImGui::EndGroup();
 }
 
+void Arcadia::ImguiWindowPropertyFunctor_ScriptComponent_AddScriptDialog::operator()(ScriptComponent& script_comp)
+{
+    if(!Opened)
+    {
+        return;
+    }
+
+    std::string imgui_window_title("Add Script");
+
+    ImGuiPopupFlags popup_flags =
+        ImGuiPopupFlags_NoOpenOverExistingPopup;
+    ImGui::OpenPopup(imgui_window_title.c_str(), popup_flags);
+    ImGui::SetNextWindowSize({ 430,120 }, ImGuiCond_Once);
+
+    ImGuiWindowFlags window_flags =
+        ImGuiWindowFlags_NoCollapse;
+    if(ImGui::BeginPopupModal(imgui_window_title.c_str(), &Opened, window_flags))
+    {
+        if(_UseFilenameAsScriptName)
+        {
+            ImGui::BeginDisabled();
+        }
+        ImGuiInputTextFlags input_text_flags =
+            ImGuiInputTextFlags_AutoSelectAll;;
+        ImGui::Text("Script Name");
+        (void) ImGui::InputText("##script_name", &_ScriptName, input_text_flags);
+        if(_UseFilenameAsScriptName)
+        {
+            ImGui::EndDisabled();
+        }
+        ImGui::SameLine();
+        ImGui::Checkbox("Use Filename as Script Name", &_UseFilenameAsScriptName);
+
+        if(ImGui::Button("Select File"))
+        {
+            std::vector<std::string> filepath_strings = pfd::open_file(
+                "Select Lua File",
+                "",
+                { "Lua File", std::format("*{}",LuaFileExtension) }
+            ).result();
+            if(!filepath_strings.empty())
+            {
+                _FilepathString = filepath_strings[0];
+            }
+        }
+        if(!_FilepathString.empty())
+        {
+            ImGui::TextColored({ 228,228,228,255 }, "Loaded Lua File: %s", _FilepathString.c_str());
+        }
+
+        bool confirmed = false;
+        if(_FilepathString.empty() || !_UseFilenameAsScriptName && _ScriptName.empty())
+        {
+            ImGui::BeginDisabled();
+            ImGui::Button("Confirm");
+            ImGui::EndDisabled();
+        }
+        else
+        {
+            confirmed = ImGui::Button("Confirm");
+            if(confirmed)
+            {
+                std::filesystem::path filepath = _FilepathString;
+                std::string name = _UseFilenameAsScriptName ? filepath.stem().generic_string() : _ScriptName;
+                script_comp.LoadScript(filepath, name);
+            }
+        }
+        ImGui::SameLine();
+        if(confirmed || ImGui::Button("Cancel"))
+        {
+            ImGui::CloseCurrentPopup();
+            Opened = false;
+            _ScriptName.clear();
+            _FilepathString.clear();
+            _UseFilenameAsScriptName = true;
+        }
+
+        ImGui::EndPopup();
+    }
+}
+
+void Arcadia::ImguiWindowPropertyFunctor_ScriptComponent::operator()(ScriptComponent& script_comp)
+{
+    ImGui::BeginGroup();
+
+    ImGui::TextWrapped(std::format("Name: {}", script_comp.GetName()).c_str());
+    ImGui::TextWrapped(std::format("Filepath: {}", script_comp.GetFilepath().generic_string()).c_str());
+
+    if(ImGui::Button("Add Script ..."))
+    {
+        _AddScriptDialog.Opened = true;
+    }
+    _AddScriptDialog(script_comp);
+
+    if(ImGui::Button("Execute Lua Script"))
+    {
+        EventQueue::Instance().Signal<Events::ExecuteScript>(script_comp.GetScriptText());
+    }
+
+    ImGui::EndGroup();
+}
+
 Arcadia::ImguiWindowProperty::ImguiWindowProperty(bool open, const std::string& title):
     ImguiWindowInterface(open, title)
 {
@@ -945,6 +1049,7 @@ void Arcadia::ImguiWindowProperty::OnUpdate()
                 _DisplayProperty<ModelComponent>("Model", ACDA_BIND_MEMBER_FN(_ImguiWindowPropertyFunctor_ModelComponent));
                 _DisplayProperty<PhysicsComponent>("Physics", ACDA_BIND_MEMBER_FN(_ImguiWindowPropertyFunctor_PhysicsComponent));
                 _DisplayProperty<TransformComponent>("Transform", ACDA_BIND_MEMBER_FN(_ImguiWindowPropertyFunctor_TransformComponent));
+                _DisplayProperty<ScriptComponent>("Script", ACDA_BIND_MEMBER_FN(_ImguiWindowPropertyFunctor_ScriptComponent));
                 ImGui::PopItemWidth();
             }
         }

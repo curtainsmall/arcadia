@@ -8,7 +8,7 @@
 #include "function/physics/physics_simulator.hpp"
 #include "function/render/renderer_events.hpp"
 #include "function/render/renderer_layer.hpp"
-
+#include "function/script/script_layer.hpp"
 #include "resource/scene_events.hpp"
 #include "resource/scene_layer.hpp"
 
@@ -22,15 +22,11 @@ namespace Arcadia
     struct ImguiWindowStateFunctor_Scene
     {
     public:
-        using SelfType = ImguiWindowStateFunctor_Scene;
-    public:
         void operator()(const std::shared_ptr<SceneLayer>& scene_layer);
     };
 
     struct ImguiWindowStateFunctor_Renderer
     {
-    public:
-        using SelfType = ImguiWindowStateFunctor_Renderer;
     public:
         void operator()(const std::shared_ptr<RendererLayer>& renderer_layer);
     };
@@ -38,12 +34,16 @@ namespace Arcadia
     struct ImguiWindowStateFunctor_PhysicsSimulator
     {
     public:
-        using SelfType = ImguiWindowStateFunctor_PhysicsSimulator;
-    public:
         void operator()(const std::shared_ptr<PhysicsLayer>& physics_layer);
     private:
         bool _EnabledModifyingTempAllocatorSize{ false };
         bool _ShouldLinkUpsAndSpu{ true };
+    };
+
+    struct ImguiWindowStateFunctor_ScriptInterpreter
+    {
+    public:
+        void operator()(const std::shared_ptr<ScriptLayer>& script_layer);
     };
 
     struct ImguiWindowState: public ImguiWindowInterface

@@ -19,7 +19,7 @@ namespace Arcadia
 {
     namespace Exceptions
     {
-        ACDA_DEFINE_RUNTIME_ERROR_EXCEPTION(ModelComponent_ModelLoadInvalidFormat);
+        ACDA_DEFINE_EXCEPTION(ModelComponent_ModelLoadInvalidFormat);
     }
 
     using ModelComponent_IdentifiableMeshesType = Identifiable<std::vector<Mesh>>;
@@ -45,7 +45,7 @@ namespace Arcadia
         ModelComponent() = default;
         ModelComponent(const std::filesystem::path& filepath);
         ModelComponent(const nlohmann::json& json);
-        ~ModelComponent() = default;
+        virtual ~ModelComponent() = default;
         [[nodiscard]]
         auto ToJson() const -> nlohmann::json;
 

@@ -7,10 +7,7 @@
 #include "function/physics/physics_layer.hpp"
 #include "function/render/renderer_layer.hpp"
 #include "function/window/window_events.hpp"
-#include "resource/components/camera_component.hpp"
-#include "resource/components/model_component.hpp"
-#include "resource/components/physics_component.hpp"
-#include "resource/components/transform_component.hpp"
+#include "resource/components.hpp"
 #include "resource/scene_layer.hpp"
 
 #include "project/project_layer.hpp"

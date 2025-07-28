@@ -18,8 +18,8 @@ namespace Arcadia
 {
     namespace Exceptions
     {
-        ACDA_DEFINE_RUNTIME_ERROR_EXCEPTION(GlPipelineLinkFailed);
-        ACDA_DEFINE_RUNTIME_ERROR_EXCEPTION(GlPipelineInvalidUniformLocation);
+        ACDA_DEFINE_EXCEPTION(GlPipelineLinkFailed);
+        ACDA_DEFINE_EXCEPTION(GlPipelineInvalidUniformLocation);
     }
 
     struct ACDA_API GlPipeline: public Noncopyable

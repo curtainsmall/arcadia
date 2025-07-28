@@ -7,11 +7,7 @@
 #include "function/physics/physics_layer.hpp"
 #include "function/render/renderer_events.hpp"
 #include "function/render/renderer_layer.hpp"
-#include "resource/components/camera_component.hpp"
-#include "resource/components/light_component.hpp"
-#include "resource/components/model_component.hpp"
-#include "resource/components/physics_component.hpp"
-#include "resource/components/transform_component.hpp"
+#include "resource/components.hpp"
 
 Arcadia::SceneLayer::SceneLayer():
     LayerInterface("scene")
@@ -340,6 +336,8 @@ void Arcadia::SceneLayer::_OnNewEntity(Events::NewEntity& e)
 
             TransformComponent& transform_comp = scene.EmplaceComponent<TransformComponent>(entity_id);
             transform_comp.AddFlag(TransformComponentFlags::UseRotation);
+
+            scene.EmplaceComponent<ScriptComponent>(entity_id);
         },
         std::string("camera"),
         [&]()

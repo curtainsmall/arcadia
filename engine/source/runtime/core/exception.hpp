@@ -23,73 +23,28 @@ namespace Arcadia::Exceptions
             return what();
         }
     };
-
-    struct ACDA_API RuntimeError: public BasicException
-    {
-    public:
-        explicit RuntimeError(const std::string& msg = "(No Message Given)"):
-            BasicException(msg)
-        {
-            ACDA_LOG_ERROR(std::format("Runtime Exception: {}", msg));
-        }
-    };
-
-    struct ACDA_API LogicError: public BasicException
-    {
-    public:
-        explicit LogicError(const std::string& msg = "(No Message Given)"):
-            BasicException(msg)
-        {
-            ACDA_LOG_ERROR(std::format("Logic Exception {}", msg));
-        }
-    };
 }
 
-//==== Logic error exception ====
-
-#define _ACDA_DEFINE_LOGIC_ERROR_EXCEPTION(exception_name) \
-struct ACDA_API exception_name: public Arcadia::Exceptions::LogicError{\
+#define _ACDA_DEFINE_EXCEPTION(exception_name) \
+struct ACDA_API exception_name: public Arcadia::Exceptions::BasicException{\
 public:\
         inline exception_name(const std::string& msg = #exception_name) :\
-        Arcadia::Exceptions::LogicError(msg)\
+        Arcadia::Exceptions::BasicException(msg)\
     {}\
 }
 
-#define _ACDA_DEFINE_LOGIC_ERROR_EXCEPTION_WITH_MESSAGE(exception_name, message) \
-struct ACDA_API exception_name: public Arcadia::Exceptions::LogicError{\
+#define _ACDA_DEFINE_EXCEPTION_WITH_MESSAGE(exception_name, message) \
+struct ACDA_API exception_name: public Arcadia::Exceptions::BasicException{\
 public:\
     inline exception_name(const std::string& msg = message ):\
-        Arcadia::Exceptions::LogicError(msg)\
+        Arcadia::Exceptions::BasicException(msg)\
     {}\
 }
 
-#define _ACDA_GET_DEFINE_LOGIC_ERROR_EXCEPTION_MACRO(_1, _2, name, ...) name
+#define _ACDA_GET_DEFINE_EXCEPTION_MACRO(_1, _2, name, ...) name
 
-#define ACDA_DEFINE_LOGIC_ERROR_EXCEPTION(...) \
-_ACDA_GET_DEFINE_LOGIC_ERROR_EXCEPTION_MACRO(__VA_ARGS__, _ACDA_DEFINE_LOGIC_ERROR_EXCEPTION_WITH_MESSAGE, _ACDA_DEFINE_LOGIC_ERROR_EXCEPTION)(__VA_ARGS__)
-
-//==== Runtime error exception ====
-
-#define _ACDA_DEFINE_RUNTIME_ERROR_EXCEPTION(exception_name) \
-struct ACDA_API exception_name: public Arcadia::Exceptions::RuntimeError{\
-public:\
-        inline exception_name(const std::string& msg = #exception_name) :\
-        Arcadia::Exceptions::RuntimeError(msg)\
-    {}\
-}
-
-#define _ACDA_DEFINE_RUNTIME_ERROR_EXCEPTION_WITH_MESSAGE(exception_name, message) \
-struct ACDA_API exception_name: public Arcadia::Exceptions::RuntimeError{\
-public:\
-    inline exception_name(const std::string& msg = message ):\
-        Arcadia::Exceptions::RuntimeError(msg)\
-    {}\
-}
-
-#define _ACDA_GET_DEFINE_RUNTIME_ERROR_EXCEPTION_MACRO(_1, _2, name, ...) name
-
-#define ACDA_DEFINE_RUNTIME_ERROR_EXCEPTION(...) \
-_ACDA_GET_DEFINE_RUNTIME_ERROR_EXCEPTION_MACRO(__VA_ARGS__, _ACDA_DEFINE_RUNTIME_ERROR_EXCEPTION_WITH_MESSAGE, _ACDA_DEFINE_RUNTIME_ERROR_EXCEPTION)(__VA_ARGS__)
+#define ACDA_DEFINE_EXCEPTION(...) \
+_ACDA_GET_DEFINE_EXCEPTION_MACRO(__VA_ARGS__, _ACDA_DEFINE_EXCEPTION_WITH_MESSAGE, _ACDA_DEFINE_EXCEPTION)(__VA_ARGS__)
 
 #define _ACDA_EXCPETION_MESSAGE_WRAPPER(msg) std::format("{} at {}:{}",msg,__FILE__, __LINE__)
 #define _ACDA_THROW(exception_name) throw exception_name(_ACDA_EXCPETION_MESSAGE_WRAPPER("(No Exception Message)"))

@@ -15,7 +15,7 @@ namespace Arcadia
         ACDA_COMPONENT_TYPE_STR_GETTERS("skybox");
 
         SkyboxComponent() = default;
-        ~SkyboxComponent() = default;
+        virtual ~SkyboxComponent() = default;
 
         [[nodiscard]]
         auto GetCubemap() const -> const Cubemap&;

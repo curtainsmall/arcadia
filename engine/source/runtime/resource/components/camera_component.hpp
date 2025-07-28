@@ -40,7 +40,7 @@ namespace Arcadia
 
         CameraComponent() = default;
         CameraComponent(const nlohmann::json& json);
-        ~CameraComponent() = default;
+        virtual ~CameraComponent() = default;
         [[nodiscard]]
         auto ToJson() const -> nlohmann::json;
 

@@ -1,0 +1,12 @@
+#pragma once
+
+extern "C" {
+#include "lua/lua.h"
+#include "lua/lualib.h"
+#include "lua/lauxlib.h"
+}
+
+namespace Arcadia
+{
+    static inline const char* LuaFileExtension{ ".lua" };
+}

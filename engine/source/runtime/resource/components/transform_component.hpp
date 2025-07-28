@@ -39,7 +39,7 @@ namespace Arcadia
 
         TransformComponent() = default;
         TransformComponent(const nlohmann::json& json);
-        ~TransformComponent() = default;
+        virtual ~TransformComponent() = default;
         [[nodiscard]]
         auto ToJson() const -> nlohmann::json;
 

@@ -13,11 +13,7 @@
 #include "function/render/opengl/gl_renderer.hpp"
 #include "function/window/window_events.hpp"
 #include "function/window/window_layer.hpp"
-#include "resource/components/camera_component.hpp"
-#include "resource/components/light_component.hpp"
-#include "resource/components/model_component.hpp"
-#include "resource/components/physics_component.hpp"
-#include "resource/components/transform_component.hpp"
+#include "resource/components.hpp"
 #include "resource/scene_layer.hpp"
 
 Arcadia::ProjectLayer::ProjectLayer():
@@ -174,18 +170,18 @@ void Arcadia::ProjectLayer::_OnOpenProject(Events::OpenProject& e)
     std::vector<std::string> filepathes = pfd::open_file{
         "Arcadia - Open",
         "",
-        std::vector<std::string>{"Arcadia Project",std::format("*{}",Project::ProjectExtensionString)}
+        std::vector<std::string>{"Arcadia Project",std::format("*{}",Project::ProjectFileExtension)}
     }.result();
     _ProjectFilepath = filepathes.size() ? filepathes.at(0) : std::string{};
     if(_ProjectFilepath.empty())
     {
         return;
     }
-    if(_ProjectFilepath.extension() != Project::ProjectExtensionString)
+    if(_ProjectFilepath.extension() != Project::ProjectFileExtension)
     {
         (void) pfd::message(
             "Arcadia - Open Project",
-            std::format("Arcadia project must ends with extension \"{}\" while {} does not", Project::ProjectExtensionString, _ProjectFilepath.generic_string()),
+            std::format("Arcadia project must ends with extension \"{}\" while {} does not", Project::ProjectFileExtension, _ProjectFilepath.generic_string()),
             pfd::choice::ok,
             pfd::icon::info
         );

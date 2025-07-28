@@ -24,6 +24,7 @@ namespace Arcadia
         public Noncopyable
     {
     public:
+        virtual ~ComponentInterface() = default;
         virtual auto GetTypeString() const -> std::string = 0;
     };
 

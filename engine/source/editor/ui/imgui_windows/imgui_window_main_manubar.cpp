@@ -41,8 +41,8 @@ void Arcadia::ImguiWindowPopupFunctor_CreateProject::operator()()
         {
             _FilepathString = pfd::save_file{
                 "Select location for Project",
-                _Name + Project::ProjectExtensionString,
-                {"Arcadia Project",Project::ProjectExtensionString}
+                _Name + Project::ProjectFileExtension,
+                {"Arcadia Project",std::format("*{}", Project::ProjectFileExtension)}
             }.result();
         }
         if(!_FilepathString.empty())

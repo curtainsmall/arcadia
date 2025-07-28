@@ -14,7 +14,7 @@ namespace Arcadia
 {
     namespace Exceptions
     {
-        ACDA_DEFINE_RUNTIME_ERROR_EXCEPTION(CreatingSceneFromJsonFailed);
+        ACDA_DEFINE_EXCEPTION(CreatingSceneFromJsonFailed);
     }
 
     struct ACDA_API SceneLayer: public LayerInterface
