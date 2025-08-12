@@ -11,7 +11,6 @@
 
 #include "core/enum.hpp"
 #include "core/log.hpp"
-#include "core/noncopyable.hpp"
 #include "platform/defines.hpp"
 
 namespace Arcadia
@@ -25,12 +24,17 @@ namespace Arcadia
         _EnumBitfield
     };
 
-    struct ACDA_API EventBase: public Noncopyable
+    struct ACDA_API EventBase
     {
+    public:
+        using SelfType = EventBase;
     public:
         EventBase() = default;
         // Virtual destructor that make event type virtual
         virtual ~EventBase() = default;
+
+        EventBase(const SelfType&) = delete;
+        auto operator=(const SelfType&) -> SelfType & = delete;
 
         void MarkHandled();
         void MarkOnceAgain();
@@ -50,7 +54,7 @@ namespace Arcadia
     template<Concepts::Event Event>
     using EventHandler = std::function<void(Event&)>;
 
-    struct ACDA_API EventDispatcher: public Noncopyable
+    struct ACDA_API EventDispatcher
     {
     public:
         using SelfType = EventDispatcher;
@@ -60,6 +64,9 @@ namespace Arcadia
         {
         }
         ~EventDispatcher() = default;
+
+        EventDispatcher(const SelfType&) = delete;
+        auto operator=(const SelfType&) -> SelfType & = delete;
 
         template<Concepts::Event Event>
         auto Dispatch(const EventHandler<Event>& handler) -> SelfType&
@@ -79,7 +86,7 @@ namespace Arcadia
         bool _Dispatched{ false };
     };
 
-    struct ACDA_API EventQueue: public Noncopyable
+    struct ACDA_API EventQueue
     {
     public:
         using DebugExcludedEventTypeSetType = std::unordered_set<std::type_index>;
@@ -89,6 +96,12 @@ namespace Arcadia
 
     public:
         static auto Instance() -> SelfType&;
+
+        EventQueue() = default;
+        ~EventQueue() = default;
+
+        EventQueue(const SelfType&) = delete;
+        auto operator=(const SelfType&) -> SelfType & = delete;
 
         template<Concepts::Event Event, class ...Args>
         auto Signal(Args&& ...args) -> SelfType&

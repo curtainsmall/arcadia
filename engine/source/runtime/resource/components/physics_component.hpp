@@ -63,7 +63,6 @@ namespace Arcadia
     };
 
     struct ACDA_API PhysicsComponent:
-        public Noncopyable,
         public Mementoable<PhysicsComponent_Memento>
     {
     public:
@@ -77,6 +76,9 @@ namespace Arcadia
         virtual ~PhysicsComponent() = default;
         [[nodiscard]]
         auto ToJson() const -> nlohmann::json;
+
+        PhysicsComponent(const SelfType&) = delete;
+        auto operator=(const SelfType&) -> SelfType & = delete;
 
         [[nodiscard]]
         auto IsValid() const -> bool;

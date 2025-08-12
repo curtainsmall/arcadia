@@ -9,7 +9,6 @@
 #include "core/event.hpp"
 #include "core/exception.hpp"
 #include "core/nlohmann_json.hpp"
-#include "core/noncopyable.hpp"
 #include "core/string.hpp"
 #include "core/uuid.hpp"
 #include "platform/defines.hpp"
@@ -42,7 +41,7 @@ namespace Arcadia
         std::string _Name;
     };
 
-    struct ACDA_API Scene: public Noncopyable
+    struct ACDA_API Scene
     {
     public:
         using EntityInfoStorageType = std::unordered_map<EntityId, EntityInfo>;
@@ -54,6 +53,9 @@ namespace Arcadia
         Scene(const nlohmann::json& json);
         ~Scene() = default;
         auto ToJson() const -> nlohmann::json;
+
+        Scene(const SelfType&) = delete;
+        auto operator=(const SelfType&) -> SelfType & = delete;
 
         Scene(SelfType&&) noexcept = default;
         auto operator=(SelfType&&) noexcept -> SelfType & = default;

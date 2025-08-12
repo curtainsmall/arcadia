@@ -4,7 +4,6 @@
 #include <unordered_map>
 #include <unordered_set>
 
-#include "core/noncopyable.hpp"
 #include "platform/defines.hpp"
 #include "platform/jolt.hpp"
 #include "resource/scene.hpp"
@@ -44,13 +43,16 @@ namespace Arcadia
         virtual auto ShouldCollide(JPH::ObjectLayer obj, JPH::BroadPhaseLayer bp) const -> bool override;
     };
 
-    struct ACDA_API PhysicsSimulator: public Noncopyable
+    struct ACDA_API PhysicsSimulator
     {
     public:
         using SelfType = PhysicsSimulator;
     public:
         PhysicsSimulator();
         ~PhysicsSimulator();
+
+        PhysicsSimulator(const SelfType&) = delete;
+        auto operator=(const SelfType&) -> SelfType & = delete;
 
         [[nodiscard]]
         auto HasEntity(EntityId entity_id) const -> bool;

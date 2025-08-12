@@ -4,7 +4,6 @@
 #include <list>
 #include <memory>
 
-#include "core/noncopyable.hpp"
 #include "platform/defines.hpp"
 
 namespace Arcadia

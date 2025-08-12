@@ -33,7 +33,6 @@ namespace Arcadia
     };
 
     struct ACDA_API ModelComponent:
-        public Noncopyable,
         public Mementoable<ModelComponent_Memento>
     {
     public:
@@ -48,6 +47,9 @@ namespace Arcadia
         virtual ~ModelComponent() = default;
         [[nodiscard]]
         auto ToJson() const -> nlohmann::json;
+
+        ModelComponent(const SelfType&) = delete;
+        auto operator=(const SelfType&) -> SelfType & = delete;
 
         ModelComponent(SelfType&&) noexcept = default;
         auto operator=(SelfType&&) noexcept -> SelfType & = default;

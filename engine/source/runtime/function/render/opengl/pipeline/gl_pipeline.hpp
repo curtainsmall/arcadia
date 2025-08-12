@@ -9,7 +9,6 @@
 #include "core/file.hpp"
 #include "core/log.hpp"
 #include "core/math.hpp"
-#include "core/noncopyable.hpp"
 #include "function/render/opengl/pipeline/gl_shader.hpp"
 #include "platform/defines.hpp"
 #include "platform/opengl.hpp"
@@ -22,7 +21,7 @@ namespace Arcadia
         ACDA_DEFINE_EXCEPTION(GlPipelineInvalidUniformLocation);
     }
 
-    struct ACDA_API GlPipeline: public Noncopyable
+    struct ACDA_API GlPipeline
     {
     public:
         using GlShadersBuilderType = std::function<void(const std::filesystem::path&, std::vector<GlShader>&)>;
@@ -33,6 +32,9 @@ namespace Arcadia
             const GlShadersBuilderType& gl_shaders_builder
         );
         ~GlPipeline();
+
+        GlPipeline(const SelfType&) = delete;
+        auto operator=(const SelfType&) -> SelfType & = delete;
 
         GlPipeline(SelfType&& rhs) noexcept;
         auto operator=(SelfType&& rhs) noexcept -> SelfType&;

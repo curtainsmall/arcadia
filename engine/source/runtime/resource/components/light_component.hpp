@@ -152,7 +152,6 @@ namespace Arcadia
     };
 
     struct ACDA_API LightComponent:
-        public Noncopyable,
         public Mementoable<LightComponent_Memento>
     {
     public:
@@ -166,6 +165,9 @@ namespace Arcadia
         virtual ~LightComponent() = default;
         [[nodiscard]]
         auto ToJson() const -> nlohmann::json;
+
+        LightComponent(const SelfType&) = delete;
+        auto operator=(const SelfType&) -> SelfType & = delete;
 
         [[nodiscard]]
         auto GetLight() const -> const LightType&;

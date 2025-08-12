@@ -1,9 +1,9 @@
 #pragma once
 
 #include <string>
+#include <concepts>
 
 #include "core/nlohmann_json.hpp"
-#include "core/noncopyable.hpp"
 #include "platform/defines.hpp"
 
 #define ACDA_COMPONENT_TYPE_STR_GETTERS(type_str) \
@@ -24,7 +24,7 @@ namespace Arcadia
     {
         template<class T>
         concept Component =
-            std::derived_from<T, Noncopyable>
+            !std::copyable<T>
             && requires(const T comp, const nlohmann::json json)
         {
             {

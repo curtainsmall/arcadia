@@ -6,7 +6,7 @@
 
 namespace Arcadia
 {
-    struct ACDA_API PlayerComponent: public Noncopyable
+    struct ACDA_API PlayerComponent
     {
     public:
         using SelfType = PlayerComponent;
@@ -18,5 +18,8 @@ namespace Arcadia
         virtual ~PlayerComponent() = default;
         [[nodiscard]]
         auto ToJson() const -> nlohmann::json;
+
+        PlayerComponent(const SelfType&) = delete;
+        auto operator=(const SelfType&) -> SelfType & = delete;
     };
 }

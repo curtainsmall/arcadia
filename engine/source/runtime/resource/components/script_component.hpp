@@ -20,7 +20,6 @@ namespace Arcadia
     };
 
     struct ACDA_API ScriptComponent:
-        public Noncopyable,
         public Mementoable<ScriptComponent_Memento>
     {
     public:
@@ -34,6 +33,9 @@ namespace Arcadia
         virtual ~ScriptComponent() override = default;
         [[nodiscard]]
         auto ToJson() const -> nlohmann::json;
+
+        ScriptComponent(const SelfType&) = delete;
+        auto operator=(const SelfType&) -> SelfType & = delete;
 
         ScriptComponent(SelfType&&) noexcept = default;
         auto operator=(SelfType&&) noexcept -> SelfType & = default;

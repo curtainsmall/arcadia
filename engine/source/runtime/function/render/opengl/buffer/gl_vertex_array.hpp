@@ -2,7 +2,6 @@
 
 #include <vector>
 
-#include "core/noncopyable.hpp"
 #include "function/render/opengl/buffer/gl_index_buffer.hpp"
 #include "function/render/opengl/buffer/gl_vertex_buffer.hpp"
 #include "platform/defines.hpp"
@@ -11,7 +10,7 @@
 
 namespace Arcadia
 {
-    struct ACDA_API GlVertexArray: public Noncopyable
+    struct ACDA_API GlVertexArray
     {
     public:
         using SelfType = GlVertexArray;
@@ -22,6 +21,9 @@ namespace Arcadia
             const std::vector<Mesh::IndexType>& indices
         );
         ~GlVertexArray();
+
+        GlVertexArray(const SelfType&) = delete;
+        auto operator=(const SelfType&) -> SelfType & = delete;
 
         GlVertexArray(SelfType&& rhs) noexcept;
         auto operator=(SelfType&& rhs) noexcept -> SelfType&;

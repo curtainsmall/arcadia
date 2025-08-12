@@ -4,7 +4,6 @@
 
 #include "core/exception.hpp"
 #include "core/math.hpp"
-#include "core/noncopyable.hpp"
 #include "platform/defines.hpp"
 #include "platform/graphic_api.hpp"
 #include "resource/scene.hpp"
@@ -18,7 +17,7 @@ namespace Arcadia
         glm::i32vec2 Size;
     };
 
-    struct ACDA_API RendererInterface: public Noncopyable
+    struct ACDA_API RendererInterface
     {
     public:
 
@@ -26,6 +25,9 @@ namespace Arcadia
     public:
         RendererInterface() = default;
         virtual ~RendererInterface() = default;
+
+        RendererInterface(const SelfType&) = delete;
+        auto operator=(const SelfType&) -> SelfType & = delete;
 
         [[nodiscard]]
         virtual auto HasEntity(EntityId entity_id) const -> bool = 0;

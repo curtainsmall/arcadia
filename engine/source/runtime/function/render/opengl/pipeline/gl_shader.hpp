@@ -2,7 +2,6 @@
 
 #include <string>
 
-#include "core/noncopyable.hpp"
 #include "platform/defines.hpp"
 #include "platform/opengl.hpp"
 
@@ -24,7 +23,7 @@ namespace Arcadia
         ACDA_DEFINE_EXCEPTION(GlShaderCompileFail);
     }
 
-    struct ACDA_API GlShader: public Noncopyable
+    struct ACDA_API GlShader
     {
     public:
         using SelfType = GlShader;
@@ -34,6 +33,9 @@ namespace Arcadia
             GlShaderType shader_type
         );
         ~GlShader();
+
+        GlShader(const SelfType&) = delete;
+        auto operator=(const SelfType&) -> SelfType & = delete;
 
         GlShader(SelfType&& rhs) noexcept;
         auto operator=(SelfType&& rhs) noexcept -> SelfType&;

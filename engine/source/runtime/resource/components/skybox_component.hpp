@@ -6,8 +6,7 @@
 
 namespace Arcadia
 {
-    struct ACDA_API SkyboxComponent:
-        public Noncopyable
+    struct ACDA_API SkyboxComponent
     {
     public:
         using SelfType = SkyboxComponent;
@@ -16,6 +15,9 @@ namespace Arcadia
 
         SkyboxComponent() = default;
         virtual ~SkyboxComponent() = default;
+
+        SkyboxComponent(const SelfType&) = delete;
+        auto operator=(const SelfType&) -> SelfType & = delete;
 
         [[nodiscard]]
         auto GetCubemap() const -> const Cubemap&;

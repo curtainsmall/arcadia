@@ -2,7 +2,6 @@
 
 #include <string_view>
 
-#include "core/noncopyable.hpp"
 #include "platform/defines.hpp"
 #include "platform/lua.hpp"
 #include "core/exception.hpp"
@@ -14,11 +13,16 @@ namespace Arcadia
         ACDA_DEFINE_EXCEPTION(FailedToExecuteScript);
     }
 
-    struct ACDA_API ScriptInterpreter: public Noncopyable
+    struct ACDA_API ScriptInterpreter
     {
+    public:
+        using SelfType = ScriptInterpreter;
     public:
         ScriptInterpreter();
         ~ScriptInterpreter();
+
+        ScriptInterpreter(const SelfType&) = delete;
+        auto operator=(const SelfType&) -> SelfType & = delete;
 
         void ExecuteScript(std::string_view text);
     private:

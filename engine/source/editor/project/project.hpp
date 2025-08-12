@@ -6,11 +6,10 @@
 
 #include "core/exception.hpp"
 #include "core/nlohmann_json.hpp"
-#include "core/noncopyable.hpp"
 
 namespace Arcadia
 {
-    struct Project: public Noncopyable
+    struct Project
     {
     public:
         using SelfType = Project;
@@ -20,6 +19,9 @@ namespace Arcadia
         ~Project();
         [[nodiscard]]
         auto ToJson() const -> nlohmann::json;
+
+        Project(const SelfType&) = delete;
+        auto operator=(const SelfType&) -> SelfType & = delete;
 
         [[nodiscard]]
         auto GetName() const -> std::string_view;

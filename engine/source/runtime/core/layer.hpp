@@ -13,18 +13,20 @@
 #include "core/assert.hpp"
 #include "core/event.hpp"
 #include "core/exception.hpp"
-#include "core/noncopyable.hpp"
 #include "platform/defines.hpp"
 
 namespace Arcadia
 {
-    struct ACDA_API LayerInterface: public Noncopyable
+    struct ACDA_API LayerInterface
     {
     public:
         using SelfType = LayerInterface;
     public:
         LayerInterface(std::string_view name = "layer");
         virtual ~LayerInterface() = default;
+
+        LayerInterface(const SelfType&) = delete;
+        auto operator=(const SelfType&) -> SelfType & = delete;
 
         [[nodiscard]]
         auto GetLayerName() const -> std::string_view;

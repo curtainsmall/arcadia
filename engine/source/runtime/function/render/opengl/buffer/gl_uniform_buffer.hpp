@@ -1,12 +1,11 @@
 #pragma once
 
-#include "core/noncopyable.hpp"
 #include "platform/defines.hpp"
 #include "platform/opengl.hpp"
 
 namespace Arcadia
 {
-    struct ACDA_API GlUniformBuffer: public Noncopyable
+    struct ACDA_API GlUniformBuffer
     {
     public:
         using SelfType = GlUniformBuffer;
@@ -20,7 +19,10 @@ namespace Arcadia
         );
         ~GlUniformBuffer();
 
-        GlUniformBuffer(SelfType&& rhs)noexcept;
+        GlUniformBuffer(const SelfType&) = delete;
+        auto operator=(const SelfType&) -> SelfType & = delete;
+
+        GlUniformBuffer(SelfType&& rhs) noexcept;
         auto operator=(SelfType&& rhs) noexcept -> SelfType&;
 
         void Bind() const;

@@ -1,20 +1,22 @@
 #pragma once
 
 #include "core/math.hpp"
-#include "core/noncopyable.hpp"
 #include "platform/defines.hpp"
 #include "platform/opengl.hpp"
 #include "resource/cubemap.hpp"
 
 namespace Arcadia
 {
-    struct ACDA_API GlCubemap: public Noncopyable
+    struct ACDA_API GlCubemap
     {
     public:
         using SelfType = GlCubemap;
     public:
         GlCubemap(const Cubemap& cubemap);
         ~GlCubemap();
+
+        GlCubemap(const SelfType&) = delete;
+        auto operator=(const SelfType&) -> SelfType & = delete;
 
         GlCubemap(SelfType&& rhs) noexcept;
         auto operator=(SelfType&& rhs) noexcept -> SelfType&;

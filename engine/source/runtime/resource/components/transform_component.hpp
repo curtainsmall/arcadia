@@ -28,7 +28,6 @@ namespace Arcadia
     };
 
     struct ACDA_API TransformComponent:
-        public Noncopyable,
         public Mementoable<TransformComponent_Memento>
     {
     public:
@@ -42,6 +41,9 @@ namespace Arcadia
         virtual ~TransformComponent() = default;
         [[nodiscard]]
         auto ToJson() const -> nlohmann::json;
+
+        TransformComponent(const SelfType&) = delete;
+        auto operator=(const SelfType&) -> SelfType & = delete;
 
         TransformComponent(SelfType&&) noexcept = default;
         auto operator=(SelfType&&) noexcept -> SelfType & = default;

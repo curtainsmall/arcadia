@@ -3,7 +3,6 @@
 #include "GL/gl3w.h"
 
 #include "core/exception.hpp"
-#include "core/noncopyable.hpp"
 #include "core/version.hpp"
 #include "platform/defines.hpp"
 
@@ -43,10 +42,15 @@ namespace Arcadia
 
     ACDA_API auto GetGlMaxTextureImageUnitsCount() -> GLint;
 
-    struct ACDA_API OpenglContext: public Noncopyable
+    struct ACDA_API OpenglContext
     {
+    public:
+        using SelfType = OpenglContext;
     public:
         OpenglContext();
         ~OpenglContext() = default;
+
+        OpenglContext(const SelfType&) = delete;
+        auto operator=(const SelfType&) -> SelfType & = delete;
     };
 }

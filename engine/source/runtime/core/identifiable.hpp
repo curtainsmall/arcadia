@@ -2,13 +2,12 @@
 
 #include <utility>
 
-#include "core/noncopyable.hpp"
 #include "core/uuid.hpp"
 
 namespace Arcadia
 {
     template<class Value>
-    struct ACDA_API Identifiable: public Noncopyable
+    struct ACDA_API Identifiable
     {
     public:
         using ValueType = Value;
@@ -28,6 +27,9 @@ namespace Arcadia
             _Value(std::forward<Args>(args)...)
         {
         }
+
+        Identifiable(const SelfType&) = delete;
+        auto operator=(const SelfType&) -> SelfType & = delete;
 
         Identifiable(SelfType&&) noexcept = default;
         auto operator=(SelfType&&) noexcept -> SelfType & = default;

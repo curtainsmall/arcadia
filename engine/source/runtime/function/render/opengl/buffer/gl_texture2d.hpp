@@ -1,14 +1,13 @@
 #pragma once
 
 #include "core/math.hpp"
-#include "core/noncopyable.hpp"
 #include "platform/defines.hpp"
 #include "platform/opengl.hpp"
 #include "resource/material/texture2d.hpp"
 
 namespace Arcadia
 {
-    struct ACDA_API GlTexture2d: public Noncopyable
+    struct ACDA_API GlTexture2d
     {
     public:
         using SelfType = GlTexture2d;
@@ -21,6 +20,9 @@ namespace Arcadia
             const Texture2d& texture2d
         );
         ~GlTexture2d();
+
+        GlTexture2d(const SelfType&) = delete;
+        auto operator=(const SelfType&) -> SelfType & = delete;
 
         GlTexture2d(SelfType&& rhs) noexcept;
         auto operator=(SelfType&& rhs) noexcept -> SelfType&;

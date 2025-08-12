@@ -4,7 +4,6 @@
 
 #include "core/assert.hpp"
 #include "core/math.hpp"
-#include "core/noncopyable.hpp"
 #include "platform/defines.hpp"
 #include "platform/opengl.hpp"
 #include "resource/mesh/vertex.hpp"
@@ -123,13 +122,16 @@ namespace Arcadia
         GLsizei Stride{};
     };
 
-    struct ACDA_API GlVertexBuffer: public Noncopyable
+    struct ACDA_API GlVertexBuffer
     {
     public:
         using SelfType = GlVertexBuffer;
     public:
         GlVertexBuffer(const std::vector<Vertex>& vertices);
         ~GlVertexBuffer();
+
+        GlVertexBuffer(const SelfType&) = delete;
+        auto operator=(const SelfType&) -> SelfType & = delete;
 
         GlVertexBuffer(SelfType&& rhs) noexcept;
         auto operator=(SelfType&& rhs) noexcept -> SelfType&;

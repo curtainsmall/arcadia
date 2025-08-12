@@ -25,7 +25,6 @@ namespace Arcadia
     };
 
     struct ACDA_API CameraComponent:
-        public Noncopyable,
         public Mementoable<CameraComponent_Memento>
     {
     public:
@@ -43,6 +42,9 @@ namespace Arcadia
         virtual ~CameraComponent() = default;
         [[nodiscard]]
         auto ToJson() const -> nlohmann::json;
+
+        CameraComponent(const SelfType&) = delete;
+        auto operator=(const SelfType&) -> SelfType & = delete;
 
         [[nodiscard]]
         auto GetNearPlane() const -> float;

@@ -1,7 +1,6 @@
 #pragma once
 
 #include "core/exception.hpp"
-#include "core/noncopyable.hpp"
 #include "function/render/opengl/buffer/gl_renderbuffer.hpp"
 #include "function/render/opengl/buffer/gl_texture2d.hpp"
 #include "platform/defines.hpp"
@@ -9,7 +8,7 @@
 
 namespace Arcadia
 {
-    struct ACDA_API GlFramebuffer:Noncopyable
+    struct ACDA_API GlFramebuffer
     {
     public:
 
@@ -21,6 +20,9 @@ namespace Arcadia
             float far_plane
         );
         ~GlFramebuffer();
+
+        GlFramebuffer(const SelfType&) = delete;
+        auto operator=(const SelfType&) -> SelfType & = delete;
 
         GlFramebuffer(SelfType&& rhs) noexcept;
         auto operator=(SelfType&& rhs) noexcept -> SelfType&;

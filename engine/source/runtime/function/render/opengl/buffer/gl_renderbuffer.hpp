@@ -1,13 +1,12 @@
 #pragma once
 
 #include "core/math.hpp"
-#include "core/noncopyable.hpp"
 #include "platform/defines.hpp"
 #include "platform/opengl.hpp"
 
 namespace Arcadia
 {
-    struct ACDA_API GlRenderbuffer: public Noncopyable
+    struct ACDA_API GlRenderbuffer
     {
     public:
         using SelfType = GlRenderbuffer;
@@ -15,6 +14,9 @@ namespace Arcadia
         GlRenderbuffer();
         GlRenderbuffer(GLenum format, const glm::i32vec2& size);
         ~GlRenderbuffer();
+
+        GlRenderbuffer(const SelfType&) = delete;
+        auto operator=(const SelfType&) -> SelfType & = delete;
 
         GlRenderbuffer(SelfType&&) noexcept = default;
         auto operator=(SelfType&&) noexcept -> SelfType & = default;

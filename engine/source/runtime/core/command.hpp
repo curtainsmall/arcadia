@@ -5,7 +5,6 @@
 #include <memory>
 #include <string>
 
-#include "core/noncopyable.hpp"
 #include "platform/defines.hpp"
 
 namespace Arcadia
@@ -37,7 +36,7 @@ namespace Arcadia
         FunctionType _UnexecuteFunction;
     };
 
-    struct ACDA_API CommandList: public Noncopyable
+    struct ACDA_API CommandList
     {
     public:
         using FunctionType = Command::FunctionType;
@@ -46,6 +45,12 @@ namespace Arcadia
     public:
         [[nodiscard]]
         static auto Instance() -> SelfType&;
+
+        CommandList() = default;
+        ~CommandList() = default;
+
+        CommandList(const SelfType&) = delete;
+        auto operator=(const SelfType&) -> SelfType & = delete;
 
         // The latest command is emplaced at the begin of the deque
         void Emplace(
