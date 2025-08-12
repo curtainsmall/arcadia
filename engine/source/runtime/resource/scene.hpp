@@ -13,7 +13,7 @@
 #include "core/string.hpp"
 #include "core/uuid.hpp"
 #include "platform/defines.hpp"
-#include "resource/components/component_interface.hpp"
+#include "resource/components/component.hpp"
 #include "resource/entity_id.hpp"
 #include "resource/entt.hpp"
 

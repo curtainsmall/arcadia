@@ -12,7 +12,7 @@
 #include "core/memento.hpp"
 #include "core/nlohmann_json.hpp"
 #include "platform/defines.hpp"
-#include "resource/components/component_interface.hpp"
+#include "resource/components/component.hpp"
 #include "resource/mesh/mesh.hpp"
 
 namespace Arcadia
@@ -33,7 +33,7 @@ namespace Arcadia
     };
 
     struct ACDA_API ModelComponent:
-        public ComponentInterface,
+        public Noncopyable,
         public Mementoable<ModelComponent_Memento>
     {
     public:

@@ -7,7 +7,7 @@
 #include "core/memento.hpp"
 #include "core/nlohmann_json.hpp"
 #include "platform/defines.hpp"
-#include "resource/components/component_interface.hpp"
+#include "resource/components/component.hpp"
 
 namespace Arcadia
 {
@@ -152,7 +152,7 @@ namespace Arcadia
     };
 
     struct ACDA_API LightComponent:
-        public ComponentInterface,
+        public Noncopyable,
         public Mementoable<LightComponent_Memento>
     {
     public:

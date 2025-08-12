@@ -3,7 +3,7 @@
 #include <vector>
 
 #include "platform/defines.hpp"
-#include "resource/components/component_interface.hpp"
+#include "resource/components/component.hpp"
 #include "resource/material/material.hpp"
 #include "resource/mesh/vertex.hpp"
 

@@ -1,13 +1,13 @@
 #pragma once
 
 #include "platform/defines.hpp"
-#include "resource/components/component_interface.hpp"
+#include "resource/components/component.hpp"
 #include "resource/cubemap.hpp"
 
 namespace Arcadia
 {
     struct ACDA_API SkyboxComponent:
-        public ComponentInterface
+        public Noncopyable
     {
     public:
         using SelfType = SkyboxComponent;

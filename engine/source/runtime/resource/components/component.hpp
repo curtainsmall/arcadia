@@ -13,30 +13,26 @@ static constexpr auto GetTypeStringStatic() -> std::string_view\
     return type_str;\
 }\
 [[nodiscard]]\
-virtual auto GetTypeString() const -> std::string_view override\
+constexpr auto GetTypeString() const -> std::string_view \
 {\
     return GetTypeStringStatic();\
 }
 
 namespace Arcadia
 {
-    struct ACDA_API ComponentInterface:
-        public Noncopyable
-    {
-    public:
-        virtual ~ComponentInterface() = default;
-        virtual auto GetTypeString() const -> std::string_view = 0;
-    };
-
     namespace Concepts
     {
         template<class T>
         concept Component =
-            std::derived_from<T, ComponentInterface>
+            std::derived_from<T, Noncopyable>
             && requires(const T comp, const nlohmann::json json)
         {
             {
                 T::GetTypeStringStatic()
+            }->std::same_as<std::string_view>;
+
+            {
+                comp.GetTypeString()
             }->std::same_as<std::string_view>;
 
             {

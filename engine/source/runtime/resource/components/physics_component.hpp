@@ -9,7 +9,7 @@
 #include "core/nlohmann_json.hpp"
 #include "platform/defines.hpp"
 #include "platform/jolt.hpp"
-#include "resource/components/component_interface.hpp"
+#include "resource/components/component.hpp"
 
 namespace Arcadia
 {
@@ -63,7 +63,7 @@ namespace Arcadia
     };
 
     struct ACDA_API PhysicsComponent:
-        public ComponentInterface,
+        public Noncopyable,
         public Mementoable<PhysicsComponent_Memento>
     {
     public:

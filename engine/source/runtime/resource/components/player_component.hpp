@@ -2,11 +2,11 @@
 
 #include "core/nlohmann_json.hpp"
 #include "platform/defines.hpp"
-#include "resource/components/component_interface.hpp"
+#include "resource/components/component.hpp"
 
 namespace Arcadia
 {
-    struct ACDA_API PlayerComponent: public ComponentInterface
+    struct ACDA_API PlayerComponent: public Noncopyable
     {
     public:
         using SelfType = PlayerComponent;

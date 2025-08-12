@@ -7,7 +7,7 @@
 #include "core/exception.hpp"
 #include "core/nlohmann_json.hpp"
 #include "core/memento.hpp"
-#include "resource/components/component_interface.hpp"
+#include "resource/components/component.hpp"
 
 namespace Arcadia
 {
@@ -20,7 +20,7 @@ namespace Arcadia
     };
 
     struct ACDA_API ScriptComponent:
-        public ComponentInterface,
+        public Noncopyable,
         public Mementoable<ScriptComponent_Memento>
     {
     public:
