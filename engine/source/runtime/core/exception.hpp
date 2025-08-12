@@ -2,21 +2,22 @@
 
 #include <exception>
 #include <string>
+#include <tuple>
 
 #include "core/log.hpp"
 #include "platform/defines.hpp"
 
-namespace Arcadia::Exceptions
+namespace Arcadia
 {
-    struct ACDA_API BasicException: public std::exception
+    struct ACDA_API Exception: public std::runtime_error
     {
     public:
-        explicit BasicException(std::string_view msg = "Basic Exception"):
-            std::exception(msg.data())
+        explicit Exception(std::string_view msg = "Basic Exception"):
+            std::runtime_error(std::string(msg))
         {
         }
 
-        virtual ~BasicException() = default;
+        virtual ~Exception() = default;
 
         auto GetErrorMessage() const -> const char*
         {
@@ -26,18 +27,18 @@ namespace Arcadia::Exceptions
 }
 
 #define _ACDA_DEFINE_EXCEPTION(exception_name) \
-struct ACDA_API exception_name: public Arcadia::Exceptions::BasicException{\
+struct ACDA_API exception_name: public Arcadia::Exception{\
 public:\
         inline exception_name(std::string_view msg = #exception_name) :\
-        Arcadia::Exceptions::BasicException(msg)\
+        Arcadia::Exception(msg)\
     {}\
 }
 
 #define _ACDA_DEFINE_EXCEPTION_WITH_MESSAGE(exception_name, message) \
-struct ACDA_API exception_name: public Arcadia::Exceptions::BasicException{\
+struct ACDA_API exception_name: public Arcadia::Exception{\
 public:\
     inline exception_name(std::string_view msg = message ):\
-        Arcadia::Exceptions::BasicException(msg)\
+        Arcadia::Exception(msg)\
     {}\
 }
 

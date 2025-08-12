@@ -10,11 +10,6 @@
 
 namespace Arcadia
 {
-    namespace Exceptions
-    {
-        ACDA_DEFINE_EXCEPTION(ProjectConstructionFailed);
-    }
-
     struct Project: public Noncopyable
     {
     public:
