@@ -25,7 +25,7 @@ Arcadia::Project::Project(nlohmann::json& json):
             .Signal<Events::CreateSceneFromJson>(json_scene);
     }
     EventQueue::Instance()
-        .Signal<Events::SelectScene>(json.at("active_scene_name"));
+        .Signal<Events::SelectScene>(json.at("active_scene_name"), true);
 }
 
 Arcadia::Project::~Project()

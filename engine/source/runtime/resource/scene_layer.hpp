@@ -7,6 +7,7 @@
 #include "core/event.hpp"
 #include "core/exception.hpp"
 #include "core/layer.hpp"
+#include "core/enum.hpp"
 #include "resource/scene.hpp"
 #include "resource/scene_events.hpp"
 
@@ -20,6 +21,18 @@ namespace Arcadia
     struct ACDA_API SceneLayer: public LayerInterface
     {
     public:
+        enum class ActiveSceneModificationFlag: std::uint8_t
+        {
+            None = 0,
+            Content = 0x01,
+            Name = 0x02,
+            Self = 0x04, // Whether another scene is set as active scene
+
+            All = std::numeric_limits<std::underlying_type_t<ActiveSceneModificationFlag>>::max(),
+
+            _EnumBitfield
+        };
+
         using SceneStorageType = std::unordered_map<std::string, std::shared_ptr<Scene>>;
         using SelfType = SceneLayer;
     public:
@@ -91,13 +104,14 @@ namespace Arcadia
         }
 
         [[nodiscard]]
-        auto IsActiveSceneModified() const -> bool;
+        auto IsActiveSceneModified(ActiveSceneModificationFlag type) const -> bool;
+        void MarkActiveSceneModified(ActiveSceneModificationFlag type, bool modified);
 
         void Snapshot();
         void Restore();
 
     private:
-        void _SetActiveScene(std::string_view name = {});
+        void _SetActiveScene(std::string_view name = {}, bool not_considered_modified = false);
 
         void _CreateScene(std::string_view name);
         void _CreateScene(const nlohmann::json& json);
@@ -124,6 +138,6 @@ namespace Arcadia
     private:
         SceneStorageType _SceneStorage{};
         std::shared_ptr<Scene> _spActiveScene{};
-        bool _ActiveSceneModified{ false };
+        ActiveSceneModificationFlag _ActiveSceneModificationFlag{ ActiveSceneModificationFlag::None };
     };
 }

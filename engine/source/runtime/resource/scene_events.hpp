@@ -98,12 +98,14 @@ namespace Arcadia::Events
     struct ACDA_API SelectScene: public EventBase
     {
     public:
-        SelectScene(std::string_view name):
-            Name(name)
+        SelectScene(std::string_view name, bool not_considered_modified = false):
+            Name(name),
+            NotConsideredModified(not_considered_modified)
         {
         }
     public:
         const std::string Name;
+        const bool NotConsideredModified; // Active scene is not marked modified if this is true. Useful when first load scene
     };
 
     struct ACDA_API CloseScene: public EventBase

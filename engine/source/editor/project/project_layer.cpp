@@ -246,7 +246,7 @@ void Arcadia::ProjectLayer::_OnCloseProject(Events::CloseProject& e)
     std::shared_ptr<SceneLayer> scene_layer_sptr = LayerStack::Instance().GetLayerShared<SceneLayer>();
 
     CommandList& cmd_list = CommandList::Instance();
-    if(cmd_list.GetSize() || _ProjectModified || scene_layer_sptr->IsActiveSceneModified())
+    if(cmd_list.GetSize() || _ProjectModified || scene_layer_sptr->IsActiveSceneModified(SceneLayer::ActiveSceneModificationFlag::All))
     {
         pfd::button res = pfd::message{
                         "Unsaved",

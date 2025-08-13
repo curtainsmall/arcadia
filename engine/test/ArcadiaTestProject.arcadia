@@ -1,5 +1,5 @@
 {
-    "active_scene_name": "Scene 1",
+    "active_scene_name": "Scene 0",
     "name": "ArcadiaTestProject",
     "scenes": [
         {
@@ -20,8 +20,118 @@
                             "speed": 0.25,
                             "up_epsilon": 0.001745329238474369,
                             "viewport_size": [
-                                1826,
-                                972
+                                2016,
+                                1337
+                            ]
+                        },
+                        "transform": {
+                            "direction": [
+                                -0.6659052968025208,
+                                -0.7026702761650085,
+                                -0.2506486773490906
+                            ],
+                            "flags": 0,
+                            "pivot": [
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            "position": [
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "rotation": [
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0,
+                                1.0
+                            ]
+                        }
+                    },
+                    "display": true,
+                    "internal": true,
+                    "name": "viewport_camera",
+                    "type": "camera"
+                },
+                {
+                    "components": {
+                        "model": {
+                            "filepath": ""
+                        },
+                        "physics": {
+                            "body_shape_color": [
+                                0.20000000298023224,
+                                0.20000000298023224,
+                                0.20000000298023224
+                            ],
+                            "jph_motion_type": 0,
+                            "jph_object_layer": 0,
+                            "jph_shape_info": {
+                                "type": "none"
+                            }
+                        },
+                        "transform": {
+                            "direction": [
+                                0.0,
+                                0.0,
+                                1.0
+                            ],
+                            "flags": 1,
+                            "pivot": [
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            "position": [
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            "rotation": [
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0,
+                                1.0
+                            ]
+                        }
+                    },
+                    "display": true,
+                    "internal": false,
+                    "name": "New Entity",
+                    "type": "actor"
+                }
+            ],
+            "name": "Scene 2"
+        },
+        {
+            "entities": [
+                {
+                    "components": {
+                        "camera": {
+                            "cursor_move_offset_range": [
+                                -100.0,
+                                100.0
+                            ],
+                            "far_plane": 100.0,
+                            "fixed_up": true,
+                            "fovy": 1.3089969158172607,
+                            "fovy_max": 2.094395160675049,
+                            "fovy_min": 0.01745329238474369,
+                            "near_plane": 0.10000000149011612,
+                            "speed": 0.25,
+                            "up_epsilon": 0.001745329238474369,
+                            "viewport_size": [
+                                1947,
+                                985
                             ]
                         },
                         "transform": {
@@ -298,117 +408,7 @@
                     "type": "actor"
                 }
             ],
-            "name": "Scene 1"
-        },
-        {
-            "entities": [
-                {
-                    "components": {
-                        "camera": {
-                            "cursor_move_offset_range": [
-                                -100.0,
-                                100.0
-                            ],
-                            "far_plane": 100.0,
-                            "fixed_up": true,
-                            "fovy": 1.3089969158172607,
-                            "fovy_max": 2.094395160675049,
-                            "fovy_min": 0.01745329238474369,
-                            "near_plane": 0.10000000149011612,
-                            "speed": 0.25,
-                            "up_epsilon": 0.001745329238474369,
-                            "viewport_size": [
-                                2016,
-                                1337
-                            ]
-                        },
-                        "transform": {
-                            "direction": [
-                                -0.6659052968025208,
-                                -0.7026702761650085,
-                                -0.2506486773490906
-                            ],
-                            "flags": 0,
-                            "pivot": [
-                                0.0,
-                                0.0,
-                                0.0
-                            ],
-                            "position": [
-                                1.0,
-                                1.0,
-                                1.0
-                            ],
-                            "rotation": [
-                                0.0,
-                                0.0,
-                                0.0
-                            ],
-                            "scale": [
-                                1.0,
-                                1.0,
-                                1.0
-                            ]
-                        }
-                    },
-                    "display": true,
-                    "internal": true,
-                    "name": "viewport_camera",
-                    "type": "camera"
-                },
-                {
-                    "components": {
-                        "model": {
-                            "filepath": ""
-                        },
-                        "physics": {
-                            "body_shape_color": [
-                                0.20000000298023224,
-                                0.20000000298023224,
-                                0.20000000298023224
-                            ],
-                            "jph_motion_type": 0,
-                            "jph_object_layer": 0,
-                            "jph_shape_info": {
-                                "type": "none"
-                            }
-                        },
-                        "transform": {
-                            "direction": [
-                                0.0,
-                                0.0,
-                                1.0
-                            ],
-                            "flags": 1,
-                            "pivot": [
-                                0.0,
-                                0.0,
-                                0.0
-                            ],
-                            "position": [
-                                0.0,
-                                0.0,
-                                0.0
-                            ],
-                            "rotation": [
-                                0.0,
-                                0.0,
-                                0.0
-                            ],
-                            "scale": [
-                                1.0,
-                                1.0,
-                                1.0
-                            ]
-                        }
-                    },
-                    "display": true,
-                    "internal": false,
-                    "name": "New Entity",
-                    "type": "actor"
-                }
-            ],
-            "name": "Scene 2"
+            "name": "Scene 0"
         }
     ]
 }

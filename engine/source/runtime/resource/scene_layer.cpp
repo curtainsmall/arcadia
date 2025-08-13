@@ -87,28 +87,32 @@ auto Arcadia::SceneLayer::GetActiveSceneShared() const -> const std::shared_ptr<
     return _spActiveScene;
 }
 
-void Arcadia::SceneLayer::_SetActiveScene(std::string_view name)
+void Arcadia::SceneLayer::_SetActiveScene(std::string_view name, bool not_considered_modified)
 {
-    bool is_same_scene = HasActiveScene() && name == _spActiveScene->GetName();
-
-    if(!is_same_scene)
+    if(HasActiveScene() && name == _spActiveScene->GetName())
     {
-        CommandList::Instance().Clear();
+        return;
+    }
 
-        if(HasActiveScene())
-        {
-            _spActiveScene.reset();
-            EventQueue::Instance()
-                .Signal<Events::SceneDeactivated>();
-        }
+    CommandList::Instance().Clear();
 
-        if(!name.empty() && _SceneStorage.contains(std::string(name)))
-        {
-            _spActiveScene = _SceneStorage.at(std::string(name));
+    if(HasActiveScene())
+    {
+        _spActiveScene.reset();
+        EventQueue::Instance()
+            .Signal<Events::SceneDeactivated>();
+    }
 
-            EventQueue::Instance()
-                .Signal<Events::SceneActivated>(_spActiveScene);
-        }
+    if(!name.empty() && _SceneStorage.contains(std::string(name)))
+    {
+        _spActiveScene = _SceneStorage.at(std::string(name));
+
+        EventQueue::Instance()
+            .Signal<Events::SceneActivated>(_spActiveScene);
+    }
+    if(!not_considered_modified)
+    {
+        _ActiveSceneModificationFlag |= ActiveSceneModificationFlag::Self;
     }
 }
 
@@ -156,6 +160,7 @@ auto Arcadia::SceneLayer::_SaveScene(std::string_view name) -> nlohmann::json
 {
     nlohmann::json json = nlohmann::json::array();
     json.push_back(_SceneStorage.at(std::string(name))->ToJson());
+    _ActiveSceneModificationFlag &= ~ActiveSceneModificationFlag::Content;
     return json;
 }
 
@@ -234,9 +239,21 @@ auto Arcadia::SceneLayer::ActiveScene_GetEntityInfoStorage() const -> const Scen
     return _spActiveScene->GetEntityInfoStorage();
 }
 
-auto Arcadia::SceneLayer::IsActiveSceneModified() const -> bool
+auto Arcadia::SceneLayer::IsActiveSceneModified(ActiveSceneModificationFlag type) const -> bool
 {
-    return _ActiveSceneModified;
+    return !!(_ActiveSceneModificationFlag & type);
+}
+
+void Arcadia::SceneLayer::MarkActiveSceneModified(ActiveSceneModificationFlag type, bool modified)
+{
+    if(modified)
+    {
+        _ActiveSceneModificationFlag |= type;
+    }
+    else
+    {
+        _ActiveSceneModificationFlag &= ~type;
+    }
 }
 
 void Arcadia::SceneLayer::Snapshot()
@@ -254,7 +271,6 @@ void Arcadia::SceneLayer::_OnCreateScene(Events::CreateScene& e)
     {
         _SetActiveScene(e.Name);
     }
-    _ActiveSceneModified = true;
 }
 
 void Arcadia::SceneLayer::_OnCreateSceneFromJson(Events::CreateSceneFromJson& e)
@@ -265,19 +281,17 @@ void Arcadia::SceneLayer::_OnCreateSceneFromJson(Events::CreateSceneFromJson& e)
 void Arcadia::SceneLayer::_OnRenameScene(Events::RenameScene& e)
 {
     _RenameScene(GetActiveSceneShared()->GetName(), e.NewName);
-    _ActiveSceneModified = true;
+    _ActiveSceneModificationFlag |= ActiveSceneModificationFlag::Name;
 }
 
 void Arcadia::SceneLayer::_OnSelectScene(Events::SelectScene& e)
 {
-    _SetActiveScene(e.Name);
-    _ActiveSceneModified = true;
+    _SetActiveScene(e.Name, e.NotConsideredModified);
 }
 
 void Arcadia::SceneLayer::_OnCloseScene(Events::CloseScene& e)
 {
     _SetActiveScene();
-    _ActiveSceneModified = true;
 }
 
 void Arcadia::SceneLayer::_OnDeleteScene(Events::DeleteScene& e)
@@ -302,7 +316,6 @@ void Arcadia::SceneLayer::_OnDeleteScene(Events::DeleteScene& e)
             break;
         }
     }
-    _ActiveSceneModified = true;
 }
 
 void Arcadia::SceneLayer::_OnDestroyAllScene(Events::DestroyAllScenes& e)
@@ -358,19 +371,19 @@ void Arcadia::SceneLayer::_OnNewEntity(Events::NewEntity& e)
             transform_comp.AddFlag(TransformComponentFlags::UseDirection);
         }
     );
-    _ActiveSceneModified = true;
+    _ActiveSceneModificationFlag |= ActiveSceneModificationFlag::Content;
 }
 
 void Arcadia::SceneLayer::_OnRenameEntity(Events::RenameEntity& e)
 {
     GetActiveSceneShared()->RenameEntity(e.EntityId, e.NewName);
-    _ActiveSceneModified = true;
+    _ActiveSceneModificationFlag |= ActiveSceneModificationFlag::Content;
 }
 
 void Arcadia::SceneLayer::_OnDeleteEntity(Events::DeleteEntity& e)
 {
     GetActiveSceneShared()->DestroyEntity(e.EntityId);
-    _ActiveSceneModified = true;
+    _ActiveSceneModificationFlag |= ActiveSceneModificationFlag::Content;
 }
 
 void Arcadia::SceneLayer::_OnUpdateEntityInfo(Events::UpdateEntityInfo& e)
@@ -405,7 +418,7 @@ void Arcadia::SceneLayer::_OnAddComponent(Events::AddComponent& e)
             scene.EmplaceComponent<PhysicsComponent>(e.EntityId);
         }
     );
-    _ActiveSceneModified = true;
+    _ActiveSceneModificationFlag |= ActiveSceneModificationFlag::Content;
 }
 
 void Arcadia::SceneLayer::_OnRemoveComponent(Events::RemoveComponent& e)
@@ -435,5 +448,5 @@ void Arcadia::SceneLayer::_OnRemoveComponent(Events::RemoveComponent& e)
             scene.RemoveComponent<PhysicsComponent>(e.EntityId);
         }
     );
-    _ActiveSceneModified = true;
+    _ActiveSceneModificationFlag |= ActiveSceneModificationFlag::Content;
 }
