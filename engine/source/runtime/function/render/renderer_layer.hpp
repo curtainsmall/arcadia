@@ -47,6 +47,6 @@ namespace Arcadia
         void _OnRendererSetActive(Events::RendererSetActive& e);
         void _OnRendererSetEntity(Events::RendererSetEntity& e);
     private:
-        std::shared_ptr<RendererInterface> _spRenderer{};
+        std::unique_ptr<RendererInterface> _upRenderer{};
     };
 }

@@ -7,7 +7,6 @@
 Arcadia::PhysicsLayer::PhysicsLayer():
     LayerInterface("physics")
 {
-    _spPhysicsSimulator = std::make_shared<PhysicsSimulator>();
 }
 
 void Arcadia::PhysicsLayer::OnEvent(EventBase& event)
@@ -21,57 +20,47 @@ void Arcadia::PhysicsLayer::OnEvent(EventBase& event)
 
 void Arcadia::PhysicsLayer::OnUpdate()
 {
-    ACDA_ASSERT(_spPhysicsSimulator);
-
-    if(!_spPhysicsSimulator->IsActive())
+    if(!_PhysicsSimulator.IsActive())
     {
         return;
     }
 
-    _spPhysicsSimulator->Update();
-    _spPhysicsSimulator->ApplyToEntity();
+    _PhysicsSimulator.Update();
+    _PhysicsSimulator.ApplyToEntity();
 }
 
 auto Arcadia::PhysicsLayer::IsPhysicsSimulatorActive() const -> bool
 {
-    ACDA_ASSERT(_spPhysicsSimulator);
-    return _spPhysicsSimulator->IsActive();
+    return _PhysicsSimulator.IsActive();
 }
 
 auto Arcadia::PhysicsLayer::GetPhysicsBodyCount() const -> std::size_t
 {
-    ACDA_ASSERT(_spPhysicsSimulator);
-    return _spPhysicsSimulator->GetBodyCount();
+    return _PhysicsSimulator.GetBodyCount();
 }
 
 auto Arcadia::PhysicsLayer::GetTempAllocatorSize() const -> std::size_t
 {
-    ACDA_ASSERT(_spPhysicsSimulator);
-    return _spPhysicsSimulator->GetJphTempAllocatorSize();
+    return _PhysicsSimulator.GetJphTempAllocatorSize();
 }
 
 auto Arcadia::PhysicsLayer::GetUpdatesPerSecondCount() const -> std::int32_t
 {
-    ACDA_ASSERT(_spPhysicsSimulator);
-    return _spPhysicsSimulator->GetJphPhysicsSystemUpdatesPerSecond();
+    return _PhysicsSimulator.GetJphPhysicsSystemUpdatesPerSecond();
 }
 
 void Arcadia::PhysicsLayer::_OnPhysicsSimulatorSetActive(Events::PhysicsSimulatirSetActive& e)
 {
-    ACDA_ASSERT(_spPhysicsSimulator);
-    _spPhysicsSimulator->SetActive(e.Active);
+    _PhysicsSimulator.SetActive(e.Active);
 }
 
 void Arcadia::PhysicsLayer::_OnPhysicsSimulatorReset(Events::PhysicsSimulatorReset& e)
 {
-    ACDA_ASSERT(_spPhysicsSimulator);
-    _spPhysicsSimulator->Reset();
+    _PhysicsSimulator.Reset();
 }
 
 void Arcadia::PhysicsLayer::_OnPhysicsSimulatorSetEntity(Events::PhysicsSimulatorSetEntity& e)
 {
-    ACDA_ASSERT(_spPhysicsSimulator);
-
     std::shared_ptr<SceneLayer> scene_layer_sptr = LayerStack::Instance().GetLayerShared<SceneLayer>();
     if(!scene_layer_sptr->HasActiveScene() || !scene_layer_sptr->ActiveScene_ContainsEntity(e.EntityId))
     {
@@ -82,12 +71,12 @@ void Arcadia::PhysicsLayer::_OnPhysicsSimulatorSetEntity(Events::PhysicsSimulato
     {
         case Events::PhysicsSimulatorSetEntity::ActionType::Build:
         {
-            _spPhysicsSimulator->BuildEntity(e.EntityId);
+            _PhysicsSimulator.BuildEntity(e.EntityId);
             break;
         }
         case Events::PhysicsSimulatorSetEntity::ActionType::Remove:
         {
-            _spPhysicsSimulator->RemoveEntity(e.EntityId);
+            _PhysicsSimulator.RemoveEntity(e.EntityId);
             break;
         }
         default:

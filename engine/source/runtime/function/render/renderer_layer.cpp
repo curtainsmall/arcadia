@@ -16,7 +16,7 @@ Arcadia::RendererLayer::RendererLayer(const GraphicApi::Type& graphic_api, std::
         [&](const GraphicApi::Opengl&)
         {
             static OpenglContext gl_context{};
-            _spRenderer = std::make_shared<GlRenderer>(working_directory / ToFilepath("shaders/opengl"));
+            _upRenderer = std::make_unique<GlRenderer>(working_directory / ToFilepath("shaders/opengl"));
         },
         [](auto&&)
         {
@@ -36,60 +36,60 @@ void Arcadia::RendererLayer::OnEvent(EventBase& event)
 
 void Arcadia::RendererLayer::OnUpdate()
 {
-    ACDA_ASSERT(_spRenderer);
-    _spRenderer->Draw();
+    ACDA_ASSERT(_upRenderer);
+    _upRenderer->Draw();
 }
 
 auto Arcadia::RendererLayer::HasRenderer() const -> bool
 {
-    return !!_spRenderer;
+    return !!_upRenderer;
 }
 
 auto Arcadia::RendererLayer::RendererHasEntity(EntityId entity_id) const -> bool
 {
-    ACDA_ASSERT(_spRenderer);
-    return _spRenderer->HasEntity(entity_id);
+    ACDA_ASSERT(_upRenderer);
+    return _upRenderer->HasEntity(entity_id);
 }
 
 auto Arcadia::RendererLayer::HasRenderResult() const -> bool
 {
-    ACDA_ASSERT(_spRenderer);
-    return _spRenderer->HasRenderResult();
+    ACDA_ASSERT(_upRenderer);
+    return _upRenderer->HasRenderResult();
 }
 
 auto Arcadia::RendererLayer::GetRenderResultId(EntityId entity_id) const -> void*
 {
-    ACDA_ASSERT(_spRenderer);
-    return _spRenderer->GetRenderResultId(entity_id);
+    ACDA_ASSERT(_upRenderer);
+    return _upRenderer->GetRenderResultId(entity_id);
 }
 
 auto Arcadia::RendererLayer::GetCurrentGraphicApiType() const -> GraphicApi::Type
 {
-    ACDA_ASSERT(_spRenderer);
-    return _spRenderer->GetGraphicApiType();
+    ACDA_ASSERT(_upRenderer);
+    return _upRenderer->GetGraphicApiType();
 }
 
 auto Arcadia::RendererLayer::IsRendererActive() const -> bool
 {
-    ACDA_ASSERT(_spRenderer);
-    return _spRenderer->IsActive();
+    ACDA_ASSERT(_upRenderer);
+    return _upRenderer->IsActive();
 }
 
 void Arcadia::RendererLayer::_OnRendererReset(Events::RendererReset& e)
 {
-    ACDA_ASSERT(_spRenderer);
-    _spRenderer->Reset();
+    ACDA_ASSERT(_upRenderer);
+    _upRenderer->Reset();
 }
 
 void Arcadia::RendererLayer::_OnRendererSetActive(Events::RendererSetActive& e)
 {
-    ACDA_ASSERT(_spRenderer);
-    _spRenderer->SetActive(e.Active);
+    ACDA_ASSERT(_upRenderer);
+    _upRenderer->SetActive(e.Active);
 }
 
 void Arcadia::RendererLayer::_OnRendererSetEntity(Events::RendererSetEntity& e)
 {
-    ACDA_ASSERT(_spRenderer);
+    ACDA_ASSERT(_upRenderer);
 
     std::shared_ptr<SceneLayer> scene_layer_sptr = LayerStack::Instance().GetLayerShared<SceneLayer>();
     if(!scene_layer_sptr->HasActiveScene() || !scene_layer_sptr->ActiveScene_ContainsEntity(e.EntityId))
@@ -101,12 +101,12 @@ void Arcadia::RendererLayer::_OnRendererSetEntity(Events::RendererSetEntity& e)
     {
         case Events::RendererSetEntity::ActionType::Build:
         {
-            _spRenderer->BuildEntity(e.EntityId);
+            _upRenderer->BuildEntity(e.EntityId);
             break;
         }
         case Events::RendererSetEntity::ActionType::Remove:
         {
-            _spRenderer->RemoveEntity(e.EntityId);
+            _upRenderer->RemoveEntity(e.EntityId);
             break;
         }
         default:

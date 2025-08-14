@@ -49,11 +49,6 @@ Arcadia::ImguiLayer::~ImguiLayer()
     }
 }
 
-auto Arcadia::ImguiLayer::GetWindow() const -> std::shared_ptr<WindowLayer>
-{
-    return _wpWindow.lock();
-}
-
 auto Arcadia::ImguiLayer::GetImguiWindows() const -> const std::vector<std::unique_ptr<ImguiWindowInterface>>&
 {
     return _ImguiWindows;

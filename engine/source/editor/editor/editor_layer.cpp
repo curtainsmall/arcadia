@@ -108,11 +108,11 @@ void Arcadia::EditorLayer::_Stop()
     runtime_config.WindowPosition = window_layer_sptr->GetPosition();
     runtime_config.WindowMaxmized = window_layer_sptr->GetSizeState() == WindowSizeState::Maxmized;
 
-    for(const std::unique_ptr<ImguiWindowInterface>& imgui_window : imgui_layer_sptr->GetImguiWindows())
+    for(const std::unique_ptr<ImguiWindowInterface>& imgui_window_uptr : imgui_layer_sptr->GetImguiWindows())
     {
-        if(imgui_window->Open())
+        if(imgui_window_uptr->Open())
         {
-            runtime_config.ImguiOpenedWindowIdStrings.emplace(imgui_window->GetIdString());
+            runtime_config.ImguiOpenedWindowIdStrings.emplace(imgui_window_uptr->GetIdString());
         }
     }
 

@@ -38,6 +38,6 @@ namespace Arcadia
         void _OnPhysicsSimulatorSetEntity(Events::PhysicsSimulatorSetEntity& e);
 
     private:
-        std::shared_ptr<PhysicsSimulator> _spPhysicsSimulator{};
+        PhysicsSimulator _PhysicsSimulator{};
     };
 }

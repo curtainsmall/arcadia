@@ -27,9 +27,6 @@ namespace Arcadia
         virtual ~ImguiLayer();
 
         [[nodiscard]]
-        auto GetWindow() const -> std::shared_ptr<WindowLayer>;
-
-        [[nodiscard]]
         auto GetImguiWindows() const -> const std::vector<std::unique_ptr<ImguiWindowInterface>>&;
 
         virtual void OnEvent(EventBase& e) override;
@@ -51,7 +48,7 @@ namespace Arcadia
         bool ShouldShowDemoWindow{ false };
         bool ShouldShowDebugInfo{ false };
     private:
-        std::weak_ptr< WindowLayer> _wpWindow;
+        std::weak_ptr<WindowLayer> _wpWindow;
         ImGuiContext* _pImguiContext{ nullptr };
         std::vector<std::unique_ptr<ImguiWindowInterface>> _ImguiWindows{};
     };

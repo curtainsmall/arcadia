@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include "platform/defines.hpp"
 #include "core/layer.hpp"
 #include "core/event.hpp"

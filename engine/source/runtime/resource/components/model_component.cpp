@@ -123,10 +123,10 @@ auto Arcadia::ModelComponent::IsModelLoaded() const -> bool
 
 auto Arcadia::ModelComponent::OnSnapshot() const -> std::unique_ptr<MementoType>
 {
-    std::unique_ptr<MementoType> memento_data_sptr = std::make_unique<MementoType>();
-    memento_data_sptr->Filepath = GetFilepath();
-    memento_data_sptr->upIdentifiableMeshes = std::make_unique<ModelComponent_IdentifiableMeshesType>(GetIdentifiableMeshes().GetValue());
-    return memento_data_sptr;
+    std::unique_ptr<MementoType> memento_data_uptr = std::make_unique<MementoType>();
+    memento_data_uptr->Filepath = GetFilepath();
+    memento_data_uptr->upIdentifiableMeshes = std::make_unique<ModelComponent_IdentifiableMeshesType>(GetIdentifiableMeshes().GetValue());
+    return memento_data_uptr;
 }
 
 void Arcadia::ModelComponent::OnRestore(const std::unique_ptr<MementoType>& memento_uptr)

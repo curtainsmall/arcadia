@@ -326,48 +326,48 @@ void Arcadia::SceneLayer::_OnDestroyAllScene(Events::DestroyAllScenes& e)
 
 void Arcadia::SceneLayer::_OnNewEntity(Events::NewEntity& e)
 {
-    Scene& scene = *GetActiveSceneShared();
+    std::shared_ptr<Scene> scene_sptr = GetActiveSceneShared();
 
     std::string_view temp_name = "New Entity";
     std::string name(temp_name);
     std::int32_t postfix{ 1 };
 
     // Append extra number for duplicated name
-    while(scene.IsEntityNameUsed(name))
+    while(scene_sptr->IsEntityNameUsed(name))
     {
         name = std::format("{} {}", temp_name, ++postfix);
     }
 
-    EntityId entity_id = scene.CreateEntity(name, e.EntityTypeString);
+    EntityId entity_id = scene_sptr->CreateEntity(name, e.EntityTypeString);
 
     Match<void>(
         e.EntityTypeString,
         "actor",
         [&]()
         {
-            scene.EmplaceComponent<ModelComponent>(entity_id);
+            scene_sptr->EmplaceComponent<ModelComponent>(entity_id);
 
-            scene.EmplaceComponent<PhysicsComponent>(entity_id);
+            scene_sptr->EmplaceComponent<PhysicsComponent>(entity_id);
 
-            TransformComponent& transform_comp = scene.EmplaceComponent<TransformComponent>(entity_id);
+            TransformComponent& transform_comp = scene_sptr->EmplaceComponent<TransformComponent>(entity_id);
             transform_comp.AddFlag(TransformComponentFlags::UseRotation);
 
-            scene.EmplaceComponent<ScriptComponent>(entity_id);
+            scene_sptr->EmplaceComponent<ScriptComponent>(entity_id);
         },
         "camera",
         [&]()
         {
-            scene.EmplaceComponent<CameraComponent>(entity_id);
+            scene_sptr->EmplaceComponent<CameraComponent>(entity_id);
 
-            TransformComponent& transform_comp = scene.EmplaceComponent<TransformComponent>(entity_id);
+            TransformComponent& transform_comp = scene_sptr->EmplaceComponent<TransformComponent>(entity_id);
             transform_comp.AddFlag(TransformComponentFlags::UseDirection);
         },
         "light",
         [&]()
         {
-            scene.EmplaceComponent<LightComponent>(entity_id);
+            scene_sptr->EmplaceComponent<LightComponent>(entity_id);
 
-            TransformComponent& transform_comp = scene.EmplaceComponent<TransformComponent>(entity_id);
+            TransformComponent& transform_comp = scene_sptr->EmplaceComponent<TransformComponent>(entity_id);
             transform_comp.AddFlag(TransformComponentFlags::UseDirection);
         }
     );
@@ -393,29 +393,29 @@ void Arcadia::SceneLayer::_OnUpdateEntityInfo(Events::UpdateEntityInfo& e)
 
 void Arcadia::SceneLayer::_OnAddComponent(Events::AddComponent& e)
 {
-    Scene& scene = *GetActiveSceneShared();
+    std::shared_ptr<Scene> scene_sptr = GetActiveSceneShared();
 
     Match<void>(
         std::string_view(e.ComponentTypeString),
         CameraComponent::GetTypeStringStatic(),
         [&]()
         {
-            scene.EmplaceComponent<CameraComponent>(e.EntityId);
+            scene_sptr->EmplaceComponent<CameraComponent>(e.EntityId);
         },
         LightComponent::GetTypeStringStatic(),
         [&]()
         {
-            scene.EmplaceComponent<LightComponent>(e.EntityId);
+            scene_sptr->EmplaceComponent<LightComponent>(e.EntityId);
         },
         ModelComponent::GetTypeStringStatic(),
         [&]()
         {
-            scene.EmplaceComponent<ModelComponent>(e.EntityId);
+            scene_sptr->EmplaceComponent<ModelComponent>(e.EntityId);
         },
         PhysicsComponent::GetTypeStringStatic(),
         [&]()
         {
-            scene.EmplaceComponent<PhysicsComponent>(e.EntityId);
+            scene_sptr->EmplaceComponent<PhysicsComponent>(e.EntityId);
         }
     );
     _ActiveSceneModificationFlag |= ActiveSceneModificationFlag::Content;
@@ -423,29 +423,29 @@ void Arcadia::SceneLayer::_OnAddComponent(Events::AddComponent& e)
 
 void Arcadia::SceneLayer::_OnRemoveComponent(Events::RemoveComponent& e)
 {
-    Scene& scene = *GetActiveSceneShared();
+    std::shared_ptr<Scene> scene_sptr = GetActiveSceneShared();
 
     Match<void>(
         std::string_view(e.ComponentTypeString),
         CameraComponent::GetTypeStringStatic(),
         [&]()
         {
-            scene.RemoveComponent<CameraComponent>(e.EntityId);
+            scene_sptr->RemoveComponent<CameraComponent>(e.EntityId);
         },
         LightComponent::GetTypeStringStatic(),
         [&]()
         {
-            scene.RemoveComponent<LightComponent>(e.EntityId);
+            scene_sptr->RemoveComponent<LightComponent>(e.EntityId);
         },
         ModelComponent::GetTypeStringStatic(),
         [&]()
         {
-            scene.RemoveComponent<ModelComponent>(e.EntityId);
+            scene_sptr->RemoveComponent<ModelComponent>(e.EntityId);
         },
         PhysicsComponent::GetTypeStringStatic(),
         [&]()
         {
-            scene.RemoveComponent<PhysicsComponent>(e.EntityId);
+            scene_sptr->RemoveComponent<PhysicsComponent>(e.EntityId);
         }
     );
     _ActiveSceneModificationFlag |= ActiveSceneModificationFlag::Content;

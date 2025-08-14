@@ -51,11 +51,11 @@ auto Arcadia::ScriptComponent::ToJson() const -> nlohmann::json
 
 auto Arcadia::ScriptComponent::OnSnapshot() const -> std::unique_ptr<MementoType>
 {
-    std::unique_ptr<MementoType> memento_data_sptr = std::make_unique<MementoType>();
-    memento_data_sptr->Filepath = _Filepath;
-    memento_data_sptr->Name = _Name;
-    memento_data_sptr->ScriptText = _ScriptText;
-    return memento_data_sptr;
+    std::unique_ptr<MementoType> memento_data_uptr = std::make_unique<MementoType>();
+    memento_data_uptr->Filepath = _Filepath;
+    memento_data_uptr->Name = _Name;
+    memento_data_uptr->ScriptText = _ScriptText;
+    return memento_data_uptr;
 }
 
 void Arcadia::ScriptComponent::OnRestore(const std::unique_ptr<MementoType>& memento_uptr)
