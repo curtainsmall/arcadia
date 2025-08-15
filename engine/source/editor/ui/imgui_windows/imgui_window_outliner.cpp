@@ -54,23 +54,19 @@ void Arcadia::ImguiWindowOutliner::OnUpdate()
 
             if(ImGui::Selectable("Actor"))
             {
-                event_queue.Signal<Events::NewEntity>("actor");
+                event_queue.Signal<Events::NewEntity>(EntityType::Actor);
             }
 
             if(ImGui::Selectable("Camera"))
             {
-                event_queue.Signal<Events::NewEntity>("camera");
+                event_queue.Signal<Events::NewEntity>(EntityType::Camera);
             }
 
             if(ImGui::Selectable("Light"))
             {
-                event_queue.Signal<Events::NewEntity>("light");
+                event_queue.Signal<Events::NewEntity>(EntityType::Light);
             }
 
-            /*if(ImGui::Selectable("Custom"))
-            {
-                event_queue.Signal<event::NewEntity>("");
-            }*/
             ImGui::EndPopup();
         }
 
@@ -144,7 +140,7 @@ void Arcadia::ImguiWindowOutliner::OnUpdate()
                     }
                     if(ImGui::IsItemHovered())
                     {
-                        ImGui::SetTooltip(entity_info.TypeString.c_str());
+                        ImGui::SetTooltip(ToEntityTypeString(entity_info.Type).c_str());
                     }
 
                     if(ImGui::BeginPopupContextItem())

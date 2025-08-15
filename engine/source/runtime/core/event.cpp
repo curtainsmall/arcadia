@@ -66,6 +66,20 @@ void Arcadia::EventBase::ClearMark()
     _HandleState = EventHandleState::NotHandled;
 }
 
+Arcadia::EventDispatcher::EventDispatcher(EventBase& event):
+    _pEvent(&event)
+{
+}
+
+auto Arcadia::EventDispatcher::HaltDispatchIf(bool condition) -> SelfType&
+{
+    if(condition)
+    {
+        _Halt = true;
+    }
+    return *this;
+}
+
 auto Arcadia::EventDispatcher::IsDispatched() const -> bool
 {
     return _Dispatched;

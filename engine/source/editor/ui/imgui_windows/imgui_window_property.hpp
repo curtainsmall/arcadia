@@ -154,6 +154,14 @@ namespace Arcadia
         ImguiWindowPropertyFunctor_ScriptComponent_AddScriptDialog _AddScriptDialog{};
     };
 
+    struct ACDA_API ImguiWindowPropertyFunctor_PlayerComponent
+    {
+    public:
+        using SelfType = ImguiWindowPropertyFunctor_PlayerComponent;
+    public:
+        void operator()(PlayerComponent& player_comp);
+    };
+
     struct ImguiWindowProperty: public ImguiWindowInterface
     {
     public:
@@ -198,7 +206,9 @@ namespace Arcadia
         {
             if(_ContainsComponent<Component>(_SelectedEntityId) && ImGui::TreeNodeEx(tab_name.data(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_FramePadding))
             {
+                ImGui::BeginGroup();
                 display_fn(_GetComponent<Component>(_SelectedEntityId));
+                ImGui::EndGroup();
                 ImGui::TreePop();
             }
         }
@@ -212,5 +222,6 @@ namespace Arcadia
         ImguiWindowPropertyFunctor_PhysicsComponent _ImguiWindowPropertyFunctor_PhysicsComponent{};
         ImguiWindowPropertyFunctor_TransformComponent _ImguiWindowPropertyFunctor_TransformComponent{};
         ImguiWindowPropertyFunctor_ScriptComponent _ImguiWindowPropertyFunctor_ScriptComponent{};
+        ImguiWindowPropertyFunctor_PlayerComponent _ImguiWindowPropertyFunctor_PlayerComponent{};
     };
 }

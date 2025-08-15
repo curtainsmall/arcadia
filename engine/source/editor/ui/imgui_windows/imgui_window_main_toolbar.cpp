@@ -80,9 +80,10 @@ void Arcadia::ImguiWindowMainToolbar::OnUpdate()
         if(scene_layer_sptr->HasActiveScene())
         {
             ImGui::SameLine();
-            if(editor_layer_sptr->GetPlayMode())
+            if(editor_layer_sptr->IsInPlayMode())
             {
                 ImGui::PushStyleColor(ImGuiCol_Text, glm::vec4{ 1.f,0.f,0.f,1.f });
+                // implemented in Arcadia::Editor::_OnInputKey()
                 ImGui::Text("Press Shift + Esc to stop play mode");
                 ImGui::PopStyleColor();
             }
@@ -90,7 +91,7 @@ void Arcadia::ImguiWindowMainToolbar::OnUpdate()
             {
                 if(ImGui::Button("PLAY"))
                 {
-                    EventQueue::Instance().Signal<Events::TogglePlayMode>();
+                    EventQueue::Instance().Signal<Events::SetPlayMode>(true);
                 }
             }
         }

@@ -65,8 +65,15 @@ namespace Arcadia
 
         //==== Events for modes ====//
 
-        struct TogglePlayMode: public EventBase
+        struct SetPlayMode: public EventBase
         {
+        public:
+            SetPlayMode(bool in_play_mode):
+                InPlayMode(in_play_mode)
+            {
+            }
+        public:
+            const bool InPlayMode;
         };
 
         //==== Events for viewport ====//

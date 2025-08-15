@@ -5,7 +5,6 @@
 #undef ERROR
 #include "csys/system.h"
 
-#include "function/input/input_events.hpp"
 #include "function/window/window_events.hpp"
 #include "function/window/window_layer.hpp"
 
@@ -27,7 +26,7 @@ namespace Arcadia
 
         void SetPlayMode(bool play_mode);
         [[nodiscard]]
-        auto GetPlayMode() const -> bool;
+        auto IsInPlayMode() const -> bool;
 
         void SetUiScale(float ui_scale);
         [[nodiscard]]
@@ -42,7 +41,7 @@ namespace Arcadia
         void _OnWindowShouldClose(Events::WindowShouldClose& e);
         void _OnProjectUnbuilt(Events::ProjectUnbuilt& e);
         void _OnWindowCloseCanceled(Events::WindowCloseCanceled& e);
-        void _OnTogglePlayMode(Events::TogglePlayMode& e);
+        void _OnSetPlayMode(Events::SetPlayMode& e);
         void _OnInputKey(Events::InputKey& e);
 
     private:

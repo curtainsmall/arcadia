@@ -41,8 +41,7 @@ void Arcadia::PhysicsSimulator::BuildEntity(EntityId entity_id)
     std::shared_ptr<SceneLayer> scene_layer_sptr = LayerStack::Instance().GetLayerShared<SceneLayer>();
     const EntityInfo& entity_info = scene_layer_sptr->ActiveScene_GetEntityInfo(entity_id);
 
-    // For now, only actor entity has physics component
-    if(entity_info.TypeString != "actor")
+    if(entity_info.Type != EntityType::Actor)
     {
         return;
     }
@@ -176,8 +175,7 @@ void Arcadia::PhysicsSimulator::ApplyToEntity()
         std::shared_ptr<SceneLayer> scene_layer_sptr = LayerStack::Instance().GetLayerShared<SceneLayer>();
         const EntityInfo& entity_info = scene_layer_sptr->ActiveScene_GetEntityInfo(entity_id);
 
-        // For now, only actor entity has physics component
-        if(entity_info.TypeString != "actor")
+        if(entity_info.Type != EntityType::Actor)
         {
             continue;
         }

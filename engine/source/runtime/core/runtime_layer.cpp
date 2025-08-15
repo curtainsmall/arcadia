@@ -7,6 +7,7 @@
 #include "function/physics/physics_layer.hpp"
 #include "function/render/renderer_layer.hpp"
 #include "function/script/script_layer.hpp"
+#include "function/player/player_layer.hpp"
 #include "resource/scene_layer.hpp"
 
 Arcadia::RuntimeLayer::RuntimeLayer():
@@ -120,6 +121,8 @@ Arcadia::RuntimeLayer::RuntimeLayer():
     );
 
     layer_stack.PushLayer<ScriptLayer>();
+
+    layer_stack.PushLayer<PlayerLayer>();
 }
 
 Arcadia::RuntimeLayer::~RuntimeLayer()

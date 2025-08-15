@@ -59,10 +59,7 @@ namespace Arcadia
     public:
         using SelfType = EventDispatcher;
     public:
-        EventDispatcher(EventBase& event):
-            _pEvent(&event)
-        {
-        }
+        EventDispatcher(EventBase& event);
         ~EventDispatcher() = default;
 
         EventDispatcher(const SelfType&) = delete;
@@ -71,7 +68,7 @@ namespace Arcadia
         template<Concepts::Event Event>
         auto Dispatch(const EventHandler<Event>& handler) -> SelfType&
         {
-            if(typeid(*_pEvent) == typeid(Event))
+            if(typeid(*_pEvent) == typeid(Event) && !_Halt)
             {
                 handler(static_cast<Event&>(*_pEvent));
                 _Dispatched = true;
@@ -79,11 +76,18 @@ namespace Arcadia
             return *this;
         }
 
+        // Halt further dispatch when `condition` is true
+        // It is useful when you want to prevent the event from being dispatched further
+        // You can still chain call Dispatch() and IsDispatched() afterwards
+        // Dispatch() will take no effect and IsDispatched() when give the correct result
+        auto HaltDispatchIf(bool condition = true) -> SelfType&;
+
         auto IsDispatched() const -> bool;
 
     private:
         EventBase* _pEvent;
         bool _Dispatched{ false };
+        bool _Halt{ false };
     };
 
     struct ACDA_API EventQueue

@@ -1,7 +1,7 @@
 #include "imgui_layer.hpp"
 
 #include "core/function.hpp"
-#include "function/input/input_events.hpp"
+
 #include "resource/fonts/icon.hpp"
 
 #include "editor/editor_layer.hpp"
@@ -59,7 +59,7 @@ void Arcadia::ImguiLayer::OnEvent(EventBase& e)
     std::shared_ptr<EditorLayer> editor_layer_sptr = LayerStack::Instance().GetLayerShared<EditorLayer>();
 
     // We do not dispatch events to ImGui when the editor is in play mode
-    if(editor_layer_sptr->GetPlayMode())
+    if(editor_layer_sptr->IsInPlayMode())
     {
         return;
     }
@@ -87,22 +87,9 @@ void Arcadia::ImguiLayer::OnUpdate()
 
     ImGui::DockSpaceOverViewport();
 
-    if(ShouldShowDebugInfo)
+    for(std::unique_ptr<ImguiWindowInterface>& imgui_window_uptr : _ImguiWindows)
     {
-        ImGui::ShowStackToolWindow();
-        ImGui::ShowMetricsWindow();
-    }
-
-    if(ShouldShowDemoWindow)
-    {
-        ImGui::ShowDemoWindow();
-    }
-    else
-    {
-        for(std::unique_ptr<ImguiWindowInterface>& imgui_window_uptr : _ImguiWindows)
-        {
-            imgui_window_uptr->OnUpdate();
-        }
+        imgui_window_uptr->OnUpdate();
     }
 
     ImGui::Render();

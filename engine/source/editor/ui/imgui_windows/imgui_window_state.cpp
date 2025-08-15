@@ -52,8 +52,8 @@ void Arcadia::ImguiWindowStateFunctor_Renderer::operator()(const std::shared_ptr
 void Arcadia::ImguiWindowStateFunctor_PhysicsSimulator::operator()(const std::shared_ptr<PhysicsLayer>& physics_layer)
 {
     ImGui::Text(std::format("Body Count: {}", physics_layer->GetPhysicsBodyCount()).c_str());
-    ImGui::Text(std::format("Temporary Allocator Size (KiB)", physics_layer->GetTempAllocatorSize()).c_str());
-    ImGui::Text(std::format("Update per Second", physics_layer->GetUpdatesPerSecondCount()).c_str());
+    ImGui::Text(std::format("Temporary Allocator Size (KiB): {}", physics_layer->GetTempAllocatorSize()).c_str());
+    ImGui::Text(std::format("Update per Second: {}", physics_layer->GetUpdatesPerSecondCount()).c_str());
 
     ImGui::NewLine();
 

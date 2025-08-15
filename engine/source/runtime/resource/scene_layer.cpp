@@ -338,11 +338,11 @@ void Arcadia::SceneLayer::_OnNewEntity(Events::NewEntity& e)
         name = std::format("{} {}", temp_name, ++postfix);
     }
 
-    EntityId entity_id = scene_sptr->CreateEntity(name, e.EntityTypeString);
+    EntityId entity_id = scene_sptr->CreateEntity(name, e.EntityType);
 
     Match<void>(
-        e.EntityTypeString,
-        "actor",
+        e.EntityType,
+        EntityType::Actor,
         [&]()
         {
             scene_sptr->EmplaceComponent<ModelComponent>(entity_id);
@@ -353,8 +353,10 @@ void Arcadia::SceneLayer::_OnNewEntity(Events::NewEntity& e)
             transform_comp.AddFlag(TransformComponentFlags::UseRotation);
 
             scene_sptr->EmplaceComponent<ScriptComponent>(entity_id);
+
+            scene_sptr->EmplaceComponent<PlayerComponent>(entity_id);
         },
-        "camera",
+        EntityType::Camera,
         [&]()
         {
             scene_sptr->EmplaceComponent<CameraComponent>(entity_id);
@@ -362,7 +364,7 @@ void Arcadia::SceneLayer::_OnNewEntity(Events::NewEntity& e)
             TransformComponent& transform_comp = scene_sptr->EmplaceComponent<TransformComponent>(entity_id);
             transform_comp.AddFlag(TransformComponentFlags::UseDirection);
         },
-        "light",
+        EntityType::Light,
         [&]()
         {
             scene_sptr->EmplaceComponent<LightComponent>(entity_id);

@@ -16,7 +16,7 @@ Arcadia::Scene::Scene(const nlohmann::json& json):
 
     for(const auto& [entity_index_string, json_entity] : json_entities.items())
     {
-        EntityId entity_id = CreateEntity(json_entity.at("name"), json_entity.value("type", std::string{}));
+        EntityId entity_id = CreateEntity(json_entity.at("name"), FromEntityTypeString(json_entity.value("type", std::string{})));
         EntityInfo& entity_info = GetEntityInfo(entity_id);
         entity_info.Displayed = json_entity.value("display", true);
         entity_info.Internal = json_entity.value("internal", false);
@@ -57,6 +57,11 @@ Arcadia::Scene::Scene(const nlohmann::json& json):
                 [&]()
                 {
                     EmplaceComponent<ScriptComponent>(entity_id, json_comp);
+                },
+                PlayerComponent::GetTypeStringStatic(),
+                [&]()
+                {
+                    EmplaceComponent<PlayerComponent>(entity_id, json_comp);
                 }
             );
         }
@@ -72,7 +77,7 @@ auto Arcadia::Scene::ToJson() const -> nlohmann::json
         json_entities.push_back(
             {
                 {"name",entity._Name},
-                {"type",entity.TypeString},
+                {"type",ToEntityTypeString(entity.Type)},
                 {"display",entity.Displayed},
                 {"internal",entity.Internal},
                 {"components",_CreateJsonComponents(entity_id)}
@@ -133,7 +138,7 @@ auto Arcadia::Scene::GetEntityInfo(EntityId entity_id) -> EntityInfo&
     return _EntityInfoStorage.at(entity_id);
 }
 
-auto Arcadia::Scene::CreateEntity(std::string_view entity_name, std::string_view type_string) -> EntityId
+auto Arcadia::Scene::CreateEntity(std::string_view entity_name, EntityType type) -> EntityId
 {
     ACDA_ASSERT(!IsEntityNameUsed(entity_name));
 
@@ -141,7 +146,7 @@ auto Arcadia::Scene::CreateEntity(std::string_view entity_name, std::string_view
 
     EntityInfo entity_info;
     entity_info._Name = entity_name;
-    entity_info.TypeString = type_string;
+    entity_info.Type = type;
 
     _EntityInfoStorage.insert_or_assign(
         entity_id,
@@ -232,4 +237,32 @@ auto Arcadia::Scene::GetEntityIdByName(std::string_view entity_name) const -> En
 auto Arcadia::EntityInfo::GetName() const -> std::string_view
 {
     return _Name;
+}
+
+auto Arcadia::FromEntityTypeString(std::string_view type_string) -> EntityType
+{
+    return Match<EntityType>(
+        type_string,
+        EntityType::Unkonwn,
+        "actor",
+        EntityType::Actor,
+        "camera",
+        EntityType::Camera,
+        "light",
+        EntityType::Light
+    );
+}
+
+auto Arcadia::ToEntityTypeString(EntityType type) -> std::string
+{
+    return Match<std::string>(
+        type,
+        "unknown",
+        EntityType::Actor,
+        "actor",
+        EntityType::Camera,
+        "camera",
+        EntityType::Light,
+        "light"
+    );
 }

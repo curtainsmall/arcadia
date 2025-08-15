@@ -125,12 +125,12 @@ namespace Arcadia::Events
     struct ACDA_API NewEntity: public EventBase
     {
     public:
-        NewEntity(std::string_view entity_type_string):
-            EntityTypeString(entity_type_string)
+        NewEntity(EntityType entity_type):
+            EntityType(entity_type)
         {
         }
     public:
-        const std::string EntityTypeString;
+        const EntityType EntityType;
     };
 
     struct ACDA_API SelectEntity: public EventBase

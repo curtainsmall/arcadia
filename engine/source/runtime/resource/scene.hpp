@@ -18,11 +18,18 @@
 
 namespace Arcadia
 {
-    static constexpr std::array BuiltinEntityTypes{
-         "actor",
-         "camera",
-         "light",
+    enum class EntityType: std::uint8_t
+    {
+        Unkonwn = 0,
+        Actor,
+        Camera,
+        Light,
     };
+
+    [[nodiscard]]
+    ACDA_API auto FromEntityTypeString(std::string_view type_string) -> EntityType;
+    [[nodiscard]]
+    ACDA_API auto ToEntityTypeString(EntityType type) -> std::string;
 
     struct ACDA_API EntityInfo
     {
@@ -34,7 +41,7 @@ namespace Arcadia
         auto GetName() const -> std::string_view;
 
     public:
-        std::string TypeString{}; // Type of the entity
+        EntityType Type{}; // Type of the entity
         bool Displayed{ true }; // Whether the entity will be displayed in the viewport (the renderer will skip the hidden ones)
         bool Internal{ false }; // Whether the entity is controled internally (it will not be listed in the outliner); Note that an internal entity will still be rendered unless `Display` is set to false
     private:
@@ -80,7 +87,7 @@ namespace Arcadia
         auto GetEntityInfo(EntityId entity_id) -> EntityInfo&;
 
         [[nodiscard]]
-        auto CreateEntity(std::string_view entity_name, std::string_view type_string) -> EntityId;
+        auto CreateEntity(std::string_view entity_name, EntityType type) -> EntityId;
 
         void DestroyEntity(EntityId entity_id);
 

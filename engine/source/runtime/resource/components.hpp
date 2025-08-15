@@ -6,3 +6,4 @@
 #include "resource/components/physics_component.hpp"
 #include "resource/components/transform_component.hpp"
 #include "resource/components/script_component.hpp"
+#include "resource/components/player_component.hpp"

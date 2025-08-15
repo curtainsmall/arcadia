@@ -27,7 +27,7 @@ void Arcadia::EditorLayer::SetPlayMode(bool play_mode)
     _PlayMode = play_mode;
 }
 
-auto Arcadia::EditorLayer::GetPlayMode() const -> bool
+auto Arcadia::EditorLayer::IsInPlayMode() const -> bool
 {
     return _PlayMode;
 }
@@ -94,7 +94,7 @@ void Arcadia::EditorLayer::OnEvent(EventBase& e)
     EventDispatcher{ e }
         .Dispatch<Events::WindowShouldClose>(ACDA_BIND_MEMBER_FN(_OnWindowShouldClose))
         .Dispatch<Events::ProjectUnbuilt>(ACDA_BIND_MEMBER_FN(_OnProjectUnbuilt))
-        .Dispatch<Events::TogglePlayMode>(ACDA_BIND_MEMBER_FN(_OnTogglePlayMode))
+        .Dispatch<Events::SetPlayMode>(ACDA_BIND_MEMBER_FN(_OnSetPlayMode))
         .Dispatch<Events::InputKey>(ACDA_BIND_MEMBER_FN(_OnInputKey))
         .IsDispatched();
 }
@@ -106,7 +106,7 @@ void Arcadia::EditorLayer::_Stop()
     RuntimeConfig& runtime_config = RuntimeConfig::Instance();
     runtime_config.WindowSize = window_layer_sptr->GetSize();
     runtime_config.WindowPosition = window_layer_sptr->GetPosition();
-    runtime_config.WindowMaxmized = window_layer_sptr->GetSizeState() == WindowSizeState::Maxmized;
+    runtime_config.WindowMaxmized = window_layer_sptr->GetSizeState() == GlfwWindowSizeState::Maxmized;
 
     for(const std::unique_ptr<ImguiWindowInterface>& imgui_window_uptr : imgui_layer_sptr->GetImguiWindows())
     {
@@ -122,10 +122,9 @@ void Arcadia::EditorLayer::_Stop()
 void Arcadia::EditorLayer::_OnWindowShouldClose(Events::WindowShouldClose& e)
 {
     LayerStack& layer_stack = LayerStack::Instance();
-    std::shared_ptr<WindowLayer> main_window_layer_sptr = layer_stack.GetLayerShared<WindowLayer>();
-    std::shared_ptr<ProjectLayer> main_project_layer_sptr = layer_stack.GetLayerShared<ProjectLayer>();
+    std::shared_ptr<ProjectLayer> project_layer_sptr = layer_stack.GetLayerShared<ProjectLayer>();
 
-    if(main_project_layer_sptr->HasProject())
+    if(project_layer_sptr->HasProject())
     {
         _WaitingForProjectUnbuiltBeforeClosing = true;
     }
@@ -148,16 +147,16 @@ void Arcadia::EditorLayer::_OnWindowCloseCanceled(Events::WindowCloseCanceled& e
     _WaitingForProjectUnbuiltBeforeClosing = false;
 }
 
-void Arcadia::EditorLayer::_OnTogglePlayMode(Events::TogglePlayMode& e)
+void Arcadia::EditorLayer::_OnSetPlayMode(Events::SetPlayMode& e)
 {
     std::shared_ptr<EditorLayer> editor_layer_sptr = LayerStack::Instance().GetLayerShared<EditorLayer>();
-    editor_layer_sptr->SetPlayMode(!editor_layer_sptr->GetPlayMode());
+    editor_layer_sptr->SetPlayMode(e.InPlayMode);
 }
 
 void Arcadia::EditorLayer::_OnInputKey(Events::InputKey& e)
 {
-    if(e.KeyCode == InputKey::Escape && !!(e.Modifier & InputModifier::Shift))
+    if(e.KeyCode == GlfwInputKey::Escape && !!(e.Modifier & GlfwInputModifier::Shift))
     {
-        LayerStack::Instance().GetLayerShared<EditorLayer>()->SetPlayMode(false);
+        EventQueue::Instance().Signal<Events::SetPlayMode>(false);
     }
 }

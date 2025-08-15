@@ -32,7 +32,7 @@ namespace Arcadia
         auto GetTitle() const -> std::string_view;
 
         [[nodiscard]]
-        auto GetSizeState() const -> WindowSizeState;
+        auto GetSizeState() const -> GlfwWindowSizeState;
 
         [[nodiscard]]
         auto GetSize() const -> glm::i32vec2;
@@ -44,7 +44,7 @@ namespace Arcadia
         auto GetMultisampleCount() const -> std::int32_t;
 
         [[nodiscard]]
-        auto GetCursorInputMode() const -> WindowCursorInputMode;
+        auto GetCursorInputMode() const -> GlfwWindowCursorInputMode;
 
     private:
         static auto _GetWindowPointerFromGlfwUserPointer(GLFWwindow* glfw_window) -> SelfType*;

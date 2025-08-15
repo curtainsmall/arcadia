@@ -44,9 +44,6 @@ namespace Arcadia
     private:
         void _OnScaleImguiWindow(Events::ScaleImguiWindow& e);
 
-    public:
-        bool ShouldShowDemoWindow{ false };
-        bool ShouldShowDebugInfo{ false };
     private:
         std::weak_ptr<WindowLayer> _wpWindow;
         ImGuiContext* _pImguiContext{ nullptr };

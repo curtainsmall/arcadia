@@ -43,8 +43,6 @@ void Arcadia::ImguiWindowPropertyFunctor_CameraComponent::operator()(CameraCompo
     const ImGuiSliderFlags flags =
         ImGuiSliderFlags_AlwaysClamp;
 
-    ImGui::BeginGroup();
-
     float near_plane = camera_comp.GetNearPlane();
     ImGui::DragFloat("Near Plane", &near_plane, drag_speed, min, max, format, flags);
     camera_comp.SetNearPlane(near_plane);
@@ -89,8 +87,6 @@ void Arcadia::ImguiWindowPropertyFunctor_CameraComponent::operator()(CameraCompo
     ImGui::DragFloat("Up Axis Angle Epsilon", &up_epsilon, drag_speed, min, max, format, flags);
     camera_comp.SetUpAxisAngleEpsilon(glm::radians(up_epsilon));
     _ACDA_COMMAND_HELPER("[Camera] Up Axis Angle Epsilon", camera_comp, GetUpAxisAngleEpsilon, SetUpAxisAngleEpsilon, up_epsilon, _OriginUpAxisAngleEpsilon);
-
-    ImGui::EndGroup();
 }
 
 void Arcadia::ImguiWindowPropertyFunctor_CameraComponent::Refresh(const CameraComponent& comp)
@@ -108,8 +104,6 @@ void Arcadia::ImguiWindowPropertyFunctor_CameraComponent::Refresh(const CameraCo
 
 void Arcadia::ImguiWindowPropertyFunctor_LightComponent::operator()(LightComponent& light_comp)
 {
-    ImGui::BeginGroup();
-
     const float light_direction_drag_speed = .01f;
     const float light_direction_min = -1.f;
     const float light_direction_max = 1.f;
@@ -342,7 +336,6 @@ void Arcadia::ImguiWindowPropertyFunctor_LightComponent::operator()(LightCompone
             _ACDA_COMMAND_HELPER("[Point Light] Specular Strength", light, GetSpecularStrength, SetSpecularStrength, specular, _OriginSpecularStrength);
         }
     );
-    ImGui::EndGroup();
 }
 
 void Arcadia::ImguiWindowPropertyFunctor_LightComponent::Refresh(const LightComponent& comp)
@@ -404,8 +397,6 @@ void Arcadia::ImguiWindowPropertyFunctor_LightComponent::Refresh(const LightComp
 
 void Arcadia::ImguiWindowPropertyFunctor_ModelComponent::operator()(ModelComponent& model_comp)
 {
-    ImGui::BeginGroup();
-
     ImGui::SeparatorText("Filepath");
     std::string filepath_string = model_comp.GetFilepath().empty()
         ? "(No Filepath)"
@@ -438,8 +429,6 @@ void Arcadia::ImguiWindowPropertyFunctor_ModelComponent::operator()(ModelCompone
     {
         model_comp.UnloadModel();
     }
-
-    ImGui::EndGroup();
 }
 
 void Arcadia::ImguiWindowPopupFunctor_PhysicsComponentCreateBody::operator()(PhysicsComponent& physics_comp)
@@ -690,8 +679,6 @@ void Arcadia::ImguiWindowPropertyFunctor_PhysicsComponent::operator()(PhysicsCom
 {
     _ImguiWindowPopupPhysicsComponentCreateBody(physics_comp);
 
-    ImGui::BeginGroup();
-
     ImGuiTreeNodeFlags tree_node_flags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_FramePadding;
 
     if(physics_comp.IsValid())
@@ -824,8 +811,6 @@ void Arcadia::ImguiWindowPropertyFunctor_PhysicsComponent::operator()(PhysicsCom
             _ImguiWindowPopupPhysicsComponentCreateBody.Opened = true;
         }
     }
-
-    ImGui::EndGroup();
 }
 
 void Arcadia::ImguiWindowPropertyFunctor_TransformComponent::Refresh(const TransformComponent& comp)
@@ -839,8 +824,6 @@ void Arcadia::ImguiWindowPropertyFunctor_TransformComponent::Refresh(const Trans
 
 void Arcadia::ImguiWindowPropertyFunctor_TransformComponent::operator()(TransformComponent& transform_comp)
 {
-    ImGui::BeginGroup();
-
     const float speed = 1.f;
     const float min = std::numeric_limits<float>::max();
     const float max = std::numeric_limits<float>::lowest();
@@ -889,8 +872,6 @@ void Arcadia::ImguiWindowPropertyFunctor_TransformComponent::operator()(Transfor
     ImGui::DragFloat3("Pivot", glm::value_ptr(pivot), speed, min, max, format, slider_flags);
     transform_comp.SetPivot(pivot);
     _ACDA_COMMAND_HELPER("[Transform] Pivot", transform_comp, GetPivot, SetPivot, pivot, _OriginPivot);
-
-    ImGui::EndGroup();
 }
 
 void Arcadia::ImguiWindowPropertyFunctor_ScriptComponent_AddScriptDialog::operator()(ScriptComponent& script_comp)
@@ -980,8 +961,6 @@ void Arcadia::ImguiWindowPropertyFunctor_ScriptComponent_AddScriptDialog::operat
 
 void Arcadia::ImguiWindowPropertyFunctor_ScriptComponent::operator()(ScriptComponent& script_comp)
 {
-    ImGui::BeginGroup();
-
     ImGui::TextWrapped(std::format("Name: {}", script_comp.GetName()).c_str());
     ImGui::TextWrapped(std::format("Filepath: {}", script_comp.GetFilepath().generic_string()).c_str());
 
@@ -995,8 +974,10 @@ void Arcadia::ImguiWindowPropertyFunctor_ScriptComponent::operator()(ScriptCompo
     {
         EventQueue::Instance().Signal<Events::ExecuteScript>(script_comp.GetScriptText());
     }
+}
 
-    ImGui::EndGroup();
+void Arcadia::ImguiWindowPropertyFunctor_PlayerComponent::operator()(PlayerComponent& player_comp)
+{
 }
 
 Arcadia::ImguiWindowProperty::ImguiWindowProperty(bool open, std::string_view title):
@@ -1060,6 +1041,7 @@ void Arcadia::ImguiWindowProperty::OnUpdate()
                 _DisplayProperty<PhysicsComponent>("Physics", ACDA_BIND_MEMBER_FN(_ImguiWindowPropertyFunctor_PhysicsComponent));
                 _DisplayProperty<TransformComponent>("Transform", ACDA_BIND_MEMBER_FN(_ImguiWindowPropertyFunctor_TransformComponent));
                 _DisplayProperty<ScriptComponent>("Script", ACDA_BIND_MEMBER_FN(_ImguiWindowPropertyFunctor_ScriptComponent));
+                _DisplayProperty<PlayerComponent>("Player", ACDA_BIND_MEMBER_FN(_ImguiWindowPropertyFunctor_PlayerComponent));
                 ImGui::PopItemWidth();
             }
         }

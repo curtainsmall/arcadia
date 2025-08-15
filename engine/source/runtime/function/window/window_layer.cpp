@@ -3,7 +3,6 @@
 #include "core/runtime_config.hpp"
 #include "core/function.hpp"
 #include "core/match.hpp"
-#include "function/input/input_events.hpp"
 
 Arcadia::WindowLayer::WindowLayer(
     glm::i32vec2 size,
@@ -106,19 +105,19 @@ auto Arcadia::WindowLayer::GetTitle() const -> std::string_view
     return _Title;
 }
 
-auto Arcadia::WindowLayer::GetSizeState() const -> WindowSizeState
+auto Arcadia::WindowLayer::GetSizeState() const -> GlfwWindowSizeState
 {
     if(glfwGetWindowAttrib(_GlfwWindow, GLFW_MAXIMIZED))
     {
-        return WindowSizeState::Maxmized;
+        return GlfwWindowSizeState::Maxmized;
     }
     else if(glfwGetWindowAttrib(_GlfwWindow, GLFW_ICONIFIED))
     {
-        return WindowSizeState::Minimized;
+        return GlfwWindowSizeState::Minimized;
     }
     else
     {
-        return WindowSizeState::Restored;
+        return GlfwWindowSizeState::Restored;
     }
 }
 
@@ -145,13 +144,13 @@ void Arcadia::WindowLayer::_OnWindowSetCursorInputMode(Events::WindowSetCursorIn
 {
     std::int32_t val = Match<std::int32_t>(
         e.Mode,
-        WindowCursorInputMode::Normal,
+        GlfwWindowCursorInputMode::Normal,
         GLFW_CURSOR_NORMAL,
-        WindowCursorInputMode::Hidden,
+        GlfwWindowCursorInputMode::Hidden,
         GLFW_CURSOR_HIDDEN,
-        WindowCursorInputMode::Disabled,
+        GlfwWindowCursorInputMode::Disabled,
         GLFW_CURSOR_DISABLED,
-        WindowCursorInputMode::Captured,
+        GlfwWindowCursorInputMode::Captured,
         GLFW_CURSOR_CAPTURED
     );
     glfwSetInputMode(_GlfwWindow, GLFW_CURSOR, val);
@@ -166,10 +165,10 @@ void Arcadia::WindowLayer::_SetupCallbacks()
         {
             EventQueue::Instance()
                 .Signal<Events::InputKey>(
-                    key,
+                    GlfwInputKey(key),
                     scancode,
-                    action,
-                    mods
+                    GlfwInputAction(action),
+                    GlfwInputModifier(mods)
                 );
         }
     );
@@ -214,9 +213,9 @@ void Arcadia::WindowLayer::_SetupCallbacks()
         {
             EventQueue::Instance()
                 .Signal<Events::InputMouseButton>(
-                    button,
-                    action,
-                    mods
+                    GlfwInputMouseButton(button),
+                    GlfwInputAction(action),
+                    GlfwInputModifier(mods)
                 );
         }
     );
@@ -248,13 +247,13 @@ void Arcadia::WindowLayer::_SetupCallbacks()
             if(iconified)
             {
                 event_queue.Signal<Events::WindowSizeStateChanged>(
-                    WindowSizeState::Minimized
+                    GlfwWindowSizeState::Minimized
                 );
             }
             else
             {
                 event_queue.Signal<Events::WindowSizeStateChanged>(
-                    WindowSizeState::Restored
+                    GlfwWindowSizeState::Restored
                 );
             }
         }
@@ -267,13 +266,13 @@ void Arcadia::WindowLayer::_SetupCallbacks()
             if(maxmized)
             {
                 event_queue.Signal<Events::WindowSizeStateChanged>(
-                    WindowSizeState::Maxmized
+                    GlfwWindowSizeState::Maxmized
                 );
             }
             else
             {
                 event_queue.Signal<Events::WindowSizeStateChanged>(
-                    WindowSizeState::Restored
+                    GlfwWindowSizeState::Restored
                 );
             }
         }
@@ -363,25 +362,25 @@ auto Arcadia::WindowLayer::GetMultisampleCount() const -> std::int32_t
     return _MultisampleCount;
 }
 
-auto Arcadia::WindowLayer::GetCursorInputMode() const -> WindowCursorInputMode
+auto Arcadia::WindowLayer::GetCursorInputMode() const -> GlfwWindowCursorInputMode
 {
     switch(glfwGetInputMode(_GlfwWindow, GLFW_CURSOR))
     {
         case GLFW_CURSOR_NORMAL:
         {
-            return WindowCursorInputMode::Normal;
+            return GlfwWindowCursorInputMode::Normal;
         }
         case GLFW_CURSOR_HIDDEN:
         {
-            return WindowCursorInputMode::Hidden;
+            return GlfwWindowCursorInputMode::Hidden;
         }
         case GLFW_CURSOR_DISABLED:
         {
-            return WindowCursorInputMode::Disabled;
+            return GlfwWindowCursorInputMode::Disabled;
         }
         case GLFW_CURSOR_CAPTURED:
         {
-            return WindowCursorInputMode::Captured;
+            return GlfwWindowCursorInputMode::Captured;
         }
     }
 }

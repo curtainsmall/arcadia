@@ -84,12 +84,12 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
 
             if(!_InViewportFreecamMode && ImGui::IsItemHovered() && ImGui::IsMouseDown(ImGuiMouseButton_Right))
             {
-                EventQueue::Instance().Signal<Events::WindowSetCursorInputMode>(WindowCursorInputMode::Disabled);
+                EventQueue::Instance().Signal<Events::WindowSetCursorInputMode>(GlfwWindowCursorInputMode::Disabled);
                 _InViewportFreecamMode = true;
             }
             if(_InViewportFreecamMode && !ImGui::IsMouseDown(ImGuiMouseButton_Right))
             {
-                EventQueue::Instance().Signal<Events::WindowSetCursorInputMode>(WindowCursorInputMode::Normal);
+                EventQueue::Instance().Signal<Events::WindowSetCursorInputMode>(GlfwWindowCursorInputMode::Normal);
                 _InViewportFreecamMode = false;
             }
 
@@ -398,7 +398,7 @@ void Arcadia::ImguiWindowViewport::_OnSceneActivated(Events::SceneActivated& e)
     const std::shared_ptr<Scene>& scene_sptr = e.spScene;
     if(!scene_sptr->IsEntityNameUsed(_ViewportCameraEntityName))
     {
-        EntityId entity_id = scene_sptr->CreateEntity(_ViewportCameraEntityName, "camera");
+        EntityId entity_id = scene_sptr->CreateEntity(_ViewportCameraEntityName, EntityType::Camera);
         EntityInfo& entity = scene_sptr->GetEntityInfo(entity_id);
         entity.Internal = true;
         scene_sptr->EmplaceComponent<CameraComponent>(entity_id);

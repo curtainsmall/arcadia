@@ -131,7 +131,12 @@ void Arcadia::ImguiBackend::OnInputCursorPosition(Events::InputCursorPosition& e
 void Arcadia::ImguiBackend::OnInputMouseButton(Events::InputMouseButton& e)
 {
     std::shared_ptr<WindowLayer> window_layer_sptr = LayerStack::Instance().GetLayerShared<WindowLayer>();
-    ImGui_ImplGlfw_MouseButtonCallback(window_layer_sptr->GetGlfwWindow(), e.Code, e.Action, e.Modifier);
+    ImGui_ImplGlfw_MouseButtonCallback(
+        window_layer_sptr->GetGlfwWindow(),
+        static_cast<int>(e.MouseButton),
+        static_cast<int>(e.Action),
+        static_cast<int>(e.Modifier)
+    );
 }
 
 void Arcadia::ImguiBackend::OnInputScroll(Events::InputScroll& e)
@@ -143,7 +148,13 @@ void Arcadia::ImguiBackend::OnInputScroll(Events::InputScroll& e)
 void Arcadia::ImguiBackend::OnInputKey(Events::InputKey& e)
 {
     std::shared_ptr<WindowLayer> window_layer_sptr = LayerStack::Instance().GetLayerShared<WindowLayer>();
-    ImGui_ImplGlfw_KeyCallback(window_layer_sptr->GetGlfwWindow(), e.KeyCode, e.KeyScancode, e.Action, e.Modifier);
+    ImGui_ImplGlfw_KeyCallback(
+        window_layer_sptr->GetGlfwWindow(),
+        static_cast<int>(e.KeyCode),
+        e.KeyScancode,
+        static_cast<int>(e.Action),
+        static_cast<int>(e.Modifier)
+    );
 }
 
 void Arcadia::ImguiBackend::OnInputChar(Events::InputChar& e)

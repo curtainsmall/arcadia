@@ -29,12 +29,12 @@ void Arcadia::GlRenderer::BuildEntity(EntityId entity_id)
     const EntityInfo& entity_info = scene_layer_sptr->ActiveScene_GetEntityInfo(entity_id);
 
     Match<void>(
-        entity_info.TypeString,
+        entity_info.Type,
         [&]()
         {
             ACDA_UNREACHABLE("Entity type not supported");
         },
-        "camera",
+        EntityType::Camera,
         [&]()
         {
             const auto& [camera_comp, transform_comp] = scene_layer_sptr->ActiveScene_GetComponent<CameraComponent, TransformComponent>(entity_id);
@@ -65,7 +65,7 @@ void Arcadia::GlRenderer::BuildEntity(EntityId entity_id)
                 );
             }
         },
-        "light",
+        EntityType::Light,
         [&]()
         {
             const auto& [light_comp, transform_comp] = scene_layer_sptr->ActiveScene_GetComponent<LightComponent, TransformComponent>(entity_id);
@@ -87,7 +87,7 @@ void Arcadia::GlRenderer::BuildEntity(EntityId entity_id)
                 );
             }
         },
-        "actor",
+        EntityType::Actor,
         [&]()
         {
             const auto [model_comp, transform_comp, physics_comp] = scene_layer_sptr->ActiveScene_GetComponent<ModelComponent, TransformComponent, PhysicsComponent>(entity_id);
