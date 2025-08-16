@@ -33,8 +33,6 @@ namespace Arcadia
         void _OnInputScroll(Events::InputScroll& e);
         void _OnInputMouseButton(Events::InputMouseButton& e);
 
-        void _ProcessInputKey(GlfwInputKey key, GlfwInputAction action, GlfwInputModifier mod);
-        void _ProcessInputMouseButton(GlfwInputMouseButton mouse_button, GlfwInputAction action, GlfwInputModifier mod);
     private:
         PlayerController _PlayerController{};
     };

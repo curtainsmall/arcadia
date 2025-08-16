@@ -9,12 +9,14 @@
 #include "function/render/renderer_events.hpp"
 #include "function/render/renderer_layer.hpp"
 #include "function/script/script_layer.hpp"
+#include "function/player/player_layer.hpp"
 #include "resource/scene_events.hpp"
 #include "resource/scene_layer.hpp"
 
 #include "project/project.hpp"
 #include "project/project_events.hpp"
 #include "ui/imgui_window.hpp"
+#include "ui/imgui.hpp"
 #include "ui/ui_events.hpp"
 
 namespace Arcadia
@@ -46,6 +48,12 @@ namespace Arcadia
         void operator()(const std::shared_ptr<ScriptLayer>& script_layer);
     };
 
+    struct ImguiWindowStateFunctor_PlayerController
+    {
+    public:
+        void operator()(const std::shared_ptr<PlayerLayer>& player_layer);
+    };
+
     struct ImguiWindowState: public ImguiWindowInterface
     {
     public:
@@ -65,9 +73,17 @@ namespace Arcadia
     private:
         void _OnOpenImguiWindow(Events::OpenImguiWindow& e);
 
+        void _DisplayState(
+            std::string_view tab_name,
+            bool is_activated,
+            const std::function<void()>& display_fn
+        ) const;
+
     private:
         ImguiWindowStateFunctor_Scene _ImguiWindowStateFunctor_Scene{};
         ImguiWindowStateFunctor_Renderer _ImguiWindowStateFunctor_Renderer{};
         ImguiWindowStateFunctor_PhysicsSimulator _ImguiWindowStateFunctor_PhysicsSimulator{};
+        ImguiWindowStateFunctor_ScriptInterpreter _ImguiWindowStateFunctor_ScriptInterpreter{};
+        ImguiWindowStateFunctor_PlayerController _ImguiWindowStateFunctor_PlayerController{};
     };
 }

@@ -23,6 +23,9 @@ namespace Arcadia
         [[nodiscard]]
         auto GetActiveEntityId() const -> EntityId;
         void SetActiveEntityId(EntityId entity_id);
+
+        void ProcessInputKey(GlfwInputKey key, GlfwInputAction action, GlfwInputModifier mod);
+        void ProcessInputMouseButton(GlfwInputMouseButton mouse_button, GlfwInputAction action, GlfwInputModifier mod);
     private:
         bool _Active{ false };
         EntityId _ActiveEntityId{};

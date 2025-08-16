@@ -8,12 +8,12 @@
 #include "ui/imgui.hpp"
 #include "ui/imgui_wrapper.hpp"
 
-void Arcadia::ImguiWindowStateFunctor_Scene::operator()(const std::shared_ptr<SceneLayer>& scene_layer)
+void Arcadia::ImguiWindowStateFunctor_Scene::operator()(const std::shared_ptr<SceneLayer>& scene_layer_sptr)
 {
     ImGui::Text(
         std::format(
             "Entity Count: {}",
-            scene_layer->ActiveScene_GetEntityCount(
+            scene_layer_sptr->ActiveScene_GetEntityCount(
                 [&](EntityId, const EntityInfo& info)->bool
                 {
                     return !info.Internal;
@@ -24,10 +24,10 @@ void Arcadia::ImguiWindowStateFunctor_Scene::operator()(const std::shared_ptr<Sc
     );
 }
 
-void Arcadia::ImguiWindowStateFunctor_Renderer::operator()(const std::shared_ptr<RendererLayer>& renderer_layer)
+void Arcadia::ImguiWindowStateFunctor_Renderer::operator()(const std::shared_ptr<RendererLayer>& renderer_layer_sptr)
 {
     std::string graphic_api_type_string = MatchVariant<std::string>(
-        renderer_layer->GetCurrentGraphicApiType(),
+        renderer_layer_sptr->GetCurrentGraphicApiType(),
         [&](const GraphicApi::Opengl& api)
         {
             return std::format("OpenGL ({})", api.Version);
@@ -49,15 +49,15 @@ void Arcadia::ImguiWindowStateFunctor_Renderer::operator()(const std::shared_ptr
     }
 }
 
-void Arcadia::ImguiWindowStateFunctor_PhysicsSimulator::operator()(const std::shared_ptr<PhysicsLayer>& physics_layer)
+void Arcadia::ImguiWindowStateFunctor_PhysicsSimulator::operator()(const std::shared_ptr<PhysicsLayer>& physics_layer_sptr)
 {
-    ImGui::Text(std::format("Body Count: {}", physics_layer->GetPhysicsBodyCount()).c_str());
-    ImGui::Text(std::format("Temporary Allocator Size (KiB): {}", physics_layer->GetTempAllocatorSize()).c_str());
-    ImGui::Text(std::format("Update per Second: {}", physics_layer->GetUpdatesPerSecondCount()).c_str());
+    ImGui::Text(std::format("Body Count: {}", physics_layer_sptr->GetPhysicsBodyCount()).c_str());
+    ImGui::Text(std::format("Temporary Allocator Size (KiB): {}", physics_layer_sptr->GetTempAllocatorSize()).c_str());
+    ImGui::Text(std::format("Update per Second: {}", physics_layer_sptr->GetUpdatesPerSecondCount()).c_str());
 
     ImGui::NewLine();
 
-    if(physics_layer->IsPhysicsSimulatorActive())
+    if(physics_layer_sptr->IsPhysicsSimulatorActive())
     {
         if(ImGui::Button("Stop"))
         {
@@ -81,8 +81,22 @@ void Arcadia::ImguiWindowStateFunctor_PhysicsSimulator::operator()(const std::sh
     ImGui::EndDisabled();
 }
 
-void Arcadia::ImguiWindowStateFunctor_ScriptInterpreter::operator()(const std::shared_ptr<ScriptLayer>& script_layer)
+void Arcadia::ImguiWindowStateFunctor_ScriptInterpreter::operator()(const std::shared_ptr<ScriptLayer>& script_layer_sptr)
 {
+}
+
+void Arcadia::ImguiWindowStateFunctor_PlayerController::operator()(const std::shared_ptr<PlayerLayer>& player_layer_sptr)
+{
+    EntityId entity_id = player_layer_sptr->GetActiveEntityId();
+
+    if(!entity_id.IsNull())
+    {
+        ImGui::Text(std::format("Active Player Entity Id: {}", entity_id).c_str());
+    }
+    else
+    {
+        ImGui::Text("No Active Entity");
+    }
 }
 
 Arcadia::ImguiWindowState::ImguiWindowState(bool open, std::string_view title):
@@ -104,7 +118,17 @@ void Arcadia::ImguiWindowState::OnUpdate()
         return;
     }
 
-    auto [scene_layer_sptr, renderer_layer_sptr, physcis_layer] = LayerStack::Instance().GetMultipleLayersShared<SceneLayer, RendererLayer, PhysicsLayer>();
+    auto [
+        scene_layer_sptr,
+        renderer_layer_sptr,
+        physcis_layer_sptr,
+        player_layer_sptr
+    ] = LayerStack::Instance().GetMultipleLayersShared<
+        SceneLayer,
+        RendererLayer,
+        PhysicsLayer,
+        PlayerLayer
+    >();
 
     std::string imgui_window_title{};
     imgui_window_title
@@ -120,42 +144,69 @@ void Arcadia::ImguiWindowState::OnUpdate()
             ImGuiTabBarFlags_NoCloseWithMiddleMouseButton;
         ImGui::PushItemWidth(200.f);
 
-        if(ImGui::TreeNodeEx("Scene", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_FramePadding))
-        {
-            if(scene_layer_sptr->HasActiveScene())
+        _DisplayState(
+            "Scene",
+            true,
+            [&]()
             {
-                _ImguiWindowStateFunctor_Scene(scene_layer_sptr);
+                if(scene_layer_sptr->HasActiveScene())
+                {
+                    _ImguiWindowStateFunctor_Scene(scene_layer_sptr);
+                }
+                else
+                {
+                    ImGui::Text("(No Scene)");
+                }
             }
-            else
+        );
+
+        _DisplayState(
+            "Renderer",
+            renderer_layer_sptr->IsRendererActive(),
+            [&]()
             {
-                ImGui::Text("(No scene)");
+                if(renderer_layer_sptr)
+                {
+                    _ImguiWindowStateFunctor_Renderer(renderer_layer_sptr);
+                }
+                else
+                {
+                    ImGui::Text("(No renderer)");
+                }
             }
-            ImGui::TreePop();
-        }
-        if(ImGui::TreeNodeEx("Renderer", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_FramePadding))
-        {
-            if(renderer_layer_sptr)
+        );
+
+        _DisplayState(
+            "Physics Simulator",
+            physcis_layer_sptr->IsPhysicsSimulatorActive(),
+            [&]()
             {
-                _ImguiWindowStateFunctor_Renderer(renderer_layer_sptr);
+                if(physcis_layer_sptr)
+                {
+                    _ImguiWindowStateFunctor_PhysicsSimulator(physcis_layer_sptr);
+                }
+                else
+                {
+                    ImGui::Text("(No physics simulator)");
+                }
             }
-            else
+        );
+
+        _DisplayState(
+            "Player Controller",
+            player_layer_sptr->IsPlayerControllerActive(),
+            [&]()
             {
-                ImGui::Text("(No renderer)");
+                if(player_layer_sptr)
+                {
+                    _ImguiWindowStateFunctor_PlayerController(player_layer_sptr);
+                }
+                else
+                {
+                    ImGui::Text("No Player Controller");
+                }
             }
-            ImGui::TreePop();
-        }
-        if(ImGui::TreeNodeEx("Physics Simulator", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_FramePadding))
-        {
-            if(physcis_layer)
-            {
-                _ImguiWindowStateFunctor_PhysicsSimulator(physcis_layer);
-            }
-            else
-            {
-                ImGui::Text("(No physics simulator)");
-            }
-            ImGui::TreePop();
-        }
+        );
 
         ImGui::PopItemWidth();
     }
@@ -167,5 +218,18 @@ void Arcadia::ImguiWindowState::_OnOpenImguiWindow(Events::OpenImguiWindow& e)
     if(e.IdString == GetIdString())
     {
         _Opened = true;
+    }
+}
+
+void Arcadia::ImguiWindowState::_DisplayState(std::string_view tab_name, bool is_activated, const std::function<void()>& display_fn) const
+{
+    static std::string_view state{};
+    state = is_activated ? "Activated" : "Inactivated";
+    if(ImGui::TreeNodeEx(std::format("{} | {}", tab_name, state).c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_FramePadding))
+    {
+        ImGui::BeginGroup();
+        display_fn();
+        ImGui::EndGroup();
+        ImGui::TreePop();
     }
 }

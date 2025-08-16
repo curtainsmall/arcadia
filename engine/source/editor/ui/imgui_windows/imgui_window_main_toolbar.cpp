@@ -5,6 +5,7 @@
 #include "core/function.hpp"
 #include "resource/fonts/icon.hpp"
 #include "resource/scene_layer.hpp"
+#include "function/player/player_events.hpp"
 
 #include "editor/editor_layer.hpp"
 #include "ui/imgui.hpp"
@@ -83,7 +84,7 @@ void Arcadia::ImguiWindowMainToolbar::OnUpdate()
             if(editor_layer_sptr->IsInPlayMode())
             {
                 ImGui::PushStyleColor(ImGuiCol_Text, glm::vec4{ 1.f,0.f,0.f,1.f });
-                // implemented in Arcadia::Editor::_OnInputKey()
+                // implemented in Arcadia::EditorLayer::_OnInputKey()
                 ImGui::Text("Press Shift + Esc to stop play mode");
                 ImGui::PopStyleColor();
             }
@@ -91,7 +92,9 @@ void Arcadia::ImguiWindowMainToolbar::OnUpdate()
             {
                 if(ImGui::Button("PLAY"))
                 {
-                    EventQueue::Instance().Signal<Events::SetPlayMode>(true);
+                    EventQueue::Instance()
+                        .Signal<Events::SetPlayMode>(true)
+                        .Signal<Events::PlayerControllerSetActive>(true);
                 }
             }
         }

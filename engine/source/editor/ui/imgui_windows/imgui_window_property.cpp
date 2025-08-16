@@ -9,6 +9,8 @@
 #include "core/match.hpp"
 #include "core/pfd.hpp"
 #include "function/script/script_events.hpp"
+#include "function/player/player_events.hpp"
+#include "function/player/player_layer.hpp"
 #include "resource/scene_layer.hpp"
 #include "platform/lua.hpp"
 
@@ -776,21 +778,14 @@ void Arcadia::ImguiWindowPropertyFunctor_PhysicsComponent::operator()(PhysicsCom
         glm::vec3 color = physics_comp.GetBodyShapeColor();
         ImGui::ColorEdit3("Body Shape Color", glm::value_ptr(color));
         physics_comp.SetBodyShapeColor(color);
-        if(ImGui::IsItemDeactivatedAfterEdit())
-        {
-            glm::vec3 origin = physics_comp.GetBodyShapeColor();
-            CommandList::Instance().Emplace(
-                "[Physics] Body Shape Color",
-                [&]() -> void
-                {
-                    physics_comp.SetBodyShapeColor(color);
-                },
-                [&]() -> void
-                {
-                    physics_comp.SetBodyShapeColor(origin);
-                }
-            );
-        }
+        _ACDA_COMMAND_HELPER(
+            "[Physics] Body Shape Color",
+            physics_comp,
+            GetBodyShapeColor,
+            SetBodyShapeColor,
+            color,
+            _OriginBodyShapeColor
+        );
 
         if(ImGui::Button("Recreate Body"))
         {
@@ -811,6 +806,11 @@ void Arcadia::ImguiWindowPropertyFunctor_PhysicsComponent::operator()(PhysicsCom
             _ImguiWindowPopupPhysicsComponentCreateBody.Opened = true;
         }
     }
+}
+
+void Arcadia::ImguiWindowPropertyFunctor_PhysicsComponent::Refresh(PhysicsComponent& physics_comp)
+{
+    _OriginBodyShapeColor = physics_comp.GetBodyShapeColor();
 }
 
 void Arcadia::ImguiWindowPropertyFunctor_TransformComponent::Refresh(const TransformComponent& comp)
@@ -976,8 +976,18 @@ void Arcadia::ImguiWindowPropertyFunctor_ScriptComponent::operator()(ScriptCompo
     }
 }
 
-void Arcadia::ImguiWindowPropertyFunctor_PlayerComponent::operator()(PlayerComponent& player_comp)
+void Arcadia::ImguiWindowPropertyFunctor_PlayerComponent::operator()(EntityId entity_id)
 {
+    std::shared_ptr<PlayerLayer> player_layer_sptr = LayerStack::Instance().GetLayerShared<PlayerLayer>();
+    if(player_layer_sptr->GetActiveEntityId() == entity_id)
+    {
+        ImGui::Text("Current Active Player");
+    }
+    else if(ImGui::Button("Set As Active Player"))
+    {
+        EventQueue::Instance()
+            .Signal<Events::PlayerControllerSetEntity>(entity_id);
+    }
 }
 
 Arcadia::ImguiWindowProperty::ImguiWindowProperty(bool open, std::string_view title):
@@ -1035,13 +1045,64 @@ void Arcadia::ImguiWindowProperty::OnUpdate()
             {
                 ImGui::PushItemWidth(200.f);
 
-                _DisplayProperty<CameraComponent>("Camera", ACDA_BIND_MEMBER_FN(_ImguiWindowPropertyFunctor_CameraComponent));
-                _DisplayProperty<LightComponent>("Light", ACDA_BIND_MEMBER_FN(_ImguiWindowPropertyFunctor_LightComponent));
-                _DisplayProperty<ModelComponent>("Model", ACDA_BIND_MEMBER_FN(_ImguiWindowPropertyFunctor_ModelComponent));
-                _DisplayProperty<PhysicsComponent>("Physics", ACDA_BIND_MEMBER_FN(_ImguiWindowPropertyFunctor_PhysicsComponent));
-                _DisplayProperty<TransformComponent>("Transform", ACDA_BIND_MEMBER_FN(_ImguiWindowPropertyFunctor_TransformComponent));
-                _DisplayProperty<ScriptComponent>("Script", ACDA_BIND_MEMBER_FN(_ImguiWindowPropertyFunctor_ScriptComponent));
-                _DisplayProperty<PlayerComponent>("Player", ACDA_BIND_MEMBER_FN(_ImguiWindowPropertyFunctor_PlayerComponent));
+                _DisplayProperty(
+                    "Transform",
+                    _ContainsComponent<TransformComponent>(_SelectedEntityId),
+                    [&]()
+                    {
+                        _ImguiWindowPropertyFunctor_TransformComponent(_GetComponent<TransformComponent>(_SelectedEntityId));
+                    }
+                );
+
+                _DisplayProperty(
+                    "Camera",
+                    _ContainsComponent<CameraComponent>(_SelectedEntityId),
+                    [&]()
+                    {
+                        _ImguiWindowPropertyFunctor_CameraComponent(_GetComponent<CameraComponent>(_SelectedEntityId));
+                    }
+                );
+                _DisplayProperty(
+                    "Light",
+                    _ContainsComponent<LightComponent>(_SelectedEntityId),
+                    [&]()
+                    {
+                        _ImguiWindowPropertyFunctor_LightComponent(_GetComponent<LightComponent>(_SelectedEntityId));
+                    }
+                );
+                _DisplayProperty(
+                    "Model",
+                    _ContainsComponent<ModelComponent>(_SelectedEntityId),
+                    [&]()
+                    {
+                        _ImguiWindowPropertyFunctor_ModelComponent(_GetComponent<ModelComponent>(_SelectedEntityId));
+                    }
+                );
+                _DisplayProperty(
+                    "Physics",
+                    _ContainsComponent<PhysicsComponent>(_SelectedEntityId),
+                    [&]()
+                    {
+                        _ImguiWindowPropertyFunctor_PhysicsComponent(_GetComponent<PhysicsComponent>(_SelectedEntityId));
+                    }
+                );
+                _DisplayProperty(
+                    "Script",
+                    _ContainsComponent<ScriptComponent>(_SelectedEntityId),
+                    [&]()
+                    {
+                        _ImguiWindowPropertyFunctor_ScriptComponent(_GetComponent<ScriptComponent>(_SelectedEntityId));
+                    }
+                );
+                _DisplayProperty(
+                    "Player",
+                    _ContainsComponent<PlayerComponent>(_SelectedEntityId),
+                    [&]()
+                    {
+                        _ImguiWindowPropertyFunctor_PlayerComponent(_SelectedEntityId);
+                    }
+                );
+
                 ImGui::PopItemWidth();
             }
         }
@@ -1080,6 +1141,11 @@ void Arcadia::ImguiWindowProperty::_OnSelectEntity(Events::SelectEntity& e)
     {
         _ImguiWindowPropertyFunctor_LightComponent.Refresh(scene_layer_sptr->ActiveScene_GetComponent<LightComponent>(_SelectedEntityId));
     }
+
+    if(scene_layer_sptr->ActiveScene_ContainsAllComponents<PhysicsComponent>(_SelectedEntityId))
+    {
+        _ImguiWindowPropertyFunctor_PhysicsComponent.Refresh(scene_layer_sptr->ActiveScene_GetComponent<PhysicsComponent>(_SelectedEntityId));
+    }
 }
 
 void Arcadia::ImguiWindowProperty::_OnDeleteEntity(Events::DeleteEntity& e)
@@ -1087,5 +1153,16 @@ void Arcadia::ImguiWindowProperty::_OnDeleteEntity(Events::DeleteEntity& e)
     if(_SelectedEntityId == e.EntityId)
     {
         _SelectedEntityId.SetNull();
+    }
+}
+
+void Arcadia::ImguiWindowProperty::_DisplayProperty(std::string_view tab_name, bool condition, const std::function<void()>& display_fn) const
+{
+    if(condition && ImGui::TreeNodeEx(tab_name.data(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_FramePadding))
+    {
+        ImGui::BeginGroup();
+        display_fn();
+        ImGui::EndGroup();
+        ImGui::TreePop();
     }
 }

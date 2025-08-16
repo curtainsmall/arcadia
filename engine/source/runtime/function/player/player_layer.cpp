@@ -1,17 +1,15 @@
 #include "player_layer.hpp"
 
-#include "resource/scene_layer.hpp"
-#include "resource/components.hpp"
 #include "core/function.hpp"
-#include "function/window/window_events.hpp"
-#include "core/match.hpp"
+#include "core/log.hpp"
+#include "resource/scene_layer.hpp"
 
 void Arcadia::PlayerLayer::OnEvent(EventBase& event)
 {
     EventDispatcher(event)
         .Dispatch<Events::PlayerControllerSetActive>(ACDA_BIND_MEMBER_FN(_OnPlayerControllerSetActive))
         .Dispatch<Events::PlayerControllerSetEntity>(ACDA_BIND_MEMBER_FN(_OnPlayerControllerSetEntity))
-        .HaltDispatchIf(!IsPlayerControllerActive())
+        .HaltDispatchIf(!IsPlayerControllerActive() || GetActiveEntityId().IsNull())
         .Dispatch<Events::InputKey>(ACDA_BIND_MEMBER_FN(_OnInputKey))
         .Dispatch<Events::InputCursorMove>(ACDA_BIND_MEMBER_FN(_OnInputCursorMove))
         .Dispatch<Events::InputScroll>(ACDA_BIND_MEMBER_FN(_OnInputScroll))
@@ -35,6 +33,7 @@ auto Arcadia::PlayerLayer::GetActiveEntityId() const -> EntityId
 
 void Arcadia::PlayerLayer::_OnPlayerControllerSetActive(Events::PlayerControllerSetActive& e)
 {
+    ACDA_LOG_DEBUG(std::format("Player Controller set: {}", e.Active));
     _PlayerController.SetActive(e.Active);
 }
 
@@ -51,7 +50,7 @@ void Arcadia::PlayerLayer::_OnPlayerControllerSetEntity(Events::PlayerController
 
 void Arcadia::PlayerLayer::_OnInputKey(Events::InputKey& e)
 {
-    _ProcessInputKey(e.KeyCode, e.Action, e.Modifier);
+    _PlayerController.ProcessInputKey(e.KeyCode, e.Action, e.Modifier);
 }
 
 void Arcadia::PlayerLayer::_OnInputCursorMove(Events::InputCursorMove& e)
@@ -64,39 +63,5 @@ void Arcadia::PlayerLayer::_OnInputScroll(Events::InputScroll& e)
 
 void Arcadia::PlayerLayer::_OnInputMouseButton(Events::InputMouseButton& e)
 {
-}
-
-void Arcadia::PlayerLayer::_ProcessInputKey(GlfwInputKey key, GlfwInputAction action, GlfwInputModifier mod)
-{
-    std::shared_ptr<SceneLayer> scene_layer_sptr = LayerStack::Instance().GetLayerShared<SceneLayer>();
-    auto [transform_comp, physics_comp] = scene_layer_sptr->ActiveScene_GetComponent<TransformComponent, PhysicsComponent>(_PlayerController.GetActiveEntityId());
-
-    const float speed = 5.0f;
-    switch(key)
-    {
-        case GlfwInputKey::W:
-        {
-            physics_comp.SetLinearVelocity(glm::normalize(transform_comp.GetDirection()) * speed);
-            break;
-        }
-        case GlfwInputKey::S:
-        {
-            physics_comp.SetLinearVelocity(-glm::normalize(transform_comp.GetDirection()) * speed);
-            break;
-        }
-        case GlfwInputKey::A:
-        {
-            physics_comp.SetLinearVelocity(glm::normalize(glm::cross(CameraComponent::GetUpAxis(), transform_comp.GetDirection()) * speed));
-            break;
-        }
-        case GlfwInputKey::D:
-        {
-            physics_comp.SetLinearVelocity(-glm::normalize(glm::cross(CameraComponent::GetUpAxis(), transform_comp.GetDirection()) * speed));
-            break;
-        }
-    }
-}
-
-void Arcadia::PlayerLayer::_ProcessInputMouseButton(GlfwInputMouseButton mouse_button, GlfwInputAction action, GlfwInputModifier mod)
-{
+    _PlayerController.ProcessInputMouseButton(e.MouseButton, e.Action, e.Modifier);
 }

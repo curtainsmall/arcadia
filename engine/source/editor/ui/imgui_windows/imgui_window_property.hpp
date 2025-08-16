@@ -97,6 +97,7 @@ namespace Arcadia
         using SelfType = ImguiWindowPopupFunctor_PhysicsComponentCreateBody;
     public:
         void operator()(PhysicsComponent& physics_comp);
+
     public:
         bool Opened{ false };
     private:
@@ -111,8 +112,10 @@ namespace Arcadia
         using SelfType = ImguiWindowPropertyFunctor_PhysicsComponent;
     public:
         void operator()(PhysicsComponent& physics_comp);
+        void Refresh(PhysicsComponent& physics_comp);
     private:
         ImguiWindowPopupFunctor_PhysicsComponentCreateBody _ImguiWindowPopupPhysicsComponentCreateBody{};
+        glm::vec3 _OriginBodyShapeColor{};
     };
 
     struct ImguiWindowPropertyFunctor_TransformComponent
@@ -159,7 +162,7 @@ namespace Arcadia
     public:
         using SelfType = ImguiWindowPropertyFunctor_PlayerComponent;
     public:
-        void operator()(PlayerComponent& player_comp);
+        void operator()(EntityId entity_id);
     };
 
     struct ImguiWindowProperty: public ImguiWindowInterface
@@ -201,17 +204,11 @@ namespace Arcadia
         void _OnSelectEntity(Events::SelectEntity& e);
         void _OnDeleteEntity(Events::DeleteEntity& e);
 
-        template<Concepts::Component Component>
-        void _DisplayProperty(std::string_view tab_name, const std::function<void(Component&)>& display_fn) const
-        {
-            if(_ContainsComponent<Component>(_SelectedEntityId) && ImGui::TreeNodeEx(tab_name.data(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_FramePadding))
-            {
-                ImGui::BeginGroup();
-                display_fn(_GetComponent<Component>(_SelectedEntityId));
-                ImGui::EndGroup();
-                ImGui::TreePop();
-            }
-        }
+        void _DisplayProperty(
+            std::string_view tab_name,
+            bool condition,
+            const std::function<void()>& display_fn
+        ) const;
 
     private:
         EntityId _SelectedEntityId{};

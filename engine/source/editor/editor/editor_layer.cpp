@@ -8,6 +8,7 @@
 #include "core/function.hpp"
 #include "core/layer.hpp"
 #include "core/runtime_layer.hpp"
+#include "function/player/player_events.hpp"
 
 #include "ui/imgui_windows/imgui_window_main_manubar.hpp"
 #include "ui/imgui_windows/imgui_window_main_statusbar.hpp"
@@ -157,6 +158,8 @@ void Arcadia::EditorLayer::_OnInputKey(Events::InputKey& e)
 {
     if(e.KeyCode == GlfwInputKey::Escape && !!(e.Modifier & GlfwInputModifier::Shift))
     {
-        EventQueue::Instance().Signal<Events::SetPlayMode>(false);
+        EventQueue::Instance()
+            .Signal<Events::SetPlayMode>(false)
+            .Signal<Events::PlayerControllerSetActive>(false);
     }
 }
