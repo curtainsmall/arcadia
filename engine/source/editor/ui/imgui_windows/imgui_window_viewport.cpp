@@ -428,7 +428,7 @@ void Arcadia::ImguiWindowViewport::_OnSceneDeactivated(Events::SceneDeactivated&
     EventQueue::Instance()
         .Signal<Events::RendererSetActive>(false)
         .Signal<Events::RendererReset>()
-        .Signal<Events::PhysicsSimulatirSetActive>(false)
+        .Signal<Events::PhysicsSimulatorSetActive>(false)
         .Signal<Events::PhysicsSimulatorReset>();
 }
 

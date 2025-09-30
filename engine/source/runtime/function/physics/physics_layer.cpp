@@ -12,7 +12,7 @@ Arcadia::PhysicsLayer::PhysicsLayer():
 void Arcadia::PhysicsLayer::OnEvent(EventBase& event)
 {
     EventDispatcher(event)
-        .Dispatch<Events::PhysicsSimulatirSetActive>(ACDA_BIND_MEMBER_FN(_OnPhysicsSimulatorSetActive))
+        .Dispatch<Events::PhysicsSimulatorSetActive>(ACDA_BIND_MEMBER_FN(_OnPhysicsSimulatorSetActive))
         .Dispatch<Events::PhysicsSimulatorReset>(ACDA_BIND_MEMBER_FN(_OnPhysicsSimulatorReset))
         .Dispatch<Events::PhysicsSimulatorSetEntity>(ACDA_BIND_MEMBER_FN(_OnPhysicsSimulatorSetEntity))
         .IsDispatched();
@@ -26,7 +26,7 @@ void Arcadia::PhysicsLayer::OnUpdate()
     }
 
     _PhysicsSimulator.Update();
-    _PhysicsSimulator.ApplyToEntity();
+    _PhysicsSimulator.ApplyToEntites();
 }
 
 auto Arcadia::PhysicsLayer::IsPhysicsSimulatorActive() const -> bool
@@ -49,7 +49,7 @@ auto Arcadia::PhysicsLayer::GetUpdatesPerSecondCount() const -> std::int32_t
     return _PhysicsSimulator.GetJphPhysicsSystemUpdatesPerSecond();
 }
 
-void Arcadia::PhysicsLayer::_OnPhysicsSimulatorSetActive(Events::PhysicsSimulatirSetActive& e)
+void Arcadia::PhysicsLayer::_OnPhysicsSimulatorSetActive(Events::PhysicsSimulatorSetActive& e)
 {
     _PhysicsSimulator.SetActive(e.Active);
 }

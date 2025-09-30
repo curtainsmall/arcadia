@@ -34,7 +34,7 @@ namespace Arcadia
 
     private:
         void _OnPhysicsSimulatorReset(Events::PhysicsSimulatorReset& e);
-        void _OnPhysicsSimulatorSetActive(Events::PhysicsSimulatirSetActive& e);
+        void _OnPhysicsSimulatorSetActive(Events::PhysicsSimulatorSetActive& e);
         void _OnPhysicsSimulatorSetEntity(Events::PhysicsSimulatorSetEntity& e);
 
     private:

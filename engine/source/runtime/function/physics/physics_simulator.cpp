@@ -168,7 +168,7 @@ void Arcadia::PhysicsSimulator::Update()
     );
 }
 
-void Arcadia::PhysicsSimulator::ApplyToEntity()
+void Arcadia::PhysicsSimulator::ApplyToEntites()
 {
     for(const EntityId& entity_id : _EntityIdSet)
     {

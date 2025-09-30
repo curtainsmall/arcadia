@@ -1,9 +1,5 @@
 #pragma once
 
-#define JPH_FLOATING_POINT_EXCEPTIONS_ENABLED
-#define JPH_PROFILE_ENABLED
-#define JPH_DEBUG_RENDERER
-
 #include "Jolt/Jolt.h"
 
 #include "Jolt/Core/Factory.h"

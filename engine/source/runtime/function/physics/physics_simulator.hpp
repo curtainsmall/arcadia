@@ -63,7 +63,7 @@ namespace Arcadia
         void Update();
 
         // Apply changes to entities
-        void ApplyToEntity();
+        void ApplyToEntites();
 
         // Reset physics simulator, clear all bodies
         void Reset();

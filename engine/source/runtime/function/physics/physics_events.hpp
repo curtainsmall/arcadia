@@ -9,10 +9,10 @@ namespace Arcadia::Events
     {
     };
 
-    struct ACDA_API PhysicsSimulatirSetActive: public EventBase
+    struct ACDA_API PhysicsSimulatorSetActive: public EventBase
     {
     public:
-        PhysicsSimulatirSetActive(bool active):
+        PhysicsSimulatorSetActive(bool active):
             Active(active)
         {
         }

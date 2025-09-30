@@ -6,6 +6,7 @@
 #include "resource/fonts/icon.hpp"
 #include "resource/scene_layer.hpp"
 #include "function/player/player_events.hpp"
+#include "function/physics/physics_events.hpp"
 
 #include "editor/editor_layer.hpp"
 #include "ui/imgui.hpp"
@@ -94,7 +95,8 @@ void Arcadia::ImguiWindowMainToolbar::OnUpdate()
                 {
                     EventQueue::Instance()
                         .Signal<Events::SetPlayMode>(true)
-                        .Signal<Events::PlayerControllerSetActive>(true);
+                        .Signal<Events::PlayerControllerSetActive>(true)
+                        .Signal<Events::PhysicsSimulatorSetActive>(true);
                 }
             }
         }

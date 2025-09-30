@@ -56,19 +56,19 @@ void Arcadia::ImguiWindowStateFunctor_PhysicsSimulator::operator()(const std::sh
     ImGui::Text(std::format("Update per Second: {}", physics_layer_sptr->GetUpdatesPerSecondCount()).c_str());
 
     ImGui::NewLine();
-
+#if 0
     if(physics_layer_sptr->IsPhysicsSimulatorActive())
     {
         if(ImGui::Button("Stop"))
         {
-            EventQueue::Instance().Signal<Events::PhysicsSimulatirSetActive>(false);
+            EventQueue::Instance().Signal<Events::PhysicsSimulatorSetActive>(false);
         }
     }
     else
     {
         if(ImGui::Button("Start"))
         {
-            EventQueue::Instance().Signal<Events::PhysicsSimulatirSetActive>(true);
+            EventQueue::Instance().Signal<Events::PhysicsSimulatorSetActive>(true);
         }
     }
     ImGui::SameLine();
@@ -76,9 +76,10 @@ void Arcadia::ImguiWindowStateFunctor_PhysicsSimulator::operator()(const std::sh
     if(ImGui::Button("Reset"))
     {
         EventQueue::Instance().Signal<Events::PhysicsSimulatorReset>();
-        EventQueue::Instance().Signal<Events::PhysicsSimulatirSetActive>(false);
+        EventQueue::Instance().Signal<Events::PhysicsSimulatorSetActive>(false);
     }
     ImGui::EndDisabled();
+#endif
 }
 
 void Arcadia::ImguiWindowStateFunctor_ScriptInterpreter::operator()(const std::shared_ptr<ScriptLayer>& script_layer_sptr)

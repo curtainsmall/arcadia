@@ -9,6 +9,7 @@
 #include "core/layer.hpp"
 #include "core/runtime_layer.hpp"
 #include "function/player/player_events.hpp"
+#include "function/physics/physics_events.hpp"
 
 #include "ui/imgui_windows/imgui_window_main_manubar.hpp"
 #include "ui/imgui_windows/imgui_window_main_statusbar.hpp"
@@ -160,6 +161,7 @@ void Arcadia::EditorLayer::_OnInputKey(Events::InputKey& e)
     {
         EventQueue::Instance()
             .Signal<Events::SetPlayMode>(false)
-            .Signal<Events::PlayerControllerSetActive>(false);
+            .Signal<Events::PlayerControllerSetActive>(false)
+            .Signal<Events::PhysicsSimulatorSetActive>(false);
     }
 }
