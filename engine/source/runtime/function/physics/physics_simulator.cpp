@@ -3,8 +3,6 @@
 #include <thread>
 
 #include "core/match.hpp"
-#include "resource/components/physics_component.hpp"
-#include "resource/components/transform_component.hpp"
 #include "resource/scene_layer.hpp"
 
 Arcadia::PhysicsSimulator::PhysicsSimulator()
@@ -46,7 +44,7 @@ void Arcadia::PhysicsSimulator::BuildEntity(EntityId entity_id)
         return;
     }
 
-    const auto [physics_comp, transform_comp] = scene_layer_sptr->ActiveScene_GetComponent<PhysicsComponent, TransformComponent>(entity_id);
+    const auto& [physics_comp, transform_comp] = scene_layer_sptr->ActiveScene_GetComponent<PhysicsComponent, TransformComponent>(entity_id);
 
     if(physics_comp.IsValid())
     {
@@ -54,81 +52,11 @@ void Arcadia::PhysicsSimulator::BuildEntity(EntityId entity_id)
 
         if(HasEntity(entity_id))
         {
-            const JPH::BodyID body_id = _JphBodyIdStorage.at(entity_id);
-
-            const JPH::Shape* jph_shape_ptr = MatchVariant<JPH::Shape*>(
-                physics_comp.GetJphShapeInfo(),
-                [&](const JphNoShapeInfo&)
-                {
-                    ACDA_UNREACHABLE("Invalid shape info type");
-                    return nullptr;
-                },
-                [&](const JphBoxShapeInfo& info)
-                {
-                    return new JPH::BoxShape(ToJphVec3(info.HalfExtent), info.ConvexRadius);
-                },
-                [&](const JphCapsuleShapeInfo& info)
-                {
-                    return new JPH::CapsuleShape(info.HalfHeightOfCylinder, info.Radius);
-                },
-                [&](const JphCylinderShapeInfo& info)
-                {
-                    return new JPH::CylinderShape(info.HalfHeight, info.Radius, info.ConvexRadius);
-                },
-                [&](const JphSphereShapeInfo& info)
-                {
-                    return new JPH::SphereShape(info.Radius);
-                }
-            );
-
-            jph_body_interface.SetShape(body_id, jph_shape_ptr, true, JPH::EActivation::DontActivate);
-            jph_body_interface.SetPositionAndRotation(
-                body_id,
-                ToJphVec3(transform_comp.GetPosition()),
-                ToJphQuat(transform_comp.GetRotationQuaternion()),
-                JPH::EActivation::DontActivate
-            );
-            jph_body_interface.SetMotionType(body_id, physics_comp.GetJphMotionType(), JPH::EActivation::DontActivate);
-            jph_body_interface.SetObjectLayer(body_id, physics_comp.GetJphObjectLayer());
+            _UpdateJphBody(jph_body_interface, physics_comp, transform_comp, entity_id);
         }
         else
         {
-            JPH::ShapeRefC jph_shape_refc = MatchVariant<JPH::Shape*>(
-                physics_comp.GetJphShapeInfo(),
-                [&](const JphNoShapeInfo&)
-                {
-                    ACDA_UNREACHABLE("Invalid shape info type");
-                    return nullptr;
-                },
-                [&](const JphBoxShapeInfo& info)
-                {
-                    return new JPH::BoxShape(ToJphVec3(info.HalfExtent), info.ConvexRadius);
-                },
-                [&](const JphCapsuleShapeInfo& info)
-                {
-                    return new JPH::CapsuleShape(info.HalfHeightOfCylinder, info.Radius);
-                },
-                [&](const JphCylinderShapeInfo& info)
-                {
-                    return new JPH::CylinderShape(info.HalfHeight, info.Radius, info.ConvexRadius);
-                },
-                [&](const JphSphereShapeInfo& info)
-                {
-                    return new JPH::SphereShape(info.Radius);
-                }
-            );
-            const JPH::BodyID body_id = jph_body_interface.CreateAndAddBody(
-                JPH::BodyCreationSettings(
-                    jph_shape_refc,
-                    ToJphVec3(transform_comp.GetPosition()),
-                    ToJphQuat(transform_comp.GetRotationQuaternion()),
-                    physics_comp.GetJphMotionType(),
-                    physics_comp.GetJphObjectLayer()
-                ),
-                JPH::EActivation::Activate
-            );
-            ACDA_ASSERT(!body_id.IsInvalid() && "Failed to create body");
-            _JphBodyIdStorage.try_emplace(entity_id, body_id);
+            _CreateJphBody(jph_body_interface, physics_comp, transform_comp, entity_id);
         }
     }
 }
@@ -247,6 +175,76 @@ auto Arcadia::PhysicsSimulator::GetBodyCount() const->std::size_t
 void Arcadia::PhysicsSimulator::_Clear()
 {
     _JphBodyIdStorage.clear();
+}
+
+auto Arcadia::PhysicsSimulator::_CreateJphShape(const PhysicsComponent& physics_comp) const -> const JPH::Shape*
+{
+    return MatchVariant<JPH::Shape*>(
+        physics_comp.GetJphShapeInfo(),
+        [&](const JphNoShapeInfo&)
+        {
+            ACDA_UNREACHABLE("Invalid shape info type");
+            return nullptr;
+        },
+        [&](const JphBoxShapeInfo& info)
+        {
+            return new JPH::BoxShape(ToJphVec3(info.HalfExtent), info.ConvexRadius);
+        },
+        [&](const JphCapsuleShapeInfo& info)
+        {
+            return new JPH::CapsuleShape(info.HalfHeightOfCylinder, info.Radius);
+        },
+        [&](const JphCylinderShapeInfo& info)
+        {
+            return new JPH::CylinderShape(info.HalfHeight, info.Radius, info.ConvexRadius);
+        },
+        [&](const JphSphereShapeInfo& info)
+        {
+            return new JPH::SphereShape(info.Radius);
+        }
+    );
+}
+
+void Arcadia::PhysicsSimulator::_CreateJphBody(
+    JPH::BodyInterface& jph_body_interface,
+    const PhysicsComponent& physics_comp,
+    const TransformComponent& transform_comp,
+    EntityId entity_id
+)
+{
+    JPH::ShapeRefC jph_shape_refc = _CreateJphShape(physics_comp);
+    const JPH::BodyID body_id = jph_body_interface.CreateAndAddBody(
+        JPH::BodyCreationSettings(
+            jph_shape_refc,
+            ToJphVec3(transform_comp.GetPosition()),
+            ToJphQuat(transform_comp.GetRotationQuaternion()),
+            physics_comp.GetJphMotionType(),
+            physics_comp.GetJphObjectLayer()
+        ),
+        JPH::EActivation::Activate
+    );
+    ACDA_ASSERT(!body_id.IsInvalid() && "Failed to create body");
+    _JphBodyIdStorage.try_emplace(entity_id, body_id);
+}
+
+void Arcadia::PhysicsSimulator::_UpdateJphBody(
+    JPH::BodyInterface& jph_body_interface,
+    const PhysicsComponent& physics_comp,
+    const TransformComponent& transform_comp,
+    EntityId entity_id)
+{
+    const JPH::BodyID body_id = _JphBodyIdStorage.at(entity_id);
+    const JPH::Shape* jph_shape_ptr = _CreateJphShape(physics_comp);
+
+    jph_body_interface.SetShape(body_id, jph_shape_ptr, true, JPH::EActivation::DontActivate);
+    jph_body_interface.SetPositionAndRotation(
+        body_id,
+        ToJphVec3(transform_comp.GetPosition()),
+        ToJphQuat(transform_comp.GetRotationQuaternion()),
+        JPH::EActivation::DontActivate
+    );
+    jph_body_interface.SetMotionType(body_id, physics_comp.GetJphMotionType(), JPH::EActivation::DontActivate);
+    jph_body_interface.SetObjectLayer(body_id, physics_comp.GetJphObjectLayer());
 }
 
 auto Arcadia::JphObjectLayerPairFilerImpl::ShouldCollide(JPH::ObjectLayer obj_1, JPH::ObjectLayer obj_2) const -> bool

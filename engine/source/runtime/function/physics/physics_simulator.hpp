@@ -7,6 +7,8 @@
 #include "platform/defines.hpp"
 #include "platform/jolt.hpp"
 #include "resource/scene.hpp"
+#include "resource/components/physics_component.hpp"
+#include "resource/components/transform_component.hpp"
 
 namespace Arcadia
 {
@@ -85,6 +87,20 @@ namespace Arcadia
 
     private:
         void _Clear();
+
+        auto _CreateJphShape(const PhysicsComponent& physics_comp) const -> const JPH::Shape*;
+        void _CreateJphBody(
+            JPH::BodyInterface& jph_body_interface,
+            const PhysicsComponent& physics_comp,
+            const TransformComponent& transform_comp,
+            EntityId entity_id
+        );
+        void _UpdateJphBody(
+            JPH::BodyInterface& jph_body_interface,
+            const PhysicsComponent& physics_comp,
+            const TransformComponent& transform_comp,
+            EntityId entity_id
+        );
     private:
 
         bool _Active{ false };

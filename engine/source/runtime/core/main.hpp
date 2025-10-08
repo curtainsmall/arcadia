@@ -48,7 +48,7 @@ namespace Arcadia
             }
 
             // Updates
-            for(const std::shared_ptr<LayerInterface>& layer_sptr : std::ranges::reverse_view{ LayerStack::Instance() })
+            for(const std::shared_ptr<LayerInterface>& layer_sptr : std::ranges::reverse_view(LayerStack::Instance()))
             {
                 layer_sptr->OnUpdate();
             }
