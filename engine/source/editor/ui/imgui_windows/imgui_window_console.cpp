@@ -31,7 +31,7 @@ void Arcadia::ImguiWindowConsole::OnUpdate()
     }
 
     ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 1.0f);
-    ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar;
+    ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoCollapse;
     if(ImGui::Begin(_Title.c_str(), &_Opened, window_flags))
     {
         ImGui::PopStyleVar();

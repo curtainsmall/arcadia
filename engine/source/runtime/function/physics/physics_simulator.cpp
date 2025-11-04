@@ -16,8 +16,7 @@ Arcadia::PhysicsSimulator::PhysicsSimulator()
     const JPH::uint max_body_pair = 65535;
     const JPH::uint max_contact_constraints = 10240;
 
-    _upJphPhysicsSystem = std::make_unique<JPH::PhysicsSystem>();
-    _upJphPhysicsSystem->Init(max_bodies, num_body_mutexes, max_body_pair, max_contact_constraints, _JphBroadPhaseLayer, _JphObjectVsBroadLayerFilter, _JphObjectLayerPairFilter);
+    _JphPhysicsSystem.Init(max_bodies, num_body_mutexes, max_body_pair, max_contact_constraints, _JphBroadPhaseLayer, _JphObjectVsBroadLayerFilter, _JphObjectLayerPairFilter);
 }
 
 Arcadia::PhysicsSimulator::~PhysicsSimulator()
@@ -48,7 +47,7 @@ void Arcadia::PhysicsSimulator::BuildEntity(EntityId entity_id)
 
     if(physics_comp.IsValid())
     {
-        JPH::BodyInterface& jph_body_interface = _upJphPhysicsSystem->GetBodyInterface();
+        JPH::BodyInterface& jph_body_interface = _JphPhysicsSystem.GetBodyInterface();
 
         if(HasEntity(entity_id))
         {
@@ -67,7 +66,7 @@ void Arcadia::PhysicsSimulator::RemoveEntity(EntityId entity_id)
     {
         return;
     }
-    JPH::BodyInterface& jph_body_interface = _upJphPhysicsSystem->GetBodyInterface();
+    JPH::BodyInterface& jph_body_interface = _JphPhysicsSystem.GetBodyInterface();
     JPH::BodyID body_id = _JphBodyIdStorage.at(entity_id);
     jph_body_interface.RemoveBody(body_id);
     jph_body_interface.DestroyBody(body_id);
@@ -88,7 +87,7 @@ void Arcadia::PhysicsSimulator::Update()
 
     int collusion_step = 60 / _JphPhysicsSystemUpdatesPerSecond;
     collusion_step = collusion_step > 0 ? collusion_step : 1;
-    _upJphPhysicsSystem->Update(
+    _JphPhysicsSystem.Update(
         1.f / _JphPhysicsSystemUpdatesPerSecond,
         collusion_step,
         &temp_allocator,
@@ -112,7 +111,7 @@ void Arcadia::PhysicsSimulator::ApplyToEntites()
 
         if(physics_comp.IsValid())
         {
-            const JPH::BodyInterface& jph_body_interface = _upJphPhysicsSystem->GetBodyInterface();
+            const JPH::BodyInterface& jph_body_interface = _JphPhysicsSystem.GetBodyInterface();
             const JPH::BodyID& body_id = _JphBodyIdStorage.at(entity_id);
 
             physics_comp.SetActive(jph_body_interface.IsActive(body_id));
@@ -127,7 +126,7 @@ void Arcadia::PhysicsSimulator::ApplyToEntites()
 
 void Arcadia::PhysicsSimulator::Reset()
 {
-    JPH::BodyInterface& jph_body_interface = _upJphPhysicsSystem->GetBodyInterface();
+    JPH::BodyInterface& jph_body_interface = _JphPhysicsSystem.GetBodyInterface();
     for(const auto& [uuid, body_id] : _JphBodyIdStorage)
     {
         jph_body_interface.RemoveBody(body_id);

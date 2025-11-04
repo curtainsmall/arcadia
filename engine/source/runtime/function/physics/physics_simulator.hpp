@@ -6,9 +6,9 @@
 
 #include "platform/defines.hpp"
 #include "platform/jolt.hpp"
-#include "resource/scene.hpp"
 #include "resource/components/physics_component.hpp"
 #include "resource/components/transform_component.hpp"
+#include "resource/scene.hpp"
 
 namespace Arcadia
 {
@@ -115,6 +115,6 @@ namespace Arcadia
         JphObjectVsBroadPhaseLayerFilterImpl _JphObjectVsBroadLayerFilter{};
         JphObjectLayerPairFilerImpl _JphObjectLayerPairFilter{};
 
-        std::unique_ptr<JPH::PhysicsSystem> _upJphPhysicsSystem{};
+        JPH::PhysicsSystem _JphPhysicsSystem{};
     };
 }

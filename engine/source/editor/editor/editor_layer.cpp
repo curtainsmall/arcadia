@@ -2,15 +2,16 @@
 
 #include <memory>
 
-#include "core/runtime_config.hpp"
 #include "core/enum.hpp"
 #include "core/event.hpp"
 #include "core/function.hpp"
 #include "core/layer.hpp"
+#include "core/runtime_config.hpp"
 #include "core/runtime_layer.hpp"
-#include "function/player/player_events.hpp"
 #include "function/physics/physics_events.hpp"
+#include "function/player/player_events.hpp"
 
+#include "ui/imgui_windows/imgui_window_console.hpp"
 #include "ui/imgui_windows/imgui_window_main_manubar.hpp"
 #include "ui/imgui_windows/imgui_window_main_statusbar.hpp"
 #include "ui/imgui_windows/imgui_window_main_toolbar.hpp"
@@ -18,7 +19,6 @@
 #include "ui/imgui_windows/imgui_window_property.hpp"
 #include "ui/imgui_windows/imgui_window_state.hpp"
 #include "ui/imgui_windows/imgui_window_viewport.hpp"
-#include "ui/imgui_windows/imgui_window_console.hpp"
 
 void Arcadia::EditorLayer::OnUpdate()
 {
@@ -110,6 +110,7 @@ void Arcadia::EditorLayer::_Stop()
     runtime_config.WindowPosition = window_layer_sptr->GetPosition();
     runtime_config.WindowMaxmized = window_layer_sptr->GetSizeState() == GlfwWindowSizeState::Maxmized;
 
+    runtime_config.ImguiOpenedWindowIdStrings.clear();
     for(const std::unique_ptr<ImguiWindowInterface>& imgui_window_uptr : imgui_layer_sptr->GetImguiWindows())
     {
         if(imgui_window_uptr->Open())
