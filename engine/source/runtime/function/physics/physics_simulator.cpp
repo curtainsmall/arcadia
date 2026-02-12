@@ -17,6 +17,8 @@ Arcadia::PhysicsSimulator::PhysicsSimulator()
     const JPH::uint max_contact_constraints = 10240;
 
     _JphPhysicsSystem.Init(max_bodies, num_body_mutexes, max_body_pair, max_contact_constraints, _JphBroadPhaseLayer, _JphObjectVsBroadLayerFilter, _JphObjectLayerPairFilter);
+    _JphJobSystemThreadPool.Init(JPH::cMaxPhysicsJobs, JPH::cMaxPhysicsBarriers, static_cast<int>(std::thread::hardware_concurrency() - 1)
+    );
 }
 
 Arcadia::PhysicsSimulator::~PhysicsSimulator()
@@ -77,13 +79,7 @@ void Arcadia::PhysicsSimulator::RemoveEntity(EntityId entity_id)
 void Arcadia::PhysicsSimulator::Update()
 {
     // Update physics simulation
-
     JPH::TempAllocatorImpl temp_allocator(_JphTempAllocatorSize);
-    JPH::JobSystemThreadPool job_system_thread_pool(
-        JPH::cMaxPhysicsJobs,
-        JPH::cMaxPhysicsBarriers,
-        static_cast<int>(std::thread::hardware_concurrency() - 1)
-    );
 
     int collusion_step = 60 / _JphPhysicsSystemUpdatesPerSecond;
     collusion_step = collusion_step > 0 ? collusion_step : 1;
@@ -91,7 +87,7 @@ void Arcadia::PhysicsSimulator::Update()
         1.f / _JphPhysicsSystemUpdatesPerSecond,
         collusion_step,
         &temp_allocator,
-        &job_system_thread_pool
+        &_JphJobSystemThreadPool
     );
 }
 

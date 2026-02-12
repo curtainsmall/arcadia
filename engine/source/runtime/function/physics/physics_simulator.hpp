@@ -116,5 +116,6 @@ namespace Arcadia
         JphObjectLayerPairFilerImpl _JphObjectLayerPairFilter{};
 
         JPH::PhysicsSystem _JphPhysicsSystem{};
+        JPH::JobSystemThreadPool _JphJobSystemThreadPool{};
     };
 }
