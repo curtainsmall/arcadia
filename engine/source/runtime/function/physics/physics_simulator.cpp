@@ -238,8 +238,10 @@ void Arcadia::PhysicsSimulator::_UpdateJphBody(
         ToJphQuat(transform_comp.GetRotationQuaternion()),
         JPH::EActivation::DontActivate
     );
+    jph_body_interface.SetLinearVelocity(body_id, ToJphVec3(physics_comp.GetLinearVelocity()));
     jph_body_interface.SetMotionType(body_id, physics_comp.GetJphMotionType(), JPH::EActivation::DontActivate);
     jph_body_interface.SetObjectLayer(body_id, physics_comp.GetJphObjectLayer());
+    jph_body_interface.ActivateBody(body_id);
 }
 
 auto Arcadia::JphObjectLayerPairFilerImpl::ShouldCollide(JPH::ObjectLayer obj_1, JPH::ObjectLayer obj_2) const -> bool
