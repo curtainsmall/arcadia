@@ -101,9 +101,6 @@ namespace Arcadia
     public:
         static auto Instance() -> SelfType&;
 
-        EventQueue() = default;
-        ~EventQueue() = default;
-
         EventQueue(const SelfType&) = delete;
         auto operator=(const SelfType&) -> SelfType & = delete;
 
@@ -119,6 +116,11 @@ namespace Arcadia
         auto HasEvent() const -> bool;
         auto ProcessEvent(const EventHandler<EventBase>& handler) -> bool;
         void EventProcessFinished();
+
+    private:
+        EventQueue() = default;
+        ~EventQueue() = default;
+
     private:
         _EventQueueType _QueueA{};
         _EventQueueType _QueueB{};

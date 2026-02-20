@@ -144,6 +144,9 @@ namespace Arcadia
         auto rend() -> LayerVectorType::const_reverse_iterator;
 
     private:
+        LayerStack() = default;
+        ~LayerStack() = default;
+
         template<std::size_t Index, Concepts::Layer ...Layers>
         void _GetMultipleLayersSharedHelper(std::tuple<std::shared_ptr<Layers>...>& tuple)
         {

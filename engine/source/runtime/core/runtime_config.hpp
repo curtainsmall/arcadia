@@ -17,6 +17,9 @@ namespace Arcadia
         using SelfType = RuntimeConfig;
     public:
         static auto Instance() -> SelfType&;
+    private:
+        RuntimeConfig() = default;
+        ~RuntimeConfig() = default;
     public:
         static inline std::filesystem::path Filepath{ ToFilepath(".acdacfg") };
 

@@ -46,9 +46,6 @@ namespace Arcadia
         [[nodiscard]]
         static auto Instance() -> SelfType&;
 
-        CommandList() = default;
-        ~CommandList() = default;
-
         CommandList(const SelfType&) = delete;
         auto operator=(const SelfType&) -> SelfType & = delete;
 
@@ -95,6 +92,10 @@ namespace Arcadia
         auto cbegin() const noexcept -> ContainerType::const_iterator;
         [[nodiscard]]
         auto cend() const noexcept -> ContainerType::const_iterator;
+
+    private:
+        CommandList() = default;
+        ~CommandList() = default;
 
     private:
         std::size_t _MaxSize{ 40 };

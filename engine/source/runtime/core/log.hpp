@@ -15,8 +15,6 @@ namespace Arcadia
     public:
         using SelfType = Logger;
     public:
-        Logger();
-        ~Logger();
 
         static auto Instance() -> SelfType&;
 
@@ -71,6 +69,10 @@ namespace Arcadia
         {
             _spLogger->dump_backtrace();
         }
+
+    private:
+        Logger();
+        ~Logger();
 
     private:
         std::shared_ptr<spdlog::logger> _spLogger{};

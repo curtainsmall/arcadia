@@ -153,6 +153,9 @@ namespace Arcadia
         auto cbegin() const noexcept -> ContainerType::const_iterator;
         [[nodiscard]]
         auto cend() const noexcept -> ContainerType::const_iterator;
+    private:
+        MementoList() = default;
+        ~MementoList() = default;
 
     private:
         std::size_t _Capacity{ 40 };
