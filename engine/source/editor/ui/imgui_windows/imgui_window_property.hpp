@@ -103,7 +103,7 @@ namespace Arcadia
     private:
         JPH::EMotionType _TempJphMotionType{ JPH::EMotionType::Static };
         JPH::ObjectLayer _TempJphObjectLayer{ JphObjectLayers::NonMoving };
-        JphShapeInfo     _TempJphShapeInfo{ JphNoShapeInfo{} };
+        JphShapeInfo     _TempJphShapeInfo{ JphNullShapeInfo{} };
     };
 
     struct ImguiWindowPropertyFunctor_PhysicsComponent

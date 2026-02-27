@@ -133,7 +133,7 @@ void Arcadia::GlRenderer::BuildEntity(EntityId entity_id)
                     const JphShapeInfo& shape_info = physics_comp.GetJphShapeInfo();
                     const Mesh& shape_mesh = MatchVariant<Mesh>(
                         shape_info,
-                        [&](const JphNoShapeInfo&)
+                        [&](const JphNullShapeInfo&)
                         {
                             ACDA_UNREACHABLE("Invalid shape info type");
                             return Mesh{};
@@ -166,9 +166,11 @@ void Arcadia::GlRenderer::BuildEntity(EntityId entity_id)
 
                 GlRenderUnitPhysicsBodyShape& gl_render_unit_physics_body_shape
                     = _GlRenderUnitPhysicsBodyShapeStorage.at(entity_id);
+
                 gl_render_unit_physics_body_shape.TransformMatrix =
                     glm::translate(Glm::Mat4_CreateIdentity(), transform_comp.GetPosition())
                     * glm::mat4_cast(transform_comp.GetRotationQuaternion());
+
                 gl_render_unit_physics_body_shape.Color = physics_comp.GetBodyShapeColor();
             }
         }
@@ -197,7 +199,7 @@ void Arcadia::GlRenderer::Draw()
 
     ACDA_ASSERT(_GlRenderUnitCameraStorage.size() && "No framebuffer to draw to");
 
-    ACDA_GL_CALL(glClearColor(41 / 255.0, 43 / 255.0, 44 / 255.0, 1.f));
+    ACDA_GL_CALL(glClearColor(_ClearColor.x, _ClearColor.y, _ClearColor.z, _ClearColor.a));
 
     // For each framebuffer
     for(const auto& [entity_id, gl_render_unit_camera] : _GlRenderUnitCameraStorage)

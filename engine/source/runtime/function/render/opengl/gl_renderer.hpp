@@ -123,6 +123,8 @@ namespace Arcadia
         );
 
     private:
+        inline static glm::vec4 _ClearColor{ 41 / 255.0, 43 / 255.0, 44 / 255.0, 1.f };
+
         std::unordered_map<EntityId, std::vector<GlRenderUnitMesh>> _GlRenderUnitMeshStorage{};
         std::unordered_map<EntityId, GlRenderUnitPhysicsBodyShape> _GlRenderUnitPhysicsBodyShapeStorage{};
         std::unordered_map<EntityId, GlRenderUnitCamera> _GlRenderUnitCameraStorage{};

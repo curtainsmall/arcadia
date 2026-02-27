@@ -13,7 +13,7 @@
 
 namespace Arcadia
 {
-    struct ACDA_API JphNoShapeInfo
+    struct ACDA_API JphNullShapeInfo
     {
     };
 
@@ -46,7 +46,7 @@ namespace Arcadia
     };
 
     using JphShapeInfo = std::variant<
-        JphNoShapeInfo,
+        JphNullShapeInfo,
         JphBoxShapeInfo,
         JphCapsuleShapeInfo,
         JphCylinderShapeInfo,
@@ -59,7 +59,7 @@ namespace Arcadia
         bool Active{ false };
         JPH::EMotionType JphMotionType{ JPH::EMotionType::Static };
         JPH::ObjectLayer JphObjectLayer{ JphObjectLayers::NonMoving };
-        JphShapeInfo JphShapeInfo{ JphNoShapeInfo{} };
+        JphShapeInfo JphShapeInfo{ JphNullShapeInfo{} };
     };
 
     struct ACDA_API PhysicsComponent:
@@ -122,7 +122,7 @@ namespace Arcadia
         bool _Validity{ false };
         JPH::EMotionType _JphMotionType{ JPH::EMotionType::Static };
         JPH::ObjectLayer _JphObjectLayer{ JphObjectLayers::NonMoving };
-        JphShapeInfo _JphShapeInfo{ JphNoShapeInfo{} };
+        JphShapeInfo _JphShapeInfo{ JphNullShapeInfo{} };
 
         bool _Active{ false };
         glm::vec3 _BodyShapeColor{ .2f,.2f,.2f };

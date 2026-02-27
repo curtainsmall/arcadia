@@ -59,7 +59,7 @@ Arcadia::PhysicsComponent::PhysicsComponent(const nlohmann::json& json):
         [&]() -> JphShapeInfo
         {
             ACDA_UNREACHABLE("No shape case should have early returned");
-            return JphNoShapeInfo{};
+            return JphNullShapeInfo{};
         }
     );
     SetJphShapeInfo(shape_info);
@@ -72,7 +72,7 @@ auto Arcadia::PhysicsComponent::ToJson() const -> nlohmann::json
 {
     nlohmann::json json_shape_info = MatchVariant<nlohmann::json>(
         GetJphShapeInfo(),
-        [&](const JphNoShapeInfo&)
+        [&](const JphNullShapeInfo&)
         {
             return nlohmann::json{
                 {"type","none"}

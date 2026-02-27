@@ -490,7 +490,7 @@ void Arcadia::ImguiWindowPopupFunctor_PhysicsComponentCreateBody::operator()(Phy
         //Shape
         _TempJphShapeInfo = MatchVariant<JphShapeInfo>(
             _TempJphShapeInfo,
-            [&](const JphNoShapeInfo&) -> JphShapeInfo
+            [&](const JphNullShapeInfo&) -> JphShapeInfo
             {
                 if(ImGui::BeginCombo("Shape Type", "Sphere Shape"))
                 {
@@ -670,7 +670,7 @@ void Arcadia::ImguiWindowPopupFunctor_PhysicsComponentCreateBody::operator()(Phy
             Opened = false;
             _TempJphMotionType = JPH::EMotionType::Static;
             _TempJphObjectLayer = JphObjectLayers::NonMoving;
-            _TempJphShapeInfo = JphNoShapeInfo{};
+            _TempJphShapeInfo = JphNullShapeInfo{};
         }
 
         ImGui::EndPopup();
@@ -724,7 +724,7 @@ void Arcadia::ImguiWindowPropertyFunctor_PhysicsComponent::operator()(PhysicsCom
 
         bool tree_open = MatchVariant<bool>(
             physics_comp.GetJphShapeInfo(),
-            [&](const JphNoShapeInfo)
+            [&](const JphNullShapeInfo)
             {
                 ACDA_UNREACHABLE("Invalid shape info type");
                 return false;
