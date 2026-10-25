@@ -42,41 +42,47 @@ void Arcadia::ImguiWindowPropertyFunctor_CameraComponent::operator()(CameraCompo
     const float min = .0;
     const float max = .0f;
     const char* format = "%.3f";
-    const ImGuiSliderFlags flags =
-        ImGuiSliderFlags_AlwaysClamp;
+    // NOTE: min == max == 0.0f is ImGui's legacy "unbounded" sentinel, but
+    // ImGuiSliderFlags_AlwaysClamp implies ImGuiSliderFlags_ClampZeroRange,
+    // which pins such a zero range to [0,0] for both dragging and manual input.
+    // Widgets that must stay unbounded therefore pass no clamp flags at all.
+    const ImGuiSliderFlags unbounded_flags = ImGuiSliderFlags_None;
+    const ImGuiSliderFlags clamp_flags = ImGuiSliderFlags_AlwaysClamp;
 
     float near_plane = camera_comp.GetNearPlane();
-    ImGui::DragFloat("Near Plane", &near_plane, drag_speed, min, max, format, flags);
+    ImGui::DragFloat("Near Plane", &near_plane, drag_speed, min, max, format, unbounded_flags);
     camera_comp.SetNearPlane(near_plane);
     _ACDA_COMMAND_HELPER("[Camera] Near Plane", camera_comp, GetNearPlane, SetNearPlane, near_plane, _OriginNearPlane);
 
     float far_plane = camera_comp.GetFarPlane();
-    ImGui::DragFloat("Far Plane", &far_plane, drag_speed, min, max, format, flags);
+    ImGui::DragFloat("Far Plane", &far_plane, drag_speed, min, max, format, unbounded_flags);
     camera_comp.SetFarPlane(far_plane);
     _ACDA_COMMAND_HELPER("[Camera] Far Plane", camera_comp, GetFarPlane, SetFarPlane, far_plane, _OriginFarPlane);
 
     float fovy = glm::degrees(camera_comp.GetFovY());
-    ImGui::DragFloat("FOV-Y", &fovy, drag_speed, camera_comp.GetFovYMin(), camera_comp.GetFovYMax(), format, flags);
+    ImGui::DragFloat("FOV-Y", &fovy, drag_speed, glm::degrees(camera_comp.GetFovYMin()), glm::degrees(camera_comp.GetFovYMax()), format, clamp_flags);
     camera_comp.SetFovY(glm::radians(fovy));
     _ACDA_COMMAND_HELPER("[Camera] FOV-Y", camera_comp, GetFovY, SetFovY, fovy, _OriginFovY);
 
     float fovy_min = glm::degrees(camera_comp.GetFovYMin());
-    ImGui::DragFloat("FOV-Y Min", &fovy_min, drag_speed, 0.0f, 180.0f, format, flags);
+    ImGui::DragFloat("FOV-Y Min", &fovy_min, drag_speed, 0.0f, 180.0f, format, clamp_flags);
     camera_comp.SetFovYMin(glm::radians(fovy_min));
     _ACDA_COMMAND_HELPER("[Camera] FOV-Y Min", camera_comp, GetFovYMin, SetFovYMin, fovy_min, _OriginFovYMin);
 
     float fovy_max = glm::degrees(camera_comp.GetFovYMax());
-    ImGui::DragFloat("FOV-Y Max", &fovy_max, drag_speed, 0.0f, 180.0f, format, flags);
+    ImGui::DragFloat("FOV-Y Max", &fovy_max, drag_speed, 0.0f, 180.0f, format, clamp_flags);
     camera_comp.SetFovYMax(glm::radians(fovy_max));
     _ACDA_COMMAND_HELPER("[Camera] FOV-Y Max", camera_comp, GetFovYMax, SetFovYMax, fovy_max, _OriginFovYMax);
 
     float speed = camera_comp.GetSpeed();
-    ImGui::DragFloat("Speed", &speed, drag_speed, min, max, format, flags);
+    ImGui::DragFloat("Speed", &speed, drag_speed, min, max, format, unbounded_flags);
     camera_comp.SetSpeed(speed);
     _ACDA_COMMAND_HELPER("[Camera] Speed", camera_comp, GetSpeed, SetSpeed, speed, _OriginSpeed);
 
     glm::i32vec2 viewport_size = camera_comp.GetViewportSize();
-    ImGui::DragInt2("Viewport Size", glm::value_ptr(viewport_size), drag_speed, 1.0f, INT_MAX, format, flags);
+    // An integer drag needs an integer format: passing "%.3f" makes ImGui print
+    // the value through the wrong varargs slot, so the field always shows 0.
+    ImGui::DragInt2("Viewport Size", glm::value_ptr(viewport_size), drag_speed, 1, INT_MAX, "%d", clamp_flags);
     camera_comp.SetViewportSize(viewport_size);
     _ACDA_COMMAND_HELPER("[Camera] Viewport Size", camera_comp, GetViewportSize, SetViewportSize, viewport_size, _OriginViewportSize);
 
@@ -86,7 +92,7 @@ void Arcadia::ImguiWindowPropertyFunctor_CameraComponent::operator()(CameraCompo
     _ACDA_COMMAND_HELPER("[Camera] Up Axis Fixed", camera_comp, IsUpAxisFixed, SetUpAxisFixed, up_axis_fixed, _OriginUpAxisFixed);
 
     float up_epsilon = glm::degrees(camera_comp.GetUpAxisAngleEpsilon());
-    ImGui::DragFloat("Up Axis Angle Epsilon", &up_epsilon, drag_speed, min, max, format, flags);
+    ImGui::DragFloat("Up Axis Angle Epsilon", &up_epsilon, drag_speed, min, max, format, unbounded_flags);
     camera_comp.SetUpAxisAngleEpsilon(glm::radians(up_epsilon));
     _ACDA_COMMAND_HELPER("[Camera] Up Axis Angle Epsilon", camera_comp, GetUpAxisAngleEpsilon, SetUpAxisAngleEpsilon, up_epsilon, _OriginUpAxisAngleEpsilon);
 }
@@ -120,8 +126,10 @@ void Arcadia::ImguiWindowPropertyFunctor_LightComponent::operator()(LightCompone
     const float min = .0f;
     const float max = .0f;
     const char* format = "%.3f";
-    const ImGuiSliderFlags flags =
-        ImGuiSliderFlags_AlwaysClamp;
+    // See ImguiWindowPropertyFunctor_CameraComponent: min == max == 0.0f only
+    // means "unbounded" when no clamp flags are passed (ImGuiSliderFlags_
+    // AlwaysClamp implies ImGuiSliderFlags_ClampZeroRange, which pins it to 0).
+    const ImGuiSliderFlags flags = ImGuiSliderFlags_None;
     MatchVariant<void>(
         light_comp.GetLight(),
         [&](NullLight&)
@@ -180,7 +188,7 @@ void Arcadia::ImguiWindowPropertyFunctor_LightComponent::operator()(LightCompone
             const float cutoff_angle_min = 0.f;
             const float cutoff_angle_max = 180.f;
             glm::vec2 cutoff = light.GetCutoffAngles();
-            ImGui::DragFloat2("Cutoff Angle", glm::value_ptr(cutoff), cutoff_angle_drag_speend, cutoff_angle_min, cutoff_angle_max, format, flags);
+            ImGui::DragFloat2("Cutoff Angle", glm::value_ptr(cutoff), cutoff_angle_drag_speend, cutoff_angle_min, cutoff_angle_max, format, ImGuiSliderFlags_AlwaysClamp);
             light.SetCutoffAngles(cutoff);
             _ACDA_COMMAND_HELPER("[Spot Light] Cutoff Angle", light, GetCutoffAngles, SetCutoffAngles, cutoff, _OriginCutoffAngle);
             ImGui::SameLine();
@@ -451,8 +459,6 @@ void Arcadia::ImguiWindowPopupFunctor_PhysicsComponentCreateBody::operator()(Phy
     if(ImGui::BeginPopupModal(imgui_window_title.data(), &Opened, window_flags))
     {
         float speed = .05f;
-        float min = .0f;
-        float max = .0f;
         const char* format = "%.3f";
         ImGuiSliderFlags slider_flags =
             ImGuiSliderFlags_AlwaysClamp;
@@ -825,11 +831,13 @@ void Arcadia::ImguiWindowPropertyFunctor_TransformComponent::Refresh(const Trans
 void Arcadia::ImguiWindowPropertyFunctor_TransformComponent::operator()(TransformComponent& transform_comp)
 {
     const float speed = 1.f;
-    const float min = std::numeric_limits<float>::max();
-    const float max = std::numeric_limits<float>::lowest();
+    const float min = .0f;
+    const float max = .0f;
     const char* format = "%.3f";
+    // Unbounded on purpose: min == max == 0.0f means "no bounds" only while no
+    // clamp flags are set (ImGuiSliderFlags_AlwaysClamp would pin it to [0,0]).
     const ImGuiSliderFlags slider_flags =
-        ImGuiSliderFlags_AlwaysClamp;
+        ImGuiSliderFlags_None;
 
     glm::vec3 position = transform_comp.GetPosition();
     glm::vec3 position_delta = position; // Previous position
