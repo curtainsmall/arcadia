@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.26 FATAL_ERROR)
+cmake_minimum_required(VERSION 4.0 FATAL_ERROR)
 
 project(arcadia VERSION 0.1.0)
 if(PROJECT_SOURCE_DIR STREQUAL PROJECT_BINARY_DIR)
