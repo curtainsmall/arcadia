@@ -6,7 +6,8 @@
 
 #include "core/event.hpp"
 #include "core/exception.hpp"
-#include "core/layer.hpp"
+#include "app/engine.hpp"
+#include "app/services.hpp"
 #include "core/enum.hpp"
 #include "resource/scene.hpp"
 #include "resource/scene_events.hpp"
@@ -18,7 +19,7 @@ namespace Arcadia
         ACDA_DEFINE_EXCEPTION(CreatingSceneFromJsonFailed);
     }
 
-    struct ACDA_API SceneLayer: public LayerInterface
+    struct ACDA_API SceneService: public SceneCommit
     {
     public:
         enum class ActiveSceneModificationFlag: std::uint8_t
@@ -34,13 +35,15 @@ namespace Arcadia
         };
 
         using SceneStorageType = std::unordered_map<std::string, std::shared_ptr<Scene>>;
-        using SelfType = SceneLayer;
+        using SelfType = SceneService;
     public:
-        SceneLayer();
-        virtual ~SceneLayer() override = default;
+        SceneService(Engine& engine);
+        virtual ~SceneService() override = default;
 
-        virtual void OnEvent(EventBase& event);
-        virtual void OnUpdate();
+        void Commit() override;
+
+        void OnEvent(EventBase& event);
+        void OnUpdate();
 
         [[nodiscard]]
         auto GetActiveSceneShared() const -> const std::shared_ptr<Scene>&;
@@ -136,6 +139,10 @@ namespace Arcadia
         void _OnRemoveComponent(Events::RemoveComponent& e);
 
     private:
+        Engine& _Engine;
+
+        Foundation::Subscription _EventSubscription{};
+
         SceneStorageType _SceneStorage{};
         std::shared_ptr<Scene> _spActiveScene{};
         ActiveSceneModificationFlag _ActiveSceneModificationFlag{ ActiveSceneModificationFlag::None };

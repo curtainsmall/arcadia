@@ -1,120 +1,115 @@
 #pragma once
 
+#include <concepts>
 #include <functional>
 #include <memory>
 #include <queue>
-#include <tuple>
-#include <typeindex>
+#include <type_traits>
 #include <typeinfo>
-#include <unordered_set>
-#include <vector>
+#include <utility>
 
-#include "core/enum.hpp"
-#include "core/log.hpp"
+#include "foundation/event_bus.hpp"
 #include "platform/defines.hpp"
+
+// Core event layer.
+//
+// The event base and the bus now come from the foundation ring: every event in
+// the engine derives from Foundation::Event, and the "consumed" flag lives on
+// that base instead of in a per-module state enum.
+//
+// What is left here is the legacy *shape* of the API that the runtime modules and
+// the editor still use (typeid chain + queued broadcast). It is a thin adapter:
+// once the last module is moved onto EventBus::Subscribe / SubscribeAny, this
+// file disappears.
 
 namespace Arcadia
 {
-    enum struct ACDA_API EventHandleState: std::uint8_t
-    {
-        NotHandled = 0,
-        Handled = 1 << 0,
-        OnceAgain = 1 << 1,
-
-        _EnumBitfield
-    };
-
-    struct ACDA_API EventBase
-    {
-    public:
-        using SelfType = EventBase;
-    public:
-        EventBase() = default;
-        // Virtual destructor that make event type virtual
-        virtual ~EventBase() = default;
-
-        EventBase(const SelfType&) = delete;
-        auto operator=(const SelfType&) -> SelfType & = delete;
-
-        void MarkHandled();
-        void MarkOnceAgain();
-
-        auto GetHandleState() const -> EventHandleState;
-        void ClearMark();
-    private:
-        EventHandleState _HandleState{ EventHandleState::NotHandled };
-    };
+    using EventBase = Foundation::Event;
 
     namespace Concepts
     {
         template<class T>
-        concept Event = std::derived_from<T, EventBase>;
+        concept Event = std::derived_from<T, EventBase> && (not std::is_abstract_v<T>);
     }
 
-    template<Concepts::Event Event>
-    using EventHandler = std::function<void(Event&)>;
+    template<Concepts::Event E>
+    using EventHandler = std::function<void(E&)>;
 
+    // Chainable "does this event have type E?" dispatcher. Equivalent to a
+    // typeid compare; kept so the existing OnEvent bodies stay untouched.
     struct ACDA_API EventDispatcher
     {
     public:
-        using SelfType = EventDispatcher;
-    public:
-        EventDispatcher(EventBase& event);
-        ~EventDispatcher() = default;
-
-        EventDispatcher(const SelfType&) = delete;
-        auto operator=(const SelfType&) -> SelfType & = delete;
-
-        template<Concepts::Event Event>
-        auto Dispatch(const EventHandler<Event>& handler) -> SelfType&
+        explicit EventDispatcher(EventBase& event):
+            _pEvent(&event)
         {
-            if(typeid(*_pEvent) == typeid(Event) && !_Halt)
+        }
+
+        EventDispatcher(const EventDispatcher&) = delete;
+        auto operator=(const EventDispatcher&) -> EventDispatcher& = delete;
+
+        template<Concepts::Event E>
+        auto Dispatch(const EventHandler<E>& handler) -> EventDispatcher&
+        {
+            if(!_halt && typeid(*_pEvent) == typeid(E))
             {
-                handler(static_cast<Event&>(*_pEvent));
-                _Dispatched = true;
+                handler(static_cast<E&>(*_pEvent));
+                _dispatched = true;
             }
             return *this;
         }
 
-        // Halt further dispatch when `condition` is true
-        // It is useful when you want to prevent the event from being dispatched further
-        // You can still chain call Dispatch() and IsDispatched() afterwards
-        // Dispatch() will take no effect and IsDispatched() when give the correct result
-        auto HaltDispatchIf(bool condition = true) -> SelfType&;
+        auto HaltDispatchIf(bool condition = true) -> EventDispatcher&
+        {
+            if(condition)
+            {
+                _halt = true;
+            }
+            return *this;
+        }
 
-        auto IsDispatched() const -> bool;
+        // The legacy OnEvent bodies end their chain with a discarded IsDispatched(),
+        // so the result is deliberately not marked [[nodiscard]].
+        auto IsDispatched() const -> bool
+        {
+            return _dispatched;
+        }
 
     private:
-        EventBase* _pEvent;
-        bool _Dispatched{ false };
-        bool _Halt{ false };
+        EventBase* _pEvent{ nullptr };
+        bool _dispatched{ false };
+        bool _halt{ false };
     };
 
+    // Frame-deferred broadcast queue: Signal() enqueues, the main loop swaps the
+    // queues once per frame and hands each event to the subscribers in order.
+    //
+    // Engine owns the EventBus that the frame loop drives; this queue is kept for
+    // the call sites that still use its explicit swap/process API.
     struct ACDA_API EventQueue
     {
     public:
-        using DebugExcludedEventTypeSetType = std::unordered_set<std::type_index>;
+        using QueueType = std::queue<std::unique_ptr<EventBase>>;
         using SelfType = EventQueue;
-    private:
-        using _EventQueueType = std::queue<std::unique_ptr<EventBase>>;
 
     public:
         static auto Instance() -> SelfType&;
 
         EventQueue(const SelfType&) = delete;
-        auto operator=(const SelfType&) -> SelfType & = delete;
+        auto operator=(const SelfType&) -> SelfType& = delete;
 
-        template<Concepts::Event Event, class ...Args>
+        template<Concepts::Event E, class ...Args>
         auto Signal(Args&& ...args) -> SelfType&
         {
-            _pCollectingQueue->emplace(std::make_unique<Event>(std::forward<Args>(args)...));
-
+            _pCollectingQueue->emplace(std::make_unique<E>(std::forward<Args>(args)...));
             return *this;
         }
 
         void SwapQueue();
-        auto HasEvent() const -> bool;
-        auto ProcessEvent(const EventHandler<EventBase>& handler) -> bool;
+        [[nodiscard]] auto HasEvent() const -> bool;
+
+        // Returns true when the event was consumed (Event::MarkHandled()).
+        auto ProcessEvent(const std::function<void(EventBase&)>& handler) -> bool;
         void EventProcessFinished();
 
     private:
@@ -122,9 +117,9 @@ namespace Arcadia
         ~EventQueue() = default;
 
     private:
-        _EventQueueType _QueueA{};
-        _EventQueueType _QueueB{};
-        _EventQueueType* _pProcessingQueue{ &_QueueA };
-        _EventQueueType* _pCollectingQueue{ &_QueueB };
+        QueueType _QueueA{};
+        QueueType _QueueB{};
+        QueueType* _pProcessingQueue{ &_QueueA };
+        QueueType* _pCollectingQueue{ &_QueueB };
     };
 }

@@ -31,6 +31,13 @@ set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
 
 add_subdirectory(dependencies)
 
+# Foundation ring (event bus, reflection). Additive: runtime and editor are not
+# touched by it yet, they keep their own implementations until they migrate.
+add_subdirectory(source/foundation)
+
+# Host ring: Engine + App + Config. Additive as well.
+add_subdirectory(source/app)
+
 add_subdirectory(source/runtime)
 add_subdirectory(source/editor)
 add_subdirectory(source/bootstrap)

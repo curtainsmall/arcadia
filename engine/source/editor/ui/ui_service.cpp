@@ -1,21 +1,29 @@
-#include "imgui_layer.hpp"
+#include "ui/ui_service.hpp"
 
 #include "core/function.hpp"
 
 #include "resource/fonts/icon.hpp"
 
-#include "editor/editor_layer.hpp"
+#include "editor/editor/editor_app.hpp"
 #include "ui/imgui_backend.hpp"
 
-Arcadia::ImguiLayer::ImguiLayer(
-    const std::shared_ptr<WindowLayer>& window_layer_sptr,
-    const std::function<void(ImguiLayer&)>& imgui_window_installer,
+Arcadia::UiService::UiService(
+    Engine& engine,
+    const std::function<void(UiService&)>& imgui_window_installer,
     const std::function<void()>& imgui_style_setter,
     float init_scale
 ):
-    LayerInterface("imgui"),
-    _wpWindow(window_layer_sptr)
+    _Engine(engine)
 {
+    _EventSubscription = _Engine.events.SubscribeAny(
+        Foundation::Order::Imgui,
+        [this](Foundation::Event& e) -> bool
+        {
+            OnEvent(e);
+            return e.Handled();
+        }
+    );
+
     _pImguiContext = ImGui::CreateContext();
     ImGui::SetCurrentContext(_pImguiContext);
 
@@ -34,32 +42,32 @@ Arcadia::ImguiLayer::ImguiLayer(
     static const std::array<ImWchar, 3> imgui_icon_ranges{ ICON_MIN_FA, ICON_MAX_FA,0 };
     io.Fonts->AddFontFromFileTTF(FontFilepathString.data(), FontSize, &imgui_font_config, imgui_icon_ranges.data());
 
-    ImguiBackend::Initialize(_wpWindow.lock());
+    ImguiBackend::Initialize(_Engine, *_Engine.window);
 
     imgui_style_setter();
     imgui_window_installer(*this);
 }
 
-Arcadia::ImguiLayer::~ImguiLayer()
+Arcadia::UiService::~UiService()
 {
+    _EventSubscription.Reset();
+
     if(_pImguiContext)
     {
-        ImguiBackend::Shutdown(_wpWindow.lock());
+        ImguiBackend::Shutdown(_Engine, *_Engine.window);
         ImGui::DestroyContext(_pImguiContext);
     }
 }
 
-auto Arcadia::ImguiLayer::GetImguiWindows() const -> const std::vector<std::unique_ptr<ImguiWindowInterface>>&
+auto Arcadia::UiService::GetImguiWindows() const -> const std::vector<std::unique_ptr<ImguiWindowInterface>>&
 {
     return _ImguiWindows;
 }
 
-void Arcadia::ImguiLayer::OnEvent(EventBase& e)
+void Arcadia::UiService::OnEvent(EventBase& e)
 {
-    std::shared_ptr<EditorLayer> editor_layer_sptr = LayerStack::Instance().GetLayerShared<EditorLayer>();
-
     // We do not dispatch events to ImGui when the editor is in play mode
-    if(editor_layer_sptr->IsInPlayMode())
+    if(_Engine.editor != nullptr && _Engine.editor->IsInPlayMode())
     {
         return;
     }
@@ -68,20 +76,20 @@ void Arcadia::ImguiLayer::OnEvent(EventBase& e)
         .Dispatch<Events::ScaleImguiWindow>(ACDA_BIND_MEMBER_FN(_OnScaleImguiWindow))
         .IsDispatched();
 
-    ImguiBackend::OnEvent(e);
+    ImguiBackend::OnEvent(_Engine, e);
     for(std::unique_ptr<ImguiWindowInterface>& imgui_window_uptr : _ImguiWindows)
     {
         imgui_window_uptr->OnEvent(e);
     }
 }
 
-void Arcadia::ImguiLayer::OnUpdate()
+void Arcadia::UiService::OnUpdate()
 {
-    std::shared_ptr<WindowLayer> window_sptr = _wpWindow.lock();
+    WindowService* window_service = _Engine.window;
 
     ImGui::SetCurrentContext(_pImguiContext);
 
-    ImguiBackend::NewFrame(window_sptr);
+    ImguiBackend::NewFrame(_Engine, *window_service);
     ImGui::NewFrame();
     ImGuizmo::BeginFrame();
 
@@ -93,7 +101,7 @@ void Arcadia::ImguiLayer::OnUpdate()
     }
 
     ImGui::Render();
-    ImguiBackend::RenderDrawData(window_sptr);
+    ImguiBackend::RenderDrawData(_Engine, *window_service);
 
     if(ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
     {
@@ -104,13 +112,13 @@ void Arcadia::ImguiLayer::OnUpdate()
     }
 }
 
-void Arcadia::ImguiLayer::ScaleUi(float factor)
+void Arcadia::UiService::ScaleUi(float factor)
 {
     ImGui::GetIO().FontGlobalScale = factor;
     ImGui::GetStyle().ScaleAllSizes(factor);
 }
 
-void Arcadia::ImguiLayer::_OnScaleImguiWindow(Events::ScaleImguiWindow& e)
+void Arcadia::UiService::_OnScaleImguiWindow(Events::ScaleImguiWindow& e)
 {
     ScaleUi(e.NewScale);
 }

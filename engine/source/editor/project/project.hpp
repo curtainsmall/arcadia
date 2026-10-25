@@ -6,6 +6,7 @@
 
 #include "core/exception.hpp"
 #include "core/nlohmann_json.hpp"
+#include "app/engine.hpp"
 
 namespace Arcadia
 {
@@ -14,8 +15,8 @@ namespace Arcadia
     public:
         using SelfType = Project;
     public:
-        Project(std::string_view name);
-        Project(nlohmann::json& json);
+        Project(Engine& engine, std::string_view name);
+        Project(Engine& engine, nlohmann::json& json);
         ~Project();
         [[nodiscard]]
         auto ToJson() const -> nlohmann::json;
@@ -31,6 +32,8 @@ namespace Arcadia
         static inline const char* ProjectFileExtension{ ".arcadia" };
 
     private:
+        Engine& _Engine;
+
         std::string _Name;
     };
 }

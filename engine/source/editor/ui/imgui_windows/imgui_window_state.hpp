@@ -4,14 +4,14 @@
 
 #include "core/event.hpp"
 #include "function/physics/physics_events.hpp"
-#include "function/physics/physics_layer.hpp"
+#include "function/physics/physics_service.hpp"
 #include "function/physics/physics_simulator.hpp"
 #include "function/render/renderer_events.hpp"
-#include "function/render/renderer_layer.hpp"
-#include "function/script/script_layer.hpp"
-#include "function/player/player_layer.hpp"
+#include "function/render/renderer_service.hpp"
+#include "function/script/script_service.hpp"
+#include "function/player/player_service.hpp"
 #include "resource/scene_events.hpp"
-#include "resource/scene_layer.hpp"
+#include "resource/scene_service.hpp"
 
 #include "project/project.hpp"
 #include "project/project_events.hpp"
@@ -24,19 +24,19 @@ namespace Arcadia
     struct ImguiWindowStateFunctor_Scene
     {
     public:
-        void operator()(const std::shared_ptr<SceneLayer>& scene_layer);
+        void operator()(SceneService* scene_service);
     };
 
     struct ImguiWindowStateFunctor_Renderer
     {
     public:
-        void operator()(const std::shared_ptr<RendererLayer>& renderer_layer);
+        void operator()(RendererService* renderer_service);
     };
 
     struct ImguiWindowStateFunctor_PhysicsSimulator
     {
     public:
-        void operator()(const std::shared_ptr<PhysicsLayer>& physics_layer);
+        void operator()(PhysicsService* physics_service);
     private:
         bool _EnabledModifyingTempAllocatorSize{ false };
         bool _ShouldLinkUpsAndSpu{ true };
@@ -45,13 +45,13 @@ namespace Arcadia
     struct ImguiWindowStateFunctor_ScriptInterpreter
     {
     public:
-        void operator()(const std::shared_ptr<ScriptLayer>& script_layer);
+        void operator()(ScriptService* script_service);
     };
 
     struct ImguiWindowStateFunctor_PlayerController
     {
     public:
-        void operator()(const std::shared_ptr<PlayerLayer>& player_layer);
+        void operator()(PlayerService* player_service);
     };
 
     struct ImguiWindowState: public ImguiWindowInterface
@@ -62,13 +62,14 @@ namespace Arcadia
         ACDA_IMGUI_WINDOW_ID_STR_GETTERS("###state");
 
         ImguiWindowState(
+            Engine& engine,
             bool open,
             std::string_view title
         );
         virtual ~ImguiWindowState() override = default;
 
-        virtual void OnEvent(EventBase& e) override;
-        virtual void OnUpdate() override;
+        void OnEvent(EventBase& e);
+        void OnUpdate();
 
     private:
         void _OnOpenImguiWindow(Events::OpenImguiWindow& e);

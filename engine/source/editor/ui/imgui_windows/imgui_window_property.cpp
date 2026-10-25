@@ -10,8 +10,8 @@
 #include "core/pfd.hpp"
 #include "function/script/script_events.hpp"
 #include "function/player/player_events.hpp"
-#include "function/player/player_layer.hpp"
-#include "resource/scene_layer.hpp"
+#include "function/player/player_service.hpp"
+#include "resource/scene_service.hpp"
 #include "platform/lua.hpp"
 
 #include "ui/imgui.hpp"
@@ -20,7 +20,7 @@
 #define _ACDA_COMMAND_HELPER(msg, comp_name, getter_name, setter_name, value_name, origin_name) \
 if(ImGui::IsItemDeactivatedAfterEdit())\
 {\
-    CommandList::Instance().Emplace(\
+    engine.commands->Emplace(\
         msg,\
         [&comp = comp_name, value = value_name, origin_ptr = &origin_name]() -> void\
     {\
@@ -36,7 +36,7 @@ if(ImGui::IsItemDeactivatedAfterEdit())\
     origin_name = comp_name.getter_name();\
 }
 
-void Arcadia::ImguiWindowPropertyFunctor_CameraComponent::operator()(CameraComponent& camera_comp)
+void Arcadia::ImguiWindowPropertyFunctor_CameraComponent::operator()(Engine& engine, CameraComponent& camera_comp)
 {
     const float drag_speed = 1.f;
     const float min = .0;
@@ -110,7 +110,7 @@ void Arcadia::ImguiWindowPropertyFunctor_CameraComponent::Refresh(const CameraCo
     _OriginUpAxisAngleEpsilon = comp.GetUpAxisAngleEpsilon();
 }
 
-void Arcadia::ImguiWindowPropertyFunctor_LightComponent::operator()(LightComponent& light_comp)
+void Arcadia::ImguiWindowPropertyFunctor_LightComponent::operator()(Engine& engine, LightComponent& light_comp)
 {
     const float light_direction_drag_speed = .01f;
     const float light_direction_min = -1.f;
@@ -405,7 +405,7 @@ void Arcadia::ImguiWindowPropertyFunctor_LightComponent::Refresh(const LightComp
     );
 }
 
-void Arcadia::ImguiWindowPropertyFunctor_ModelComponent::operator()(ModelComponent& model_comp)
+void Arcadia::ImguiWindowPropertyFunctor_ModelComponent::operator()(Engine& engine, ModelComponent& model_comp)
 {
     ImGui::SeparatorText("Filepath");
     std::string filepath_string = model_comp.GetFilepath().empty()
@@ -441,7 +441,7 @@ void Arcadia::ImguiWindowPropertyFunctor_ModelComponent::operator()(ModelCompone
     }
 }
 
-void Arcadia::ImguiWindowPopupFunctor_PhysicsComponentCreateBody::operator()(PhysicsComponent& physics_comp)
+void Arcadia::ImguiWindowPopupFunctor_PhysicsComponentCreateBody::operator()(Engine& engine, PhysicsComponent& physics_comp)
 {
     if(!Opened)
     {
@@ -683,9 +683,9 @@ void Arcadia::ImguiWindowPopupFunctor_PhysicsComponentCreateBody::operator()(Phy
     }
 }
 
-void Arcadia::ImguiWindowPropertyFunctor_PhysicsComponent::operator()(PhysicsComponent& physics_comp)
+void Arcadia::ImguiWindowPropertyFunctor_PhysicsComponent::operator()(Engine& engine, PhysicsComponent& physics_comp)
 {
-    _ImguiWindowPopupPhysicsComponentCreateBody(physics_comp);
+    _ImguiWindowPopupPhysicsComponentCreateBody(engine, physics_comp);
 
     ImGuiTreeNodeFlags tree_node_flags = ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_FramePadding;
 
@@ -828,7 +828,7 @@ void Arcadia::ImguiWindowPropertyFunctor_TransformComponent::Refresh(const Trans
     _OriginPivot = comp.GetPivot();
 }
 
-void Arcadia::ImguiWindowPropertyFunctor_TransformComponent::operator()(TransformComponent& transform_comp)
+void Arcadia::ImguiWindowPropertyFunctor_TransformComponent::operator()(Engine& engine, TransformComponent& transform_comp)
 {
     const float speed = 1.f;
     const float min = .0f;
@@ -882,7 +882,7 @@ void Arcadia::ImguiWindowPropertyFunctor_TransformComponent::operator()(Transfor
     _ACDA_COMMAND_HELPER("[Transform] Pivot", transform_comp, GetPivot, SetPivot, pivot, _OriginPivot);
 }
 
-void Arcadia::ImguiWindowPropertyFunctor_ScriptComponent_AddScriptDialog::operator()(ScriptComponent& script_comp)
+void Arcadia::ImguiWindowPropertyFunctor_ScriptComponent_AddScriptDialog::operator()(Engine& engine, ScriptComponent& script_comp)
 {
     if(!Opened)
     {
@@ -967,7 +967,7 @@ void Arcadia::ImguiWindowPropertyFunctor_ScriptComponent_AddScriptDialog::operat
     }
 }
 
-void Arcadia::ImguiWindowPropertyFunctor_ScriptComponent::operator()(ScriptComponent& script_comp)
+void Arcadia::ImguiWindowPropertyFunctor_ScriptComponent::operator()(Engine& engine, ScriptComponent& script_comp)
 {
     ImGui::TextWrapped(std::format("Name: {}", script_comp.GetName()).c_str());
     ImGui::TextWrapped(std::format("Filepath: {}", script_comp.GetFilepath().generic_string()).c_str());
@@ -976,30 +976,30 @@ void Arcadia::ImguiWindowPropertyFunctor_ScriptComponent::operator()(ScriptCompo
     {
         _AddScriptDialog.Opened = true;
     }
-    _AddScriptDialog(script_comp);
+    _AddScriptDialog(engine, script_comp);
 
     if(ImGui::Button("Execute Lua Script"))
     {
-        EventQueue::Instance().Signal<Events::ExecuteScript>(script_comp.GetScriptText());
+        engine.events.Signal<Events::ExecuteScript>(script_comp.GetScriptText());
     }
 }
 
-void Arcadia::ImguiWindowPropertyFunctor_PlayerComponent::operator()(EntityId entity_id)
+void Arcadia::ImguiWindowPropertyFunctor_PlayerComponent::operator()(Engine& engine, EntityId entity_id)
 {
-    std::shared_ptr<PlayerLayer> player_layer_sptr = LayerStack::Instance().GetLayerShared<PlayerLayer>();
-    if(player_layer_sptr->GetActiveEntityId() == entity_id)
+    PlayerService* player_service = engine.player_service;
+    if(player_service->GetActiveEntityId() == entity_id)
     {
         ImGui::Text("Current Active Player");
     }
     else if(ImGui::Button("Set As Active Player"))
     {
-        EventQueue::Instance()
+        engine.events
             .Signal<Events::PlayerControllerSetEntity>(entity_id);
     }
 }
 
-Arcadia::ImguiWindowProperty::ImguiWindowProperty(bool open, std::string_view title):
-    ImguiWindowInterface(open, title)
+Arcadia::ImguiWindowProperty::ImguiWindowProperty(Engine& engine, bool open, std::string_view title):
+    ImguiWindowInterface(engine, open, title)
 {
 }
 
@@ -1020,13 +1020,13 @@ void Arcadia::ImguiWindowProperty::OnUpdate()
         return;
     }
 
-    std::shared_ptr<SceneLayer> scene_layer_sptr = LayerStack::Instance().GetLayerShared<SceneLayer>();
+    SceneService* scene_service = _Engine.scenes;
 
     std::string imgui_window_title{};
-    scene_layer_sptr->HasActiveScene() && _SelectedEntityId
+    scene_service->HasActiveScene() && _SelectedEntityId
         ? imgui_window_title
         .append(_Title + " - ")
-        .append(scene_layer_sptr->ActiveScene_GetEntityInfo(_SelectedEntityId).GetName())
+        .append(scene_service->ActiveScene_GetEntityInfo(_SelectedEntityId).GetName())
         .append(GetIdString())
         : imgui_window_title
         .append(_Title)
@@ -1037,7 +1037,7 @@ void Arcadia::ImguiWindowProperty::OnUpdate()
         ImGuiWindowFlags_NoCollapse;
     if(ImGui::Begin(imgui_window_title.c_str(), &_Opened, window_flags))
     {
-        if(!scene_layer_sptr->HasActiveScene())
+        if(!scene_service->HasActiveScene())
         {
             ImGui::Text("(No scene)");
         }
@@ -1058,7 +1058,7 @@ void Arcadia::ImguiWindowProperty::OnUpdate()
                     _ContainsComponent<TransformComponent>(_SelectedEntityId),
                     [&]()
                     {
-                        _ImguiWindowPropertyFunctor_TransformComponent(_GetComponent<TransformComponent>(_SelectedEntityId));
+                        _ImguiWindowPropertyFunctor_TransformComponent(_Engine, _GetComponent<TransformComponent>(_SelectedEntityId));
                     }
                 );
 
@@ -1067,7 +1067,7 @@ void Arcadia::ImguiWindowProperty::OnUpdate()
                     _ContainsComponent<CameraComponent>(_SelectedEntityId),
                     [&]()
                     {
-                        _ImguiWindowPropertyFunctor_CameraComponent(_GetComponent<CameraComponent>(_SelectedEntityId));
+                        _ImguiWindowPropertyFunctor_CameraComponent(_Engine, _GetComponent<CameraComponent>(_SelectedEntityId));
                     }
                 );
                 _DisplayProperty(
@@ -1075,7 +1075,7 @@ void Arcadia::ImguiWindowProperty::OnUpdate()
                     _ContainsComponent<LightComponent>(_SelectedEntityId),
                     [&]()
                     {
-                        _ImguiWindowPropertyFunctor_LightComponent(_GetComponent<LightComponent>(_SelectedEntityId));
+                        _ImguiWindowPropertyFunctor_LightComponent(_Engine, _GetComponent<LightComponent>(_SelectedEntityId));
                     }
                 );
                 _DisplayProperty(
@@ -1083,7 +1083,7 @@ void Arcadia::ImguiWindowProperty::OnUpdate()
                     _ContainsComponent<ModelComponent>(_SelectedEntityId),
                     [&]()
                     {
-                        _ImguiWindowPropertyFunctor_ModelComponent(_GetComponent<ModelComponent>(_SelectedEntityId));
+                        _ImguiWindowPropertyFunctor_ModelComponent(_Engine, _GetComponent<ModelComponent>(_SelectedEntityId));
                     }
                 );
                 _DisplayProperty(
@@ -1091,7 +1091,7 @@ void Arcadia::ImguiWindowProperty::OnUpdate()
                     _ContainsComponent<PhysicsComponent>(_SelectedEntityId),
                     [&]()
                     {
-                        _ImguiWindowPropertyFunctor_PhysicsComponent(_GetComponent<PhysicsComponent>(_SelectedEntityId));
+                        _ImguiWindowPropertyFunctor_PhysicsComponent(_Engine, _GetComponent<PhysicsComponent>(_SelectedEntityId));
                     }
                 );
                 _DisplayProperty(
@@ -1099,7 +1099,7 @@ void Arcadia::ImguiWindowProperty::OnUpdate()
                     _ContainsComponent<ScriptComponent>(_SelectedEntityId),
                     [&]()
                     {
-                        _ImguiWindowPropertyFunctor_ScriptComponent(_GetComponent<ScriptComponent>(_SelectedEntityId));
+                        _ImguiWindowPropertyFunctor_ScriptComponent(_Engine, _GetComponent<ScriptComponent>(_SelectedEntityId));
                     }
                 );
                 _DisplayProperty(
@@ -1107,7 +1107,7 @@ void Arcadia::ImguiWindowProperty::OnUpdate()
                     _ContainsComponent<PlayerComponent>(_SelectedEntityId),
                     [&]()
                     {
-                        _ImguiWindowPropertyFunctor_PlayerComponent(_SelectedEntityId);
+                        _ImguiWindowPropertyFunctor_PlayerComponent(_Engine, _SelectedEntityId);
                     }
                 );
 
@@ -1134,25 +1134,25 @@ void Arcadia::ImguiWindowProperty::_OnSceneDeactivated(Events::SceneDeactivated&
 void Arcadia::ImguiWindowProperty::_OnSelectEntity(Events::SelectEntity& e)
 {
     _SelectedEntityId = e.EntityId;
-    std::shared_ptr<SceneLayer> scene_layer_sptr = LayerStack::Instance().GetLayerShared<SceneLayer>();
-    if(scene_layer_sptr->ActiveScene_ContainsAllComponents<TransformComponent>(_SelectedEntityId))
+    SceneService* scene_service = _Engine.scenes;
+    if(scene_service->ActiveScene_ContainsAllComponents<TransformComponent>(_SelectedEntityId))
     {
-        _ImguiWindowPropertyFunctor_TransformComponent.Refresh(scene_layer_sptr->ActiveScene_GetComponent<TransformComponent>(_SelectedEntityId));
+        _ImguiWindowPropertyFunctor_TransformComponent.Refresh(scene_service->ActiveScene_GetComponent<TransformComponent>(_SelectedEntityId));
     }
 
-    if(scene_layer_sptr->ActiveScene_ContainsAllComponents<CameraComponent>(_SelectedEntityId))
+    if(scene_service->ActiveScene_ContainsAllComponents<CameraComponent>(_SelectedEntityId))
     {
-        _ImguiWindowPropertyFunctor_CameraComponent.Refresh(scene_layer_sptr->ActiveScene_GetComponent<CameraComponent>(_SelectedEntityId));
+        _ImguiWindowPropertyFunctor_CameraComponent.Refresh(scene_service->ActiveScene_GetComponent<CameraComponent>(_SelectedEntityId));
     }
 
-    if(scene_layer_sptr->ActiveScene_ContainsAllComponents<LightComponent>(_SelectedEntityId))
+    if(scene_service->ActiveScene_ContainsAllComponents<LightComponent>(_SelectedEntityId))
     {
-        _ImguiWindowPropertyFunctor_LightComponent.Refresh(scene_layer_sptr->ActiveScene_GetComponent<LightComponent>(_SelectedEntityId));
+        _ImguiWindowPropertyFunctor_LightComponent.Refresh(scene_service->ActiveScene_GetComponent<LightComponent>(_SelectedEntityId));
     }
 
-    if(scene_layer_sptr->ActiveScene_ContainsAllComponents<PhysicsComponent>(_SelectedEntityId))
+    if(scene_service->ActiveScene_ContainsAllComponents<PhysicsComponent>(_SelectedEntityId))
     {
-        _ImguiWindowPropertyFunctor_PhysicsComponent.Refresh(scene_layer_sptr->ActiveScene_GetComponent<PhysicsComponent>(_SelectedEntityId));
+        _ImguiWindowPropertyFunctor_PhysicsComponent.Refresh(scene_service->ActiveScene_GetComponent<PhysicsComponent>(_SelectedEntityId));
     }
 }
 

@@ -10,6 +10,7 @@
 
 #include "core/exception.hpp"
 #include "core/math.hpp"
+#include "app/engine.hpp"
 #include "function/render/opengl/buffer/gl_cubemap.hpp"
 #include "function/render/opengl/buffer/gl_framebuffer.hpp"
 #include "function/render/opengl/buffer/gl_uniform_buffer.hpp"
@@ -74,7 +75,7 @@ namespace Arcadia
 
         using SelfType = GlRenderer;
     public:
-        GlRenderer(const std::filesystem::path& gl_shader_folder_path);
+        GlRenderer(Engine& engine, const std::filesystem::path& gl_shader_folder_path);
         virtual ~GlRenderer() override = default;
 
         [[nodiscard]]
@@ -123,6 +124,8 @@ namespace Arcadia
         );
 
     private:
+        Engine& _Engine;
+
         inline static glm::vec4 _ClearColor{ 41 / 255.0, 43 / 255.0, 44 / 255.0, 1.f };
 
         std::unordered_map<EntityId, std::vector<GlRenderUnitMesh>> _GlRenderUnitMeshStorage{};

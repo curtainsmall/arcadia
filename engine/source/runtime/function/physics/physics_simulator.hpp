@@ -5,6 +5,7 @@
 #include <unordered_set>
 
 #include "platform/defines.hpp"
+#include "app/engine.hpp"
 #include "platform/jolt.hpp"
 #include "resource/components/physics_component.hpp"
 #include "resource/components/transform_component.hpp"
@@ -50,7 +51,7 @@ namespace Arcadia
     public:
         using SelfType = PhysicsSimulator;
     public:
-        PhysicsSimulator();
+        explicit PhysicsSimulator(Engine& engine);
         ~PhysicsSimulator();
 
         PhysicsSimulator(const SelfType&) = delete;
@@ -102,6 +103,8 @@ namespace Arcadia
             EntityId entity_id
         );
     private:
+
+        Engine& _Engine;
 
         bool _Active{ false };
 

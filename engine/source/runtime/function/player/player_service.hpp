@@ -1,23 +1,26 @@
 #pragma once
 
 #include "platform/defines.hpp"
-#include "core/layer.hpp"
+#include "app/engine.hpp"
+#include "app/services.hpp"
 #include "function/player/player_controller.hpp"
 #include "function/player/player_events.hpp"
 #include "function/window/window_events.hpp"
 
 namespace Arcadia
 {
-    struct ACDA_API PlayerLayer: LayerInterface
+    struct ACDA_API PlayerService: public Players
     {
     public:
-        using SelfType = PlayerLayer;
+        using SelfType = PlayerService;
     public:
-        PlayerLayer() = default;
-        virtual ~PlayerLayer() override = default;
+        PlayerService(Engine& engine);
+        virtual ~PlayerService() override = default;
 
-        virtual void OnEvent(EventBase& event) override;
-        virtual void OnUpdate() override;
+        void Update() override;
+
+        void OnEvent(EventBase& event);
+        void OnUpdate();
 
         [[nodiscard]]
         auto IsPlayerControllerActive() const -> bool;
@@ -34,6 +37,10 @@ namespace Arcadia
         void _OnInputMouseButton(Events::InputMouseButton& e);
 
     private:
-        PlayerController _PlayerController{};
+        Engine& _Engine;
+
+        Foundation::Subscription _EventSubscription{};
+
+        PlayerController _PlayerController;
     };
 }

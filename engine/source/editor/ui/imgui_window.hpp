@@ -4,6 +4,7 @@
 #include <string>
 
 #include "core/event.hpp"
+#include "app/engine.hpp"
 
 // ImGui window ID should follow: Title###id so that we can change the title for a curtain window
 #define ACDA_IMGUI_WINDOW_ID_STR_GETTERS(id_str) \
@@ -26,9 +27,11 @@ namespace Arcadia
         using SelfType = ImguiWindowInterface;
     public:
         ImguiWindowInterface(
+            Engine& engine,
             bool open = false,
             std::string_view title = {}
         ):
+            _Engine(engine),
             _Opened(open),
             _Title(title)
         {
@@ -54,6 +57,8 @@ namespace Arcadia
         virtual auto GetIdString() const -> std::string_view = 0;
 
     protected:
+        Engine& _Engine;
+
         bool _Opened;
         std::string _Title{};
     };

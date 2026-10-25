@@ -5,7 +5,8 @@
 #include <vector>
 
 #include "core/exception.hpp"
-#include "function/window/window_layer.hpp"
+#include "app/engine.hpp"
+#include "function/window/window_service.hpp"
 #include "ui/imgui.hpp"
 #include "ui/imgui_style.hpp"
 #include "ui/imgui_window.hpp"
@@ -13,24 +14,24 @@
 
 namespace Arcadia
 {
-    struct ImguiLayer: public LayerInterface
+    struct UiService
     {
     public:
-        using SelfType = ImguiLayer;
+        using SelfType = UiService;
     public:
-        ImguiLayer(
-            const std::shared_ptr<WindowLayer>& window_layer,
-            const std::function<void(ImguiLayer&)>& imgui_window_installer = {},
+        UiService(
+            Engine& engine,
+            const std::function<void(UiService&)>& imgui_window_installer = {},
             const std::function<void()>& imgui_style_setter = ImguiStyle::SetToDefaultDark,
             float init_scale = 1
         );
-        virtual ~ImguiLayer();
+        virtual ~UiService();
 
         [[nodiscard]]
         auto GetImguiWindows() const -> const std::vector<std::unique_ptr<ImguiWindowInterface>>&;
 
-        virtual void OnEvent(EventBase& e) override;
-        virtual void OnUpdate() override;
+        void OnEvent(EventBase& e);
+        void OnUpdate();
 
         template<Concepts::ImguiWindow ImGuiWindow, class ...Args>
         auto EmplaceImguiWindow(Args&& ...args) -> SelfType&
@@ -45,7 +46,10 @@ namespace Arcadia
         void _OnScaleImguiWindow(Events::ScaleImguiWindow& e);
 
     private:
-        std::weak_ptr<WindowLayer> _wpWindow;
+        Engine& _Engine;
+
+        Foundation::Subscription _EventSubscription{};
+
         ImGuiContext* _pImguiContext{ nullptr };
         std::vector<std::unique_ptr<ImguiWindowInterface>> _ImguiWindows{};
     };

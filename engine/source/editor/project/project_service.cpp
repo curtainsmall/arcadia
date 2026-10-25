@@ -1,6 +1,5 @@
-#include "project_layer.hpp"
+#include "project_service.hpp"
 
-#include "core/runtime_config.hpp"
 #include "core/assert.hpp"
 #include "core/command.hpp"
 #include "core/enum.hpp"
@@ -12,20 +11,28 @@
 #include "core/pfd.hpp"
 #include "function/render/opengl/gl_renderer.hpp"
 #include "function/window/window_events.hpp"
-#include "function/window/window_layer.hpp"
+#include "function/window/window_service.hpp"
 #include "resource/components.hpp"
-#include "resource/scene_layer.hpp"
+#include "resource/scene_service.hpp"
 
-Arcadia::ProjectLayer::ProjectLayer():
-    LayerInterface("project")
+Arcadia::ProjectService::ProjectService(Engine& engine):
+    _Engine(engine)
+{
+    _EventSubscription = _Engine.events.SubscribeAny(
+        Foundation::Order::Project,
+        [this](Foundation::Event& e) -> bool
+        {
+            OnEvent(e);
+            return e.Handled();
+        }
+    );
+}
+
+Arcadia::ProjectService::~ProjectService()
 {
 }
 
-Arcadia::ProjectLayer::~ProjectLayer()
-{
-}
-
-void Arcadia::ProjectLayer::OnEvent(EventBase& e)
+void Arcadia::ProjectService::OnEvent(EventBase& e)
 {
     EventDispatcher{ e }
         .Dispatch<Events::WindowShouldClose>(ACDA_BIND_MEMBER_FN(_OnWindowShouldClose))
@@ -39,16 +46,16 @@ void Arcadia::ProjectLayer::OnEvent(EventBase& e)
         .IsDispatched();
 }
 
-void Arcadia::ProjectLayer::OnUpdate()
+void Arcadia::ProjectService::OnUpdate()
 {
 }
 
-auto Arcadia::ProjectLayer::HasProject() const -> bool
+auto Arcadia::ProjectService::HasProject() const -> bool
 {
     return !!_spProject;
 }
 
-void Arcadia::ProjectLayer::_SaveProject()
+void Arcadia::ProjectService::_SaveProject()
 {
     ACDA_ASSERT(_spProject);
 
@@ -57,10 +64,10 @@ void Arcadia::ProjectLayer::_SaveProject()
     std::ofstream ofs(_ProjectFilepath);
     ofs << std::setw(4) << json;
 
-    EventQueue::Instance().Signal<Events::ProjectSaved>();
+    _Engine.events.Signal<Events::ProjectSaved>();
 }
 
-void Arcadia::ProjectLayer::_LoadProject()
+void Arcadia::ProjectService::_LoadProject()
 {
     ACDA_ASSERT(!_spProject);
 
@@ -72,25 +79,21 @@ void Arcadia::ProjectLayer::_LoadProject()
 
     nlohmann::json json{};
     ifs >> json;
-    _spProject = std::make_shared<Project>(json);
+    _spProject = std::make_shared<Project>(_Engine, json);
 
-    EventQueue::Instance().Signal<Events::ProjectLoaded>();
+    _Engine.events.Signal<Events::ProjectLoaded>();
 }
 
-void Arcadia::ProjectLayer::_OnWindowShouldClose(Events::WindowShouldClose& e)
+void Arcadia::ProjectService::_OnWindowShouldClose(Events::WindowShouldClose& e)
 {
-    EventQueue& event_queue = EventQueue::Instance();
-
-    std::shared_ptr<WindowLayer> window_layer_sptr = LayerStack::Instance().GetLayerShared<WindowLayer>();
-
     if(_spProject)
     {
-        EventQueue::Instance()
+        _Engine.events
             .Signal<Events::CloseProject>();
     }
 }
 
-void Arcadia::ProjectLayer::_OnCreateProject(Events::CreateProject& e)
+void Arcadia::ProjectService::_OnCreateProject(Events::CreateProject& e)
 {
     if(_spProject)
     {
@@ -125,14 +128,14 @@ void Arcadia::ProjectLayer::_OnCreateProject(Events::CreateProject& e)
         _spProject.reset();
     }
 
-    _spProject = std::make_shared<Project>(e.Name);
+    _spProject = std::make_shared<Project>(_Engine, e.Name);
     _ProjectFilepath = e.FilepathString.size() ? ToFilepath(e.FilepathString) : std::filesystem::path{};
 
-    EventQueue::Instance()
+    _Engine.events
         .Signal<Events::ProjectBuilt>(_spProject);
 }
 
-void Arcadia::ProjectLayer::_OnOpenProject(Events::OpenProject& e)
+void Arcadia::ProjectService::_OnOpenProject(Events::OpenProject& e)
 {
     if(_spProject)
     {
@@ -203,11 +206,11 @@ void Arcadia::ProjectLayer::_OnOpenProject(Events::OpenProject& e)
         return;
     }
 
-    EventQueue::Instance()
+    _Engine.events
         .Signal<Events::ProjectBuilt>(_spProject);
 }
 
-void Arcadia::ProjectLayer::_OnSaveProject(Events::SaveProject& e)
+void Arcadia::ProjectService::_OnSaveProject(Events::SaveProject& e)
 {
     ACDA_ASSERT(_spProject);
 
@@ -224,7 +227,7 @@ void Arcadia::ProjectLayer::_OnSaveProject(Events::SaveProject& e)
     _SaveProject();
 }
 
-void Arcadia::ProjectLayer::_OnSaveProjectAs(Events::SaveProjectAs& e)
+void Arcadia::ProjectService::_OnSaveProjectAs(Events::SaveProjectAs& e)
 {
     ACDA_ASSERT(_spProject);
 
@@ -238,15 +241,15 @@ void Arcadia::ProjectLayer::_OnSaveProjectAs(Events::SaveProjectAs& e)
     _SaveProject();
 }
 
-void Arcadia::ProjectLayer::_OnCloseProject(Events::CloseProject& e)
+void Arcadia::ProjectService::_OnCloseProject(Events::CloseProject& e)
 {
     ACDA_ASSERT(_spProject);
 
-    EventQueue& event_queue = EventQueue::Instance();
-    std::shared_ptr<SceneLayer> scene_layer_sptr = LayerStack::Instance().GetLayerShared<SceneLayer>();
+    Foundation::EventBus& event_queue = _Engine.events;
+    SceneService* scene_service = _Engine.scenes;
 
-    CommandList& cmd_list = CommandList::Instance();
-    if(cmd_list.GetSize() || _ProjectModified || scene_layer_sptr->IsActiveSceneModified(SceneLayer::ActiveSceneModificationFlag::All))
+    CommandList& cmd_list = *_Engine.commands;
+    if(cmd_list.GetSize() || _ProjectModified || scene_service->IsActiveSceneModified(SceneService::ActiveSceneModificationFlag::All))
     {
         pfd::button res = pfd::message{
                         "Unsaved",
@@ -281,11 +284,11 @@ void Arcadia::ProjectLayer::_OnCloseProject(Events::CloseProject& e)
         }
     }
     _spProject.reset();
-    EventQueue::Instance()
+    _Engine.events
         .Signal<Events::ProjectUnbuilt>();
 }
 
-void Arcadia::ProjectLayer::_OnProjectSaved(Events::ProjectSaved& e)
+void Arcadia::ProjectService::_OnProjectSaved(Events::ProjectSaved& e)
 {
-    CommandList::Instance().Clear();
+    _Engine.commands->Clear();
 }

@@ -1,8 +1,13 @@
 #include "player_controller.hpp"
 
 #include "resource/components.hpp"
-#include "resource/scene_layer.hpp"
+#include "resource/scene_service.hpp"
 #include "core/math.hpp"
+
+Arcadia::PlayerController::PlayerController(Engine& engine):
+    _Engine(engine)
+{
+}
 
 auto Arcadia::PlayerController::IsActive() const -> bool
 {
@@ -26,8 +31,8 @@ void Arcadia::PlayerController::SetActiveEntityId(EntityId entity_id)
 
 void Arcadia::PlayerController::ProcessInputKey(GlfwInputKey key, GlfwInputAction action, GlfwInputModifier mod)
 {
-    std::shared_ptr<SceneLayer> scene_layer_sptr = LayerStack::Instance().GetLayerShared<SceneLayer>();
-    auto [transform_comp, physics_comp] = scene_layer_sptr->ActiveScene_GetComponent<TransformComponent, PhysicsComponent>(_ActiveEntityId);
+    SceneService* scene_service = _Engine.scenes;
+    auto [transform_comp, physics_comp] = scene_service->ActiveScene_GetComponent<TransformComponent, PhysicsComponent>(_ActiveEntityId);
 
     const float speed = 5.0f;
     switch(key)

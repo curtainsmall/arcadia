@@ -12,9 +12,9 @@
 #include "platform/jolt.hpp"
 #include "resource/components.hpp"
 #include "resource/scene_events.hpp"
-#include "resource/scene_layer.hpp"
+#include "resource/scene_service.hpp"
 
-#include "editor/editor_layer.hpp"
+#include "editor/editor/editor_app.hpp"
 #include "project/project_events.hpp"
 #include "ui/imgui.hpp"
 #include "ui/imgui_window.hpp"
@@ -27,7 +27,7 @@ namespace Arcadia
     public:
         using SelfType = ImguiWindowPropertyFunctor_CameraComponent;
     public:
-        void operator()(CameraComponent& camera_comp);
+        void operator()(Engine& engine, CameraComponent& camera_comp);
 
         void Refresh(const CameraComponent& comp);
 
@@ -48,7 +48,7 @@ namespace Arcadia
     public:
         using SelfType = ImguiWindowPropertyFunctor_LightComponent;
     public:
-        void operator()(LightComponent& light_comp);
+        void operator()(Engine& engine, LightComponent& light_comp);
 
         void Refresh(const LightComponent& comp);
     private:
@@ -88,7 +88,7 @@ namespace Arcadia
     public:
         using SelfType = ImguiWindowPropertyFunctor_ModelComponent;
     public:
-        void operator()(ModelComponent& model_comp);
+        void operator()(Engine& engine, ModelComponent& model_comp);
     };
 
     struct ImguiWindowPopupFunctor_PhysicsComponentCreateBody
@@ -96,7 +96,7 @@ namespace Arcadia
     public:
         using SelfType = ImguiWindowPopupFunctor_PhysicsComponentCreateBody;
     public:
-        void operator()(PhysicsComponent& physics_comp);
+        void operator()(Engine& engine, PhysicsComponent& physics_comp);
 
     public:
         bool Opened{ false };
@@ -111,7 +111,7 @@ namespace Arcadia
     public:
         using SelfType = ImguiWindowPropertyFunctor_PhysicsComponent;
     public:
-        void operator()(PhysicsComponent& physics_comp);
+        void operator()(Engine& engine, PhysicsComponent& physics_comp);
         void Refresh(PhysicsComponent& physics_comp);
     private:
         ImguiWindowPopupFunctor_PhysicsComponentCreateBody _ImguiWindowPopupPhysicsComponentCreateBody{};
@@ -125,7 +125,7 @@ namespace Arcadia
     public:
         void Refresh(const TransformComponent& comp);
 
-        void operator()(TransformComponent& transform_comp);
+        void operator()(Engine& engine, TransformComponent& transform_comp);
 
     private:
         glm::vec3 _OriginPosition{};
@@ -138,7 +138,7 @@ namespace Arcadia
     struct ACDA_API ImguiWindowPropertyFunctor_ScriptComponent_AddScriptDialog
     {
     public:
-        void operator()(ScriptComponent& script_comp);
+        void operator()(Engine& engine, ScriptComponent& script_comp);
     public:
         bool Opened{ false };
     private:
@@ -152,7 +152,7 @@ namespace Arcadia
     public:
         using SelfType = ImguiWindowPropertyFunctor_ScriptComponent;
     public:
-        void operator()(ScriptComponent& script_comp);
+        void operator()(Engine& engine, ScriptComponent& script_comp);
     private:
         ImguiWindowPropertyFunctor_ScriptComponent_AddScriptDialog _AddScriptDialog{};
     };
@@ -162,7 +162,7 @@ namespace Arcadia
     public:
         using SelfType = ImguiWindowPropertyFunctor_PlayerComponent;
     public:
-        void operator()(EntityId entity_id);
+        void operator()(Engine& engine, EntityId entity_id);
     };
 
     struct ImguiWindowProperty: public ImguiWindowInterface
@@ -173,30 +173,31 @@ namespace Arcadia
         ACDA_IMGUI_WINDOW_ID_STR_GETTERS("###property");
 
         ImguiWindowProperty(
+            Engine& engine,
             bool open,
             std::string_view title
         );
         virtual ~ImguiWindowProperty() override = default;
 
-        virtual void OnEvent(EventBase& e) override;
-        virtual void OnUpdate() override;
+        void OnEvent(EventBase& e);
+        void OnUpdate();
     private:
         template<Concepts::Component Component>
         auto _ContainsComponent(EntityId entity_id) const -> bool
         {
-            std::shared_ptr<SceneLayer> scene_layer_sptr = LayerStack::Instance().GetLayerShared<SceneLayer>();
-            ACDA_ASSERT(scene_layer_sptr->HasActiveScene());
+            SceneService* scene_service = _Engine.scenes;
+            ACDA_ASSERT(scene_service->HasActiveScene());
 
-            return scene_layer_sptr->ActiveScene_ContainsAllComponents<Component>(entity_id);
+            return scene_service->ActiveScene_ContainsAllComponents<Component>(entity_id);
         }
         template<Concepts::Component Component>
         auto _GetComponent(EntityId entity_id) const -> Component&
         {
-            std::shared_ptr<SceneLayer> scene_layer_sptr = LayerStack::Instance().GetLayerShared<SceneLayer>();
-            ACDA_ASSERT(scene_layer_sptr->HasActiveScene());
+            SceneService* scene_service = _Engine.scenes;
+            ACDA_ASSERT(scene_service->HasActiveScene());
             ACDA_ASSERT(_ContainsComponent<Component>(entity_id));
 
-            return scene_layer_sptr->ActiveScene_GetComponent<Component>(entity_id);
+            return scene_service->ActiveScene_GetComponent<Component>(entity_id);
         }
 
         void _OnOpenImguiWindow(Events::OpenImguiWindow& e);

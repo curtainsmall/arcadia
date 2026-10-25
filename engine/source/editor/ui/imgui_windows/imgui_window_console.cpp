@@ -2,11 +2,11 @@
 
 #include "core/function.hpp"
 
-#include "editor/editor_layer.hpp"
+#include "editor/editor/editor_app.hpp"
 #include "ui/imgui_wrapper.hpp"
 
-Arcadia::ImguiWindowConsole::ImguiWindowConsole(bool open, std::string_view title):
-    ImguiWindowInterface(open, title)
+Arcadia::ImguiWindowConsole::ImguiWindowConsole(Engine& engine, bool open, std::string_view title):
+    ImguiWindowInterface(engine, open, title)
 {
     _ColorPalette[ToUnderlying(ColorPalette::Command)] = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
     _ColorPalette[ToUnderlying(ColorPalette::Log)] = glm::vec4(1.0f, 1.0f, 1.0f, 0.5f);
@@ -94,8 +94,8 @@ void Arcadia::ImguiWindowConsole::_LogArea()
 
         ImGui::PushTextWrapPos();
 
-        std::shared_ptr<EditorLayer> editor_layer_sptr = LayerStack::Instance().GetLayerShared<EditorLayer>();
-        csys::System& system = editor_layer_sptr->GetCsysSystem();
+        EditorApp* editor_app = _Engine.editor;
+        csys::System& system = editor_app->GetCsysSystem();
 
         for(const auto& item : system.Items())
         {
@@ -166,8 +166,8 @@ void Arcadia::ImguiWindowConsole::_InputBar()
 
     bool reclaim_focus = false;
 
-    std::shared_ptr<EditorLayer> editor_layer_sptr = LayerStack::Instance().GetLayerShared<EditorLayer>();
-    csys::System& system = editor_layer_sptr->GetCsysSystem();
+    EditorApp* editor_app = _Engine.editor;
+    csys::System& system = editor_app->GetCsysSystem();
 
     ImGui::PushItemWidth(-ImGui::GetStyle().ItemSpacing.x * 7);
     if(ImGui::InputText(
@@ -223,8 +223,8 @@ auto Arcadia::ImguiWindowConsole::_InputCallback(ImGuiInputTextCallbackData* dat
     else
         trim_str = console->_InputBuffer;
 
-    std::shared_ptr<EditorLayer> editor_layer_sptr = LayerStack::Instance().GetLayerShared<EditorLayer>();
-    csys::System& system = editor_layer_sptr->GetCsysSystem();
+    EditorApp* editor_app = console->_Engine.editor;
+    csys::System& system = editor_app->GetCsysSystem();
 
     switch(data->EventFlag)
     {

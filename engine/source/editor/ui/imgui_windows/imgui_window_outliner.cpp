@@ -5,12 +5,12 @@
 #include "core/function.hpp"
 #include "core/pfd.hpp"
 #include "resource/components.hpp"
-#include "resource/scene_layer.hpp"
+#include "resource/scene_service.hpp"
 
 #include "ui/imgui.hpp"
 
-Arcadia::ImguiWindowOutliner::ImguiWindowOutliner(bool open, std::string_view title):
-    ImguiWindowInterface(open, title)
+Arcadia::ImguiWindowOutliner::ImguiWindowOutliner(Engine& engine, bool open, std::string_view title):
+    ImguiWindowInterface(engine, open, title)
 {
 }
 
@@ -29,15 +29,15 @@ void Arcadia::ImguiWindowOutliner::OnUpdate()
         return;
     }
 
-    std::shared_ptr<SceneLayer> scene_layer_sptr = LayerStack::Instance().GetLayerShared<SceneLayer>();
+    SceneService* scene_service = _Engine.scenes;
 
-    EventQueue& event_queue = EventQueue::Instance();
+    Foundation::EventBus& event_queue = _Engine.events;
 
     std::string imgui_window_title{};
-    scene_layer_sptr->HasActiveScene()
+    scene_service->HasActiveScene()
         ? imgui_window_title
         .append(_Title + " - ")
-        .append(scene_layer_sptr->ActiveScene_GetName())
+        .append(scene_service->ActiveScene_GetName())
         .append(GetIdString())
         : imgui_window_title
         .append(_Title)
@@ -48,7 +48,7 @@ void Arcadia::ImguiWindowOutliner::OnUpdate()
         ImGuiWindowFlags_NoCollapse;
     if(ImGui::Begin(imgui_window_title.data(), &_Opened, window_flags))
     {
-        if(scene_layer_sptr->HasActiveScene() && ImGui::BeginPopupContextWindow())
+        if(scene_service->HasActiveScene() && ImGui::BeginPopupContextWindow())
         {
             ImGui::SeparatorText("New");
 
@@ -70,13 +70,13 @@ void Arcadia::ImguiWindowOutliner::OnUpdate()
             ImGui::EndPopup();
         }
 
-        if(!scene_layer_sptr->HasActiveScene())
+        if(!scene_service->HasActiveScene())
         {
             ImGui::Text("(No scene)");
         }
         else
         {
-            for(auto& [entity_id, entity_info] : scene_layer_sptr->ActiveScene_GetEntityInfoStorage())
+            for(auto& [entity_id, entity_info] : scene_service->ActiveScene_GetEntityInfoStorage())
             {
                 // Display text input
                 if(_EntityOldName == entity_info.GetName())
@@ -91,7 +91,7 @@ void Arcadia::ImguiWindowOutliner::OnUpdate()
                     {
                         if(_EntityOldName != _EntityNewName)
                         {
-                            if(scene_layer_sptr->ActiveScene_IsEntityNameUsed(_EntityNewName))
+                            if(scene_service->ActiveScene_IsEntityNameUsed(_EntityNewName))
                             {
                                 pfd::message msg{
                                     "Arcadia - Rename Entity",
@@ -123,7 +123,7 @@ void Arcadia::ImguiWindowOutliner::OnUpdate()
                     ImGui::Checkbox(std::format("##render_in_viewport_{}", entity_id).c_str(), &display_entity);
                     if(display_entity != entity_info.Displayed)
                     {
-                        EventQueue::Instance()
+                        _Engine.events
                             .Signal<Events::UpdateEntityInfo>(
                                 entity_id,
                                 [=](EntityInfo& entity_info)

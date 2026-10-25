@@ -1,4 +1,4 @@
-#include "event.hpp"
+#include "core/event.hpp"
 
 #include "core/assert.hpp"
 
@@ -15,72 +15,19 @@ void Arcadia::EventQueue::SwapQueue()
 
 auto Arcadia::EventQueue::HasEvent() const -> bool
 {
-    return _pProcessingQueue->size();
+    return !_pProcessingQueue->empty();
 }
 
-auto Arcadia::EventQueue::ProcessEvent(const EventHandler<EventBase>& handler) -> bool
+auto Arcadia::EventQueue::ProcessEvent(const std::function<void(EventBase&)>& handler) -> bool
 {
     ACDA_ASSERT(HasEvent());
 
     EventBase& event = *_pProcessingQueue->front();
     handler(event);
-    return !!(event.GetHandleState() & EventHandleState::Handled);
+    return event.Handled();
 }
 
 void Arcadia::EventQueue::EventProcessFinished()
 {
-    std::unique_ptr<EventBase> event_uptr = std::move(_pProcessingQueue->front());
     _pProcessingQueue->pop();
-    switch(event_uptr->GetHandleState())
-    {
-        case EventHandleState::OnceAgain:
-        {
-            event_uptr->ClearMark();
-            _pCollectingQueue->push(std::move(event_uptr));
-            break;
-        }
-        default:
-        {
-            break;
-        }
-    }
-}
-
-void Arcadia::EventBase::MarkHandled()
-{
-    _HandleState |= EventHandleState::Handled;
-}
-
-void Arcadia::EventBase::MarkOnceAgain()
-{
-    _HandleState |= EventHandleState::OnceAgain;
-}
-
-auto Arcadia::EventBase::GetHandleState() const -> EventHandleState
-{
-    return _HandleState;
-}
-
-void Arcadia::EventBase::ClearMark()
-{
-    _HandleState = EventHandleState::NotHandled;
-}
-
-Arcadia::EventDispatcher::EventDispatcher(EventBase& event):
-    _pEvent(&event)
-{
-}
-
-auto Arcadia::EventDispatcher::HaltDispatchIf(bool condition) -> SelfType&
-{
-    if(condition)
-    {
-        _Halt = true;
-    }
-    return *this;
-}
-
-auto Arcadia::EventDispatcher::IsDispatched() const -> bool
-{
-    return _Dispatched;
 }

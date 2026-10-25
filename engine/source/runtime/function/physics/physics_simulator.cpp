@@ -3,9 +3,10 @@
 #include <thread>
 
 #include "core/match.hpp"
-#include "resource/scene_layer.hpp"
+#include "resource/scene_service.hpp"
 
-Arcadia::PhysicsSimulator::PhysicsSimulator()
+Arcadia::PhysicsSimulator::PhysicsSimulator(Engine& engine):
+    _Engine(engine)
 {
     JPH::RegisterDefaultAllocator();
     JPH::Factory::sInstance = new JPH::Factory();
@@ -37,15 +38,15 @@ void Arcadia::PhysicsSimulator::BuildEntity(EntityId entity_id)
 {
     _EntityIdSet.emplace(entity_id);
 
-    std::shared_ptr<SceneLayer> scene_layer_sptr = LayerStack::Instance().GetLayerShared<SceneLayer>();
-    const EntityInfo& entity_info = scene_layer_sptr->ActiveScene_GetEntityInfo(entity_id);
+    SceneService* scene_service = _Engine.scenes;
+    const EntityInfo& entity_info = scene_service->ActiveScene_GetEntityInfo(entity_id);
 
     if(entity_info.Type != EntityType::Actor)
     {
         return;
     }
 
-    const auto& [physics_comp, transform_comp] = scene_layer_sptr->ActiveScene_GetComponent<PhysicsComponent, TransformComponent>(entity_id);
+    const auto& [physics_comp, transform_comp] = scene_service->ActiveScene_GetComponent<PhysicsComponent, TransformComponent>(entity_id);
 
     if(physics_comp.IsValid())
     {
@@ -95,15 +96,15 @@ void Arcadia::PhysicsSimulator::ApplyToEntites()
 {
     for(const EntityId& entity_id : _EntityIdSet)
     {
-        std::shared_ptr<SceneLayer> scene_layer_sptr = LayerStack::Instance().GetLayerShared<SceneLayer>();
-        const EntityInfo& entity_info = scene_layer_sptr->ActiveScene_GetEntityInfo(entity_id);
+        SceneService* scene_service = _Engine.scenes;
+        const EntityInfo& entity_info = scene_service->ActiveScene_GetEntityInfo(entity_id);
 
         if(entity_info.Type != EntityType::Actor)
         {
             continue;
         }
 
-        auto [physics_comp, transform_comp] = scene_layer_sptr->ActiveScene_GetComponent<PhysicsComponent, TransformComponent>(entity_id);
+        auto [physics_comp, transform_comp] = scene_service->ActiveScene_GetComponent<PhysicsComponent, TransformComponent>(entity_id);
 
         if(physics_comp.IsValid())
         {

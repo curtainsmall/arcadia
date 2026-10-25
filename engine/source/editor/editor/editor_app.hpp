@@ -5,24 +5,29 @@
 #undef ERROR
 #include "csys/system.h"
 
+#include "app/app.hpp"
+#include "app/engine.hpp"
 #include "function/window/window_events.hpp"
-#include "function/window/window_layer.hpp"
+#include "function/window/window_service.hpp"
 
 #include "editor/defines.hpp"
 #include "project/project_events.hpp"
-#include "project/project_layer.hpp"
-#include "ui/imgui_layer.hpp"
+#include "project/project_service.hpp"
+#include "ui/ui_service.hpp"
 
 namespace Arcadia
 {
-    struct ACDA_API EditorLayer: public LayerInterface
+    struct ACDA_API EditorApp: public App
     {
     public:
-        EditorLayer();
-        virtual ~EditorLayer() = default;
+        EditorApp(Engine& engine);
+        virtual ~EditorApp() override;
 
-        virtual void OnEvent(EventBase& e) override;
-        virtual void OnUpdate() override;
+        void OnFrame(Engine& engine) override;
+        void OnStop(Engine& engine) override;
+
+        void OnEvent(EventBase& e);
+        void OnUpdate();
 
         void SetPlayMode(bool play_mode);
         [[nodiscard]]
@@ -38,6 +43,8 @@ namespace Arcadia
     private:
         void _Stop();
 
+        void _CollectConfig();
+
         void _OnWindowShouldClose(Events::WindowShouldClose& e);
         void _OnProjectUnbuilt(Events::ProjectUnbuilt& e);
         void _OnWindowCloseCanceled(Events::WindowCloseCanceled& e);
@@ -45,6 +52,14 @@ namespace Arcadia
         void _OnInputKey(Events::InputKey& e);
 
     private:
+        Engine& _Engine;
+
+        Foundation::Subscription _EventSubscription{};
+
+        // The editor composes its own services; they are torn down with it.
+        std::unique_ptr<ProjectService> _upProject{};
+        std::unique_ptr<UiService> _upUi{};
+
         bool _PlayMode{ false };
         float _UiScale{ 1.0f };
 

@@ -19,10 +19,17 @@ namespace Arcadia
     public:
         using SelfType = ImguiWindowPopupFunctor_CreateProject;
     public:
+        explicit ImguiWindowPopupFunctor_CreateProject(Engine& engine):
+            _Engine(engine)
+        {
+        }
+    public:
         void operator()();
     public:
         bool Opened{ false };
     private:
+        Engine& _Engine;
+
         std::string _Name{};
         std::string _FilepathString{};
     };
@@ -32,10 +39,17 @@ namespace Arcadia
     public:
         using SelfType = ImguiWindowPopupFunctor_CreateScene;
     public:
+        explicit ImguiWindowPopupFunctor_CreateScene(Engine& engine):
+            _Engine(engine)
+        {
+        }
+    public:
         void operator()();
     public:
         bool Opened{ false };
     private:
+        Engine& _Engine;
+
         std::string _Name{};
         bool _AsCurrent{ true };
         bool _NameAvailable{ true };
@@ -46,10 +60,17 @@ namespace Arcadia
     public:
         using SelfType = ImguiWindowPopupFunctor_RenameScene;
     public:
+        explicit ImguiWindowPopupFunctor_RenameScene(Engine& engine):
+            _Engine(engine)
+        {
+        }
+    public:
         void operator()();
     public:
         bool Opened{ false };
     private:
+        Engine& _Engine;
+
         std::string _PrevName{};
         std::string _NewName{};
         bool _Initailized{ false };
@@ -63,11 +84,14 @@ namespace Arcadia
     public:
         ACDA_IMGUI_WINDOW_ID_STR_GETTERS("###menubar");
 
-        ImguiWindowMainMenubar(const std::initializer_list<std::tuple<std::string_view, std::string_view>>& imgui_window_title_id_pairs);
+        ImguiWindowMainMenubar(
+            Engine& engine,
+            const std::initializer_list<std::tuple<std::string_view, std::string_view>>& imgui_window_title_id_pairs
+        );
         virtual ~ImguiWindowMainMenubar() override = default;
 
-        virtual void OnEvent(EventBase& e) override;
-        virtual void OnUpdate() override;
+        void OnEvent(EventBase& e);
+        void OnUpdate();
     private:
         void _ShowFileMenu();
         void _ShowEditMenu();
@@ -75,9 +99,9 @@ namespace Arcadia
         void _ShowOptionMenu();
 
     private:
-        ImguiWindowPopupFunctor_CreateProject _ImguiWindowPopupFunctor_CreateProject{};
-        ImguiWindowPopupFunctor_CreateScene _ImguiWindowPopupFunctor_CreateScene{};
-        ImguiWindowPopupFunctor_RenameScene _ImguiWindowPopupFunctor_RenameScene{};
+        ImguiWindowPopupFunctor_CreateProject _ImguiWindowPopupFunctor_CreateProject;
+        ImguiWindowPopupFunctor_CreateScene _ImguiWindowPopupFunctor_CreateScene;
+        ImguiWindowPopupFunctor_RenameScene _ImguiWindowPopupFunctor_RenameScene;
 
         std::vector<std::tuple<std::string_view, std::string_view>> _ImguiWindowTitleAndIdStringPairs{};
 

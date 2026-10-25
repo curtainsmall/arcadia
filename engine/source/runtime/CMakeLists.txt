@@ -40,7 +40,11 @@ target_link_libraries(
 target_include_directories(
   ${RUNTIME_NAME}
   PUBLIC "${RUNTIME_DIR}"
-  PUBLIC "${DEPENDENCY_DIR}")
+  PUBLIC "${DEPENDENCY_DIR}"
+  PUBLIC "${ENGINE_ROOT_DIR}/source")
+
+# Host ring: Engine, App and RuntimeConfig live there.
+target_link_libraries(${RUNTIME_NAME} PUBLIC arcadia_app)
 
 target_precompile_headers(
   ${RUNTIME_NAME}

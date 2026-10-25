@@ -13,11 +13,11 @@ namespace Arcadia
 
         ACDA_IMGUI_WINDOW_ID_STR_GETTERS("###statusbar");
 
-        ImguiWindowMainStatusbar();
+        ImguiWindowMainStatusbar(Engine& engine);
         virtual ~ImguiWindowMainStatusbar() override = default;
 
-        virtual void OnEvent(EventBase& e) override;
-        virtual void OnUpdate() override;
+        void OnEvent(EventBase& e);
+        void OnUpdate();
 
     private:
         float _UiScale{};

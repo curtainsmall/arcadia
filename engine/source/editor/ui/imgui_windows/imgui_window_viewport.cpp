@@ -3,17 +3,16 @@
 #include "core/assert.hpp"
 #include "core/command.hpp"
 #include "core/function.hpp"
-#include "core/runtime_layer.hpp"
-#include "function/physics/physics_layer.hpp"
-#include "function/render/renderer_layer.hpp"
+#include "function/physics/physics_service.hpp"
+#include "function/render/renderer_service.hpp"
 #include "function/window/window_events.hpp"
 #include "resource/components.hpp"
-#include "resource/scene_layer.hpp"
+#include "resource/scene_service.hpp"
 
-#include "project/project_layer.hpp"
+#include "project/project_service.hpp"
 
-Arcadia::ImguiWindowViewport::ImguiWindowViewport(bool open, std::string_view title):
-    ImguiWindowInterface(open, title)
+Arcadia::ImguiWindowViewport::ImguiWindowViewport(Engine& engine, bool open, std::string_view title):
+    ImguiWindowInterface(engine, open, title)
 {
 }
 
@@ -38,8 +37,9 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
         return;
     }
 
-    auto [scene_layer_sptr, physics_layer_sptr, renderer_layer_sptr, runtime_layer_sptr] =
-        LayerStack::Instance().GetMultipleLayersShared<SceneLayer, PhysicsLayer, RendererLayer, RuntimeLayer>();
+    SceneService* scene_service = _Engine.scenes;
+    PhysicsService* physics_service = _Engine.physics_service;
+    RendererService* renderer_service = _Engine.renderer_service;
 
     std::string imgui_window_title{};
     imgui_window_title
@@ -52,44 +52,44 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, glm::vec2(2, 2));
     if(ImGui::Begin(imgui_window_title.c_str(), &_Opened, window_flags))
     {
-        if(!scene_layer_sptr->HasActiveScene())
+        if(!scene_service->HasActiveScene())
         {
             ImGui::Text("(No scene)");
         }
-        else if(!renderer_layer_sptr->HasRenderer())
+        else if(!renderer_service->HasRenderer())
         {
             ImGui::Text("(No renderer)");
         }
-        else if(!scene_layer_sptr->ActiveScene_IsEntityNameUsed(_ViewportCameraEntityName))
+        else if(!scene_service->ActiveScene_IsEntityNameUsed(_ViewportCameraEntityName))
         {
         }
         else
         {
-            ACDA_ASSERT(physics_layer_sptr);
-            ACDA_ASSERT(renderer_layer_sptr);
+            ACDA_ASSERT(physics_service);
+            ACDA_ASSERT(renderer_service);
 
-            auto [viewport_camera_comp, viewport_transform_comp] = scene_layer_sptr->ActiveScene_GetComponent<CameraComponent, TransformComponent>(scene_layer_sptr->ActiveScene_GetEntityIdByName(_ViewportCameraEntityName));
+            auto [viewport_camera_comp, viewport_transform_comp] = scene_service->ActiveScene_GetComponent<CameraComponent, TransformComponent>(scene_service->ActiveScene_GetEntityIdByName(_ViewportCameraEntityName));
             viewport_camera_comp.SetViewportSize(ImGui::GetContentRegionAvail());
-            EventQueue::Instance()
+            _Engine.events
                 .Signal<Events::RendererSetEntity>(
                     _ViewportCameraEntityId,
                     Events::RendererSetEntity::ActionType::Build
                 );
 
             glm::vec2 image_cursor_pos = ImGui::GetCursorPos();
-            if(renderer_layer_sptr->HasRenderResult())
+            if(renderer_service->HasRenderResult())
             {
-                ImGui::Image(renderer_layer_sptr->GetRenderResultId(_ViewportCameraEntityId), viewport_camera_comp.GetViewportSize(), { 0,1 }, { 1,0 });
+                ImGui::Image(renderer_service->GetRenderResultId(_ViewportCameraEntityId), viewport_camera_comp.GetViewportSize(), { 0,1 }, { 1,0 });
             }
 
             if(!_InViewportFreecamMode && ImGui::IsItemHovered() && ImGui::IsMouseDown(ImGuiMouseButton_Right))
             {
-                EventQueue::Instance().Signal<Events::WindowSetCursorInputMode>(GlfwWindowCursorInputMode::Disabled);
+                _Engine.events.Signal<Events::WindowSetCursorInputMode>(GlfwWindowCursorInputMode::Disabled);
                 _InViewportFreecamMode = true;
             }
             if(_InViewportFreecamMode && !ImGui::IsMouseDown(ImGuiMouseButton_Right))
             {
-                EventQueue::Instance().Signal<Events::WindowSetCursorInputMode>(GlfwWindowCursorInputMode::Normal);
+                _Engine.events.Signal<Events::WindowSetCursorInputMode>(GlfwWindowCursorInputMode::Normal);
                 _InViewportFreecamMode = false;
             }
 
@@ -145,7 +145,7 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
             ImGui::SameLine(ImGui::GetWindowWidth() - gizmo_option_position_offset_to_right);
             const glm::vec2 gizmo_options_cursor_pos = ImGui::GetCursorPos();
             ImGui::Dummy({ 0,0 });
-            float fps = 1.f / std::chrono::duration_cast<std::chrono::duration<float>>(runtime_layer_sptr->GetDeltaTime()).count();
+            float fps = 1.f / std::chrono::duration_cast<std::chrono::duration<float>>(_Engine.frame.DeltaTime).count();
             ImGui::Text(std::format("FPS: {:.2f}", fps).c_str());
 
             ImGui::SetCursorPos(gizmo_options_cursor_pos);
@@ -160,7 +160,7 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
                 ImGui::PushStyleColor(ImGuiCol_ButtonHovered, hovered_color);
                 ImGui::PushStyleColor(ImGuiCol_ButtonActive, active_color);
 
-                TransformComponent& transform_comp = scene_layer_sptr->ActiveScene_GetComponent<TransformComponent>(_SelectedEntityId);
+                TransformComponent& transform_comp = scene_service->ActiveScene_GetComponent<TransformComponent>(_SelectedEntityId);
 
                 if(_GizmoMode == GizmoMode::Local)
                 {
@@ -253,7 +253,7 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
                 ImGui::PopStyleColor(2);
 
                 // Gizmo
-                if(scene_layer_sptr->ActiveScene_ContainsEntity(_SelectedEntityId) && scene_layer_sptr->ActiveScene_ContainsAllComponents<TransformComponent>(_SelectedEntityId))
+                if(scene_service->ActiveScene_ContainsEntity(_SelectedEntityId) && scene_service->ActiveScene_ContainsAllComponents<TransformComponent>(_SelectedEntityId))
                 {
                     ImGuizmo::SetDrawlist();
 
@@ -300,7 +300,7 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
                             transform_comp.SetPivot(_GizmoOriginPivot + translation - _GizmoOriginPosition);
                             if(_GizmoEditState == GizmoEditState::Edited)
                             {
-                                CommandList::Instance().Emplace(
+                                _Engine.commands->Emplace(
                                     "Transform - Position",
                                     [&comp = transform_comp, value = translation, origin_ptr = &_GizmoOriginPosition]() -> void
                                     {
@@ -325,7 +325,7 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
                             transform_comp.SetRotationEularAngle(rotation);
                             if(_GizmoEditState == GizmoEditState::Edited)
                             {
-                                CommandList::Instance().Emplace(
+                                _Engine.commands->Emplace(
                                     "Transform - Rotation",
                                     [&comp = transform_comp, value = delta_rotation, origin_ptr = &_GizmoOriginPosition]() -> void
                                     {
@@ -348,7 +348,7 @@ void Arcadia::ImguiWindowViewport::OnUpdate()
                             transform_comp.SetScale(scale);
                             if(_GizmoEditState == GizmoEditState::Edited)
                             {
-                                CommandList::Instance().Emplace(
+                                _Engine.commands->Emplace(
                                     "Transform - Scale",
                                     [&comp = transform_comp, value = scale, origin_ptr = &_GizmoOriginPosition]() -> void
                                     {
@@ -393,8 +393,6 @@ void Arcadia::ImguiWindowViewport::_OnOpenImguiWindow(Events::OpenImguiWindow& e
 
 void Arcadia::ImguiWindowViewport::_OnSceneActivated(Events::SceneActivated& e)
 {
-    auto [renderer_layer_sptr, physics_layer_sptr] = LayerStack::Instance().GetMultipleLayersShared<RendererLayer, PhysicsLayer>();
-
     const std::shared_ptr<Scene>& scene_sptr = e.spScene;
     if(!scene_sptr->IsEntityNameUsed(_ViewportCameraEntityName))
     {
@@ -410,35 +408,33 @@ void Arcadia::ImguiWindowViewport::_OnSceneActivated(Events::SceneActivated& e)
 
     for(const auto& [entity_id, entity_info] : scene_sptr->GetEntityInfoStorage())
     {
-        EventQueue::Instance()
-            .Signal<Events::RendererSetEntity>(
-                entity_id,
-                Events::RendererSetEntity::ActionType::Build
-            )
-            .Signal<Events::PhysicsSimulatorSetEntity>(
-                entity_id,
-                Events::PhysicsSimulatorSetEntity::ActionType::Build
-            );
+        _Engine.events.Signal<Events::RendererSetEntity>(
+            entity_id,
+            Events::RendererSetEntity::ActionType::Build
+        );
+        _Engine.events.Signal<Events::PhysicsSimulatorSetEntity>(
+            entity_id,
+            Events::PhysicsSimulatorSetEntity::ActionType::Build
+        );
     }
-    EventQueue::Instance().Signal<Events::RendererSetActive>(true);
+    _Engine.events.Signal<Events::RendererSetActive>(true);
 }
 
 void Arcadia::ImguiWindowViewport::_OnSceneDeactivated(Events::SceneDeactivated& e)
 {
-    EventQueue::Instance()
-        .Signal<Events::RendererSetActive>(false)
-        .Signal<Events::RendererReset>()
-        .Signal<Events::PhysicsSimulatorSetActive>(false)
-        .Signal<Events::PhysicsSimulatorReset>();
+    _Engine.events.Signal<Events::RendererSetActive>(false);
+    _Engine.events.Signal<Events::RendererReset>();
+    _Engine.events.Signal<Events::PhysicsSimulatorSetActive>(false);
+    _Engine.events.Signal<Events::PhysicsSimulatorReset>();
 }
 
 void Arcadia::ImguiWindowViewport::_OnSelectEntity(Events::SelectEntity& e)
 {
     _SelectedEntityId = e.EntityId;
-    std::shared_ptr<SceneLayer> scene_layer_sptr = LayerStack::Instance().GetLayerShared<SceneLayer>();
-    if(scene_layer_sptr->ActiveScene_ContainsAllComponents<TransformComponent>(_SelectedEntityId))
+    SceneService* scene_service = _Engine.scenes;
+    if(scene_service->ActiveScene_ContainsAllComponents<TransformComponent>(_SelectedEntityId))
     {
-        const TransformComponent& transform_comp = scene_layer_sptr->ActiveScene_GetComponent<TransformComponent>(_SelectedEntityId);
+        const TransformComponent& transform_comp = scene_service->ActiveScene_GetComponent<TransformComponent>(_SelectedEntityId);
         _GizmoOriginPosition = transform_comp.GetPosition();
         _GizmoOriginRotationEularAngle = transform_comp.GetRotationEularAngle();
         _GizmoOriginScale = transform_comp.GetScale();

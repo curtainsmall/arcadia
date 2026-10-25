@@ -1,7 +1,8 @@
 #pragma once
 
 #include "core/event.hpp"
-#include "core/layer.hpp"
+#include "app/engine.hpp"
+#include "app/services.hpp"
 #include "core/math.hpp"
 #include "function/window/window_events.hpp"
 #include "platform/defines.hpp"
@@ -10,23 +11,26 @@
 
 namespace Arcadia
 {
-    struct ACDA_API WindowLayer: public LayerInterface
+    struct ACDA_API WindowService: public Platform
     {
     public:
-        using SelfType = WindowLayer;
+        using SelfType = WindowService;
     public:
-        WindowLayer(
+        WindowService(
+            Engine& engine,
             glm::i32vec2 size = { 800,600 },
             std::string_view title = "Untitled",
             std::int32_t multisample_count = 0
         );
-        virtual ~WindowLayer();
+        virtual ~WindowService() override;
+
+        void PollEvents() override;
+        void SwapBuffers() override;
 
         [[nodiscard]]
         auto GetGlfwWindow() const -> GLFWwindow*;
 
-        virtual void OnEvent(EventBase& event) override;
-        virtual void OnUpdate() override;
+        void OnEvent(EventBase& event);
 
         [[nodiscard]]
         auto GetTitle() const -> std::string_view;
@@ -53,12 +57,18 @@ namespace Arcadia
 
         void _SetupCallbacks();
 
-        void _SwapBuffers();
-
         void _OnWindowCloseCanceled(Events::WindowCloseCanceled& e);
 
     private:
+        Engine& _Engine;
+
+        Foundation::Subscription _EventSubscription{};
+
         static inline GlfwContext _GlfwContext{};
+
+        // GLFW monitor callbacks carry no user data; the service keeps the one
+        // engine it belongs to.
+        static inline Engine* _pEngine{ nullptr };
 
         // Cursor move offset that is out of this range will be silently ignored
         static constexpr glm::vec2 _LegalCursorMoveRange{ -20.f,20.f };

@@ -4,7 +4,7 @@
 
 #include "core/event.hpp"
 #include "core/file.hpp"
-#include "core/layer.hpp"
+#include "app/engine.hpp"
 #include "function/physics/physics_simulator.hpp"
 #include "function/render/renderer.hpp"
 #include "function/window/window_events.hpp"
@@ -14,14 +14,14 @@
 
 namespace Arcadia
 {
-    struct ProjectLayer: public LayerInterface
+    struct ProjectService
     {
     public:
-        ProjectLayer();
-        virtual ~ProjectLayer();
+        ProjectService(Engine& engine);
+        virtual ~ProjectService();
 
-        virtual void OnEvent(EventBase& e) override;
-        virtual void OnUpdate() override;
+        void OnEvent(EventBase& e);
+        void OnUpdate();
 
         [[nodiscard]]
         auto HasProject() const -> bool;
@@ -40,6 +40,10 @@ namespace Arcadia
         void _OnProjectSaved(Events::ProjectSaved& e);
 
     private:
+        Engine& _Engine;
+
+        Foundation::Subscription _EventSubscription{};
+
         std::filesystem::path _ProjectFilepath{};
         std::shared_ptr<Project> _spProject{};
         bool _ProjectModified{ false };

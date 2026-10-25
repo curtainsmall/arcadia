@@ -8,12 +8,12 @@
 #include "ui/imgui.hpp"
 #include "ui/imgui_wrapper.hpp"
 
-void Arcadia::ImguiWindowStateFunctor_Scene::operator()(const std::shared_ptr<SceneLayer>& scene_layer_sptr)
+void Arcadia::ImguiWindowStateFunctor_Scene::operator()(SceneService* scene_service)
 {
     ImGui::Text(
         std::format(
             "Entity Count: {}",
-            scene_layer_sptr->ActiveScene_GetEntityCount(
+            scene_service->ActiveScene_GetEntityCount(
                 [&](EntityId, const EntityInfo& info)->bool
                 {
                     return !info.Internal;
@@ -24,10 +24,10 @@ void Arcadia::ImguiWindowStateFunctor_Scene::operator()(const std::shared_ptr<Sc
     );
 }
 
-void Arcadia::ImguiWindowStateFunctor_Renderer::operator()(const std::shared_ptr<RendererLayer>& renderer_layer_sptr)
+void Arcadia::ImguiWindowStateFunctor_Renderer::operator()(RendererService* renderer_service)
 {
     std::string graphic_api_type_string = MatchVariant<std::string>(
-        renderer_layer_sptr->GetCurrentGraphicApiType(),
+        renderer_service->GetCurrentGraphicApiType(),
         [&](const GraphicApi::Opengl& api)
         {
             return std::format("OpenGL ({})", api.Version);
@@ -49,11 +49,11 @@ void Arcadia::ImguiWindowStateFunctor_Renderer::operator()(const std::shared_ptr
     }
 }
 
-void Arcadia::ImguiWindowStateFunctor_PhysicsSimulator::operator()(const std::shared_ptr<PhysicsLayer>& physics_layer_sptr)
+void Arcadia::ImguiWindowStateFunctor_PhysicsSimulator::operator()(PhysicsService* physics_service)
 {
-    ImGui::Text(std::format("Body Count: {}", physics_layer_sptr->GetPhysicsBodyCount()).c_str());
-    ImGui::Text(std::format("Temporary Allocator Size (KiB): {}", physics_layer_sptr->GetTempAllocatorSize()).c_str());
-    ImGui::Text(std::format("Update per Second: {}", physics_layer_sptr->GetUpdatesPerSecondCount()).c_str());
+    ImGui::Text(std::format("Body Count: {}", physics_service->GetPhysicsBodyCount()).c_str());
+    ImGui::Text(std::format("Temporary Allocator Size (KiB): {}", physics_service->GetTempAllocatorSize()).c_str());
+    ImGui::Text(std::format("Update per Second: {}", physics_service->GetUpdatesPerSecondCount()).c_str());
 
     ImGui::NewLine();
 #if 0
@@ -61,34 +61,34 @@ void Arcadia::ImguiWindowStateFunctor_PhysicsSimulator::operator()(const std::sh
     {
         if(ImGui::Button("Stop"))
         {
-            EventQueue::Instance().Signal<Events::PhysicsSimulatorSetActive>(false);
+            _Engine.events.Signal<Events::PhysicsSimulatorSetActive>(false);
         }
     }
     else
     {
         if(ImGui::Button("Start"))
         {
-            EventQueue::Instance().Signal<Events::PhysicsSimulatorSetActive>(true);
+            _Engine.events.Signal<Events::PhysicsSimulatorSetActive>(true);
         }
     }
     ImGui::SameLine();
     ImGui::BeginDisabled();
     if(ImGui::Button("Reset"))
     {
-        EventQueue::Instance().Signal<Events::PhysicsSimulatorReset>();
-        EventQueue::Instance().Signal<Events::PhysicsSimulatorSetActive>(false);
+        _Engine.events.Signal<Events::PhysicsSimulatorReset>();
+        _Engine.events.Signal<Events::PhysicsSimulatorSetActive>(false);
     }
     ImGui::EndDisabled();
 #endif
 }
 
-void Arcadia::ImguiWindowStateFunctor_ScriptInterpreter::operator()(const std::shared_ptr<ScriptLayer>& script_layer_sptr)
+void Arcadia::ImguiWindowStateFunctor_ScriptInterpreter::operator()(ScriptService* script_service)
 {
 }
 
-void Arcadia::ImguiWindowStateFunctor_PlayerController::operator()(const std::shared_ptr<PlayerLayer>& player_layer_sptr)
+void Arcadia::ImguiWindowStateFunctor_PlayerController::operator()(PlayerService* player_service)
 {
-    EntityId entity_id = player_layer_sptr->GetActiveEntityId();
+    EntityId entity_id = player_service->GetActiveEntityId();
 
     if(!entity_id.IsNull())
     {
@@ -100,8 +100,8 @@ void Arcadia::ImguiWindowStateFunctor_PlayerController::operator()(const std::sh
     }
 }
 
-Arcadia::ImguiWindowState::ImguiWindowState(bool open, std::string_view title):
-    ImguiWindowInterface(open, title)
+Arcadia::ImguiWindowState::ImguiWindowState(Engine& engine, bool open, std::string_view title):
+    ImguiWindowInterface(engine, open, title)
 {
 }
 
@@ -119,17 +119,10 @@ void Arcadia::ImguiWindowState::OnUpdate()
         return;
     }
 
-    auto [
-        scene_layer_sptr,
-        renderer_layer_sptr,
-        physcis_layer_sptr,
-        player_layer_sptr
-    ] = LayerStack::Instance().GetMultipleLayersShared<
-        SceneLayer,
-        RendererLayer,
-        PhysicsLayer,
-        PlayerLayer
-    >();
+    SceneService* scene_service = _Engine.scenes;
+    RendererService* renderer_service = _Engine.renderer_service;
+    PhysicsService* physics_service = _Engine.physics_service;
+    PlayerService* player_service = _Engine.player_service;
 
     std::string imgui_window_title{};
     imgui_window_title
@@ -150,9 +143,9 @@ void Arcadia::ImguiWindowState::OnUpdate()
             true,
             [&]()
             {
-                if(scene_layer_sptr->HasActiveScene())
+                if(scene_service->HasActiveScene())
                 {
-                    _ImguiWindowStateFunctor_Scene(scene_layer_sptr);
+                    _ImguiWindowStateFunctor_Scene(scene_service);
                 }
                 else
                 {
@@ -163,12 +156,12 @@ void Arcadia::ImguiWindowState::OnUpdate()
 
         _DisplayState(
             "Renderer",
-            renderer_layer_sptr->IsRendererActive(),
+            renderer_service->IsRendererActive(),
             [&]()
             {
-                if(renderer_layer_sptr)
+                if(renderer_service)
                 {
-                    _ImguiWindowStateFunctor_Renderer(renderer_layer_sptr);
+                    _ImguiWindowStateFunctor_Renderer(renderer_service);
                 }
                 else
                 {
@@ -179,12 +172,12 @@ void Arcadia::ImguiWindowState::OnUpdate()
 
         _DisplayState(
             "Physics Simulator",
-            physcis_layer_sptr->IsPhysicsSimulatorActive(),
+            physics_service->IsPhysicsSimulatorActive(),
             [&]()
             {
-                if(physcis_layer_sptr)
+                if(physics_service)
                 {
-                    _ImguiWindowStateFunctor_PhysicsSimulator(physcis_layer_sptr);
+                    _ImguiWindowStateFunctor_PhysicsSimulator(physics_service);
                 }
                 else
                 {
@@ -195,12 +188,12 @@ void Arcadia::ImguiWindowState::OnUpdate()
 
         _DisplayState(
             "Player Controller",
-            player_layer_sptr->IsPlayerControllerActive(),
+            player_service->IsPlayerControllerActive(),
             [&]()
             {
-                if(player_layer_sptr)
+                if(player_service)
                 {
-                    _ImguiWindowStateFunctor_PlayerController(player_layer_sptr);
+                    _ImguiWindowStateFunctor_PlayerController(player_service);
                 }
                 else
                 {

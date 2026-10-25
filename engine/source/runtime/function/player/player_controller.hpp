@@ -1,6 +1,7 @@
 #pragma once
 
 #include "platform/defines.hpp"
+#include "app/engine.hpp"
 #include "resource/entity_id.hpp"
 
 namespace Arcadia
@@ -10,7 +11,7 @@ namespace Arcadia
     public:
         using SelfType = PlayerController;
     public:
-        PlayerController() = default;
+        explicit PlayerController(Engine& engine);
         ~PlayerController() = default;
 
         PlayerController(const SelfType&) = delete;
@@ -27,6 +28,8 @@ namespace Arcadia
         void ProcessInputKey(GlfwInputKey key, GlfwInputAction action, GlfwInputModifier mod);
         void ProcessInputMouseButton(GlfwInputMouseButton mouse_button, GlfwInputAction action, GlfwInputModifier mod);
     private:
+        Engine& _Engine;
+
         bool _Active{ false };
         EntityId _ActiveEntityId{};
     };

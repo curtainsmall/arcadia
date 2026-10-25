@@ -5,9 +5,9 @@
 #include "core/pfd.hpp"
 #include "platform/graphic_api.hpp"
 #include "resource/fonts/icon.hpp"
-#include "resource/scene_layer.hpp"
+#include "resource/scene_service.hpp"
 
-#include "project/project_layer.hpp"
+#include "project/project_service.hpp"
 #include "ui/imgui.hpp"
 #include "ui/ui_events.hpp"
 
@@ -18,7 +18,7 @@ void Arcadia::ImguiWindowPopupFunctor_CreateProject::operator()()
         return;
     }
 
-    EventQueue::Instance().Signal<Events::KeyboardInputOccupied>(true);
+    _Engine.events.Signal<Events::KeyboardInputOccupied>(true);
 
     std::string_view imgui_window_title("Create Project");
 
@@ -62,7 +62,7 @@ void Arcadia::ImguiWindowPopupFunctor_CreateProject::operator()()
             confirmed = ImGui::Button("Confirm");
             if(confirmed)
             {
-                EventQueue::Instance()
+                _Engine.events
                     .Signal<Events::CreateProject>(
                         _Name,
                         _FilepathString
@@ -74,7 +74,7 @@ void Arcadia::ImguiWindowPopupFunctor_CreateProject::operator()()
         {
             ImGui::CloseCurrentPopup();
             Opened = false;
-            EventQueue::Instance().Signal<Events::KeyboardInputOccupied>(false);
+            _Engine.events.Signal<Events::KeyboardInputOccupied>(false);
             _Name.clear();
             _FilepathString.clear();
         }
@@ -90,9 +90,9 @@ void Arcadia::ImguiWindowPopupFunctor_CreateScene::operator()()
         return;
     }
 
-    EventQueue::Instance().Signal<Events::KeyboardInputOccupied>(true);
+    _Engine.events.Signal<Events::KeyboardInputOccupied>(true);
 
-    std::shared_ptr<SceneLayer> scene_layer_sptr = LayerStack::Instance().GetLayerShared<SceneLayer>();
+    SceneService* scene_service = _Engine.scenes;
 
     std::string_view imgui_window_title("Create Scene");
 
@@ -111,7 +111,7 @@ void Arcadia::ImguiWindowPopupFunctor_CreateScene::operator()()
         ImGui::Text("Scene name");
         if(ImGui::InputText("##scene_name", &_Name, input_text_flags))
         {
-            _NameAvailable = !scene_layer_sptr->HasScene(_Name);
+            _NameAvailable = !scene_service->HasScene(_Name);
         }
         if(!_NameAvailable)
         {
@@ -134,7 +134,7 @@ void Arcadia::ImguiWindowPopupFunctor_CreateScene::operator()()
             confirmed = ImGui::Button("Confirm");
             if(confirmed)
             {
-                EventQueue::Instance()
+                _Engine.events
                     .Signal<Events::CreateScene>(
                         _Name,
                         _AsCurrent
@@ -147,7 +147,7 @@ void Arcadia::ImguiWindowPopupFunctor_CreateScene::operator()()
         {
             ImGui::CloseCurrentPopup();
             Opened = false;
-            EventQueue::Instance().Signal<Events::KeyboardInputOccupied>(false);
+            _Engine.events.Signal<Events::KeyboardInputOccupied>(false);
             _Name.clear();
             _AsCurrent = true;
             _NameAvailable = true;
@@ -164,12 +164,12 @@ void Arcadia::ImguiWindowPopupFunctor_RenameScene::operator()()
         return;
     }
 
-    EventQueue::Instance().Signal<Events::KeyboardInputOccupied>(true);
-    std::shared_ptr<SceneLayer> scene_layer = LayerStack::Instance().GetLayerShared<SceneLayer>();
+    _Engine.events.Signal<Events::KeyboardInputOccupied>(true);
+    SceneService* scene_service = _Engine.scenes;
 
     if(!_Initailized)
     {
-        _PrevName = scene_layer->GetActiveSceneShared()->GetName();
+        _PrevName = scene_service->GetActiveSceneShared()->GetName();
         _NewName = _PrevName;
         _Initailized = true;
     }
@@ -191,7 +191,7 @@ void Arcadia::ImguiWindowPopupFunctor_RenameScene::operator()()
         ImGui::Text("New name");
         if(ImGui::InputText("##new_scene_name", &_NewName, input_text_flags))
         {
-            _NameAvailable = !scene_layer->HasScene(_NewName);
+            _NameAvailable = !scene_service->HasScene(_NewName);
         }
 
         bool confirmed = false;
@@ -206,7 +206,7 @@ void Arcadia::ImguiWindowPopupFunctor_RenameScene::operator()()
             confirmed = ImGui::Button("Confirm");
             if(confirmed)
             {
-                EventQueue::Instance()
+                _Engine.events
                     .Signal<Events::RenameScene>(
                         _NewName
                     );
@@ -217,7 +217,7 @@ void Arcadia::ImguiWindowPopupFunctor_RenameScene::operator()()
         {
             ImGui::CloseCurrentPopup();
             Opened = false;
-            EventQueue::Instance().Signal<Events::KeyboardInputOccupied>(false);
+            _Engine.events.Signal<Events::KeyboardInputOccupied>(false);
             _NewName.clear();
             _PrevName.clear();
             _Initailized = false;
@@ -227,8 +227,14 @@ void Arcadia::ImguiWindowPopupFunctor_RenameScene::operator()()
     }
 }
 
-Arcadia::ImguiWindowMainMenubar::ImguiWindowMainMenubar(const std::initializer_list<std::tuple<std::string_view, std::string_view>>& imgui_window_title_id_pairs):
-    ImguiWindowInterface(true, "Main Menubar"),
+Arcadia::ImguiWindowMainMenubar::ImguiWindowMainMenubar(
+    Engine& engine,
+    const std::initializer_list<std::tuple<std::string_view, std::string_view>>& imgui_window_title_id_pairs
+):
+    ImguiWindowInterface(engine, true, "Main Menubar"),
+    _ImguiWindowPopupFunctor_CreateProject(engine),
+    _ImguiWindowPopupFunctor_CreateScene(engine),
+    _ImguiWindowPopupFunctor_RenameScene(engine),
     _ImguiWindowTitleAndIdStringPairs(imgui_window_title_id_pairs)
 {
 }
@@ -252,9 +258,9 @@ void Arcadia::ImguiWindowMainMenubar::OnUpdate()
 
 void Arcadia::ImguiWindowMainMenubar::_ShowFileMenu()
 {
-    std::shared_ptr<ProjectLayer> project_layer_sptr = LayerStack::Instance().GetLayerShared<ProjectLayer>();
+    ProjectService* project_service = _Engine.project;
 
-    EventQueue& event_queue = EventQueue::Instance();
+    Foundation::EventBus& event_queue = _Engine.events;
 
     _ImguiWindowPopupFunctor_CreateProject();
     if(ImGui::BeginMenu("File"))
@@ -267,15 +273,15 @@ void Arcadia::ImguiWindowMainMenubar::_ShowFileMenu()
         {
             event_queue.Signal<Events::OpenProject>();
         }
-        if(ImGui::MenuItem("Save Project", nullptr, nullptr, project_layer_sptr->HasProject()))
+        if(ImGui::MenuItem("Save Project", nullptr, nullptr, project_service->HasProject()))
         {
             event_queue.Signal<Events::SaveProject>();
         }
-        if(ImGui::MenuItem("Save Project As...", nullptr, nullptr, project_layer_sptr->HasProject()))
+        if(ImGui::MenuItem("Save Project As...", nullptr, nullptr, project_service->HasProject()))
         {
             event_queue.Signal<Events::SaveProjectAs>();
         }
-        if(ImGui::MenuItem("Close Project", nullptr, nullptr, project_layer_sptr->HasProject()))
+        if(ImGui::MenuItem("Close Project", nullptr, nullptr, project_service->HasProject()))
         {
             event_queue.Signal<Events::CloseProject>();
         }
@@ -286,29 +292,30 @@ void Arcadia::ImguiWindowMainMenubar::_ShowFileMenu()
 
 void Arcadia::ImguiWindowMainMenubar::_ShowEditMenu()
 {
-    auto [scene_layer_sptr, project_layer_sptr] = LayerStack::Instance().GetMultipleLayersShared<SceneLayer, ProjectLayer>();
+    SceneService* scene_service = _Engine.scenes;
+    ProjectService* project_service = _Engine.project;
 
-    if(project_layer_sptr->HasProject())
+    if(project_service->HasProject())
     {
         _ImguiWindowPopupFunctor_CreateScene();
         _ImguiWindowPopupFunctor_RenameScene();
     }
-    EventQueue& event_queue = EventQueue::Instance();
+    Foundation::EventBus& event_queue = _Engine.events;
     if(ImGui::BeginMenu("Edit"))
     {
-        if(ImGui::MenuItem("New Scene ...", nullptr, nullptr, project_layer_sptr->HasProject()))
+        if(ImGui::MenuItem("New Scene ...", nullptr, nullptr, project_service->HasProject()))
         {
             _ImguiWindowPopupFunctor_CreateScene.Opened = true;
         }
 
-        bool has_scene = project_layer_sptr->HasProject() && scene_layer_sptr->HasScene();
-        bool has_active_scene = has_scene && scene_layer_sptr->HasActiveScene();
+        bool has_scene = project_service->HasProject() && scene_service->HasScene();
+        bool has_active_scene = has_scene && scene_service->HasActiveScene();
 
         if(ImGui::BeginMenu("Select Scene", has_scene))
         {
-            ACDA_ASSERT(project_layer_sptr->HasProject());
+            ACDA_ASSERT(project_service->HasProject());
 
-            for(const auto& [key, scene] : scene_layer_sptr->GetSceneStorage())
+            for(const auto& [key, scene] : scene_service->GetSceneStorage())
             {
                 if(ImGui::MenuItem(key.c_str()))
                 {
@@ -339,7 +346,7 @@ void Arcadia::ImguiWindowMainMenubar::_ShowEditMenu()
 
 void Arcadia::ImguiWindowMainMenubar::_ShowViewMenu()
 {
-    EventQueue& event_queue = EventQueue::Instance();
+    Foundation::EventBus& event_queue = _Engine.events;
     if(ImGui::BeginMenu("View"))
     {
         for(const auto& [title, id_string] : _ImguiWindowTitleAndIdStringPairs)
@@ -356,7 +363,7 @@ void Arcadia::ImguiWindowMainMenubar::_ShowViewMenu()
 
 void Arcadia::ImguiWindowMainMenubar::_ShowOptionMenu()
 {
-    EventQueue& event_queue = EventQueue::Instance();
+    Foundation::EventBus& event_queue = _Engine.events;
     if(ImGui::BeginMenu("Option"))
     {
         if(ImGui::Checkbox("Show Gizmo", &_ShouldShowGizmo))

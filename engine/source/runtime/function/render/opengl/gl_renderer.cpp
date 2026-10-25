@@ -4,9 +4,10 @@
 
 #include "core/match.hpp"
 #include "resource/components.hpp"
-#include "resource/scene_layer.hpp"
+#include "resource/scene_service.hpp"
 
-Arcadia::GlRenderer::GlRenderer(const std::filesystem::path& gl_shader_folder_path):
+Arcadia::GlRenderer::GlRenderer(Engine& engine, const std::filesystem::path& gl_shader_folder_path):
+    _Engine(engine),
     _GlModelPipeline(gl_shader_folder_path, GenerateModelShadersBuilder()),
     _GlSkyboxPipeline(gl_shader_folder_path, GenerateSkyboxShadersBuilder()),
     _GlGridPipeline(gl_shader_folder_path, GenerateGridShadersBuilder()),
@@ -25,8 +26,8 @@ void Arcadia::GlRenderer::BuildEntity(EntityId entity_id)
 {
     _EntityIdSet.emplace(entity_id);
 
-    std::shared_ptr<SceneLayer> scene_layer_sptr = LayerStack::Instance().GetLayerShared<SceneLayer>();
-    const EntityInfo& entity_info = scene_layer_sptr->ActiveScene_GetEntityInfo(entity_id);
+    SceneService* scene_service = _Engine.scenes;
+    const EntityInfo& entity_info = scene_service->ActiveScene_GetEntityInfo(entity_id);
 
     Match<void>(
         entity_info.Type,
@@ -37,7 +38,7 @@ void Arcadia::GlRenderer::BuildEntity(EntityId entity_id)
         EntityType::Camera,
         [&]()
         {
-            const auto& [camera_comp, transform_comp] = scene_layer_sptr->ActiveScene_GetComponent<CameraComponent, TransformComponent>(entity_id);
+            const auto& [camera_comp, transform_comp] = scene_service->ActiveScene_GetComponent<CameraComponent, TransformComponent>(entity_id);
 
             if(_GlRenderUnitCameraStorage.contains(entity_id))
             {
@@ -68,7 +69,7 @@ void Arcadia::GlRenderer::BuildEntity(EntityId entity_id)
         EntityType::Light,
         [&]()
         {
-            const auto& [light_comp, transform_comp] = scene_layer_sptr->ActiveScene_GetComponent<LightComponent, TransformComponent>(entity_id);
+            const auto& [light_comp, transform_comp] = scene_service->ActiveScene_GetComponent<LightComponent, TransformComponent>(entity_id);
 
             if(_GlRenderUnitLightStorage.contains(entity_id))
             {
@@ -90,7 +91,7 @@ void Arcadia::GlRenderer::BuildEntity(EntityId entity_id)
         EntityType::Actor,
         [&]()
         {
-            const auto [model_comp, transform_comp, physics_comp] = scene_layer_sptr->ActiveScene_GetComponent<ModelComponent, TransformComponent, PhysicsComponent>(entity_id);
+            const auto [model_comp, transform_comp, physics_comp] = scene_service->ActiveScene_GetComponent<ModelComponent, TransformComponent, PhysicsComponent>(entity_id);
 
             if(model_comp.HasIdentifiableMeshes())
             {

@@ -4,16 +4,16 @@
 #include "core/event.hpp"
 #include "core/function.hpp"
 #include "resource/fonts/icon.hpp"
-#include "resource/scene_layer.hpp"
+#include "resource/scene_service.hpp"
 #include "function/player/player_events.hpp"
 #include "function/physics/physics_events.hpp"
 
-#include "editor/editor_layer.hpp"
+#include "editor/editor/editor_app.hpp"
 #include "ui/imgui.hpp"
 #include "ui/ui_events.hpp"
 
-Arcadia::ImguiWindowMainToolbar::ImguiWindowMainToolbar():
-    ImguiWindowInterface(true, "Toolbar")
+Arcadia::ImguiWindowMainToolbar::ImguiWindowMainToolbar(Engine& engine):
+    ImguiWindowInterface(engine, true, "Toolbar")
 {
 }
 
@@ -23,7 +23,8 @@ void Arcadia::ImguiWindowMainToolbar::OnEvent(EventBase& e)
 
 void Arcadia::ImguiWindowMainToolbar::OnUpdate()
 {
-    auto [scene_layer_sptr, editor_layer_sptr] = LayerStack::Instance().GetMultipleLayersShared<SceneLayer, EditorLayer>();
+    SceneService* scene_service = _Engine.scenes;
+    EditorApp* editor_app = _Engine.editor;
 
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, glm::vec2{ 0,0 });
     ImGuiWindowFlags window_flags =
@@ -33,7 +34,7 @@ void Arcadia::ImguiWindowMainToolbar::OnUpdate()
         | ImGuiWindowFlags_NoFocusOnAppearing;
     if(ImGui::BeginViewportSideBar("toolbar", ImGui::GetMainViewport(), ImGuiDir_Up, ImGui::GetFrameHeight(), window_flags))
     {
-        CommandList& cmd_list = CommandList::Instance();
+        CommandList& cmd_list = *_Engine.commands;
 
         ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, glm::vec2{ 0,4 });
         if(ImGui::Button(ICON_FA_ARROW_CIRCLE_LEFT))
@@ -79,13 +80,13 @@ void Arcadia::ImguiWindowMainToolbar::OnUpdate()
         }
         ImGui::SetItemTooltip(" Redo ");
 
-        if(scene_layer_sptr->HasActiveScene())
+        if(scene_service->HasActiveScene())
         {
             ImGui::SameLine();
-            if(editor_layer_sptr->IsInPlayMode())
+            if(editor_app->IsInPlayMode())
             {
                 ImGui::PushStyleColor(ImGuiCol_Text, glm::vec4{ 1.f,0.f,0.f,1.f });
-                // implemented in Arcadia::EditorLayer::_OnInputKey()
+                // implemented in Arcadia::EditorApp::_OnInputKey()
                 ImGui::Text("Press Shift + Esc to stop play mode");
                 ImGui::PopStyleColor();
             }
@@ -93,10 +94,9 @@ void Arcadia::ImguiWindowMainToolbar::OnUpdate()
             {
                 if(ImGui::Button("PLAY"))
                 {
-                    EventQueue::Instance()
-                        .Signal<Events::SetPlayMode>(true)
-                        .Signal<Events::PlayerControllerSetActive>(true)
-                        .Signal<Events::PhysicsSimulatorSetActive>(true);
+                    _Engine.events.Signal<Events::SetPlayMode>(true);
+                    _Engine.events.Signal<Events::PlayerControllerSetActive>(true);
+                    _Engine.events.Signal<Events::PhysicsSimulatorSetActive>(true);
                 }
             }
         }

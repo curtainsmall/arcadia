@@ -3,22 +3,25 @@
 #include <memory>
 
 #include "core/event.hpp"
-#include "core/layer.hpp"
+#include "app/engine.hpp"
+#include "app/services.hpp"
 #include "function/physics/physics_events.hpp"
 #include "function/physics/physics_simulator.hpp"
 
 namespace Arcadia
 {
-    struct ACDA_API PhysicsLayer: public LayerInterface
+    struct ACDA_API PhysicsService: public Physics
     {
     public:
-        using SelfType = PhysicsLayer;
+        using SelfType = PhysicsService;
     public:
-        PhysicsLayer();
-        virtual ~PhysicsLayer() override = default;
+        PhysicsService(Engine& engine);
+        virtual ~PhysicsService() override = default;
 
-        virtual void OnEvent(EventBase& event) override;
-        virtual void OnUpdate() override;
+        void Step(std::chrono::nanoseconds delta_time) override;
+        void ApplyToWorld() override;
+
+        void OnEvent(EventBase& event);
 
         [[nodiscard]]
         auto IsPhysicsSimulatorActive() const -> bool;
@@ -38,6 +41,10 @@ namespace Arcadia
         void _OnPhysicsSimulatorSetEntity(Events::PhysicsSimulatorSetEntity& e);
 
     private:
-        PhysicsSimulator _PhysicsSimulator{};
+        Engine& _Engine;
+
+        Foundation::Subscription _EventSubscription{};
+
+        PhysicsSimulator _PhysicsSimulator;
     };
 }

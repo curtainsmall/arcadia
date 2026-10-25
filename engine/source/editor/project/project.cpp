@@ -5,49 +5,48 @@
 #include "function/physics/physics_events.hpp"
 #include "function/render/renderer_events.hpp"
 #include "resource/scene_events.hpp"
-#include "resource/scene_layer.hpp"
+#include "resource/scene_service.hpp"
 
 #include "project/project_events.hpp"
 
-Arcadia::Project::Project(std::string_view name):
+Arcadia::Project::Project(Engine& engine, std::string_view name):
+    _Engine(engine),
     _Name(name)
 {
 }
 
-Arcadia::Project::Project(nlohmann::json& json):
+Arcadia::Project::Project(Engine& engine, nlohmann::json& json):
+    _Engine(engine),
     _Name(json.at("name"))
 {
-    std::shared_ptr<SceneLayer> scene_layer_sptr = LayerStack::Instance().GetLayerShared<SceneLayer>();
-
     for(const nlohmann::json& json_scene : json.at("scenes"))
     {
-        EventQueue::Instance()
+        _Engine.events
             .Signal<Events::CreateSceneFromJson>(json_scene);
     }
-    EventQueue::Instance()
+    _Engine.events
         .Signal<Events::SelectScene>(json.at("active_scene_name"), true);
 }
 
 Arcadia::Project::~Project()
 {
-    EventQueue::Instance()
-        .Signal<Events::DestroyAllScenes>()
-        .Signal<Events::RendererReset>()
-        .Signal<Events::PhysicsSimulatorReset>();
+    _Engine.events.Signal<Events::DestroyAllScenes>();
+    _Engine.events.Signal<Events::RendererReset>();
+    _Engine.events.Signal<Events::PhysicsSimulatorReset>();
 }
 
 auto Arcadia::Project::ToJson() const -> nlohmann::json
 {
-    std::shared_ptr<SceneLayer> scene_layer_sptr = LayerStack::Instance().GetLayerShared<SceneLayer>();
+    SceneService* scene_service = _Engine.scenes;
 
     nlohmann::json json{
         {"name",GetName()},
         {"scenes",nlohmann::json::array()},
-        {"active_scene_name",scene_layer_sptr->HasActiveScene() ? scene_layer_sptr->GetActiveSceneShared()->GetName() : ""}
+        {"active_scene_name",scene_service->HasActiveScene() ? scene_service->GetActiveSceneShared()->GetName() : ""}
     };
 
     nlohmann::json& json_scenes = json["scenes"];
-    for(const auto& [name, scene_sptr] : scene_layer_sptr->GetSceneStorage())
+    for(const auto& [name, scene_sptr] : scene_service->GetSceneStorage())
     {
         json_scenes.push_back(scene_sptr->ToJson());
     }
