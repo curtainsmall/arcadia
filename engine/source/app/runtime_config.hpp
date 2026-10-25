@@ -41,9 +41,11 @@ namespace Arcadia
         std::set<std::string> OpenedWindowIds{};
 
     public:
-        // Never throws: an unreadable or missing file keeps the defaults.
-        void Load(const std::filesystem::path& filepath);
-        void Save(const std::filesystem::path& filepath) const;
+        // Never throws: an unreadable or missing file keeps the defaults. Returns
+        // false when the file could not be opened or parsed, so the caller decides
+        // whether that is worth reporting.
+        auto Load(const std::filesystem::path& filepath) -> bool;
+        auto Save(const std::filesystem::path& filepath) const -> bool;
 
         [[nodiscard]] auto ToJson() const -> nlohmann::json;
         void FromJson(const nlohmann::json& json);

@@ -2,8 +2,6 @@
 
 #include <fstream>
 
-#include "foundation/log.hpp"
-
 namespace Arcadia
 {
     auto RuntimeConfig::ToJson() const -> nlohmann::json
@@ -93,12 +91,12 @@ namespace Arcadia
         }
     }
 
-    void RuntimeConfig::Load(const std::filesystem::path& filepath)
+    auto RuntimeConfig::Load(const std::filesystem::path& filepath) -> bool
     {
         std::ifstream stream{ filepath };
         if(!stream.is_open())
         {
-            return;
+            return false;
         }
 
         try
@@ -107,20 +105,20 @@ namespace Arcadia
             stream >> json;
             FromJson(json);
         }
-        catch(const nlohmann::json::exception& exception)
+        catch(const nlohmann::json::exception&)
         {
-            ACDA_LOG_WARNING(std::format("Cannot read {}: {}", filepath.generic_string(), exception.what()));
+            return false;
         }
     }
 
-    void RuntimeConfig::Save(const std::filesystem::path& filepath) const
+    auto RuntimeConfig::Save(const std::filesystem::path& filepath) const -> bool
     {
         std::ofstream stream{ filepath };
         if(!stream.is_open())
         {
-            ACDA_LOG_WARNING(std::format("Cannot write {}", filepath.generic_string()));
-            return;
+            return false;
         }
         stream << ToJson().dump(4);
+        return true;
     }
 }
