@@ -106,6 +106,13 @@ if(NOT TARGET Jolt)
 
   add_subdirectory(jolt_physics/Build)
 
+  # Jolt builds with /Wall /WX; the Windows 11 SDK headers (wingdi.h/winuser.h)
+  # emit C4865 for their unnamed enums with the newest MSVC, which would be
+  # turned into a hard error (C2220). The warning is not caused by Jolt code.
+  if(MSVC)
+    target_compile_options(Jolt PRIVATE /wd4865)
+  endif()
+
   set_target_properties(Jolt PROPERTIES FOLDER "${dependency_folder}/jolt")
 
   # if(ENABLE_PHYSICS_DEBUG_RENDERER) set_target_properties( Jolt TestFramework
